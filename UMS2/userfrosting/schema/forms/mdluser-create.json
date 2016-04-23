@@ -1,0 +1,94 @@
+{
+    "username" : {
+        "validators" : {
+            "length" : {
+                "min" : 1,
+                "max" : 50,
+                "message" : "ACCOUNT_USER_CHAR_LIMIT"
+            },
+            "only_lowercase" : {
+                "message" : "ACCOUNT_ONLY_LOWERCASE"
+            },
+            "username_check" : {
+                "message" : "ACCOUNT_USERNAME_CHECK"
+            },
+            "required" : {
+                "message" : "ACCOUNT_SPECIFY_USERNAME"
+            }
+        },
+        "sanitizers" : { "raw" : {}}
+    },
+    "password" : {
+        "validators" : {
+            "length" : {
+                "min" : 8,
+                "max" : 50,
+                "message" : "ACCOUNT_PASS_CHAR_LIMIT"
+            },
+            "check_pass" : {
+                "message" : "ACCOUNT_INVALID_PASSWORD"
+            },
+
+            "required" : {
+                "message" : "ACCOUNT_SPECIFY_PASSWORD"
+            }
+        },
+        "sanitizers" : {
+            "raw" : {}
+        }
+    },
+    "firstname" : {
+        "validators" : {
+            "length" : {
+                "min" : 1,
+                "max" : 50,
+                "message" : "ACCOUNT_DISPLAY_CHAR_LIMIT"
+            },
+            "no_leading_whitespace" : {
+                "message" : "ACCOUNT_USER_NO_LEAD_WS"
+            },
+            "no_trailing_whitespace" : {
+                "message" : "ACCOUNT_USER_NO_TRAIL_WS"
+            },
+            "required" : {
+                "message" : "ACCOUNT_SPECIFY_FIRSTNAME"
+            }
+        },
+        "sanitizers" : { "raw" : {}}
+    },
+    "lastname" : {
+        "validators" : {
+            "length" : {
+                "min" : 1,
+                "max" : 50,
+                "message" : "ACCOUNT_DISPLAY_CHAR_LIMIT"
+            },
+            "no_leading_whitespace" : {
+                "message" : "ACCOUNT_USER_NO_LEAD_WS"
+            },
+            "no_trailing_whitespace" : {
+                "message" : "ACCOUNT_USER_NO_TRAIL_WS"
+            },
+            "required" : {
+                "message" : "ACCOUNT_SPECIFY_SUBNAME"
+            }
+        },
+        "sanitizers" : { "raw" : {}}
+    },
+    "email" : {
+        "validators" : {
+            "required" : {
+                "message" : "ACCOUNT_SPECIFY_EMAIL"
+            },
+            "length" : {
+                "min" : 1,
+                "max" : 150,
+                "message" : "ACCOUNT_EMAIL_CHAR_LIMIT"
+            },
+            "email" : {
+                "message" : "ACCOUNT_INVALID_EMAIL"
+            }
+        },
+        "sanitizers" : { "raw" : {}}
+    }
+}

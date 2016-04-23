@@ -1,0 +1,151 @@
+{% extends "layouts/layout-dashboard.twig" %}
+
+{% set page_group = "cohort" %}
+
+{# Set page properties (page.*) here. #}
+{% block page %}
+    {# By putting this in a special block, we ensure that it will be set AFTER the default values are set in the parent template,
+    but BEFORE the page itself is rendered. #}
+    {% set page = page | merge({
+    "title"       : "Cohorts" ,
+    "description" : "Cohorts management, add/remove cohorts, etc."
+    }) %}
+    {{ parent() }}
+{% endblock %}
+
+{% block head %}
+    {{ parent() }}
+    <style type="text/css">
+        #table-groups td {
+            vertical-align: text-top;
+            padding-left: 15px;
+        }
+        #table-groups th{
+            text-align: center;
+        }
+        #hidelink, #hidelink a, #invi{
+            color: darkgrey;
+        }
+        .btn-width{
+            width: 85px;
+        }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class='panel panel-primary'>
+            <div class='panel-heading'>
+                <h3 class='panel-title'><i class='fa fa-users'></i> All Cohort</h3>
+            </div>
+            <div class='panel-body'>
+                <div class="table-responsive">
+                    <table id="table-groups" class="tablesorter table table-hover table-striped tablesorter-bootstrap" data-sortlist="[[0, 0]]">
+                        <thead>
+                        <tr>
+                            <th             class="sorter-metatext" data-column-name="category">Category <i class="fa fa-sort"></i></th>
+                            <th             class="sorter-metatext" data-column-name="cohort_name">Cohort Name <i class="fa fa-sort"></i></th>
+                            <th             class="sorter-metatext" data-column-name="cohort_id">Cohort ID <i class="fa fa-sort"></i></th>
+                            <th width="30%" class="sorter-metatext" data-column-name="description">Description <i class="fa fa-sort"></i></th>
+                            <th width="10%" class="sorter-metatext" data-column-name="cohort-size">Members <i class="fa fa-sort"></i></th>
+                            <th width="10%" data-column-name="flag_can_delete">Actions <i class="fa fa-sort"></i></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for cohort in cohorts %}
+                        <tr {% if cohort.visible == 0 %} id="hidelink" {% endif %}>
+                            <td >
+                                <strong>
+                                {% if cohort.cname == NULL %}
+                                System
+                                {% else %}
+                                <a href="{{site.uri.public}}/list/cohorts/ct/{{ cohort.contextid }}">
+                                {{cohort.cname}}
+                                </a>
+                                {% endif %}
+                                </strong>
+                            </td>
+                            <td >
+                                <strong>
+                                    <i class="{{cohort.name}} fa-fw"></i> {{cohort.name}}
+                                </strong>
+                            </td>
+                            <td >
+                                {{cohort.idnumber}}
+                            </td>
+                            <td>
+                                {{cohort.description | raw}}
+                            </td>
+                            <td  style="text-align: center;">
+                                {{cohort.count_members}}
+                            </td>
+                            <td >
+                                <div class="btn-group" id = "btn-group">
+                                    {% if cohort.visible == 0 %}
+                                    <button type="button" id = "invi" class="btn btn-default dropdown-toggle btn-width" data-toggle="dropdown">
+                                        Invisible <span class="caret"></span>
+                                    </button>
+                                    {% else %}
+                                    <button type="button" class="btn btn-default dropdown-toggle btn-width" data-toggle="dropdown">
+                                        Active <span class="caret"></span>
+                                    </button>
+                                    {% endif %}
+                                    <ul class="dropdown-menu" role="menu" >
+                                        <li>
+                                            {% if cohort.visible == 1 %}
+                                                <a href="#" data-id="{{cohort.id}}" class="js-cohort-disable">
+                                                    <i class="fa fa-eye"></i> Hide
+                                                </a>
+                                            {% else %}
+                                                <a href="#" data-id="{{cohort.id}}" class="js-cohort-enable">
+                                                    <i class="fa fa-eye-slash"></i> Show
+                                                </a>
+                                            {% endif %}
+                                        </li>
+                                        <li>
+                                            <a href="#" data-id="{{ cohort.id }}" class="js-cohort-delete" data-name="{{cohort.name}}" data-target="#dialog-cohort-delete" data-toggle="modal">
+                                                <i class="fa fa-trash-o"></i> Delete cohort
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="{{site.uri.public}}/forms/cohorts/c/{{ cohort.id }}/0">
+                                                <i class="fa fa-edit"></i> Edit cohort
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="{{site.uri.public}}/assign/cohorts/c/{{ cohort.id }}/0">
+                                                <i class="fa fa-users"></i> Assign
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    {% include 'components/common/table-tablesorter-default.twig' with {'pager_id' : 'table-groups-pager'} %}
+                </div>
+                <div class="row">
+                    <div class="col-md-6 ">
+                        <a href="{{site.uri.public}}/forms/cohorts/ct/0">
+                        <button type="button" class="btn btn-success">
+                            <i class="fa fa-plus-square"></i>  Create New Cohort
+                        </button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block page_scripts %}
+    <script>
+        $(document).ready(function() {
+            ufTable('table-groups');
+        });
+    </script>
+{% endblock %}

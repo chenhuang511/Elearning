@@ -1,0 +1,535 @@
+{% extends "layouts/layout-dashboard.twig" %}
+            {% block page %}
+                {% set page = page | merge({
+                "title"       : "Thêm thành viên mới",
+                "description" : "Update the title for every user in a particular group."
+                }) %}
+                {{ parent() }}
+            {% endblock %}
+
+            {% block content %}
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-users"></i> Thêm thành viên mới</h3>
+                            </div>
+
+                            <div class="panel-body">
+                                <form class="form-horizontal" enctype="multipart/form-data" role="form" name="mdlusercreate" action="{{site.uri.public}}/mdlusers" method="post" id="id_mldusercreate">
+                                    {#General collapse#}
+                                    <div class="form-group">
+                                        <div class="panel-group">
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading">
+                                                    <h4 class="panel-title">
+                                                        <a data-toggle="collapse" href="#collapse_Gen">General</a>
+                                                    </h4>
+                                                </div>
+                                                <div id="collapse_Gen" class="panel-collapse collapse in">
+                                                    <ul class="list-group">
+                                                        <li class="list-group-item">
+                                                            <div class="form-group">
+                                                                <label for="id_username" class="col-sm-4 control-label">Username<span style='color:#d11010; font-size: large'>*</span> </label>
+                                                                <div class="col-ms-5" style="display: table; width:40%">
+                                                                    {#<span class="input-group-addon"><i class="fa fa-edit"></i></span>#}
+                                                                    <input type="text" class="form-control" style="margin-right: 15px" name="username" id="id_username" autocomplete="off"
+                                                                           value="{{target_user.username}}" placeholder="Please enter the user name">
+                                                                </div>
+                                                            </div>
+                                                        </li>
+
+                                                        <li class="list-group-item">
+                                                            <div class="form-group">
+                                                                <label for="id_auth" class="col-sm-4 control-label">Choose an authentication method</label>
+                                                                <div class="input-group" style="width: 40%">
+                                                                    <span class="input-group-addon"><i class="fa fa-language"></i></span>
+                                                                    <select id="id_auth" class='form-control select2' name="auth">
+                                                                        {% for option, label in auths %}
+                                                                            <option value="{{option}}" {% if (option == 'manual') %}selected{% endif %}>{{label}}</option>
+                                                                        {% endfor %}
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <div class="form-group">
+                                                                <label for="id_suspended" class="col-sm-4 control-label">Suspended account</label>
+                                                                <input type="checkbox" style="margin: 10px 0 0"  name="suspended" value="1" id ="id_suspended">
+                                                            </div>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <div class="form-group">
+                                                                <label for="id_createpassword" class="col-sm-4 control-label">Generate password and notify user</label>
+                                                                <input type="checkbox" style="margin: 10px 0 0" name="createpassword" value="1" id ="id_createpassword" >
+                                                            </div>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <div class="form-group">
+                                                                <label for="id_password" class="col-sm-4 control-label">New password</label>
+                                                                <div class="col-ms-5" style="display: table; width:40%">
+                                                                    <div class="input-group">
+                                                                        <label class="input-group-addon"><i class="fa fa-edit"></i></label>
+                                                                        <input type="password" name="password" class="form-control" style="width: 60%; margin-right: 15px; border-radius:4px" value="" placeholder="Enter Password" id="id_password">
+                                                                        <button class="unmask" type="button" title="Mask/Unmask password to check content" style="margin: 4px 2px; border-radius:4px">Unmask</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <div class="form-group">
+                                                                <label for="id_preference_auth_forcepasswordchange" class="col-sm-4 control-label">Force password change</label>
+                                                                <input type="checkbox" style="margin: 10px 0 0"  name="preference_auth_forcepasswordchange" value="1" id ="id_preference_auth_forcepasswordchange">
+                                                            </div>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <div class="form-group">
+                                                                <label for="id_firstname" class="col-sm-4 control-label">Firstname<span style='color:#d11010; font-size: large'>*</span> </label>
+                                                                <div class="col-ms-5" style="display: table; width:40%">
+                                                                    {#<span class="input-group-addon"><i class="fa fa-edit"></i></span>#}
+                                                                    <input type="text" class="form-control" style="margin-right: 15px" name="firstname" id="id_firstname" autocomplete="off"
+                                                                           value="{{target_user.user_name}}" placeholder="Please enter the firstname">
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <div class="form-group">
+                                                                <label for="id_lastname" class="col-sm-4 control-label">Surname<span style='color:#d11010; font-size: large'>*</span> </label>
+                                                                <div class="col-ms-5" style="display: table; width:40%">
+                                                                    {#<span class="input-group-addon"><i class="fa fa-edit"></i></span>#}
+                                                                    <input type="text" class="form-control" style="margin-right: 15px" name="lastname" id="id_lastname" autocomplete="off"
+                                                                           value="{{target_user.user_name}}" placeholder="Please enter the surname">
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <div class="form-group">
+                                                                <label for="id_email" class="col-sm-4 control-label">Email address<span style='color:#d11010; font-size: large'>*</span> </label>
+                                                                <div class="col-ms-5" style="display: table; width:40%">
+                                                                    {#<span class="input-group-addon"><i class="fa fa-edit"></i></span>#}
+                                                                    <input type="text" class="form-control" style="margin-right: 15px" name="email" id="id_email" autocomplete="off"
+                                                                           value="{{target_user.user_name}}" placeholder="Please enter the email address">
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <div class="form-group">
+                                                                <label for="id_maildisplay" class="col-sm-4 control-label">Email display</label>
+                                                                <div class="input-group" style="width: 40%">
+                                                                    <span class="input-group-addon"><i class="fa fa-language"></i></span>
+                                                                    <select id="id_maildisplay" class='form-control select2' name="maildisplay" >
+                                                                        {% for option, label in mail_dis %}
+                                                                            <option value="{{option}}" {% if (option == 2) %}selected{% endif %}>{{label}}</option>
+                                                                        {% endfor %}
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <div class="form-group">
+                                                                <label for="id_city" class="col-sm-4 control-label">City/town</label>
+                                                                <div class="input-group" style="width: 40%">
+                                                                    <span class="input-group-addon"><i class="fa fa-edit"></i></span>
+                                                                    <input type="text" class="form-control" name="city" id="id_city"  autocomplete="off" value="" placeholder="Please enter the city">
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <div class="form-group">
+                                                                <label for="id_country" class="col-sm-4 control-label">Select a country</label>
+                                                                <div class="input-group" style="width: 40%">
+                                                                    <span class="input-group-addon"><i class="fa fa-language"></i></span>
+                                                                    <select id="id_country" class='form-control select2' name="country">
+                                                                        <option value="">Select a country ...</option>
+                                                                        {% for option, label in countries %}
+                                                                            <option value="{{option}}" {% if (option == '') %}selected{% endif %}>{{label}}</option>
+                                                                        {% endfor %}
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <div class="form-group">
+                                                                <label for="id_timezone" class="col-sm-4 control-label">Timezone</label>
+                                                                <div class="input-group" style="width: 40%">
+                                                                    <span class="input-group-addon"><i class="fa fa-language"></i></span>
+                                                                    <select id="id_timezone" class='form-control select2' name="timezone" >
+                                                                        {% for option, label in timezone %}
+                                                                            <option value="{{option}}" {% if (option == 'manual') %}selected{% endif %}>{{label}}</option>
+                                                                        {% endfor %}
+                                                                        <option value="99" selected="selected">Server timezone (Viet Nam)</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <div class="form-group">
+                                                                <label for="input_title" class="col-sm-4 control-label">Description</label>
+                                                                <div class="input-group" style="width: 40%">
+                                                                    <textarea class="form-control" id="id_description" name="description" rows="10"></textarea>
+                                                                    {% block ckeditor %}
+                                                                        <script src="{{ site.uri.public }}/ckeditor/ckeditor.js"></script>
+                                                                        <script>CKEDITOR.replace('id_description'); </script>
+                                                                        {#<script>#}
+                                                                            {#CKEDITOR.instances['id_description'].setData('{{cohort.description|raw}}')#}
+                                                                        {#</script>#}
+                                                                        <script>CKEDITOR.config.entities = false;</script>
+                                                                        <script>CKEDITOR.config.entities_latin = false;</script>
+                                                                        {#<script src="//cdn.tinymce.com/4/tinymce.min.js"></script>#}
+                                                                        {#<script src="tinymce/tinymce.min.js"></script>#}
+                                                                        {#<script>tinymce.init({ selector:'textarea' });</script>#}
+                                                                    {% endblock %}
+                                                                    {#<p class="help-block">This will become the new title for all users in the selected group.</p>#}
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {#User picture#}
+                                    <div class="form-group">
+                                        <div class="panel-group">
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading">
+                                                    <h4 class="panel-title">
+                                                        <a data-toggle="collapse" href="#collapse_pic">User Picture</a>
+                                                    </h4>
+                                                </div>
+                                                <div id="collapse_pic" class="panel-collapse collapse">
+                                                    <ul class="list-group">
+                                                        <li class="list-group-item">
+                                                            <div class="form-group">
+                                                                <label for="input_group" class="col-sm-4 control-label">Current Picture</label>
+                                                                <div class="input-group" style="width: 40%">
+                                                                    <input type="text" class="form-control" name="curr_pic" value="">
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <div class="form-group">
+                                                                <label for="id_deletepicture" class="col-sm-4 control-label">Delete</label>
+                                                                <input type="checkbox" style="margin: 10px 0 0"  name="deletepicture" value="1" id ="id_deletepicture">
+                                                            </div>
+                                                        </li>
+                                                        {#<li class="list-group-item">#}
+                                                            {#<div class="form-group">#}
+                                                                {#<label for="input_group" class="col-sm-4 control-label">New picture</label>#}
+                                                                {#<input type="hidden" name="{{csrf_key}}" value="{{csrf_token}}">#}
+                                                                {#<input type="file" id="file" name="file" style="margin: 5px 0 0">#}
+                                                            {#</div>#}
+                                                        {#</li>#}
+                                                        <li class="list-group-item">
+                                                            <div class="form-group">
+                                                                <label for="id_imagealt" class="col-sm-4 control-label">Picture description</label>
+                                                                <div class="input-group" style="width: 40%">
+                                                                    <span class="input-group-addon"><i class="fa fa-edit"></i></span>
+                                                                    <input type="text" class="form-control" name="imagealt" id="id_imagealt" value="" placeholder="Please enter the picture description">
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {#Additional names#}
+                                    <div class="form-group">
+                                        <div class="panel-group">
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading">
+                                                    <h4 class="panel-title">
+                                                        <a data-toggle="collapse" href="#collapse_add">Additional names</a>
+                                                    </h4>
+                                                </div>
+                                                <div id="collapse_add" class="panel-collapse collapse">
+                                                    <ul class="list-group">
+                                                        <li class="list-group-item">
+                                                            <div class="form-group">
+                                                                <label for="id_firstnamephonetic" class="col-sm-4 control-label">First name - phonetic</label>
+                                                                <div class="input-group" style="width: 40%">
+                                                                    <span class="input-group-addon"><i class="fa fa-edit"></i></span>
+                                                                    <input type="text" class="form-control" name="firstnamephonetic" id="id_firstnamephonetic" value="" placeholder="Please enter the first name - phonetic">
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <div class="form-group">
+                                                                <label for="id_lastnamephonetic" class="col-sm-4 control-label">Surname - phonetic</label>
+                                                                <div class="input-group" style="width: 40%">
+                                                                    <span class="input-group-addon"><i class="fa fa-edit"></i></span>
+                                                                    <input type="text" class="form-control" name="lastnamephonetic" id="id_lastnamephonetic" value="" placeholder="Please enter the surname - phonetic">
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <div class="form-group">
+                                                                <label for="id_middlename" class="col-sm-4 control-label">Middle name</label>
+                                                                <div class="input-group" style="width: 40%">
+                                                                    <span class="input-group-addon"><i class="fa fa-edit"></i></span>
+                                                                    <input type="text" class="form-control" name="middlename" id="id_middlename" value="" placeholder="Please enter the middle name">
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <div class="form-group">
+                                                                <label for="id_alternatename" class="col-sm-4 control-label">Alternate name</label>
+                                                                <div class="input-group" style="width: 40%">
+                                                                    <span class="input-group-addon"><i class="fa fa-edit"></i></span>
+                                                                    <input type="text" class="form-control" name="alternatename" id="id_alternatename" value="" placeholder="Please enter the alternate name">
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {#Interests#}
+                                    <div class="form-group">
+                                        <div class="panel-group">
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading">
+                                                    <h4 class="panel-title">
+                                                        <a data-toggle="collapse" href="#collapse_int">Interests</a>
+                                                    </h4>
+                                                </div>
+                                                <div id="collapse_int" class="panel-collapse collapse in">
+                                                    <ul class="list-group">
+                                                        <li class="list-group-item">
+                                                            <div class="form-group">
+                                                                <label for="input_group" class="col-sm-4 control-label">List of interests</label>
+                                                                <div class="input-group" style="width: 40%">
+                                                                    <div class="input textarea clearfix example1"></div>
+                                                                    {% block stylesheets %}
+                                                                        <link href="{{ site.uri.public }}/js/tagglejs/assets/css/taggle.css" type="text/css" rel="stylesheet" />
+                                                                        {#<link href="{{ site.uri.public }}/js/tagglejs/assets/css/projects.min.css" type="text/css" rel="stylesheet" />#}
+                                                                        {#<link href="{{ site.uri.public }}/js/tagglejs/assets/css/twilight.css" type="text/css" rel="stylesheet" />#}
+                                                                    {% endblock %}
+                                                                    {% block entertag %}
+                                                                        <script src="{{ site.uri.public }}/js/jquery-1.11.2.js"></script>
+                                                                        <script src="{{ site.uri.public }}/js/tagglejs/assets/js/jquery-ui.js"></script>
+                                                                        <script src="{{ site.uri.public }}/js/tagglejs/src/taggle.js"></script>
+                                                                        {#<script src="{{ site.uri.public }}/js/tagglejs/assets/js/scripts.js"></script>#}
+
+                                                                        {#<script src="{{ site.uri.public }}/js/jsEnterTag/jquery-ui.js"></script>#}
+                                                                        {#<script src="{{ site.uri.public }}/js/jsEnterTag/taggle.js"></script>#}
+                                                                        <script>
+                                                                            new Taggle($('.example1.textarea')[0], {
+                                                                                duplicateTagClass: 'bounce'
+                                                                            });
+                                                                        </script>
+                                                                    {% endblock %}
+                                                                </div>
+                                                            </div>
+                                                        </li>
+
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {#Optional#}
+                                    <div class="form-group">
+                                        <div class="panel-group">
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading">
+                                                    <h4 class="panel-title">
+                                                        <a data-toggle="collapse" href="#collapse_opt">Optional</a>
+                                                    </h4>
+                                                </div>
+                                                <div id="collapse_opt" class="panel-collapse collapse">
+                                                    <ul class="list-group">
+                                                        <li class="list-group-item">
+                                                            <div class="form-group">
+                                                                <label for="id_url" class="col-sm-4 control-label">Web page</label>
+                                                                <div class="input-group" style="width: 40%">
+                                                                    <span class="input-group-addon"><i class="fa fa-edit"></i></span>
+                                                                    <input type="text" class="form-control" name="url" id="id_url" value="" placeholder="Please enter the Web page">
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <div class="form-group">
+                                                                <label for="id_icq" class="col-sm-4 control-label">ICQ number</label>
+                                                                <div class="input-group" style="width: 40%">
+                                                                    <span class="input-group-addon"><i class="fa fa-edit"></i></span>
+                                                                    <input type="text" class="form-control" name="icq" id="id_icq" value="" placeholder="Please enter the ICQ number">
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <div class="form-group">
+                                                                <label for="id_skype" class="col-sm-4 control-label">Skype ID</label>
+                                                                <div class="input-group" style="width: 40%">
+                                                                    <span class="input-group-addon"><i class="fa fa-edit"></i></span>
+                                                                    <input type="text" class="form-control" name="skype" id="id_skype" value="" placeholder="Please enter the Skype ID">
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <div class="form-group">
+                                                                <label for="id_aim" class="col-sm-4 control-label">AIM ID</label>
+                                                                <div class="input-group" style="width: 40%">
+                                                                    <span class="input-group-addon"><i class="fa fa-edit"></i></span>
+                                                                    <input type="text" class="form-control" name="aim" id="id_aim" value="" placeholder="Please enter the AIM ID">
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <div class="form-group">
+                                                                <label for="id_yahoo" class="col-sm-4 control-label">Yahoo ID</label>
+                                                                <div class="input-group" style="width: 40%">
+                                                                    <span class="input-group-addon"><i class="fa fa-edit"></i></span>
+                                                                    <input type="text" class="form-control" name="yahoo" id="id_yahoo" value="" placeholder="Please enter the Yahoo ID">
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <div class="form-group">
+                                                                <label for="id_msn" class="col-sm-4 control-label">MSN ID</label>
+                                                                <div class="input-group" style="width: 40%">
+                                                                    <span class="input-group-addon"><i class="fa fa-edit"></i></span>
+                                                                    <input type="text" class="form-control" name="msn" id="id_msn" value="" placeholder="Please enter the MSN ID">
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <div class="form-group">
+                                                                <label for="id_idnumber" class="col-sm-4 control-label">ID number</label>
+                                                                <div class="input-group" style="width: 40%">
+                                                                    <span class="input-group-addon"><i class="fa fa-edit"></i></span>
+                                                                    <input type="text" class="form-control" name="idnumber" id="id_idnumber" value="" placeholder="Please enter the ID number">
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <div class="form-group">
+                                                                <label for="id_institution" class="col-sm-4 control-label">Institution</label>
+                                                                <div class="input-group" style="width: 40%">
+                                                                    <span class="input-group-addon"><i class="fa fa-edit"></i></span>
+                                                                    <input type="text" class="form-control" name="institution" id="id_institution" value="" placeholder="Please enter the Institution">
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <div class="form-group">
+                                                                <label for="id_department" class="col-sm-4 control-label">Department</label>
+                                                                <div class="input-group" style="width: 40%">
+                                                                    <span class="input-group-addon"><i class="fa fa-edit"></i></span>
+                                                                    <input type="text" class="form-control" name="department" id="id_department" value="" placeholder="Please enter the Department">
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <div class="form-group">
+                                                                <label for="id_phone1" class="col-sm-4 control-label">Phone</label>
+                                                                <div class="input-group" style="width: 40%">
+                                                                    <span class="input-group-addon"><i class="fa fa-edit"></i></span>
+                                                                    <input type="text" class="form-control" name="phone1" id="id_phone1" value="" placeholder="Please enter the Phone">
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <div class="form-group">
+                                                                <label for="id_phone2" class="col-sm-4 control-label">Mobile phone</label>
+                                                                <div class="input-group" style="width: 40%">
+                                                                    <span class="input-group-addon"><i class="fa fa-edit"></i></span>
+                                                                    <input type="text" class="form-control" name="phone2" id="id_phone2" value="" placeholder="Please enter the Mobile phone">
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <div class="form-group">
+                                                                <label for="id_address" class="col-sm-4 control-label">Address</label>
+                                                                <div class="input-group" style="width: 40%">
+                                                                    <span class="input-group-addon"><i class="fa fa-edit"></i></span>
+                                                                    <input type="text" class="form-control" name="address" id="id_address" value="" placeholder="Please enter the Address">
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group text-center">
+                                        <button type="submit" id="uploadbutton" class="btn btn-success text-center">Create User</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endblock %}
+
+            {% block page_scripts %}
+                <script>
+                    //*************** Ham xu ly unmask password *****************
+                    //link xu ly: http://codepen.io/CreativeJuiz/pen/cvyEi?editors=1010
+                    $('.unmask').on('click', function(){
+                        if($(this).prev('input').attr('type') == 'password')
+                            changeType($(this).prev('input'), 'text');
+                        else
+                            changeType($(this).prev('input'), 'password');
+                        return false;
+                    });
+                    function changeType(x, type) {
+                        if(x.prop('type') == type)
+                            return x; //That was easy.
+                        try {
+                            return x.prop('type', type); //Stupid IE security will not allow this
+                        } catch(e) {
+                            //Try re-creating the element (yep... this sucks)
+                            //jQuery has no html() method for the element, so we have to put into a div first
+                            var html = $("<div>").append(x.clone()).html();
+                            var regex = /type=(\")?([^\"\s]+)(\")?/; //matches type=text or type="text"
+                            //If no match, we add the type attribute to the end; otherwise, we replace
+                            var tmp = $(html.match(regex) == null ?
+                                    html.replace(">", ' type="' + type + '">') :
+                                    html.replace(regex, 'type="' + type + '"') );
+                            //Copy data from old element
+                            tmp.data('type', x.data('type') );
+                            var events = x.data('events');
+                            var cb = function(events) {
+                                return function() {
+                                    //Bind all prior events
+                                    for(i in events)
+                                    {
+                                        var y = events[i];
+                                        for(j in y)
+                                            tmp.bind(i, y[j].handler);
+                                    }
+                                }
+                            }(events);
+                            x.replaceWith(tmp);
+                            setTimeout(cb, 10); //Wait a bit to call function
+                            return tmp;
+                        }
+                    }
+                    //************Het ham xu ly unmask pass*************
+                </script>
+
+                <script>
+                    $(document).ready(function() {
+                        // Load the validator rules for this form
+                        var validators = {{validators | raw}};
+                        url_listuser = site['uri']['public'] + '/mdlusers/';
+                        ufFormSubmit(
+                                $("form[name='mdlusercreate']"),
+                                validators,
+                                $("#userfrosting-alerts"),
+                                function(data, statusText, jqXHR) {
+                                    // Reload the page on success
+                                    window.location = url_listuser;
+                                }
+                        );
+                    });
+                </script>
+            {% endblock %}

@@ -1,0 +1,149 @@
+{% extends "layouts/layout-dashboard.twig" %}
+
+{% block head %}
+    {{ parent() }}
+    <style type="text/css">
+        #btn-info {
+            height: 15px;
+            width: 15px;
+            font-size: 7px;
+            font-weight: 800;
+            color: lightslategray;
+            padding: 1px 0 0 0;
+            margin-bottom: 7px;
+            background-color: transparent;
+            border: 2px solid lightslategray;
+        }
+    </style>
+{% endblock %}
+
+{% set page_group = "cohort" %}
+
+{% block page %}
+    {% set page = page | merge({
+        "title"       : box_title,
+        "description" : "Cohort management, add/remove Cohort, etc."
+    }) %}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><i class="fa fa-group"></i> {{ box_title }} </h3>
+                </div>
+                <div class="panel-body">
+                    <form class="form-horizontal" enctype="multipart/form-data" role="form" method="POST" name="cohort" action="{{ form_action }}" >
+
+                        <div class="form-group">
+                            <label for="input_name" class="col-sm-4 control-label">
+                                Name<span style='color:#d11010; font-size: large'>*</span>
+                            </label>
+                            <div class="col-sm-5" style="display: table">
+                                <input type="text" id="input_name" class="form-control" name="name" value="{{ cohort.name }}" placeholder="Enter a name cohort.">
+                            </div>
+                        </div>
+
+                        {#<div class="form-group">#}
+
+                            {#<label for="input_name" class="col-sm-4 control-label">#}
+                                {#Test#}
+                            {#</label>#}
+                            {#<div style="display: table">#}
+                                {#<input type="file" name="file[]" >#}
+                            {#</div>#}
+                        {#</div>#}
+
+                        <div class="form-group">
+                            <label for="input_context" class="col-sm-4 control-label">Context</label>
+                            <div class="col-sm-5">
+                                <select id="input_context" class="form-control select2" name="contextid">
+                                    <option value="1">System</option>
+                                    {% for coursecat in coursecats %}
+                                        <option value="{{coursecat.id}}" {% if (coursecat.id == cohort.contextid) %}selected{% endif %}>{{coursecat.name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="input_idnumber" class="col-sm-4 control-label">CohortID</label>
+                            <div class="col-sm-5">
+                                <input type="text" id="input_idnumber" class="form-control" name="idnumber" value="{{ cohort.idnumber }}" placeholder="Enter ID cohort.">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-4" style="text-align: right">
+                            <label for="input_switch" class="control-label">Visible</label>
+                            <a tabindex="0" class="btn btn-info btn-circle" id="btn-info" data-toggle="popover" data-trigger="focus" title="Visible" data-placement="left" data-html="true"
+                               data-content="Any cohort can be viewed by users who have 'moodle/cohort:view' capability in the cohort context.<br />Visible cohorts can also be viewed by users in the underlying courses">?</a>
+                            </div>
+                            <div class="col-sm-1">
+                                <input type='checkbox' id="input_switch" class="checkbox" name="visible" value="1"  {% if box_title == "Create Cohort" or cohort.visible == 1 %} checked {% endif %} >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="editor1" class="col-sm-4 control-label">Description</label>
+                            <div class="col-sm-5">
+                                <textarea class="form-control" id="editor1" name="description" rows="15">{{ cohort.description | raw }}</textarea>
+                                {% block ckeditor %}
+                                    <script src="{{site.uri.public}}/ckeditor/ckeditor.js"></script>
+                                    <script >CKEDITOR.replace( 'editor1');</script>
+                                {% endblock %}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="form-group text-center">
+                            <button type="submit" class="btn btn-primary">{{ box_title }}</button>
+                            {% if contextid == 0  %}
+                            <a href="{{site.uri.public}}/list/cohorts">
+                            {% else %}
+                            <a href="{{site.uri.public}}/list/cohorts/ct/{{ contextid }}">
+                            {% endif %}
+                                <button type="button" class="btn btn-default ">
+                                    Cancel
+                                </button>
+                            </a>
+                        </div>
+                        <div class="text-center">
+                            <span style="color: lightslategray">There are required fields in this form marked</span>
+                            <span style='color: #d11010; font-size: large'>*</span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block page_scripts %}
+    <script>
+        var contextid = {{ contextid }};
+
+        $(document).ready(function() {
+            // Load the validator rules for this form
+            var validators = {{validators | raw}};
+            var url1 = site['uri']['public'] + '/list/cohorts/';
+            var url2 = site['uri']['public'] + '/list/cohorts/ct/' + contextid;
+            ufFormSubmit(
+                    $("form[name='cohort']"),
+                    validators,
+                    $("#userfrosting-alerts"),
+                    function(data, statusText, jqXHR) {
+                        // Reload the page on success
+                        if(contextid == 0)
+                            window.location = url1;
+                        else
+                            window.location = url2
+//                        window.location.reload(true);
+                    }
+            );
+        });
+    </script>
+    <script>
+        $(function () {
+            $('[data-toggle="popover"]').popover()
+        })
+    </script>
+{% endblock %}

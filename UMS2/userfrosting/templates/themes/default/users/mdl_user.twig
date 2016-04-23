@@ -1,0 +1,169 @@
+{% extends "layouts/layout-dashboard.twig" %}
+{% set page_group = "user" %}
+
+{# Set page properties (page.*) here. #}
+{% block page %}
+    {# By putting this in a special block, we ensure that it will be set AFTER the default values are set in the parent template,
+    but BEFORE the page itself is rendered. #}
+    {% set page = page | merge({
+    "title"       : box_title,
+    "description" : "A listing of the users for your site.  Provides management tools including the ability to edit user details, manually activate users, enable/disable users, and more."
+    }) %}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class='panel panel-primary'>
+                <div class='panel-heading panel-heading-buttons clearfix'>
+                    <h3 class='panel-title pull-left'><i class='{{icon}}'></i> {{box_title}}</h3>
+                    <div class='pull-right'>
+                        <button id="table-mdl_users-download" class="btn btn-sm btn-default">Download CSV</button>
+                    </div>
+                </div>
+                <div class='panel-body'>
+                    <div class="table-responsive">
+                        <table id="table-mdl_users" class="tablesorter table table-bordered table-hover table-striped" data-sortlist="[[0, 0]]">
+                            <thead>
+                            <tr>
+                                <th class="sorter-metatext" data-column-name="firstname" width="20%">First name/Surname <i class="fa fa-sort"></i></th>
+                                <th class="sorter-metatext" data-column-name="email" width="20%">Email address <i class="fa fa-sort"></i></th>
+                                <th class="sorter-metatext" data-column-name="city" width="15%">City/Town <i class="fa fa-sort"></i></th>
+                                <th class="sorter-metatext" data-column-name="country" width="15%">Country <i class="fa fa-sort"></i></th>
+                                <th class="sorter-metanum" data-column-name="last_sign_in_time" width="15%">Last Access <i class="fa fa-sort"></i></th>
+                                <th data-column-name="flag_enabled" width="15%">Status/Actions <i class="fa fa-sort"></i></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {# If we are not using server-side pagination, then just render all results immediately #}
+                            {% if not paginate_server_side %}
+                                {% for user in users %}
+                                    <tr>
+                                        <td data-text="{{user.firstname}}">
+                                            <strong>
+                                                <a href="{{site.uri.public}}/users/u/{{user.id}}">{{user.firstname}} ({{user.lastname}})</a>
+                                            </strong>
+                                            <div>
+                                                <i>{{user.username}}</i>
+                                            </div>
+                                            <div>
+                                                <i class="fa fa-envelope"></i> <a href="mailto:{{user.email}}">{{user.email}}</a>
+                                            </div>
+                                        </td>
+                                        <td data-text="{{user.email}}">
+                                            <i>{{user.email}}</i>
+                                        </td>
+                                        {% if user.city %}
+                                            <td data-text="{{user.city}}">
+                                                {{user.city}}
+                                            </td>
+                                        {% else %}
+                                            <td data-text="">
+                                                <i>Unknown City</i>
+                                            </td>
+                                        {% endif %}
+                                        {% if user.country %}
+                                            <td data-text="{{user.country}}">
+                                                {{user.country}}
+                                            </td>
+                                        {% else %}
+                                            <td data-text="">
+                                                <i>Unknown Country</i>
+                                            </td>
+                                        {% endif %}
+                                        {% if user.lastaccess %}
+                                            <td data-num="{{user.lastaccess | date('U')}}">
+                                                {{user.lastaccess | date("l")}}<br>{{user.lastaccess | date("M j, Y g:i a")}}
+                                            </td>
+                                        {% else %}
+                                            <td data-num="0">
+                                                <i>Brand new!</i>
+                                            </td>
+                                        {% endif %}
+                                        <td>
+                                            <div class="btn-group">
+                                                {% if user.suspended == 1 %}
+                                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                                        Disabled
+                                                        <span class="caret"></span>
+                                                    </button>
+                                                {% elseif user.suspended == 1 %}
+                                                    <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown">
+                                                        Unactivated
+                                                        <span class="caret"></span>
+                                                    </button>
+                                                {% else %}
+                                                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                                                        Active
+                                                        <span class="caret"></span>
+                                                    </button>
+                                                {% endif %}
+                                                <ul class="dropdown-menu" role="menu">
+                                                    {% if user.confirmed == 0 %}
+                                                        <li>
+                                                            <a href="#" data-id="{{user.id}}" class="js-user-activate">
+                                                                <i class="fa fa-bolt"></i> Activate user
+                                                            </a>
+                                                        </li>
+                                                    {% endif %}
+                                                    <li>
+                                                        <a href="#" data-id="{{user.id}}" class="js-user-edit" data-target="#dialog-user-edit" data-toggle="modal">
+                                                            <i class="fa fa-edit"></i> Edit user
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#" data-id="{{user.id}}" class="js-user-password" data-target="#dialog-user-password" data-toggle="modal">
+                                                            <i class="fa fa-key"></i> Change password
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        {% if user.suspended == 0 %}
+                                                            <a href="#" data-id="{{user.id}}" class="js-user-disable">
+                                                                <i class="fa fa-minus-circle"></i> Disable user
+                                                            </a>
+                                                        {% else %}
+                                                            <a href="#" data-id="{{user.id}}" class="js-user-enable">
+                                                                <i class="fa fa-plus-circle"></i> Enable user
+                                                            </a>
+                                                        {% endif %}
+                                                    </li>
+                                                    <li>
+                                                        <a href="#" data-id="{{user.id}}" class="js-user-delete" data-user_name="{{user.username}}" data-target="#dialog-user-delete" data-toggle="modal">
+                                                            <i class="fa fa-trash-o"></i> Delete user</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+                            </tbody>
+                        </table>
+                        {% include 'components/common/table-tablesorter-default.twig' with {'pager_id' : 'table-mdl_users-pager'} %}
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 ">
+                            <a href="{{site.uri.public}}/forms/mdlusers/?"><button type="button" class="btn btn-success js-usermood-create">
+                                    <i class="fa fa-plus-square"></i>  Create New User
+                            </button></a>
+                        </div>
+                        <div class="col-md-6 text-right ">
+                            <a href="#">View All Users <i class="fa fa-arrow-circle-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block page_scripts %}
+    <script>
+        $(document).ready(function() {
+            ufTable('table-mdl_users');
+        });
+    </script>
+{% endblock %}
+
+

@@ -1,0 +1,9 @@
+{
+  "id" : {
+    "validators" : {
+      "integer" : {
+        "message" : "VALIDATE_INTEGER"
+      }
+    }
+  }
+}
