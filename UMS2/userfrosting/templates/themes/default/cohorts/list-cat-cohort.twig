@@ -23,11 +23,14 @@
         #table-groups th{
             text-align: center;
         }
-        #hidelink, #hidelink a, #invi{
+        #hidelink, #hidelink a{
             color: darkgrey;
         }
         .btn-width{
             width: 85px;
+        }
+        #invi{
+            opacity: 0.45;
         }
     </style>
 {% endblock %}
@@ -45,43 +48,44 @@
                         <table id="table-groups" class="tablesorter table table-hover table-striped tablesorter-bootstrap" data-sortlist="[[0, 0]]">
                             <thead>
                                 <tr>
-                                    <th width="25%" class="sorter-metatext" data-column-name="cohort_name">Cohort Name <i class="fa fa-sort"></i></th>
-                                    <th width="20%" class="sorter-metatext" data-column-name="cohort_id">Cohort ID <i class="fa fa-sort"></i></th>
-                                    <th width="35%" class="sorter-metatext" data-column-name="description">Description <i class="fa fa-sort"></i></th>
-                                    <th width="10%" class="sorter-metatext" data-column-name="cohort-size">Members <i class="fa fa-sort"></i></th>
-                                    <th width="10%" data-column-name="flag_can_delete">Actions <i class="fa fa-sort"></i></th>
+                                    <th width="40%" class="sorter-metatext" data-column-name="cohort_name">Cohort Name <i class="fa fa-sort"></i></th>
+                                    <th width="30%" class="sorter-metatext" data-column-name="cohort_id">Cohort ID <i class="fa fa-sort"></i></th>
+                                    <th width="15%" class="sorter-metatext" data-column-name="cohort-size">Members <i class="fa fa-sort"></i></th>
+                                    <th width="15%" data-column-name="flag_can_delete">Actions <i class="fa fa-sort"></i></th>
                                 </tr>
                             </thead>
                             <tbody>
                             {% for cohort in cohorts %}
                                 <tr {% if cohort.visible == 0 %} id="hidelink" {% endif %} >
-                                    <td >
-                                        <strong>
-                                            <i class="{{cohort.name}} fa-fw"></i> {{cohort.name}}
-                                        </strong>
+                                    <td data-toggle="collapse" data-target="#description{{ cohort.id }}">
+                                        <p>
+                                        <div class="col-md-11">
+                                            <strong>
+                                                <i class="{{cohort.name}} fa-fw"></i> {{cohort.name}}
+                                            </strong>
+                                        </div>
+                                        <span class="fa fa-chevron-down" ></span>
+                                        </p>
+                                        <div id="description{{ cohort.id }}" class="collapse"  >
+                                            {{ cohort.description | raw }}
+                                        </div>
                                     </td>
                                     <td>
                                         {{cohort.idnumber}}
-                                    </td>
-                                    <td >
-                                        {{cohort.description | raw}}
                                     </td>
                                     <td  style="text-align: center;">
                                         {{cohort.count_members}}
                                     </td>
                                     <td>
                                         <div class="btn-group">
-                                            {% if cohort.visible == 0 %}
-                                                <button type="button" class="btn btn-default dropdown-toggle btn-width" id="invi" data-toggle="dropdown" >
+                                            <button type="button" class="btn btn-primary dropdown-toggle btn-width" {% if cohort.visible == 0 %}id="invi"{% endif %} data-toggle="dropdown" >
+                                                {% if cohort.visible == 0 %}
                                                     Invisible
-                                                    <span class="caret"></span>
-                                                </button>
-                                            {% else %}
-                                                <button type="button" class="btn btn-default dropdown-toggle btn-width" data-toggle="dropdown" >
+                                                {% else %}
                                                     Active
-                                                    <span class="caret"></span>
-                                                </button>
-                                            {% endif %}
+                                                {% endif %}
+                                                <span class="fa fa-caret-down"></span>
+                                            </button>
                                             <ul class="dropdown-menu" role="menu">
                                                 <li>
                                                     {% if cohort.visible == 1 %}
@@ -144,6 +148,9 @@
     <script>
         $(document).ready(function() {
             ufTable('table-groups');
+        });
+        $('.collapse').on('show.bs.collapse', function () {
+            $('.collapse.in').collapse('hide');
         });
     </script>
 {% endblock %}
