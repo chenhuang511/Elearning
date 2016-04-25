@@ -57,7 +57,7 @@
                         </thead>
                         <tbody>
                         {% for cohort in cohorts %}
-                        <tr>
+                        <tr {% if cohort.visible == 0 %} id="hidelink" {% endif %}>
                             <td data-toggle="collapse" data-target="#description{{ cohort.id }}" >
                                 <strong>
                                 {% if cohort.cname == NULL %}
