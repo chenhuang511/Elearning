@@ -816,4 +816,79 @@ class MdlUserController extends \UserFrosting\BaseController{
         //update path cho bảng context
         MdlContext::where('id','=',$contextId)->update(['path' => $context['path']]);
     }
+    public function formMdluserEdit($user_id){
+        // Get the mdluser to edit
+        $mdluser = User::find($user_id)->toArray();
+//        // Access-controlled resource
+//        if (!$this->_app->user->checkAccess('uri_users') && !$this->_app->user->checkAccess('uri_group_users', ['primary_group_id' => $target_user->primary_group_id])){
+//            $this->_app->notFound();
+//        }
+
+        // Get a list of all locales
+        $locale_list = $this->_app->site->getLocales();
+
+        // Determine authorized fields
+        $fields = ['display_name', 'email', 'title', 'locale', 'groups', 'primary_group_id'];
+        $show_fields = [];
+        $disabled_fields = [];
+        $hidden_fields = [];
+        foreach ($fields as $field){
+            if ($this->_app->user->checkAccess("update_account_setting", ["user" => $target_user, "property" => $field]))
+                $show_fields[] = $field;
+            else if ($this->_app->user->checkAccess("view_account_setting", ["user" => $target_user, "property" => $field]))
+                $disabled_fields[] = $field;
+            else
+                $hidden_fields[] = $field;
+        }
+
+        // Always disallow editing username
+        $disabled_fields[] = "user_name";
+
+        // Load validator rules
+        $schema = new \Fortress\RequestSchema($this->_app->config('schema.path') . "/forms/user-update.json");
+        $this->_app->jsValidator->setSchema($schema);
+
+        $this->_app->render($template, [
+            "box_id" => $get['box_id'],
+            "box_title" => "Edit User",
+            "submit_button" => "Update user",
+            "form_action" => $this->_app->site->uri['public'] . "/users/u/$user_id",
+            "target_user" => $target_user,
+            "groups" => $group_list,
+            "locales" => $locale_list,
+            "fields" => [
+                "disabled" => $disabled_fields,
+                "hidden" => $hidden_fields
+            ],
+            "buttons" => [
+                "hidden" => [
+                    "edit", "enable", "delete", "activate"
+                ]
+            ],
+            "validators" => $this->_app->jsValidator->rules()
+        ]);
+
+
+
+
+        $this->_app->render("cohorts/form-edit-cohort.twig", [
+            "box_title" => "Create Cohort",
+            "contextid" => $context_id,
+            "form_action" => $this->_app->site->uri['public'] . "/forms/cohorts",
+            "cohort" => array(
+                "contextid" => $context_id
+            ),
+            "coursecats" => $coursecats,
+            "validators" => $this->_app->jsValidator->rules()
+        ]);
+
+        $this->_app->render("cohorts/form-edit-cohort.twig", [
+            "box_title" => "Update Cohort",
+            "contextid" => $context_id,
+            "form_action" => $this->_app->site->uri['public'] . "/forms/cohorts/c/$cohort_id",
+            "cohort" => $cohort,
+            "coursecats" => $coursecats,
+            "validators" => $this->_app->jsValidator->rules()
+        ]);
+    }
 }
