@@ -20,7 +20,7 @@
             vertical-align: text-top;
             padding-left: 15px;
         }
-        #table-groups th{
+        th{
             text-align: center;
         }
         #hidelink, #hidelink a{
@@ -28,6 +28,7 @@
         }
         .btn-width{
             width: 85px;
+            text-align: left;
         }
         #invi{
             opacity: 0.45;
@@ -64,7 +65,7 @@
                                                 <i class="{{cohort.name}} fa-fw"></i> {{cohort.name}}
                                             </strong>
                                         </div>
-                                        <span class="fa fa-chevron-down" ></span>
+                                        <div id="btn{{ cohort.id }}"><span class="fa fa-chevron-down" ></span></div>
                                         </p>
                                         <div id="description{{ cohort.id }}" class="collapse"  >
                                             {{ cohort.description | raw }}
@@ -151,6 +152,19 @@
         });
         $('.collapse').on('show.bs.collapse', function () {
             $('.collapse.in').collapse('hide');
+        });
+        $(document).ready(function(){
+            var cohorts = [{% for cohort in cohorts %}"{{ cohort.id }}",{% endfor %}];
+            $.each(cohorts,function (index, value) {
+                var desc = "#description" + value;
+                var btn = "#btn" + value;
+                $(desc).on("hide.bs.collapse", function(){
+                    $(btn).html('<span class="fa fa-chevron-down" ></span>');
+                });
+                $(desc).on("show.bs.collapse", function(){
+                    $(btn).html('<span class="fa fa-chevron-up" ></span>');
+                });
+            });
         });
     </script>
 {% endblock %}

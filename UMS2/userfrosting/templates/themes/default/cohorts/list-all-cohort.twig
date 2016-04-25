@@ -20,7 +20,7 @@
             vertical-align: text-top;
             padding-left: 15px;
         }
-        #table-groups th{
+        th{
             text-align: center;
         }
         #hidelink, #hidelink a{
@@ -28,6 +28,7 @@
         }
         .btn-width{
             width: 85px;
+            text-align: left;
         }
         #invi{
             opacity: 0.45;
@@ -49,16 +50,16 @@
                         <thead>
                         <tr>
                             <th width="25%" class="sorter-metatext" data-column-name="category">Category <i class="fa fa-sort"></i></th>
-                            <th width="25%" class="sorter-metatext" data-column-name="cohort_name">Cohort Name <i class="fa fa-sort"></i></th>
+                            <th width="30%" class="sorter-metatext" data-column-name="cohort_name">Cohort Name <i class="fa fa-sort"></i></th>
                             <th width="20%" class="sorter-metatext" data-column-name="cohort_id">Cohort ID <i class="fa fa-sort"></i></th>
-                            <th width="15%" class="sorter-metatext" data-column-name="cohort-size">Members <i class="fa fa-sort"></i></th>
-                            <th width="15%" data-column-name="flag_can_delete">Actions <i class="fa fa-sort"></i></th>
+                            <th width="12%" class="sorter-metatext" data-column-name="cohort-size">Members <i class="fa fa-sort"></i></th>
+                            <th width="13%" data-column-name="flag_can_delete">Actions <i class="fa fa-sort"></i></th>
                         </tr>
                         </thead>
                         <tbody>
                         {% for cohort in cohorts %}
                         <tr {% if cohort.visible == 0 %} id="hidelink" {% endif %} >
-                            <td data-toggle="collapse" data-target="#description{{ cohort.id }}" >
+                            <td>
                                 <strong>
                                 {% if cohort.cname == NULL %}
                                 System
@@ -76,10 +77,11 @@
                                         <i class="{{cohort.name}} fa-fw"></i> {{cohort.name}}
                                     </strong>
                                     </div>
-                                    <span class="fa fa-chevron-down" ></span>
+                                    <div id="btn{{ cohort.id }}"><span class="fa fa-chevron-down" ></span></div>
                                 </p>
                                 <div id="description{{ cohort.id }}" class="collapse"  >
                                     {{ cohort.description | raw }}
+
                                 </div>
                             </td>
                             <td >
@@ -89,7 +91,7 @@
                                 {{cohort.count_members}}
                             </td>
                             <td >
-                                <div class="btn-group" id = "btn-group">
+                                <div class="btn-group">
                                         <button type="button" class="btn btn-primary dropdown-toggle btn-width" {% if cohort.visible == 0 %}id="invi"{% endif %} data-toggle="dropdown" >
                                             {% if cohort.visible == 0 %}
                                             Invisible
@@ -129,7 +131,6 @@
                                 </div>
                             </td>
                         </tr>
-
                         {% endfor %}
                         </tbody>
                     </table>
@@ -156,6 +157,19 @@
             });
         $('.collapse').on('show.bs.collapse', function () {
             $('.collapse.in').collapse('hide');
+        });
+        $(document).ready(function(){
+            var cohorts = [{% for cohort in cohorts %}"{{ cohort.id }}",{% endfor %}];
+            $.each(cohorts,function (index, value) {
+                var desc = "#description" + value;
+                var btn = "#btn" + value;
+                $(desc).on("hide.bs.collapse", function(){
+                $(btn).html('<span class="fa fa-chevron-down" ></span>');
+                });
+                $(desc).on("show.bs.collapse", function(){
+                $(btn).html('<span class="fa fa-chevron-up" ></span>');
+                });
+            });
         });
     </script>
 {% endblock %}
