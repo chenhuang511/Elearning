@@ -45,7 +45,7 @@
             </div>
             <div class='panel-body' >
                 <div class="table-responsive">
-                    <table id="table-groups" class="tablesorter table table-hover table-striped tablesorter-bootstrap" data-sortlist="[[0, 0]]" id="accordion">
+                    <table id="table-groups" class="tablesorter table table-bordered table-hover table-striped tablesorter-bootstrap" data-sortlist="[[0, 0]]" id="accordion">
                         <thead>
                         <tr>
                             <th width="25%" class="sorter-metatext" data-column-name="category">Category <i class="fa fa-sort"></i></th>
@@ -57,7 +57,7 @@
                         </thead>
                         <tbody>
                         {% for cohort in cohorts %}
-                        <tr {% if cohort.visible == 0 %} id="hidelink" {% endif %}>
+                        <tr {% if cohort.visible == 0 %} id="hidelink" {% endif %} >
                             <td data-toggle="collapse" data-target="#description{{ cohort.id }}" >
                                 <strong>
                                 {% if cohort.cname == NULL %}
