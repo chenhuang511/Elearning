@@ -41,13 +41,22 @@
         {#{% endif %}#}
 
         <li>
-            <a href="#"><i class="fa fa-group fa-fw"></i> Cohorts<span class="fa arrow"></span></a>
+            <a href="#"><i class="fa fa-group fa-fw"></i> {{ translate("MENU_COHORT") }}<span class="fa arrow"></span></a>
             <ul class="nav nav-second-level">
                 <li>
-                    <a href="{{site.uri.public}}/list/cohorts"><i class="fa fa-group fa-fw"></i> All Cohorts</a>
+                    <a href="{{site.uri.public}}/list/cohorts"><i class="fa fa-group fa-fw"></i> {{ translate("MENU_ALL_COHORT") }}</a>
                 </li>
                 <li>
-                    <a href="{{site.uri.public}}/list/cohorts/ct/1"><i class="fa fa-wrench fa-fw"></i> Cohort System</a>
+                    <a href="{{site.uri.public}}/list/cohorts/ct/1"><i class="fa fa-wrench fa-fw"></i> {{ translate("MENU_COHORT_SYSTEM") }}</a>
+                </li>
+            </ul>
+        </li>
+
+        <li>
+            <a href="#"><i class="fa fa-user-secret fa-fw"></i> {{ translate("MENU_PERMISSIONS") }}<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+                <li>
+                    <a href="#"><i class="fa fa-wrench fa-fw"></i> {{ translate("MENU_DEFINE_ROLE") }}</a>
                 </li>
             </ul>
         </li>
