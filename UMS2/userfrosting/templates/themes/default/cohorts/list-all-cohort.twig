@@ -155,21 +155,21 @@
         $(document).ready(function() {
             ufTable('table-groups');
             });
-        $('.collapse').on('show.bs.collapse', function () {
-            $('.collapse.in').collapse('hide');
-        });
-        $(document).ready(function(){
+
             var cohorts = [{% for cohort in cohorts %}"{{ cohort.id }}",{% endfor %}];
             $.each(cohorts,function (index, value) {
                 var desc = "#description" + value;
                 var btn = "#btn" + value;
                 $(desc).on("hide.bs.collapse", function(){
-                $(btn).html('<span class="fa fa-chevron-down" ></span>');
+                    $(btn).html('<span class="fa fa-chevron-down" ></span>');
                 });
                 $(desc).on("show.bs.collapse", function(){
-                $(btn).html('<span class="fa fa-chevron-up" ></span>');
+                    $(btn).html('<span class="fa fa-chevron-up" ></span>');
                 });
             });
-        });
+
+            $('.collapse').on('show.bs.collapse', function () {
+                $('.collapse.in').collapse('hide');
+            });
     </script>
 {% endblock %}
