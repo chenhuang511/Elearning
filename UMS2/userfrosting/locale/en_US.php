@@ -210,7 +210,15 @@ $lang = array_merge($lang,array(
 // Permissions Moodle
 $lang = array_merge($lang, array(
 	"MENU_PERMISSIONS" => "Permissions",
-	"MENU_DEFINE_ROLE" => "Define Role"
+	"MENU_DEFINE_ROLE" => "Define Role",
+//	"MANAGER" => "Manager",
+//	"COURSE_CREATOR" => "Course creator",
+//	"EDITING_TEACHER" => "Teacher",
+//	"TEACHER" => "Non-editing teacher",
+//	"STUDENT" => "Student",
+//	"GUEST" => "Guest",
+//	"USER" => "Authenticated user",
+//	"FRONTPAGE" => "Authenticated user on frontpage"
 ));
 
 return $lang;

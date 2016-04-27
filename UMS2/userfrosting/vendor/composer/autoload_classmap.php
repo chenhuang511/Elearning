@@ -51,6 +51,8 @@ return array(
     'UserFrosting\\MdlCohortMembers' => $baseDir . '/models/database/MdlCohortMembers.php',
     'UserFrosting\\MdlContext' => $baseDir . '/models/database/MdlContext.php',
     'UserFrosting\\MdlCourseCategories' => $baseDir . '/models/database/MdlCourseCategories.php',
+    'UserFrosting\\MdlPermissionsController' => $baseDir . '/controllers/MdlPermissionsController.php',
+    'UserFrosting\\MdlRole' => $baseDir . '/models/database/MdlRole.php',
     'UserFrosting\\MdlUser' => $baseDir . '/models/database/MdlUser.php',
     'UserFrosting\\MdlUserController' => $baseDir . '/controllers/MdlUserController.php',
     'UserFrosting\\Notification' => $baseDir . '/models/notify/Notification.php',

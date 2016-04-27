@@ -202,6 +202,13 @@
         return $controller->deleteCohort($cohort_id);
     });
 
+    /********** MOODLE PERMISSIONS INTERFACE **********/
+
+    $app->get('/roles/manage/?', function () use ($app){
+        $controller = new UF\MdlPermissionsController($app);
+        return $controller->manageRoles();
+    });
+
     /********** USER MANAGEMENT INTERFACE **********/
 
     // List users
