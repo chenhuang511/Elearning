@@ -1,5 +1,5 @@
 {% extends "layouts/layout-dashboard.twig" %}
-{% set page_group = "user" %}
+{% set page_group = "mdluser" %}
 
 {# Set page properties (page.*) here. #}
 {% block page %}
@@ -108,13 +108,8 @@
                                                         </li>
                                                     {% endif %}
                                                     <li>
-                                                        <a href="#" data-id="{{user.id}}" class="js-user-edit" data-target="#dialog-user-edit" data-toggle="modal">
+                                                        <a href="{{site.uri.public}}/forms/mdlusers/u/{{ user.id }}/?">
                                                             <i class="fa fa-edit"></i> Edit user
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#" data-id="{{user.id}}" class="js-user-password" data-target="#dialog-user-password" data-toggle="modal">
-                                                            <i class="fa fa-key"></i> Change password
                                                         </a>
                                                     </li>
                                                     <li>
@@ -129,7 +124,7 @@
                                                         {% endif %}
                                                     </li>
                                                     <li>
-                                                        <a href="#" data-id="{{user.id}}" class="js-user-delete" data-user_name="{{user.username}}" data-target="#dialog-user-delete" data-toggle="modal">
+                                                        <a href="#" data-id="{{user.id}}" class="js-mdluser-delete" data-user_name="{{user.username}}" data-target="#dialog-mdluser-delete" data-toggle="modal">
                                                             <i class="fa fa-trash-o"></i> Delete user</a>
                                                     </li>
                                                 </ul>
