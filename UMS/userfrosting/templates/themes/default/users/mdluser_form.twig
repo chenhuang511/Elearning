@@ -1,8 +1,8 @@
 {% extends "layouts/layout-dashboard.twig" %}
             {% block page %}
                 {% set page = page | merge({
-                "title"       : "Thêm thành viên mới",
-                "description" : "Update the title for every user in a particular group."
+                "title"       : box_title,
+                "description" : "Mdluser management, CRUD mdlUser"
                 }) %}
                 {{ parent() }}
             {% endblock %}
@@ -12,11 +12,11 @@
                     <div class="col-lg-12">
                         <div class="panel panel-primary">
                             <div class="panel-heading">
-                                <h3 class="panel-title"><i class="fa fa-users"></i> Thêm thành viên mới</h3>
+                                <h3 class="panel-title"><i class="fa fa-users"></i> {{ box_title }}</h3>
                             </div>
 
                             <div class="panel-body">
-                                <form class="form-horizontal" enctype="multipart/form-data" role="form" name="mdlusercreate" action="{{site.uri.public}}/mdlusers" method="post" id="id_mldusercreate">
+                                <form class="form-horizontal" enctype="multipart/form-data" role="form" name="mdlusercreate" action="{{ form_action }}" method="post" id="id_mldusercreate">
                                     {#General collapse#}
                                     <div class="form-group">
                                         <div class="panel-group">
@@ -34,7 +34,7 @@
                                                                 <div class="col-ms-5" style="display: table; width:40%">
                                                                     {#<span class="input-group-addon"><i class="fa fa-edit"></i></span>#}
                                                                     <input type="text" class="form-control" style="margin-right: 15px" name="username" id="id_username" autocomplete="off"
-                                                                           value="{{target_user.username}}" placeholder="Please enter the user name">
+                                                                           value="{{mdluser.username}}" placeholder="Please enter the user name">
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -46,7 +46,7 @@
                                                                     <span class="input-group-addon"><i class="fa fa-language"></i></span>
                                                                     <select id="id_auth" class='form-control select2' name="auth">
                                                                         {% for option, label in auths %}
-                                                                            <option value="{{option}}" {% if (option == 'manual') %}selected{% endif %}>{{label}}</option>
+                                                                            <option value="{{option}}" {% if (option == mdluser.auth) %}selected{% endif %}>{{label}}</option>
                                                                         {% endfor %}
                                                                     </select>
                                                                 </div>
@@ -55,13 +55,13 @@
                                                         <li class="list-group-item">
                                                             <div class="form-group">
                                                                 <label for="id_suspended" class="col-sm-4 control-label">Suspended account</label>
-                                                                <input type="checkbox" style="margin: 10px 0 0"  name="suspended" value="1" id ="id_suspended">
+                                                                <input type="checkbox" style="margin: 10px 0 0"  name="suspended" id ="id_suspended" {% if mdluser.suspended %}checked{% endif %}>
                                                             </div>
                                                         </li>
                                                         <li class="list-group-item">
                                                             <div class="form-group">
                                                                 <label for="id_createpassword" class="col-sm-4 control-label">Generate password and notify user</label>
-                                                                <input type="checkbox" style="margin: 10px 0 0" name="createpassword" value="1" id ="id_createpassword" >
+                                                                <input type="checkbox" style="margin: 10px 0 0" name="createpassword" id ="id_createpassword" >
                                                             </div>
                                                         </li>
                                                         <li class="list-group-item">
@@ -79,7 +79,7 @@
                                                         <li class="list-group-item">
                                                             <div class="form-group">
                                                                 <label for="id_preference_auth_forcepasswordchange" class="col-sm-4 control-label">Force password change</label>
-                                                                <input type="checkbox" style="margin: 10px 0 0"  name="preference_auth_forcepasswordchange" value="1" id ="id_preference_auth_forcepasswordchange">
+                                                                <input type="checkbox" style="margin: 10px 0 0"  name="preference_auth_forcepasswordchange" id ="id_preference_auth_forcepasswordchange" {% if pref.value %}checked{% endif %}>
                                                             </div>
                                                         </li>
                                                         <li class="list-group-item">
@@ -88,7 +88,7 @@
                                                                 <div class="col-ms-5" style="display: table; width:40%">
                                                                     {#<span class="input-group-addon"><i class="fa fa-edit"></i></span>#}
                                                                     <input type="text" class="form-control" style="margin-right: 15px" name="firstname" id="id_firstname" autocomplete="off"
-                                                                           value="{{target_user.user_name}}" placeholder="Please enter the firstname">
+                                                                           value="{{mdluser.firstname}}" placeholder="Please enter the firstname">
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -98,7 +98,7 @@
                                                                 <div class="col-ms-5" style="display: table; width:40%">
                                                                     {#<span class="input-group-addon"><i class="fa fa-edit"></i></span>#}
                                                                     <input type="text" class="form-control" style="margin-right: 15px" name="lastname" id="id_lastname" autocomplete="off"
-                                                                           value="{{target_user.user_name}}" placeholder="Please enter the surname">
+                                                                           value="{{mdluser.lastname}}" placeholder="Please enter the surname">
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -108,7 +108,7 @@
                                                                 <div class="col-ms-5" style="display: table; width:40%">
                                                                     {#<span class="input-group-addon"><i class="fa fa-edit"></i></span>#}
                                                                     <input type="text" class="form-control" style="margin-right: 15px" name="email" id="id_email" autocomplete="off"
-                                                                           value="{{target_user.user_name}}" placeholder="Please enter the email address">
+                                                                           value="{{mdluser.email}}" placeholder="Please enter the email address">
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -119,7 +119,7 @@
                                                                     <span class="input-group-addon"><i class="fa fa-language"></i></span>
                                                                     <select id="id_maildisplay" class='form-control select2' name="maildisplay" >
                                                                         {% for option, label in mail_dis %}
-                                                                            <option value="{{option}}" {% if (option == 2) %}selected{% endif %}>{{label}}</option>
+                                                                            <option value="{{option}}" {% if (option == mdl.maildisplay) %}selected{% endif %}>{{label}}</option>
                                                                         {% endfor %}
                                                                     </select>
                                                                 </div>
@@ -130,7 +130,7 @@
                                                                 <label for="id_city" class="col-sm-4 control-label">City/town</label>
                                                                 <div class="input-group" style="width: 40%">
                                                                     <span class="input-group-addon"><i class="fa fa-edit"></i></span>
-                                                                    <input type="text" class="form-control" name="city" id="id_city"  autocomplete="off" value="" placeholder="Please enter the city">
+                                                                    <input type="text" class="form-control" name="city" id="id_city"  autocomplete="off" value="{{mdluser.city}}" placeholder="Please enter the city">
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -142,7 +142,7 @@
                                                                     <select id="id_country" class='form-control select2' name="country">
                                                                         <option value="">Select a country ...</option>
                                                                         {% for option, label in countries %}
-                                                                            <option value="{{option}}" {% if (option == '') %}selected{% endif %}>{{label}}</option>
+                                                                            <option value="{{option}}" {% if (option == mdluser.country) %}selected{% endif %}>{{label}}</option>
                                                                         {% endfor %}
                                                                     </select>
                                                                 </div>
@@ -155,9 +155,8 @@
                                                                     <span class="input-group-addon"><i class="fa fa-language"></i></span>
                                                                     <select id="id_timezone" class='form-control select2' name="timezone" >
                                                                         {% for option, label in timezone %}
-                                                                            <option value="{{option}}" {% if (option == 'manual') %}selected{% endif %}>{{label}}</option>
+                                                                            <option value="{{option}}" {% if (option == mdluser.timezone) %}selected{% endif %}>{{label}}</option>
                                                                         {% endfor %}
-                                                                        <option value="99" selected="selected">Server timezone (Viet Nam)</option>
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -166,18 +165,10 @@
                                                             <div class="form-group">
                                                                 <label for="input_title" class="col-sm-4 control-label">Description</label>
                                                                 <div class="input-group" style="width: 40%">
-                                                                    <textarea class="form-control" id="id_description" name="description" rows="10"></textarea>
+                                                                    <textarea class="form-control" id="id_description" name="description" rows="10">{{ mdluser.description }}</textarea>
                                                                     {% block ckeditor %}
                                                                         <script src="{{ site.uri.public }}/ckeditor/ckeditor.js"></script>
                                                                         <script>CKEDITOR.replace('id_description'); </script>
-                                                                        {#<script>#}
-                                                                            {#CKEDITOR.instances['id_description'].setData('{{cohort.description|raw}}')#}
-                                                                        {#</script>#}
-                                                                        <script>CKEDITOR.config.entities = false;</script>
-                                                                        <script>CKEDITOR.config.entities_latin = false;</script>
-                                                                        {#<script src="//cdn.tinymce.com/4/tinymce.min.js"></script>#}
-                                                                        {#<script src="tinymce/tinymce.min.js"></script>#}
-                                                                        {#<script>tinymce.init({ selector:'textarea' });</script>#}
                                                                     {% endblock %}
                                                                     {#<p class="help-block">This will become the new title for all users in the selected group.</p>#}
                                                                 </div>
@@ -190,30 +181,30 @@
                                     </div>
 
                                     {#User picture#}
-                                    <div class="form-group">
-                                        <div class="panel-group">
-                                            <div class="panel panel-default">
-                                                <div class="panel-heading">
-                                                    <h4 class="panel-title">
-                                                        <a data-toggle="collapse" href="#collapse_pic">User Picture</a>
-                                                    </h4>
-                                                </div>
-                                                <div id="collapse_pic" class="panel-collapse collapse">
-                                                    <ul class="list-group">
-                                                        <li class="list-group-item">
-                                                            <div class="form-group">
-                                                                <label for="input_group" class="col-sm-4 control-label">Current Picture</label>
-                                                                <div class="input-group" style="width: 40%">
-                                                                    <input type="text" class="form-control" name="curr_pic" value="">
-                                                                </div>
-                                                            </div>
-                                                        </li>
-                                                        <li class="list-group-item">
-                                                            <div class="form-group">
-                                                                <label for="id_deletepicture" class="col-sm-4 control-label">Delete</label>
-                                                                <input type="checkbox" style="margin: 10px 0 0"  name="deletepicture" value="1" id ="id_deletepicture">
-                                                            </div>
-                                                        </li>
+                                    {#<div class="form-group">#}
+                                        {#<div class="panel-group">#}
+                                            {#<div class="panel panel-default">#}
+                                                {#<div class="panel-heading">#}
+                                                    {#<h4 class="panel-title">#}
+                                                        {#<a data-toggle="collapse" href="#collapse_pic">User Picture</a>#}
+                                                    {#</h4>#}
+                                                {#</div>#}
+                                                {#<div id="collapse_pic" class="panel-collapse collapse">#}
+                                                    {#<ul class="list-group">#}
+                                                        {#<li class="list-group-item">#}
+                                                            {#<div class="form-group">#}
+                                                                {#<label for="input_group" class="col-sm-4 control-label">Current Picture</label>#}
+                                                                {#<div class="input-group" style="width: 40%">#}
+                                                                    {#<input type="text" class="form-control" name="curr_pic" value="">#}
+                                                                {#</div>#}
+                                                            {#</div>#}
+                                                        {#</li>#}
+                                                        {#<li class="list-group-item">#}
+                                                            {#<div class="form-group">#}
+                                                                {#<label for="id_deletepicture" class="col-sm-4 control-label">Delete</label>#}
+                                                                {#<input type="checkbox" style="margin: 10px 0 0"  name="deletepicture" value="1" id ="id_deletepicture">#}
+                                                            {#</div>#}
+                                                        {#</li>#}
                                                         {#<li class="list-group-item">#}
                                                             {#<div class="form-group">#}
                                                                 {#<label for="input_group" class="col-sm-4 control-label">New picture</label>#}
@@ -221,20 +212,20 @@
                                                                 {#<input type="file" id="file" name="file" style="margin: 5px 0 0">#}
                                                             {#</div>#}
                                                         {#</li>#}
-                                                        <li class="list-group-item">
-                                                            <div class="form-group">
-                                                                <label for="id_imagealt" class="col-sm-4 control-label">Picture description</label>
-                                                                <div class="input-group" style="width: 40%">
-                                                                    <span class="input-group-addon"><i class="fa fa-edit"></i></span>
-                                                                    <input type="text" class="form-control" name="imagealt" id="id_imagealt" value="" placeholder="Please enter the picture description">
-                                                                </div>
-                                                            </div>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                                        {#<li class="list-group-item">#}
+                                                            {#<div class="form-group">#}
+                                                                {#<label for="id_imagealt" class="col-sm-4 control-label">Picture description</label>#}
+                                                                {#<div class="input-group" style="width: 40%">#}
+                                                                    {#<span class="input-group-addon"><i class="fa fa-edit"></i></span>#}
+                                                                    {#<input type="text" class="form-control" name="imagealt" id="id_imagealt" value="{{ mdluser.imagealt }}" placeholder="Please enter the picture description">#}
+                                                                {#</div>#}
+                                                            {#</div>#}
+                                                        {#</li>#}
+                                                    {#</ul>#}
+                                                {#</div>#}
+                                            {#</div>#}
+                                        {#</div>#}
+                                    {#</div>#}
 
                                     {#Additional names#}
                                     <div class="form-group">
@@ -252,7 +243,7 @@
                                                                 <label for="id_firstnamephonetic" class="col-sm-4 control-label">First name - phonetic</label>
                                                                 <div class="input-group" style="width: 40%">
                                                                     <span class="input-group-addon"><i class="fa fa-edit"></i></span>
-                                                                    <input type="text" class="form-control" name="firstnamephonetic" id="id_firstnamephonetic" value="" placeholder="Please enter the first name - phonetic">
+                                                                    <input type="text" class="form-control" name="firstnamephonetic" id="id_firstnamephonetic" value="{{ mdluser.firstnamephonetic }}" placeholder="Please enter the first name - phonetic">
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -261,7 +252,7 @@
                                                                 <label for="id_lastnamephonetic" class="col-sm-4 control-label">Surname - phonetic</label>
                                                                 <div class="input-group" style="width: 40%">
                                                                     <span class="input-group-addon"><i class="fa fa-edit"></i></span>
-                                                                    <input type="text" class="form-control" name="lastnamephonetic" id="id_lastnamephonetic" value="" placeholder="Please enter the surname - phonetic">
+                                                                    <input type="text" class="form-control" name="lastnamephonetic" id="id_lastnamephonetic" value="{{ mdluser.lastnamephonetic }}" placeholder="Please enter the surname - phonetic">
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -270,7 +261,7 @@
                                                                 <label for="id_middlename" class="col-sm-4 control-label">Middle name</label>
                                                                 <div class="input-group" style="width: 40%">
                                                                     <span class="input-group-addon"><i class="fa fa-edit"></i></span>
-                                                                    <input type="text" class="form-control" name="middlename" id="id_middlename" value="" placeholder="Please enter the middle name">
+                                                                    <input type="text" class="form-control" name="middlename" id="id_middlename" value="{{ mdluser.middlename }}" placeholder="Please enter the middle name">
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -279,7 +270,7 @@
                                                                 <label for="id_alternatename" class="col-sm-4 control-label">Alternate name</label>
                                                                 <div class="input-group" style="width: 40%">
                                                                     <span class="input-group-addon"><i class="fa fa-edit"></i></span>
-                                                                    <input type="text" class="form-control" name="alternatename" id="id_alternatename" value="" placeholder="Please enter the alternate name">
+                                                                    <input type="text" class="form-control" name="alternatename" id="id_alternatename" value="{{ mdluser.alternatename }}" placeholder="Please enter the alternate name">
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -320,6 +311,9 @@
                                                                         {#<script src="{{ site.uri.public }}/js/jsEnterTag/taggle.js"></script>#}
                                                                         <script>
                                                                             new Taggle($('.example1.textarea')[0], {
+                                                                                tags: [{% for tag in tags %}
+                                                                                            '{{ tag.name }}',
+                                                                                        {% endfor %}],
                                                                                 duplicateTagClass: 'bounce'
                                                                             });
                                                                         </script>
@@ -350,7 +344,7 @@
                                                                 <label for="id_url" class="col-sm-4 control-label">Web page</label>
                                                                 <div class="input-group" style="width: 40%">
                                                                     <span class="input-group-addon"><i class="fa fa-edit"></i></span>
-                                                                    <input type="text" class="form-control" name="url" id="id_url" value="" placeholder="Please enter the Web page">
+                                                                    <input type="text" class="form-control" name="url" id="id_url" value="{{ mdluser.url }}" placeholder="Please enter the Web page">
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -359,7 +353,7 @@
                                                                 <label for="id_icq" class="col-sm-4 control-label">ICQ number</label>
                                                                 <div class="input-group" style="width: 40%">
                                                                     <span class="input-group-addon"><i class="fa fa-edit"></i></span>
-                                                                    <input type="text" class="form-control" name="icq" id="id_icq" value="" placeholder="Please enter the ICQ number">
+                                                                    <input type="text" class="form-control" name="icq" id="id_icq" value="{{ mdluser.icq }}" placeholder="Please enter the ICQ number">
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -368,7 +362,7 @@
                                                                 <label for="id_skype" class="col-sm-4 control-label">Skype ID</label>
                                                                 <div class="input-group" style="width: 40%">
                                                                     <span class="input-group-addon"><i class="fa fa-edit"></i></span>
-                                                                    <input type="text" class="form-control" name="skype" id="id_skype" value="" placeholder="Please enter the Skype ID">
+                                                                    <input type="text" class="form-control" name="skype" id="id_skype" value="{{ mdluser.skype }}" placeholder="Please enter the Skype ID">
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -377,7 +371,7 @@
                                                                 <label for="id_aim" class="col-sm-4 control-label">AIM ID</label>
                                                                 <div class="input-group" style="width: 40%">
                                                                     <span class="input-group-addon"><i class="fa fa-edit"></i></span>
-                                                                    <input type="text" class="form-control" name="aim" id="id_aim" value="" placeholder="Please enter the AIM ID">
+                                                                    <input type="text" class="form-control" name="aim" id="id_aim" value="{{ mdluser.aim }}" placeholder="Please enter the AIM ID">
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -386,7 +380,7 @@
                                                                 <label for="id_yahoo" class="col-sm-4 control-label">Yahoo ID</label>
                                                                 <div class="input-group" style="width: 40%">
                                                                     <span class="input-group-addon"><i class="fa fa-edit"></i></span>
-                                                                    <input type="text" class="form-control" name="yahoo" id="id_yahoo" value="" placeholder="Please enter the Yahoo ID">
+                                                                    <input type="text" class="form-control" name="yahoo" id="id_yahoo" value="{{ mdluser.yahoo }}" placeholder="Please enter the Yahoo ID">
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -395,7 +389,7 @@
                                                                 <label for="id_msn" class="col-sm-4 control-label">MSN ID</label>
                                                                 <div class="input-group" style="width: 40%">
                                                                     <span class="input-group-addon"><i class="fa fa-edit"></i></span>
-                                                                    <input type="text" class="form-control" name="msn" id="id_msn" value="" placeholder="Please enter the MSN ID">
+                                                                    <input type="text" class="form-control" name="msn" id="id_msn" value="{{ mdluser.msn }}" placeholder="Please enter the MSN ID">
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -404,7 +398,7 @@
                                                                 <label for="id_idnumber" class="col-sm-4 control-label">ID number</label>
                                                                 <div class="input-group" style="width: 40%">
                                                                     <span class="input-group-addon"><i class="fa fa-edit"></i></span>
-                                                                    <input type="text" class="form-control" name="idnumber" id="id_idnumber" value="" placeholder="Please enter the ID number">
+                                                                    <input type="text" class="form-control" name="idnumber" id="id_idnumber" value="{{ mdluser.idnumber }}" placeholder="Please enter the ID number">
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -413,7 +407,7 @@
                                                                 <label for="id_institution" class="col-sm-4 control-label">Institution</label>
                                                                 <div class="input-group" style="width: 40%">
                                                                     <span class="input-group-addon"><i class="fa fa-edit"></i></span>
-                                                                    <input type="text" class="form-control" name="institution" id="id_institution" value="" placeholder="Please enter the Institution">
+                                                                    <input type="text" class="form-control" name="institution" id="id_institution" value="{{ mdluser.institution }}" placeholder="Please enter the Institution">
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -422,7 +416,7 @@
                                                                 <label for="id_department" class="col-sm-4 control-label">Department</label>
                                                                 <div class="input-group" style="width: 40%">
                                                                     <span class="input-group-addon"><i class="fa fa-edit"></i></span>
-                                                                    <input type="text" class="form-control" name="department" id="id_department" value="" placeholder="Please enter the Department">
+                                                                    <input type="text" class="form-control" name="department" id="id_department" value="{{ mdluser.department }}" placeholder="Please enter the Department">
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -431,7 +425,7 @@
                                                                 <label for="id_phone1" class="col-sm-4 control-label">Phone</label>
                                                                 <div class="input-group" style="width: 40%">
                                                                     <span class="input-group-addon"><i class="fa fa-edit"></i></span>
-                                                                    <input type="text" class="form-control" name="phone1" id="id_phone1" value="" placeholder="Please enter the Phone">
+                                                                    <input type="text" class="form-control" name="phone1" id="id_phone1" value="{{ mdluser.phone1 }}" placeholder="Please enter the Phone">
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -440,7 +434,7 @@
                                                                 <label for="id_phone2" class="col-sm-4 control-label">Mobile phone</label>
                                                                 <div class="input-group" style="width: 40%">
                                                                     <span class="input-group-addon"><i class="fa fa-edit"></i></span>
-                                                                    <input type="text" class="form-control" name="phone2" id="id_phone2" value="" placeholder="Please enter the Mobile phone">
+                                                                    <input type="text" class="form-control" name="phone2" id="id_phone2" value="{{ mdluser.phone2 }}" placeholder="Please enter the Mobile phone">
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -449,7 +443,7 @@
                                                                 <label for="id_address" class="col-sm-4 control-label">Address</label>
                                                                 <div class="input-group" style="width: 40%">
                                                                     <span class="input-group-addon"><i class="fa fa-edit"></i></span>
-                                                                    <input type="text" class="form-control" name="address" id="id_address" value="" placeholder="Please enter the Address">
+                                                                    <input type="text" class="form-control" name="address" id="id_address" value="{{ mdluser.address }}" placeholder="Please enter the Address">
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -460,7 +454,7 @@
                                     </div>
 
                                     <div class="form-group text-center">
-                                        <button type="submit" id="uploadbutton" class="btn btn-success text-center">Create User</button>
+                                        <button type="submit" id="uploadbutton" class="btn btn-success text-center">{{ box_title }}</button>
                                     </div>
                                 </form>
                             </div>

@@ -193,6 +193,48 @@ $table_course_categories = new \UserFrosting\DatabaseTable("mdl_course_categorie
     "name"
 ]);
 
+$table_mdl_user_preferences = new \UserFrosting\DatabaseTable("mdl_user_preferences",[
+    "id",
+    "userid",
+    "name",
+    "value"
+]);
+
+$table_mdl_tag = new \UserFrosting\DatabaseTable("mdl_tag",[
+    "id",
+    "userid",
+    "name",
+    "rawname",
+    "tagtype",
+    "description",
+    "descriptionformat",
+    "flag",
+    "timemodified"
+]);
+
+$table_mdl_tag_instance = new \UserFrosting\DatabaseTable("mdl_tag_instance",[
+    "id",
+    "tagid",
+    "component",
+    "itemtype",
+    "itemid",
+    "contextid",
+    "tiuserid",
+    "ordering",
+    "timecreated",
+    "timemodified"
+]);
+
+
+$table_mdl_cache_flags = new \UserFrosting\DatabaseTable("mdl_cache_flags",[
+    "id",
+    "flagtype",
+    "name",
+    "timemodified",
+    "value",
+    "expiry",
+]);
+
 $table_cohort_members = new \UserFrosting\DatabaseTable("mdl_cohort_members",[
     "id",
     "timeadded"
@@ -225,6 +267,10 @@ $table_authorize_group = new \UserFrosting\DatabaseTable($app->config('db')['db_
 \UserFrosting\Database::setSchemaTable("mdl_context",$table_context);
 \UserFrosting\Database::setSchemaTable("mdl_course_categories",$table_course_categories);
 \UserFrosting\Database::setSchemaTable("mdl_role", $table_mdl_role);
+\UserFrosting\Database::setSchemaTable("mdl_user_preferences", $table_mdl_user_preferences);
+\UserFrosting\Database::setSchemaTable("mdl_tag", $table_mdl_tag);
+\UserFrosting\Database::setSchemaTable("mdl_tag_instance", $table_mdl_tag_instance);
+\UserFrosting\Database::setSchemaTable("mdl_cache_flags", $table_mdl_cache_flags);
 
 
 // Info for RememberMe table
