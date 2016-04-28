@@ -16,7 +16,7 @@
 {% block head %}
     {{ parent() }}
     <style type="text/css">
-        #table-groups td {
+        #table-cohorts td {
             vertical-align: text-top;
             padding-left: 15px;
         }
@@ -27,7 +27,7 @@
             color: darkgrey;
         }
         .btn-width{
-            width: 85px;
+            width: 90px;
             text-align: left;
         }
         #invi{
@@ -46,7 +46,7 @@
                 </div>
                 <div class='panel-body'>
                     <div class="table-responsive">
-                        <table id="table-groups" class="tablesorter table table-bordered table-hover table-striped tablesorter-bootstrap" data-sortlist="[[0, 0]]">
+                        <table id="table-cohorts" class="tablesorter table table-bordered table-hover table-striped tablesorter-bootstrap" data-sortlist="[[0, 0]]">
                             <thead>
                                 <tr>
                                     <th width="40%" class="sorter-metatext" data-column-name="cohort_name">Cohort Name <i class="fa fa-sort"></i></th>
@@ -80,38 +80,39 @@
                                     <td>
                                         <div class="btn-group">
                                             <button type="button" class="btn btn-primary dropdown-toggle btn-width" {% if cohort.visible == 0 %}id="invi"{% endif %} data-toggle="dropdown" >
+                                                <div style=" float: left">
                                                 {% if cohort.visible == 0 %}
                                                     Invisible
                                                 {% else %}
                                                     Active
-                                                {% endif %}
-                                                <span class="fa fa-caret-down"></span>
+                                                {% endif %}</div>
+                                                <div style="text-align: right"><span class="fa fa-caret-down"></span></div>
                                             </button>
                                             <ul class="dropdown-menu" role="menu">
                                                 <li>
                                                     {% if cohort.visible == 1 %}
                                                         <a href="#" data-id="{{cohort.id}}" class="js-cohort-disable">
-                                                            <i class="fa fa-eye"></i> Hide
+                                                            <i class="fa fa-eye fa-fw"></i> Hide
                                                         </a>
                                                     {% else %}
                                                         <a href="#" data-id="{{cohort.id}}" class="js-cohort-enable">
-                                                            <i class="fa fa-eye-slash"></i> Show
+                                                            <i class="fa fa-eye-slash fa-fw "></i> Show
                                                         </a>
                                                     {% endif %}
                                                 </li>
                                                 <li>
                                                     <a href="{{site.uri.public}}/forms/cohorts/c/{{ cohort.id }}/{{ contextid }}">
-                                                        <i class="fa fa-edit"></i> Edit cohort
+                                                        <i class="fa fa-edit fa-fw"></i> Edit cohort
                                                     </a>
                                                 </li>
                                                 <li>
                                                     <a href="{{site.uri.public}}/assign/cohorts/c/{{ cohort.id }}/{{ contextid }}">
-                                                        <i class="fa fa-users"></i> Assign
+                                                        <i class="fa fa-users fa-fw"></i> Assign
                                                     </a>
                                                 </li>
                                                 <li>
                                                     <a href="#" data-id="{{ cohort.id }}" class="js-cohort-delete" data-name="{{cohort.name}}" data-target="#dialog-cohort-delete" data-toggle="modal">
-                                                        <i class="fa fa-trash-o"></i> Delete cohort
+                                                        <i class="fa fa-trash-o fa-fw"></i> Delete cohort
                                                     </a>
 
                                                 </li>
@@ -122,7 +123,7 @@
                             {% endfor %}
                             </tbody>
                         </table>
-                        {% include 'components/common/table-tablesorter-default.twig' with {'pager_id' : 'table-groups-pager'} %}
+                        {% include 'components/common/table-tablesorter-default.twig' with {'pager_id' : 'table-cohorts-pager'} %}
                     </div>
                     <div class="row">
                         <div class="col-md-6 ">
@@ -148,12 +149,8 @@
 {% block page_scripts %}
     <script>
         $(document).ready(function() {
-            ufTable('table-groups');
-        });
-        $('.collapse').on('show.bs.collapse', function () {
-            $('.collapse.in').collapse('hide');
-        });
-        $(document).ready(function(){
+            ufTable('table-cohorts');
+
             var cohorts = [{% for cohort in cohorts %}"{{ cohort.id }}",{% endfor %}];
             $.each(cohorts,function (index, value) {
                 var desc = "#description" + value;
@@ -165,6 +162,11 @@
                     $(btn).html('<span class="fa fa-chevron-up" ></span>');
                 });
             });
+
+            $('.collapse').on('show.bs.collapse', function () {
+                $('.collapse.in').collapse('hide');
+            });
         });
+
     </script>
 {% endblock %}

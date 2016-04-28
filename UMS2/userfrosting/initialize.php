@@ -197,6 +197,14 @@ $table_cohort_members = new \UserFrosting\DatabaseTable("mdl_cohort_members",[
     "id",
     "timeadded"
 ]);
+$table_mdl_role = new \UserFrosting\DatabaseTable("mdl_role",[
+    "id",
+    "name",
+    "shortname",
+    "description",
+    "sortorder",
+    "archetype"
+]);
 
 $table_group_user = new \UserFrosting\DatabaseTable($app->config('db')['db_prefix'] . "group_user");
 $table_configuration = new \UserFrosting\DatabaseTable($app->config('db')['db_prefix'] . "configuration");
@@ -216,6 +224,7 @@ $table_authorize_group = new \UserFrosting\DatabaseTable($app->config('db')['db_
 \UserFrosting\Database::setSchemaTable("mdl_cohort_members",$table_cohort_members);
 \UserFrosting\Database::setSchemaTable("mdl_context",$table_context);
 \UserFrosting\Database::setSchemaTable("mdl_course_categories",$table_course_categories);
+\UserFrosting\Database::setSchemaTable("mdl_role", $table_mdl_role);
 
 
 // Info for RememberMe table

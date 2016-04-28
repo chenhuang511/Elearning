@@ -1,0 +1,98 @@
+{% extends "layouts/layout-dashboard.twig" %}
+
+{% set page_group = "permissions" %}
+
+{% block page %}
+    {# By putting this in a special block, we ensure that it will be set AFTER the default values are set in the parent template,
+    but BEFORE the page itself is rendered. #}
+    {% set page = page | merge({
+    "title"       : title,
+    "description" : "Roles management, add/remove Roles, etc."
+    }) %}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    <div class="row" xmlns="http://www.w3.org/1999/html">
+        <div class="col-lg-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><i class="fa fa-wrench fa-fw"></i> {{ title }} </h3>
+                </div>
+                <div class='panel-body'>
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#home">Manage roles</a></li>
+                        <li><a data-toggle="tab" href="#assign">Allow role assignments</a></li>
+                        <li><a data-toggle="tab" href="#override">Allow role overrides</a></li>
+                        <li><a data-toggle="tab" href="#switch">Allow role switches</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="home" class="table-responsive tab-pane fade in active" style="padding-top: 30px">
+                            <table id="table-roles" class=" table table-bordered table-hover table-striped">
+                                <thead>
+                                    <tr>
+                                        <th width="25%" >Role </th>
+                                        <th width="45%" >Description </th>
+                                        <th width="15%" >Short name </th>
+                                        <th width="15%" >Edit </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for role in roles %}
+                                        <tr>
+                                            <td> <a href="#">{{ role.name }}</a> </td>
+                                            <td>{{ role.description }}</td>
+                                            <td>{{ role.shortname }}</td>
+                                            <td>
+                                                {% if role.sortorder != firstrole.sortorder %}
+                                                    <a href="#" data-id="{{ role.id }}" class="js-permission-moveup"><i class="glyphicon glyphicon-arrow-up fa-fw"></i></a>
+                                                {% else %}
+                                                    <i class="glyphicon glyphicon-none fa-fw" ></i>
+                                                {% endif %}
+                                                {% if role.sortorder != lastrole.sortorder %}
+                                                    <a href="#" data-id="{{ role.id }}" class="js-permission-movedown"><i class="glyphicon glyphicon-arrow-down fa-fw"></i></a>
+                                                {% else %}
+                                                    <i class="glyphicon glyphicon-none fa-fw" ></i>
+                                                {% endif %}
+                                                    <a href="#"><i class="glyphicon glyphicon-cog fa-fw"></i></a>
+                                                {% if undeletablerole[role.id] is not defined %}<a href="#"><i class="glyphicon glyphicon-remove fa-fw"></i></a>{% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            <hr>
+                            <div class="text-center">
+                                <a href="#">
+                                    <button type="button" class="btn btn-primary">
+                                        Add a new role
+                                    </button>
+                                </a>
+                            </div>
+                        </div>
+                        <div id="assign" class="tab-pane fade">
+                            <p></p>
+                            <p>You can allow people who have the roles on the left side to assign some of the column roles to other people.</p>
+                        </div>
+                        <div id="override" class="tab-pane fade">
+                            <p></p>
+                            <p>Select which role(s) can be overridden by each role in the left column.</p>
+                            <p>Note that these settings only apply to users who have either the capability moodle/role:override or the capability moodle/role:safeoverride allowed.</p>
+                        </div>
+                        <div id="switch" class="tab-pane fade">
+                            <p></p>
+                            <p>Select which roles a user may switch to, based on which roles they already have. In addition to an entry in this table, a user must also have the moodle/role:switchroles capability to be able to switch.</p>
+                            <p>Note that it is only possible to switch to roles that have the moodle/course:view capability, and that do not have the moodle/site:doanything capability, so some columns in this table are disabled.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block page_scripts %}
+<script>
+
+</script>
+{% endblock %}

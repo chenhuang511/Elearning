@@ -189,8 +189,11 @@ $lang = array_merge($lang,array(
     "GROUP_DEFAULT_PRIMARY_NOT_DEFINED" => "You cannot create a new user because there is no default primary group defined.  Please check your group settings."
 ));
 
-// Cohort
+// Cohort Moodle
 $lang = array_merge($lang,array(
+	"MENU_COHORT" => "Cohorts",
+	"MENU_ALL_COHORT" => "All cohort",
+	"MENU_COHORT_SYSTEM" => "Cohort System",
 	"COHORT_NAME_IN_USE" => "Cohort name '{{name}}' is already in use",
 	"COHORT_CREATION_SUCCESSFUL" => "Successfully created cohort '{{name}}'",
 	"COHORT_UPDATE" => "Details for cohort '{{name}}' successfully updated.",
@@ -202,6 +205,22 @@ $lang = array_merge($lang,array(
 	"COHORT_NO_LEAD_WS" => "Cohort names cannot begin with whitespace",
 	"COHORT_USER_NO_TRAIL_WS" => "Cohort names cannot end with whitespace",
 	"COHORT_SPECIFY_USERNAME" => "Please enter your cohort name.",
+));
+
+// Permissions Moodle
+$lang = array_merge($lang, array(
+	"MENU_PERMISSIONS" => "Permissions",
+	"MENU_DEFINE_ROLE" => "Define Role",
+	"CAN_NOT_SWITCH" => "You can't switch this role",
+	"SWITCH_SUCCESSFULLY" => "Switch sucessfully"
+//	"MANAGER" => "Manager",
+//	"COURSE_CREATOR" => "Course creator",
+//	"EDITING_TEACHER" => "Teacher",
+//	"TEACHER" => "Non-editing teacher",
+//	"STUDENT" => "Student",
+//	"GUEST" => "Guest",
+//	"USER" => "Authenticated user",
+//	"FRONTPAGE" => "Authenticated user on frontpage"
 ));
 
 return $lang;
