@@ -66,4 +66,85 @@ class MdlPermissionsController extends \UserFrosting\BaseController{
         ]);
     }
 
+    public function moveupRole($roleid){
+        $post = $this->_app->request()->post();
+        unset($post['csrf_token']);
+
+        $ms = $this->_app->alerts;
+
+        $roles = MdlRole::orderBy('sortorder','asc')->get();
+        $tmp = new MdlRole();
+        $selectedrole = MdlRole::find($roleid);
+        $prevrole = null;
+
+        foreach($roles as $role){
+            if($role->id == $selectedrole->id)
+            {
+                break;
+            }
+            else
+                $prevrole = $role;
+        }
+
+        if(empty($prevrole)){
+            $ms->addMessageTranslated("danger", 'CAN_NOT_SWITCH');
+            $this->_app->halt(400);
+        }
+
+        $tmp->sortorder = $selectedrole->sortorder;
+        $selectedrole->sortorder = $prevrole->sortorder;
+        $prevrole->sortorder = null;
+        $prevrole->store();
+        $selectedrole->store();
+
+        $prevrole->sortorder = $tmp->sortorder;
+        $prevrole->store();
+        $tmp->delete();
+        unset($tmp);
+
+        $ms->addMessageTranslated("success", 'SWITCH_SUCCESSFULLY');
+    }
+
+    public function movedownRole($roleid)
+    {
+        $post = $this->_app->request()->post();
+        unset($post['csrf_token']);
+
+        $ms = $this->_app->alerts;
+
+        $roles = MdlRole::orderBy('sortorder','asc')->get();
+        $tmp = new MdlRole();
+        $selectedrole = MdlRole::find($roleid);
+        $thisrole = null;
+        $nextrole = null;
+
+        foreach ($roles as $role){
+            if($role->id == $selectedrole->id){
+                $thisrole = $selectedrole;
+            }
+            else if (!empty($thisrole)){
+                $nextrole = $role;
+                break;
+            }
+        }
+
+        if(empty($nextrole)){
+            $ms->addMessageTranslated("danger", 'CAN_NOT_SWITCH');
+            $this->_app->halt(400);
+        }
+
+        $tmp->sortorder = $thisrole->sortorder;
+        $thisrole->sortorder = $nextrole->sortorder;
+        $nextrole->sortorder = null;
+        $nextrole->store();
+        $thisrole->store();
+
+        $nextrole->sortorder = $tmp->sortorder;
+        $nextrole->store();
+        $tmp->delete();
+        unset($tmp);
+
+        $ms->addMessageTranslated("success", 'SWITCH_SUCCESSFULLY');
+
+    }
 }

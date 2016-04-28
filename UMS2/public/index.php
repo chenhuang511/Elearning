@@ -209,6 +209,15 @@
         return $controller->manageRoles();
     });
 
+
+    $app->post('/roles/manage/:mode/:roleid/?', function ($mode, $roleid) use ($app){
+        $controller = new UF\MdlPermissionsController($app);
+        if($mode == "moveup")
+            return $controller->moveupRole($roleid);
+        if($mode == "movedown")
+            return $controller->movedownRole($roleid);
+    });
+
     /********** USER MANAGEMENT INTERFACE **********/
 
     // List users
