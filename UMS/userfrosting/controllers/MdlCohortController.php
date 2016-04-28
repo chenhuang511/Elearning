@@ -174,7 +174,7 @@ class MdlCohortController extends \UserFrosting\BaseController
 
         if (isset($post['name']) && $post['name'] != $cohort->name && MdlCohort::where('name', $post['name'])->first()){
             $ms->addMessageTranslated("danger", 'COHORT_NAME_IN_USE', $post);
-            $error = true;
+            $this->_app->halt(400);
         }
 
         $rf = new \Fortress\HTTPRequestFortress($ms, $requestSchema, $post);
@@ -182,10 +182,6 @@ class MdlCohortController extends \UserFrosting\BaseController
         $rf->sanitize();
 
         if (!$rf->validate()) {
-            $error = true;
-        }
-
-        if ($error) {
             $this->_app->halt(400);
         }
 
@@ -304,7 +300,6 @@ class MdlCohortController extends \UserFrosting\BaseController
         if($get['mod'] == 'remove'){
             $searchtext = $get['search'];
             unset($get['csrf_token']);
-            unset($get['mod']);
 
             $cohort = MdlCohort::find($cohort_id);
             $currentUsers = $cohort->users()
@@ -324,7 +319,6 @@ class MdlCohortController extends \UserFrosting\BaseController
         if($get['mod'] == 'add'){
             $searchtext = $get['search'];
             unset($get['csrf_token']);
-            unset($get['mod']);
 
             $cohort = MdlCohort::find($cohort_id);
             $Users = MdlUser::where('mdl_user.id','<>','1'  )
