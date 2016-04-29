@@ -205,6 +205,21 @@ $table_mdl_role = new \UserFrosting\DatabaseTable("mdl_role",[
     "sortorder",
     "archetype"
 ]);
+$table_mdl_role_allow_assign = new \UserFrosting\DatabaseTable("mdl_role_allow_assign",[
+    "id",
+    "roleid",
+    "allowassign"
+]);
+$table_mdl_role_allow_override = new \UserFrosting\DatabaseTable("mdl_role_allow_override",[
+    "id",
+    "roleid",
+    "allowoverride"
+]);
+$table_mdl_role_allow_switch = new \UserFrosting\DatabaseTable("mdl_role_allow_switch",[
+    "id",
+    "roleid",
+    "allowswitch"
+]);
 
 $table_group_user = new \UserFrosting\DatabaseTable($app->config('db')['db_prefix'] . "group_user");
 $table_configuration = new \UserFrosting\DatabaseTable($app->config('db')['db_prefix'] . "configuration");
@@ -225,7 +240,9 @@ $table_authorize_group = new \UserFrosting\DatabaseTable($app->config('db')['db_
 \UserFrosting\Database::setSchemaTable("mdl_context",$table_context);
 \UserFrosting\Database::setSchemaTable("mdl_course_categories",$table_course_categories);
 \UserFrosting\Database::setSchemaTable("mdl_role", $table_mdl_role);
-
+\UserFrosting\Database::setSchemaTable("mdl_role_allow_assign", $table_mdl_role_allow_assign);
+\UserFrosting\Database::setSchemaTable("mdl_role_allow_override", $table_mdl_role_allow_override);
+\UserFrosting\Database::setSchemaTable("mdl_role_allow_switch", $table_mdl_role_allow_switch);
 
 // Info for RememberMe table
 $app->remember_me_table = [

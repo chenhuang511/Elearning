@@ -20,8 +20,11 @@ class MdlPermissionsController extends \UserFrosting\BaseController{
         $roles = MdlRole::queryBuilder()->orderBy('sortorder','asc')->get();
         $firstrole = reset($roles);
         $lastrole = end($roles);
-
         $undeletablerole = array();
+
+        $roleallowassign = MdlRoleAllowAssign::all();
+        $roleallowoverride = MdlRoleAllowOverride::all();
+        $roleallowswitch = MdlRoleAllowSwitch::all();
 
         foreach ($roles as &$role){
             if(empty($role['name']))
@@ -62,7 +65,10 @@ class MdlPermissionsController extends \UserFrosting\BaseController{
             "roles" => $roles,
             "firstrole" => $firstrole,
             "lastrole" => $lastrole,
-            "undeletablerole" => $undeletablerole
+            "undeletablerole" => $undeletablerole,
+            "roleallowassign" => $roleallowassign,
+            "roleaalowoverride" => $roleallowoverride,
+            "roleallowswitch" => $roleallowswitch
         ]);
     }
 

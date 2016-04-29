@@ -7,8 +7,10 @@
  */
 namespace UserFrosting;
 
-class MdlUserController extends \UserFrosting\BaseController{
-    public function __construct($app){
+class MdlUserController extends \UserFrosting\BaseController
+{
+    public function __construct($app)
+    {
         $this->_app = $app;
     }
 
@@ -21,7 +23,7 @@ class MdlUserController extends \UserFrosting\BaseController{
         $name = "Users Moodle";
         $icon = "fa fa-users";
 
-        $this->_app->render("/users/mdl_user.twig",[
+        $this->_app->render("/users/mdl_user.twig", [
             "box_title" => $name,
             "icon" => $icon,
             "users" => isset($user_collection) ? $user_collection : []
@@ -29,7 +31,8 @@ class MdlUserController extends \UserFrosting\BaseController{
     }
 
     //Create form Usermood
-    public function CreateMdlUser(){
+    public function CreateMdlUser()
+    {
         // Get a list of all groups
         $get = $this->_app->request->get();
 
@@ -57,7 +60,7 @@ class MdlUserController extends \UserFrosting\BaseController{
             '1' => 'Allow everyone to see my email address',
             '2' => 'Allow only other course members to see my email address',
         );
-        
+
         $countries = array(
             'AD' => 'Andorra',
             'AE' => 'United Arab Emirates',
@@ -715,7 +718,8 @@ class MdlUserController extends \UserFrosting\BaseController{
         ]);
     }
 
-    public function submitCreateUsermood(){
+    public function submitCreateUsermood()
+    {
         //kiểm tra ảnh
 //        if($_FILES["file"]["error"]>0)
 //        {
@@ -750,10 +754,10 @@ class MdlUserController extends \UserFrosting\BaseController{
         $rf->removeFields(['csrf_token']);
         //lấy các dữ liệu còn lại(những dl không cần validate) từ biến post
         foreach ($post as $key => $value) {
-            if($key != 'username'){
-                if($key != 'firstname'){
-                    if($key != 'surname'){
-                        if($key != 'email'){
+            if ($key != 'username') {
+                if ($key != 'firstname') {
+                    if ($key != 'surname') {
+                        if ($key != 'email') {
                             $user[$key] = $value;
                         }
                     }
@@ -772,18 +776,18 @@ class MdlUserController extends \UserFrosting\BaseController{
         //hash password theo moodle
         $fasthash = false;
         $options = ($fasthash) ? array('cost' => 4) : array();
-        $user['password'] = password_hash($user['password'],PASSWORD_DEFAULT,$options);
+        $user['password'] = password_hash($user['password'], PASSWORD_DEFAULT, $options);
 
         $user['username'] = trim($user['username']);
         $user['firstname'] = trim($user['firstname']);
         $user['lastname'] = trim($user['lastname']);
 
         // Check if user_name or email already exists
-        if (MdlUser::where('username', $user['username'])->first()){
+        if (MdlUser::where('username', $user['username'])->first()) {
             $ms->addMessageTranslated("danger", "ACCOUNT_USERNAME_IN_USE", $user);
             $error = true;
         }
-        if (MdlUser::where('email', $user['email'])->first()){
+        if (MdlUser::where('email', $user['email'])->first()) {
             $ms->addMessageTranslated("danger", "ACCOUNT_EMAIL_IN_USE", $user);
             $error = true;
         }
@@ -797,7 +801,7 @@ class MdlUserController extends \UserFrosting\BaseController{
         // Store new user to database
         $mdluser->store();
         // Success message
-        $ms->addMessageTranslated("success", 'Create user "{{name}}"!! successfull',["name" => $user['username']]);
+        $ms->addMessageTranslated("success", 'Create user "{{name}}"!! successfull', ["name" => $user['username']]);
 
         //lấy dữ liệu user_id vừa mới thêm vào bảng user để đưa vào instanceid
         $userId = $mdluser->id;
@@ -812,83 +816,8 @@ class MdlUserController extends \UserFrosting\BaseController{
         $mdlcontext->store();
         //lấy context_id vừa thêm để đưa vào trường path của bảng context
         $contextId = $mdlcontext->id;
-        $context['path'] = '/1/'.$contextId;
+        $context['path'] = '/1/' . $contextId;
         //update path cho bảng context
-        MdlContext::where('id','=',$contextId)->update(['path' => $context['path']]);
-    }
-    public function formMdluserEdit($user_id){
-        // Get the mdluser to edit
-        $mdluser = User::find($user_id)->toArray();
-//        // Access-controlled resource
-//        if (!$this->_app->user->checkAccess('uri_users') && !$this->_app->user->checkAccess('uri_group_users', ['primary_group_id' => $target_user->primary_group_id])){
-//            $this->_app->notFound();
-//        }
-
-        // Get a list of all locales
-        $locale_list = $this->_app->site->getLocales();
-
-        // Determine authorized fields
-        $fields = ['display_name', 'email', 'title', 'locale', 'groups', 'primary_group_id'];
-        $show_fields = [];
-        $disabled_fields = [];
-        $hidden_fields = [];
-        foreach ($fields as $field){
-            if ($this->_app->user->checkAccess("update_account_setting", ["user" => $target_user, "property" => $field]))
-                $show_fields[] = $field;
-            else if ($this->_app->user->checkAccess("view_account_setting", ["user" => $target_user, "property" => $field]))
-                $disabled_fields[] = $field;
-            else
-                $hidden_fields[] = $field;
-        }
-
-        // Always disallow editing username
-        $disabled_fields[] = "user_name";
-
-        // Load validator rules
-        $schema = new \Fortress\RequestSchema($this->_app->config('schema.path') . "/forms/user-update.json");
-        $this->_app->jsValidator->setSchema($schema);
-
-        $this->_app->render($template, [
-            "box_id" => $get['box_id'],
-            "box_title" => "Edit User",
-            "submit_button" => "Update user",
-            "form_action" => $this->_app->site->uri['public'] . "/users/u/$user_id",
-            "target_user" => $target_user,
-            "groups" => $group_list,
-            "locales" => $locale_list,
-            "fields" => [
-                "disabled" => $disabled_fields,
-                "hidden" => $hidden_fields
-            ],
-            "buttons" => [
-                "hidden" => [
-                    "edit", "enable", "delete", "activate"
-                ]
-            ],
-            "validators" => $this->_app->jsValidator->rules()
-        ]);
-
-
-
-
-        $this->_app->render("cohorts/form-edit-cohort.twig", [
-            "box_title" => "Create Cohort",
-            "contextid" => $context_id,
-            "form_action" => $this->_app->site->uri['public'] . "/forms/cohorts",
-            "cohort" => array(
-                "contextid" => $context_id
-            ),
-            "coursecats" => $coursecats,
-            "validators" => $this->_app->jsValidator->rules()
-        ]);
-
-        $this->_app->render("cohorts/form-edit-cohort.twig", [
-            "box_title" => "Update Cohort",
-            "contextid" => $context_id,
-            "form_action" => $this->_app->site->uri['public'] . "/forms/cohorts/c/$cohort_id",
-            "cohort" => $cohort,
-            "coursecats" => $coursecats,
-            "validators" => $this->_app->jsValidator->rules()
-        ]);
+        MdlContext::where('id', '=', $contextId)->update(['path' => $context['path']]);
     }
 }
