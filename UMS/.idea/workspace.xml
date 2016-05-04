@@ -38,13 +38,11 @@
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="-1.9615384">
               <caret line="1373" column="0" selection-start-line="1373" selection-start-column="0" selection-end-line="1373" selection-end-column="0" />
-=======
       <file leaf-file-name="index.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/public/index.php">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="3655">
               <caret line="215" column="18" selection-start-line="215" selection-start-column="12" selection-end-line="215" selection-end-column="18" />
->>>>>>> refs/remotes/origin/MinhNguyen
               <folding />
             </state>
           </provider>
@@ -53,17 +51,9 @@
       <file leaf-file-name="GroupController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/userfrosting/controllers/GroupController.php">
           <provider selected="true" editor-type-id="text-editor">
-<<<<<<< HEAD
-            <state relative-caret-position="6154">
-=======
-<<<<<<< HEAD
             <state vertical-scroll-proportion="-0.65384614">
               <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
-=======
-            <state relative-caret-position="187">
->>>>>>> master
               <caret line="362" column="8" selection-start-line="362" selection-start-column="8" selection-end-line="367" selection-end-column="9" />
->>>>>>> refs/remotes/origin/MinhNguyen
               <folding />
             </state>
           </provider>
@@ -72,13 +62,10 @@
       <file leaf-file-name="MdlPermissionsController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/userfrosting/controllers/MdlPermissionsController.php">
           <provider selected="true" editor-type-id="text-editor">
-<<<<<<< HEAD
             <state vertical-scroll-proportion="-25.5">
               <caret line="143" column="17" selection-start-line="143" selection-start-column="17" selection-end-line="143" selection-end-column="17" />
-=======
             <state relative-caret-position="680">
               <caret line="64" column="18" selection-start-line="64" selection-start-column="13" selection-end-line="64" selection-end-column="18" />
->>>>>>> refs/remotes/origin/MinhNguyen
               <folding>
                 <element signature="e#6#94#0#PHP" expanded="true" />
               </folding>
@@ -99,23 +86,14 @@
       <file leaf-file-name="manage-roles.twig" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/userfrosting/templates/themes/default/permissions/manage-roles.twig">
           <provider selected="true" editor-type-id="text-editor">
-<<<<<<< HEAD
-            <state relative-caret-position="1292">
-              <caret line="76" column="154" selection-start-line="76" selection-start-column="145" selection-end-line="76" selection-end-column="154" />
-              <folding />
-=======
-<<<<<<< HEAD
             <state vertical-scroll-proportion="0.0">
               <caret line="73" column="35" selection-start-line="73" selection-start-column="35" selection-end-line="73" selection-end-column="35" />
               <folding />
-=======
             <state relative-caret-position="476">
               <caret line="76" column="154" selection-start-line="76" selection-start-column="145" selection-end-line="76" selection-end-column="154" />
               <folding>
                 <element signature="n#style#0;n#div#0;n#div#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
               </folding>
->>>>>>> refs/remotes/origin/MinhNguyen
->>>>>>> master
             </state>
           </provider>
         </entry>
@@ -133,17 +111,11 @@
       <file leaf-file-name="form-edit-cohort.twig" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/userfrosting/templates/themes/default/cohorts/form-edit-cohort.twig">
           <provider selected="true" editor-type-id="text-editor">
-<<<<<<< HEAD
             <state relative-caret-position="1989">
-=======
-<<<<<<< HEAD
             <state vertical-scroll-proportion="0.0">
               <caret line="226" column="0" selection-start-line="226" selection-start-column="0" selection-end-line="226" selection-end-column="0" />
-=======
             <state relative-caret-position="404">
->>>>>>> master
               <caret line="117" column="20" selection-start-line="117" selection-start-column="20" selection-end-line="117" selection-end-column="20" />
->>>>>>> refs/remotes/origin/MinhNguyen
               <folding />
             </state>
           </provider>
@@ -152,16 +124,10 @@
       <file leaf-file-name="MdlUserController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/userfrosting/controllers/MdlUserController.php">
           <provider selected="true" editor-type-id="text-editor">
-<<<<<<< HEAD
-            <state relative-caret-position="2720">
-=======
-<<<<<<< HEAD
             <state vertical-scroll-proportion="0.0">
               <caret line="18" column="22" selection-start-line="18" selection-start-column="9" selection-end-line="18" selection-end-column="22" />
               <folding />
-=======
             <state relative-caret-position="2475">
->>>>>>> master
               <caret line="822" column="1" selection-start-line="822" selection-start-column="1" selection-end-line="822" selection-end-column="1" />
               <folding>
                 <element signature="e#959#1675#0#PHP" expanded="false" />
@@ -170,7 +136,6 @@
                 <element signature="e#10764#30195#0#PHP" expanded="false" />
                 <element signature="e#31326#31340#0#PHP" expanded="false" />
               </folding>
->>>>>>> refs/remotes/origin/MinhNguyen
             </state>
           </provider>
         </entry>
@@ -178,17 +143,11 @@
       <file leaf-file-name="widget-permissions.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/public/js/widget-permissions.js">
           <provider selected="true" editor-type-id="text-editor">
-<<<<<<< HEAD
             <state relative-caret-position="578">
-=======
-<<<<<<< HEAD
             <state vertical-scroll-proportion="0.0">
               <caret line="22" column="35" selection-start-line="22" selection-start-column="35" selection-end-line="22" selection-end-column="35" />
-=======
             <state relative-caret-position="425">
->>>>>>> master
               <caret line="36" column="64" selection-start-line="36" selection-start-column="64" selection-end-line="36" selection-end-column="64" />
->>>>>>> refs/remotes/origin/MinhNguyen
               <folding>
                 <element signature="e#0#47#0" expanded="false" />
               </folding>
@@ -199,17 +158,12 @@
       <file leaf-file-name="initialize.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/userfrosting/initialize.php">
           <provider selected="true" editor-type-id="text-editor">
-<<<<<<< HEAD
             <state relative-caret-position="3655">
-=======
 <<<<<<< HEAD
             <state vertical-scroll-proportion="-12.653846">
               <caret line="83" column="16" selection-start-line="83" selection-start-column="16" selection-end-line="83" selection-end-column="16" />
-=======
             <state relative-caret-position="157">
->>>>>>> master
               <caret line="220" column="16" selection-start-line="220" selection-start-column="16" selection-end-line="220" selection-end-column="16" />
->>>>>>> refs/remotes/origin/MinhNguyen
               <folding />
             </state>
           </provider>
@@ -278,13 +232,10 @@
         <option value="$PROJECT_DIR$/userfrosting/models/database/MdlRoleAllowSwitch.php" />
         <option value="$PROJECT_DIR$/userfrosting/models/database/MdlRoleAllowAssign.php" />
         <option value="$PROJECT_DIR$/userfrosting/templates/themes/default/permissions/manage-roles.twig" />
-<<<<<<< HEAD
         <option value="$PROJECT_DIR$/userfrosting/controllers/MdlCohortController.php" />
-=======
         <option value="$PROJECT_DIR$/userfrosting/controllers/MdlPermissionsController.php" />
         <option value="$PROJECT_DIR$/userfrosting/templates/themes/default/components/common/permissions-allow-table.twig" />
         <option value="$PROJECT_DIR$/userfrosting/controllers/MdlUserController.php" />
->>>>>>> refs/remotes/origin/MinhNguyen
       </list>
     </option>
   </component>
@@ -350,10 +301,8 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-<<<<<<< HEAD
               <option name="myItemId" value="UMS" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-=======
               <option name="myItemId" value="UMS" />
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
             </PATH_ELEMENT>
@@ -370,21 +319,12 @@
             <PATH_ELEMENT>
               <option name="myItemId" value="userfrosting" />
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
->>>>>>> refs/remotes/origin/MinhNguyen
             </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
               <option name="myItemId" value="UMS" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-<<<<<<< HEAD
-              <option name="myItemId" value="UMS" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-=======
-              <option name="myItemId" value="UMS" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="userfrosting" />
@@ -406,9 +346,7 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="UMS" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
->>>>>>> refs/remotes/origin/MinhNguyen
-            </PATH_ELEMENT>
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />            </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="userfrosting" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
@@ -420,14 +358,6 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-<<<<<<< HEAD
-              <option name="myItemId" value="UMS" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="userfrosting" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-=======
               <option name="myItemId" value="UMS" />
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
             </PATH_ELEMENT>
@@ -544,7 +474,6 @@
             <PATH_ELEMENT>
               <option name="myItemId" value="userfrosting" />
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
->>>>>>> refs/remotes/origin/MinhNguyen
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="controllers" />
@@ -557,10 +486,6 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-<<<<<<< HEAD
-              <option name="myItemId" value="UMS" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-=======
               <option name="myItemId" value="UMS" />
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
             </PATH_ELEMENT>
@@ -577,7 +502,6 @@
             <PATH_ELEMENT>
               <option name="myItemId" value="UMS" />
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
->>>>>>> refs/remotes/origin/MinhNguyen
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="public" />
@@ -665,15 +589,7 @@
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="0" />
     <editor active="true" />
     <layout>
-<<<<<<< HEAD
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22014925" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-=======
-<<<<<<< HEAD
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17004265" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-=======
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21801706" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
->>>>>>> refs/remotes/origin/MinhNguyen
->>>>>>> master
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.26421404" sideWeight="0.5021322" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -681,14 +597,7 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2895323" sideWeight="0.4978678" order="3" side_tool="false" content_ui="tabs" />
-=======
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24414715" sideWeight="0.4978678" order="3" side_tool="false" content_ui="tabs" />
->>>>>>> refs/remotes/origin/MinhNguyen
->>>>>>> master
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -747,16 +656,11 @@
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-<<<<<<< HEAD
-      <option name="time" value="283" />
-=======
       <option name="time" value="285" />
->>>>>>> refs/remotes/origin/MinhNguyen
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/userfrosting/models/auth/password.php">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -820,8 +724,6 @@
         </state>
       </provider>
     </entry>
-=======
->>>>>>> refs/remotes/origin/MinhNguyen
     <entry file="file://$PROJECT_DIR$/userfrosting/models/database/MdlContext.php">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -850,7 +752,6 @@
         </state>
       </provider>
     </entry>
-<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/userfrosting/controllers/MdlUserController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -865,8 +766,6 @@
         </state>
       </provider>
     </entry>
-=======
->>>>>>> refs/remotes/origin/MinhNguyen
     <entry file="file://$PROJECT_DIR$/userfrosting/templates/themes/default/components/dashboard/menus/topbar.twig">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -923,7 +822,6 @@
         </state>
       </provider>
     </entry>
-<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/userfrosting/templates/themes/default/components/common/table-tablesorter-default.twig">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -938,8 +836,6 @@
         </state>
       </provider>
     </entry>
-=======
->>>>>>> refs/remotes/origin/MinhNguyen
     <entry file="file://$PROJECT_DIR$/userfrosting/vendor/alexweissman/fortress/fortress/MessageStream.php">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -958,43 +854,26 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/userfrosting/controllers/AccountController.php">
       <provider selected="true" editor-type-id="text-editor">
-<<<<<<< HEAD
         <state vertical-scroll-proportion="0.0">
           <caret line="12" column="43" selection-start-line="12" selection-start-column="35" selection-end-line="12" selection-end-column="43" />
-=======
         <state relative-caret-position="-29">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-<<<<<<< HEAD
-=======
           <folding />
->>>>>>> refs/remotes/origin/MinhNguyen
->>>>>>> master
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/userfrosting/controllers/AdminController.php">
       <provider selected="true" editor-type-id="text-editor">
-<<<<<<< HEAD
-        <state vertical-scroll-proportion="0.0">
-          <caret line="226" column="66" selection-start-line="226" selection-start-column="66" selection-end-line="226" selection-end-column="66" />
-=======
         <state relative-caret-position="-29">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-<<<<<<< HEAD
-=======
           <folding />
->>>>>>> refs/remotes/origin/MinhNguyen
->>>>>>> master
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/userfrosting/controllers/ApiController.php">
       <provider selected="true" editor-type-id="text-editor">
-<<<<<<< HEAD
         <state vertical-scroll-proportion="0.0">
-=======
         <state relative-caret-position="-29">
->>>>>>> refs/remotes/origin/MinhNguyen
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
@@ -1023,54 +902,30 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/userfrosting/controllers/UserController.php">
       <provider selected="true" editor-type-id="text-editor">
-<<<<<<< HEAD
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-=======
         <state relative-caret-position="-12">
           <caret line="189" column="37" selection-start-line="189" selection-start-column="32" selection-end-line="189" selection-end-column="37" />
-<<<<<<< HEAD
-=======
->>>>>>> refs/remotes/origin/MinhNguyen
           <folding />
->>>>>>> master
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/userfrosting/vendor/slim/slim/Slim/Route.php">
       <provider selected="true" editor-type-id="text-editor">
-<<<<<<< HEAD
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-=======
         <state relative-caret-position="456">
           <caret line="468" column="0" selection-start-line="468" selection-start-column="0" selection-end-line="468" selection-end-column="0" />
-<<<<<<< HEAD
-=======
->>>>>>> refs/remotes/origin/MinhNguyen
           <folding />
->>>>>>> master
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/userfrosting/vendor/illuminate/database/Eloquent/Model.php">
       <provider selected="true" editor-type-id="text-editor">
-<<<<<<< HEAD
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-=======
         <state relative-caret-position="-205">
           <caret line="1114" column="20" selection-start-line="1114" selection-start-column="20" selection-end-line="1114" selection-end-column="20" />
->>>>>>> refs/remotes/origin/MinhNguyen
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="jar://$APPLICATION_HOME_DIR$/lib/phpstorm.jar!/resources/html5-schema/html5/sectional.rnc">
       <provider selected="true" editor-type-id="text-editor">
-<<<<<<< HEAD
-        <state vertical-scroll-proportion="0.0">
-=======
         <state relative-caret-position="203">
           <caret line="44" column="16" selection-start-line="44" selection-start-column="16" selection-end-line="44" selection-end-column="16" />
           <folding />
@@ -1087,33 +942,20 @@
     <entry file="file://$PROJECT_DIR$/userfrosting/templates/themes/default/components/common/table-tablesorter-default.twig">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
->>>>>>> refs/remotes/origin/MinhNguyen
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/public/js/userfrosting.js">
       <provider selected="true" editor-type-id="text-editor">
-<<<<<<< HEAD
-        <state vertical-scroll-proportion="0.0">
-          <caret line="189" column="37" selection-start-line="189" selection-start-column="32" selection-end-line="189" selection-end-column="37" />
-=======
         <state relative-caret-position="-17">
           <caret line="80" column="9" selection-start-line="80" selection-start-column="9" selection-end-line="80" selection-end-column="9" />
-<<<<<<< HEAD
-=======
->>>>>>> refs/remotes/origin/MinhNguyen
           <folding />
->>>>>>> master
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/userfrosting/templates/themes/default/layouts/layout-dashboard.twig">
       <provider selected="true" editor-type-id="text-editor">
-<<<<<<< HEAD
-        <state vertical-scroll-proportion="0.0">
-          <caret line="18" column="22" selection-start-line="18" selection-start-column="22" selection-end-line="18" selection-end-column="22" />
-=======
         <state relative-caret-position="605">
           <caret line="83" column="16" selection-start-line="83" selection-start-column="16" selection-end-line="83" selection-end-column="16" />
         </state>
@@ -1123,11 +965,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="646">
           <caret line="128" column="93" selection-start-line="128" selection-start-column="85" selection-end-line="128" selection-end-column="93" />
-<<<<<<< HEAD
-=======
           <folding />
->>>>>>> refs/remotes/origin/MinhNguyen
->>>>>>> master
         </state>
       </provider>
     </entry>
@@ -1135,12 +973,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="122" column="0" selection-start-line="122" selection-start-column="0" selection-end-line="126" selection-end-column="7" />
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
           <folding />
->>>>>>> master
         </state>
       </provider>
     </entry>
@@ -1156,35 +989,21 @@
         <state relative-caret-position="305">
           <caret line="1377" column="0" selection-start-line="1377" selection-start-column="0" selection-end-line="1377" selection-end-column="0" />
           <folding />
->>>>>>> refs/remotes/origin/MinhNguyen
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/userfrosting/schema/forms/user-update.json">
       <provider selected="true" editor-type-id="text-editor">
-<<<<<<< HEAD
-        <state vertical-scroll-proportion="0.0">
-          <caret line="468" column="0" selection-start-line="468" selection-start-column="0" selection-end-line="468" selection-end-column="0" />
-=======
         <state relative-caret-position="34">
           <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="8" selection-end-column="10" />
-<<<<<<< HEAD
-=======
->>>>>>> refs/remotes/origin/MinhNguyen
           <folding />
->>>>>>> master
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/userfrosting/vendor/alexweissman/fortress/fortress/HTTPRequestFortress.php">
       <provider selected="true" editor-type-id="text-editor">
-<<<<<<< HEAD
-        <state vertical-scroll-proportion="0.0">
-          <caret line="1114" column="20" selection-start-line="1114" selection-start-column="20" selection-end-line="1114" selection-end-column="20" />
-=======
         <state relative-caret-position="216">
           <caret line="128" column="20" selection-start-line="128" selection-start-column="20" selection-end-line="128" selection-end-column="20" />
->>>>>>> refs/remotes/origin/MinhNguyen
           <folding />
         </state>
       </provider>
@@ -1205,11 +1024,9 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/userfrosting/locale/en_US.php">
       <provider selected="true" editor-type-id="text-editor">
-<<<<<<< HEAD
         <state vertical-scroll-proportion="0.0">
           <caret line="18" column="22" selection-start-line="18" selection-start-column="9" selection-end-line="18" selection-end-column="22" />
           <folding />
-=======
         <state relative-caret-position="610">
           <caret line="226" column="0" selection-start-line="226" selection-start-column="0" selection-end-line="226" selection-end-column="0" />
         </state>
@@ -1219,35 +1036,22 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="187">
           <caret line="11" column="26" selection-start-line="11" selection-start-column="26" selection-end-line="11" selection-end-column="26" />
-<<<<<<< HEAD
-=======
           <folding>
             <element signature="e#6#94#0#PHP" expanded="true" />
           </folding>
->>>>>>> refs/remotes/origin/MinhNguyen
->>>>>>> master
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/userfrosting/models/database/MdlRoleAllowAssign.php">
       <provider selected="true" editor-type-id="text-editor">
-<<<<<<< HEAD
-        <state vertical-scroll-proportion="0.0">
-          <caret line="22" column="35" selection-start-line="22" selection-start-column="35" selection-end-line="22" selection-end-column="35" />
-=======
         <state relative-caret-position="17">
           <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-<<<<<<< HEAD
-=======
->>>>>>> refs/remotes/origin/MinhNguyen
           <folding>
             <element signature="e#6#94#0#PHP" expanded="true" />
           </folding>
->>>>>>> master
         </state>
       </provider>
     </entry>
-<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/userfrosting/locale/en_US.php">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1260,7 +1064,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="44" column="16" selection-start-line="44" selection-start-column="16" selection-end-line="44" selection-end-column="16" />
-=======
     <entry file="file://$PROJECT_DIR$/userfrosting/models/database/MdlRoleAllowSwitch.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="187">
@@ -1272,17 +1075,14 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3655">
           <caret line="220" column="16" selection-start-line="220" selection-start-column="16" selection-end-line="220" selection-end-column="16" />
->>>>>>> refs/remotes/origin/MinhNguyen
           <folding />
         </state>
       </provider>
     </entry>
-<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/userfrosting/templates/themes/default/permissions/manage-roles.twig">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="73" column="35" selection-start-line="73" selection-start-column="35" selection-end-line="73" selection-end-column="35" />
-=======
     <entry file="file://$PROJECT_DIR$/public/js/widget-permissions.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="578">
@@ -1297,17 +1097,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3655">
           <caret line="215" column="18" selection-start-line="215" selection-start-column="12" selection-end-line="215" selection-end-column="18" />
->>>>>>> refs/remotes/origin/MinhNguyen
           <folding />
         </state>
       </provider>
     </entry>
-<<<<<<< HEAD
-    <entry file="file://$PROJECT_DIR$/userfrosting/templates/themes/default/permissions/manage-roles.twig">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1292">
-=======
-<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/userfrosting/controllers/MdlPermissionsController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-25.5">
@@ -1322,19 +1115,16 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-12.653846">
           <caret line="83" column="16" selection-start-line="83" selection-start-column="16" selection-end-line="83" selection-end-column="16" />
-=======
     <entry file="file://$PROJECT_DIR$/userfrosting/controllers/GroupController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="187">
           <caret line="362" column="8" selection-start-line="362" selection-start-column="8" selection-end-line="367" selection-end-column="9" />
->>>>>>> refs/remotes/origin/MinhNguyen
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/public/index.php">
       <provider selected="true" editor-type-id="text-editor">
-<<<<<<< HEAD
         <state vertical-scroll-proportion="-0.65384614">
           <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
           <folding />
@@ -1354,9 +1144,7 @@
         <state vertical-scroll-proportion="0.7009009">
           <caret line="319" column="41" selection-start-line="319" selection-start-column="41" selection-end-line="319" selection-end-column="41" />
           <folding />
-=======
         <state relative-caret-position="476">
->>>>>>> master
           <caret line="76" column="154" selection-start-line="76" selection-start-column="145" selection-end-line="76" selection-end-column="154" />
           <folding />
         </state>
@@ -1414,7 +1202,6 @@
           <folding>
             <element signature="e#6#94#0#PHP" expanded="true" />
           </folding>
->>>>>>> refs/remotes/origin/MinhNguyen
         </state>
       </provider>
     </entry>
