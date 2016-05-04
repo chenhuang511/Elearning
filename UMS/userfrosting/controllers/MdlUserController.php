@@ -7,8 +7,10 @@
  */
 namespace UserFrosting;
 
-class MdlUserController extends \UserFrosting\BaseController{
-    public function __construct($app){
+class MdlUserController extends \UserFrosting\BaseController
+{
+    public function __construct($app)
+    {
         $this->_app = $app;
     }
 
@@ -755,10 +757,10 @@ class MdlUserController extends \UserFrosting\BaseController{
         $rf->removeFields(['csrf_token']);
         //lấy các dữ liệu còn lại(những dl không cần validate) từ biến post
         foreach ($post as $key => $value) {
-            if($key != 'username'){
-                if($key != 'firstname'){
-                    if($key != 'surname'){
-                        if($key != 'email'){
+            if ($key != 'username') {
+                if ($key != 'firstname') {
+                    if ($key != 'surname') {
+                        if ($key != 'email') {
                             $user[$key] = $value;
                         }
                     }
@@ -777,18 +779,18 @@ class MdlUserController extends \UserFrosting\BaseController{
         //hash password theo moodle
         $fasthash = false;
         $options = ($fasthash) ? array('cost' => 4) : array();
-        $user['password'] = password_hash($user['password'],PASSWORD_DEFAULT,$options);
+        $user['password'] = password_hash($user['password'], PASSWORD_DEFAULT, $options);
 
         $user['username'] = trim($user['username']);
         $user['firstname'] = trim($user['firstname']);
         $user['lastname'] = trim($user['lastname']);
 
         // Check if user_name or email already exists
-        if (MdlUser::where('username', $user['username'])->first()){
+        if (MdlUser::where('username', $user['username'])->first()) {
             $ms->addMessageTranslated("danger", "ACCOUNT_USERNAME_IN_USE", $user);
             $error = true;
         }
-        if (MdlUser::where('email', $user['email'])->first()){
+        if (MdlUser::where('email', $user['email'])->first()) {
             $ms->addMessageTranslated("danger", "ACCOUNT_EMAIL_IN_USE", $user);
             $error = true;
         }
@@ -803,7 +805,6 @@ class MdlUserController extends \UserFrosting\BaseController{
         $mdluser->store();
         // Success message
         $ms->addMessageTranslated("success", 'MDLUSER_CREATE_SUCCESS',["name" => $user['username']]);
-
         //lấy dữ liệu user_id vừa mới thêm vào bảng user để đưa vào instanceid của bảng mdl_context
         $userId = $mdluser->id;
         $context = array();
@@ -817,7 +818,7 @@ class MdlUserController extends \UserFrosting\BaseController{
         $mdlcontext->store();
         //lấy context_id vừa thêm để đưa vào trường path của bảng context
         $contextId = $mdlcontext->id;
-        $context['path'] = '/1/'.$contextId;
+        $context['path'] = '/1/' . $contextId;
         //update path cho bảng context
         MdlContext::where('id','=',$contextId)->update(['path' => $context['path']]);
 

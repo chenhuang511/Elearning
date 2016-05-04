@@ -176,11 +176,15 @@ class MdlCohortController extends \UserFrosting\BaseController
             $ms->addMessageTranslated("danger", 'COHORT_NAME_IN_USE', $post);
             $this->_app->halt(400);
         }
-
+        
         $rf = new \Fortress\HTTPRequestFortress($ms, $requestSchema, $post);
 
         $rf->sanitize();
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/master
         // Validate, and halt on validation errors.
         if (isset($post['name'])) {
             if (!$rf->validate()) {
@@ -189,8 +193,8 @@ class MdlCohortController extends \UserFrosting\BaseController
         }
 
         $data = $rf->data();
-        if(isset($_POST['description'])){
-            $data['description'] = $_POST['description'];
+        if(isset($post['description'])){
+            $data['description'] = $post['description'];
         }
 
         $data['timemodified'] = time();
@@ -299,8 +303,7 @@ class MdlCohortController extends \UserFrosting\BaseController
 
     public function searchMember($cohort_id){
         $get = $this->_app->request->get();
-
-        if($get['mod'] == 'remove'){
+        if(isset($get['mod']) && $get['mod'] == 'remove'){
             $searchtext = $get['search'];
             unset($get['csrf_token']);
 
@@ -319,7 +322,7 @@ class MdlCohortController extends \UserFrosting\BaseController
             ]);
         }
 
-        if($get['mod'] == 'add'){
+        if(isset($get['mod']) && $get['mod'] == 'add'){
             $searchtext = $get['search'];
             unset($get['csrf_token']);
 

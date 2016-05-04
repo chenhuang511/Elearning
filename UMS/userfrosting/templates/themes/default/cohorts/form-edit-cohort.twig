@@ -36,7 +36,6 @@
                 </div>
                 <div class="panel-body">
                     <form class="form-horizontal" enctype="multipart/form-data" role="form" method="POST" name="cohort" action="{{ form_action }}" >
-
                         <div class="form-group">
                             <label for="input_name" class="col-sm-4 control-label">
                                 Name<span style='color:#d11010; font-size: large'>*</span>
@@ -45,16 +44,6 @@
                                 <input type="text" id="input_name" class="form-control" name="name" value="{{ cohort.name }}" placeholder="Enter a name cohort.">
                             </div>
                         </div>
-
-                        {#<div class="form-group">#}
-
-                            {#<label for="input_name" class="col-sm-4 control-label">#}
-                                {#Test#}
-                            {#</label>#}
-                            {#<div style="display: table">#}
-                                {#<input type="file" name="file[]" >#}
-                            {#</div>#}
-                        {#</div>#}
 
                         <div class="form-group">
                             <label for="input_context" class="col-sm-4 control-label">Context</label>
@@ -135,15 +124,14 @@
                         if(contextid == 0)
                             window.location = url1;
                         else
-                            window.location = url2
+                            window.location = url2;
 //                        window.location.reload(true);
                     }
             );
+            $(function () {
+                $('[data-toggle="popover"]').popover()
+            })
         });
     </script>
-    <script>
-        $(function () {
-            $('[data-toggle="popover"]').popover()
-        })
-    </script>
+
 {% endblock %}

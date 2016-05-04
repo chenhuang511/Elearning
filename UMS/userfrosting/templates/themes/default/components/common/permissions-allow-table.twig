@@ -1,0 +1,35 @@
+<form enctype="multipart/form-data" role="form" method="POST" name="{{ form_name }}" action="{{ form_action }}" >
+    <table class=" table table-hover table-striped">
+        <thead>
+        <tr>
+            <th>&nbsp;</th>
+            {% for role in roles %}
+                <th>{{ role.name }} </th>
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for role_col in roles %}
+            <tr>
+                <td>{{ role_col.name }}</td>
+                {% for role_row in roles %}
+                    <td><input type='checkbox' name="allow_role[{{ role_col.id }}][{{ role_row.id }}]" value="1"
+                                {% for ra in roleallow %}
+                                    {% if role_col.id == ra.roleid and (role_row.id == ra.allowassign or role_row.id == ra.allowoverride or role_row.id == ra.allowswitch) %}
+                                        checked
+                                    {% endif %}
+                                {% endfor %}></td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <hr>
+    <div class="text-center">
+        <a href="#">
+            <button type="button" class="btn btn-primary">
+                Save changes
+            </button>
+        </a>
+    </div>
+</form>
