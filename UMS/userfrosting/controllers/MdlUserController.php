@@ -1589,168 +1589,176 @@ class MdlUserController extends \UserFrosting\BaseController{
     public function submitEditUsermood($user_id){
         $post = $this->_app->request->post();
 
-        // Load the request schema
-        $requestSchema = new \Fortress\RequestSchema($this->_app->config('schema.path') . "/forms/mdluser-update.json");
+            // Load the request schema
+            $requestSchema = new \Fortress\RequestSchema($this->_app->config('schema.path') . "/forms/mdluser-update.json");
+            // Get the alert message stream
+            $ms = $this->_app->alerts;
 
-        // Get the alert message stream
-        $ms = $this->_app->alerts;
+            // Get the target user and context_user
+            $mdluser = MdlUser::find($user_id);
 
-        // Get the target user and context_user
-        $mdluser = MdlUser::find($user_id);
-        $context = MdlContext::where('instanceid',$user_id)->where('contextlevel','=',30)->first();
-
-        // Remove csrf_token
-        unset($post['csrf_token']);
-
-        // Nếu password không được nhập -> unset password. Tránh việc báo lỗi khi validate dữ liệu pass
-        if (($post['password'])==''){
-            unset($post['password']);
+        //
+        if((!isset($post['username'])) || (!isset($post['email']))){
+            if(isset($post['suspended'])){
+                $mdluser->suspended = $post['suspended'];
+                $mdluser->store();
+            }
+            elseif(isset($post['confirmed'])){
+                $mdluser->confirmed = $post['confirmed'];
+                $mdluser->store();
+            }
+            else {
+                $this->_app->halt(400);
+            }
         }
+        else {
+            $context = MdlContext::where('instanceid', $user_id)->where('contextlevel', '=', 30)->first();
+            // Remove csrf_token
+            unset($post['csrf_token']);
+            //        // Nếu password không được nhập -> unset password. Tránh việc báo lỗi khi validate dữ liệu pass
+            if (($post['password']) == '') {
+                unset($post['password']);
+            }
+            // Set up Fortress to process the request
+            $rf = new \Fortress\HTTPRequestFortress($ms, $requestSchema, $post);
 
-        // Set up Fortress to process the request
-        $rf = new \Fortress\HTTPRequestFortress($ms, $requestSchema, $post);
+            // Check that the username is not in use
+            if (isset($post['username']) && $post['username'] != $mdluser->username && MdlUser::where('username', $post['username'])->first()) {
+                $ms->addMessageTranslated("danger", 'ACCOUNT_MDLUSERNAME_IN_USE', $post);
+                $error = true;
+            }
+            // Check that the email address is not in use
+            if (isset($post['email']) && $post['email'] != $mdluser->email && MdlUser::where('email', $post['email'])->first()) {
+                $ms->addMessageTranslated("danger", "ACCOUNT_EMAIL_IN_USE", $post);
+                $error = true;
+            }
 
-        // Check that the username is not in use
-        if (isset($post['username']) && $post['username'] != $mdluser->username && MdlUser::where('username', $post['username'])->first()){
-            $ms->addMessageTranslated("danger", 'ACCOUNT_MDLUSERNAME_IN_USE', $post);
-            $error = true;
-        }
+            // Sanitize
+            $rf->sanitize();
+            $error = !$rf->validate(true);
+            // Validate, and halt on validation errors.
+            if (!$rf->validate()) {
+                $this->_app->halt(400);
+            }
+            if ($error) {
+                $this->_app->halt(400);
+            }
 
-        // Check that the email address is not in use
-        if (isset($post['email']) && $post['email'] != $mdluser->email && MdlUser::where('email', $post['email'])->first()){
-            $ms->addMessageTranslated("danger", "ACCOUNT_EMAIL_IN_USE", $post);
-            $error = true;
-        }
+            // Get the filtered data
+            $data = $rf->data();
 
-        // Sanitize
-        $rf->sanitize();
-        $error = !$rf->validate(true);
-        // Validate, and halt on validation errors.
-        if (!$rf->validate()) {
-            $this->_app->halt(400);
-        }
-
-        if ($error) {
-            $this->_app->halt(400);
-        }
-
-        // Get the filtered data
-        $data = $rf->data();
-
-        foreach ($post as $key => $value) {
-            if($key != 'username'){
-                if($key != 'firstname'){
-                    if($key != 'surname'){
-                        if($key != 'email'){
-                            $data[$key] = $value;
+            foreach ($post as $key => $value) {
+                if ($key != 'username') {
+                    if ($key != 'firstname') {
+                        if ($key != 'surname') {
+                            if ($key != 'email') {
+                                $data[$key] = $value;
+                            }
                         }
                     }
                 }
             }
-        }
-        $data['timemodified'] = time();
-        //hash password theo moodle
-        if (isset($data['password'])){
-            $fasthash = false;
-            $options = ($fasthash) ? array('cost' => 4) : array();
-            $data['password'] = password_hash($data['password'],PASSWORD_DEFAULT,$options);
-        }
+            $data['timemodified'] = time();
+            //hash password theo moodle
+            if (isset($data['password'])) {
+                $fasthash = false;
+                $options = ($fasthash) ? array('cost' => 4) : array();
+                $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT, $options);
+            }
 
-        //Update preferences: mdl_user_preferences: auth_forcepasswordchange
-        $pref = MdlUserPreferences::where('name','auth_forcepasswordchange')->where('userid',$user_id)->first();
-        if($data['preference_auth_forcepasswordchange'] != $pref->value){
-            MdlUserPreferences::where('name','auth_forcepasswordchange')->where('userid',$user_id)->update(['value' => $data['preference_auth_forcepasswordchange']]);
-        }
+            //Update preferences: mdl_user_preferences: auth_forcepasswordchange
+            $pref = MdlUserPreferences::where('name', 'auth_forcepasswordchange')->where('userid', $user_id)->first();
+            if ($data['preference_auth_forcepasswordchange'] != $pref->value) {
+                MdlUserPreferences::where('name', 'auth_forcepasswordchange')->where('userid', $user_id)->update(['value' => $data['preference_auth_forcepasswordchange']]);
+            }
 
-        //Update tags
-        $usertag = $data['taggles'];
-        if (!empty($usertag)) {
-            // 1. update bảng mdl_tag
-            $tag = array();
-            $tag['userid'] = 2;
-            $tag['tagtype'] = 'default';
-            $tag['description'] = NULL;
-            $tag['descriptionformat'] = 0;
-            $tag['flag'] = 0;
-            $tag['timemodified'] = time();
-            // 2. update bảng mdl_tag_instance
-            $tag_instance = array();
-            $tag_instance['component'] = 'core';
-            $tag_instance['itemtype'] = 'user';
-            $tag_instance['itemid'] = $user_id;
-            $tag_instance['contextid'] = $context->id;
-            $tag_instance['tiuserid'] = 0;
+            //Update tags
+            $usertag = $data['taggles'];
+            if (!empty($usertag)) {
+                // 1. update bảng mdl_tag
+                $tag = array();
+                $tag['userid'] = 2;
+                $tag['tagtype'] = 'default';
+                $tag['description'] = NULL;
+                $tag['descriptionformat'] = 0;
+                $tag['flag'] = 0;
+                $tag['timemodified'] = time();
+                // 2. update bảng mdl_tag_instance
+                $tag_instance = array();
+                $tag_instance['component'] = 'core';
+                $tag_instance['itemtype'] = 'user';
+                $tag_instance['itemid'] = $user_id;
+                $tag_instance['contextid'] = $context->id;
+                $tag_instance['tiuserid'] = 0;
 
-            foreach ($usertag as $key => $value) {
-                // kiểm tra xem đã tồn tại tag_name này chưa. tránh việc lưu cùng sở thích nhiều lần
-                $tagcurren = MdlTag::where('name',$value)->first();
-                if($tagcurren) {
-                    // Nếu đã tồn tại tag_name = value thì lấy tagid của nó.
-                    // Kiểm tra xem với tagid, user_id thì key trong db của mdl_tag_instance có bằng key post từ form không
-                    $taginstance_current = MdlTagInstance::where('tagid',$tagcurren->id)->where('itemid',$user_id)->first();
-                    //Kiểm tra xem có tồn tại taginstance_current hay không
-                    if(!$taginstance_current){
-                        // Nếu không có (sở thích đã có trong tag nhưng người dùng này mới khai báo thêm sở thích này)
-                        //Xóa bản ghi cũ trong tag_instance với $user_id và $key
-                        MdlTagInstance::where('ordering',$key)->where('itemid',$user_id)->delete();
-                        // Thêm bản ghi mới trong tag_instance với tagid và $key
-                        $tagid = $tagcurren->id;
-                        $tag_instance['tagid'] = $tagid;
+                foreach ($usertag as $key => $value) {
+                    // kiểm tra xem đã tồn tại tag_name này chưa. tránh việc lưu cùng sở thích nhiều lần
+                    $tagcurren = MdlTag::where('name', $value)->first();
+                    if ($tagcurren) {
+                        // Nếu đã tồn tại tag_name = value thì lấy tagid của nó.
+                        // Kiểm tra xem với tagid, user_id thì key trong db của mdl_tag_instance có bằng key post từ form không
+                        $taginstance_current = MdlTagInstance::where('tagid', $tagcurren->id)->where('itemid', $user_id)->first();
+                        //Kiểm tra xem có tồn tại taginstance_current hay không
+                        if (!$taginstance_current) {
+                            // Nếu không có (sở thích đã có trong tag nhưng người dùng này mới khai báo thêm sở thích này)
+                            //Xóa bản ghi cũ trong tag_instance với $user_id và $key
+                            MdlTagInstance::where('ordering', $key)->where('itemid', $user_id)->delete();
+                            // Thêm bản ghi mới trong tag_instance với tagid và $key
+                            $tagid = $tagcurren->id;
+                            $tag_instance['tagid'] = $tagid;
+                            $tag_instance['ordering'] = $key;
+                            $tag_instance['timecreated'] = time();
+                            $tag_instance['timemodified'] = $tag_instance['timecreated'];
+                            $mdltag_instance = new MdlTagInstance($tag_instance);
+                            $mdltag_instance->store();
+                        } else {
+                            // Nếu có lấy ordering của bản ghi cũ này trong tag_instance để so sánh với $key hiện tại
+                            $order = $taginstance_current->ordering;
+                            if ($order != $key) {
+                                // Nếu khác (có một sở thích cũ phía trước đã bị xóa nên ordering thay đổi)
+                                $tag_instance['timemodified'] = time();
+                                MdlTagInstance::where('id', '=', $taginstance_current->id)->update(['ordering' => $key], ['timemodified' => $tag_instance['timemodified']]);
+                                // Xóa bản ghi cũ với ordering cũ, bản ghi cũ vừa được update phía trên
+                                //                            MdlTagInstance::where('ordering',$order)->where('itemid',$user_id)->delete();
+                                // xóa bản ghi với tagid cũ đi
+                                MdlTagInstance::where('tagid', '<>', $taginstance_current->tagid)->where('ordering', $key)->where('itemid', $user_id)->delete();
+                            } else {
+                                //Nếu bằng -> update lại timemodified và duyệt sang tag tiếp theo
+                                $tag_instance['timemodified'] = time();
+                                MdlTagInstance::where('id', '=', $taginstance_current->id)->update(['timemodified' => $tag_instance['timemodified']]);
+                            }
+                        }
+                    } else {
+                        // Nếu chưa tồn tại tại tag_name = value thì thêm bản ghi mới trong mdl_tag và trong mdl_tag_instance
+                        $tag['name'] = $value;
+                        $tag['rawname'] = $value;
+                        $mdltag = new MdlTag($tag);
+                        $mdltag->store();
+                        // với mỗi bản ghi trong tag vừa thêm ta cũng thêm một bản ghi mới trong tag_instance và với tag_id vừa thêm vào
+                        $tag_instance['tagid'] = $mdltag->id;;
                         $tag_instance['ordering'] = $key;
                         $tag_instance['timecreated'] = time();
                         $tag_instance['timemodified'] = $tag_instance['timecreated'];
                         $mdltag_instance = new MdlTagInstance($tag_instance);
                         $mdltag_instance->store();
                     }
-                    else{
-                        // Nếu có lấy ordering của bản ghi cũ này trong tag_instance để so sánh với $key hiện tại
-                        $order = $taginstance_current->ordering;
-                        if($order != $key){
-                            // Nếu khác (có một sở thích cũ phía trước đã bị xóa nên ordering thay đổi)
-                            $tag_instance['timemodified'] = time();
-                            MdlTagInstance::where('id','=',$taginstance_current->id)->update(['ordering' => $key],['timemodified' => $tag_instance['timemodified']]);
-                            // Xóa bản ghi cũ với ordering cũ, bản ghi cũ vừa được update phía trên
-//                            MdlTagInstance::where('ordering',$order)->where('itemid',$user_id)->delete();
-                            // xóa bản ghi với tagid cũ đi
-                            MdlTagInstance::where('tagid','<>',$taginstance_current->tagid)->where('ordering',$key)->where('itemid',$user_id)->delete();
-                        }
-                        else{
-                            //Nếu bằng -> update lại timemodified và duyệt sang tag tiếp theo
-                            $tag_instance['timemodified'] = time();
-                            MdlTagInstance::where('id','=',$taginstance_current->id)->update(['timemodified' => $tag_instance['timemodified']]);
-                        }
-                    }
                 }
-                else{
-                    // Nếu chưa tồn tại tại tag_name = value thì thêm bản ghi mới trong mdl_tag và trong mdl_tag_instance
-                    $tag['name'] = $value;
-                    $tag['rawname'] = $value;
-                    $mdltag = new MdlTag($tag);
-                    $mdltag->store();
-                    // với mỗi bản ghi trong tag vừa thêm ta cũng thêm một bản ghi mới trong tag_instance và với tag_id vừa thêm vào
-                    $tag_instance['tagid'] = $mdltag->id;;
-                    $tag_instance['ordering'] = $key;
-                    $tag_instance['timecreated'] = time();
-                    $tag_instance['timemodified'] = $tag_instance['timecreated'];
-                    $mdltag_instance = new MdlTagInstance($tag_instance);
-                    $mdltag_instance->store();
+                // Xóa những bản ghi trong tag_instance có ordering > $key (key_max)
+                MdlTagInstance::where('ordering', '>', $key)->where('itemid', $user_id)->delete();
+            }
+
+            // unset cacs trường trong data dùng để xử lý mà không đưa vào mdl_user db
+            unset($data['taggles']);
+            unset($data['preference_auth_forcepasswordchange']);
+            unset($data['createpassword']);
+
+            foreach ($data as $name => $value) {
+                if ($value != $mdluser->$name) {
+                    $mdluser->$name = $value;
                 }
             }
-            // Xóa những bản ghi trong tag_instance có ordering > $key (key_max)
-            MdlTagInstance::where('ordering','>',$key)->where('itemid',$user_id)->delete();
+            $mdluser->store();
+            $ms->addMessageTranslated("success", 'MDLUSER_UPDATE_SUCCESS', ["name" => $data['username']]);
         }
-
-        // unset cacs trường trong data dùng để xử lý mà không đưa vào mdl_user db
-        unset($data['taggles']);
-        unset($data['preference_auth_forcepasswordchange']);
-        unset($data['createpassword']);
-
-        foreach ($data as $name => $value) {
-            if ($value != $mdluser->$name) {
-                $mdluser->$name = $value;
-            }
-        }
-        $mdluser->store();
-        $ms->addMessageTranslated("success", 'MDLUSER_UPDATE_SUCCESS',["name" => $data['username']]);
     }
 }

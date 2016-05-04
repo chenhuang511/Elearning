@@ -157,13 +157,13 @@ class MdlCohortController extends \UserFrosting\BaseController
     {
         $post = $this->_app->request->post();
 
-        $requestSchema = new \Fortress\RequestSchema($this->_app->config('schema.path') . "/forms/cohort-update.json");
-
-        $ms = $this->_app->alerts;
-
         $cohort = MdlCohort::find($cohort_id);
 
         unset($post['csrf_token']);
+
+        $requestSchema = new \Fortress\RequestSchema($this->_app->config('schema.path') . "/forms/cohort-update.json");
+
+        $ms = $this->_app->alerts;
 
         foreach ($post as $name => $value) {
             if (!isset($cohort->$name)) {
@@ -181,8 +181,11 @@ class MdlCohortController extends \UserFrosting\BaseController
 
         $rf->sanitize();
 
-        if (!$rf->validate()) {
-            $this->_app->halt(400);
+        // Validate, and halt on validation errors.
+        if (isset($post['name'])) {
+            if (!$rf->validate()) {
+                $this->_app->halt(400);
+            }
         }
 
         $data = $rf->data();

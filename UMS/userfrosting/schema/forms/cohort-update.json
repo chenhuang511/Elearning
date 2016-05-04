@@ -11,6 +11,9 @@
       },
       "no_trailing_whitespace" : {
         "message" : "COHORT_USER_NO_TRAIL_WS"
+      },
+      "required" : {
+        "message" : "COHORT_SPECIFY_USERNAME"
       }
     },
     "sanitizers" : {
