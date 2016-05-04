@@ -46,6 +46,7 @@ return array(
     'UserFrosting\\GroupController' => $baseDir . '/controllers/GroupController.php',
     'UserFrosting\\GroupLoader' => $baseDir . '/models/database/GroupLoader.php',
     'UserFrosting\\InstallController' => $baseDir . '/controllers/InstallController.php',
+    'UserFrosting\\MdlCacheFlags' => $baseDir . '/models/database/MdlCacheFlags.php',
     'UserFrosting\\MdlCohort' => $baseDir . '/models/database/MdlCohort.php',
     'UserFrosting\\MdlCohortController' => $baseDir . '/controllers/MdlCohortController.php',
     'UserFrosting\\MdlCohortMembers' => $baseDir . '/models/database/MdlCohortMembers.php',
@@ -53,11 +54,17 @@ return array(
     'UserFrosting\\MdlCourseCategories' => $baseDir . '/models/database/MdlCourseCategories.php',
     'UserFrosting\\MdlPermissionsController' => $baseDir . '/controllers/MdlPermissionsController.php',
     'UserFrosting\\MdlRole' => $baseDir . '/models/database/MdlRole.php',
+<<<<<<< HEAD
+    'UserFrosting\\MdlTag' => $baseDir . '/models/database/MdlTag.php',
+    'UserFrosting\\MdlTagInstance' => $baseDir . '/models/database/MdlTagInstance.php',
+=======
     'UserFrosting\\MdlRoleAllowAssign' => $baseDir . '/models/database/MdlRoleAllowAssign.php',
     'UserFrosting\\MdlRoleAllowOverride' => $baseDir . '/models/database/MdlRoleAllowOverride.php',
     'UserFrosting\\MdlRoleAllowSwitch' => $baseDir . '/models/database/MdlRoleAllowSwitch.php',
+>>>>>>> refs/remotes/origin/MinhNguyen
     'UserFrosting\\MdlUser' => $baseDir . '/models/database/MdlUser.php',
     'UserFrosting\\MdlUserController' => $baseDir . '/controllers/MdlUserController.php',
+    'UserFrosting\\MdlUserPreferences' => $baseDir . '/models/database/MdlUserPreferences.php',
     'UserFrosting\\Notification' => $baseDir . '/models/notify/Notification.php',
     'UserFrosting\\PageSchema' => $baseDir . '/models/PageSchema.php',
     'UserFrosting\\SiteSettings' => $baseDir . '/models/database/SiteSettings.php',

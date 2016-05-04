@@ -34,6 +34,22 @@ $lang = array_merge($lang,array(
 	"CONFIG_TOKEN_MISMATCH" => "Sorry, that configuration token is not correct."
 ));
 
+// Mdluser
+$lang = array_merge($lang, array(
+	//validate username cua moodle
+	"ACCOUNT_USERNAME_CHECK" => "The username can only contain alphanumeric lowercase characters (letters and numbers), underscore (_), hyphen (-), period (.) or at symbol (@).",
+	"ACCOUNT_ONLY_LOWERCASE" => "Only lowercase letters allowed.",
+	//end
+	//validate password
+	"ACCOUNT_INVALID_PASSWORD" => "The password must have at least 8 characters, at least 1 digit(s), at least 1 lower case letter(s),
+	at least 1 upper case letter(s),at least 1 non-alphanumeric character(s) such as as *, -, or #",
+	"ACCOUNT_SPECIFY_FIRSTNAME" => "Please enter your first name.",
+	"ACCOUNT_SPECIFY_SUBNAME" => "Please enter your sub name.",
+	"ACCOUNT_MDLUSERNAME_IN_USE" => "Username '{{username}}' is already in use",
+	"MDLUSER_CREATE_SUCCESS" => "Details for User '{{name}}' successfully create.",
+	"MDLUSER_UPDATE_SUCCESS" => "Details for User '{{name}}' successfully updated.",
+));
+
 // Account
 $lang = array_merge($lang,array(
 	"ACCOUNT_SPECIFY_USERNAME" => "Please enter your user name.",
@@ -57,18 +73,6 @@ $lang = array_merge($lang,array(
 	"ACCOUNT_USER_INVALID_CHARACTERS" => "Username can only include alpha-numeric characters",
     "ACCOUNT_USER_NO_LEAD_WS" => "Username cannot begin with whitespace",
     "ACCOUNT_USER_NO_TRAIL_WS" => "Username cannot end with whitespace",
-
-	//validate username cua moodle
-	"ACCOUNT_USERNAME_CHECK" => "The username can only contain alphanumeric lowercase characters (letters and numbers), underscore (_), hyphen (-), period (.) or at symbol (@).",
-	"ACCOUNT_ONLY_LOWERCASE" => "Only lowercase letters allowed.",
-	//end
-	//validate password
-	"ACCOUNT_INVALID_PASSWORD" => "The password must have at least 8 characters, at least 1 digit(s), at least 1 lower case letter(s),
-	at least 1 upper case letter(s),at least 1 non-alphanumeric character(s) such as as *, -, or #",
-	//end
-	"ACCOUNT_SPECIFY_FIRSTNAME" => "Please enter your first name.",
-	"ACCOUNT_SPECIFY_SUBNAME" => "Please enter your sub name.",
-
 	"ACCOUNT_DISPLAY_CHAR_LIMIT" => "Your display name must be between {{min}} and {{max}} characters in length.",
 	"ACCOUNT_PASS_CHAR_LIMIT" => "Your password must be between {{min}} and {{max}} characters in length.",
 	"ACCOUNT_EMAIL_CHAR_LIMIT" => "Email must be between {{min}} and {{max}} characters in length.",

@@ -181,11 +181,16 @@ class MdlCohortController extends \UserFrosting\BaseController
 
         $rf->sanitize();
 
+<<<<<<< HEAD
+        if (!$rf->validate()) {
+            $this->_app->halt(400);
+=======
         // Validate, and halt on validation errors.
         if (isset($post['name'])) {
             if (!$rf->validate()) {
                 $this->_app->halt(400);
             }
+>>>>>>> refs/remotes/origin/MinhNguyen
         }
 
         $data = $rf->data();
@@ -235,7 +240,6 @@ class MdlCohortController extends \UserFrosting\BaseController
     }
 
     public function assignSubmitCohortMember($cohort_id, $context_id){
-
         if(isset($_POST['addnew'])){
             $post = $this->_app->request->post();
 
@@ -300,7 +304,12 @@ class MdlCohortController extends \UserFrosting\BaseController
 
     public function searchMember($cohort_id){
         $get = $this->_app->request->get();
+<<<<<<< HEAD
+
+        if($get['mod'] == 'remove'){
+=======
         if(isset($get['mod']) && $get['mod'] == 'remove'){
+>>>>>>> refs/remotes/origin/MinhNguyen
             $searchtext = $get['search'];
             unset($get['csrf_token']);
 

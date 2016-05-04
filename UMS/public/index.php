@@ -121,22 +121,34 @@
     
     /********** MOODLE USER INTERFACE **********/
 
-    // List user moodle
+    // List user moodle. show all mdluser
     $app->get('/mdlusers/?', function () use ($app){
         $controller = new UF\MdlUserController($app);
         return $controller->pageMdlUsers();
     });
 
-    // Create form mdl_user
+    // Form create mdl_user. tạo form create mdluser
     $app->get('/forms/mdlusers/?', function () use ($app) {
         $controller = new UF\MdlUserController($app);
         return $controller->CreateMdlUser();
     });
 
-    // Create mdl_user
+    // Form edit mdluser. lấy dl từ moodledb ứng với user cụ thể và đẩy dl ra form
+    $app->get('/forms/mdlusers/u/:mdluser_id/?', function ($user_id) use ($app) {
+        $controller = new UF\MdlUserController($app);
+        return $controller->formMdluserEdit($user_id);
+    });
+
+    // Submit create mdl_user. Nhận dl từ form create mdluser, xử lý dl và lưu vào moodledb
     $app->post('/mdlusers/?', function () use ($app) {
         $controller = new UF\MdlUserController($app);
         return $controller->submitCreateUsermood();
+    });
+
+    // Submit Edit mdlUser. Nhận dl từ form edit mdluser, xử lý và lưu vào moodledb
+    $app->post('/mdlusers/u/:mdluser_id/?', function ($user_id) use ($app){
+        $controller = new UF\MdlUserController($app);
+        return $controller->submitEditUsermood($user_id);
     });
 
 
