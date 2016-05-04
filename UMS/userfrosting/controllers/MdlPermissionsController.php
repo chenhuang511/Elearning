@@ -68,7 +68,10 @@ class MdlPermissionsController extends \UserFrosting\BaseController{
             "undeletablerole" => $undeletablerole,
             "roleallowassign" => $roleallowassign,
             "roleaalowoverride" => $roleallowoverride,
-            "roleallowswitch" => $roleallowswitch
+            "roleallowswitch" => $roleallowswitch,
+            "formactionassignments" => $this->_app->site->uri['public'] . "/roles/manage/assignments",
+            "formactionoverrides" => $this->_app->site->uri['public'] . "/roles/manage/overrides",
+            "formactionswitchs" => $this->_app->site->uri['public'] . "/roles/manage/switchs",
         ]);
     }
 
@@ -152,5 +155,13 @@ class MdlPermissionsController extends \UserFrosting\BaseController{
 
         $ms->addMessageTranslated("success", 'SWITCH_SUCCESSFULLY');
 
+    }
+
+    public function allowRoleAssignments(){
+        $post = $this->_app->request()->post();
+        unset($post['csrf_token']);
+        
+        
+        
     }
 }

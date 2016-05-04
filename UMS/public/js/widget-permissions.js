@@ -26,7 +26,6 @@ function bindGroupTableButtons(table) {
                 window.location.reload();
             });
     });
-
 }
 
 function switchRole(roleid, mode) {

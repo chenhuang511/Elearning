@@ -230,6 +230,17 @@
             return $controller->movedownRole($roleid);
     });
 
+
+    $app->post('/roles/manage/:mode/?', function ($mode) use ($app) {
+        $controller = new UF\MdlPermissionsController($app);
+        if(isset($mode) && $mode == "assignments")
+            return $controller->allowRoleAssignments();
+        if(isset($mode) && $mode == "overrides")
+            return $controller->allowRoleOverrides();
+        if(isset($mode) && $mode == "switchs")
+            return $controller->allowRoleSwitchs();
+    });
+
     /********** USER MANAGEMENT INTERFACE **********/
 
     // List users
