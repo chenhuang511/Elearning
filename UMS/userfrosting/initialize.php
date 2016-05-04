@@ -247,6 +247,21 @@ $table_mdl_role = new \UserFrosting\DatabaseTable("mdl_role",[
     "sortorder",
     "archetype"
 ]);
+$table_mdl_role_allow_assign = new \UserFrosting\DatabaseTable("mdl_role_allow_assign",[
+    "id",
+    "roleid",
+    "allowassign"
+]);
+$table_mdl_role_allow_override = new \UserFrosting\DatabaseTable("mdl_role_allow_override",[
+    "id",
+    "roleid",
+    "allowoverride"
+]);
+$table_mdl_role_allow_switch = new \UserFrosting\DatabaseTable("mdl_role_allow_switch",[
+    "id",
+    "roleid",
+    "allowswitch"
+]);
 
 $table_group_user = new \UserFrosting\DatabaseTable($app->config('db')['db_prefix'] . "group_user");
 $table_configuration = new \UserFrosting\DatabaseTable($app->config('db')['db_prefix'] . "configuration");
@@ -267,11 +282,17 @@ $table_authorize_group = new \UserFrosting\DatabaseTable($app->config('db')['db_
 \UserFrosting\Database::setSchemaTable("mdl_context",$table_context);
 \UserFrosting\Database::setSchemaTable("mdl_course_categories",$table_course_categories);
 \UserFrosting\Database::setSchemaTable("mdl_role", $table_mdl_role);
+<<<<<<< HEAD
 \UserFrosting\Database::setSchemaTable("mdl_user_preferences", $table_mdl_user_preferences);
 \UserFrosting\Database::setSchemaTable("mdl_tag", $table_mdl_tag);
 \UserFrosting\Database::setSchemaTable("mdl_tag_instance", $table_mdl_tag_instance);
 \UserFrosting\Database::setSchemaTable("mdl_cache_flags", $table_mdl_cache_flags);
 
+=======
+\UserFrosting\Database::setSchemaTable("mdl_role_allow_assign", $table_mdl_role_allow_assign);
+\UserFrosting\Database::setSchemaTable("mdl_role_allow_override", $table_mdl_role_allow_override);
+\UserFrosting\Database::setSchemaTable("mdl_role_allow_switch", $table_mdl_role_allow_switch);
+>>>>>>> refs/remotes/origin/MinhNguyen
 
 // Info for RememberMe table
 $app->remember_me_table = [

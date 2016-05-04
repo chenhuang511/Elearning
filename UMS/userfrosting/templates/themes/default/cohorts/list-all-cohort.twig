@@ -72,14 +72,14 @@
                             </td>
                             <td data-toggle="collapse" data-target="#description{{ cohort.id }}">
                                 <p>
-                                    <div class="col-md-11">
+                                <div class="col-md-11">
                                     <strong>
-                                        <i class="{{cohort.name}} fa-fw"></i> {{cohort.name}}
+                                        {{cohort.name}}
                                     </strong>
-                                    </div>
-                                    <div id="btn{{ cohort.id }}"><span class="fa fa-chevron-down" ></span></div>
+                                </div>
+                                <div id="btn{{ cohort.id }}"><span class="fa fa-chevron-down" ></span></div>
                                 </p>
-                                <div id="description{{ cohort.id }}" class="collapse"  >
+                                <div id="description{{ cohort.id }}" class="collapse">
                                     {{ cohort.description | raw }}
                                 </div>
                             </td>

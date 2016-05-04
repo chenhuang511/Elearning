@@ -157,13 +157,13 @@ class MdlCohortController extends \UserFrosting\BaseController
     {
         $post = $this->_app->request->post();
 
-        $requestSchema = new \Fortress\RequestSchema($this->_app->config('schema.path') . "/forms/cohort-update.json");
-
-        $ms = $this->_app->alerts;
-
         $cohort = MdlCohort::find($cohort_id);
 
         unset($post['csrf_token']);
+
+        $requestSchema = new \Fortress\RequestSchema($this->_app->config('schema.path') . "/forms/cohort-update.json");
+
+        $ms = $this->_app->alerts;
 
         foreach ($post as $name => $value) {
             if (!isset($cohort->$name)) {
@@ -176,18 +176,26 @@ class MdlCohortController extends \UserFrosting\BaseController
             $ms->addMessageTranslated("danger", 'COHORT_NAME_IN_USE', $post);
             $this->_app->halt(400);
         }
-
+        
         $rf = new \Fortress\HTTPRequestFortress($ms, $requestSchema, $post);
 
         $rf->sanitize();
 
+<<<<<<< HEAD
         if (!$rf->validate()) {
             $this->_app->halt(400);
+=======
+        // Validate, and halt on validation errors.
+        if (isset($post['name'])) {
+            if (!$rf->validate()) {
+                $this->_app->halt(400);
+            }
+>>>>>>> refs/remotes/origin/MinhNguyen
         }
 
         $data = $rf->data();
-        if(isset($_POST['description'])){
-            $data['description'] = $_POST['description'];
+        if(isset($post['description'])){
+            $data['description'] = $post['description'];
         }
 
         $data['timemodified'] = time();
@@ -296,8 +304,12 @@ class MdlCohortController extends \UserFrosting\BaseController
 
     public function searchMember($cohort_id){
         $get = $this->_app->request->get();
+<<<<<<< HEAD
 
         if($get['mod'] == 'remove'){
+=======
+        if(isset($get['mod']) && $get['mod'] == 'remove'){
+>>>>>>> refs/remotes/origin/MinhNguyen
             $searchtext = $get['search'];
             unset($get['csrf_token']);
 
@@ -316,7 +328,7 @@ class MdlCohortController extends \UserFrosting\BaseController
             ]);
         }
 
-        if($get['mod'] == 'add'){
+        if(isset($get['mod']) && $get['mod'] == 'add'){
             $searchtext = $get['search'];
             unset($get['csrf_token']);
 

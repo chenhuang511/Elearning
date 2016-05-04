@@ -7,8 +7,10 @@
  */
 namespace UserFrosting;
 
-class MdlUserController extends \UserFrosting\BaseController{
-    public function __construct($app){
+class MdlUserController extends \UserFrosting\BaseController
+{
+    public function __construct($app)
+    {
         $this->_app = $app;
     }
 
@@ -21,15 +23,25 @@ class MdlUserController extends \UserFrosting\BaseController{
         $name = "Users Moodle";
         $icon = "fa fa-users";
 
+<<<<<<< HEAD
         $this->_app->render("/users/mdluser_list.twig",[
+=======
+        $this->_app->render("/users/mdl_user.twig", [
+>>>>>>> refs/remotes/origin/MinhNguyen
             "box_title" => $name,
             "icon" => $icon,
             "users" => isset($user_collection) ? $user_collection : []
         ]);
     }
 
+<<<<<<< HEAD
     //Create form Usermood. Hàm này tạo form cho create mdluser
     public function CreateMdlUser(){
+=======
+    //Create form Usermood
+    public function CreateMdlUser()
+    {
+>>>>>>> refs/remotes/origin/MinhNguyen
         // Get a list of all groups
         $get = $this->_app->request->get();
 
@@ -719,8 +731,13 @@ class MdlUserController extends \UserFrosting\BaseController{
         ]);
     }
 
+<<<<<<< HEAD
     // Hàm này xử lý việc submit form create. lấy dl từ form lưu vào moodledb
     public function submitCreateUsermood(){
+=======
+    public function submitCreateUsermood()
+    {
+>>>>>>> refs/remotes/origin/MinhNguyen
         //kiểm tra ảnh
 //        if($_FILES["file"]["error"]>0)
 //        {
@@ -755,10 +772,10 @@ class MdlUserController extends \UserFrosting\BaseController{
         $rf->removeFields(['csrf_token']);
         //lấy các dữ liệu còn lại(những dl không cần validate) từ biến post
         foreach ($post as $key => $value) {
-            if($key != 'username'){
-                if($key != 'firstname'){
-                    if($key != 'surname'){
-                        if($key != 'email'){
+            if ($key != 'username') {
+                if ($key != 'firstname') {
+                    if ($key != 'surname') {
+                        if ($key != 'email') {
                             $user[$key] = $value;
                         }
                     }
@@ -777,18 +794,18 @@ class MdlUserController extends \UserFrosting\BaseController{
         //hash password theo moodle
         $fasthash = false;
         $options = ($fasthash) ? array('cost' => 4) : array();
-        $user['password'] = password_hash($user['password'],PASSWORD_DEFAULT,$options);
+        $user['password'] = password_hash($user['password'], PASSWORD_DEFAULT, $options);
 
         $user['username'] = trim($user['username']);
         $user['firstname'] = trim($user['firstname']);
         $user['lastname'] = trim($user['lastname']);
 
         // Check if user_name or email already exists
-        if (MdlUser::where('username', $user['username'])->first()){
+        if (MdlUser::where('username', $user['username'])->first()) {
             $ms->addMessageTranslated("danger", "ACCOUNT_USERNAME_IN_USE", $user);
             $error = true;
         }
-        if (MdlUser::where('email', $user['email'])->first()){
+        if (MdlUser::where('email', $user['email'])->first()) {
             $ms->addMessageTranslated("danger", "ACCOUNT_EMAIL_IN_USE", $user);
             $error = true;
         }
@@ -802,7 +819,11 @@ class MdlUserController extends \UserFrosting\BaseController{
         // Store new user to database
         $mdluser->store();
         // Success message
+<<<<<<< HEAD
         $ms->addMessageTranslated("success", 'MDLUSER_CREATE_SUCCESS',["name" => $user['username']]);
+=======
+        $ms->addMessageTranslated("success", 'Create user "{{name}}"!! successfull', ["name" => $user['username']]);
+>>>>>>> refs/remotes/origin/MinhNguyen
 
         //lấy dữ liệu user_id vừa mới thêm vào bảng user để đưa vào instanceid của bảng mdl_context
         $userId = $mdluser->id;
@@ -817,8 +838,9 @@ class MdlUserController extends \UserFrosting\BaseController{
         $mdlcontext->store();
         //lấy context_id vừa thêm để đưa vào trường path của bảng context
         $contextId = $mdlcontext->id;
-        $context['path'] = '/1/'.$contextId;
+        $context['path'] = '/1/' . $contextId;
         //update path cho bảng context
+<<<<<<< HEAD
         MdlContext::where('id','=',$contextId)->update(['path' => $context['path']]);
 
         //Update preferences: mdl_user_preferences: auth_forcepasswordchange
@@ -1752,5 +1774,8 @@ class MdlUserController extends \UserFrosting\BaseController{
         }
         $mdluser->store();
         $ms->addMessageTranslated("success", 'MDLUSER_UPDATE_SUCCESS',["name" => $data['username']]);
+=======
+        MdlContext::where('id', '=', $contextId)->update(['path' => $context['path']]);
+>>>>>>> refs/remotes/origin/MinhNguyen
     }
 }
