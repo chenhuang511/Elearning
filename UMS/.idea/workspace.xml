@@ -554,12 +554,12 @@
       <workItem from="1461660677647" duration="15072000" />
       <workItem from="1461739535537" duration="221000" />
       <workItem from="1461740114930" duration="28898000" />
-      <workItem from="1461836812862" duration="25303000" />
+      <workItem from="1461836812862" duration="25798000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="81014000" />
+    <option name="totallyTimeSpent" value="81509000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -982,14 +982,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/userfrosting/controllers/GroupController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="362" column="8" selection-start-line="362" selection-start-column="8" selection-end-line="367" selection-end-column="9" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/userfrosting/templates/themes/default/permissions/manage-roles.twig">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="476">
@@ -1034,6 +1026,14 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="17">
           <caret line="1" column="24" selection-start-line="1" selection-start-column="24" selection-end-line="1" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/userfrosting/controllers/GroupController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="362" column="8" selection-start-line="362" selection-start-column="8" selection-end-line="367" selection-end-column="9" />
           <folding />
         </state>
       </provider>
