@@ -44,7 +44,7 @@ require_capability('moodle/role:manage', $syscontext);
 $controller = new $classformode[$mode]();
 
 if (optional_param('submit', false, PARAM_BOOL) && data_submitted() && confirm_sesskey()) {
-    $tmp = $controller->process_submission();
+    $controller->process_submission();
     $syscontext->mark_dirty();
     $event = null;
     // Create event depending on mode.

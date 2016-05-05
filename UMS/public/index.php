@@ -215,13 +215,13 @@
     });
 
     /********** MOODLE PERMISSIONS INTERFACE **********/
-
+    // Hiển thị list role
     $app->get('/roles/manage/?', function () use ($app){
         $controller = new UF\MdlPermissionsController($app);
         return $controller->manageRoles();
     });
 
-
+    // Xử lý move up, move down các role
     $app->post('/roles/manage/:mode/:roleid/?', function ($mode, $roleid) use ($app){
         $controller = new UF\MdlPermissionsController($app);
         if($mode == "moveup")
@@ -230,7 +230,7 @@
             return $controller->movedownRole($roleid);
     });
 
-
+    // Xử lý cập nhật các bảng mdl_allow_role_assignments, mdl_allow_role_overrides, mdl_allow_role_switch
     $app->post('/roles/manage/:mode/?', function ($mode) use ($app) {
         $controller = new UF\MdlPermissionsController($app);
         if(isset($mode) && $mode == "assignments")

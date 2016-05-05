@@ -111,7 +111,7 @@ $table_group = new \UserFrosting\DatabaseTable($app->config('db')['db_prefix'] .
     "icon"
 ]);
 
-
+// Lấy các thuộc tính từ bảng mdl_user
 $table_mdl_user = new \UserFrosting\DatabaseTable("mdl_user",[
     "auth",
     "confirmed",
@@ -167,6 +167,7 @@ $table_mdl_user = new \UserFrosting\DatabaseTable("mdl_user",[
     "alternatename"
 ]);
 
+// Lấy các thuộc tính từ bảng mdl_cohort
 $table_cohort = new \UserFrosting\DatabaseTable("mdl_cohort",[
     "id",
     "contextid",
@@ -180,6 +181,7 @@ $table_cohort = new \UserFrosting\DatabaseTable("mdl_cohort",[
     "timemodified"
 ]);
 
+// Lấy các thuộc tính từ bảng mdl_context
 $table_context = new \UserFrosting\DatabaseTable("mdl_context",[
     "id",
     "contextlevel",
@@ -188,11 +190,13 @@ $table_context = new \UserFrosting\DatabaseTable("mdl_context",[
     "depth"
 ]);
 
+// Lấy các thuộc tính từ bảng mdl_course_categories
 $table_course_categories = new \UserFrosting\DatabaseTable("mdl_course_categories",[
     "id",
     "name"
 ]);
 
+// Lấy các thuộc tính từ bảng mdl_user_preferences
 $table_mdl_user_preferences = new \UserFrosting\DatabaseTable("mdl_user_preferences",[
     "id",
     "userid",
@@ -200,6 +204,7 @@ $table_mdl_user_preferences = new \UserFrosting\DatabaseTable("mdl_user_preferen
     "value"
 ]);
 
+// Lấy các thuộc tính từ bảng mdl_tag
 $table_mdl_tag = new \UserFrosting\DatabaseTable("mdl_tag",[
     "id",
     "userid",
@@ -212,6 +217,7 @@ $table_mdl_tag = new \UserFrosting\DatabaseTable("mdl_tag",[
     "timemodified"
 ]);
 
+// Lấy các thuộc tính từ bảng mdl_instance
 $table_mdl_tag_instance = new \UserFrosting\DatabaseTable("mdl_tag_instance",[
     "id",
     "tagid",
@@ -225,7 +231,7 @@ $table_mdl_tag_instance = new \UserFrosting\DatabaseTable("mdl_tag_instance",[
     "timemodified"
 ]);
 
-
+// Lấy các thuộc tính từ bảng mdl_cache_flags
 $table_mdl_cache_flags = new \UserFrosting\DatabaseTable("mdl_cache_flags",[
     "id",
     "flagtype",
@@ -235,10 +241,13 @@ $table_mdl_cache_flags = new \UserFrosting\DatabaseTable("mdl_cache_flags",[
     "expiry",
 ]);
 
+// Lấy các thuộc tính từ bảng mdl_cohort_members
 $table_cohort_members = new \UserFrosting\DatabaseTable("mdl_cohort_members",[
     "id",
     "timeadded"
 ]);
+
+// Lấy các thuộc tính từ bảng mdl_role
 $table_mdl_role = new \UserFrosting\DatabaseTable("mdl_role",[
     "id",
     "name",
@@ -247,16 +256,22 @@ $table_mdl_role = new \UserFrosting\DatabaseTable("mdl_role",[
     "sortorder",
     "archetype"
 ]);
+
+// Lấy các thuộc tính từ bảng mdl_role_allow_assign
 $table_mdl_role_allow_assign = new \UserFrosting\DatabaseTable("mdl_role_allow_assign",[
     "id",
     "roleid",
     "allowassign"
 ]);
+
+// Lấy các thuộc tính từ bảng mdl_role_allow_override
 $table_mdl_role_allow_override = new \UserFrosting\DatabaseTable("mdl_role_allow_override",[
     "id",
     "roleid",
     "allowoverride"
 ]);
+
+// Lấy các thuộc tính từ bảng mdl_role_allow_switch
 $table_mdl_role_allow_switch = new \UserFrosting\DatabaseTable("mdl_role_allow_switch",[
     "id",
     "roleid",
@@ -276,6 +291,7 @@ $table_authorize_group = new \UserFrosting\DatabaseTable($app->config('db')['db_
 \UserFrosting\Database::setSchemaTable("configuration", $table_configuration);
 \UserFrosting\Database::setSchemaTable("authorize_user", $table_authorize_user);
 \UserFrosting\Database::setSchemaTable("authorize_group", $table_authorize_group);
+// Moodle
 \UserFrosting\Database::setSchemaTable("mdl_user", $table_mdl_user);
 \UserFrosting\Database::setSchemaTable("mdl_cohort",$table_cohort);
 \UserFrosting\Database::setSchemaTable("mdl_cohort_members",$table_cohort_members);

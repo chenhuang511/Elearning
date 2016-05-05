@@ -3,7 +3,7 @@ $(document).ready(function() {
     bindGroupTableButtons($("body"));
 
 });
-
+// Hàm xử lý để bao lâu thì gửi request lên 
 var delay = (function(){
     var timer = 0;
     return function(callback, ms){
@@ -13,13 +13,15 @@ var delay = (function(){
 })();
 
 function bindGroupTableButtons(table) {
+    // Xử lý khi người dùng bấm vào nút delete cohort
     $(table).find('.js-cohort-delete').click(function() {
         var btn = $(this);
         var cohort_id = btn.data('id');
         var name = btn.data('name');
         deleteCohortDialog('dialog-cohort-delete', cohort_id, name);
     });
-
+    
+    // Xử lý khi người dùng ấn vào nút show cohort
     $(table).find('.js-cohort-enable').click(function () {
         var btn = $(this);
         var cohort_id = btn.data('id');
@@ -29,7 +31,8 @@ function bindGroupTableButtons(table) {
                 window.location.reload();
             });
     });
-
+    
+    // Xử lý khi người dùng ấn vào nút hide cohort
     $(table).find('.js-cohort-disable').click(function () {
         var btn = $(this);
         var cohort_id = btn.data('id');
@@ -39,14 +42,16 @@ function bindGroupTableButtons(table) {
                 window.location.reload();
             });
     });
-
+    
+    // Xử lý trong form tìm kiếm của người dùng hiện đang trong nhóm 
     $(table).find('#removeselect_searchtext').keyup(function () {
         var btn = $('#btnreset');
         var form_search = $(this);
         var form = $(table).find('#removeselect');
         var search = form_search.val();
         var cohort_id = form_search.data('id');
-
+        
+        // Kiểm tra xem trong form có chữ hay không
         if(!search)
             btn.prop('disabled',true);
         else
@@ -59,7 +64,8 @@ function bindGroupTableButtons(table) {
         });
         searchUsers("remove",search,form,cohort_id);
     });
-
+    
+    // Xử lý trong form tìm kiếm của người dùng tiềm năng 
     $(table).find('#addselect_searchtext').keyup(function () {
         var btn = $('#btnreset1');
         var form_search = $(this);
@@ -67,6 +73,7 @@ function bindGroupTableButtons(table) {
         var search = form_search.val();
         var cohort_id = form_search.data('id');
 
+        // Kiểm tra xem trong form có chữ hay không
         if(!search)
             btn.prop('disabled',true);
         else
@@ -81,6 +88,7 @@ function bindGroupTableButtons(table) {
     });
 }
 
+// Hàm xử lý tìm kiếm người dùng
 function searchUsers(mod,search,form,cohort_id){
     var csrf_token = $("meta[name=csrf_token]").attr("content");
     var data = {
@@ -88,9 +96,11 @@ function searchUsers(mod,search,form,cohort_id){
         search: search,
         csrf_token: csrf_token
     };
+    // Hiển thị loading...
     var url = site['uri']['public'] + "/form/search/c/" + cohort_id;
     var loading_text = "<optgroup label=''></optgroup>";
-
+    
+    // Thực hiện gửi sau 1 khoảng thời gian ms
     delay(function () {
         $.ajax({
             type: "GET",
@@ -110,6 +120,7 @@ function searchUsers(mod,search,form,cohort_id){
     }, 500);
 }
 
+// Hàm xử lý việc update ẩn hiện cho nhóm
 function updateCohortEnabledStatus(cohort_id, visible) {
     visible = typeof visible !== 'undefined' ? visible : 1;
     var csrf_token = $("meta[name=csrf_token]").attr("content");
@@ -127,6 +138,7 @@ function updateCohortEnabledStatus(cohort_id, visible) {
     });
 }
 
+// Hiển thị thông báo xóa nhóm và xóa nhóm khỏi CSDL
 function deleteCohortDialog(box_id, cohort_id, name){
     // Delete any existing instance of the form with the same name
     if($('#' + box_id).length ) {
