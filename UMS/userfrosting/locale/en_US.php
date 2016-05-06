@@ -215,6 +215,7 @@ $lang = array_merge($lang,array(
 $lang = array_merge($lang, array(
 	"MENU_PERMISSIONS" => "Permissions",
 	"MENU_DEFINE_ROLE" => "Define Role",
+	"MENU_MANAGE_SITE_ADMIN" => "Site administrators",
 	"CAN_NOT_SWITCH" => "You can't switch this role",
 	"SWITCH_SUCCESSFULLY" => "Switch sucessfully",
 	"UPDATE_ALLOW_ROLE_ASSIGNMENTS_SUCCESSFULLY" => "Update allow role assignments successfully",

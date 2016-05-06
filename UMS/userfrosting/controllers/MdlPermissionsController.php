@@ -240,4 +240,40 @@ class MdlPermissionsController extends \UserFrosting\BaseController{
             $ms->addMessageTranslated("success", 'UPDATE_ALLOW_ROLE_SWITCHS_SUCCESSFULLY');
         }
     }
+
+    // Hàm hiển thị form Manage site administrators
+    public function manageSiteAdministrators(){
+        $Users = MdlUser::where('mdl_user.id','<>','1' )
+            ->where('mdl_user.deleted','0')
+            ->where('mdl_user.confirmed','1')
+            ->get();
+
+        // Lấy id những người dùng là admin của trang
+        $siteAdmin = MdlConfig::where('mdl_config.name','siteadmins')->first()->value;
+        $admins = array();
+
+        // Lấy giá trị value của mdl_config chuyển từ string sang int rồi cho vào mảng
+        foreach (explode(',', $siteAdmin) as $admin){
+            $admin = (int)$admin;
+            if ($admin)
+                $admins[$admin] = $admin;
+        }
+
+        // Lấy danh sách người dùng quy đinh là admin
+        $admisUsers = MdlUser::where('mdl_user.id','<>','1' )
+            ->where('mdl_user.deleted','0')
+            ->where('mdl_user.confirmed','1')
+            ->find($admins);
+        $firstNode = $admisUsers[0];
+        $otherNode = $admisUsers[count($admisUsers)-2];
+//        var_dump($otherNode);die;
+        // Lấy danh sách người dùng tiềm năng
+        $potentialUsers = $Users->diff($admisUsers);
+        $potentialCount = count($potentialUsers);
+        $this->_app->render("permissions/site-administrators.twig",[
+            "potentialUsers" => $potentialUsers,
+            "admisUsers" => $admisUsers,
+            "potentialCount" => $potentialCount,
+        ]);
+    }
 }

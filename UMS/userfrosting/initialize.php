@@ -278,6 +278,12 @@ $table_mdl_role_allow_switch = new \UserFrosting\DatabaseTable("mdl_role_allow_s
     "allowswitch"
 ]);
 
+$table_mdl_config = new \UserFrosting\DatabaseTable("mdl_config",[
+    "id",
+    "name",
+    "value",
+]);
+
 $table_group_user = new \UserFrosting\DatabaseTable($app->config('db')['db_prefix'] . "group_user");
 $table_configuration = new \UserFrosting\DatabaseTable($app->config('db')['db_prefix'] . "configuration");
 $table_authorize_user = new \UserFrosting\DatabaseTable($app->config('db')['db_prefix'] . "authorize_user");
@@ -305,6 +311,7 @@ $table_authorize_group = new \UserFrosting\DatabaseTable($app->config('db')['db_
 \UserFrosting\Database::setSchemaTable("mdl_role_allow_assign", $table_mdl_role_allow_assign);
 \UserFrosting\Database::setSchemaTable("mdl_role_allow_override", $table_mdl_role_allow_override);
 \UserFrosting\Database::setSchemaTable("mdl_role_allow_switch", $table_mdl_role_allow_switch);
+\UserFrosting\Database::setSchemaTable("mdl_config", $table_mdl_config);
 
 // Info for RememberMe table
 $app->remember_me_table = [

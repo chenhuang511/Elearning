@@ -221,6 +221,12 @@
         return $controller->manageRoles();
     });
 
+    // Hiển thị Site administrators
+    $app->get('/roles/admin/?', function () use ($app){
+        $controller = new UF\MdlPermissionsController($app);
+        return $controller->manageSiteAdministrators();
+    });
+
     // Xử lý move up, move down các role
     $app->post('/roles/manage/:mode/:roleid/?', function ($mode, $roleid) use ($app){
         $controller = new UF\MdlPermissionsController($app);
