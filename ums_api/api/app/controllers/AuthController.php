@@ -45,6 +45,6 @@ class AuthController extends RESTController
             $dtr['data'] = $userobject;
             $this->setPayload($dtr);
         }
-        echo $this->render();
+        $this->render();
     }
 }

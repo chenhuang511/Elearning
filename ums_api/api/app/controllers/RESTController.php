@@ -111,7 +111,8 @@ class RESTController extends BaseController
             header("$key:$value");
         }
         $this->view->disable();
-        return $content;
+        echo $content;
+        return;
     }
     protected function getResponseDescription($code)
     {
