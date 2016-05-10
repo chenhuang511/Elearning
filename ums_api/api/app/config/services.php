@@ -12,7 +12,8 @@ use Phalcon\Mvc\View\Engine\Volt as VoltEngine;
 use Phalcon\Mvc\Model\Metadata\Memory as MetaDataAdapter;
 use Phalcon\Session\Adapter\Files as SessionAdapter;
 use Phalcon\Flash\Direct as Flash;
-
+use Phalcon\Cache\Frontend\Data as FrontendData;
+use Phalcon\Cache\Backend\Redis as BackendMemcache;
 /**
  * The FactoryDefault Dependency Injector automatically register the right services providing a full stack framework
  */
@@ -97,7 +98,20 @@ $di->setShared('session', function () {
     return $session;
 });
 
-$di->set('router', function () use ($di) {
-    require 'routes.php';
-    return $router;
+$di->set('modelsCache', function () {
+    // Cache data for one day by default
+    $frontCache = new FrontendData(
+        array(
+            "lifetime" => 86400
+        )
+    );
+    // Memcached connection settings
+    $cache = new BackendMemcache(
+        $frontCache,
+        array(
+            "host" => "localhost",
+            "port" => "6379"
+        )
+    );
+    return $cache;
 });

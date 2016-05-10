@@ -1,5 +1,4 @@
 <?php
-use \Phalcon\Mvc\View as PhView;
 class ExampleController extends RESTController
 {
     /**
@@ -15,8 +14,7 @@ class ExampleController extends RESTController
      */
     public function indexAction()
     {
-        $this->initResponse();
-        $this->setPayload(array("name"=>"Vi","age"=>"10"));
-        return $this->render();
+        $this->setPayload(array("name"=>"Vi","age"=>"10"));        
+        echo $this->render();
     }
 }

@@ -24,7 +24,7 @@ $api->add('/:controller/([0-9]+)/:action', [
     'controller' => 1,
     'id' => 2,
     'action' => 3
-]);
+]); 
 /**
  * Prefix incoming action name with HTTP method
  */
