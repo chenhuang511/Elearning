@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="2fb284a2-1983-4250-a1f3-7f54a978bdd2" name="UMS" url="http://10.0.0.19">
+        <fileTransfer host="10.0.0.19" port="22" accessType="SFTP" password="dfdadfc6df86dfc5dfc1dfc7dfc3dfc0dfc4dfea" username="root">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
