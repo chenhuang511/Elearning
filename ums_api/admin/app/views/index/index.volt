@@ -1,0 +1,1 @@
+<div class="alert alert-success">{{ labelkey['home.message'] }}</div>

@@ -1,0 +1,7 @@
+classobj.lbl_form = Lớp học
+classobj.lbl_info = Thông tin lớp học
+classobj.lbl_name = Tên lớp học
+classobj.lbl_descriptions = Mô tả
+classobj.lbl_creator = Người tạo
+classobj.lbl_timetable = Lịch học
+classobj.lbl_pupillist = Danh sách học sinh trong lớp
