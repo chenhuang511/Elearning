@@ -1,5 +1,5 @@
 <?php
-use Phalcon\Mvc\Model\Validator\Email as EmailValidator;
+//use Phalcon\Mvc\Model\Validator\Email as EmailValidator;
 class User extends BaseModel
 {
 
@@ -166,7 +166,7 @@ class User extends BaseModel
      */
     public function validation()
     {
-        if(strlen($this->email)>0){
+       /* if(strlen($this->email)>0){
             $this->validate(new EmailValidator(array(
                 'field' => 'email'
             )));
@@ -175,7 +175,7 @@ class User extends BaseModel
 
         if ($this->validationHasFailed() == true) {
             return false;
-        }
+        }*/
 
         return true;
     }

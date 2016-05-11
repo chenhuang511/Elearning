@@ -57,6 +57,7 @@ class UserController extends RESTController
             session_destroy(); // gọi lại hàm này khi máy chủ cấu hình REDIS để lưu session
         }
         $this->setPayload($dtr); // Trả dữ liệu cho client
+        $this->render();
     }
 
     /***
@@ -73,11 +74,13 @@ class UserController extends RESTController
                 "conditions"=>"id = :userid:",
                 "bind"=>array("userid"=>$userid)
             ))->toArray();
-
+            $this->datarespone = array("status"=>1,"mss"=>"Successfully","data"=>$userobject);
+            $this->setPayload($this->datarespone);
         }
         catch (Exception $e){
 
         }
+        $this->render();
     }
 
 }
