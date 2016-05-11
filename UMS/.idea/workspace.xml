@@ -2,37 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6fb45e42-da42-43cd-ac8f-3daf0e4ec725" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/userfrosting/models/database/MdlConfig.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/userfrosting/models/database/MdlExternalServicesUsers.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/userfrosting/models/database/MdlExternalTokens.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/userfrosting/models/database/MdlGradeGrades.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/userfrosting/models/database/MdlGroupMembers.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/userfrosting/models/database/MdlMessage.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/userfrosting/models/database/MdlMessageRead.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/userfrosting/models/database/MdlMessageWorking.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/userfrosting/models/database/MdlMyPages.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/userfrosting/models/database/MdlRoleAssignments.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/userfrosting/models/database/MdlUserEnrolments.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/userfrosting/models/database/MdlUserInfoData.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/userfrosting/models/database/MdlUserLastaccess.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/userfrosting/models/database/MdlUserPasswordHistory.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/userfrosting/models/database/MdlUserPrivateKey.php" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../moodle/.idea/workspace.xml" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/index.php" afterPath="$PROJECT_DIR$/public/index.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/js/widget-mdlusers.js" afterPath="$PROJECT_DIR$/public/js/widget-mdlusers.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/userfrosting/composer.lock" afterPath="$PROJECT_DIR$/userfrosting/composer.lock" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/userfrosting/controllers/MdlCohortController.php" afterPath="$PROJECT_DIR$/userfrosting/controllers/MdlCohortController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/userfrosting/controllers/MdlUserController.php" afterPath="$PROJECT_DIR$/userfrosting/controllers/MdlUserController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/userfrosting/initialize.php" afterPath="$PROJECT_DIR$/userfrosting/initialize.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/userfrosting/locale/en_US.php" afterPath="$PROJECT_DIR$/userfrosting/locale/en_US.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/userfrosting/locale/moodle_local/timezones.php" afterPath="$PROJECT_DIR$/userfrosting/locale/moodle_local/timezones.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/userfrosting/templates/themes/default/users/mdluser_form.twig" afterPath="$PROJECT_DIR$/userfrosting/templates/themes/default/users/mdluser_form.twig" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/userfrosting/templates/themes/default/users/mdluser_list.twig" afterPath="$PROJECT_DIR$/userfrosting/templates/themes/default/users/mdluser_list.twig" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/userfrosting/vendor/composer/autoload_classmap.php" afterPath="$PROJECT_DIR$/userfrosting/vendor/composer/autoload_classmap.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/userfrosting/vendor/composer/installed.json" afterPath="$PROJECT_DIR$/userfrosting/vendor/composer/installed.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../moodle/config.php" afterPath="$PROJECT_DIR$/../moodle/config.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../moodle/lib/datalib.php" afterPath="$PROJECT_DIR$/../moodle/lib/datalib.php" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../ums_api/.idea/vcs.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../ums_api/api/app/controllers/UserController.php" afterPath="$PROJECT_DIR$/../ums_api/api/app/controllers/UserController.php" />
     </list>
     <ignored path="UMS.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -54,20 +25,20 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="MdlUserController.php" pinned="false" current-in-tab="false">
+      <file leaf-file-name="MdlUserController.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/userfrosting/controllers/MdlUserController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="367" column="54" selection-start-line="367" selection-start-column="54" selection-end-line="367" selection-end-column="54" />
+            <state vertical-scroll-proportion="0.82742316">
+              <caret line="104" column="31" selection-start-line="104" selection-start-column="31" selection-end-line="104" selection-end-column="31" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="mdluser_form.twig" pinned="false" current-in-tab="true">
+      <file leaf-file-name="mdluser_form.twig" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/userfrosting/templates/themes/default/users/mdluser_form.twig">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.4066194">
+            <state vertical-scroll-proportion="-28.52">
               <caret line="141" column="136" selection-start-line="141" selection-start-column="136" selection-end-line="141" selection-end-column="136" />
               <folding />
             </state>
@@ -228,6 +199,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
       <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
@@ -341,7 +313,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -393,7 +364,7 @@
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1716418" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17324094" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -809,18 +780,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/userfrosting/controllers/MdlUserController.php">
+    <entry file="file://$PROJECT_DIR$/userfrosting/templates/themes/default/users/mdluser_form.twig">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="367" column="54" selection-start-line="367" selection-start-column="54" selection-end-line="367" selection-end-column="54" />
+        <state vertical-scroll-proportion="-28.52">
+          <caret line="141" column="136" selection-start-line="141" selection-start-column="136" selection-end-line="141" selection-end-column="136" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/userfrosting/templates/themes/default/users/mdluser_form.twig">
+    <entry file="file://$PROJECT_DIR$/userfrosting/controllers/MdlUserController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.4066194">
-          <caret line="141" column="136" selection-start-line="141" selection-start-column="136" selection-end-line="141" selection-end-column="136" />
+        <state vertical-scroll-proportion="0.82742316">
+          <caret line="104" column="31" selection-start-line="104" selection-start-column="31" selection-end-line="104" selection-end-column="31" />
           <folding />
         </state>
       </provider>

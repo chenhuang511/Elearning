@@ -58,4 +58,26 @@ class UserController extends RESTController
         }
         $this->setPayload($dtr); // Trả dữ liệu cho client
     }
+
+    /***
+     * Detail User - Xem thông tin user
+     * @param userid
+     * @return UserObject(userid)
+     */
+    public function detailAction(){
+        try{
+            // Xử lý form
+            $userid = $this->request->get("userid","int");
+            $mss = "";
+            $userobject = User::findFirst(array(
+                "conditions"=>"id = :userid:",
+                "bind"=>array("userid"=>$userid)
+            ))->toArray();
+
+        }
+        catch (Exception $e){
+
+        }
+    }
+
 }
