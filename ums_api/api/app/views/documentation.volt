@@ -23,7 +23,6 @@
         <div class="pull-right">
             <a href="http://frittt.com/free-documentation-html-template-docweb" target="_blank" class="btn btn-download"><img src="/documentation/img/download.png" width="25" alt="Download Free Documentation Template"/> Download Now</a>
         </div>
-
     </nav>
     <header>
         <div class="container">
