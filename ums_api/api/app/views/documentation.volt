@@ -32,12 +32,12 @@
     {{ content() }}
     <section class="vibrant centered">
         <div class="">
-            <h4> This documentation template is provided by <a href="javascript:void(0)" target="_blank">Frittt Templates</a>. You can download and use this template for free. If you have used this template, please pay the developer's effort by Tweeting, sharing on Facebook, social mention or with a linkback. Enjoy! :)</h4>
+            <h4> This documentation is provided by <a href="javascript:void(0)" target="_blank">Services Team</a>. Contact Mr.Hoang to support</h4>
         </div>
     </section>
     <footer>
         <div class="">
-            <p> &copy; Copyright Frittt Templates. All Rights Reserved.</p>
+            <p> &copy; Copyright 2016 TecaPro. All Rights Reserved.</p>
         </div>
     </footer>
 </div>
