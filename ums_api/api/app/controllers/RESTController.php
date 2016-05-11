@@ -1,4 +1,9 @@
 <?php
+
+/***
+ * Class RESTController
+ * Extended and Process for RestAPI
+ */
 class RESTController extends BaseController
 {
     public function initialize(){
