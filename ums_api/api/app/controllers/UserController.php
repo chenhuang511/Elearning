@@ -40,7 +40,7 @@ class UserController extends RESTController
                 $userobject = User::findFirst(array(
                     "conditions"=>"username = :username: and password = :password:",
                     "bind"=>array("username"=>$datapost['username'],"password"=>$datapost['password'])
-                ))->toArray();
+                ))->toArray(); // Select ngược lại thông tin để lấy chính xác thông tin user trả về cho client
                 $tokenkey = $this->session->getId(); // get session id and set to tokenkey
                 $userobject['tokenkey'] = $tokenkey; // set return data with tokenkey
                 $this->session->set("uinfo", $userobject); // Set lại đăng nhập cho user
