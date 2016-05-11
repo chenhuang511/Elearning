@@ -111,7 +111,7 @@ $di->set('modelsCache', function () {
     $cache = new BackendMemcache(
         $frontCache,
         array(
-            "host" => "10.0.0.19",
+            "host" => "localhost",
             "port" => "6379"
         )
     );
