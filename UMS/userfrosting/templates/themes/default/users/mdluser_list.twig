@@ -65,7 +65,7 @@
                                     <tr {% if user.suspended == 1 %} id="hidelink" {% endif %}>
                                         <td data-text="{{user.firstname}}">
                                             <strong>
-                                                <a href="{{site.uri.public}}/users/u/{{user.id}}">{{user.firstname}} ({{user.lastname}})</a>
+                                                <a href="{{site.uri.public}}/forms/mdlusers/u/{{ user.id }}/?">{{user.firstname}} ({{user.lastname}})</a>
                                             </strong>
                                             <div>
                                                 <i>{{user.username}}</i>
@@ -126,26 +126,38 @@
                                                             </a>
                                                         </li>
                                                     {% endif %}
-                                                    <li>
-                                                        <a href="{{site.uri.public}}/forms/mdlusers/u/{{ user.id }}/?">
-                                                            <i class="fa fa-edit"></i> Edit user
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        {% if user.suspended == 0 %}
-                                                            <a href="#" data-id="{{ user.id }}" class="js-mdluser-disable">
-                                                                <i class="fa fa-eye fa-fw"></i> Hide User
+
+                                                    {#lệnh {% if user.id in admins %} để xác định user.id của người dùng hiện tại có tồn tại trong mảng các user_id của admins hay không#}
+                                                    {#nếu có tồn tại thì chỉ cho hiện edit button#}
+                                                    {% if user.id in admins %}
+                                                        <li>
+                                                            <a href="{{site.uri.public}}/forms/mdlusers/u/{{ user.id }}/?">
+                                                                <i class="fa fa-edit"></i> Edit user
                                                             </a>
-                                                        {% else %}
-                                                            <a href="#" data-id="{{user.id}}" class="js-mdluser-enable">
-                                                                <i class="fa fa-eye-slash fa-fw"></i> Show user
+                                                        </li>
+                                                    {#Nếu không tồn tại (không là tài khoản admin) thì cho hiện đầy đủ button#}
+                                                    {% else %}
+                                                        <li>
+                                                            <a href="{{site.uri.public}}/forms/mdlusers/u/{{ user.id }}/?">
+                                                                <i class="fa fa-edit fa-fw"></i> Edit user
                                                             </a>
-                                                        {% endif %}
-                                                    </li>
-                                                    <li>
-                                                        <a href="#" data-id="{{user.id}}" class="js-mdluser-delete" data-user_name="{{user.username}}" data-target="#dialog-mdluser-delete" data-toggle="modal">
-                                                            <i class="fa fa-trash-o"></i> Delete user</a>
-                                                    </li>
+                                                        </li>
+                                                        <li>
+                                                            {% if user.suspended == 0 %}
+                                                                <a href="#" data-id="{{ user.id }}" class="js-mdluser-disable">
+                                                                    <i class="fa fa-eye fa-fw"></i> Hide User
+                                                                </a>
+                                                            {% else %}
+                                                                <a href="#" data-id="{{user.id}}" class="js-mdluser-enable">
+                                                                    <i class="fa fa-eye-slash fa-fw"></i> Show user
+                                                                </a>
+                                                            {% endif %}
+                                                        </li>
+                                                        <li>
+                                                            <a href="#" data-id="{{user.id}}" class="js-mdluser-delete" data-mdluser_name="{{user.username}}" data-target="#dialog-mdluser-delete" data-toggle="modal">
+                                                                <i class="fa fa-trash-o fa-fw"></i> Delete user</a>
+                                                        </li>
+                                                    {% endif %}
                                                 </ul>
                                             </div>
                                         </td>

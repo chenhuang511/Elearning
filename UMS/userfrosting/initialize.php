@@ -235,8 +235,118 @@ $table_mdl_cache_flags = new \UserFrosting\DatabaseTable("mdl_cache_flags",[
     "expiry",
 ]);
 
+$table_mdl_config = new \UserFrosting\DatabaseTable("mdl_config",[
+    "id",
+    "name",
+    "value",
+]);
+
+$table_mdl_grade_grades = new \UserFrosting\DatabaseTable("mdl_grade_grades",[
+    "id",
+    "userid",
+]);
+
+$table_mdl_message = new \UserFrosting\DatabaseTable("mdl_message",[
+    "id",
+    "useridfrom",
+    "useridto",
+    "subject",
+    "fullmessage",
+    "fullmessageformat",
+    "fullmessagehtml",
+    "smallmessage",
+    "notification",
+    "contexturl",
+    "contexturlname",
+    "timecreated",
+    "timeuserfromdeleted",
+    "timeusertodeleted",
+]);
+
+$table_mdl_message_read = new \UserFrosting\DatabaseTable("mdl_message_read",[
+    "id",
+    "useridfrom",
+    "useridto",
+    "subject",
+    "fullmessage",
+    "fullmessageformat",
+    "fullmessagehtml",
+    "smallmessage",
+    "notification",
+    "contexturl",
+    "contexturlname",
+    "timecreated",
+    "timeread",
+    "timeuserfromdeleted",
+    "timeusertodeleted",
+]);
+
+$table_mdl_message_working = new \UserFrosting\DatabaseTable("mdl_message_working",[
+    "id",
+    "unreadmessageid",
+    "processorid",
+]);
+
+$table_mdl_user_enrolments = new \UserFrosting\DatabaseTable("mdl_user_enrolments",[
+    "id",
+    "userid",
+]);
+
+$table_mdl_groups_members = new \UserFrosting\DatabaseTable("mdl_groups_members",[
+    "id",
+    "groupid",
+    "userid",
+]);
+
+$table_mdl_user_info_data = new \UserFrosting\DatabaseTable("mdl_user_info_data",[
+    "id",
+    "userid",
+    "data",
+]);
+
+$table_mdl_user_password_history = new \UserFrosting\DatabaseTable("mdl_user_password_history",[
+    "id",
+    "userid",
+]);
+
+$table_mdl_role_assignments = new \UserFrosting\DatabaseTable("mdl_role_assignments",[
+    "id",
+    "userid",
+]);
+
+$table_mdl_user_lastaccess = new \UserFrosting\DatabaseTable("mdl_user_lastaccess",[
+    "id",
+    "userid",
+]);
+
+$table_mdl_external_tokens = new \UserFrosting\DatabaseTable("mdl_external_tokens",[
+    "id",
+    "userid",
+]);
+
+$table_mdl_external_services_users = new \UserFrosting\DatabaseTable("mdl_external_services_users",[
+    "id",
+    "userid",
+]);
+
+$table_mdl_user_private_key = new \UserFrosting\DatabaseTable("mdl_user_private_key",[
+    "id",
+    "userid",
+]);
+
+$table_mdl_my_pages = new \UserFrosting\DatabaseTable("mdl_my_pages",[
+    "id",
+    "userid",
+    "private",
+]);
+
+
+
+
+//Phần của Minh
 $table_cohort_members = new \UserFrosting\DatabaseTable("mdl_cohort_members",[
     "id",
+    "userid",
     "timeadded"
 ]);
 $table_mdl_role = new \UserFrosting\DatabaseTable("mdl_role",[
@@ -286,6 +396,22 @@ $table_authorize_group = new \UserFrosting\DatabaseTable($app->config('db')['db_
 \UserFrosting\Database::setSchemaTable("mdl_tag", $table_mdl_tag);
 \UserFrosting\Database::setSchemaTable("mdl_tag_instance", $table_mdl_tag_instance);
 \UserFrosting\Database::setSchemaTable("mdl_cache_flags", $table_mdl_cache_flags);
+\UserFrosting\Database::setSchemaTable("mdl_config", $table_mdl_config);
+\UserFrosting\Database::setSchemaTable("mdl_grade_grades", $table_mdl_grade_grades);
+\UserFrosting\Database::setSchemaTable("mdl_message", $table_mdl_message);
+\UserFrosting\Database::setSchemaTable("mdl_message_working", $table_mdl_message_working);
+\UserFrosting\Database::setSchemaTable("mdl_message_read", $table_mdl_message_read);
+\UserFrosting\Database::setSchemaTable("mdl_user_enrolments", $table_mdl_user_enrolments);
+\UserFrosting\Database::setSchemaTable("mdl_groups_members", $table_mdl_groups_members);
+\UserFrosting\Database::setSchemaTable("mdl_user_info_data", $table_mdl_user_info_data);
+\UserFrosting\Database::setSchemaTable("mdl_user_password_history", $table_mdl_user_password_history);
+\UserFrosting\Database::setSchemaTable("mdl_user_lastaccess", $table_mdl_user_lastaccess);
+\UserFrosting\Database::setSchemaTable("mdl_external_tokens", $table_mdl_external_tokens);
+\UserFrosting\Database::setSchemaTable("mdl_external_services_users", $table_mdl_external_services_users);
+\UserFrosting\Database::setSchemaTable("mdl_user_private_key", $table_mdl_user_private_key);
+\UserFrosting\Database::setSchemaTable("mdl_my_pages", $table_mdl_my_pages);
+\UserFrosting\Database::setSchemaTable("mdl_role_assignments", $table_mdl_role_assignments);
+
 \UserFrosting\Database::setSchemaTable("mdl_role_allow_assign", $table_mdl_role_allow_assign);
 \UserFrosting\Database::setSchemaTable("mdl_role_allow_override", $table_mdl_role_allow_override);
 \UserFrosting\Database::setSchemaTable("mdl_role_allow_switch", $table_mdl_role_allow_switch);

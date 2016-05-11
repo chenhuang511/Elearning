@@ -181,10 +181,6 @@ class MdlCohortController extends \UserFrosting\BaseController
 
         $rf->sanitize();
 
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/master
         // Validate, and halt on validation errors.
         if (isset($post['name'])) {
             if (!$rf->validate()) {

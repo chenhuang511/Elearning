@@ -142,13 +142,19 @@
     // Submit create mdl_user. Nhận dl từ form create mdluser, xử lý dl và lưu vào moodledb
     $app->post('/mdlusers/?', function () use ($app) {
         $controller = new UF\MdlUserController($app);
-        return $controller->submitCreateUsermood();
+        return $controller->submitCreateMdluser();
     });
 
     // Submit Edit mdlUser. Nhận dl từ form edit mdluser, xử lý và lưu vào moodledb
     $app->post('/mdlusers/u/:mdluser_id/?', function ($user_id) use ($app){
         $controller = new UF\MdlUserController($app);
-        return $controller->submitEditUsermood($user_id);
+        return $controller->submitEditMdluser($user_id);
+    });
+
+    // Delete mdluser
+    $app->post('/mdlusers/u/:mdluser_id/delete/?', function ($user_id) use ($app) {
+        $controller = new UF\MdlUserController($app);
+        return $controller->deleteMdluser($user_id);
     });
 
     /********** MOODLE COHORT INTERFACE **********/

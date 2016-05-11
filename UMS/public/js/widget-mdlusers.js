@@ -46,8 +46,8 @@ function bindGroupTableButtons(table) {
     $(table).find('.js-mdluser-delete').click(function() {
         var btn = $(this);
         var mdluser_id = btn.data('id');
-        var name = btn.data('name');
-        deleteMdluserDialog('dialog-mdluser-delete', mdluser_id, name);
+        var mdluser_name = btn.data('mdluser_name');
+        deleteMdluserDialog('dialog-mdluser-delete', mdluser_id, mdluser_name);
     });
 }
 
@@ -95,9 +95,9 @@ function deleteMdluserDialog(box_id, mdluser_id, name){
 
     var data = {
         box_id: box_id,
-        box_title: "Delete cohort",
-        confirm_message: "Are you sure you want to delete the cohort " + '"' + name + '"' + "?",
-        confirm_button: "Yes, delete cohort"
+        box_title: "Delete moodle user",
+        confirm_message: "Are you sure you want to delete the user " + '"' + name + '"' + "?",
+        confirm_button: "Yes, delete user"
     };
 
     // Generate the form
@@ -116,11 +116,11 @@ function deleteMdluserDialog(box_id, mdluser_id, name){
             $( "body" ).append(result);
             $('#' + box_id).modal('show');
             $('#' + box_id + ' .js-confirm').click(function(){
-                var url = site['uri']['public'] + "/forms/cohorts/c/" + cohort_id + "/delete";
+                var url = site['uri']['public'] + "/mdlusers/u/" + user_id + "/delete";
 
                 csrf_token = $("meta[name=csrf_token]").attr("content");
                 var data = {
-                    cohort_id: cohort_id,
+                    mdluser_id: mdluser_id,
                     csrf_token: csrf_token
                 };
 
