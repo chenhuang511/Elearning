@@ -35,6 +35,7 @@ class AuthController extends RESTController
             $this->session->destroy(); // remove session
             $dtr['status'] = 0; // return data with message
             $dtr['mss'] = "Cannot find user";
+            $dtr['data'] = new stdClass();
             $this->setPayload($dtr);
         }
         else{ // if user available

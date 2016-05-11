@@ -9,14 +9,20 @@ class UserController extends ControllerBase
         parent::initialize();
     }
 
+    /***
+     * Danh sách user
+     * @return view
+     */
     public function indexAction()
     {
-        if (!$this->checkpermission("user_view")) return false;
+        if (!$this->checkpermission("user_view")) return false;  // Kiểm tra quyền
+        // Tính toán tham số phân trang
         $limit = 20;
         $p = $this->request->get("p");
         if ($p <= 1) $p = 1;
         $cp = ($p - 1) * $limit;
 
+        // Khởi tạo các tham số tìm kiếm từ form
         $q = $this->request->getQuery("q", "string");
         $query = "flags = 'system'";
         if (!empty($q)) $query .= " and username LIKE '%" . $q . "%'";
@@ -25,7 +31,7 @@ class UserController extends ControllerBase
             "order" => "id DESC",
             "limit" => $limit,
             "offset" => $cp
-        ));
+        )); // List
 
         $this->view->q = $q;
         $this->view->listdata = $listdata;
@@ -35,15 +41,16 @@ class UserController extends ControllerBase
     public function formAction()
     {
         $id = $this->request->get("id");
+        // Check permission
         if(!empty($id)){
             if (!$this->checkpermission("user_update")) return false;
         }
         else {
             if (!$this->checkpermission("user_add")) return false;
         }
-        if ($this->request->isPost()) {
+        if ($this->request->isPost()) {  // If form save
             try {
-                $datapost = Helper::post_to_array("username,password,email,firstname,lastname,dob,address,phone,gender");
+                $datapost = Helper::post_to_array("username,password,email,firstname,lastname,dob,address,phone,gender"); ;// Get data
                 // <editor-fold desc="Validate">
                 if (strlen($datapost['password']) > 0) $datapost['password'] = Helper::encryptpassword($datapost['password']);
                 else unset($datapost['password']);

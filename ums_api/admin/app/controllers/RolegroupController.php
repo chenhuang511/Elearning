@@ -8,15 +8,28 @@ class RolegroupController extends ControllerBase
         $this->view->activesidebar = "/rolegroup/index";
         parent::initialize();
     }
+
+    /***
+     * Danh sách nhóm quyền trên hệ thống
+     * @return view
+     */
     public function indexAction()
     {
         if (!$this->checkpermission("rolegroup_view")) return false;
+        $userinfo = $this->userinfo;
         $limit = 20;
         $p = $this->request->get("p");
         if ($p <= 1) $p = 1;
         $cp = ($p - 1) * $limit;
-
+        $listrole = $userinfo['listrole'];
         $query = "id > 0";
+        if(!in_array("all",$listrole)){
+            unset($listrole['all']);
+            $listrole = array_values($listrole);
+            if(count($listrole)>0) $listrole = implode(",",$listrole);
+            else $listrole = "0";
+            //$query .= " and id in($listrole)";
+        }
         $q = $this->request->getQuery("q", "string");
         if ($q) $query .= " AND name LIKE '%" . $q . "%'";
         $listdata = Rolegroup::find(
@@ -33,21 +46,28 @@ class RolegroupController extends ControllerBase
         $this->view->painginfo = Helper::paginginfo(Rolegroup::count($query), $limit, $p);
     }
 
+    /***
+     * Form xử lý thông tin nhóm quyền
+     * @return view
+     */
     public function formAction()
     {
         $id = $this->request->get("id");
+        // Check permission to process
         if(!empty($id)){
             if (!$this->checkpermission("rolegroup_update")) return false;
         }
         else {
             if (!$this->checkpermission("rolegroup_add")) return false;
         }
-        $uinfo = (array)$this->session->get("uinfo");
+        $uinfo = (array)$this->session->get("uinfo"); // Select userinfo login from session
 
-        if ($this->request->isPost()) {
+        if ($this->request->isPost()) { // If form save
             try {
-                $datapost = Helper::post_to_array("name,level,permissions");
-                $datapost['permissions'] = implode(",", $datapost['permissions']);
+                $datapost = Helper::post_to_array("name,level,permissions,rolemanageid");
+                $datapost['permissions'] = implode(",", $datapost['permissions']); // Select Permission from form and implode array to string
+                $datapost['manageid'] = implode(",", $datapost['rolemanageid']); // Select RoleID from form and implode array to string
+                unset($datapost['rolemanageid']);
                 // <editor-fold desc="Validate">
                 if ($id > 0) { // Update
                     $o = Rolegroup::findFirst($id);
@@ -65,14 +85,16 @@ class RolegroupController extends ControllerBase
             }
 
         }
-        if (!empty($id)) $o = Rolegroup::findFirst($id);
-        $activepermission = $o->permissions;
-        $this->view->object = $o;
+        // Select and bind to view old value
+        if (!empty($id)) $o = Rolegroup::findFirst($id); // Select Role by ID if id exist
+        $activepermission = $o->permissions; // set permission to list
+        $o->manageid = explode($o->manageid); // explode manageid to array
+        $this->view->object = $o; // set RoleObject to object in view
 
-        $activepermission = explode(",", $activepermission);
-        $module = new Module();
+        $activepermission = explode(",", $activepermission); // explode permission from string to array
+        $module = new Module(); // Get list permission from system
         $listpermission = $module->Permission();
-        //set active for rolegroup
+        //set active for permission
         foreach ($listpermission as $key => $item) {
             if (in_array($key, $activepermission)) $listpermission[$key]['checked'] = 'checked';
             else $listpermission[$key]['checked'] = '';
@@ -81,6 +103,20 @@ class RolegroupController extends ControllerBase
                 else $listpermission[$key]['child'][$ckey]['checked'] = "";
             }
         }
+
+        //Select list role for manage
+        $listdata = Rolegroup::find(
+            array(
+                "conditions" => "1=1",
+                "order" => "level asc"
+            )
+        )->toArray();
+        foreach ($listdata as $key => $item) {
+            if (in_array($item['id'], explode(",",$o->manageid))) $listdata[$key]['checked'] = 'checked';
+            else $listpermission[$key]['checked'] = '';
+        }
+        //set active for roleid
+        $this->view->listdata = $listdata;
         $this->view->module = $listpermission;
         $this->view->backurl = strlen($this->request->getHTTPReferer())<=0? $this->view->activesidebar: $this->request->getHTTPReferer();
     }

@@ -12,6 +12,9 @@
                     <li class="">
                         <a data-toggle="tab" href="#about-iso">{{ labelkey['rolegroup.lbl_perlist'] }}</a>
                     </li>
+                    <li class="">
+                        <a data-toggle="tab" href="#managerole">{{ labelkey['rolegroup.lbl_manage'] }}</a>
+                    </li>
                 </ul>
                 <div class="panel-body">
                     <div class="tab-content">
@@ -25,6 +28,7 @@
                                     <label>{{ labelkey['rolegroup.lbl_level'] }}</label>
                                     <input type="text" name="level" value="{{ object.level }}" class="form-control">
                                 </div>
+
                             </div>
 
                         </div>
@@ -37,9 +41,7 @@
                                                    class="catitem" {{ item['checked'] }} name="permissions[]">
                                             <i class="input-helper"></i>
                                             {{ item['name'] }}
-                                        </label>&nbsp;&nbsp;<span style="font-weight: normal;font-size: 11px"><a
-                                                    href="javascript:void(0)" onclick="recheck(this)">Check
-                                                all</a></span>
+                                        </label>&nbsp;&nbsp;<span style="font-weight: normal;font-size: 11px"><a href="javascript:void(0)" onclick="recheck(this)">Checkall</a></span>
                                         <ul class="p-l-25">
                                             {% if item['child'] is defined %}
                                                 {% for value in item['child'] %}
@@ -58,6 +60,37 @@
                                         {% endfor %}
                                     </li>
                             </ul>
+                        </div>
+                        <div class="tab-pane" id="managerole">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th class="col-md-2">#</th>
+                                    <th>{{ labelkey['rolegroup.lbl_name'] }}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>
+                                        <label class="checkbox-custom check-success">
+                                            <input type="checkbox" {{ in_array('all',object.manageid)?"checked":"" }} name="rolemanageid[]" id="c_all" value="all"> <label for="c_all"> </label>
+                                        </label>
+                                    </td>
+                                    <td>All</td>
+                                </tr>
+                                {% for item in listdata %}
+                                    <tr>
+                                        <td>
+                                            <label class="checkbox-custom check-success">
+                                                <input {{ item['checked'] }} type="checkbox" name="rolemanageid[]" id="c{{ item['id'] }}" value="{{ item['id'] }}"> <label for="c{{ item['id'] }}"> </label>
+                                            </label>
+                                        </td>
+                                        <td>{{ item['name'] }}</td>
+                                    </tr>
+                                {% endfor %}
+
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
