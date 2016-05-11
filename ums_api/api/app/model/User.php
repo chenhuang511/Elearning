@@ -1,8 +1,6 @@
 <?php
-
-use Phalcon\Mvc\Model\Validator\Email as Email;
-
-class User extends \Phalcon\Mvc\Model
+use Phalcon\Mvc\Model\Validator\Email as EmailValidator;
+class User extends BaseModel
 {
 
     /**
@@ -127,7 +125,7 @@ class User extends \Phalcon\Mvc\Model
 
     /**
      *
-     * @var integer
+     * @var string
      */
     public $status;
 
@@ -162,26 +160,18 @@ class User extends \Phalcon\Mvc\Model
     public $captions;
 
     /**
-     *
-     * @var integer
-     */
-    public $pos_id;
-
-    /**
      * Validations and business logic
      *
      * @return boolean
      */
     public function validation()
     {
-        $this->validate(
-            new Email(
-                array(
-                    'field'    => 'email',
-                    'required' => true,
-                )
-            )
-        );
+        if(strlen($this->email)>0){
+            $this->validate(new EmailValidator(array(
+                'field' => 'email'
+            )));
+        }
+
 
         if ($this->validationHasFailed() == true) {
             return false;
@@ -195,10 +185,9 @@ class User extends \Phalcon\Mvc\Model
      */
     public function initialize()
     {
-        $this->hasMany('id', 'Rolegroup', 'usercreate', array('alias' => 'Rolegroup'));
         $this->hasMany('id', 'User', 'usercreate', array('alias' => 'User'));
-        $this->hasMany('id', 'UserRole', 'userid', array('alias' => 'UserRole'));
         $this->belongsTo('usercreate', 'User', 'id', array('alias' => 'User'));
+        $this->belongsTo('classid', 'Classobj', 'id', array('alias' => 'Classobj'));
     }
 
     /**

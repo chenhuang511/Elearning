@@ -6,11 +6,14 @@
  */
 class RESTController extends BaseController
 {
+    public $datarespone;
     public function initialize(){
         $this->initResponse();
         $this->setFormat("json");
         if($this->request->get("responetype")=="xml") $this->setFormat("xml");
         parent::initialize();
+        $tokkenkey = $this->request->get("tokenkey");
+        if(strlen($tokkenkey)>0) $this->session->setId($tokkenkey);
     }
     protected $statusCode = 200;
     protected $headers    = array();

@@ -50,7 +50,7 @@ class UserController extends ControllerBase
         }
         if ($this->request->isPost()) {  // If form save
             try {
-                $datapost = Helper::post_to_array("username,password,email,firstname,lastname,dob,address,phone,gender"); ;// Get data
+                $datapost = Helper::post_to_array("username,password,email,firstname,lastname,dob,address,phone,gender"); ;// Get data from form
                 // <editor-fold desc="Validate">
                 if (strlen($datapost['password']) > 0) $datapost['password'] = Helper::encryptpassword($datapost['password']);
                 else unset($datapost['password']);

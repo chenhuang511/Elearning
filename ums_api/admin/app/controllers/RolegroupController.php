@@ -15,20 +15,19 @@ class RolegroupController extends ControllerBase
      */
     public function indexAction()
     {
+        // Check quyền thao tác
         if (!$this->checkpermission("rolegroup_view")) return false;
-        $userinfo = $this->userinfo;
-        $limit = 20;
+        $userinfo = $this->userinfo; // Lấy userinfo login từ session
+        $limit = 20; // Phân trang
         $p = $this->request->get("p");
         if ($p <= 1) $p = 1;
         $cp = ($p - 1) * $limit;
-        $listrole = $userinfo['listrole'];
+        $listrole = $userinfo['listrole']; // Set danh sách quyền mà user login được quyền quản trị
         $query = "id > 0";
-        if(!in_array("all",$listrole)){
-            unset($listrole['all']);
-            $listrole = array_values($listrole);
-            if(count($listrole)>0) $listrole = implode(",",$listrole);
-            else $listrole = "0";
-            //$query .= " and id in($listrole)";
+        if (!in_array("all", $listrole)) { // Nếu ko có từ khóa all, thì check các role nằm trong đó
+            if (count($listrole) > 0) $listrole = implode(",", $listrole); // Nếu mảng role ko có phần tử, set về giá trị 0 để tránh select lỗi
+            if(strlen($listrole)<=0) $listrole = "0";
+            $query .= " and id in($listrole)";
         }
         $q = $this->request->getQuery("q", "string");
         if ($q) $query .= " AND name LIKE '%" . $q . "%'";
@@ -54,10 +53,9 @@ class RolegroupController extends ControllerBase
     {
         $id = $this->request->get("id");
         // Check permission to process
-        if(!empty($id)){
+        if (!empty($id)) {
             if (!$this->checkpermission("rolegroup_update")) return false;
-        }
-        else {
+        } else {
             if (!$this->checkpermission("rolegroup_add")) return false;
         }
         $uinfo = (array)$this->session->get("uinfo"); // Select userinfo login from session
@@ -88,7 +86,7 @@ class RolegroupController extends ControllerBase
         // Select and bind to view old value
         if (!empty($id)) $o = Rolegroup::findFirst($id); // Select Role by ID if id exist
         $activepermission = $o->permissions; // set permission to list
-        $o->manageid = explode($o->manageid); // explode manageid to array
+        $o->manageid = explode(",", $o->manageid); // explode manageid to array
         $this->view->object = $o; // set RoleObject to object in view
 
         $activepermission = explode(",", $activepermission); // explode permission from string to array
@@ -112,14 +110,15 @@ class RolegroupController extends ControllerBase
             )
         )->toArray();
         foreach ($listdata as $key => $item) {
-            if (in_array($item['id'], explode(",",$o->manageid))) $listdata[$key]['checked'] = 'checked';
-            else $listpermission[$key]['checked'] = '';
+            if (in_array($item['id'], $o->manageid)) $listdata[$key]['checked'] = 'checked';
+            else $listdata[$key]['checked'] = '';
         }
         //set active for roleid
         $this->view->listdata = $listdata;
         $this->view->module = $listpermission;
-        $this->view->backurl = strlen($this->request->getHTTPReferer())<=0? $this->view->activesidebar: $this->request->getHTTPReferer();
+        $this->view->backurl = strlen($this->request->getHTTPReferer()) <= 0 ? $this->view->activesidebar : $this->request->getHTTPReferer();
     }
+
     public function deleteAction()
     {
         if (!$this->checkpermission("rolegroup_delete")) return false;

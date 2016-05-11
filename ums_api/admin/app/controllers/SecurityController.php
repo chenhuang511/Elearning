@@ -24,7 +24,7 @@ class SecurityController extends ControllerBase {
                 foreach($tmp as $item){ // lặp danh sách các quyền lấy được để lấy đc permission mà quyền đó có
                     $roleitem = $item->RoleGroup->toArray();
                     if(strlen($roleitem['permissions'])>0) $permission .= $roleitem['permissions'].","; // nối các quyền đó với quyền ban đầu, thêm dấu ,
-                    if(strlen($roleitem['manageroleid'])>0) $manageroleid .= $roleitem['manageid'].","; // nối các role đó với role ban đầu, thêm dấu ,
+                    if(strlen($roleitem['manageid'])>0) $manageroleid .= $roleitem['manageid'].","; // nối các role đó với role ban đầu, thêm dấu ,
                 }
                 $permission .= $o['private_permission']; // nối các quyền trong role với quyền hạn đặc biệt
                 $permission = rtrim($permission,","); // xóa bỏ dấu , cuối cùng của chuỗi quyền đc ghép lại
@@ -37,7 +37,7 @@ class SecurityController extends ControllerBase {
                     $this->flash->error("You cannot login to system by policy");
                 }
                 else{
-                    $this->session->set("uinfo",$o);
+                    $this->session->set("uinfo",$o); // Đưa thông tin người dùng vào SESSION
                     $this->response->redirect("index/index");
                 }
             }
