@@ -7,7 +7,7 @@
             <li><a href="#license" class="cc-active">License</a></li>
             <li class="separator"></li>
             <li><strong>API</strong></li>
-            <li><a href="#view_type" class="cc-active">User Authenticate</a></li>
+            <li><a href="#userauthenticate" class="cc-active">User Authenticate</a></li>
         </ul>
         <div class="docs-content">
             <h2> Getting Started</h2>
@@ -22,7 +22,8 @@
             </ul>
             <h3 id="license"> License</h3>
             <p>Teca Pro technology 2016 by Services Team</p>
-            <h3 id="view_type">User Authenticate</h3>
+            <h3 id="userauthenticate">User Authenticate</h3>
+            <h4>1. Authenticate by username and password</h4>
             <p>Path: http://api.ums.dev:4449/auth/login</p>
             <ul>
                 <li>Method: <b>HTTP POST</b></li>
@@ -56,6 +57,41 @@
                 }
               </pre>
             </div>
+
+            <h4>2. Authenticate by facebookid</h4>
+            <p>Path: http://api.ums.dev:4449/auth/loginbyfacebookid</p>
+            <ul>
+                <li>Method: <b>HTTP POST</b></li>
+                <li>Datatype: <b>Form Data</b></li>
+                <li>Parameter</li>
+            </ul>
+            <div>
+                <pre class="prettyprint">
+                  fbid: "123456"
+                </pre>
+            </div>
+            <ul>
+                <li>Return</li>
+            </ul>
+            <div>
+                <pre class="prettyprint">
+                  {
+                    "status": ​1,
+                    "mss": "Successfully",
+                    "data":
+                    {
+                        "id": "1",
+                        "firstname": "Nguyễn Hoàng",
+                        "lastname": "Việt",
+                        "username": "admin",
+                        "address": "Thanh Quang - An Thượng - Hoài Đức - Hà Nội",
+                        "email": "vietpiano@gmail.com",
+                        "tokenkey": "ddgfgcfjvb3nvucq1ocfn1dc35"
+                    }
+                }
+              </pre>
+            </div>
+
         </div>
     </div>
 </section>
