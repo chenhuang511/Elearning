@@ -45,7 +45,9 @@ $di->setShared('view', function () use ($config) {
 
             $volt->setOptions(array(
                 'compiledPath' => $config->application->cacheDir,
-                'compiledSeparator' => '_'
+                'compiledSeparator' => '_',
+                'stat' => true,
+                'compileAlways' => true
             ));
 
             return $volt;
@@ -109,7 +111,7 @@ $di->set('modelsCache', function () {
     $cache = new BackendMemcache(
         $frontCache,
         array(
-            "host" => "localhost",
+            "host" => "10.0.0.19",
             "port" => "6379"
         )
     );
