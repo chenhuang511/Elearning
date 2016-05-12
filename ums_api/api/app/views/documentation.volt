@@ -26,7 +26,7 @@
     </nav>
     <header>
         <div class="container">
-            <h2 class="lone-header">Documentation guide connect API UMS</h2>
+            <h2 class="lone-header">Documentation guide connect API UMS (Updating...)</h2>
         </div>
     </header>
     {{ content() }}
