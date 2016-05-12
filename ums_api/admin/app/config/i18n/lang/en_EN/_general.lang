@@ -27,3 +27,4 @@ general.lbl_uploadexcel = Upload Excel
 general.lbl_filename = File Name
 general.lbl_filetemplate = File Template
 general.lbl_duplicateuser = Username already exists, please choose another username
+general.lbl_duplicateuser = Permission already exists, please choose another permission

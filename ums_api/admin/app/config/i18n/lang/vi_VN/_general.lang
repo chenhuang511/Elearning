@@ -27,3 +27,4 @@ general.lbl_uploadexcel = Upload Excel
 general.lbl_filename = File Name
 general.lbl_filetemplate = File mẫu
 general.lbl_duplicateuser = Tên tài khoản đã tồn tại, xui lòng chọn tên tài khoản khác
+general.lbl_duplicatepermission = Tên permission đã tồn tại, xui lòng chọn tên tên khác
