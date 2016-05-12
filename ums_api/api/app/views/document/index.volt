@@ -55,6 +55,9 @@
             {#Detail User By UD#}
             {% include "document/detail_user_by_id.volt" %}
 
+            {#Role List#}
+            {% include "document/list_role.volt" %}
+
 
         </div>
     </div>

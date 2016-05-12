@@ -6,6 +6,7 @@
 <div>
 <pre class="prettyprint">
 {
+"tokenkey": "xxxx",
 "userid": "mã user của người dùng muốn xem thông tin"
 }
 </pre>

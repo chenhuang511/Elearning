@@ -20,13 +20,10 @@
             <h1><a href="javascript:"><img src="/documentation/img/icon.png" alt="Free Documentation Template Icon"/> <span>UMS Documentation</span></a></h1>
         </div>
 
-        <div class="pull-right">
-            <a href="javascript:void(0)" target="_blank" class="btn btn-download"><img src="/documentation/img/download.png" width="25" alt="Download Free Documentation Template"/> Download Now</a>
-        </div>
     </nav>
     <header>
         <div class="container">
-            <h2 class="lone-header">Documentation guide connect API UMS</h2>
+            <h2 class="lone-header">Documentation guide connect API UMS (Updating...)</h2>
         </div>
     </header>
     <?= $this->getContent() ?>

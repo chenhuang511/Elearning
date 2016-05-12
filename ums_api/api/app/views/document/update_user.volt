@@ -15,7 +15,6 @@
 "address": "địa chỉ",
 "phone": "số điện thoại",
 "gender": "giới tính (1:Nam,2:Nữ)",
-"Ghi chú : trường dữ liệu trống sẽ tự động được unset",
 }
 </pre>
 </div>

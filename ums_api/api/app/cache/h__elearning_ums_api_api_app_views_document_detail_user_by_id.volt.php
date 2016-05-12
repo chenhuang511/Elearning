@@ -6,8 +6,7 @@
 <div>
 <pre class="prettyprint">
 {
-"tokenkey":"xxxxx",
-"userid": "Tên đăng nhập"
+"userid": "mã user của người dùng muốn xem thông tin"
 }
 </pre>
 </div>
@@ -17,16 +16,15 @@
 <div>
 <pre class="prettyprint">
 {
-  "status": 1,
-  "mss": "Successfully",
-  "data": {
-    "id": "1",
-    "firstname": "Nguyễn Hoàng",
-    "lastname": "Việt",
-    "username": "admin",
-    "address": "Thanh Quang - An Thượng - Hoài Đức - Hà Nội",
-    "email": "vietpiano@gmail.com",
-    "tokenkey": "ddgfgcfjvb3nvucq1ocfn1dc35"
+  status: 1,
+  mss: "Successfully",
+  data: {
+    id: "5",
+    firstname: "Nguyễn Thế",
+    lastname: "Cơ",
+    username: "supercom",
+    address: "164 Khuất Duy Tiến",
+    email: "nhacdjchamvn@gmail.com"
   }
 }
 </pre>

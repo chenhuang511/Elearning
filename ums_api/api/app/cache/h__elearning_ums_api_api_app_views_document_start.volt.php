@@ -2,8 +2,7 @@
 <p>UMS (User Management System) Documentation Connector API</p>
 <h3 id="features">2. Features</h3>
 <ul>
-    <li>User Authenticate</li>
-    <li>User CRUD</li>
+    <li>API</li>
     <li>Unit Test</li>
     <li>Documentation</li>
 </ul>
