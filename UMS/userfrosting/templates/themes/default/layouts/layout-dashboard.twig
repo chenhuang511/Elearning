@@ -79,6 +79,9 @@
         {% for item in includeJSBottom(page_group|default("common")) %}
             <script src="{{item}}" ></script>
         {% endfor %}
+        {% if page_group == "mdluser" %}
+            <script src="{{ site.uri.js }}/widget-mdlusers.js"></script>
+        {% endif %}
         {% if page_group == "cohort" %}
             <script src="{{ site.uri.js }}/widget-cohorts.js"></script>
         {% endif %}

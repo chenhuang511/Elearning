@@ -90,6 +90,7 @@
                             </td>
                             <td >
                                 <div class="btn-group">
+<<<<<<< HEAD
                                     <button type="button" class="btn btn-primary btn-width" {% if cohort.visible == 0 %}id="invi"{% endif %}>
                                         {% if cohort.visible == 0 %}
                                         Invisible
@@ -101,6 +102,19 @@
                                         <span class="caret"></span>
                                         <span class="sr-only">Toggle Dropdown</span>
                                     </button>
+=======
+                                        <button type="button" class="btn btn-primary dropdown-toggle btn-width" {% if cohort.visible == 0 %}id="invi"{% endif %} data-toggle="dropdown" >
+                                            <div style=" float: left">
+                                                {% if cohort.visible == 0 %}
+                                                    Invisible
+                                                {% else %}
+                                                    Active
+                                                {% endif %}
+                                            </div>
+                                            <div style="text-align: right"><span class="fa fa-caret-down"></span></div>
+                                        </button>
+
+>>>>>>> a417c670928d790b4b831fcfe4148124e4bda0d6
                                     <ul class="dropdown-menu" role="menu">
                                         <li>
                                             {% if cohort.visible == 1 %}

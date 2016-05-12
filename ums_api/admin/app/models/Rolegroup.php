@@ -38,7 +38,11 @@ class Rolegroup extends BaseModel
      * @var string
      */
     public $permissions;
-
+    /**
+     *
+     * @var string
+     */
+    public $manageid;
     /**
      * Initialize method for model.
      */

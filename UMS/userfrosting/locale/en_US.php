@@ -48,6 +48,8 @@ $lang = array_merge($lang, array(
 	"ACCOUNT_MDLUSERNAME_IN_USE" => "Username '{{username}}' is already in use",
 	"MDLUSER_CREATE_SUCCESS" => "Details for User '{{name}}' successfully create.",
 	"MDLUSER_UPDATE_SUCCESS" => "Details for User '{{name}}' successfully updated.",
+	"ACCOUNT_DELETE_GUEST" => "Guest user account can not be deleted.",
+	"ACCOUNT_DELETE_ADMIN" => "Local administrator accounts can not be deleted.",
 ));
 
 // Account

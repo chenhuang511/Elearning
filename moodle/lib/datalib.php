@@ -523,7 +523,6 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
                                    FROM {user}
                                   WHERE $select
                                   $sort", $params, $page, $recordsperpage);
-
 }
 
 

@@ -45,7 +45,9 @@ $di->setShared('view', function () use ($config) {
 
             $volt->setOptions(array(
                 'compiledPath' => $config->application->cacheDir,
-                'compiledSeparator' => '_'
+                'compiledSeparator' => '_',
+                'stat' => true,
+                'compileAlways' => true
             ));
 
             return $volt;
@@ -75,7 +77,6 @@ $di->setShared('db', function () use ($config) {
 $di->setShared('modelsMetadata', function () {
     return new MetaDataAdapter();
 });
-
 /**
  * Register the session flash service with the Twitter Bootstrap classes
  */

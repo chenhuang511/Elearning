@@ -4,3 +4,4 @@ rolegroup.lbl_level = Level
 rolegroup.lbl_creator = Creator
 rolegroup.lbl_roleinfo = Role Information
 rolegroup.lbl_perlist = Permission List
+rolegroup.lbl_manage = Role Management

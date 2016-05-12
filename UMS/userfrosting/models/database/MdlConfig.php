@@ -1,10 +1,11 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: Minh Nguyen
- * Date: 5/6/2016
- * Time: 3:36 PM
+ * User: vanhaIT
+ * Date: 05/05/2016
+ * Time: 10:34 SA
  */
+
 namespace UserFrosting;
 
 use \Illuminate\Database\Capsule\Manager as Capsule;

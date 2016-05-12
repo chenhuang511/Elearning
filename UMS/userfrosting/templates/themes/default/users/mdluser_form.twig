@@ -312,7 +312,7 @@
                                                                         <script>
                                                                             new Taggle($('.example1.textarea')[0], {
                                                                                 tags: [{% for tag in tags %}
-                                                                                            '{{ tag.name }}',
+                                                                                            '{{ tag.rawname }}',
                                                                                         {% endfor %}],
                                                                                 duplicateTagClass: 'bounce'
                                                                             });
