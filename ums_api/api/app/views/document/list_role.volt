@@ -3,6 +3,14 @@
 <ul>
     <li>Parameter (Http Post)</li>
 </ul>
+<div>
+<pre class="prettyprint">
+{
+"limit": "số bản ghi trên một trang (all nếu muốn lấy tất bản ghi)",
+"page": "trang muốn lấy"
+}
+</pre>
+</div>
 
 <ul>
     <li>Return</li>
@@ -10,48 +18,19 @@
 <div>
 <pre class="prettyprint">
 {
-    status: 1,
-    mss: "Successfully",
-    data: [
+    "status": 1,
+    "mss": "Successfully",
+    "paging": {
+        "limit": "2",
+        "page": "1",
+        "total": "3"
+    },
+    "data": [
         {
-            id: "1",
-            name: "Super Administrator",
-            level: "1",
-            permissions: [
-                "loginsystem",
-                "rolegroup",
-                "rolegroup_view",
-                "rolegroup_add",
-                "rolegroup_update",
-                "rolegroup_delete",
-                "user",
-                "user_view",
-                "user_add",
-                "user_update",
-                "user_delete",
-                "user_role",
-                "permission",
-                "permission_view",
-                "permission_add",
-                "permission_update",
-                "permission_delete"
-            ],
-            manageid: "all,1"
-        },
-        {
-            id: "2",
-            name: "Mod",
-            level: "2",
-            permissions: [
-            ""
-            ],
-            manageid: null
-        },
-        {
-            id: "3",
-            name: "Nhóm quyền test",
-            level: "3",
-            permissions: [
+            "id": "3",
+            "name": "Nhóm quyền test",
+            "level": "3",
+            "permissions": [
                 "loginsystem",
                 "categoryview",
                 "categoryview_view",
@@ -64,7 +43,16 @@
                 "event_update",
                 "event_delete"
             ],
-            manageid: null
+            "manageid": null
+        },
+        {
+            "id": "2",
+            "name": "Mod",
+            "level": "2",
+            "permissions": [
+                ""
+            ],
+            "manageid": null
         }
     ]
 }

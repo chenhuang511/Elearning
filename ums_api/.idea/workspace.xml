@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5f6d215f-5820-4a77-acbb-7ee374046027" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/api/app/controllers/RolegroupController.php" afterPath="$PROJECT_DIR$/api/app/controllers/RolegroupController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/api/app/views/document/list_role.volt" afterPath="$PROJECT_DIR$/api/app/views/document/list_role.volt" />
     </list>
     <list id="159f06be-d34e-4147-b2e5-6f2702d7171b" name="Failed commit: Default" comment="HaNV update user api" />
     <ignored path="ums_api.iws" />
@@ -26,10 +25,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="RolegroupController.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="RolegroupController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/api/app/controllers/RolegroupController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.4962963">
+            <state vertical-scroll-proportion="-18.2">
               <caret line="38" column="35" selection-start-line="38" selection-start-column="35" selection-end-line="38" selection-end-column="35" />
               <folding />
             </state>
@@ -40,7 +39,7 @@
         <entry file="file://$PROJECT_DIR$/admin/app/controllers/UserController.php">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="-8.8">
-              <caret line="20" column="38" selection-start-line="20" selection-start-column="38" selection-end-line="20" selection-end-column="38" />
+              <caret line="21" column="28" selection-start-line="21" selection-start-column="28" selection-end-line="21" selection-end-column="28" />
               <folding />
             </state>
           </provider>
@@ -59,18 +58,18 @@
       <file leaf-file-name="detail_user_by_id.volt" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/api/app/views/document/detail_user_by_id.volt">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="22" column="12" selection-start-line="22" selection-start-column="12" selection-end-line="22" selection-end-column="12" />
+            <state vertical-scroll-proportion="-9.6">
+              <caret line="12" column="6" selection-start-line="5" selection-start-column="0" selection-end-line="12" selection-end-column="6" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="list_role.volt" pinned="false" current-in-tab="false">
+      <file leaf-file-name="list_role.volt" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/api/app/views/document/list_role.volt">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-51.2">
-              <caret line="64" column="30" selection-start-line="64" selection-start-column="30" selection-end-line="64" selection-end-column="30" />
+            <state vertical-scroll-proportion="0.58518517">
+              <caret line="27" column="13" selection-start-line="27" selection-start-column="13" selection-end-line="27" selection-end-column="13" />
               <folding />
             </state>
           </provider>
@@ -145,9 +144,9 @@
         <option value="$PROJECT_DIR$/api/app/views/document/index.volt" />
         <option value="$PROJECT_DIR$/api/app/views/document/update_user.volt" />
         <option value="$PROJECT_DIR$/api/app/views/document/detail_user_by_id.volt" />
-        <option value="$PROJECT_DIR$/api/app/views/document/list_role.volt" />
         <option value="$PROJECT_DIR$/admin/app/controllers/UserController.php" />
         <option value="$PROJECT_DIR$/api/app/controllers/RolegroupController.php" />
+        <option value="$PROJECT_DIR$/api/app/views/document/list_role.volt" />
       </list>
     </option>
   </component>
@@ -726,14 +725,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/api/app/views/document/detail_user_by_id.volt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="22" column="12" selection-start-line="22" selection-start-column="12" selection-end-line="22" selection-end-column="12" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/api/app/models/User.php">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.32592592">
@@ -742,10 +733,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/api/app/views/document/list_role.volt">
+    <entry file="file://$PROJECT_DIR$/admin/app/controllers/UserController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-51.2">
-          <caret line="64" column="30" selection-start-line="64" selection-start-column="30" selection-end-line="64" selection-end-column="30" />
+        <state vertical-scroll-proportion="-8.8">
+          <caret line="21" column="28" selection-start-line="21" selection-start-column="28" selection-end-line="21" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/api/app/controllers/RolegroupController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-18.2">
+          <caret line="38" column="35" selection-start-line="38" selection-start-column="35" selection-end-line="38" selection-end-column="35" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/api/app/views/document/detail_user_by_id.volt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-9.6">
+          <caret line="12" column="6" selection-start-line="5" selection-start-column="0" selection-end-line="12" selection-end-column="6" />
           <folding />
         </state>
       </provider>
@@ -758,18 +765,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/admin/app/controllers/UserController.php">
+    <entry file="file://$PROJECT_DIR$/api/app/views/document/list_role.volt">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-8.8">
-          <caret line="20" column="38" selection-start-line="20" selection-start-column="38" selection-end-line="20" selection-end-column="38" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/api/app/controllers/RolegroupController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.4962963">
-          <caret line="38" column="35" selection-start-line="38" selection-start-column="35" selection-end-line="38" selection-end-column="35" />
+        <state vertical-scroll-proportion="0.58518517">
+          <caret line="27" column="13" selection-start-line="27" selection-start-column="13" selection-end-line="27" selection-end-column="13" />
           <folding />
         </state>
       </provider>
