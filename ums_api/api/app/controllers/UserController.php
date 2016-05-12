@@ -23,14 +23,23 @@ class UserController extends RESTController
             $datapost['dob'] = strtotime($datapost['dob']);
             $datapost['flags'] = "user";
             $flag_insert = true; // Đánh dấu tất cả các validator đều hợp lệ. Nếu sai, không cho insert vào DB
-            $mss = "";// Thông báo trạng thái khi thực hiện thao tác
+            $status = $mss = "";// Thông báo trạng thái khi thực hiện thao tác
             // Validation
+            if(strlen($datapost['username'])<=0){
+                $flag_insert = false;
+                $status = 0;
+                $mss = "Fill your username";
+            }
             if (strlen($datapost['email']) > 0) { // Kiểm tra xem email đã tồn tại trên hệ thống hay chưa
                 $c = User::count(array(
                     "conditions" => "email = :email:",
                     "bind" => array("email" => $datapost['email'])
                 ));
-                if($c>0) $flag_insert = false;
+                if($c>0) {
+                    $flag_insert = false;
+                    $status = 0;
+                    $mss = "Email is available in system";
+                }
             }
             if($flag_insert==true){ // nếu tất cả thông tin là hợp lệ thông qua biến flag_insert
                 $o = new User(); // Tạo mới object user
@@ -50,13 +59,11 @@ class UserController extends RESTController
                 
             }
         } catch (Exception $e) { // Xử lý thông báo lỗi
-            $dtr['status'] = 0;
-            $dtr['mss'] = $e->getMessage();
-            $dtr['data'] = new stdClass();
+            $this->datarespone = array("status"=>0,"mss"=>$e->getMessage(),"data"=>new stdClass());
             $this->session->destroy();// Hủy session thông tin user
-            session_destroy(); // gọi lại hàm này khi máy chủ cấu hình REDIS để lưu session
+            session_destroy();
         }
-        $this->setPayload($dtr); // Trả dữ liệu cho client
+        $this->setPayload($this->datarespone); // Trả dữ liệu cho client
         $this->render();
     }
 
