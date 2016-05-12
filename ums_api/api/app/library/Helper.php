@@ -13,7 +13,7 @@ class Helper
         $param = explode(",", $param);
         $arr = array();
         //foreach ($param as $item) $arr[$item] = Helper::xss_clean($_POST[$item]);
-        foreach ($param as $item) $arr[$item] = $_POST[$item];
+        foreach ($param as $item) $arr[trim($item)] = $_POST[trim($item)];
         return $arr;
     }
 
