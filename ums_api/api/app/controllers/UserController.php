@@ -81,6 +81,7 @@ class UserController extends RESTController
             }
             else{
                 $userobject = User::findFirst(array(
+                    "columns"=>"id,firstname,lastname,username,address,email",
                     "conditions"=>"id = :userid:",
                     "bind"=>array("userid"=>$userid)
                 ));
@@ -148,7 +149,11 @@ class UserController extends RESTController
                 if($flag_update==true){
                     $userobject->map_object($datapost); // Đồng bộ hóa form với các thông tin cột trong userobject
                     $userobject->save(); // Lưu vào Database
-                    $userobject = User::findFirst($userid); // Select ngược lại thông tin để lấy chính xác thông tin user trả về cho client
+                    $userobject = User::findFirst(array(// Select ngược lại thông tin để lấy chính xác thông tin user trả về cho client
+                        "columns"=>"id,firstname,lastname,username,address,email",
+                        "conditions"=>"id = :userid:",
+                        "bind"=>array("userid"=>$userid)
+                    ));
                     $mss = "Successfully";
                     $status = 1;
                 }
