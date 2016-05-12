@@ -35,7 +35,7 @@
             {% include "document/create_user.volt" %}
 
             {#Update User#}
-            {% include "document/create_user.volt" %}
+            {% include "document/update_user.volt" %}
 
             {#Detail User By UD#}
             {% include "document/detail_user_by_id.volt" %}
