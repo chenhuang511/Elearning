@@ -38,6 +38,7 @@
                 <li>Path: <a href="javascript:void(0)">http://api.ums.dev:4449</a></li>
                 <li>Method: <b>HTTP POST or GET</b></li>
                 <li>Datatype: <b>Form Data</b></li>
+                <li>Return Data Type: <b>JSON</b> (If you want return XML format, you need add responetype=xml parameter into your request)</li>
             </ul>
             {#Authenticate by system#}
             {% include "document/authenticate_by_system.volt" %}
