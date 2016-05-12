@@ -16,17 +16,7 @@
         </ul>
         <div class="docs-content">
             <h2>I. Getting Started</h2>
-            <h3 id="welcome">1. Welcome</h3>
-            <p>UMS (User Management System) Documentation Connector API</p>
-            <h3 id="features">2. Features</h3>
-            <ul>
-                <li>User Authenticate</li>
-                <li>User CRUD</li>
-                <li>Unit Test</li>
-                <li>Documentation</li>
-            </ul>
-            <h3 id="license">3. License</h3>
-            <p>Teca Pro technology 2016 by Services Team</p>
+            {% include "document/start.volt" %}
 
             <h2>II. API</h2>
             <ul>
@@ -35,114 +25,13 @@
                 <li>Datatype: <b>Form Data</b></li>
             </ul>
             {#Authenticate by system#}
-            <h3 id="userauthenticate_bysystem">4. User Authenticate</h3>
-            <p>Path: /auth/login</p>
-            <ul>
-                <li>Parameter (Http Post)</li>
-            </ul>
-            <div>
-                <pre class="prettyprint">
-                  username: "admin",
-                  password: "123456"
-                </pre>
-            </div>
-            <ul>
-                <li>Return</li>
-            </ul>
-            <div>
-                <pre class="prettyprint">
-                  {
-                    "status": ​1,
-                    "mss": "Successfully",
-                    "data":
-                    {
-                        "id": "1",
-                        "firstname": "Nguyễn Hoàng",
-                        "lastname": "Việt",
-                        "username": "admin",
-                        "address": "Thanh Quang - An Thượng - Hoài Đức - Hà Nội",
-                        "email": "vietpiano@gmail.com",
-                        "tokenkey": "ddgfgcfjvb3nvucq1ocfn1dc35"
-                    }
-                }
-              </pre>
-            </div>
+            {% include "document/authenticate_by_system.volt" %}
 
             {#Authenticate by facebookid#}
-            <h3 id="userauthenticate_byfacebook">5. User Authenticate By Facebook</h3>
-            <p>Path: /auth/loginbyfacebookid</p>
-            <ul>
-                <li>Parameter (Http Post)</li>
-            </ul>
-            <div>
-                <pre class="prettyprint">
-                  fbid: "123456"
-                </pre>
-            </div>
-            <ul>
-                <li>Return</li>
-            </ul>
-            <div>
-                <pre class="prettyprint">
-                  {
-                    "status": ​1,
-                    "mss": "Successfully",
-                    "data":
-                    {
-                        "id": "1",
-                        "firstname": "Nguyễn Hoàng",
-                        "lastname": "Việt",
-                        "username": "admin",
-                        "address": "Thanh Quang - An Thượng - Hoài Đức - Hà Nội",
-                        "email": "vietpiano@gmail.com",
-                        "tokenkey": "ddgfgcfjvb3nvucq1ocfn1dc35"
-                    }
-                }
-              </pre>
-            </div>
+            {% include "document/authenticate_by_facebookid.volt" %}
 
             {#CreateUser#}
-            <h3 id="usercrud_create">6. Create User</h3>
-            <p>Path: /user/create</p>
-            <ul>
-                <li>Parameter (Http Post)</li>
-            </ul>
-            <div>
-                <pre class="prettyprint">
-                   {
-                    "username": "Tên đăng nhập",
-                    "password": "mật khẩu",
-                    "email": "email có thể để trống",
-                    "firstname": "Họ",
-                    "lastname": "Tên",
-                    "dob": "Ngày tháng năm sinh (dd-mm-yyyy)",
-                    "address": "địa chỉ",
-                    "phone": "số điện thoại",
-                    "gender": "giới tính (1:Nam,2:Nữ)",
-                    }
-                </pre>
-            </div>
-            <ul>
-                <li>Return</li>
-            </ul>
-            <div>
-                <pre class="prettyprint">
-                  {
-                    "status": ​1,
-                    "mss": "Successfully",
-                    "data":
-                    {
-                        "id": "1",
-                        "firstname": "Nguyễn Hoàng",
-                        "lastname": "Việt",
-                        "username": "admin",
-                        "address": "Thanh Quang - An Thượng - Hoài Đức - Hà Nội",
-                        "email": "vietpiano@gmail.com",
-                        "tokenkey": "ddgfgcfjvb3nvucq1ocfn1dc35"
-                    }
-                }
-              </pre>
-            </div>
+            {% include "document/create_user.volt" %}
 
 
         </div>
