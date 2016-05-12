@@ -1,4 +1,4 @@
-<form enctype="multipart/form-data" role="form" method="POST" name="{{ form_name }}" action="{{ form_action }}" >
+<form enctype="multipart/form-data" role="form" method="POST" name="{{ form_name }}" id="{{ form_name }}" action="{{ form_action }}" >
     <table class=" table table-hover table-striped">
         <thead>
         <tr>
@@ -12,6 +12,7 @@
         {% for role_col in roles %}
             <tr>
                 <td>{{ role_col.name }}</td>
+                {# Thực hiện 2 vòng lặp để hiển thị ma trận checkbox, 1 vòng lặp bên trong để kiểm tra những giá trị có trong CSDL #}
                 {% for role_row in roles %}
                     <td><input type='checkbox' name="allow_role[{{ role_col.id }}][{{ role_row.id }}]" value="1"
                                 {% for ra in roleallow %}
@@ -22,14 +23,14 @@
                 {% endfor %}
             </tr>
         {% endfor %}
+        <input type="hidden" name="{{csrf_key}}" value="{{csrf_token}}">
         </tbody>
     </table>
     <hr>
     <div class="text-center">
-        <a href="#">
-            <button type="button" class="btn btn-primary">
+            <button type="submit" class="btn btn-primary ">
                 Save changes
             </button>
-        </a>
     </div>
 </form>
+

@@ -20,7 +20,7 @@
                     <h3 class="panel-title"><i class="fa fa-wrench fa-fw"></i> {{ title }} </h3>
                 </div>
                 <div class='panel-body'>
-                    <ul class="nav nav-tabs">
+                    <ul class="nav nav-tabs" id="myTab">
                         <li class="active"><a data-toggle="tab" href="#home">Manage roles</a></li>
                         <li><a data-toggle="tab" href="#assign">Allow role assignments</a></li>
                         <li><a data-toggle="tab" href="#override">Allow role overrides</a></li>
@@ -74,21 +74,21 @@
                             <br>
                             <p>You can allow people who have the roles on the left side to assign some of the column roles to other people.</p>
                             <br>
-                            {% include 'components/common/permissions-allow-table.twig' with {'form_name' : 'allow_assign', 'form_action' : '', 'roleallow': roleallowassign} %}
+                            {% include 'components/common/permissions-allow-table.twig' with {'form_name' : 'allow_assign', 'form_action' : formactionassignments, 'roleallow': roleallowassign} %}
                         </div>
                         <div id="override" class="tab-pane fade">
                             <br>
                             <p>Select which role(s) can be overridden by each role in the left column.</p>
                             <p>Note that these settings only apply to users who have either the capability moodle/role:override or the capability moodle/role:safeoverride allowed.</p>
                             <br>
-                            {% include 'components/common/permissions-allow-table.twig' with {'form_name' : 'allow_override', 'form_action' : '', 'roleallow': roleaalowoverride} %}
+                            {% include 'components/common/permissions-allow-table.twig' with {'form_name' : 'allow_override', 'form_action' : formactionoverrides, 'roleallow': roleaalowoverride} %}
                         </div>
                         <div id="switch" class="tab-pane fade">
                             <br>
                             <p>Select which roles a user may switch to, based on which roles they already have. In addition to an entry in this table, a user must also have the moodle/role:switchroles capability to be able to switch.</p>
                             <p>Note that it is only possible to switch to roles that have the moodle/course:view capability, and that do not have the moodle/site:doanything capability, so some columns in this table are disabled.</p>
                             <br>
-                            {% include 'components/common/permissions-allow-table.twig' with {'form_name' : 'allow_switch', 'form_action' : '', 'roleallow': roleallowswitch} %}
+                            {% include 'components/common/permissions-allow-table.twig' with {'form_name' : 'allow_switch', 'form_action' : formactionswitchs, 'roleallow': roleallowswitch} %}
                         </div>
                     </div>
                 </div>
@@ -97,8 +97,3 @@
     </div>
 {% endblock %}
 
-{% block page_scripts %}
-<script>
-
-</script>
-{% endblock %}
