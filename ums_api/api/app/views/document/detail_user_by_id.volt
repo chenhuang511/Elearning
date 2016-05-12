@@ -1,20 +1,13 @@
-<h3 id="usercrud_create">6. Create User</h3>
-<p>Path: /user/create</p>
+<h3 id="usercrud_detailbyid">8. Detail User By ID</h3>
+<p>Path: /user/detail</p>
 <ul>
     <li>Parameter (Http Post)</li>
 </ul>
 <div>
 <pre class="prettyprint">
 {
-"username": "Tên đăng nhập",
-"password": "mật khẩu",
-"email": "email có thể để trống",
-"firstname": "Họ",
-"lastname": "Tên",
-"dob": "Ngày tháng năm sinh (dd-mm-yyyy)",
-"address": "địa chỉ",
-"phone": "số điện thoại",
-"gender": "giới tính (1:Nam,2:Nữ)",
+"tokenkey":"xxxxx",
+"userid": "Tên đăng nhập"
 }
 </pre>
 </div>

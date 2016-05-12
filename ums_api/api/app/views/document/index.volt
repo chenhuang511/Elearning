@@ -13,6 +13,7 @@
             <li><strong>User CRUD</strong></li>
             <li><a href="#usercrud_create" class="cc-active">6. Create User</a></li>
             <li><a href="#usercrud_update" class="cc-active">7. Update user</a></li>
+            <li><a href="#usercrud_detailbyid" class="cc-active">8. Detail user by userid</a></li>
         </ul>
         <div class="docs-content">
             <h2>I. Getting Started</h2>
@@ -32,6 +33,12 @@
 
             {#CreateUser#}
             {% include "document/create_user.volt" %}
+
+            {#Update User#}
+            {% include "document/create_user.volt" %}
+
+            {#Detail User By UD#}
+            {% include "document/detail_user_by_id.volt" %}
 
 
         </div>

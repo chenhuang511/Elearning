@@ -1,4 +1,4 @@
-<h3 id="usercrud_create">6. Create User</h3>
+<h3 id="usercrud_update">7. Update User</h3>
 <p>Path: /user/create</p>
 <ul>
     <li>Parameter (Http Post)</li>
@@ -6,6 +6,7 @@
 <div>
 <pre class="prettyprint">
 {
+"tokenkey":"xxxx",
 "username": "Tên đăng nhập",
 "password": "mật khẩu",
 "email": "email có thể để trống",
