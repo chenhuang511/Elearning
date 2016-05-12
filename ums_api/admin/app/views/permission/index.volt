@@ -1,3 +1,8 @@
+<!--nestable-->
+<style>
+    ol{list-style-type: decimal}
+    ol li{list-style-type: decimal}
+</style>
 <div class="row">
     <div class="col-sm-12">
         <section class="panel">
@@ -17,11 +22,3 @@
         </section>
     </div>
 </div>
-
-<style>
-    ol{
-        padding-left: 3em;
-        line-height: 2.5em;
-        list-style-type: dot;
-    }
-</style>
