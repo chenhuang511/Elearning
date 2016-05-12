@@ -19,7 +19,7 @@
 </div>
 
 <style>
-    ul{
+    ol{
         padding-left: 3em;
         line-height: 2.5em;
         list-style-type: dot;
