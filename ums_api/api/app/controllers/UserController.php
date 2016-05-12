@@ -38,7 +38,7 @@ class UserController extends RESTController
                 if($c>0) {
                     $flag_insert = false;
                     $status = 0;
-                    $mss = "Email is available in system";
+                    $mss = "Email is available on system";
                 }
             }
             if($flag_insert==true){ // nếu tất cả thông tin là hợp lệ thông qua biến flag_insert
@@ -47,6 +47,7 @@ class UserController extends RESTController
                 $o->map_object($datapost); // Đồng bộ hóa form với các thông tin cột trong userobject
                 $o->save(); // Lưu vào Database
                 $userobject = User::findFirst(array(
+                    "columns"=>"id,firstname,lastname,username,address,email",
                     "conditions"=>"username = :username: and password = :password:",
                     "bind"=>array("username"=>$datapost['username'],"password"=>$datapost['password'])
                 ))->toArray(); // Select ngược lại thông tin để lấy chính xác thông tin user trả về cho client
@@ -56,10 +57,10 @@ class UserController extends RESTController
                 $this->datarespone = array("status"=>1,"mss"=>"Successfully","data"=>$userobject); // Set giá trị vào biến datarespone trong RESTController để trả về client
             }
             else{
-                
+                $this->datarespone = array("status"=>$status,"mss"=>$mss,"data"=>new stdClass()); // Set giá trị vào biến datarespone trong RESTController để trả về client
             }
         } catch (Exception $e) { // Xử lý thông báo lỗi
-            $this->datarespone = array("status"=>0,"mss"=>$e->getMessage(),"data"=>new stdClass());
+            $this->datarespone = array("status"=>0,"mss"=>$e->getMessage(),"data"=>array("errorcode"=>$e->getCode()));
             $this->session->destroy();// Hủy session thông tin user
             session_destroy();
         }

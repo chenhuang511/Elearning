@@ -24,10 +24,9 @@
 <div>
                 <pre class="prettyprint">
                   {
-                    "status": ​1,
-                    "mss": "Successfully",
-                    "data":
-                    {
+                      "status": 1,
+                      "mss": "Successfully",
+                      "data": {
                         "id": "1",
                         "firstname": "Nguyễn Hoàng",
                         "lastname": "Việt",
@@ -35,7 +34,7 @@
                         "address": "Thanh Quang - An Thượng - Hoài Đức - Hà Nội",
                         "email": "vietpiano@gmail.com",
                         "tokenkey": "ddgfgcfjvb3nvucq1ocfn1dc35"
+                      }
                     }
-                }
               </pre>
 </div>
