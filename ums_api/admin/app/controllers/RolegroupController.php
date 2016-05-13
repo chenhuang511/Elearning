@@ -52,24 +52,24 @@ class RolegroupController extends ControllerBase
     public function formAction()
     {
         $id = $this->request->get("id");
-        // Check permission to process
+        // Kiểm tra quyền để thao tác
         if (!empty($id)) {
             if (!$this->checkpermission("rolegroup_update")) return false;
         } else {
             if (!$this->checkpermission("rolegroup_add")) return false;
         }
-        $uinfo = (array)$this->session->get("uinfo"); // Select userinfo login from session
+        $uinfo = (array)$this->session->get("uinfo"); // Lấy userinfo login từ session
 
         if ($this->request->isPost()) { // If form save
             try {
                 $datapost = Helper::post_to_array("name,level,permissions,rolemanageid");
-                $datapost['permissions'] = implode(",", $datapost['permissions']); // Select Permission from form and implode array to string
-                $datapost['manageid'] = implode(",", $datapost['rolemanageid']); // Select RoleID from form and implode array to string
+                $datapost['permissions'] = implode(",", $datapost['permissions']); // Lấy tên quyền từ form và implode từ mảng sang chuỗi
+                $datapost['manageid'] = implode(",", $datapost['rolemanageid']); // Lấy RoleID từ form và từ mảng sang chuỗi
                 unset($datapost['rolemanageid']);
                 // <editor-fold desc="Validate">
-                if ($id > 0) { // Update
+                if ($id > 0) { // Cập nhật
                     $o = Rolegroup::findFirst($id);
-                } else { //insert
+                } else { // Thêm mới
                     $o = new Rolegroup();
                     $datapost['datecreate'] = time();
                     $datapost['usercreate'] = $uinfo['id'];
@@ -84,13 +84,13 @@ class RolegroupController extends ControllerBase
 
         }
         // Select and bind to view old value
-        if (!empty($id)) $o = Rolegroup::findFirst($id); // Select Role by ID if id exist
-        $activepermission = $o->permissions; // set permission to list
-        $o->manageid = explode(",", $o->manageid); // explode manageid to array
-        $this->view->object = $o; // set RoleObject to object in view
+        if (!empty($id)) $o = Rolegroup::findFirst($id); // Lấy Role theo ID nếu ID tồn tại
+        $activepermission = $o->permissions; // Thiết lập phân quyền cho danh sách
+        $o->manageid = explode(",", $o->manageid); // explode manageid sang chuỗi
+        $this->view->object = $o; // Thiết lập RoleObject thành các object để cho vào view
 
-        $activepermission = explode(",", $activepermission); // explode permission from string to array
-        $module = new Module(); // Get list permission from system
+        $activepermission = explode(",", $activepermission); // explode permission từ chuỗi thành mảng
+        $module = new Module(); // Lấy danh sách permission từ hệ thống
         $listpermission = $module->Permission();
         //set active for permission
         foreach ($listpermission as $key => $item) {
@@ -102,7 +102,7 @@ class RolegroupController extends ControllerBase
             }
         }
 
-        //Select list role for manage
+        // Chọn danh sách role cho việc quản lý
         $listdata = Rolegroup::find(
             array(
                 "conditions" => "1=1",
@@ -113,7 +113,7 @@ class RolegroupController extends ControllerBase
             if (in_array($item['id'], $o->manageid)) $listdata[$key]['checked'] = 'checked';
             else $listdata[$key]['checked'] = '';
         }
-        //set active for roleid
+        // Thiết lập kích hoạt cho roleid
         $this->view->listdata = $listdata;
         $this->view->module = $listpermission;
         $this->view->backurl = strlen($this->request->getHTTPReferer()) <= 0 ? $this->view->activesidebar : $this->request->getHTTPReferer();

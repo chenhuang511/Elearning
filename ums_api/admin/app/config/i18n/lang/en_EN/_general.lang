@@ -1,4 +1,5 @@
 general.btn_addnew = Add New
+general.btn_addchild = Add child
 general.btn_update = Update
 general.btn_edit = Edit
 general.btn_delete = Delete

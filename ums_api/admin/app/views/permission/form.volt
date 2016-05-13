@@ -8,22 +8,22 @@
                 </header>
                 <div class="panel-body">
                     <div class="form-group">
-                        <label class="col-md-2 control-label" for="key">Key</label>
-                        <div class="col-md-10"><input type="text" name="key" value="{{ object.key }}" class="form-control" id="key" placeholder="Permission name ..." required></div>
+                        <label class="col-md-2 control-label" for="key">{{ labelkey['permission.lbl_key'] }}</label>
+                        <div class="col-md-10"><input type="text" name="key" value="{{ object.key }}" class="form-control" id="key" placeholder="{{ labelkey['permission.plh_key'] }}" required></div>
                     </div>
                     <div class="form-group">
-                        <label class="col-md-2 control-label" for="note">Note</label>
-                        <div class="col-md-10"><input type="text" name="note" value="{{ object.note }}" class="form-control" id="note" placeholder="Description ..."></input></div>
+                        <label class="col-md-2 control-label" for="note">{{ labelkey['permission.lbl_note'] }}</label>
+                        <div class="col-md-10"><input type="text" name="note" value="{{ object.note }}" class="form-control" id="note" placeholder="{{ labelkey['permission.plh_note'] }}"> </input> </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-md-2 control-label" for="status">Status</label>
+                        <label class="col-md-2 control-label" for="status">{{ labelkey['permission.lbl_status'] }}</label>
                         <div class="col-md-10"><input type="checkbox" name="status" value="1" class="js-switch-blue" id="status" {% if object.status == 1 %} checked {% endif %}></div>
                     </div>
                 </div>
             </section>
         </div>
         <div class="col-lg-12">
-            <button type="submit" class="btn btn-info">Save</button>
+            <button type="submit" class="btn btn-info">{{ labelkey['general.btn_save'] }}</button>
         </div>
     </form>
 </div>

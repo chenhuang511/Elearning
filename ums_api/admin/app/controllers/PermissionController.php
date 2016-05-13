@@ -15,32 +15,44 @@ class PermissionController extends ControllerBase
         parent::initialize();
     }
 
+    /***
+     * Danh sách permission trên hệ thống
+     * @return view
+     */
     public function indexAction()
     {
+        // Kiểm tra quyền thao tác
         if (!$this->checkpermission("permission_view")) return false;
-        $cattree = self::getMenu(0);
+        $cattree = self::getMenu(0);    // Lấy danh sách cây phân quyền
         $this->view->cattree =  $cattree;
     }
 
+    /***
+     * Form xử lý thông tin nhóm quyền
+     * @return view
+     */
     public function formAction()
     {
         $id = $this->request->get('id');
+        // Lấy thông tin về parentid
+        $parentid = $this->request->get('parentid');
+        
+        // Kiểm tra quyền để thao tác
         if(!empty($id)){
             if (!$this->checkpermission("permission_update")) return false;
         }
         else {
             if (!$this->checkpermission("permission_add")) return false;
         }
-        $parentid = $this->request->get('parentid');
         if ($this->request->isPost()) {
             try {
                 $datapost = Helper::post_to_array('key,note,status');
-                if ($id > 0) {//Update
+                if ($id > 0) {// Cập nhật
                     $p = Permission::findFirst($id);
                 }
                 else{// Add new
                     $p = new Permission();
-                    $datapost['parentid'] = (int)$parentid;
+                    $datapost['parentid'] = (int)$parentid; // Gán parentid cho permission mới để biết cha nó là ai
                     if(!$datapost['status']) $datapost['status'] = 0;
                 }
                 $p->map_object($datapost);
@@ -52,19 +64,24 @@ class PermissionController extends ControllerBase
                 else $this->flash->error($e->getMessage());
             }
         }
-        if (!empty($id)) $p = Permission::findFirst($id);
+        if (!empty($id)) $p = Permission::findFirst($id); // Kiểm tra id xem có hệ thống chưa, nếu có thì lấy ra rồi truyền vào form edit
         $this->view->object = $p;
     }
 
+    /***
+     * Action xử lý việc xóa một permission
+     * @return boolean
+     */
     public function deleteAction()
     {
+        // Kiểm tra quyền để thao tác
         if (!$this->checkpermission("permission_delete")) return false;
         $id = $this->request->get('id');
         $p = Permission::findFirst($id);
         if($p){
             try{
                 $p->delete();
-                self::getPermission($id);
+                self::deletePermissionChild($id); // Xóa các con của nó
                 $this->flash->success("Delete success !!");
             } catch (Exception $e){
                 $this->flash->error($e->getMessage());
@@ -73,23 +90,33 @@ class PermissionController extends ControllerBase
         $this->response->redirect($this->request->getHTTPReferer());
     }
 
-    public function getPermission($id){
+    /***
+     * Action xử lý việc xóa một permission
+     * @param $id tên id của permission
+     * @return boolean
+     */
+    public function deletePermissionChild($id){
         $listpermissions = Permission::find(array("conditions" => "parentid=$id"));
-        $listpermissions = $listpermissions->toArray();
-        if(!$listpermissions) return null;
+        $listpermissions = $listpermissions->toArray(); // Lấy danh sách permission dưới dạng mảng
+        if(!$listpermissions) return null; // Kiểm tra xem danh sách có tồn tại hay không
         foreach ($listpermissions as $row){
             Permission::findFirst($row['id'])->delete();
-            self::getPermission($row['id']);
+            self::deletePermissionChild($row['id']);
         }
         return 1;
     }
 
+    /***
+     * Phương thức xử lý việc hiển thị cây đệ quy
+     * @param $parentid tên parentid của permission
+     * @return định dạng html
+     */
     public function getMenu($parentid)
     {
         $listdata = Permission::find(array("conditions" => "parentid=$parentid"));
         $listdata = $listdata->toArray();
         if (!$listdata) return null;
-
+        // Thực hiện đệ quy để hiện thị ra cây permission dưới dạng html
         $html = "<ol class='tree'>";
         foreach ($listdata as $row) {
             $html .= "<li id='{$row['id']}'>";
