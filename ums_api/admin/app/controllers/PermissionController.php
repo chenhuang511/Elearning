@@ -19,7 +19,6 @@ class PermissionController extends ControllerBase
     {
         if (!$this->checkpermission("permission_view")) return false;
         $cattree = self::getMenu(0);
-//        var_dump($cattree); die;
         $this->view->cattree =  $cattree;
     }
 
@@ -91,13 +90,13 @@ class PermissionController extends ControllerBase
         $listdata = $listdata->toArray();
         if (!$listdata) return null;
 
-        $html = "<ol class='dd-list'>";
+        $html = "<ol class='tree'>";
         foreach ($listdata as $row) {
-            $status = $row['status'] == 1 ? '' : '<span class="label label-danger">H</span>';
-            $html .= "<li class='dd-item' id='{$row['id']}'> {$row['key']} &nbsp;&nbsp; ";
-            $html .= "<a href='form/?id={$row['id']}'>Sửa</a> | ";
-            $html .= "<a href='delete/?id={$row['id']}' onclick=\"return confirm('Are you sure?');\" title=\"Delete\">Xóa</a> | ";
-            $html .= "<a href='form/?parentid={$row['id']}'>Thêm con</a> &nbsp;&nbsp; $status";
+            $html .= "<li id='{$row['id']}'>";
+            $row['status'] == 0 ? $html .= "<span style='text-decoration:line-through'> {$row['key']} </span> &nbsp;&nbsp; " : $html .= " {$row['key']} &nbsp;&nbsp; ";
+            $html .= "<a href='form/?id={$row['id']}'>Edit</a> | ";
+            $html .= "<a href='delete/?id={$row['id']}' onclick=\"return confirm('Are you sure?');\" title=\"Delete\">Delete</a> | ";
+            $html .= "<a href='form/?parentid={$row['id']}'>Add child</a> &nbsp;&nbsp;";
             $html .= self::getMenu($row['id']);
             $html .= "</li>";
         }
