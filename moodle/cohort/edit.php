@@ -136,6 +136,7 @@ $PAGE->set_heading($COURSE->fullname);
 $PAGE->navbar->add($strheading);
 
 $editform = new cohort_edit_form(null, array('editoroptions'=>$editoroptions, 'data'=>$cohort, 'returnurl'=>$returnurl));
+
 if ($editform->is_cancelled()) {
     redirect($returnurl);
 
