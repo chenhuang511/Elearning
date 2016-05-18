@@ -13,11 +13,6 @@ $options['function_name'] = 'core_course_get_contents';
 
 $course = get_remote_course_content($courseid, $options);
 
-echo "<pre>";
-print_r($course);
-echo "</pre>";
-die;
-
 $coursemodules = null;
 
 $PAGE->set_heading($course[0]?$course[0]->name:"nccsoft vietnam");
