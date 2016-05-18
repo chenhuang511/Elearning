@@ -106,8 +106,6 @@ function ufFormSubmit(formElement, validators, msgElement, successCallback, msgC
 
             var csrf_token = $("meta[name=csrf_token]").attr("content");
             serializedData += "&csrf_token=" + encodeURIComponent(csrf_token);
-            console.log(serializedData);
-
 
             var url = form.attr('action');
             $.ajax({

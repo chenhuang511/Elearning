@@ -23,14 +23,23 @@ class UserController extends RESTController
             $datapost['dob'] = strtotime($datapost['dob']);
             $datapost['flags'] = "user";
             $flag_insert = true; // Đánh dấu tất cả các validator đều hợp lệ. Nếu sai, không cho insert vào DB
-            $mss = "";// Thông báo trạng thái khi thực hiện thao tác
+            $status = $mss = "";// Thông báo trạng thái khi thực hiện thao tác
             // Validation
+            if(strlen($datapost['username'])<=0){
+                $flag_insert = false;
+                $status = 0;
+                $mss = "Fill your username";
+            }
             if (strlen($datapost['email']) > 0) { // Kiểm tra xem email đã tồn tại trên hệ thống hay chưa
                 $c = User::count(array(
                     "conditions" => "email = :email:",
                     "bind" => array("email" => $datapost['email'])
                 ));
-                if($c>0) $flag_insert = false;
+                if($c>0) {
+                    $flag_insert = false;
+                    $status = 0;
+                    $mss = "Email is available on system";
+                }
             }
             if($flag_insert==true){ // nếu tất cả thông tin là hợp lệ thông qua biến flag_insert
                 $o = new User(); // Tạo mới object user
@@ -38,6 +47,7 @@ class UserController extends RESTController
                 $o->map_object($datapost); // Đồng bộ hóa form với các thông tin cột trong userobject
                 $o->save(); // Lưu vào Database
                 $userobject = User::findFirst(array(
+                    "columns"=>"id,firstname,lastname,username,address,email",
                     "conditions"=>"username = :username: and password = :password:",
                     "bind"=>array("username"=>$datapost['username'],"password"=>$datapost['password'])
                 ))->toArray(); // Select ngược lại thông tin để lấy chính xác thông tin user trả về cho client
@@ -47,16 +57,14 @@ class UserController extends RESTController
                 $this->datarespone = array("status"=>1,"mss"=>"Successfully","data"=>$userobject); // Set giá trị vào biến datarespone trong RESTController để trả về client
             }
             else{
-                
+                $this->datarespone = array("status"=>$status,"mss"=>$mss,"data"=>new stdClass()); // Set giá trị vào biến datarespone trong RESTController để trả về client
             }
         } catch (Exception $e) { // Xử lý thông báo lỗi
-            $dtr['status'] = 0;
-            $dtr['mss'] = $e->getMessage();
-            $dtr['data'] = new stdClass();
+            $this->datarespone = array("status"=>0,"mss"=>$e->getMessage(),"data"=>array("errorcode"=>$e->getCode()));
             $this->session->destroy();// Hủy session thông tin user
-            session_destroy(); // gọi lại hàm này khi máy chủ cấu hình REDIS để lưu session
+            session_destroy();
         }
-        $this->setPayload($dtr); // Trả dữ liệu cho client
+        $this->setPayload($this->datarespone); // Trả dữ liệu cho client
         $this->render();
     }
 
@@ -143,7 +151,6 @@ class UserController extends RESTController
                     $userobject->save(); // Lưu vào Database
                     $userobject = User::findFirst($userid); // Select ngược lại thông tin để lấy chính xác thông tin user trả về cho client
                 }
-
                 $this->datarespone = array("status"=>$status,"mss"=>"$mss","data"=>$userobject->toArray());
             }
         }

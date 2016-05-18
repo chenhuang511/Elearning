@@ -27,8 +27,8 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="MdlUserController.php" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/userfrosting/controllers/MdlUserController.php">
+      <file leaf-file-name="MdlCohortController.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/userfrosting/controllers/MdlCohortController.php">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="-0.25650117">
               <caret line="111" column="76" selection-start-line="111" selection-start-column="76" selection-end-line="111" selection-end-column="76" />
@@ -37,8 +37,17 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="mdluser_form.twig" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/userfrosting/templates/themes/default/users/mdluser_form.twig">
+      <file leaf-file-name="Slim.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/userfrosting/vendor/slim/slim/Slim/Slim.php">
+			<provider selected="true" editor-type-id="text-editor">
+				<state vertical-scroll-proportion="-1.9615384">
+					<caret line="1373" column="0" selection-start-line="1373" selection-start-column="0" selection-end-line="1373" selection-end-column="0" />
+				</state>
+			</provider>
+		</entry>
+	  </file>
+      <file leaf-file-name="index.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/public/index.php">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
               <caret line="141" column="136" selection-start-line="141" selection-start-column="136" selection-end-line="141" selection-end-column="136" />
@@ -57,8 +66,20 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="initialize.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/userfrosting/initialize.php">
+      <file leaf-file-name="MdlPermissionsController.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/userfrosting/controllers/MdlPermissionsController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="680">
+              <caret line="64" column="18" selection-start-line="64" selection-start-column="13" selection-end-line="64" selection-end-column="18" />
+              <folding>
+                <element signature="e#6#94#0#PHP" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MdlCohortController.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/userfrosting/controllers/MdlCohortController.php">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
               <caret line="412" column="60" selection-start-line="412" selection-start-column="40" selection-end-line="412" selection-end-column="60" />
@@ -70,8 +91,8 @@
       <file leaf-file-name="MdlMyPages.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/userfrosting/models/database/MdlMyPages.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="8" column="0" selection-start-line="8" selection-start-column="0" selection-end-line="18" selection-end-column="1" />
+            <state relative-caret-position="476">
+              <caret line="76" column="154" selection-start-line="76" selection-start-column="145" selection-end-line="76" selection-end-column="154" />
               <folding>
                 <element signature="e#6#91#0#PHP" expanded="true" />
               </folding>
@@ -82,11 +103,9 @@
       <file leaf-file-name="MdlMessageRead.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/userfrosting/models/database/MdlMessageRead.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="8" column="0" selection-start-line="8" selection-start-column="0" selection-end-line="18" selection-end-column="1" />
-              <folding>
-                <element signature="e#6#91#0#PHP" expanded="true" />
-              </folding>
+            <state relative-caret-position="404">
+              <caret line="117" column="20" selection-start-line="117" selection-start-column="20" selection-end-line="117" selection-end-column="20" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -94,8 +113,8 @@
       <file leaf-file-name="MdlMessage.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/userfrosting/models/database/MdlMessage.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="17" selection-end-column="1" />
+            <state relative-caret-position="2475">
+              <caret line="822" column="1" selection-start-line="822" selection-start-column="1" selection-end-line="822" selection-end-column="1" />
               <folding>
                 <element signature="e#6#91#0#PHP" expanded="true" />
               </folding>
@@ -106,9 +125,11 @@
       <file leaf-file-name="MdlConfig.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/userfrosting/models/database/MdlConfig.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="18" column="1" selection-start-line="8" selection-start-column="0" selection-end-line="18" selection-end-column="1" />
-              <folding />
+            <state relative-caret-position="425">
+              <caret line="36" column="64" selection-start-line="36" selection-start-column="64" selection-end-line="36" selection-end-column="64" />
+              <folding>
+                <element signature="e#0#47#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -116,9 +137,8 @@
       <file leaf-file-name="en_US.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/userfrosting/locale/en_US.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="43" column="5" selection-start-line="43" selection-start-column="5" selection-end-line="43" selection-end-column="12" />
-              <folding />
+            <state relative-caret-position="157">
+              <caret line="220" column="16" selection-start-line="220" selection-start-column="16" selection-end-line="220" selection-end-column="16" />
             </state>
           </provider>
         </entry>
@@ -610,8 +630,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/userfrosting/locale/en_US.php">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
+        <state relative-caret-position="-29">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+=======
         <state vertical-scroll-proportion="0.0">
           <caret line="43" column="5" selection-start-line="43" selection-start-column="5" selection-end-line="43" selection-end-column="12" />
+>>>>>>> a417c670928d790b4b831fcfe4148124e4bda0d6
           <folding />
         </state>
       </provider>
@@ -625,7 +650,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/userfrosting/models/database/User.php">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
+        <state relative-caret-position="-29">
+=======
         <state vertical-scroll-proportion="-1.2420092">
+>>>>>>> a417c670928d790b4b831fcfe4148124e4bda0d6
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
@@ -734,8 +763,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/userfrosting/models/database/MdlMessageRead.php">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
+        <state relative-caret-position="610">
+          <caret line="226" column="0" selection-start-line="226" selection-start-column="0" selection-end-line="226" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/userfrosting/models/database/MdlRoleAllowOverride.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" column="26" selection-start-line="11" selection-start-column="26" selection-end-line="11" selection-end-column="26" />
+=======
         <state vertical-scroll-proportion="0.0">
           <caret line="8" column="0" selection-start-line="8" selection-start-column="0" selection-end-line="18" selection-end-column="1" />
+>>>>>>> a417c670928d790b4b831fcfe4148124e4bda0d6
           <folding>
             <element signature="e#6#91#0#PHP" expanded="true" />
           </folding>
@@ -767,7 +808,27 @@
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
+    <entry file="file://$PROJECT_DIR$/userfrosting/templates/themes/default/layouts/layout-dashboard.twig">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-12.653846">
+          <caret line="83" column="16" selection-start-line="83" selection-start-column="16" selection-end-line="83" selection-end-column="16" />
+		   <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/userfrosting/controllers/GroupController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="362" column="8" selection-start-line="362" selection-start-column="8" selection-end-line="367" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/index.php">
+=======
     <entry file="file://$PROJECT_DIR$/userfrosting/models/database/MdlConfig.php">
+>>>>>>> a417c670928d790b4b831fcfe4148124e4bda0d6
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="18" column="1" selection-start-line="8" selection-start-column="0" selection-end-line="18" selection-end-column="1" />
@@ -784,8 +845,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/userfrosting/templates/themes/default/users/mdluser_form.twig">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state vertical-scroll-proportion="0.0">
+=======
+<<<<<<< HEAD
+        <state relative-caret-position="476">
+          <caret line="76" column="154" selection-start-line="76" selection-start-column="145" selection-end-line="76" selection-end-column="154" />
+=======
+        <state vertical-scroll-proportion="-28.52">
+>>>>>>> 8cd39e856ee23a90eb592dff3032b257574cac34
           <caret line="141" column="136" selection-start-line="141" selection-start-column="136" selection-end-line="141" selection-end-column="136" />
+>>>>>>> a417c670928d790b4b831fcfe4148124e4bda0d6
           <folding />
         </state>
       </provider>

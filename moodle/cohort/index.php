@@ -126,7 +126,8 @@ foreach($cohorts['cohorts'] as $cohort) {
             'cohort', 'description', $cohort->id);
     if ($showall) {
         if ($cohortcontext->contextlevel == CONTEXT_COURSECAT) {
-            $line[] = html_writer::link(new moodle_url('/cohort/index.php' , array('contextid' => $cohort->contextid)), $cohortcontext->get_context_name(false));
+            $line[] = html_writer::link(new moodle_url('/cohort/index.php' ,
+                    array('contextid' => $cohort->contextid)), $cohortcontext->get_context_name(false));
         } else {
             $line[] = $cohortcontext->get_context_name(false);
         }

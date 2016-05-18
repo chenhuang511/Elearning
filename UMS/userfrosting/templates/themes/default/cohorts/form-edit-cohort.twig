@@ -108,10 +108,10 @@
 
 {% block page_scripts %}
     <script>
-        var contextid = {{ contextid }};
 
         $(document).ready(function() {
             // Load the validator rules for this form
+            var contextid = {{ contextid }};
             var validators = {{validators | raw}};
             var url1 = site['uri']['public'] + '/list/cohorts/';
             var url2 = site['uri']['public'] + '/list/cohorts/ct/' + contextid;

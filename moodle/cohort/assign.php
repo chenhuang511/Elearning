@@ -67,6 +67,7 @@ $PAGE->set_heading($COURSE->fullname);
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('assignto', 'cohort', format_string($cohort->name)));
+
 echo $OUTPUT->notification(get_string('removeuserwarning', 'core_cohort'));
 
 // Get the user_selector we will need.
@@ -109,7 +110,7 @@ if (optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
   <table summary="" class="generaltable generalbox boxaligncenter" cellspacing="0">
     <tr>
       <td id="existingcell">
-          <p><label for="removeselect"><?php print_string('currentusers', 'cohort'); ?></label>
+          <p><label for="removeselect"><?php print_string('currentusers', 'cohort'); ?></label></p>
           <?php $existinguserselector->display() ?>
       </td>
       <td id="buttonscell">
@@ -123,7 +124,7 @@ if (optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
       </td>
       <td id="potentialcell">
           <p><label for="addselect"><?php print_string('potusers', 'cohort'); ?></label></p>
-          <?php $potentialuserselector->display();?>
+          <?php $potentialuserselector->display() ?>
       </td>
     </tr>
     <tr><td colspan="3" id='backcell'>

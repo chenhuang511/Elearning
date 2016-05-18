@@ -7,20 +7,30 @@ $CFG = new stdClass();
 $CFG->dbtype    = 'mysqli';
 $CFG->dblibrary = 'native';
 $CFG->dbhost    = 'localhost';
-$CFG->dbname    = 'moodledb';
+$CFG->dbname    = 'moodle';
 $CFG->dbuser    = 'root';
-$CFG->dbpass    = '';
+$CFG->dbpass    = 'rootroot';
+
 $CFG->prefix    = 'mdl_';
 $CFG->dboptions = array (
   'dbpersist' => 0,
   'dbport' => '',
   'dbsocket' => '',
 );
-$CFG->wwwroot   = 'http://10.0.0.85:69/moodle';
-$CFG->dataroot  = 'C:\\wamp\\moodledata';
+
+$CFG->wwwroot   = 'http://localhost';
+$CFG->dataroot  = 'C:\\AppServ\\moodledata';
 $CFG->admin     = 'admin';
 
 $CFG->directorypermissions = 0777;
+
+$CFG->loginredir = "{$CFG->wwwroot}/my";
+$CFG->logoutredir = "{$CFG->wwwroot}";
+
+//$CFG->opensslcnf = 'C:\\AppServ\\Apache24\\conf\\openssl.cnf';
+
+$CFG->debug = 6143; 
+$CFG->debugdisplay = 1;
 
 require_once(dirname(__FILE__) . '/lib/setup.php');
 

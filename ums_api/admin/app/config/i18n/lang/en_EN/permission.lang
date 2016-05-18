@@ -1,0 +1,7 @@
+permission.lbl_permission = PERMISSION
+permission.lbl_permissioninfo = PERMISSION INFO
+permission.lbl_key = Key
+permission.lbl_note = Note
+permission.lbl_status = Status
+permission.plh_key = Enter key here ...
+permission.plh_note = Description here ...

@@ -208,8 +208,7 @@ abstract class user_selector_base {
      * @param boolean $return if true, return the HTML as a string instead of outputting it.
      * @return mixed if $return is true, returns the HTML as a string, otherwise returns nothing.
      */
-    public function
-    display($return = false) {
+    public function display($return = false) {
         global $PAGE;
 
         // Get the list of requested users.

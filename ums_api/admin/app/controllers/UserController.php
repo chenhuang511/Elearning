@@ -37,7 +37,7 @@ class UserController extends ControllerBase
         $this->view->listdata = $listdata;
         $this->view->painginfo = Helper::paginginfo(User::count($query), $limit, $p);
     }
-
+    
     public function formAction()
     {
         $id = $this->request->get("id");

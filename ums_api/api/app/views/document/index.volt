@@ -2,60 +2,63 @@
     <div class="container">
         <ul class="docs-nav">
             <li><strong>Getting Started</strong></li>
-            <li><a href="#welcome" class="cc-active">Lời chào</a></li>
-            <li><a href="#features" class="cc-active">Thành phần</a></li>
-            <li><a href="#license" class="cc-active">License</a></li>
+            <li><a href="#welcome" class="cc-active">1. Welcome</a></li>
+            <li><a href="#features" class="cc-active">2. Features</a></li>
+            <li><a href="#license" class="cc-active">3. License</a></li>
             <li class="separator"></li>
-            <li><strong>API</strong></li>
-            <li><a href="#view_type" class="cc-active">User Authenticate</a></li>
+            <li><strong>User Authenticate</strong></li>
+            <li><a href="#userauthenticate_bysystem" class="cc-active">4. By System</a></li>
+            <li><a href="#userauthenticate_byfacebook" class="cc-active">5. By Facebook</a></li>
+            <li class="separator"></li>
+            <li><strong>User</strong></li>
+            <li><a href="#usercrud_create" class="cc-active">6. Create User</a></li>
+            <li><a href="#usercrud_update" class="cc-active">7. Update user</a></li>
+            <li><a href="#usercrud_detailbyid" class="cc-active">8. Detail user by userid</a></li>
+            <li><strong>Role</strong></li>
+            <li><a href="#role_list" class="cc-active">9. Role List</a></li>
+            <li><strong>Permission</strong></li>
+            <li><a href="#permission_list" class="cc-active">10. Permission List</a></li>
+            <li><a href="#permission_add" class="cc-active">11. Permission Add</a></li>
         </ul>
         <div class="docs-content">
-            <h2> Getting Started</h2>
-            <h3 id="welcome"> Welcome</h3>
-            <p>Tài liệu hướng dẫn kết nối hệ thống UMS (User Management System)</p>
-            <h3 id="features"> Features</h3>
+            <h2>I. Getting Started</h2>
+            {% include "document/start.volt" %}
+
+            <h2>II. API</h2>
+            <p>First step: add this line into hosts file of system.</p>
+            <pre class="prettyprint">
+                222.252.27.89 api.ums.dev
+            </pre>
             <ul>
-                <li>User Authenticate</li>
-                <li>User CRUD</li>
-                <li>Unit Test</li>
-                <li>Documentation</li>
+                <li>Windows: %SYSTEMROOT%\system32\drivers\etc\hosts</li>
+                <li>Linux: /etc/hosts</li>
             </ul>
-            <h3 id="license"> License</h3>
-            <p>Teca Pro technology 2016 by Services Team</p>
-            <h3 id="view_type">User Authenticate</h3>
-            <p>Path: http://api.ums.dev:4449/auth/login</p>
+            <p>API General Information</p>
             <ul>
-                <li>Method: <b>HTTP POST</b></li>
+                <li>Path: <a href="javascript:void(0)">http://api.ums.dev:4449</a></li>
+                <li>Method: <b>HTTP POST or GET</b></li>
                 <li>Datatype: <b>Form Data</b></li>
-                <li>Parameter</li>
+                <li>Return Data Type: <b>JSON</b> (If you want return XML format, you need add responetype=xml parameter into your request)</li>
             </ul>
-            <div>
-                <pre class="prettyprint">
-                  username: "admin",
-                  password: "123456"
-                </pre>
-            </div>
-            <ul>
-                <li>Return</li>
-            </ul>
-            <div>
-                <pre class="prettyprint">
-                  {
-                    "status": ​1,
-                    "mss": "Successfully",
-                    "data":
-                    {
-                        "id": "1",
-                        "firstname": "Nguyễn Hoàng",
-                        "lastname": "Việt",
-                        "username": "admin",
-                        "address": "Thanh Quang - An Thượng - Hoài Đức - Hà Nội",
-                        "email": "vietpiano@gmail.com",
-                        "tokenkey": "ddgfgcfjvb3nvucq1ocfn1dc35"
-                    }
-                }
-              </pre>
-            </div>
+            {#Authenticate by system#}
+            {% include "document/authenticate_by_system.volt" %}
+
+            {#Authenticate by facebookid#}
+            {% include "document/authenticate_by_facebookid.volt" %}
+
+            {#CreateUser#}
+            {% include "document/create_user.volt" %}
+
+            {#Update User#}
+            {% include "document/update_user.volt" %}
+
+            {#Detail User By UD#}
+            {% include "document/detail_user_by_id.volt" %}
+
+            {#Role List#}
+            {% include "document/list_role.volt" %}
+
+
         </div>
     </div>
 </section>

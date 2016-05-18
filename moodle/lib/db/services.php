@@ -1265,5 +1265,5 @@ $services = array(
         'shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE,
         'downloadfiles' => 1,
         'uploadfiles' => 1
-    ),
+    )
 );

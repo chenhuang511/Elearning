@@ -1,4 +1,4 @@
- <?php
+<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -242,7 +242,7 @@ if ($usernew = $userform->get_data()) {
 
     // Update user picture.
     if (empty($USER->newadminuser)) {
-         useredit_update_picture($usernew, $userform, $filemanageroptions);
+        useredit_update_picture($usernew, $userform, $filemanageroptions);
     }
 
     // Update mail bounces.

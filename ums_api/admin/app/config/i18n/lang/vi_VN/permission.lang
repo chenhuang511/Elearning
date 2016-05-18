@@ -1,0 +1,7 @@
+permission.lbl_permission = PHÂN QUYỀN
+permission.lbl_permissioninfo = THÔNG TIN PHÂN QUYỀN
+permission.lbl_key = Tên khóa
+permission.lbl_note = Mô tả
+permission.lbl_status = Trạng thái
+permission.plh_key = Nhập tên ở đây ...
+permission.plh_note = Nhập mô tả ở đây ...

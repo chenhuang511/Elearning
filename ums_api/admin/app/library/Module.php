@@ -19,6 +19,12 @@ class Module
             array("name" => "Xóa", "key" => "delete"),
             array("name" => "Thay đổi nhóm quyền", "key" => "role")
         ));
+        $permission["permission"] = array("name" => "Permission", "child" => array(
+            array("name" => "Xem danh sách", "key" => "view"),
+            array("name" => "Thêm mới", "key" => "add"),
+            array("name" => "Sửa", "key" => "update"),
+            array("name" => "Xóa", "key" => "delete")
+        ));
         return $permission;
     }
 
@@ -27,8 +33,10 @@ class Module
         $sidebar[] = array("name" => $langarr['sidebar.home'], "icon" => "zmdi zmdi-home", "key" => "loginsystem", "controller" => "/index/index");
         $sidebar[] = array("name" => $langarr['sidebar.account'], "icon" => "zmdi zmdi-account", "key" => "user,rolegroup", "controller" => "javascript:void(0)", "child" => array(
             array("name" => $langarr['sidebar.user'], "key" => "loginsystem", "controller" => "/user/index"),
-            array("name" => $langarr['sidebar.rolegroup'], "key" => "loginsystem", "controller" => "/rolegroup/index")
+            array("name" => $langarr['sidebar.rolegroup'], "key" => "loginsystem", "controller" => "/rolegroup/index"),
+            array("name" => $langarr['sidebar.permission'], "key" => "loginsystem", "controller" => "/permission/index")
         ));
+
         return $sidebar;
     }
 
