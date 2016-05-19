@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="fd816724-7b24-4c00-ba8c-5635553d361c" name="Local Hub" url="http://10.0.0.19">
+        <fileTransfer host="10.0.0.19" port="22" accessType="SFTP" password="dfdadfc6df86dfc5dfc1dfc7dfc3dfc0dfc4dfea" username="root">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
