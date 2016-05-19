@@ -1203,6 +1203,10 @@ class core_course_renderer extends plugin_renderer_base {
             'data-type' => self::COURSECAT_TYPE_COURSE,
         ));
 
+        $content .= html_writer::start_tag('div', array('class' => 'avatar'));
+        $content .= html_writer::start_tag('img', array('class' => 'img_avatar',"src"=>"http://www.edana.org/images/default-source/newsroom-images-library01/img-training-courses.jpg"));
+        $content .= html_writer::end_tag('div'); // .avatar
+
         $content .= html_writer::start_tag('div', array('class' => 'info'));
 
         // course name
