@@ -49,7 +49,15 @@ $functions = array(
 		'description' => 'Get mod page by identify',
 		'type'        => 'read',
 		'ajax'        => true
-	)
+	),
+	'local_mod_get_book_by_id' => array(
+		'classname'   => 'local_nccsoft_external',
+		'methodname'  => 'get_mod_book_by_id',
+		'classpath'   => 'local/external_service/externallib.php',
+		'description' => 'Get mod book by identify',
+		'type'        => 'read',
+		'ajax'        => true
+	),
 	'local_mod_get_quiz_name_by_course_id' => array(
 		'classname'   => 'local_nccsoft_external',
 		'methodname'  => 'get_quiz_name_by_course_id',
@@ -66,7 +74,8 @@ $services = array(
         'functions' => array (
         	'local_mod_get_label_by_id',
 			'local_mod_get_quiz_name_by_course_id',
-			'local_mod_get_page_by_id'
+			'local_mod_get_page_by_id',
+			'local_mod_get_book_by_id',
     	),
     	'enabled' => 1,
         'restrictedusers' => 0,

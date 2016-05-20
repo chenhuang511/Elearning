@@ -103,10 +103,17 @@ function get_remote_label_content($labelid, $options = []) {
 }
 
 
-function get_remote_page_content($labelid, $options = []) {
+function get_remote_page_content($pageid, $options = []) {
 	return moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
 		'token'=>HOST_TOKEN,
 		'function_name'=>'local_mod_get_page_by_id',
-		'params' => array('labelid' =>$labelid),
+		'params' => array('pageid' =>$pageid),
+	)));
+}
+function get_remote_book_content($bookid, $options = []) {
+	return moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
+		'token'=>HOST_TOKEN,
+		'function_name'=>'local_mod_get_book_by_id',
+		'params' => array('bookid' =>$bookid),
 	)));
 }
