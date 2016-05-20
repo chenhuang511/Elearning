@@ -224,12 +224,12 @@ class local_nccsoft_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_mod_book_by_id($pageid, $options = array()) {
+    public static function get_mod_book_by_id($bookid, $options = array()) {
         global $CFG, $DB;
 
         //validate parameter
         $params = self::validate_parameters(self::get_mod_book_by_id_parameters(),
-            array('bookid' => $pageid, 'options' => $options));
+            array('bookid' => $bookid, 'options' => $options));
 
 
         //retrieve the course
@@ -270,7 +270,7 @@ class local_nccsoft_external extends external_api {
      */
     public static function get_quiz_name_by_course_id_parameters() {
         return new external_function_parameters(
-            array('courseid' => new external_value(PARAM_INT, 'course id'),
+            array('quizid' => new external_value(PARAM_INT, 'quiz id'),
                 'options' => new external_multiple_structure (
                     new external_single_structure(
                         array(
@@ -300,15 +300,15 @@ class local_nccsoft_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_quiz_name_by_course_id($courseid, $options = array()) {
+    public static function get_quiz_name_by_course_id($quizid, $options = array()) {
         global $CFG, $DB;
 
         //validate parameter
         $params = self::validate_parameters(self::get_quiz_name_by_course_id_parameters(),
-            array('courseid' => $courseid, 'options' => $options));
+            array('quizid' => $quizid, 'options' => $options));
 
         //retrieve the quiz
-        $quiz =  $DB->get_record('quiz', array('course' => $params['courseid']), '*', MUST_EXIST);
+        $quiz =  $DB->get_record('quiz', array('id' => $params['quizid']), '*', MUST_EXIST);
         return $quiz;
     }
 
@@ -320,16 +320,14 @@ class local_nccsoft_external extends external_api {
      * @since Moodle 2.2
      */
     public static function get_quiz_name_by_course_id_returns() {
-        return new external_multiple_structure(
-            new external_single_structure(
-                array(
-                    'id' => new external_value(PARAM_INT, 'quiz id'),
-                    'course' => new external_value(PARAM_INT, 'course id'),
-                    'name' => new external_value(PARAM_TEXT, 'quiz name'),
-                    'intro' => new external_value(PARAM_RAW, 'intro information'),
-                    'introformat' => new external_value(PARAM_INT, 'intro format', VALUE_OPTIONAL),
-                    'timemodified' => new external_value(PARAM_INT, 'date time')
-                )
+        return  new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'quiz id'),
+                'course' => new external_value(PARAM_INT, 'course id'),
+                'name' => new external_value(PARAM_TEXT, 'quiz name'),
+                'intro' => new external_value(PARAM_RAW, 'intro information'),
+                'introformat' => new external_value(PARAM_INT, 'intro format', VALUE_OPTIONAL),
+                'timemodified' => new external_value(PARAM_INT, 'date time')
             )
         );
     }

@@ -41,35 +41,42 @@ foreach($course as $key => $section) {
     if(isset($section->summary) && !empty($section->summary)) {
         $html .= html_writer::tag('p',$section->summary, array('class' => 'course-section-summary'));
 	}
-
     $coursemodule = $section->modules;
-    $labelcontent = $pagecontent = $bookcontent= null;
-   	if(isset($coursemodule[0]->instance) && !is_null($coursemodule[0]->instance)) {
-		$labelcontent = get_remote_label_content($coursemodule[0]->instance, ['function_name' => 'local_mod_get_label_by_id']);
-		$pagecontent = get_remote_page_content($coursemodule[0]->instance, ['function_name' => 'local_mod_get_page_by_id']);
-        $bookcontent = get_remote_book_content($coursemodule[0]->instance, ['function_name' => 'local_mod_get_book_by_id']);
-	}
 
-    if(!is_null($labelcontent)) {
-        $html .= $OUTPUT->box_start('course-label-box', "course_label_box_{$labelcontent->id}");
-        if(isset($labelcontent->intro) && !empty($labelcontent->intro)) {
-            $html .= html_writer::tag('div', $labelcontent->intro, array('class' => 'label-intro'));
-		}
-        $html .= $OUTPUT->box_end();
-    }
-    if(!is_null($pagecontent)) {
-        $html .= $OUTPUT->box_start('course-label-box', "course_label_box_{$pagecontent->id}");
-        if(isset($pagecontent->intro) && !empty($pagecontent->intro)) {
-            $html .= html_writer::tag('div', $pagecontent->intro, array('class' => 'label-intro'));
+    foreach($coursemodule as $module){
+        $content = null;
+        if($module->modname=="page") {
+            $content = get_remote_page_content($module->instance, ['function_name' => 'local_mod_get_page_by_id']);
+            $html .= $OUTPUT->box_start('course-page-box', "course_page_box_{$content->id}");
+            if(isset($content->intro) && !empty($content->intro)) {
+                $html .= html_writer::tag('div', $content->intro, array('class' => 'page-intro'));
+            }
+            $html .= $OUTPUT->box_end();
         }
-        $html .= $OUTPUT->box_end();
-    }
-    if(!is_null($bookcontent)) {
-        $html .= $OUTPUT->box_start('course-label-box', "course_label_box_{$bookcontent->id}");
-        if(isset($bookcontent->intro) && !empty($bookcontent->intro)) {
-            $html .= html_writer::tag('div', $bookcontent->intro, array('class' => 'label-intro'));
+        else if($module->modname=="quiz"){
+            $content = get_remote_quiz_content($coursemodule[0]->instance, ['function_name' => 'local_mod_get_quiz_name_by_course_id']);
+            $html .= $OUTPUT->box_start('course-page-box', "course_page_box_{$content->id}");
+            if(isset($content->name) && !empty($content->name)) {
+                $html .= html_writer::tag('div', $content->name, array('class' => 'page-intro'));
+            }
+            $html .= $OUTPUT->box_end();
         }
-        $html .= $OUTPUT->box_end();
+        else if($module->modname=="label"){
+            $content = get_remote_label_content($module->instance, ['function_name' => 'local_mod_get_label_by_id']);
+            $html .= $OUTPUT->box_start('course-page-box', "course_page_box_{$content->id}");
+            if(isset($content->intro) && !empty($content->intro)) {
+                $html .= html_writer::tag('div', $content->intro, array('class' => 'page-intro'));
+            }
+            $html .= $OUTPUT->box_end();
+        }
+        else if($module->modname=="book"){
+            $content = get_remote_book_content($module->instance, ['function_name' => 'local_mod_get_book_by_id']);
+            $html .= $OUTPUT->box_start('course-page-box', "course_page_box_{$content->id}");
+            if(isset($content->intro) && !empty($content->intro)) {
+                $html .= html_writer::tag('div', $content->intro, array('class' => 'page-intro'));
+            }
+            $html .= $OUTPUT->box_end();
+        }
     }
 
     $html .= $OUTPUT->box_end();
