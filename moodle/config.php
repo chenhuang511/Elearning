@@ -7,9 +7,9 @@ $CFG = new stdClass();
 $CFG->dbtype    = 'mysqli';
 $CFG->dblibrary = 'native';
 $CFG->dbhost    = 'localhost';
-$CFG->dbname    = 'moodle';
+$CFG->dbname    = 'moodleclient';
 $CFG->dbuser    = 'root';
-$CFG->dbpass    = 'rootroot';
+$CFG->dbpass    = '';
 
 $CFG->prefix    = 'mdl_';
 $CFG->dboptions = array (
@@ -18,8 +18,8 @@ $CFG->dboptions = array (
   'dbsocket' => '',
 );
 
-$CFG->wwwroot   = 'http://192.168.1.110';
-$CFG->dataroot  = 'C:\\AppServ\\moodledata';
+$CFG->wwwroot   = 'http://10.0.0.29:8080/moodle';
+$CFG->dataroot  = 'C:\wamp\clientdata';
 $CFG->admin     = 'admin';
 
 $CFG->directorypermissions = 0777;
@@ -27,7 +27,7 @@ $CFG->directorypermissions = 0777;
 $CFG->loginredir = "{$CFG->wwwroot}/my";
 $CFG->logoutredir = "{$CFG->wwwroot}";
 
-$CFG->opensslcnf = 'C:\\AppServ\\Apache24\\conf\\openssl.cnf';
+$CFG->opensslcnf = 'C:\wamp\bin\apache\apache2.4.9\conf\openssl.cnf';
 
 //$CFG->debug = 6143; 
 //$CFG->debugdisplay = 1;
