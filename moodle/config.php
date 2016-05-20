@@ -11,23 +11,17 @@ $CFG->dbname    = 'moodleclient';
 $CFG->dbuser    = 'root';
 $CFG->dbpass    = '';
 
-$CFG->prefix    = 'mdl_';
-$CFG->dboptions = array (
-  'dbpersist' => 0,
-  'dbport' => '',
-  'dbsocket' => '',
-);
+$CFG->opensslcnf = 'D:\Project\Teca_pro\User_mangement\Elearning\moodle\openssl.cnf';
 
 $CFG->wwwroot   = 'http://10.0.0.29:8080/moodle';
 $CFG->dataroot  = 'C:\wamp\clientdata';
+
 $CFG->admin     = 'admin';
 
 $CFG->directorypermissions = 0777;
 
 $CFG->loginredir = "{$CFG->wwwroot}/my";
 $CFG->logoutredir = "{$CFG->wwwroot}";
-
-$CFG->opensslcnf = 'C:\wamp\bin\apache\apache2.4.9\conf\openssl.cnf';
 
 //$CFG->debug = 6143; 
 //$CFG->debugdisplay = 1;

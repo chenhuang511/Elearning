@@ -4,9 +4,10 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->dirroot.'/lib/zend/Zend/Http/Client.php');
 require_once($CFG->dirroot.'/mnet/service/enrol/locallib.php');
 
-define('MOBILE_SERVICE_TOKEN', 'ac52a223f8589b3f26fa456a5dc20bde');
+/*define('MOBILE_SERVICE_TOKEN', 'ac52a223f8589b3f26fa456a5dc20bde');
 define('NCC_SERVICE_TOKEN', 'a75634b66a82dd8f42f99baedf2690a1');
-define('NCC_DOMAIN_NAME', 'http://192.168.1.252');
+define('NCC_DOMAIN_NAME', 'http://192.168.1.252');*/
+
 
 function get_remote_enrol_course_by_host() {
         global $DB;
@@ -60,23 +61,23 @@ function moodle_webservice_client($options = []) {
 }
 
 function get_remote_courses($options = []) {
-    return moodle_webservice_client(array_merge($options, array('domain' => NCC_DOMAIN_NAME, 
-    									  'token'=>MOBILE_SERVICE_TOKEN,
+    return moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
+    									  'token'=>HOST_TOKEN,
     									  'function_name'=>'core_course_get_courses'
     )));
 }
 
 function get_remote_course_content($courseid, $options=[]) {
-    return moodle_webservice_client(array_merge($options, array('domain' => NCC_DOMAIN_NAME, 
-    									  'token'=>MOBILE_SERVICE_TOKEN,
+    return moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
+    									  'token'=>HOST_TOKEN,
     									  'function_name'=>'core_course_get_contents',
     									  'params' => array('courseid' => $courseid),	
     )));
 }
 
 function get_remote_course_category($ccatid, $options=[]) {
-	return moodle_webservice_client(array_merge($options, array('domain' => NCC_DOMAIN_NAME, 
-    									  'token'=>NCC_SERVICE_TOKEN,
+	return moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
+    									  'token'=>HOST_TOKEN,
     									  'function_name'=>'core_course_get_categories',
     									  'params' => array('criteria[0][key]' => 'id', 'criteria[0][value]' => $ccatid),	
     )));
@@ -86,17 +87,41 @@ function get_remote_course_category($ccatid, $options=[]) {
  * @param int $cmid the course module id
  */
 function get_remote_course_module($cmid, $options = []) {
-    return moodle_webservice_client(array_merge($options, array('domain' => NCC_DOMAIN_NAME, 
-    									  'token'=>MOBILE_SERVICE_TOKEN,
+    return moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
+    									  'token'=>HOST_TOKEN,
     									  'function_name'=>'core_course_get_course_module',
     									  'params' => array('cmid' =>$cmid),	
     )));
 }
 
 function get_remote_label_content($labelid, $options = []) {
-    return moodle_webservice_client(array_merge($options, array('domain' => NCC_DOMAIN_NAME, 
-    									  'token'=>MOBILE_SERVICE_TOKEN,
+    return moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
+    									  'token'=>HOST_TOKEN,
     									  'function_name'=>'local_mod_get_label_by_id',
     									  'params' => array('labelid' =>$labelid),	
     )));
+}
+
+
+function get_remote_page_content($pageid, $options = []) {
+	return moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
+		'token'=>HOST_TOKEN,
+		'function_name'=>'local_mod_get_page_by_id',
+		'params' => array('pageid' =>$pageid),
+	)));
+}
+function get_remote_book_content($bookid, $options = []) {
+	return moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
+		'token'=>HOST_TOKEN,
+		'function_name'=>'local_mod_get_book_by_id',
+		'params' => array('bookid' =>$bookid),
+	)));
+}
+
+function get_remote_quiz_content($quizid, $options = []) {
+	return moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
+		'token'=>HOST_TOKEN,
+		'function_name'=>'local_mod_get_quiz_name_by_course_id',
+		'params' => array('quizid' =>$quizid),
+	)));
 }
