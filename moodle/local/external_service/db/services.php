@@ -42,14 +42,6 @@ $functions = array(
         'type'        => 'read',
         'ajax'        => true
     ),
-	'local_mod_get_quiz_name_by_course_id' => array(
-		'classname'   => 'local_nccsoft_external',
-		'methodname'  => 'get_quiz_name_by_course_id',
-		'classpath'   => 'local/external_service/externallib.php',
-		'description' => 'Get mod quizz name by courseid',
-		'type'        => 'read',
-		'ajax'        => true
-	),
 );
 
 $services = array(
