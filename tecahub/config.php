@@ -49,7 +49,7 @@ $CFG->dboptions = array(
     'dbpersist' => false,       // should persistent database connections be
                                 //  used? set to 'false' for the most stable
                                 //  setting, 'true' can improve performance
-                                //  sometimes
+                                //  sometimes.
     'dbsocket'  => false,       // should connection via UNIX socket be used?
                                 //  if you set it to 'true' or custom path
                                 //  here set dbhost to 'localhost',
