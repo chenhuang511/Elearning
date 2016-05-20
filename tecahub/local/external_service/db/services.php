@@ -42,13 +42,21 @@ $functions = array(
         'type'        => 'read',
         'ajax'        => true
     ),
-
+	'local_mod_get_page_by_id' => array(
+		'classname'   => 'local_nccsoft_external',
+		'methodname'  => 'get_mod_page_by_id',
+		'classpath'   => 'local/external_service/externallib.php',
+		'description' => 'Get mod page by identify',
+		'type'        => 'read',
+		'ajax'        => true
+	)
 );
 
 $services = array(
     'NccSoft External Service'  => array(
         'functions' => array (
         	'local_mod_get_label_by_id',
+			'local_mod_get_page_by_id'
     	),
     	'enabled' => 1,
         'restrictedusers' => 0,

@@ -8,7 +8,6 @@ $sectionid   = optional_param('sectionid', 0, PARAM_INT);
 $section     = optional_param('section', 0, PARAM_INT);
 $coursemodule = null;
 $html = '';
-
 $course = get_remote_course_content($courseid, ['function_name' => 'core_course_get_contents']);
 
 $PAGE->set_title($course[0]?$course[0]->name:"nccsoft vietnam");
@@ -16,7 +15,9 @@ $PAGE->set_heading($course[0]?$course[0]->name:"nccsoft vietnam");
 
 $html .= $OUTPUT->header();
 
+
 $html .= $OUTPUT->box_start('course-detail', "course_detail_{$courseid}");
+
 if(isset($course[0]->name) && !empty($course[0]->name)) {
     $html .= $OUTPUT->heading($course[0]->name);
 }
@@ -43,10 +44,10 @@ foreach($course as $key => $section) {
 
     $coursemodule = $section->modules;
     $labelcontent = null;
-
    	if(isset($coursemodule[0]->instance) && !is_null($coursemodule[0]->instance)) {
 		$labelcontent = get_remote_label_content($coursemodule[0]->instance, ['function_name' => 'local_mod_get_label_by_id']);
 	}
+
 
     if(!is_null($labelcontent)) {
         $html .= $OUTPUT->box_start('course-label-box', "course_label_box_{$labelcontent->id}");
