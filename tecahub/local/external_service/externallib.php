@@ -158,9 +158,9 @@ class local_nccsoft_external extends external_api {
         $params = self::validate_parameters(self::get_quiz_name_by_course_id_parameters(),
             array('courseid' => $courseid, 'options' => $options));
 
-
-        //retrieve the course
-        return $DB->get_record('quiz', array('id' => $params['courseid']), '*', MUST_EXIST);
+        //retrieve the quiz
+        $quiz =  $DB->get_record('quiz', array('course' => $params['courseid']), '*', MUST_EXIST);
+        return $quiz;
     }
 
     /**
