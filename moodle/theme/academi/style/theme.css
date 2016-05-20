@@ -36,7 +36,7 @@ a:focus {
 		margin-bottom: 0;
 }
 #header .header-top {
-		background: #88b77b;
+		background: #097eaf;
 }
 #header .header-top .navbar {
 		margin-bottom: 0;
@@ -94,7 +94,7 @@ a:focus {
 }
 #header .header-top .navbar .nav > li > a:hover,
 #header .header-top .navbar .nav > li > a:focus {
-		background: #689F59;
+		background: #22789C;
 }
 #header .header-top .navbar .nav > .active > a,
 #header .header-top .navbar .nav > .active > a:hover,
@@ -107,14 +107,14 @@ a:focus {
 #header .header-top .navbar .nav li.dropdown.open > .dropdown-toggle,
 #header .header-top .navbar .nav li.dropdown.active > .dropdown-toggle,
 #header .header-top .navbar .nav li.dropdown.open.active > .dropdown-toggle {
-		background: #689F59;
+		background: #22789C;
 }
 #header .header-top .navbar .nav .dropdown-menu::before,
 #header .header-top .navbar .nav .dropdown-menu::after {
 		border: 0;
 }
 #header .header-top .navbar .nav .dropdown-menu {
-		background: #689F59;
+		background: #22789C;
 		padding: 0;
 		border: 0;
 		-webkit-border-radius: 0;
@@ -150,10 +150,10 @@ a:focus {
 #header .header-top .navbar .nav .dropdown-menu > li > a:focus,
 #header .header-top .navbar .nav .dropdown-submenu:hover > a,
 #header .header-top .navbar .nav .dropdown-submenu:focus > a {
-		background: #88b77b;
+		background: #097eaf;
 }
 #header .header-top .navbar .nav-collapse.active {
-		border-top-color: #689F59;
+		border-top-color: #22789C;
 }
 #header .header-top .usermenu .login {
 		color: #fff;
@@ -179,7 +179,7 @@ a:focus {
 }
 
 .jsenabled #header .usermenu .moodle-actionmenu.show {
-		background: #689f59;
+		background: #22789C;
 }
 .jsenabled #header .usermenu .moodle-actionmenu > .menubar {
 		margin: 0;
@@ -247,7 +247,7 @@ a:focus {
 		#header .header-top .navbar .nav-collapse.active .nav .dropdown-menu .dropdown-submenu.open > a,
 		.navbar .nav-collapse.in .nav .dropdown-submenu.open>a,
 		.navbar .nav-collapse.in .nav .dropdown-menu .dropdown-submenu.open>a {
-				background: #88b77b;
+				background: #097eaf;
 		}
 		#header .header-top .navbar .nav .dropdown-menu li a {
 				padding-left: 30px;
@@ -558,7 +558,7 @@ a:focus {
 		line-height: 32px;
 }
 #footer .footer-main .foot-links ul li a:hover {
-		color: #88b77b;
+		color: #097eaf;
 		text-decoration: none;
 }
 #footer .footer-main .contact-info {
@@ -568,7 +568,7 @@ a:focus {
 		margin-bottom: 18px;
 }
 #footer .footer-main .contact-info p a {
-		color: #88b77b;
+		color: #097eaf;
 }
 #footer .social-media {
 		padding: 5px 0 0;
@@ -626,7 +626,7 @@ a:focus {
 		text-align: center;
 }
 #footer .footer-bootom p {
-		color: #88b77b;
+		color: #097eaf;
 		margin-bottom: 0;
 }
 @media (max-width: 767px) {
@@ -695,7 +695,7 @@ legend + * {
 }
 .breadcrumb > li > .divider {
 		font-size: 10px;
-		color: #88b77b;
+		color: #097eaf;
 }
 input, button, select, textarea {
 		font-family: Century Gothic, Arial, Helvetica, sans-serif;
@@ -777,7 +777,7 @@ input[type="search"]:focus,
 input[type="tel"]:focus,
 input[type="color"]:focus,
 .uneditable-input:focus {
-		border-color: #88b77b;
+		border-color: #097eaf;
 		border-color: rgba(136, 183, 123, .5);
 		-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(205, 255, 191, 1);
        -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(205, 255, 191, 1);
@@ -794,7 +794,7 @@ input[type="reset"],
 		font-family: Arial, Helvetica, sans-serif;
 		color: #fff;
 		text-shadow: none;
-		background: #88b77b;
+		background: #097eaf;
 		padding: 11px 16px;
 		border: 0;
 		-webkit-border-radius: 0;
@@ -1008,7 +1008,7 @@ div.backup-section + form,
 }
 .block .minicalendar .today a {
 		color: #fff;
-		background: #88b77b;
+		background: #097eaf;
 }
 @media (min-width: 768px) and (max-width: 979px) {
 		.block_calendar_month .content,
@@ -1058,7 +1058,7 @@ div.backup-section + form,
 		margin: 0;
 }
 .courses.frontpage-course-list-all .coursebox .info .coursename a {
-  	color: #6ea15f;
+  	color: #0e73e6;
 		background: none;
 		padding: 0;
 }
@@ -1105,7 +1105,7 @@ div.backup-section + form,
 .course_category_tree.frontpage-category-names .category > .info > .categoryname a {
 		font-weight: normal;
 		font-size: 18px;
-		color: #88b77b;
+		color: #097eaf;
 }
 .course_category_tree.frontpage-category-names .category > .info > .categoryname {
 		line-height: 20px;
@@ -1287,7 +1287,7 @@ div.backup-section + form,
 		}
 }
 .course_category_tree .category > .info {
-		background: #88b77b;
+		background: #097eaf;
 		border: 0;
 		-webkit-border-radius: 0;
 			 -moz-border-radius: 0;
@@ -1460,7 +1460,7 @@ div.backup-section + form,
 		}
 		.coursebox .content .summary,
 		.coursebox .content .coursecat {
-				/*padding: 0 0 0 125px;*/
+				padding: 0 0 0 125px;
 		}
 		.dir-rtl .coursebox .content .summary,
 		.dir-rtl .coursebox .content .coursecat {
@@ -1475,16 +1475,9 @@ div.backup-section + form,
 		}
 }
 @media (min-width: 768px) {
-	.coursebox .avatar{
-		max-width: 150px;
-		overflow: hidden;
-	}
-	.coursebox .img_avatar{
-		width: 150px;
-	}
 		.coursebox .content .summary,
 		.coursebox .content .coursecat {
-				/*padding: 0 0 0 130px;*/
+				padding: 0 0 0 130px;
 		}
 		.dir-rtl .coursebox .content .summary,
 		.dir-rtl .coursebox .content .coursecat {
@@ -1581,7 +1574,7 @@ table.flexible thead tr th,
 table.rolecap thead tr th,
 .forumheaderlist thead tr th {
 		color: #fff;
-		background: #88b77b;
+		background: #097eaf;
 }
 table.flexible thead th img, 
 .generaltable thead th img {
@@ -1782,4 +1775,3 @@ table#permissions tbody tr:hover > th {
 .message .messagearea .messagesend .messagesendbox {
 		box-sizing: border-box;
 }
-.course-item{width: 150px}

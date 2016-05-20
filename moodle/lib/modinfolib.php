@@ -436,7 +436,7 @@ class course_modinfo {
      */
     public function __construct($course, $userid) {
         global $CFG, $COURSE, $SITE, $DB;
-
+        
         if (!isset($course->cacherev)) {
             // We require presence of property cacherev to validate the course cache.
             // No need to clone the $COURSE or $SITE object here because we clone it below anyway.
@@ -603,6 +603,7 @@ class course_modinfo {
         if (empty($course->id)) {
             throw new coding_exception('Object $course is missing required property \id\'');
         }
+        
         // Ensure object has all necessary fields.
         foreach (self::$cachedfields as $key) {
             if (!isset($course->$key)) {

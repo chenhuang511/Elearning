@@ -6664,7 +6664,10 @@ class context_coursecat extends context {
         }
 
         if (!$record = $DB->get_record('context', array('contextlevel'=>CONTEXT_COURSECAT, 'instanceid'=>$instanceid))) {
-            if ($category = $DB->get_record('course_categories', array('id'=>$instanceid), 'id,parent', $strictness)) {
+        	$category = get_remote_course_category($instanceid);
+        	$category = $category[0];
+            if($category) {
+        	//if ($category = $DB->get_record('course_categories', array('id'=>$instanceid), 'id,parent', $strictness)) {
                 if ($category->parent) {
                     $parentcontext = context_coursecat::instance($category->parent);
                     $record = context::insert_context_record(CONTEXT_COURSECAT, $category->id, $parentcontext->path);
@@ -6916,9 +6919,15 @@ class context_course extends context {
         if ($context = context::cache_get(CONTEXT_COURSE, $instanceid)) {
             return $context;
         }
-
+        
         if (!$record = $DB->get_record('context', array('contextlevel'=>CONTEXT_COURSE, 'instanceid'=>$instanceid))) {
-            if ($course = $DB->get_record('course', array('id'=>$instanceid), 'id,category', $strictness)) {
+        	$course = new StdClass();
+        	try {
+        		$course = $DB->get_record('course', array('id'=>$instanceid), 'id,category', $strictness);
+        	} catch(Exception $e) {
+        		$course = $DB->get_record('mnetservice_enrol_courses', array('remoteid'=>$instanceid), 'remoteid as id,categoryid as category', $strictness);
+        	}
+            if ($course->id) {
                 if ($course->category) {
                     $parentcontext = context_coursecat::instance($course->category);
                     $record = context::insert_context_record(CONTEXT_COURSE, $course->id, $parentcontext->path);

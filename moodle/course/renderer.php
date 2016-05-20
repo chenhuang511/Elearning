@@ -1203,14 +1203,10 @@ class core_course_renderer extends plugin_renderer_base {
             'data-type' => self::COURSECAT_TYPE_COURSE,
         ));
 
-        $content .= html_writer::start_tag('div', array('class' => 'avatar'));
-        $content .= html_writer::start_tag('img', array('class' => 'img_avatar',"src"=>"http://www.edana.org/images/default-source/newsroom-images-library01/img-training-courses.jpg"));
-        $content .= html_writer::end_tag('div'); // .avatar
-
         $content .= html_writer::start_tag('div', array('class' => 'info'));
 
         // course name
-        $coursename = $chelper->get_course_formatted_name($course);
+        $coursename = $chelper->get_course_formatted_name($course);      
         $coursenamelink = html_writer::link(new moodle_url('/course/view.php', array('id' => $course->id)),
                                             $coursename, array('class' => $course->visible ? '' : 'dimmed'));
         $content .= html_writer::tag($nametag, $coursenamelink, array('class' => 'coursename'));
@@ -1227,7 +1223,7 @@ class core_course_renderer extends plugin_renderer_base {
             }
         }
         $content .= html_writer::end_tag('div'); // .moreinfo
-
+        
         // print enrolmenticons
         if ($icons = enrol_get_course_info_icons($course)) {
             $content .= html_writer::start_tag('div', array('class' => 'enrolmenticons'));
@@ -1343,7 +1339,7 @@ class core_course_renderer extends plugin_renderer_base {
      */
     protected function coursecat_courses(coursecat_helper $chelper, $courses, $totalcount = null) {
         global $CFG;
-        if ($totalcount === null) {
+        if ($totalcount == null) {
             $totalcount = count($courses);
         }
         if (!$totalcount) {
@@ -1405,6 +1401,7 @@ class core_course_renderer extends plugin_renderer_base {
             if ($coursecount >= count($courses)) {
                 $classes .= ' last';
             }
+            
             $content .= $this->coursecat_coursebox($chelper, $course, $classes);
         }
 
@@ -2067,7 +2064,9 @@ class core_course_renderer extends plugin_renderer_base {
      */
     public function frontpage_available_courses() {
         global $CFG;
+
         require_once($CFG->libdir. '/coursecatlib.php');
+        require_once($CFG->dirroot . '/course/remote/remotelib.php');
 
         $chelper = new coursecat_helper();
         $chelper->set_show_courses(self::COURSECAT_SHOW_COURSES_EXPANDED)->
@@ -2435,6 +2434,7 @@ class coursecat_helper {
         if (!empty($this->searchcriteria['search'])) {
             $summary = highlight($this->searchcriteria['search'], $summary);
         }
+        
         return $summary;
     }
 
@@ -2450,6 +2450,7 @@ class coursecat_helper {
         if (!isset($options['context'])) {
             $options['context'] = context_course::instance($course->id);
         }
+        
         $name = format_string(get_course_display_name_for_list($course), true, $options);
         if (!empty($this->searchcriteria['search'])) {
             $name = highlight($this->searchcriteria['search'], $name);
