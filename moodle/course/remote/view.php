@@ -6,61 +6,59 @@ require_once('remotelib.php');
 $courseid = optional_param('remoteid', 0, PARAM_INT);
 $sectionid   = optional_param('sectionid', 0, PARAM_INT);
 $section     = optional_param('section', 0, PARAM_INT);
+$coursemodule = null;
+$html = '';
 
-$options = [];
+$course = get_remote_course_content($courseid, ['function_name' => 'core_course_get_contents']);
 
-$options['function_name'] = 'core_course_get_contents';
-
-$course = get_remote_course_content($courseid, $options);
-
-$coursemodules = null;
-//var_dump($course);die;
-
+$PAGE->set_title($course[0]?$course[0]->name:"nccsoft vietnam");
 $PAGE->set_heading($course[0]?$course[0]->name:"nccsoft vietnam");
-echo $OUTPUT->header();
 
-echo "<div class='course-detail'>";
+$html .= $OUTPUT->header();
+
+$html .= $OUTPUT->box_start('course-detail', "course_detail_{$courseid}");
 if(isset($course[0]->name) && !empty($course[0]->name)) {
-	echo "<h2 class='course-name'>" . $course[0]->name . "</h2>";
+    $html .= $OUTPUT->heading($course[0]->name);
 }
 if(isset($course[0]->summary) && !empty($course[0]->summary)) {
-	echo "<p class='course-sumary'>".$course[0]->summary ."</p>";
+    $html .= html_writer::tag('p', $course[0]->summary, array('class' => 'course-sumary'));
 }
+
+$html .= $OUTPUT->box_end();
 
 foreach($course as $key => $section) {
-	if ($key == 0) continue;
+    if( $key == 0) continue;
 
-	echo "<div class='course-section'>";
-	if(isset($section->name) && !empty($section->name)) {
-		echo "<h3 class='course-section-name'>" . $section->name . "</h3>";
-	}
-	if(isset($section->summary) && !empty($section->summary)) {
-		echo "<p class='course-section-sumary'>" . $section->summary . "</p>";
-	}
+    $html .= $OUTPUT->box_start('course-section', "course_section_{$key}");
 
-//	echo "course";
-//	echo "<pre>";
-//	print_r($section);
-//	echo "</pre>";
+    $attributes = array('title' => $section->name);
+    $sectionurl = new moodle_url('/course/remote/view.php', array('section' => $key));
+    $link = html_writer::link($sectionurl,$section->name,$attributes);
 
-	$coursemodules = $section->modules;
-	$labelcontent = null;
+    $html .= $OUTPUT->heading($link,3,'course-section-name');
 
-	if(isset($coursemodules[0]->instance) && !is_null($coursemodules[0]->instance)) {
-		$labelcontent = get_remote_label_content($coursemodules[0]->instance, ['function_name' => 'local_mod_get_label_by_id']);
+    if(isset($section->summary) && !empty($section->summary)) {
+        $html .= html_writer::tag('p',$section->summary, array('class' => 'course-section-summary'));
 	}
 
-	if(!is_null($labelcontent)) {
+    $coursemodule = $section->modules;
+    $labelcontent = null;
 
-		echo "<div class='course-label-box'>";
-		if(isset($labelcontent->intro) && !empty($labelcontent->intro)) {
-			echo "<div class='label-intro'>" . $labelcontent->intro . "</div>";
+   	if(isset($coursemodule[0]->instance) && !is_null($coursemodule[0]->instance)) {
+		$labelcontent = get_remote_label_content($coursemodule[0]->instance, ['function_name' => 'local_mod_get_label_by_id']);
+	}
+
+    if(!is_null($labelcontent)) {
+        $html .= $OUTPUT->box_start('course-label-box', "course_label_box_{$labelcontent->id}");
+        if(isset($labelcontent->intro) && !empty($labelcontent->intro)) {
+            $html .= html_writer::tag('div', $labelcontent->intro, array('class' => 'label-intro'));
 		}
-		echo "</div>";
-	}
-	echo "</div>";
+        $html .= $OUTPUT->box_end();
+    }
+
+    $html .= $OUTPUT->box_end();
 }
 
-echo "</div>";
+$html .= $OUTPUT->footer();
 
-echo $OUTPUT->footer();
+echo $html;

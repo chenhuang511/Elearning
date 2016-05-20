@@ -1460,7 +1460,7 @@ div.backup-section + form,
 		}
 		.coursebox .content .summary,
 		.coursebox .content .coursecat {
-				padding: 0 0 0 125px;
+				/*padding: 0 0 0 125px;*/
 		}
 		.dir-rtl .coursebox .content .summary,
 		.dir-rtl .coursebox .content .coursecat {
@@ -1475,9 +1475,16 @@ div.backup-section + form,
 		}
 }
 @media (min-width: 768px) {
+	.coursebox .avatar{
+		max-width: 150px;
+		overflow: hidden;
+	}
+	.coursebox .img_avatar{
+		width: 150px;
+	}
 		.coursebox .content .summary,
 		.coursebox .content .coursecat {
-				padding: 0 0 0 130px;
+				/*padding: 0 0 0 130px;*/
 		}
 		.dir-rtl .coursebox .content .summary,
 		.dir-rtl .coursebox .content .coursecat {
@@ -1775,3 +1782,4 @@ table#permissions tbody tr:hover > th {
 .message .messagearea .messagesend .messagesendbox {
 		box-sizing: border-box;
 }
+.course-item{width: 150px}

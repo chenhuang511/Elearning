@@ -41,7 +41,7 @@ echo $OUTPUT->doctype() ?>
 <html <?php echo $OUTPUT->htmlattributes(); ?>>
 <head>
     <title><?php echo $OUTPUT->page_title(); ?></title>
-    <link rel="shortcut icon" href="<?php echo $OUTPUT->favicon(); ?>" />
+    <link rel="shortcut icon" href="<?php echo $OUTPUT->favicon(); ?>"/>
     <?php echo $OUTPUT->standard_head_html() ?>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
@@ -50,20 +50,20 @@ echo $OUTPUT->doctype() ?>
 
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
 
-<?php  require_once(dirname(__FILE__) . '/includes/header.php');  ?>
+<?php require_once(dirname(__FILE__) . '/includes/header.php'); ?>
 <?php
-	$PAGE->requires->js('/theme/academi/javascript/bootstrap-carousel.js');
-	$PAGE->requires->js('/theme/academi/javascript/bootstrap-transition.js');
+$PAGE->requires->js('/theme/academi/javascript/bootstrap-carousel.js');
+$PAGE->requires->js('/theme/academi/javascript/bootstrap-transition.js');
 ?>
 <div class="container-fluid">
-   <?php
-         $toggleslideshow = theme_academi_get_setting('toggleslideshow');
-        if ($toggleslideshow == 1) {
-            require_once(dirname(__FILE__) . '/includes/slideshow.php');
-        }else{
-								    echo "<br/><br/>";
-								} 
-        ?>
+    <?php
+    $toggleslideshow = theme_academi_get_setting('toggleslideshow');
+    if ($toggleslideshow == 1) {
+        require_once(dirname(__FILE__) . '/includes/slideshow.php');
+    } else {
+        echo "<br/><br/>";
+    }
+    ?>
 </div>
 <!--Slider-->
 
@@ -82,18 +82,18 @@ echo $OUTPUT->doctype() ?>
     <div id="page-content" class="row-fluid">
 
         <div id="<?php echo $regionbsid ?>" class="span9">
-					<?php
-						echo $OUTPUT->course_content_header();
-						echo $OUTPUT->main_content();
-						echo $OUTPUT->course_content_footer();
-          ?>
+            <?php
+            echo $OUTPUT->course_content_header();
+            echo $OUTPUT->main_content();
+            echo $OUTPUT->course_content_footer();
+            ?>
         </div>
-				<?php echo $OUTPUT->blocks('side-pre', 'span3'); ?>
+        <?php echo $OUTPUT->blocks('side-pre', 'span3'); ?>
 
     </div>
 
 </div>
 
-<?php  require_once(dirname(__FILE__) . '/includes/footer.php');  ?>   
+<?php require_once(dirname(__FILE__) . '/includes/footer.php'); ?>
 </body>
 </html>
