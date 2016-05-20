@@ -14,6 +14,7 @@ $options['function_name'] = 'core_course_get_contents';
 $course = get_remote_course_content($courseid, $options);
 
 $coursemodules = null;
+//var_dump($course);die;
 
 $PAGE->set_heading($course[0]?$course[0]->name:"nccsoft vietnam");
 echo $OUTPUT->header();

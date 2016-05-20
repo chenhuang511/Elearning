@@ -3,9 +3,9 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->dirroot . '/lib/zend/Zend/Http/Client.php');
 
-define('MOBILE_SERVICE_TOKEN', 'ac52a223f8589b3f26fa456a5dc20bde');
-define('NCC_SERVICE_TOKEN', 'a75634b66a82dd8f42f99baedf2690a1');
-define('NCC_DOMAIN_NAME', 'http://192.168.1.252');
+define('MOBILE_SERVICE_TOKEN', 'b873223d07fa8adb1eed6abe53ce9bd0');
+define('NCC_SERVICE_TOKEN', '37fce0f9524ba6a641ca6788cee62f9e');
+define('NCC_DOMAIN_NAME', 'http://10.0.0.19:9333/');
 
 function get_remote_course_content($courseid, $options=[]) {
     if(isset($options['function_name']) && $options['function_name'] === 'core_course_get_contents') {

@@ -109,4 +109,80 @@ class local_nccsoft_external extends external_api {
                 )
         );
     }
+
+
+    /**
+     * Hanv 20/05/2016
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.9 Options available
+     * @since Moodle 2.2
+     *
+     */
+    public static function get_quiz_name_by_course_id_parameters() {
+        return new external_function_parameters(
+            array('courseid' => new external_value(PARAM_INT, 'course id'),
+                'options' => new external_multiple_structure (
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHANUM,
+                                'The expected keys (value format) are:
+                                                excludemodules (bool) Do not return modules, return only the sections structure
+                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
+                                                sectionid (int) Return only this section
+                                                sectionnumber (int) Return only this section with number (order)
+                                                cmid (int) Return only this module information (among the whole sections structure)
+                                                modname (string) Return only modules with this name "label, forum, etc..."
+                                                modid (int) Return only the module with this id (to be used with modname'),
+                            'value' => new external_value(PARAM_RAW, 'the value of the option,
+                                                                    this param is personaly validated in the external function.')
+                        )
+                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+            )
+        );
+    }
+
+    /**
+     * Get Quiz name
+     *
+     * @param int $courseid course id
+     * @param array $options Options for filtering the results, used since Moodle 2.9
+     * @return array
+     * @since Moodle 2.9 Options available
+     * @since Moodle 2.2
+     */
+    public static function get_quiz_name_by_course_id($courseid, $options = array()) {
+        global $CFG, $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::get_quiz_name_by_course_id_parameters(),
+            array('courseid' => $courseid, 'options' => $options));
+
+
+        //retrieve the course
+        return $DB->get_record('quiz', array('id' => $params['courseid']), '*', MUST_EXIST);
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.9 Options available
+     * @since Moodle 2.2
+     */
+    public static function get_quiz_name_by_course_id_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'quiz id'),
+                    'course' => new external_value(PARAM_INT, 'course id'),
+                    'name' => new external_value(PARAM_TEXT, 'quiz name'),
+                    'intro' => new external_value(PARAM_RAW, 'intro information'),
+                    'introformat' => new external_value(PARAM_INT, 'intro format', VALUE_OPTIONAL),
+                    'timemodified' => new external_value(PARAM_INT, 'date time')
+                )
+            )
+        );
+    }
 }
