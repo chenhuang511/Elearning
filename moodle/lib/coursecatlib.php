@@ -24,7 +24,7 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-
+require_once($CFG->dirroot . '/lib/zend/Zend/Http/Client.php');
 /**
  * Class to store, cache, render and manage course category
  *
@@ -1520,6 +1520,135 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
     }
 
     /**
+     * Retrieves the list of courses accessible by user
+     *
+     * Not all information is cached, try to avoid calling this method
+     * twice in the same request.
+     *
+     * The following fields are always retrieved:
+     * - id, visible, fullname, shortname, idnumber, category, sortorder
+     *
+     * If you plan to use properties/methods course_in_list::$summary and/or
+     * course_in_list::get_course_contacts()
+     * you can preload this information using appropriate 'options'. Otherwise
+     * they will be retrieved from DB on demand and it may end with bigger DB load.
+     *
+     * Note that method course_in_list::has_summary() will not perform additional
+     * DB queries even if $options['summary'] is not specified
+     *
+     * List of found course ids is cached for 10 minutes. Cache may be purged prior
+     * to this when somebody edits courses or categories, however it is very
+     * difficult to keep track of all possible changes that may affect list of courses.
+     *
+     * @param array $options options for retrieving children
+     *    - recursive - return courses from subcategories as well. Use with care,
+     *      this may be a huge list!
+     *    - summary - preloads fields 'summary' and 'summaryformat'
+     *    - coursecontacts - preloads course contacts
+     *    - sort - list of fields to sort. Example
+     *             array('idnumber' => 1, 'shortname' => 1, 'id' => -1)
+     *             will sort by idnumber asc, shortname asc and id desc.
+     *             Default: array('sortorder' => 1)
+     *             Only cached fields may be used for sorting!
+     *    - offset
+     *    - limit - maximum number of children to return, 0 or null for no limit
+     *    - idonly - returns the array or course ids instead of array of objects
+     *               used only in get_courses_count()
+     * @return course_in_list[]
+     */
+    public function get_courses_webservice($options = array()) {
+        global $DB;
+        $recursive = !empty($options['recursive']);
+        $offset = !empty($options['offset']) ? $options['offset'] : 0;
+        $limit = !empty($options['limit']) ? $options['limit'] : null;
+        $sortfields = !empty($options['sort']) ? $options['sort'] : array('sortorder' => 1);
+
+        // Check if this category is hidden.
+        // Also 0-category never has courses unless this is recursive call.
+        if (!$this->is_uservisible() || (!$this->id && !$recursive)) {
+            return array();
+        }
+
+        $coursecatcache = cache::make('core', 'coursecat');
+        $cachekey = 'l-'. $this->id. '-'. (!empty($options['recursive']) ? 'r' : '').
+            '-'. serialize($sortfields);
+        $cntcachekey = 'lcnt-'. $this->id. '-'. (!empty($options['recursive']) ? 'r' : '');
+
+        // Check if we have already cached results.
+        /*$ids = $coursecatcache->get($cachekey);
+        if ($ids !== false) {
+            // We already cached last search result and it did not expire yet.
+            $ids = array_slice($ids, $offset, $limit);
+            $courses = array();
+            if (!empty($ids)) {
+                list($sql, $params) = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED, 'id');                
+                $records = self::get_course_records("c.id ". $sql, $params, $options);
+                // Preload course contacts if necessary - saves DB queries later to do it for each course separately.
+                if (!empty($options['coursecontacts'])) {
+                    self::preload_course_contacts($records);
+                }
+                // If option 'idonly' is specified no further action is needed, just return list of ids.
+                if (!empty($options['idonly'])) {
+                    return array_keys($records);
+                }
+                // Prepare the list of course_in_list objects.
+                foreach ($ids as $id) {
+                    $courses[$id] = new course_in_list($records[$id]);
+                }
+            }
+            return $courses;
+        }*/
+       /* print_r($options);die;
+        $serverUrl = HUB_URL . '/webservice/rest/server.php'. '?wstoken=' . HOST_TOKEN . '&wsfunction=core_course_get_courses&moodlewsrestformat=json';
+        $client = new Zend_Http_Client($serverUrl);
+        $client->setParameterPost('cmid', $cmid);
+        $response = $client->request(Zend_Http_Client::POST);*/
+
+        // Retrieve list of courses in category.
+        $where = 'c.id <> :siteid';
+        $params = array('siteid' => SITEID);
+        if ($recursive) {
+            if ($this->id) {
+                $context = context_coursecat::instance($this->id);
+                $where .= ' AND ctx.path like :path';
+                $params['path'] = $context->path. '/%';
+            }
+        } else {
+            $where .= ' AND c.category = :categoryid';
+            $params['categoryid'] = $this->id;
+        }
+        // Get list of courses without preloaded coursecontacts because we don't need them for every course.
+        $list = $this->get_course_records($where, $params, array_diff_key($options, array('coursecontacts' => 1)), true);
+print_r($params);die;
+        // Sort and cache list.
+        self::sort_records($list, $sortfields);
+        $coursecatcache->set($cachekey, array_keys($list));
+        $coursecatcache->set($cntcachekey, count($list));
+
+        // Apply offset/limit, convert to course_in_list and return.
+        $courses = array();
+        if (isset($list)) {
+            if ($offset || $limit) {
+                $list = array_slice($list, $offset, $limit, true);
+            }
+            // Preload course contacts if necessary - saves DB queries later to do it for each course separately.
+            if (!empty($options['coursecontacts'])) {
+                self::preload_course_contacts($list);
+            }
+            // If option 'idonly' is specified no further action is needed, just return list of ids.
+            if (!empty($options['idonly'])) {
+                return array_keys($list);
+            }
+            // Prepare the list of course_in_list objects.
+            foreach ($list as $record) {
+                $courses[$record->id] = new course_in_list($record);
+            }
+        }
+        return $courses;
+    }
+
+
+    /**
      * Returns number of courses visible to the user
      *
      * @param array $options similar to get_courses() except some options do not affect
@@ -1541,6 +1670,8 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
         }
         return $cnt;
     }
+
+
 
     /**
      * Returns true if the user is able to delete this category.
