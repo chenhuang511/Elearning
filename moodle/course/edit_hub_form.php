@@ -26,11 +26,6 @@ class course_edit_hub_form extends moodleform
 
         $mform->addElement('header','general', get_string('general', 'form'));
 
-        $mform->addElement('hidden', 'returnto', null);
-        $mform->setType('returnto', PARAM_ALPHANUM);
-
-        $mform->addElement('hidden', 'returnurl', null);
-        $mform->setType('returnurl', PARAM_LOCALURL);
         // full name
         $mform->addElement('text','fullname', get_string('fullnamecourse'),'maxlength="254" size="50"');
         $mform->addHelpButton('fullname', 'fullnamecourse');
@@ -41,12 +36,19 @@ class course_edit_hub_form extends moodleform
         $mform->addHelpButton('shortname', 'shortnamecourse');
         $mform->addRule('shortname', get_string('missingshortname'), 'required', null, 'client');
         $mform->setType('shortname', PARAM_TEXT);
+        // categoryid
+        $mform->addElement('text', 'category', get_string('coursecategory'),'maxlength="10" size="20"' );
+        $mform->addHelpButton('category', 'coursecategory');
+        $mform->addRule('category', get_string('missingcategory'), 'required', null, 'client');
+        $mform->setType('category', PARAM_INT);
+        $mform->setDefault('category', 2);
         // visible
         $choices = array();
         $choices['0'] = get_string('hide');
         $choices['1'] = get_string('show');
         $mform->addElement('select', 'visible', get_string('visible'), $choices);
         $mform->addHelpButton('visible', 'visible');
+
         // startdate
         $mform->addElement('date_selector', 'startdate', get_string('startdate'));
         $mform->addHelpButton('startdate', 'startdate');
@@ -58,7 +60,7 @@ class course_edit_hub_form extends moodleform
 
         $mform->addElement('header', 'descriptionhdr', get_string('description'));
         $mform->setExpanded('descriptionhdr');
-
+        // editor
         $mform->addElement('editor','summary_editor', get_string('coursesummary'), null);
         $mform->addHelpButton('summary_editor', 'coursesummary');
         $mform->setType('summary_editor', PARAM_RAW);
@@ -73,6 +75,7 @@ class course_edit_hub_form extends moodleform
 
         $mform->addElement('select', 'format', get_string('format'), $formcourseformats);
         $mform->addHelpButton('format', 'format');
+        $mform->setDefault('format', 'weeks');
 
         // Button to update format-specific options on format change (will be hidden by JavaScript).
         $mform->registerNoSubmitButton('updatecourseformat');
@@ -97,10 +100,10 @@ class course_edit_hub_form extends moodleform
             $mform->addElement('select', 'theme', get_string('forcetheme'), $themes);
         }
 
-        $languages=array();
-        $languages[''] = get_string('forceno');
-        $languages += get_string_manager()->get_list_of_translations();
-        $mform->addElement('select', 'lang', get_string('forcelanguage'), $languages);
+//        $languages=array();
+//        $languages[''] = get_string('forceno');
+//        $languages += get_string_manager()->get_list_of_translations();
+//        $mform->addElement('select', 'lang', get_string('forcelanguage'), $languages);
 
         // Multi-Calendar Support - see MDL-18375.
         $calendartypes = \core_calendar\type_factory::get_list_of_calendar_types();
@@ -138,6 +141,7 @@ class course_edit_hub_form extends moodleform
         $choices = get_max_upload_sizes($CFG->maxbytes, 0, 0, null);
         $mform->addElement('select', 'maxbytes', get_string('maximumupload'), $choices);
         $mform->addHelpButton('maxbytes', 'maximumupload');
+        $mform->setDefault('maxbytes', 104857600);
 
 
         // Group
@@ -166,10 +170,6 @@ class course_edit_hub_form extends moodleform
 
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
         $mform->closeHeaderBefore('buttonar');
-
-        $mform->addElement('hidden', 'id', null);
-        $mform->setType('id', PARAM_INT);
-
 
     }
 
