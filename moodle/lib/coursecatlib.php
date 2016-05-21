@@ -24,7 +24,7 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-require_once($CFG->dirroot . '/lib/zend/Zend/Http/Client.php');
+
 /**
  * Class to store, cache, render and manage course category
  *
@@ -140,10 +140,16 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             if ($this->$name === false) {
                 // Property was not retrieved from DB, retrieve all not retrieved fields.
                 $notretrievedfields = array_diff_key(self::$coursecatfields, array_filter(self::$coursecatfields));
-                $record = $DB->get_record('course_categories', array('id' => $this->id),
-                        join(',', array_keys($notretrievedfields)), MUST_EXIST);
+                //$record = $DB->get_record('course_categories', array('id' => $this->id),
+                //        join(',', array_keys($notretrievedfields)), MUST_EXIST);
+
+               	$record = get_remote_course_category($this->id);
+        		$record = $record[0];
+
                 foreach ($record as $key => $value) {
-                    $this->$key = $value;
+                	if (in_array($key, $notretrievedfields)) {
+                    	$this->$key = $value;
+                	}
                 }
             }
             return $this->$name;
@@ -1453,6 +1459,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
 
         // Check if we have already cached results.
         $ids = $coursecatcache->get($cachekey);
+        echo "IDS " . $ids;
         if ($ids !== false) {
             // We already cached last search result and it did not expire yet.
             $ids = array_slice($ids, $offset, $limit);
@@ -1519,8 +1526,6 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
         return $courses;
     }
 
-
-
     /**
      * Returns number of courses visible to the user
      *
@@ -1543,8 +1548,6 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
         }
         return $cnt;
     }
-
-
 
     /**
      * Returns true if the user is able to delete this category.

@@ -501,8 +501,7 @@ define('MOODLE_OFFICIAL_MOBILE_SERVICE', 'moodle_mobile_app');
  * NccSoft External Service
  */
 define('NCCSOFT_EXTERNAL_SERVICE', 'ncc_ext_service');
-define('HOST_TOKEN', '74a6caf670c5f2348df8d0ee758400a8');
-define('HUB_URL', 'http://10.0.0.19:9333');
+
 /**
  * Indicates the user has the capabilities required to ignore activity and course file size restrictions
  */
