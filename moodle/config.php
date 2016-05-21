@@ -7,24 +7,32 @@ $CFG = new stdClass();
 $CFG->dbtype    = 'mysqli';
 $CFG->dblibrary = 'native';
 $CFG->dbhost    = 'localhost';
-$CFG->dbname    = 'moodleclient';
+$CFG->dbname    = 'moodledb';
 $CFG->dbuser    = 'root';
-$CFG->dbpass    = '';
+$CFG->dbpass    = '12345';
 
-$CFG->opensslcnf = 'D:\Project\Teca_pro\User_mangement\Elearning\moodle\openssl.cnf';
+$CFG->prefix    = 'mdl_';
+$CFG->dboptions = array (
+  'dbpersist' => 0,
+  'dbport' => '',
+  'dbsocket' => '',
+);
 
-$CFG->wwwroot   = 'http://10.0.0.29:8080/moodle';
-$CFG->dataroot  = 'C:\wamp\clientdata';
-
+$CFG->wwwroot   = 'http://10.0.0.85/moodle';
+$CFG->dataroot  = 'C:\\wamp\\moodledata';
 $CFG->admin     = 'admin';
+
+$CFG->opensslcnf = 'C:\wamp\bin\apache\apache2.4.9\conf\openssl.cnf';
 
 $CFG->directorypermissions = 0777;
 
 $CFG->loginredir = "{$CFG->wwwroot}/my";
 $CFG->logoutredir = "{$CFG->wwwroot}";
 
-//$CFG->debug = 6143; 
-//$CFG->debugdisplay = 1;
+$CFG->opensslcnf = 'C:\\wamp\\bin\\apache\\apache2.4.9\\conf\\openssl.cnf';
+
+$CFG->debug = 6143; 
+$CFG->debugdisplay = 1;
 
 require_once(dirname(__FILE__) . '/lib/setup.php');
 
