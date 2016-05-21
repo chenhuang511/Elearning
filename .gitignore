@@ -1,4 +1,3 @@
-moodle/config.php
-moodle/.idea/workspace.xml
-.idea/*
-.gitignore
+*/moodle/config.php
+*/.idea/*
+*/tecahub/config.php
