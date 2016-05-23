@@ -949,8 +949,9 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
         }
         $sql = "SELECT ". join(',', $fields). ", $ctxselect
                 FROM {course} c
-                JOIN {context} ctx ON c.id = ctx.instanceid AND ctx.contextlevel = :contextcourse
+                JOIN {context} ctx ON c.remoteid = ctx.instanceid AND ctx.contextlevel = :contextcourse
                 WHERE ". $whereclause." ORDER BY c.sortorder";
+        
         $list = $DB->get_records_sql($sql,
                 array('contextcourse' => CONTEXT_COURSE) + $params);
 
@@ -964,6 +965,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
                     // Load context only if we need to check capability.
                     context_helper::preload_from_record($course);
                     if (!has_capability('moodle/course:viewhiddencourses', context_course::instance($course->id))) {
+                    	echo "COURSE ID " . $course->id;
                         unset($list[$course->id]);
                     }
                 }
@@ -974,6 +976,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
         if (!empty($options['coursecontacts'])) {
             self::preload_course_contacts($list);
         }
+        
         return $list;
     }
 
@@ -1459,8 +1462,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
 
         // Check if we have already cached results.
         $ids = $coursecatcache->get($cachekey);
-        echo "IDS " . $ids;
-        if ($ids !== false) {
+        if ($ids != false) {
             // We already cached last search result and it did not expire yet.
             $ids = array_slice($ids, $offset, $limit);
             $courses = array();
@@ -1496,6 +1498,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             $where .= ' AND c.category = :categoryid';
             $params['categoryid'] = $this->id;
         }
+        
         // Get list of courses without preloaded coursecontacts because we don't need them for every course.
         $list = $this->get_course_records($where, $params, array_diff_key($options, array('coursecontacts' => 1)), true);
 
@@ -1523,6 +1526,8 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
                 $courses[$record->id] = new course_in_list($record);
             }
         }
+        
+        var_dump($courses);
         return $courses;
     }
 

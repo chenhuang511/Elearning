@@ -502,14 +502,9 @@ define('MOODLE_OFFICIAL_MOBILE_SERVICE', 'moodle_mobile_app');
  */
 define('NCCSOFT_EXTERNAL_SERVICE', 'ncc_ext_service');
 
-define('HOST_TOKEN', '74a6caf670c5f2348df8d0ee758400a8');
-define('HOST_TOKEN_M', '2077e39e91a4cfb85c565c550cae7ca8');
-define('HUB_URL', 'http://10.0.0.19:9333');
-
 /**
  * Indicates the user has the capabilities required to ignore activity and course file size restrictions
  */
-
 define('USER_CAN_IGNORE_FILE_SIZE_LIMITS', -1);
 
 /**
@@ -2504,7 +2499,7 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
         } else if ($courseorid == SITEID) {
             $course = clone($SITE);
         } else {
-            $course = $DB->get_record('course', array('id' => $courseorid), '*', MUST_EXIST);
+            $course = $DB->get_record('course', array('remoteid' => $courseorid), '*', MUST_EXIST);
         }
         if ($cm) {
             if ($cm->course != $course->id) {

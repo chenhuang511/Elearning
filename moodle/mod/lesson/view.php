@@ -25,6 +25,7 @@
 
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot.'/mod/lesson/locallib.php');
+require_once($CFG->dirroot.'/course/remote/remotelib.php');
 require_once($CFG->dirroot.'/mod/lesson/view_form.php');
 require_once($CFG->libdir . '/completionlib.php');
 require_once($CFG->libdir . '/grade/constants.php');
@@ -35,11 +36,30 @@ $edit    = optional_param('edit', -1, PARAM_BOOL);
 $userpassword = optional_param('userpassword','',PARAM_RAW);
 $backtocourse = optional_param('backtocourse', false, PARAM_RAW);
 
-$cm = get_coursemodule_from_id('lesson', $id, 0, false, MUST_EXIST);
-$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-$lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST));
+// get course module from webservice
+//$cm = get_coursemodule_from_id('lesson', $id, 0, false, MUST_EXIST);
+$cm = get_remote_course_module($id);
+//echo "<pre>";
+//print_r($cm);
+//echo "</pre>";
 
-require_login($course, false, $cm);
+// get course from webservice
+//$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+$course = get_remote_course_content($cm->instance);
+
+// get lesson
+//$lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST));
+$lesson = get_remote_lesson_content($cm->instance);
+
+//echo "vao 1"; die();
+//echo "<pre>";
+//var_dump($course);
+//echo "</pre>";
+//die();
+
+$course = $course[0];
+
+//require_login($course, false, $cm);
 
 if ($backtocourse) {
     redirect(new moodle_url('/course/view.php', array('id'=>$course->id)));
