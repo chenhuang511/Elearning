@@ -6925,7 +6925,8 @@ class context_course extends context {
         	try {
         		$course = $DB->get_record('course', array('id'=>$instanceid), 'id,category', $strictness);
         	} catch(Exception $e) {
-        		$course = $DB->get_record('mnetservice_enrol_courses', array('remoteid'=>$instanceid), 'remoteid as id,categoryid as category', $strictness);
+        		$course = get_remote_enrol_course_by_host();
+        		$course = $course[0];
         	}
             if ($course->id) {
                 if ($course->category) {

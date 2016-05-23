@@ -45,7 +45,7 @@ foreach($course as $key => $section) {
 
     foreach($coursemodule as $module){
         $content = null;
-        if($module->modname=="page") {
+        if($module->modname==="page") {
             $content = get_remote_page_content($module->instance, ['function_name' => 'local_mod_get_page_by_id']);
             $html .= $OUTPUT->box_start('course-page-box', "course_page_box_{$content->id}");
             if(isset($content->intro) && !empty($content->intro)) {
@@ -53,15 +53,15 @@ foreach($course as $key => $section) {
             }
             $html .= $OUTPUT->box_end();
         }
-        else if($module->modname=="quiz"){
-            $content = get_remote_quiz_content($coursemodule[0]->instance, ['function_name' => 'local_mod_get_quiz_name_by_course_id']);
+        else if($module->modname==="quiz"){
+            $content = get_remote_quiz_content($module->instance, ['function_name' => 'local_mod_get_quiz_name_by_course_id']);
             $html .= $OUTPUT->box_start('course-page-box', "course_page_box_{$content->id}");
             if(isset($content->name) && !empty($content->name)) {
                 $html .= html_writer::tag('div', $content->name, array('class' => 'page-intro'));
             }
             $html .= $OUTPUT->box_end();
         }
-        else if($module->modname=="label"){
+        else if($module->modname==="label"){
             $content = get_remote_label_content($module->instance, ['function_name' => 'local_mod_get_label_by_id']);
             $html .= $OUTPUT->box_start('course-page-box', "course_page_box_{$content->id}");
             if(isset($content->intro) && !empty($content->intro)) {
@@ -69,7 +69,7 @@ foreach($course as $key => $section) {
             }
             $html .= $OUTPUT->box_end();
         }
-        else if($module->modname=="book"){
+        else if($module->modname==="book"){
             $content = get_remote_book_content($module->instance, ['function_name' => 'local_mod_get_book_by_id']);
             $html .= $OUTPUT->box_start('course-page-box', "course_page_box_{$content->id}");
             if(isset($content->intro) && !empty($content->intro)) {

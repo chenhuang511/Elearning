@@ -1,2 +1,8 @@
-*/moodle/config.php
-*/moodle/.idea/workspace.xml
+/.idea/*
+/tecahub/config.php
+/moodle/.idea/*
+/tecahub/.idea/*
+/UMS/.idea/*
+/ums_api/.idea/*
+/.idea/Elearning.iml
+/.idea/webServers.xml
