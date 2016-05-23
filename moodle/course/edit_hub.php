@@ -94,7 +94,6 @@ if (isset($data->saveandreturn)) {
 }
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading($pagedesc);
 
 $mform->display();
 
