@@ -311,7 +311,7 @@ class local_nccsoft_external extends external_api {
                                 }
                             }
                         }
-
+ 
                         $module = array();
 
                         $modcontext = context_module::instance($cm->id);
