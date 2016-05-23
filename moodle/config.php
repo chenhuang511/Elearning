@@ -31,8 +31,8 @@ $CFG->logoutredir = "{$CFG->wwwroot}";
 
 $CFG->opensslcnf = 'C:\\wamp\\bin\\apache\\apache2.4.9\\conf\\openssl.cnf';
 
-$CFG->debug = 6143; 
-$CFG->debugdisplay = 1;
+//$CFG->debug = 6143;
+//$CFG->debugdisplay = 1;
 
 require_once(dirname(__FILE__) . '/lib/setup.php');
 

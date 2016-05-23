@@ -121,7 +121,7 @@ function get_remote_book_content($bookid, $options = []) {
 function get_remote_quiz_content($quizid, $options = []) {
 	return moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
 		'token'=>HOST_TOKEN,
-		'function_name'=>'local_mod_get_quiz_name_by_course_id',
+		'function_name'=>'local_mod_get_quiz_by_id',
 		'params' => array('quizid' =>$quizid),
 	)));
 }
