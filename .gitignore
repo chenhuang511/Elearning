@@ -1,5 +1,6 @@
 /.idea/*
 /tecahub/config.php
+/moodle/config.php
 /moodle/.idea/*
 /tecahub/.idea/*
 /UMS/.idea/*
