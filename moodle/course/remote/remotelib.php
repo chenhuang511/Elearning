@@ -47,7 +47,6 @@ function moodle_webservice_client($options = []) {
         if (isset($options['params'])) {
         	$client->setParameterPost($options['params']);
         }
-
         if (isset($options['rawdata'])) {
         	$json = json_encode($options['rawdata']);
 			$client->setRawData($json, 'application/json');
