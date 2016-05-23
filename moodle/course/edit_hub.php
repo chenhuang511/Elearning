@@ -60,8 +60,8 @@ if ($mform->is_cancelled()) {
             'courses[0][shortname]' => $data->shortname,
             'courses[0][categoryid]' => $data->category,
             'courses[0][idnumber]' => $data->idnumber,
-            'courses[0][summary]' => $data->summary_editor->text,
-            'courses[0][summaryformat]' => (int)$data->summary_editor->format,
+            'courses[0][summary]' => $data->summary_editor['text'],
+            'courses[0][summaryformat]' => (int)$data->summary_editor['format'],
             'courses[0][format]' => $data->format,
             'courses[0][showgrades]' => (int)$data->showgrades,
             'courses[0][newsitems]' => (int)$data->newsitems,
@@ -76,7 +76,6 @@ if ($mform->is_cancelled()) {
             'courses[0][defaultgroupingid]' => (int)$data->defaultgroupingid,
             'courses[0][enablecompletion]' => (int)$data->enablecompletion,
             'courses[0][completionnotify]' => $data->completionnotify,
-//            'courses[0][lang]'=> (string)$data->lang,
             'courses[0][forcetheme]' => $data->forcetheme,
             'courses[0][courseformatoptions][0][name]' => $courseformatoptions_name,
             'courses[0][courseformatoptions][0][value]' => $courseformatoptions_value,
@@ -94,7 +93,6 @@ if (isset($data->saveandreturn)) {
 }
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading($pagedesc);
 
 $mform->display();
 

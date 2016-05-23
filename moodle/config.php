@@ -1,43 +1,10 @@
-<?php
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// Moodle configuration file                                             //
-//                                                                       //
-// This file should be renamed "config.php" in the top-level directory   //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.org                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards  Martin Dougiamas  http://moodle.com       //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 3 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
-unset($CFG);  // Ignore this line
-global $CFG;  // This is necessary here for PHPUnit execution
+<?php  // Moodle configuration file
+
+unset($CFG);
+global $CFG;
 $CFG = new stdClass();
 
-//=========================================================================
-// 1. DATABASE SETUP
-//=========================================================================
-// First, you need to configure the database where all Moodle data       //
-// will be stored.  This database must already have been created         //
-// and a username/password created to access it.                         //
-
+<<<<<<< HEAD
 $CFG->dbtype    = 'mysqli';      // 'pgsql', 'mariadb', 'mysqli', 'mssql', 'sqlsrv' or 'oci'
 $CFG->dblibrary = 'native';     // 'native' only at the moment
 $CFG->dbhost    = 'localhost';  // eg 'localhost' or 'db.isp.com' or IP
@@ -105,25 +72,37 @@ $CFG->dataroot  = 'D:\Project\Teca_pro';
 // NOTE: the prefixed 0 is important, and don't use quotes.
 
 $CFG->directorypermissions = 02777;
+=======
+$CFG->dbtype    = 'mysqli';
+$CFG->dblibrary = 'native';
+$CFG->dbhost    = 'localhost';
+$CFG->dbname    = 'moodledb';
+$CFG->dbuser    = 'root';
+$CFG->dbpass    = '12345';
 
+$CFG->prefix    = 'mdl_';
+$CFG->dboptions = array (
+  'dbpersist' => 0,
+  'dbport' => '',
+  'dbsocket' => '',
+);
 
-//=========================================================================
-// 5. DIRECTORY LOCATION  (most people can just ignore this setting)
-//=========================================================================
-// A very few webhosts use /admin as a special URL for you to access a
-// control panel or something.  Unfortunately this conflicts with the
-// standard location for the Moodle admin pages.  You can work around this
-// by renaming the admin directory in your installation, and putting that
-// new name here.  eg "moodleadmin".  This should fix all admin links in Moodle.
-// After any change you need to visit your new admin directory
-// and purge all caches.
+$CFG->wwwroot   = 'http://10.0.0.85/moodle';
+$CFG->dataroot  = 'C:\\wamp\\moodledata';
+$CFG->admin     = 'admin';
+>>>>>>> origin/master
 
-$CFG->admin = 'admin';
+$CFG->directorypermissions = 0777;
+
+$CFG->loginredir = "{$CFG->wwwroot}/my";
+$CFG->logoutredir = "{$CFG->wwwroot}";
+
+$CFG->opensslcnf = 'C:\\wamp\\bin\\apache\\apache2.4.9\\conf\\openssl.cnf';
 
 $CFG->debug = 6143; 
 $CFG->debugdisplay = 1;
 
-require_once(dirname(__FILE__) . '/lib/setup.php'); // Do not edit
+require_once(dirname(__FILE__) . '/lib/setup.php');
 
 // There is no php closing tag in this file,
 // it is intentional because it prevents trailing whitespace problems!

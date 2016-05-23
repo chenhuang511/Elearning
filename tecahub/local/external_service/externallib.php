@@ -342,7 +342,7 @@ class local_nccsoft_external extends external_api {
      * @since Moodle 2.2
      *
      */
-    public static function get_quiz_name_by_course_id_parameters() {
+    public static function get_mod_quiz_by_id_parameters() {
         return new external_function_parameters(
             array('quizid' => new external_value(PARAM_INT, 'quiz id'),
                 'options' => new external_multiple_structure (
@@ -374,11 +374,11 @@ class local_nccsoft_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_quiz_name_by_course_id($quizid, $options = array()) {
+    public static function get_mod_quiz_by_id($quizid, $options = array()) {
         global $CFG, $DB;
 
         //validate parameter
-        $params = self::validate_parameters(self::get_quiz_name_by_course_id_parameters(),
+        $params = self::validate_parameters(self::get_mod_quiz_by_id_parameters(),
             array('quizid' => $quizid, 'options' => $options));
 
         //retrieve the quiz
@@ -393,7 +393,7 @@ class local_nccsoft_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_quiz_name_by_course_id_returns() {
+    public static function get_mod_quiz_by_id_returns() {
         return  new external_single_structure(
             array(
                 'id' => new external_value(PARAM_INT, 'quiz id'),

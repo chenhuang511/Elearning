@@ -48,6 +48,7 @@ class course_edit_hub_form extends moodleform
         $choices['1'] = get_string('show');
         $mform->addElement('select', 'visible', get_string('visible'), $choices);
         $mform->addHelpButton('visible', 'visible');
+        $mform->setDefault('visible', 1);
 
         // startdate
         $mform->addElement('date_selector', 'startdate', get_string('startdate'));

@@ -54,7 +54,7 @@ foreach($course as $key => $section) {
             $html .= $OUTPUT->box_end();
         }
         else if($module->modname==="quiz"){
-            $content = get_remote_quiz_content($module->instance, ['function_name' => 'local_mod_get_quiz_name_by_course_id']);
+            $content = get_remote_quiz_content($module->instance, ['function_name' => 'local_mod_get_quiz_by_id']);
             $html .= $OUTPUT->box_start('course-page-box', "course_page_box_{$content->id}");
             if(isset($content->name) && !empty($content->name)) {
                 $html .= html_writer::tag('div', $content->name, array('class' => 'page-intro'));
