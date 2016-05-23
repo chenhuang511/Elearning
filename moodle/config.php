@@ -22,8 +22,6 @@ $CFG->wwwroot   = 'http://10.0.0.85/moodle';
 $CFG->dataroot  = 'C:\\wamp\\moodledata';
 $CFG->admin     = 'admin';
 
-$CFG->opensslcnf = 'C:\wamp\bin\apache\apache2.4.9\conf\openssl.cnf';
-
 $CFG->directorypermissions = 0777;
 
 $CFG->loginredir = "{$CFG->wwwroot}/my";
