@@ -309,9 +309,9 @@ class local_nccsoft_external extends external_api {
                                     // Note that if we are only filtering by modname we don't break the loop.
                                     $modfound = true;
                                 }
-                            }
+                            } 
                         }
- 
+
                         $module = array();
 
                         $modcontext = context_module::instance($cm->id);
