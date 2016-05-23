@@ -120,10 +120,10 @@ $CFG->directorypermissions = 02777;
 
 $CFG->admin = 'admin';
 
-$CFG->debug = 6143;
+$CFG->debug = 6143; 
 $CFG->debugdisplay = 1;
 
-require_once(dirname(__FILE__) . '/lib/setup.php'); // Do not edit
+require_once(dirname(__FILE__) . '/lib/setup.php');
 
 // There is no php closing tag in this file,
 // it is intentional because it prevents trailing whitespace problems!
