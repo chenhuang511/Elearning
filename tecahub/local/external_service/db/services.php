@@ -42,6 +42,14 @@ $functions = array(
         'type'        => 'read',
         'ajax'        => true
     ),
+	'local_mod_get_module_section_by_id' => array(
+		'classname'   => 'local_nccsoft_external',
+		'methodname'  => 'get_mod_module_section_by_id',
+		'classpath'   => 'local/external_service/externallib.php',
+		'description' => 'Get mod section by list id',
+		'type'        => 'read',
+		'ajax'        => true
+	),
 	'local_mod_get_page_by_id' => array(
 		'classname'   => 'local_nccsoft_external',
 		'methodname'  => 'get_mod_page_by_id',
