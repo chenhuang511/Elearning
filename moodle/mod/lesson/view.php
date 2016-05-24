@@ -296,13 +296,18 @@ if (empty($pageid)) {
     }
     // start at the first page
     //if (!$pageid = $DB->get_field('lesson_pages', 'id', array('lessonid' => $lesson->id, 'prevpageid' => 0))) {
+    echo "<pre>";
+    print_r(get_remote_lesson_page_content($lesson->id, 0));
+    echo "</pre>"; die();
     if (!$pageid = get_remote_lesson_page_content($lesson->id, 0)) {
+        echo "lay dc page id: ";
+        print_r($pageid); die();
         print_error('cannotfindfirstpage', 'lesson');
     }
     // This is the code for starting a timed test
-    if (!isset($USER->startlesson[$lesson->id]) && !$canmanage) {
-        $lesson->start_timer();
-    }
+//    if (!isset($USER->startlesson[$lesson->id]) && !$canmanage) {
+//        $lesson->start_timer();
+//    }
 }
 
 $currenttab = 'view';

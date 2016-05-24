@@ -948,7 +948,7 @@ class local_nccsoft_external extends external_api
             array('lessonid' => $lessonid, 'prevpageid' => $prevpageid, 'options' => $options));
 
         //retrieve the page
-        return $DB->get_record('lesson_pages', array('id' => $params['lessonid'], 'prevpageid' => $params['prevpageid']), '*', MUST_EXIST);
+        return $DB->get_record('lesson_pages', array('lessonid' => $params['lessonid'], 'prevpageid' => $params['prevpageid']), '*', MUST_EXIST);
     }
 
     public static function get_mod_lesson_page_by_id_returns()
