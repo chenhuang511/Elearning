@@ -504,10 +504,10 @@ define('NCCSOFT_EXTERNAL_SERVICE', 'ncc_ext_service');
 
 define('HOST_TOKEN', '74a6caf670c5f2348df8d0ee758400a8');
 define('HOST_TOKEN_M', '2077e39e91a4cfb85c565c550cae7ca8');
-define('HUB_URL', 'http://10.0.0.19:9333'); 
+define('HUB_URL', 'http://10.0.0.19:9333');
 
 /**
- * Indicates the user has the capabilities required to ignore activity and course file size restrictions
+ * Indicates the user has the capabilities required to ignore activity and course file size restrictions.
  */
 define('USER_CAN_IGNORE_FILE_SIZE_LIMITS', -1);
 
