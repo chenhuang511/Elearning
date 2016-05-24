@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 
 /** Include the files that are required by this module */
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
+require_once($CFG->dirroot . '/course/remote/remotelib.php');
 require_once($CFG->dirroot . '/mod/lesson/lib.php');
 require_once($CFG->libdir . '/filelib.php');
 
@@ -1644,6 +1645,7 @@ class lesson extends lesson_base {
         if (!array_key_exists($pageid, $this->pages)) {
             $manager = lesson_page_type_manager::get($this);
             $this->pages[$pageid] = $manager->load_page($pageid, $this);
+            echo "page" . $pageid; die();
         }
         return $this->pages[$pageid];
     }
@@ -3333,7 +3335,8 @@ class lesson_page_type_manager {
      */
     public function load_page($pageid, lesson $lesson) {
         global $DB;
-        if (!($page =$DB->get_record('lesson_pages', array('id'=>$pageid, 'lessonid'=>$lesson->id)))) {
+        //if (!($page =$DB->get_record('lesson_pages', array('id'=>$pageid, 'lessonid'=>$lesson->id)))) {
+        if (!($page = get_remote_lesson_page_content($lesson->id, array('returntype' => 'recordtype', 'pageid' => $pageid)))) {
             print_error('cannotfindpages', 'lesson');
         }
         $pagetype = get_class($this->types[$page->qtype]);

@@ -917,7 +917,6 @@ class local_nccsoft_external extends external_api
     {
         return new external_function_parameters(
             array('lessonid' => new external_value(PARAM_INT, 'lesson id'),
-                'prevpageid' => new external_value(PARAM_INT, 'prev page id'),
                 'options' => new external_multiple_structure(
                     new external_single_structure(
                         array(
@@ -939,16 +938,25 @@ class local_nccsoft_external extends external_api
         );
     }
 
-    public static function get_mod_lesson_page_by_id($lessonid, $prevpageid, $options = array())
+    public static function get_mod_lesson_page_by_id($lessonid, $options = array())
     {
         global $DB;
 
-        //validate parameter
-        $params = self::validate_parameters(self::get_mod_lesson_page_by_id_parameters(),
-            array('lessonid' => $lessonid, 'prevpageid' => $prevpageid, 'options' => $options));
-
-        //retrieve the page
-        return $DB->get_record('lesson_pages', array('lessonid' => $params['lessonid'], 'prevpageid' => $params['prevpageid']), '*', MUST_EXIST);
+        if ((isset($options['returntype']) && $options['returntype'] === 'fieldtype') && isset($options['prevpageid'])) {
+            //validate parameter
+            $params = self::validate_parameters(self::get_mod_lesson_page_by_id_parameters(),
+                array('lessonid' => $lessonid, 'prevpageid' => $options['prevpageid'], 'options' => $options));
+        }
+        if((isset($option['returntype']) && $options['returntype'] == 'recordtype') && isset($options['pageid'])) {
+            //validate parameter
+            $params = self::validate_parameters(self::get_mod_lesson_page_by_id_parameters(),
+                array('id' => $options['pageid'], 'lessonid' => $lessonid, 'options' => $options));
+        }
+        if (isset($options['returntype']) && $options['returnType'] === 'fieldtype') {
+            $lessonpage = $DB->get_record('lesson_pages', array('lessonid' => $params['lessonid'], 'prevpageid' => $params['prevpageid']), '*', MUST_EXIST);
+            return $lessonpage->id;
+        }
+        return $DB->get_record('lesson_pages', array('id' => $params['pageid'], 'lessonid' => $params['lessonid']), '*', MUST_EXIST);
     }
 
     public static function get_mod_lesson_page_by_id_returns()

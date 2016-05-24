@@ -296,12 +296,10 @@ if (empty($pageid)) {
     }
     // start at the first page
     //if (!$pageid = $DB->get_field('lesson_pages', 'id', array('lessonid' => $lesson->id, 'prevpageid' => 0))) {
-    echo "<pre>";
-    print_r(get_remote_lesson_page_content($lesson->id, 0));
-    echo "</pre>"; die();
-    if (!$pageid = get_remote_lesson_page_content($lesson->id, 0)) {
-        echo "lay dc page id: ";
-        print_r($pageid); die();
+
+    $lessonpage = get_remote_lesson_page_content($lesson->id, 0);
+
+    if (!$pageid = $lessonpage->id) {
         print_error('cannotfindfirstpage', 'lesson');
     }
     // This is the code for starting a timed test
@@ -318,8 +316,7 @@ $timer = null;
 if ($pageid != LESSON_EOL) {
     /// This is the code updates the lessontime for a timed test
     $startlastseen = optional_param('startlastseen', '', PARAM_ALPHA);
-    echo 'page id: ' . $pageid;
-    die();
+    
     $page = $lesson->load_page($pageid);
     echo "vao day roi 1";
     die();
