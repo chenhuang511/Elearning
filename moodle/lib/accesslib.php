@@ -6664,10 +6664,7 @@ class context_coursecat extends context {
         }
 
         if (!$record = $DB->get_record('context', array('contextlevel'=>CONTEXT_COURSECAT, 'instanceid'=>$instanceid))) {
-        	$category = get_remote_course_category($instanceid);
-        	$category = $category[0];
-            if($category) {
-        	//if ($category = $DB->get_record('course_categories', array('id'=>$instanceid), 'id,parent', $strictness)) {
+        	if ($category = $DB->get_record('course_categories', array('id'=>$instanceid), 'id,parent', $strictness)) {
                 if ($category->parent) {
                     $parentcontext = context_coursecat::instance($category->parent);
                     $record = context::insert_context_record(CONTEXT_COURSECAT, $category->id, $parentcontext->path);

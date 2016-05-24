@@ -509,7 +509,6 @@ define('HUB_URL', 'http://10.0.0.19:9333');
 /**
  * Indicates the user has the capabilities required to ignore activity and course file size restrictions
  */
-
 define('USER_CAN_IGNORE_FILE_SIZE_LIMITS', -1);
 
 /**
