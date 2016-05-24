@@ -2499,7 +2499,7 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
         } else if ($courseorid == SITEID) {
             $course = clone($SITE);
         } else {
-            $course = $DB->get_record('course', array('remoteid' => $courseorid), '*', MUST_EXIST);
+            $course = $DB->get_record('course', array('id' => $courseorid), '*', MUST_EXIST);
         }
         if ($cm) {
             if ($cm->course != $course->id) {
