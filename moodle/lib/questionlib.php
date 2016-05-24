@@ -707,7 +707,7 @@ function question_preload_questions($questionids = null, $extrafields = '', $joi
               {$join}
              {$where}
           {$orderby}";
-
+    
     // Load the questions.
     $questions = $DB->get_records_sql($sql, $extraparams + $params);
     foreach ($questions as $question) {
