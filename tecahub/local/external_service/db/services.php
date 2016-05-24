@@ -73,6 +73,14 @@ $functions = array(
         'description' => 'Get mod assignment by identify',
         'type' => 'read',
         'ajax' => true
+    ),
+    'local_mod_get_lesson_page_by_id' => array(
+        'classname' => 'local_nccsoft_external',
+        'methodname' => 'get_mod_lesson_page_by_id',
+        'classpath' => 'local/external_service/externallib.php',
+        'description' => 'Get mod assignment by identify',
+        'type' => 'read',
+        'ajax' => true
     )
     /*,
 	'local_mod_get_module_section_by_id' => array(
@@ -109,7 +117,8 @@ $services = array(
             'local_mod_get_lesson_by_id',
             'local_mod_get_label_by_id',
             'local_mod_get_page_by_id',
-            'local_mod_get_assignment_by_id'
+            'local_mod_get_assignment_by_id',
+            'local_mod_get_lesson_page_by_id'
             /*'local_mod_get_quiz_by_id',
             'local_mod_get_book_by_id',*/
         ),

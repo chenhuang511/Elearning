@@ -2506,7 +2506,7 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
             $course = $DB->get_record('course', array('id' => $courseorid), '*', MUST_EXIST);
         }
         if ($cm) {
-            if ($cm->course != $course->id) {
+            if ($cm->course != $course->remoteid) {
                 throw new coding_exception('course and cm parameters in require_login() call do not match!!');
             }
             // Make sure we have a $cm from get_fast_modinfo as this contains activity access details.

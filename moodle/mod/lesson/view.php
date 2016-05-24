@@ -43,23 +43,10 @@ $cm = get_remote_course_module($id);
 // get course from webservice
 $course = $DB->get_record('course', array('remoteid' => $cm->course), '*', MUST_EXIST);
 //$course = get_remote_course_content($cm->course);
-//echo "<pre>";
-//print_r($course);
-//echo "</pre>";
-//die();
 
 // get lesson
 //$lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST));
-
-echo "lesson id: " . $cm->instance; die();
-$lesson = get_remote_lesson_content($cm->instance);
-
-echo "<pre>";
-var_dump($lesson);
-echo "</pre>";
-die();
-
-$course = $course[0];
+$lesson = new lesson(get_remote_lesson_content($cm->instance));
 
 //require_login($course, false, $cm);
 
@@ -80,8 +67,8 @@ if ($pageid !== null) {
 }
 $PAGE->set_url($url);
 
-$context = context_module::instance($cm->id);
-$canmanage = has_capability('mod/lesson:manage', $context);
+//$context = context_module::instance($cm->id);
+$canmanage = false;// has_capability('mod/lesson:manage', $context);
 
 $lessonoutput = $PAGE->get_renderer('mod_lesson');
 
@@ -310,7 +297,7 @@ if (empty($pageid)) {
     if (!$pageid = $DB->get_field('lesson_pages', 'id', array('lessonid' => $lesson->id, 'prevpageid' => 0))) {
             print_error('cannotfindfirstpage', 'lesson');
     }
-    /// This is the code for starting a timed test
+    // This is the code for starting a timed test
     if(!isset($USER->startlesson[$lesson->id]) && !$canmanage) {
         $lesson->start_timer();
     }
@@ -324,8 +311,9 @@ $timer = null;
 if ($pageid != LESSON_EOL) {
     /// This is the code updates the lessontime for a timed test
     $startlastseen = optional_param('startlastseen', '', PARAM_ALPHA);
-
+    echo 'page id: ' . $pageid; die();
     $page = $lesson->load_page($pageid);
+    echo "vao day roi 1"; die();
     // Check if the page is of a special type and if so take any nessecary action
     $newpageid = $page->callback_on_view($canmanage);
     if (is_numeric($newpageid)) {
@@ -463,7 +451,7 @@ if ($pageid != LESSON_EOL) {
     echo $lessonoutput->footer();
 
 } else {
-
+    echo "vao day roi 2"; die();
     $lessoncontent = '';
     // end of lesson reached work out grade
     // Used to check to see if the student ran out of time

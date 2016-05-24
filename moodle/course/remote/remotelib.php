@@ -143,8 +143,8 @@ function get_remote_url_content($urlid, $options = [])
 {
     return moodle_webservice_client(array_merge($options,
         array(
-            'domain' => NCC_DOMAIN_NAME,
-            'token' => NCC_SERVICE_TOKEN,
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_url_by_id',
             'params' => array('urlid' => $urlid),
         )
@@ -156,9 +156,9 @@ function get_remote_lesson_content($lessonid, $options = [])
     return moodle_webservice_client(array_merge($options,
         array(
             'domain' => HUB_URL,
-            'token' => HOST_TOKEN_M,
+            'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_lesson_by_id',
-            'params' => array('lessionid' => $lessonid),
+            'params' => array('lessonid' => $lessonid),
         )
     ));
 }
