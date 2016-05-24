@@ -162,3 +162,15 @@ function get_remote_lesson_content($lessonid, $options = [])
         )
     ));
 }
+
+function get_remote_lesson_page_content($lessonid, $prevpageid, $options = [])
+{
+    return moodle_webservice_client(array_merge($options,
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_lesson_page_by_id',
+            'params' => array('lessonid' => $lessonid, 'prevpageid' => $prevpageid),
+        )
+    ));
+}

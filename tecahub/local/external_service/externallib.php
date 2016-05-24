@@ -37,7 +37,8 @@ require_once("$CFG->libdir/externallib.php");
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.2
  */
-class local_nccsoft_external extends external_api {
+class local_nccsoft_external extends external_api
+{
 
     /**
      * Returns description of method parameters
@@ -46,14 +47,15 @@ class local_nccsoft_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_mod_label_by_id_parameters() {
+    public static function get_mod_label_by_id_parameters()
+    {
         return new external_function_parameters(
-                array('labelid' => new external_value(PARAM_INT, 'label id'),
-                      'options' => new external_multiple_structure (
-                              new external_single_structure(
-                                array(
-                                    'name' => new external_value(PARAM_ALPHANUM,
-                                                'The expected keys (value format) are:
+            array('labelid' => new external_value(PARAM_INT, 'label id'),
+                'options' => new external_multiple_structure (
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHANUM,
+                                'The expected keys (value format) are:
                                                 excludemodules (bool) Do not return modules, return only the sections structure
                                                 excludecontents (bool) Do not return module contents (i.e: files inside a resource)
                                                 sectionid (int) Return only this section
@@ -61,11 +63,11 @@ class local_nccsoft_external extends external_api {
                                                 cmid (int) Return only this module information (among the whole sections structure)
                                                 modname (string) Return only modules with this name "label, forum, etc..."
                                                 modid (int) Return only the module with this id (to be used with modname'),
-                                    'value' => new external_value(PARAM_RAW, 'the value of the option,
+                            'value' => new external_value(PARAM_RAW, 'the value of the option,
                                                                     this param is personaly validated in the external function.')
-                              )
-                      ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
-                )
+                        )
+                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+            )
         );
     }
 
@@ -78,40 +80,42 @@ class local_nccsoft_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_mod_label_by_id($labelid, $options = array()) {
+    public static function get_mod_label_by_id($labelid, $options = array())
+    {
         global $CFG, $DB;
 
         //validate parameter
         $params = self::validate_parameters(self::get_mod_label_by_id_parameters(),
-                        array('labelid' => $labelid, 'options' => $options));
+            array('labelid' => $labelid, 'options' => $options));
 
 
         //retrieve the course
-	return $DB->get_record('label', array('id' => $params['labelid']), '*', MUST_EXIST);
+        return $DB->get_record('label', array('id' => $params['labelid']), '*', MUST_EXIST);
     }
-    
-/**
+
+    /**
      * Returns description of method parameters
      *
      * @return external_function_parameters
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_mod_label_by_id_returns() {
-    	return new external_single_structure(
-                array(
-                    'id' => new external_value(PARAM_INT, 'label id'),
-                    'course' => new external_value(PARAM_INT, 'course id'),
-                    'name' => new external_value(PARAM_TEXT, 'label name'),
-                    'intro' => new external_value(PARAM_RAW, 'intro information'),
-                    'introformat' => new external_value(PARAM_INT, 'intro format', VALUE_OPTIONAL),
-                    'timemodified' => new external_value(PARAM_INT, 'date time')
-                )
+    public static function get_mod_label_by_id_returns()
+    {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'label id'),
+                'course' => new external_value(PARAM_INT, 'course id'),
+                'name' => new external_value(PARAM_TEXT, 'label name'),
+                'intro' => new external_value(PARAM_RAW, 'intro information'),
+                'introformat' => new external_value(PARAM_INT, 'intro format', VALUE_OPTIONAL),
+                'timemodified' => new external_value(PARAM_INT, 'date time')
+            )
         );
     }
 
 
-/*--------------------------------------------------*/
+    /*--------------------------------------------------*/
 
     /**
      * VietNH 23-05-2016
@@ -121,7 +125,8 @@ class local_nccsoft_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_course_content_by_id_parameters() {
+    public static function get_course_content_by_id_parameters()
+    {
         return new external_function_parameters(
             array('courseid' => new external_value(PARAM_INT, 'course id'),
                 'options' => new external_multiple_structure (
@@ -153,7 +158,8 @@ class local_nccsoft_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_course_content_by_id($courseid, $options = array()) {
+    public static function get_course_content_by_id($courseid, $options = array())
+    {
         global $CFG, $DB;
         require_once($CFG->dirroot . "/course/lib.php");
 
@@ -229,7 +235,8 @@ class local_nccsoft_external extends external_api {
         $coursecontents = array();
 
         if ($canupdatecourse or $course->visible
-            or has_capability('moodle/course:viewhiddencourses', $context)) {
+            or has_capability('moodle/course:viewhiddencourses', $context)
+        ) {
 
             //retrieve sections
             $modinfo = get_fast_modinfo($course);
@@ -309,7 +316,7 @@ class local_nccsoft_external extends external_api {
                                     // Note that if we are only filtering by modname we don't break the loop.
                                     $modfound = true;
                                 }
-                            } 
+                            }
                         }
 
                         $module = array();
@@ -353,7 +360,7 @@ class local_nccsoft_external extends external_api {
                         //(each module callback take care about checking the capabilities)
 
                         require_once($CFG->dirroot . '/mod/' . $cm->modname . '/lib.php');
-                        $getcontentfunction = $cm->modname.'_export_contents';
+                        $getcontentfunction = $cm->modname . '_export_contents';
                         if (function_exists($getcontentfunction)) {
                             if (empty($filters['excludecontents']) and $contents = $getcontentfunction($cm, $baseurl)) {
                                 $module['contents'] = $contents;
@@ -392,7 +399,8 @@ class local_nccsoft_external extends external_api {
      * @return external_description
      * @since Moodle 2.2
      */
-    public static function get_course_content_by_id_returns() {
+    public static function get_course_content_by_id_returns()
+    {
         return new external_multiple_structure(
             new external_single_structure(
                 array(
@@ -419,10 +427,10 @@ class local_nccsoft_external extends external_api {
                                     new external_single_structure(
                                         array(
                                             // content info
-                                            'type'=> new external_value(PARAM_TEXT, 'a file or a folder or external link'),
-                                            'filename'=> new external_value(PARAM_FILE, 'filename'),
-                                            'filepath'=> new external_value(PARAM_PATH, 'filepath'),
-                                            'filesize'=> new external_value(PARAM_INT, 'filesize'),
+                                            'type' => new external_value(PARAM_TEXT, 'a file or a folder or external link'),
+                                            'filename' => new external_value(PARAM_FILE, 'filename'),
+                                            'filepath' => new external_value(PARAM_PATH, 'filepath'),
+                                            'filesize' => new external_value(PARAM_INT, 'filesize'),
                                             'fileurl' => new external_value(PARAM_URL, 'downloadable file url', VALUE_OPTIONAL),
                                             'content' => new external_value(PARAM_RAW, 'Raw content, will be used when type is content', VALUE_OPTIONAL),
                                             'timecreated' => new external_value(PARAM_INT, 'Time created'),
@@ -459,7 +467,8 @@ class local_nccsoft_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_mod_module_section_by_id_parameters() {
+    public static function get_mod_module_section_by_id_parameters()
+    {
         return new external_function_parameters(
             array('listmodule' => new external_value("string", 'List module id'),
                 'options' => new external_multiple_structure (
@@ -491,7 +500,8 @@ class local_nccsoft_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_mod_module_section_by_id($listmodule, $options = array()) {
+    public static function get_mod_module_section_by_id($listmodule, $options = array())
+    {
         global $CFG, $DB;
 
         //validate parameter
@@ -510,7 +520,8 @@ class local_nccsoft_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_mod_module_section_by_id_returns() {
+    public static function get_mod_module_section_by_id_returns()
+    {
         return new external_single_structure(
             array(
                 'id' => new external_value(PARAM_INT, 'page id'),
@@ -522,8 +533,8 @@ class local_nccsoft_external extends external_api {
             )
         );
     }
-    
-    
+
+
     /**
      * VietNH 20-05-2016
      * Returns description of method parameters
@@ -532,7 +543,8 @@ class local_nccsoft_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_mod_page_by_id_parameters() {
+    public static function get_mod_page_by_id_parameters()
+    {
         return new external_function_parameters(
             array('pageid' => new external_value(PARAM_INT, 'page id'),
                 'options' => new external_multiple_structure (
@@ -564,7 +576,8 @@ class local_nccsoft_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_mod_page_by_id($pageid, $options = array()) {
+    public static function get_mod_page_by_id($pageid, $options = array())
+    {
         global $CFG, $DB;
 
         //validate parameter
@@ -583,7 +596,8 @@ class local_nccsoft_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_mod_page_by_id_returns() {
+    public static function get_mod_page_by_id_returns()
+    {
         return new external_single_structure(
             array(
                 'id' => new external_value(PARAM_INT, 'page id'),
@@ -604,7 +618,8 @@ class local_nccsoft_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_mod_book_by_id_parameters() {
+    public static function get_mod_book_by_id_parameters()
+    {
         return new external_function_parameters(
             array('bookid' => new external_value(PARAM_INT, 'book id'),
                 'options' => new external_multiple_structure (
@@ -636,7 +651,8 @@ class local_nccsoft_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_mod_book_by_id($bookid, $options = array()) {
+    public static function get_mod_book_by_id($bookid, $options = array())
+    {
         global $CFG, $DB;
 
         //validate parameter
@@ -655,7 +671,8 @@ class local_nccsoft_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_mod_book_by_id_returns() {
+    public static function get_mod_book_by_id_returns()
+    {
         return new external_single_structure(
             array(
                 'id' => new external_value(PARAM_INT, 'book id'),
@@ -669,8 +686,6 @@ class local_nccsoft_external extends external_api {
     }
 
 
-
-
     /**
      * Hanv 20/05/2016
      * Returns description of method parameters
@@ -680,7 +695,8 @@ class local_nccsoft_external extends external_api {
      * @since Moodle 2.2
      *
      */
-    public static function get_mod_quiz_by_id_parameters() {
+    public static function get_mod_quiz_by_id_parameters()
+    {
         return new external_function_parameters(
             array('quizid' => new external_value(PARAM_INT, 'quiz id'),
                 'options' => new external_multiple_structure (
@@ -712,7 +728,8 @@ class local_nccsoft_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_mod_quiz_by_id($quizid, $options = array()) {
+    public static function get_mod_quiz_by_id($quizid, $options = array())
+    {
         global $CFG, $DB;
 
         //validate parameter
@@ -720,7 +737,7 @@ class local_nccsoft_external extends external_api {
             array('quizid' => $quizid, 'options' => $options));
 
         //retrieve the quiz
-        $quiz =  $DB->get_record('quiz', array('id' => $params['quizid']), '*', MUST_EXIST);
+        $quiz = $DB->get_record('quiz', array('id' => $params['quizid']), '*', MUST_EXIST);
         return $quiz;
     }
 
@@ -731,8 +748,9 @@ class local_nccsoft_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_mod_quiz_by_id_returns() {
-        return  new external_single_structure(
+    public static function get_mod_quiz_by_id_returns()
+    {
+        return new external_single_structure(
             array(
                 'id' => new external_value(PARAM_INT, 'quiz id'),
                 'course' => new external_value(PARAM_INT, 'course id'),
@@ -899,6 +917,7 @@ class local_nccsoft_external extends external_api {
     {
         return new external_function_parameters(
             array('lessonid' => new external_value(PARAM_INT, 'lesson id'),
+                'prevpageid' => new external_value(PARAM_INT, 'prev page id'),
                 'options' => new external_multiple_structure(
                     new external_single_structure(
                         array(
@@ -920,16 +939,16 @@ class local_nccsoft_external extends external_api {
         );
     }
 
-    public static function get_mod_lesson_page_by_id($lessonid, $options = array())
+    public static function get_mod_lesson_page_by_id($lessonid, $prevpageid, $options = array())
     {
         global $DB;
 
         //validate parameter
         $params = self::validate_parameters(self::get_mod_lesson_page_by_id_parameters(),
-            array('lessonid' => $lessonid, 'options' => $options));
+            array('lessonid' => $lessonid, 'prevpageid' => $prevpageid, 'options' => $options));
 
         //retrieve the page
-        return $DB->get_record('lesson_pages', array('id' => $params['lessonid']), '*', MUST_EXIST);
+        return $DB->get_record('lesson_pages', array('id' => $params['lessonid'], 'prevpageid' => $params['prevpageid']), '*', MUST_EXIST);
     }
 
     public static function get_mod_lesson_page_by_id_returns()
