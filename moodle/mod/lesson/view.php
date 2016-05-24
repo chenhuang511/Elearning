@@ -39,23 +39,25 @@ $backtocourse = optional_param('backtocourse', false, PARAM_RAW);
 // get course module from webservice
 //$cm = get_coursemodule_from_id('lesson', $id, 0, false, MUST_EXIST);
 $cm = get_remote_course_module($id);
-//echo "<pre>";
-//print_r($cm);
-//echo "</pre>";
 
 // get course from webservice
-//$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-$course = get_remote_course_content($cm->instance);
+$course = $DB->get_record('course', array('remoteid' => $cm->course), '*', MUST_EXIST);
+//$course = get_remote_course_content($cm->course);
+//echo "<pre>";
+//print_r($course);
+//echo "</pre>";
+//die();
 
 // get lesson
 //$lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST));
+
+echo "lesson id: " . $cm->instance; die();
 $lesson = get_remote_lesson_content($cm->instance);
 
-//echo "vao 1"; die();
-//echo "<pre>";
-//var_dump($course);
-//echo "</pre>";
-//die();
+echo "<pre>";
+var_dump($lesson);
+echo "</pre>";
+die();
 
 $course = $course[0];
 

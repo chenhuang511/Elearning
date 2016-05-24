@@ -34,35 +34,52 @@
  */
 
 $functions = array(
-	'local_mod_get_course_content_by_id' => array(
-		'classname'   => 'local_nccsoft_external',
-		'methodname'  => 'get_course_content_by_id',
-		'classpath'   => 'local/external_service/externallib.php',
-		'description' => 'Get course content by identify',
-		'type'        => 'read',
-		'ajax'        => true
-	),
-    /*'local_mod_get_label_by_id' => array(
-        'classname'   => 'local_nccsoft_external',
-        'methodname'  => 'get_mod_label_by_id',
-        'classpath'   => 'local/external_service/externallib.php',
+    'local_mod_get_course_content_by_id' => array(
+        'classname' => 'local_nccsoft_external',
+        'methodname' => 'get_course_content_by_id',
+        'classpath' => 'local/external_service/externallib.php',
+        'description' => 'Get course content by identify',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_lesson_by_id' => array(
+        'classname' => 'local_nccsoft_external',
+        'methodname' => 'get_mod_lesson_by_id',
+        'classpath' => 'local/external_service/externallib.php',
+        'description' => 'Get mod assignment by identify',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_label_by_id' => array(
+        'classname' => 'local_nccsoft_external',
+        'methodname' => 'get_mod_label_by_id',
+        'classpath' => 'local/external_service/externallib.php',
         'description' => 'Get mod label by identify',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_page_by_id' => array(
+        'classname'   => 'local_nccsoft_external',
+        'methodname'  => 'get_mod_page_by_id',
+        'classpath'   => 'local/external_service/externallib.php',
+        'description' => 'Get mod page by identify',
         'type'        => 'read',
         'ajax'        => true
     ),
+    'local_mod_get_assignment_by_id' => array(
+        'classname' => 'local_nccsoft_external',
+        'methodname' => 'get_mod_assignment_by_id',
+        'classpath' => 'local/external_service/externallib.php',
+        'description' => 'Get mod assignment by identify',
+        'type' => 'read',
+        'ajax' => true
+    )
+    /*,
 	'local_mod_get_module_section_by_id' => array(
 		'classname'   => 'local_nccsoft_external',
 		'methodname'  => 'get_mod_module_section_by_id',
 		'classpath'   => 'local/external_service/externallib.php',
 		'description' => 'Get mod section by list id',
-		'type'        => 'read',
-		'ajax'        => true
-	),
-	'local_mod_get_page_by_id' => array(
-		'classname'   => 'local_nccsoft_external',
-		'methodname'  => 'get_mod_page_by_id',
-		'classpath'   => 'local/external_service/externallib.php',
-		'description' => 'Get mod page by identify',
 		'type'        => 'read',
 		'ajax'        => true
 	),
@@ -86,15 +103,17 @@ $functions = array(
 );
 
 $services = array(
-    'NccSoft External Service'  => array(
-        'functions' => array (
-			'local_mod_get_course_content_by_id',
-        	/*'local_mod_get_label_by_id',
-			'local_mod_get_quiz_by_id',
-			'local_mod_get_page_by_id',
-			'local_mod_get_book_by_id',*/
-    	),
-    	'enabled' => 1,
+    'NccSoft External Service' => array(
+        'functions' => array(
+            'local_mod_get_course_content_by_id',
+            'local_mod_get_lesson_by_id',
+            'local_mod_get_label_by_id',
+            'local_mod_get_page_by_id',
+            'local_mod_get_assignment_by_id'
+            /*'local_mod_get_quiz_by_id',
+            'local_mod_get_book_by_id',*/
+        ),
+        'enabled' => 1,
         'restrictedusers' => 0,
         'shortname' => 'ncc_ext_service',
         'downloadfiles' => 1,
