@@ -1,9 +1,8 @@
 /.idea/*
+tecahub/config.php
 /tecahub/config.php
 /moodle/config.php
 /moodle/.idea/*
 /tecahub/.idea/*
 /UMS/.idea/*
 /ums_api/.idea/*
-/.idea/Elearning.iml
-/.idea/webServers.xml
