@@ -46,7 +46,8 @@ class local_nccsoft_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_course_content_by_id_parameters() {
+    public static function get_course_content_by_id_parameters()
+    {
         return new external_function_parameters(
             array('courseid' => new external_value(PARAM_INT, 'course id'),
                 'options' => new external_multiple_structure (
@@ -78,7 +79,8 @@ class local_nccsoft_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_course_content_by_id($courseid, $options = array()) {
+    public static function get_course_content_by_id($courseid, $options = array())
+    {
         global $CFG, $DB;
         require_once($CFG->dirroot . "/local/external_service/lib/course/lib.php");
 
@@ -152,6 +154,9 @@ class local_nccsoft_external extends external_api {
 
         if ($course->visible
             or has_capability('moodle/course:viewhiddencourses', $context)) {
+        if ($canupdatecourse or $course->visible
+            or has_capability('moodle/course:viewhiddencourses', $context)
+        ) {
 
             //retrieve sections
             $modinfo = get_fast_modinfo($course);
@@ -231,7 +236,7 @@ class local_nccsoft_external extends external_api {
                                     // Note that if we are only filtering by modname we don't break the loop.
                                     $modfound = true;
                                 }
-                            } 
+                            }
                         }
 
                         $module = array();
@@ -275,7 +280,7 @@ class local_nccsoft_external extends external_api {
                         //(each module callback take care about checking the capabilities)
 
                         require_once($CFG->dirroot . '/mod/' . $cm->modname . '/lib.php');
-                        $getcontentfunction = $cm->modname.'_export_contents';
+                        $getcontentfunction = $cm->modname . '_export_contents';
                         if (function_exists($getcontentfunction)) {
                             if (empty($filters['excludecontents']) and $contents = $getcontentfunction($cm, $baseurl)) {
                                 $module['contents'] = $contents;
@@ -314,7 +319,8 @@ class local_nccsoft_external extends external_api {
      * @return external_description
      * @since Moodle 2.2
      */
-    public static function get_course_content_by_id_returns() {
+    public static function get_course_content_by_id_returns()
+    {
         return new external_multiple_structure(
             new external_single_structure(
                 array(
@@ -341,10 +347,10 @@ class local_nccsoft_external extends external_api {
                                     new external_single_structure(
                                         array(
                                             // content info
-                                            'type'=> new external_value(PARAM_TEXT, 'a file or a folder or external link'),
-                                            'filename'=> new external_value(PARAM_FILE, 'filename'),
-                                            'filepath'=> new external_value(PARAM_PATH, 'filepath'),
-                                            'filesize'=> new external_value(PARAM_INT, 'filesize'),
+                                            'type' => new external_value(PARAM_TEXT, 'a file or a folder or external link'),
+                                            'filename' => new external_value(PARAM_FILE, 'filename'),
+                                            'filepath' => new external_value(PARAM_PATH, 'filepath'),
+                                            'filesize' => new external_value(PARAM_INT, 'filesize'),
                                             'fileurl' => new external_value(PARAM_URL, 'downloadable file url', VALUE_OPTIONAL),
                                             'content' => new external_value(PARAM_RAW, 'Raw content, will be used when type is content', VALUE_OPTIONAL),
                                             'timecreated' => new external_value(PARAM_INT, 'Time created'),

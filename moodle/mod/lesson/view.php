@@ -24,45 +24,34 @@
  **/
 
 require_once(dirname(__FILE__) . '/../../config.php');
-require_once($CFG->dirroot.'/mod/lesson/locallib.php');
-require_once($CFG->dirroot.'/course/remote/remotelib.php');
-require_once($CFG->dirroot.'/mod/lesson/view_form.php');
+require_once($CFG->dirroot . '/mod/lesson/locallib.php');
+require_once($CFG->dirroot . '/course/remote/remotelib.php');
+require_once($CFG->dirroot . '/mod/lesson/view_form.php');
 require_once($CFG->libdir . '/completionlib.php');
 require_once($CFG->libdir . '/grade/constants.php');
 
-$id      = required_param('id', PARAM_INT);             // Course Module ID
-$pageid  = optional_param('pageid', null, PARAM_INT);   // Lesson Page ID
-$edit    = optional_param('edit', -1, PARAM_BOOL);
-$userpassword = optional_param('userpassword','',PARAM_RAW);
+$id = required_param('id', PARAM_INT);             // Course Module ID
+$pageid = optional_param('pageid', null, PARAM_INT);   // Lesson Page ID
+$edit = optional_param('edit', -1, PARAM_BOOL);
+$userpassword = optional_param('userpassword', '', PARAM_RAW);
 $backtocourse = optional_param('backtocourse', false, PARAM_RAW);
 
 // get course module from webservice
 //$cm = get_coursemodule_from_id('lesson', $id, 0, false, MUST_EXIST);
 $cm = get_remote_course_module($id);
-//echo "<pre>";
-//print_r($cm);
-//echo "</pre>";
 
 // get course from webservice
-//$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-$course = get_remote_course_content($cm->instance);
+$course = $DB->get_record('course', array('remoteid' => $cm->course), '*', MUST_EXIST);
+//$course = get_remote_course_content($cm->course);
 
 // get lesson
 //$lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST));
-$lesson = get_remote_lesson_content($cm->instance);
-
-//echo "vao 1"; die();
-//echo "<pre>";
-//var_dump($course);
-//echo "</pre>";
-//die();
-
-$course = $course[0];
+$lesson = new lesson(get_remote_lesson_content($cm->instance));
 
 //require_login($course, false, $cm);
 
 if ($backtocourse) {
-    redirect(new moodle_url('/course/view.php', array('id'=>$course->id)));
+    redirect(new moodle_url('/course/view.php', array('id' => $course->id)));
 }
 
 // Apply overrides.
@@ -72,19 +61,19 @@ $lesson->update_effective_access($USER->id);
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
 
-$url = new moodle_url('/mod/lesson/view.php', array('id'=>$id));
+$url = new moodle_url('/mod/lesson/view.php', array('id' => $id));
 if ($pageid !== null) {
     $url->param('pageid', $pageid);
 }
 $PAGE->set_url($url);
 
-$context = context_module::instance($cm->id);
-$canmanage = has_capability('mod/lesson:manage', $context);
+//$context = context_module::instance($cm->id);
+$canmanage = false;// has_capability('mod/lesson:manage', $context);
 
 $lessonoutput = $PAGE->get_renderer('mod_lesson');
 
 $reviewmode = false;
-$userhasgrade = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id));
+$userhasgrade = $DB->count_records("lesson_grades", array("lessonid" => $lesson->id, "userid" => $USER->id));
 if ($userhasgrade && !$lesson->retake) {
     $reviewmode = true;
 }
@@ -138,11 +127,11 @@ if (!$canmanage) {
             // check for the timespent condition
             if ($conditions->timespent) {
                 $timespent = false;
-                if ($attempttimes = $DB->get_records('lesson_timer', array("userid"=>$USER->id, "lessonid"=>$dependentlesson->id))) {
+                if ($attempttimes = $DB->get_records('lesson_timer', array("userid" => $USER->id, "lessonid" => $dependentlesson->id))) {
                     // go through all the times and test to see if any of them satisfy the condition
-                    foreach($attempttimes as $attempttime) {
+                    foreach ($attempttimes as $attempttime) {
                         $duration = $attempttime->lessontime - $attempttime->starttime;
-                        if ($conditions->timespent < $duration/60) {
+                        if ($conditions->timespent < $duration / 60) {
                             $timespent = true;
                         }
                     }
@@ -153,11 +142,11 @@ if (!$canmanage) {
             }
 
             // check for the gradebetterthan condition
-            if($conditions->gradebetterthan) {
+            if ($conditions->gradebetterthan) {
                 $gradebetterthan = false;
-                if ($studentgrades = $DB->get_records('lesson_grades', array("userid"=>$USER->id, "lessonid"=>$dependentlesson->id))) {
+                if ($studentgrades = $DB->get_records('lesson_grades', array("userid" => $USER->id, "lessonid" => $dependentlesson->id))) {
                     // go through all the grades and test to see if any of them satisfy the condition
-                    foreach($studentgrades as $studentgrade) {
+                    foreach ($studentgrades as $studentgrade) {
                         if ($studentgrade->grade >= $conditions->gradebetterthan) {
                             $gradebetterthan = true;
                         }
@@ -170,7 +159,7 @@ if (!$canmanage) {
 
             // check for the completed condition
             if ($conditions->completed) {
-                if (!$DB->count_records('lesson_grades', array('userid'=>$USER->id, 'lessonid'=>$dependentlesson->id))) {
+                if (!$DB->count_records('lesson_grades', array('userid' => $USER->id, 'lessonid' => $dependentlesson->id))) {
                     $errors[] = get_string('completederror', 'lesson');
                 }
             }
@@ -185,7 +174,7 @@ if (!$canmanage) {
     }
 }
 
-    // this is called if a student leaves during a lesson
+// this is called if a student leaves during a lesson
 if ($pageid == LESSON_UNSEENBRANCHPAGE) {
     $pageid = lesson_unseen_question_jump($lesson, $USER->id, $pageid);
 }
@@ -200,7 +189,7 @@ if (empty($pageid)) {
         if (!$canmanage) {
             $lesson->add_message(get_string('lessonnotready2', 'lesson')); // a nice message to the student
         } else {
-            if (!$DB->count_records('lesson_pages', array('lessonid'=>$lesson->id))) {
+            if (!$DB->count_records('lesson_pages', array('lessonid' => $lesson->id))) {
                 redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id"); // no pages - redirect to add pages
             } else {
                 $lesson->add_message(get_string('lessonpagelinkingbroken', 'lesson'));  // ok, bad mojo
@@ -268,24 +257,25 @@ if (empty($pageid)) {
     // Check to see if end of lesson was reached.
     if ((isset($lastpageseen) && ($lastpageseen != LESSON_EOL))) {
         if (($DB->count_records('lesson_attempts', array('lessonid' => $lesson->id, 'userid' => $USER->id, 'retry' => $retries)) > 0)
-                || $DB->count_records('lesson_branch', array("lessonid" => $lesson->id, "userid" => $USER->id, "retry" => $retries)) > 0) {
+            || $DB->count_records('lesson_branch', array("lessonid" => $lesson->id, "userid" => $USER->id, "retry" => $retries)) > 0
+        ) {
 
             echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('leftduringtimedsession', 'lesson'));
             if ($lesson->timelimit) {
                 if ($lesson->retake) {
                     $continuelink = new single_button(new moodle_url('/mod/lesson/view.php',
-                            array('id' => $cm->id, 'pageid' => $lesson->firstpageid, 'startlastseen' => 'no')),
-                            get_string('continue', 'lesson'), 'get');
+                        array('id' => $cm->id, 'pageid' => $lesson->firstpageid, 'startlastseen' => 'no')),
+                        get_string('continue', 'lesson'), 'get');
 
                     echo html_writer::div($lessonoutput->message(get_string('leftduringtimed', 'lesson'), $continuelink),
-                            'center leftduring');
+                        'center leftduring');
 
                 } else {
                     $courselink = new single_button(new moodle_url('/course/view.php',
-                            array('id' => $PAGE->course->id)), get_string('returntocourse', 'lesson'), 'get');
+                        array('id' => $PAGE->course->id)), get_string('returntocourse', 'lesson'), 'get');
 
                     echo html_writer::div($lessonoutput->message(get_string('leftduringtimednoretake', 'lesson'), $courselink),
-                            'center leftduring');
+                        'center leftduring');
                 }
             } else {
                 echo $lessonoutput->continue_links($lesson, $lastpageseen);
@@ -298,20 +288,24 @@ if (empty($pageid)) {
     if ($attemptflag) {
         if (!$lesson->retake) {
             echo $lessonoutput->header($lesson, $cm, 'view', '', null, get_string("noretake", "lesson"));
-            $courselink = new single_button(new moodle_url('/course/view.php', array('id'=>$PAGE->course->id)), get_string('returntocourse', 'lesson'), 'get');
+            $courselink = new single_button(new moodle_url('/course/view.php', array('id' => $PAGE->course->id)), get_string('returntocourse', 'lesson'), 'get');
             echo $lessonoutput->message(get_string("noretake", "lesson"), $courselink);
             echo $lessonoutput->footer();
             exit();
         }
     }
     // start at the first page
-    if (!$pageid = $DB->get_field('lesson_pages', 'id', array('lessonid' => $lesson->id, 'prevpageid' => 0))) {
-            print_error('cannotfindfirstpage', 'lesson');
+    //if (!$pageid = $DB->get_field('lesson_pages', 'id', array('lessonid' => $lesson->id, 'prevpageid' => 0))) {
+
+    $lessonpage = get_remote_lesson_page_content($lesson->id, 0);
+
+    if (!$pageid = $lessonpage->id) {
+        print_error('cannotfindfirstpage', 'lesson');
     }
-    /// This is the code for starting a timed test
-    if(!isset($USER->startlesson[$lesson->id]) && !$canmanage) {
-        $lesson->start_timer();
-    }
+    // This is the code for starting a timed test
+//    if (!isset($USER->startlesson[$lesson->id]) && !$canmanage) {
+//        $lesson->start_timer();
+//    }
 }
 
 $currenttab = 'view';
@@ -322,8 +316,10 @@ $timer = null;
 if ($pageid != LESSON_EOL) {
     /// This is the code updates the lessontime for a timed test
     $startlastseen = optional_param('startlastseen', '', PARAM_ALPHA);
-
+    
     $page = $lesson->load_page($pageid);
+    echo "vao day roi 1";
+    die();
     // Check if the page is of a special type and if so take any nessecary action
     $newpageid = $page->callback_on_view($canmanage);
     if (is_numeric($newpageid)) {
@@ -347,7 +343,7 @@ if ($pageid != LESSON_EOL) {
         $lesson->displayleft = lesson_displayleftif($lesson);
 
         $continue = ($startlastseen !== '');
-        $restart  = ($continue && $startlastseen == 'yes');
+        $restart = ($continue && $startlastseen == 'yes');
         $timer = $lesson->update_timer($continue, $restart);
 
         if ($lesson->timelimit) {
@@ -355,7 +351,7 @@ if ($pageid != LESSON_EOL) {
             if ($timeleft <= 0) {
                 // Out of time
                 $lesson->add_message(get_string('eolstudentoutoftime', 'lesson'));
-                redirect(new moodle_url('/mod/lesson/view.php', array('id'=>$cm->id,'pageid'=>LESSON_EOL, 'outoftime'=>'normal')));
+                redirect(new moodle_url('/mod/lesson/view.php', array('id' => $cm->id, 'pageid' => LESSON_EOL, 'outoftime' => 'normal')));
                 die; // Shouldn't be reached, but make sure
             } else if ($timeleft < 60) {
                 // One minute warning
@@ -365,17 +361,17 @@ if ($pageid != LESSON_EOL) {
 
         if ($page->qtype == LESSON_PAGE_BRANCHTABLE && $lesson->minquestions) {
             // tell student how many questions they have seen, how many are required and their grade
-            $ntries = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id));
+            $ntries = $DB->count_records("lesson_grades", array("lessonid" => $lesson->id, "userid" => $USER->id));
             $gradeinfo = lesson_grade($lesson, $ntries);
             if ($gradeinfo->attempts) {
                 if ($gradeinfo->nquestions < $lesson->minquestions) {
                     $a = new stdClass;
-                    $a->nquestions   = $gradeinfo->nquestions;
+                    $a->nquestions = $gradeinfo->nquestions;
                     $a->minquestions = $lesson->minquestions;
                     $lesson->add_message(get_string('numberofpagesviewednotice', 'lesson', $a));
                 }
 
-                if (!$reviewmode && !$lesson->retake){
+                if (!$reviewmode && !$lesson->retake) {
                     $lesson->add_message(get_string("numberofcorrectanswers", "lesson", $gradeinfo->earned), 'notify');
                     if ($lesson->grade != GRADE_TYPE_NONE) {
                         $a = new stdClass;
@@ -411,12 +407,12 @@ if ($pageid != LESSON_EOL) {
         $USER->editing = $edit;
     }
 
-    if (is_array($page->answers) && count($page->answers)>0) {
+    if (is_array($page->answers) && count($page->answers) > 0) {
         // this is for modattempts option.  Find the users previous answer to this page,
         //   and then display it below in answer processing
         if (isset($USER->modattempts[$lesson->id])) {
-            $retries = $DB->count_records('lesson_grades', array("lessonid"=>$lesson->id, "userid"=>$USER->id));
-            if (!$attempts = $lesson->get_attempts($retries-1, false, $page->id)) {
+            $retries = $DB->count_records('lesson_grades', array("lessonid" => $lesson->id, "userid" => $USER->id));
+            if (!$attempts = $lesson->get_attempts($retries - 1, false, $page->id)) {
                 print_error('cannotfindpreattempt', 'lesson');
             }
             $attempt = end($attempts);
@@ -432,10 +428,10 @@ if ($pageid != LESSON_EOL) {
         $data->newpageid = $lesson->get_next_page($page->nextpageid);
 
         $customdata = array(
-            'title'     => $page->title,
-            'contents'  => $page->get_contents()
+            'title' => $page->title,
+            'contents' => $page->get_contents()
         );
-        $mform = new lesson_page_without_answers($CFG->wwwroot.'/mod/lesson/continue.php', $customdata);
+        $mform = new lesson_page_without_answers($CFG->wwwroot . '/mod/lesson/continue.php', $customdata);
         $mform->set_data($data);
         ob_start();
         $mform->display();
@@ -461,13 +457,14 @@ if ($pageid != LESSON_EOL) {
     echo $lessonoutput->footer();
 
 } else {
-
+    echo "vao day roi 2";
+    die();
     $lessoncontent = '';
     // end of lesson reached work out grade
     // Used to check to see if the student ran out of time
     $outoftime = optional_param('outoftime', '', PARAM_ALPHA);
 
-    $ntries = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id));
+    $ntries = $DB->count_records("lesson_grades", array("lessonid" => $lesson->id, "userid" => $USER->id));
     if (isset($USER->modattempts[$lesson->id])) {
         $ntries--;  // need to look at the old attempts :)
     }
@@ -564,7 +561,8 @@ if ($pageid != LESSON_EOL) {
                 $grade->completed = time();
                 if (isset($USER->modattempts[$lesson->id])) { // If reviewing, make sure update old grade record.
                     if (!$grades = $DB->get_records("lesson_grades",
-                        array("lessonid" => $lesson->id, "userid" => $USER->id), "completed DESC", '*', 0, 1)) {
+                        array("lessonid" => $lesson->id, "userid" => $USER->id), "completed DESC", '*', 0, 1)
+                    ) {
                         print_error('cannotfindgrade', 'lesson');
                     }
                     $oldgrade = array_shift($grades);
@@ -608,7 +606,7 @@ if ($pageid != LESSON_EOL) {
         // $ntries is decremented above
         if (!$attempts = $lesson->get_attempts($ntries)) {
             $attempts = array();
-            $url = new moodle_url('/mod/lesson/view.php', array('id'=>$PAGE->cm->id));
+            $url = new moodle_url('/mod/lesson/view.php', array('id' => $PAGE->cm->id));
         } else {
             $firstattempt = current($attempts);
             $pageid = $firstattempt->pageid;
@@ -617,7 +615,7 @@ if ($pageid != LESSON_EOL) {
             $lastattempt = end($attempts);
             $USER->modattempts[$lesson->id] = $lastattempt->pageid;
 
-            $url = new moodle_url('/mod/lesson/view.php', array('id'=>$PAGE->cm->id, 'pageid'=>$pageid));
+            $url = new moodle_url('/mod/lesson/view.php', array('id' => $PAGE->cm->id, 'pageid' => $pageid));
         }
         $lessoncontent .= html_writer::link($url, get_string('reviewlesson', 'lesson'), array('class' => 'centerpadded lessonbutton standardbutton'));
     } elseif ($lesson->modattempts && $canmanage) {
@@ -628,11 +626,12 @@ if ($pageid != LESSON_EOL) {
         $lessoncontent .= $lesson->link_for_activitylink();
     }
 
-    $url = new moodle_url('/course/view.php', array('id'=>$course->id));
-    $lessoncontent .= html_writer::link($url, get_string('returnto', 'lesson', format_string($course->fullname, true)), array('class'=>'centerpadded lessonbutton standardbutton'));
+    $url = new moodle_url('/course/view.php', array('id' => $course->id));
+    $lessoncontent .= html_writer::link($url, get_string('returnto', 'lesson', format_string($course->fullname, true)), array('class' => 'centerpadded lessonbutton standardbutton'));
 
     if (has_capability('gradereport/user:view', context_course::instance($course->id))
-            && $course->showgrades && $lesson->grade != 0 && !$lesson->practice) {
+        && $course->showgrades && $lesson->grade != 0 && !$lesson->practice
+    ) {
         $url = new moodle_url('/grade/index.php', array('id' => $course->id));
         $lessoncontent .= html_writer::link($url, get_string('viewgrades', 'lesson'),
             array('class' => 'centerpadded lessonbutton standardbutton'));

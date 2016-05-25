@@ -502,9 +502,9 @@ define('MOODLE_OFFICIAL_MOBILE_SERVICE', 'moodle_mobile_app');
  */
 define('NCCSOFT_EXTERNAL_SERVICE', 'ncc_ext_service');
 
-define('HOST_TOKEN', '74a6caf670c5f2348df8d0ee758400a8');
-define('HOST_TOKEN_M', '2077e39e91a4cfb85c565c550cae7ca8');
-define('HUB_URL', 'http://10.0.0.19:9333');
+define('HOST_TOKEN', 'a75634b66a82dd8f42f99baedf2690a1');
+define('HOST_TOKEN_M', 'ac52a223f8589b3f26fa456a5dc20bde');
+define('HUB_URL', 'http://192.168.1.252');
 
 /**
  * Indicates the user has the capabilities required to ignore activity and course file size restrictions.
@@ -2506,7 +2506,7 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
             $course = $DB->get_record('course', array('id' => $courseorid), '*', MUST_EXIST);
         }
         if ($cm) {
-            if ($cm->course != $course->id) {
+            if ($cm->course != $course->remoteid) {
                 throw new coding_exception('course and cm parameters in require_login() call do not match!!');
             }
             // Make sure we have a $cm from get_fast_modinfo as this contains activity access details.
