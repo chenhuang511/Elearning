@@ -38,6 +38,8 @@ require_once("$CFG->libdir/externallib.php");
  * @since Moodle 2.2
  */
 class local_nccsoft_external extends external_api {
+
+    //region _VIETNH
     /**
      * VietNH 23-05-2016
      * Returns description of method parameters
@@ -69,20 +71,10 @@ class local_nccsoft_external extends external_api {
             )
         );
     }
-
-    /**
-     * Get course contents
-     *
-     * @param int $courseid course id
-     * @param array $options Options for filtering the results, used since Moodle 2.9
-     * @return array
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
-     */
     public static function get_course_content_by_id($courseid, $options = array())
     {
         global $CFG, $DB;
-        require_once($CFG->dirroot . "/local/external_service/lib/course/lib.php");
+        require_once($CFG->dirroot . "/course/lib.php");
 
         //validate parameter
         $params = self::validate_parameters(self::get_course_content_by_id_parameters(),
@@ -129,43 +121,19 @@ class local_nccsoft_external extends external_api {
         //retrieve the course
         $course = $DB->get_record('course', array('id' => $params['courseid']), '*', MUST_EXIST);
 
-        if ($course->id != SITEID) {
-            // Check course format exist.
-            if (!file_exists($CFG->dirroot . '/course/format/' . $course->format . '/lib.php')) {
-                throw new moodle_exception('cannotgetcoursecontents', 'webservice', '', null,
-                    get_string('courseformatnotfound', 'error', $course->format));
-            } else {
-                require_once($CFG->dirroot . '/course/format/' . $course->format . '/lib.php');
-            }
-        }
-
         // now security checks
         $context = context_course::instance($course->id, IGNORE_MISSING);
-        try {
-            self::validate_context($context);
-        } catch (Exception $e) {
-            $exceptionparam = new stdClass();
-            $exceptionparam->message = $e->getMessage();
-            $exceptionparam->courseid = $course->id;
-            throw new moodle_exception('errorcoursecontextnotvalid', 'webservice', '', $exceptionparam);
-        }
+
         //create return value
         $coursecontents = array();
 
-        if ($course->visible
-            or has_capability('moodle/course:viewhiddencourses', $context)) {
-        if ($canupdatecourse or $course->visible
-            or has_capability('moodle/course:viewhiddencourses', $context)
-        ) {
-
+        if ($course->visible) {
             //retrieve sections
             $modinfo = get_fast_modinfo($course);
-
             $sections = $modinfo->get_section_info_all();
 
             //for each sections (first displayed to last displayed)
             $modinfosections = $modinfo->get_sections();
-
             foreach ($sections as $key => $section) {
 
                 if (!$section->uservisible) {
@@ -251,28 +219,17 @@ class local_nccsoft_external extends external_api {
                         $module['modplural'] = $cm->modplural;
                         $module['modicon'] = $cm->get_icon_url()->out(false);
                         $module['indent'] = $cm->indent;
-
-                        if (!empty($cm->showdescription) or $cm->modname == 'label') {
-                            // We want to use the external format. However from reading get_formatted_content(), $cm->content format is always FORMAT_HTML.
-                            list($module['description'], $descriptionformat) = external_format_text($cm->content,
-                                FORMAT_HTML, $modcontext->id, $cm->modname, 'intro', $cm->id);
-                        }
-
+                        $module['description'] = $cm->content;
                         //url of the module
                         $url = $cm->url;
-                        if ($url) { //labels don't have url
-                            $module['url'] = $url->out(false);
-                        }
+                        if ($url) $module['url'] = $url->out(false);
 
-                        $canviewhidden = has_capability('moodle/course:viewhiddenactivities',
-                            context_module::instance($cm->id));
+
                         //user that can view hidden module should know about the visibility
                         $module['visible'] = $cm->visible;
 
                         // Availability date (also send to user who can see hidden module).
-                        if ($CFG->enableavailability && ($canviewhidden || $canupdatecourse)) {
-                            $module['availability'] = $cm->availability;
-                        }
+                        if ($CFG->enableavailability) $module['availability'] = $cm->availability;
 
                         $baseurl = 'webservice/pluginfile.php';
 
@@ -280,7 +237,7 @@ class local_nccsoft_external extends external_api {
                         //(each module callback take care about checking the capabilities)
 
                         require_once($CFG->dirroot . '/mod/' . $cm->modname . '/lib.php');
-                        $getcontentfunction = $cm->modname . '_export_contents';
+                        $getcontentfunction = $cm->modname.'_export_contents';
                         if (function_exists($getcontentfunction)) {
                             if (empty($filters['excludecontents']) and $contents = $getcontentfunction($cm, $baseurl)) {
                                 $module['contents'] = $contents;
@@ -312,13 +269,6 @@ class local_nccsoft_external extends external_api {
         }
         return $coursecontents;
     }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 2.2
-     */
     public static function get_course_content_by_id_returns()
     {
         return new external_multiple_structure(
@@ -371,12 +321,5 @@ class local_nccsoft_external extends external_api {
             )
         );
     }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.3
-     */
-
+    //endregion
 }

@@ -73,8 +73,8 @@ function get_remote_courses($options = [])
 function get_remote_course_content($courseid, $options = [])
 {
     return moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
-        'token' => HOST_TOKEN_M,
-        'function_name' => 'core_course_get_contents',
+        'token' => HOST_TOKEN,
+        'function_name' => 'local_mod_get_course_content_by_id',
         'params' => array('courseid' => $courseid),
     )));
 }
