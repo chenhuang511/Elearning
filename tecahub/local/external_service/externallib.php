@@ -37,86 +37,9 @@ require_once("$CFG->libdir/externallib.php");
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.2
  */
-class local_nccsoft_external extends external_api
-{
+class local_nccsoft_external extends external_api {
 
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
-     */
-    public static function get_mod_label_by_id_parameters()
-    {
-        return new external_function_parameters(
-            array('labelid' => new external_value(PARAM_INT, 'label id'),
-                'options' => new external_multiple_structure (
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_ALPHANUM,
-                                'The expected keys (value format) are:
-                                                excludemodules (bool) Do not return modules, return only the sections structure
-                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
-                                                sectionid (int) Return only this section
-                                                sectionnumber (int) Return only this section with number (order)
-                                                cmid (int) Return only this module information (among the whole sections structure)
-                                                modname (string) Return only modules with this name "label, forum, etc..."
-                                                modid (int) Return only the module with this id (to be used with modname'),
-                            'value' => new external_value(PARAM_RAW, 'the value of the option,
-                                                                    this param is personaly validated in the external function.')
-                        )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
-            )
-        );
-    }
-
-    /**
-     * Get course contents
-     *
-     * @param int $courseid course id
-     * @param array $options Options for filtering the results, used since Moodle 2.9
-     * @return array
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
-     */
-    public static function get_mod_label_by_id($labelid, $options = array())
-    {
-        global $CFG, $DB;
-
-        //validate parameter
-        $params = self::validate_parameters(self::get_mod_label_by_id_parameters(),
-            array('labelid' => $labelid, 'options' => $options));
-
-
-        //retrieve the course
-        return $DB->get_record('label', array('id' => $params['labelid']), '*', MUST_EXIST);
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
-     */
-    public static function get_mod_label_by_id_returns()
-    {
-        return new external_single_structure(
-            array(
-                'id' => new external_value(PARAM_INT, 'label id'),
-                'course' => new external_value(PARAM_INT, 'course id'),
-                'name' => new external_value(PARAM_TEXT, 'label name'),
-                'intro' => new external_value(PARAM_RAW, 'intro information'),
-                'introformat' => new external_value(PARAM_INT, 'intro format', VALUE_OPTIONAL),
-                'timemodified' => new external_value(PARAM_INT, 'date time')
-            )
-        );
-    }
-
-
-    /*--------------------------------------------------*/
-
+    //region _VIETNH
     /**
      * VietNH 23-05-2016
      * Returns description of method parameters
@@ -148,16 +71,6 @@ class local_nccsoft_external extends external_api
             )
         );
     }
-
-    /**
-     * Get course contents
-     *
-     * @param int $courseid course id
-     * @param array $options Options for filtering the results, used since Moodle 2.9
-     * @return array
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
-     */
     public static function get_course_content_by_id($courseid, $options = array())
     {
         global $CFG, $DB;
@@ -208,44 +121,19 @@ class local_nccsoft_external extends external_api
         //retrieve the course
         $course = $DB->get_record('course', array('id' => $params['courseid']), '*', MUST_EXIST);
 
-        if ($course->id != SITEID) {
-            // Check course format exist.
-            if (!file_exists($CFG->dirroot . '/course/format/' . $course->format . '/lib.php')) {
-                throw new moodle_exception('cannotgetcoursecontents', 'webservice', '', null,
-                    get_string('courseformatnotfound', 'error', $course->format));
-            } else {
-                require_once($CFG->dirroot . '/course/format/' . $course->format . '/lib.php');
-            }
-        }
-
         // now security checks
         $context = context_course::instance($course->id, IGNORE_MISSING);
-        try {
-            self::validate_context($context);
-        } catch (Exception $e) {
-            $exceptionparam = new stdClass();
-            $exceptionparam->message = $e->getMessage();
-            $exceptionparam->courseid = $course->id;
-            throw new moodle_exception('errorcoursecontextnotvalid', 'webservice', '', $exceptionparam);
-        }
-
-        $canupdatecourse = has_capability('moodle/course:update', $context);
 
         //create return value
         $coursecontents = array();
 
-        if ($canupdatecourse or $course->visible
-            or has_capability('moodle/course:viewhiddencourses', $context)
-        ) {
-
+        if ($course->visible) {
             //retrieve sections
             $modinfo = get_fast_modinfo($course);
-
             $sections = $modinfo->get_section_info_all();
 
             //for each sections (first displayed to last displayed)
             $modinfosections = $modinfo->get_sections();
-
             foreach ($sections as $key => $section) {
 
                 if (!$section->uservisible) {
@@ -331,28 +219,17 @@ class local_nccsoft_external extends external_api
                         $module['modplural'] = $cm->modplural;
                         $module['modicon'] = $cm->get_icon_url()->out(false);
                         $module['indent'] = $cm->indent;
-
-                        if (!empty($cm->showdescription) or $cm->modname == 'label') {
-                            // We want to use the external format. However from reading get_formatted_content(), $cm->content format is always FORMAT_HTML.
-                            list($module['description'], $descriptionformat) = external_format_text($cm->content,
-                                FORMAT_HTML, $modcontext->id, $cm->modname, 'intro', $cm->id);
-                        }
-
+                        $module['description'] = $cm->content;
                         //url of the module
                         $url = $cm->url;
-                        if ($url) { //labels don't have url
-                            $module['url'] = $url->out(false);
-                        }
+                        if ($url) $module['url'] = $url->out(false);
 
-                        $canviewhidden = has_capability('moodle/course:viewhiddenactivities',
-                            context_module::instance($cm->id));
+
                         //user that can view hidden module should know about the visibility
                         $module['visible'] = $cm->visible;
 
                         // Availability date (also send to user who can see hidden module).
-                        if ($CFG->enableavailability && ($canviewhidden || $canupdatecourse)) {
-                            $module['availability'] = $cm->availability;
-                        }
+                        if ($CFG->enableavailability) $module['availability'] = $cm->availability;
 
                         $baseurl = 'webservice/pluginfile.php';
 
@@ -360,7 +237,7 @@ class local_nccsoft_external extends external_api
                         //(each module callback take care about checking the capabilities)
 
                         require_once($CFG->dirroot . '/mod/' . $cm->modname . '/lib.php');
-                        $getcontentfunction = $cm->modname . '_export_contents';
+                        $getcontentfunction = $cm->modname.'_export_contents';
                         if (function_exists($getcontentfunction)) {
                             if (empty($filters['excludecontents']) and $contents = $getcontentfunction($cm, $baseurl)) {
                                 $module['contents'] = $contents;
@@ -392,13 +269,6 @@ class local_nccsoft_external extends external_api
         }
         return $coursecontents;
     }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 2.2
-     */
     public static function get_course_content_by_id_returns()
     {
         return new external_multiple_structure(
@@ -451,532 +321,5 @@ class local_nccsoft_external extends external_api
             )
         );
     }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.3
-     */
-
-    /**
-     * VietNH 20-05-2016
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
-     */
-    public static function get_mod_module_section_by_id_parameters()
-    {
-        return new external_function_parameters(
-            array('listmodule' => new external_value("string", 'List module id'),
-                'options' => new external_multiple_structure (
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_ALPHANUM,
-                                'The expected keys (value format) are:
-                                                excludemodules (bool) Do not return modules, return only the sections structure
-                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
-                                                sectionid (int) Return only this section
-                                                sectionnumber (int) Return only this section with number (order)
-                                                cmid (int) Return only this module information (among the whole sections structure)
-                                                modname (string) Return only modules with this name "label, forum, etc..."
-                                                modid (int) Return only the module with this id (to be used with modname'),
-                            'value' => new external_value(PARAM_RAW, 'the value of the option,
-                                                                    this param is personaly validated in the external function.')
-                        )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
-            )
-        );
-    }
-
-    /**
-     * Get course contents - page
-     *
-     * @param int $courseid course id
-     * @param array $options Options for filtering the results, used since Moodle 2.9
-     * @return array
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
-     */
-    public static function get_mod_module_section_by_id($listmodule, $options = array())
-    {
-        global $CFG, $DB;
-
-        //validate parameter
-        $params = self::validate_parameters(self::get_mod_module_section_by_id_parameters(),
-            array('listmodule' => $listmodule, 'options' => $options));
-
-
-        //retrieve the course
-        //return $DB->get_record('page', array('id' => $params['listmodule']), '*', MUST_EXIST);
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
-     */
-    public static function get_mod_module_section_by_id_returns()
-    {
-        return new external_single_structure(
-            array(
-                'id' => new external_value(PARAM_INT, 'page id'),
-                'course' => new external_value(PARAM_INT, 'course id'),
-                'name' => new external_value(PARAM_TEXT, 'page name'),
-                'intro' => new external_value(PARAM_RAW, 'intro information'),
-                'introformat' => new external_value(PARAM_INT, 'intro format', VALUE_OPTIONAL),
-                'timemodified' => new external_value(PARAM_INT, 'date time')
-            )
-        );
-    }
-
-
-    /**
-     * VietNH 20-05-2016
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
-     */
-    public static function get_mod_page_by_id_parameters()
-    {
-        return new external_function_parameters(
-            array('pageid' => new external_value(PARAM_INT, 'page id'),
-                'options' => new external_multiple_structure (
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_ALPHANUM,
-                                'The expected keys (value format) are:
-                                                excludemodules (bool) Do not return modules, return only the sections structure
-                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
-                                                sectionid (int) Return only this section
-                                                sectionnumber (int) Return only this section with number (order)
-                                                cmid (int) Return only this module information (among the whole sections structure)
-                                                modname (string) Return only modules with this name "label, forum, etc..."
-                                                modid (int) Return only the module with this id (to be used with modname'),
-                            'value' => new external_value(PARAM_RAW, 'the value of the option,
-                                                                    this param is personaly validated in the external function.')
-                        )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
-            )
-        );
-    }
-
-    /**
-     * Get course contents - page
-     *
-     * @param int $courseid course id
-     * @param array $options Options for filtering the results, used since Moodle 2.9
-     * @return array
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
-     */
-    public static function get_mod_page_by_id($pageid, $options = array())
-    {
-        global $CFG, $DB;
-
-        //validate parameter
-        $params = self::validate_parameters(self::get_mod_page_by_id_parameters(),
-            array('pageid' => $pageid, 'options' => $options));
-
-
-        //retrieve the course
-        return $DB->get_record('page', array('id' => $params['pageid']), '*', MUST_EXIST);
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
-     */
-    public static function get_mod_page_by_id_returns()
-    {
-        return new external_single_structure(
-            array(
-                'id' => new external_value(PARAM_INT, 'page id'),
-                'course' => new external_value(PARAM_INT, 'course id'),
-                'name' => new external_value(PARAM_TEXT, 'page name'),
-                'intro' => new external_value(PARAM_RAW, 'intro information'),
-                'introformat' => new external_value(PARAM_INT, 'intro format', VALUE_OPTIONAL),
-                'timemodified' => new external_value(PARAM_INT, 'date time')
-            )
-        );
-    }
-
-    /**
-     * VietNH 20-05-2016
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
-     */
-    public static function get_mod_book_by_id_parameters()
-    {
-        return new external_function_parameters(
-            array('bookid' => new external_value(PARAM_INT, 'book id'),
-                'options' => new external_multiple_structure (
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_ALPHANUM,
-                                'The expected keys (value format) are:
-                                                excludemodules (bool) Do not return modules, return only the sections structure
-                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
-                                                sectionid (int) Return only this section
-                                                sectionnumber (int) Return only this section with number (order)
-                                                cmid (int) Return only this module information (among the whole sections structure)
-                                                modname (string) Return only modules with this name "label, forum, etc..."
-                                                modid (int) Return only the module with this id (to be used with modname'),
-                            'value' => new external_value(PARAM_RAW, 'the value of the option,
-                                                                    this param is personaly validated in the external function.')
-                        )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
-            )
-        );
-    }
-
-    /**
-     * Get course contents - page
-     *
-     * @param int $courseid course id
-     * @param array $options Options for filtering the results, used since Moodle 2.9
-     * @return array
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
-     */
-    public static function get_mod_book_by_id($bookid, $options = array())
-    {
-        global $CFG, $DB;
-
-        //validate parameter
-        $params = self::validate_parameters(self::get_mod_book_by_id_parameters(),
-            array('bookid' => $bookid, 'options' => $options));
-
-
-        //retrieve the course
-        return $DB->get_record('book', array('id' => $params['bookid']), '*', MUST_EXIST);
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
-     */
-    public static function get_mod_book_by_id_returns()
-    {
-        return new external_single_structure(
-            array(
-                'id' => new external_value(PARAM_INT, 'book id'),
-                'course' => new external_value(PARAM_INT, 'course id'),
-                'name' => new external_value(PARAM_TEXT, 'page name'),
-                'intro' => new external_value(PARAM_RAW, 'intro information'),
-                'introformat' => new external_value(PARAM_INT, 'intro format', VALUE_OPTIONAL),
-                'timemodified' => new external_value(PARAM_INT, 'date time')
-            )
-        );
-    }
-
-
-    /**
-     * Hanv 20/05/2016
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
-     *
-     */
-    public static function get_mod_quiz_by_id_parameters()
-    {
-        return new external_function_parameters(
-            array('quizid' => new external_value(PARAM_INT, 'quiz id'),
-                'options' => new external_multiple_structure (
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_ALPHANUM,
-                                'The expected keys (value format) are:
-                                                excludemodules (bool) Do not return modules, return only the sections structure
-                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
-                                                sectionid (int) Return only this section
-                                                sectionnumber (int) Return only this section with number (order)
-                                                cmid (int) Return only this module information (among the whole sections structure)
-                                                modname (string) Return only modules with this name "label, forum, etc..."
-                                                modid (int) Return only the module with this id (to be used with modname'),
-                            'value' => new external_value(PARAM_RAW, 'the value of the option,
-                                                                    this param is personaly validated in the external function.')
-                        )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
-            )
-        );
-    }
-
-    /**
-     * Get Quiz name
-     *
-     * @param int $courseid course id
-     * @param array $options Options for filtering the results, used since Moodle 2.9
-     * @return array
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
-     */
-    public static function get_mod_quiz_by_id($quizid, $options = array())
-    {
-        global $CFG, $DB;
-
-        //validate parameter
-        $params = self::validate_parameters(self::get_mod_quiz_by_id_parameters(),
-            array('quizid' => $quizid, 'options' => $options));
-
-        //retrieve the quiz
-        $quiz = $DB->get_record('quiz', array('id' => $params['quizid']), '*', MUST_EXIST);
-        return $quiz;
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
-     */
-    public static function get_mod_quiz_by_id_returns()
-    {
-        return new external_single_structure(
-            array(
-                'id' => new external_value(PARAM_INT, 'quiz id'),
-                'course' => new external_value(PARAM_INT, 'course id'),
-                'name' => new external_value(PARAM_TEXT, 'quiz name'),
-                'intro' => new external_value(PARAM_RAW, 'intro information'),
-                'introformat' => new external_value(PARAM_INT, 'intro format', VALUE_OPTIONAL),
-                'timemodified' => new external_value(PARAM_INT, 'date time')
-            )
-        );
-    }
-
-
-    public static function get_mod_lesson_by_id_parameters()
-    {
-        return new external_function_parameters(
-            array('lessonid' => new external_value(PARAM_INT, 'lesson id'),
-                'options' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_ALPHANUM,
-                                'The expected keys (value format) are:
-                                                excludemodules (bool) Do not return modules, return only the sections structure
-                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
-                                                sectionid (int) Return only this section
-                                                sectionnumber (int) Return only this section with number (order)
-                                                cmid (int) Return only this module information (among the whole sections structure)
-                                                modname (string) Return only modules with this name "label, forum, etc..."
-                                                modid (int) Return only the module with this id (to be used with modname'),
-                            'value' => new external_value(PARAM_RAW, 'the value of the option,
-                                                                    this param is personaly validated in the external function.')
-                        )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array()
-                )
-            )
-        );
-    }
-
-    public static function get_mod_lesson_by_id($lessonid, $options = array())
-    {
-        global $DB;
-
-        //validate parameter
-        $params = self::validate_parameters(self::get_mod_lesson_by_id_parameters(),
-            array('lessonid' => $lessonid, 'options' => $options));
-
-        //retrieve the page
-        return $DB->get_record('lesson', array('id' => $params['lessonid']), '*', MUST_EXIST);
-    }
-
-    public static function get_mod_lesson_by_id_returns()
-    {
-        return new external_single_structure(
-            array(
-                'id' => new external_value(PARAM_INT, 'lesson id'),
-                'course' => new external_value(PARAM_INT, 'course id'),
-                'name' => new external_value(PARAM_TEXT, 'lesson name'),
-                'intro' => new external_value(PARAM_RAW, 'lesson intro'),
-                'introformat' => new external_value(PARAM_INT, 'intro format'),
-                'practice' => new external_value(PARAM_INT, 'practice'),
-                'modattempts' => new external_value(PARAM_INT, 'mod attempts'),
-                'usepassword' => new external_value(PARAM_INT, 'use password'),
-                'password' => new external_value(PARAM_TEXT, 'password'),
-                'dependency' => new external_value(PARAM_INT, 'dependency'),
-                'conditions' => new external_value(PARAM_RAW, 'condition'),
-                'grade' => new external_value(PARAM_INT, 'grade'),
-                'custom' => new external_value(PARAM_INT, 'custom'),
-                'ongoing' => new external_value(PARAM_INT, 'on going'),
-                'usemaxgrade' => new external_value(PARAM_INT, 'use max grade'),
-                'maxanswers' => new external_value(PARAM_INT, 'max answer'),
-                'maxattempts' => new external_value(PARAM_INT, 'max attempts'),
-                'review' => new external_value(PARAM_INT, 'review'),
-                'nextpagedefault' => new external_value(PARAM_INT, 'next page default'),
-                'feedback' => new external_value(PARAM_INT, 'feedback'),
-                'minquestions' => new external_value(PARAM_INT, 'min question'),
-                'maxpages' => new external_value(PARAM_INT, 'max page'),
-                'timelimit' => new external_value(PARAM_INT, 'time limit'),
-                'retake' => new external_value(PARAM_INT, 'retake'),
-                'activitylink' => new external_value(PARAM_INT, 'activity link'),
-                'mediafile' => new external_value(PARAM_TEXT, 'media file'),
-                'mediaheight' => new external_value(PARAM_INT, 'media height'),
-                'mediawidth' => new external_value(PARAM_INT, 'media width'),
-                'mediaclose' => new external_value(PARAM_INT, 'media close'),
-                'slideshow' => new external_value(PARAM_INT, 'slideshow'),
-                'width' => new external_value(PARAM_INT, 'slideshow width'),
-                'height' => new external_value(PARAM_INT, 'slideshow height'),
-                'bgcolor' => new external_value(PARAM_TEXT, 'background color'),
-                'displayleft' => new external_value(PARAM_INT, 'display left'),
-                'displayleftif' => new external_value(PARAM_INT, 'display left if'),
-                'progressbar' => new external_value(PARAM_INT, 'progress bar'),
-                'available' => new external_value(PARAM_INT, 'available'),
-                'deadline' => new external_value(PARAM_INT, 'deadline'),
-                'timemodified' => new external_value(PARAM_INT, 'time modified'),
-                'completionendreached' => new external_value(PARAM_INT, 'completion end reached'),
-                'completiontimespent' => new external_value(PARAM_INT, 'completion time spent')
-            )
-        );
-    }
-
-    public static function get_mod_assignment_by_id_parameters()
-    {
-        return new external_function_parameters(
-            array('assignmentid' => new external_value(PARAM_INT, 'assignment id'),
-                'options' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_ALPHANUM,
-                                'The expected keys (value format) are:
-                                                excludemodules (bool) Do not return modules, return only the sections structure
-                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
-                                                sectionid (int) Return only this section
-                                                sectionnumber (int) Return only this section with number (order)
-                                                cmid (int) Return only this module information (among the whole sections structure)
-                                                modname (string) Return only modules with this name "label, forum, etc..."
-                                                modid (int) Return only the module with this id (to be used with modname'),
-                            'value' => new external_value(PARAM_RAW, 'the value of the option,
-                                                                    this param is personaly validated in the external function.')
-                        )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array()
-                )
-            )
-        );
-    }
-
-    public static function get_mod_assignment_by_id($assignmentid, $options = array())
-    {
-        global $DB;
-
-        //validate parameter
-        $params = self::validate_parameters(self::get_mod_assignment_by_id_parameters(),
-            array('assignmentid' => $assignmentid, 'options' => $options));
-
-        //retrieve the page
-        return $DB->get_record('assignment', array('id' => $params['assignmentid']), '*', MUST_EXIST);
-    }
-
-    public static function get_mod_assignment_by_id_returns()
-    {
-        return new external_single_structure(
-            array(
-                'id' => new external_value(PARAM_INT, 'assignment id'),
-                'course' => new external_value(PARAM_INT, 'course id'),
-                'name' => new external_value(PARAM_TEXT, 'assignment name'),
-                'intro' => new external_value(PARAM_RAW, 'intro information'),
-                'introformat' => new external_value(PARAM_INT, 'intro format'),
-                'assignmentype' => new external_value(PARAM_TEXT, 'assignment type'),
-                'resubmit' => new external_value(PARAM_INT, 'resubmit'),
-                'preventlate' => new external_value(PARAM_INT, 'prevent late'),
-                'emailteachers' => new external_value(PARAM_INT, 'email teacher'),
-                'var1' => new external_value(PARAM_INT, 'var1'),
-                'var2' => new external_value(PARAM_INT, 'var2'),
-                'var3' => new external_value(PARAM_INT, 'var3'),
-                'var4' => new external_value(PARAM_INT, 'var4'),
-                'var5' => new external_value(PARAM_INT, 'var5'),
-                'maxbytes' => new external_value(PARAM_INT, 'max bytes'),
-                'timedue' => new external_value(PARAM_INT, 'time due'),
-                'timeavailable' => new external_value(PARAM_INT, 'time available'),
-                'grade' => new external_value(PARAM_INT, 'grade'),
-                'timemodifield' => new external_value(PARAM_INT, 'time modifield')
-            )
-        );
-    }
-
-    public static function get_mod_lesson_page_by_id_parameters()
-    {
-        return new external_function_parameters(
-            array('lessonid' => new external_value(PARAM_INT, 'lesson id'),
-                'options' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_ALPHANUM,
-                                'The expected keys (value format) are:
-                                                excludemodules (bool) Do not return modules, return only the sections structure
-                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
-                                                sectionid (int) Return only this section
-                                                sectionnumber (int) Return only this section with number (order)
-                                                cmid (int) Return only this module information (among the whole sections structure)
-                                                modname (string) Return only modules with this name "label, forum, etc..."
-                                                modid (int) Return only the module with this id (to be used with modname'),
-                            'value' => new external_value(PARAM_RAW, 'the value of the option,
-                                                                    this param is personaly validated in the external function.')
-                        )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array()
-                )
-            )
-        );
-    }
-
-    public static function get_mod_lesson_page_by_id($lessonid, $options = array())
-    {
-        global $DB;
-
-        if ((isset($options['returntype']) && $options['returntype'] === 'fieldtype') && isset($options['prevpageid'])) {
-            //validate parameter
-            $params = self::validate_parameters(self::get_mod_lesson_page_by_id_parameters(),
-                array('lessonid' => $lessonid, 'prevpageid' => $options['prevpageid'], 'options' => $options));
-        }
-        if((isset($option['returntype']) && $options['returntype'] == 'recordtype') && isset($options['pageid'])) {
-            //validate parameter
-            $params = self::validate_parameters(self::get_mod_lesson_page_by_id_parameters(),
-                array('id' => $options['pageid'], 'lessonid' => $lessonid, 'options' => $options));
-        }
-        if (isset($options['returntype']) && $options['returnType'] === 'fieldtype') {
-            $lessonpage = $DB->get_record('lesson_pages', array('lessonid' => $params['lessonid'], 'prevpageid' => $params['prevpageid']), '*', MUST_EXIST);
-            return $lessonpage->id;
-        }
-        return $DB->get_record('lesson_pages', array('id' => $params['pageid'], 'lessonid' => $params['lessonid']), '*', MUST_EXIST);
-    }
-
-    public static function get_mod_lesson_page_by_id_returns()
-    {
-        return new external_single_structure(
-            array(
-                'id' => new external_value(PARAM_INT, 'lesson page id'),
-                'lessonid' => new external_value(PARAM_INT, 'lesson id'),
-                'prevpageid' => new external_value(PARAM_INT, 'prev page id'),
-                'nextpageid' => new external_value(PARAM_INT, 'next page id'),
-                'qtype' => new external_value(PARAM_INT, 'qtype'),
-                'qoption' => new external_value(PARAM_INT, 'q option'),
-                'layout' => new external_value(PARAM_INT, 'layout'),
-                'display' => new external_value(PARAM_INT, 'display'),
-                'timecreated' => new external_value(PARAM_INT, 'time created'),
-                'timemodified' => new external_value(PARAM_INT, 'time modified'),
-                'title' => new external_value(PARAM_TEXT, 'title'),
-                'contents' => new external_value(PARAM_RAW, 'content'),
-                'contentsformat' => new external_value(PARAM_INT, 'contents format')
-            )
-        );
-    }
+    //endregion
 }
