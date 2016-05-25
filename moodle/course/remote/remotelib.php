@@ -38,26 +38,39 @@ function get_remote_enrol_course_by_host()
     return get_remote_courses($options);
 }
 
-function moodle_webservice_client($options = [])
+function moodle_webservice_client($options = [], $usercache = true)
 {
     if (isset($options['domain']) &&
         isset($options['token']) &&
         isset($options['function_name'])
     ) {
+        if ($usercache) {
+            $webservicecache = cache::make(cache_store::MODE_APPLICATION, 'core', 'webservice');
+            $cachekey = 'wes-'.$options['domain'].$options['token'].$options['function_name'];
+        }
+
         $serverUrl = $options['domain'] . '/webservice/rest/server.php' . '?wstoken=' . $options['token'] . '&wsfunction=' . $options['function_name'] . '&moodlewsrestformat=json';
         $client = new Zend_Http_Client($serverUrl);
 
         if (isset($options['params'])) {
             $client->setParameterPost($options['params']);
+            if ($usercache) {
+                $cachekey .= implode('-', $options['params']);
+            }
         }
-        if (isset($options['rawdata'])) {
-            $json = json_encode($options['rawdata']);
-            $client->setRawData($json, 'application/json');
+
+        if ($usercache) {
+            $result = $webservicecache->get($cachekey);
+            if ($result !== false) {
+                return $result;
+            }
         }
 
         $response = $client->request(Zend_Http_Client::POST);
+        $result = json_decode($response->getBody());
+        $webservicecache->set($cachekey, $result);
 
-        return json_decode($response->getBody());
+        return $result;
     }
 
 }

@@ -1461,7 +1461,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
 
         // Check if we have already cached results.
         $ids = $coursecatcache->get($cachekey);
-        if ($ids != false) {
+        if ($ids !== false) {
             // We already cached last search result and it did not expire yet.
             $ids = array_slice($ids, $offset, $limit);
             $courses = array();
