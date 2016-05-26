@@ -37,7 +37,7 @@ require_once("$CFG->libdir/externallib.php");
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.2
  */
-class local_nccsoft_external_assign extends external_api {
+class local_mod_assign_external extends external_api {
 
     //region _VIETNH
     /**
