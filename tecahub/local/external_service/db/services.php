@@ -53,22 +53,22 @@ $functions = array(
 	),
     // hanv: api code for handling data about quizzes and the current user's attempt.
     'local_mod_get_quiz_attempt' => array(
-        'classname'   => 'local_nccsoft_external',
+        'classname'   => 'local_mod_quiz_external',
         'methodname'  => 'get_mod_quiz_attempt',
-        'classpath'   => 'local/external_service/externallib.php',
+        'classpath'   => 'local/external_service/externallib_quiz.php',
         'description' => "Get quiz with the current user's attempt",
         'type'        => 'read',
         'ajax'        => true
     ),
     // hanv: Get the list of questions needed by this page.
-//    'local_mod_get_quiz_question' => array(
-//        'classname'   => 'local_nccsoft_external',
-//        'methodname'  => 'get_mod_quiz_content_by_id',
-//        'classpath'   => 'local/external_service/externallib.php',
-//        'description' => 'Get quiz with all questions',
-//        'type'        => 'read',
-//        'ajax'        => true
-//    ),
+    'local_mod_get_quiz_question' => array(
+        'classname'   => 'local_mod_quiz_external',
+        'methodname'  => 'get_mod_quiz_content_by_id',
+        'classpath'   => 'local/external_service/externallib_quiz.php',
+        'description' => 'Get quiz with all questions',
+        'type'        => 'read',
+        'ajax'        => true
+    ),
 );
 
 $services = array(

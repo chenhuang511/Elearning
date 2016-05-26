@@ -538,10 +538,10 @@ class local_nccsoft_external extends external_api {
                 'uniqueid' => new external_value(PARAM_INT, 'unique id'),
                 'layout' => new external_value(PARAM_TEXT, 'layout format'),
                 'preview' => new external_value(PARAM_INT, 'preview infomation'),
-                'stage' => new external_value(PARAM_TEXT, 'stage'),
+                'state' => new external_value(PARAM_TEXT, 'state'),
                 'timestart' => new external_value(PARAM_INT, 'time start'),
                 'timefinish' => new external_value(PARAM_INT, 'time finish'),
-                'sumgrades' => new external_value(PARAM_INT, 'sum grade'),
+                'sumgrades' => new external_value(PARAM_TEXT, 'sum grade'),
             )
         );
     }
