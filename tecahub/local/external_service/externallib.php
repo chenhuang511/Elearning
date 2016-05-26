@@ -348,7 +348,6 @@ class local_nccsoft_external extends external_api {
     }
     public static function get_mod_assign_completion($assignid, $ip_address, $username, $options = array()) {
         global $CFG, $DB;
-
         //validate parameter
         $params = self::validate_parameters(self::get_mod_assign_completion_parameters(),
             array('assignid' => $assignid, 'username' => $username , 'ip_address' => $ip_address ,'options' => $options));
@@ -365,7 +364,12 @@ class local_nccsoft_external extends external_api {
         $context = context_module::instance($cm->id);
         $assign = new assign($context, $cm, $course);
         $instance = $assign->get_instance();
-
+        $fs = get_file_storage();
+        $files = $fs->get_area_files($assign->get_context()->id, 'mod_assign', ASSIGN_INTROATTACHMENT_FILEAREA,
+            0, 'id', false);
+        if(count($files)>0){
+            // return file variable
+        }
         //$assign->has
         $postfix = '';
        /* if ($assign->count()) {
@@ -374,12 +378,12 @@ class local_nccsoft_external extends external_api {
         }*/
 
         // Display plugin specific headers.
-        $plugins = array_merge($assign->get_submission_plugins(), $assign->get_feedback_plugins());
+      /*  $plugins = array_merge($assign->get_submission_plugins(), $assign->get_feedback_plugins());
         foreach ($plugins as $plugin) {
             if ($plugin->is_enabled() && $plugin->is_visible()) {
                 //$o .= $assign->get_renderer()->render(new assign_plugin_header($plugin));
             }
-        }
+        }*/
 
         if ($assign->can_view_grades()) {
             $draft = ASSIGN_SUBMISSION_STATUS_DRAFT;

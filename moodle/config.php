@@ -1,34 +1,7 @@
-<?php
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// Moodle configuration file                                             //
-//                                                                       //
-// This file should be renamed "config.php" in the top-level directory   //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.org                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards  Martin Dougiamas  http://moodle.com       //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 3 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
-unset($CFG);  // Ignore this line
-global $CFG;  // This is necessary here for PHPUnit execution
+<?php  // Moodle configuration file
+
+unset($CFG);
+global $CFG;
 $CFG = new stdClass();
 
 //=========================================================================
@@ -41,28 +14,27 @@ $CFG = new stdClass();
 $CFG->dbtype    = 'mysqli';      // 'pgsql', 'mariadb', 'mysqli', 'mssql', 'sqlsrv' or 'oci'
 $CFG->dblibrary = 'native';     // 'native' only at the moment
 $CFG->dbhost    = 'localhost';  // eg 'localhost' or 'db.isp.com' or IP
-$CFG->dbname    = 'moodledb';     // database name, eg moodle
+$CFG->dbname    = 'moodle';     // database name, eg moodle
 $CFG->dbuser    = 'root';   // your database username
-$CFG->dbpass    = '';   // your database password
+$CFG->dbpass    = '123456$';   // your database password
 $CFG->prefix    = 'mdl_';       // prefix to use for all table names
 $CFG->dboptions = array(
     'dbpersist' => false,       // should persistent database connections be
-                                //  used? set to 'false' for the most stable
-                                //  setting, 'true' can improve performance
-                                //  sometimes
+    //  used? set to 'false' for the most stable
+    //  setting, 'true' can improve performance
+    //  sometimes
     'dbsocket'  => false,       // should connection via UNIX socket be used?
-                                //  if you set it to 'true' or custom path
-                                //  here set dbhost to 'localhost',
-                                //  (please note mysql is always using socket
-                                //  if dbhost is 'localhost' - if you need
-                                //  local port connection use '127.0.0.1')
+    //  if you set it to 'true' or custom path
+    //  here set dbhost to 'localhost',
+    //  (please note mysql is always using socket
+    //  if dbhost is 'localhost' - if you need
+    //  local port connection use '127.0.0.1')
     'dbport'    => '',          // the TCP port number to use when connecting
-                                //  to the server. keep empty string for the
-                                //  default port
+    //  to the server. keep empty string for the
+    //  default port
 );
 
-$CFG->opensslcnf = 'C:\wamp64\bin\apache\apache2.4.17\conf\openssl.cnf';
-
+$CFG->opensslcnf = 'D:\Project\2016\TecaPro\config\openssl.cnf';
 
 //=========================================================================
 // 2. WEB SITE LOCATION
@@ -75,7 +47,7 @@ $CFG->opensslcnf = 'C:\wamp64\bin\apache\apache2.4.17\conf\openssl.cnf';
 // If you need both intranet and Internet access please read
 // http://docs.moodle.org/en/masquerading
 
-$CFG->wwwroot   = 'http://192.168.1.174:69';
+$CFG->wwwroot   = 'http://192.168.1.62:1111';
 
 
 //=========================================================================
@@ -91,7 +63,7 @@ $CFG->wwwroot   = 'http://192.168.1.174:69';
 //
 // - On Windows systems you might specify something like 'c:\moodledata'
 
-$CFG->dataroot  = 'C:\wamp64\moodledata';
+$CFG->dataroot  = 'D:\Project\2016\TecaPro\moodledata';
 
 
 //=========================================================================
@@ -120,9 +92,9 @@ $CFG->directorypermissions = 02777;
 // and purge all caches.
 
 $CFG->admin = 'admin';
-//
-//$CFG->debug = 6143;
-//$CFG->debugdisplay = 1;
+
+$CFG->debug = 6143;
+$CFG->debugdisplay = 1;
 
 require_once(dirname(__FILE__) . '/lib/setup.php');
 
