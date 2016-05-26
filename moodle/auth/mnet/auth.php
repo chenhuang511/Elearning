@@ -114,7 +114,7 @@ class auth_plugin_mnet extends auth_plugin_base {
 
         $sql = "SELECT h.name AS hostname, h.wwwroot, h.id AS hostid,
                        COUNT(c.id) AS count
-                  FROM {mnetservice_enrol_courses} c
+                  FROM {course} c
                   JOIN {mnetservice_enrol_enrolments} e ON (e.hostid = c.hostid AND e.remotecourseid = c.remoteid)
                   JOIN {mnet_host} h ON h.id = c.hostid
                  WHERE e.userid = ? AND c.hostid = ?
@@ -510,7 +510,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         $sql = "SELECT c.remoteid, c.id, c.categoryid AS cat_id, c.categoryname AS cat_name, c.sortorder,
                        c.fullname, c.shortname, c.idnumber, c.summary, c.summaryformat, c.startdate,
                        e.id AS enrolmentid
-                  FROM {mnetservice_enrol_courses} c
+                  FROM {course} c
              LEFT JOIN {mnetservice_enrol_enrolments} e ON (e.hostid = c.hostid AND e.remotecourseid = c.remoteid)
                  WHERE e.userid = ? AND c.hostid = ?";
 

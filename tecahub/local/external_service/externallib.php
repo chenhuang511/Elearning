@@ -39,80 +39,7 @@ require_once("$CFG->libdir/externallib.php");
  */
 class local_nccsoft_external extends external_api {
 
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
-     */
-    public static function get_mod_label_by_id_parameters() {
-        return new external_function_parameters(
-                array('labelid' => new external_value(PARAM_INT, 'label id'),
-                      'options' => new external_multiple_structure (
-                              new external_single_structure(
-                                array(
-                                    'name' => new external_value(PARAM_ALPHANUM,
-                                                'The expected keys (value format) are:
-                                                excludemodules (bool) Do not return modules, return only the sections structure
-                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
-                                                sectionid (int) Return only this section
-                                                sectionnumber (int) Return only this section with number (order)
-                                                cmid (int) Return only this module information (among the whole sections structure)
-                                                modname (string) Return only modules with this name "label, forum, etc..."
-                                                modid (int) Return only the module with this id (to be used with modname'),
-                                    'value' => new external_value(PARAM_RAW, 'the value of the option,
-                                                                    this param is personaly validated in the external function.')
-                              )
-                      ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
-                )
-        );
-    }
-
-    /**
-     * Get course contents
-     *
-     * @param int $courseid course id
-     * @param array $options Options for filtering the results, used since Moodle 2.9
-     * @return array
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
-     */
-    public static function get_mod_label_by_id($labelid, $options = array()) {
-        global $CFG, $DB;
-
-        //validate parameter
-        $params = self::validate_parameters(self::get_mod_label_by_id_parameters(),
-                        array('labelid' => $labelid, 'options' => $options));
-
-
-        //retrieve the course
-	return $DB->get_record('label', array('id' => $params['labelid']), '*', MUST_EXIST);
-    }
-    
-/**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
-     */
-    public static function get_mod_label_by_id_returns() {
-    	return new external_single_structure(
-                array(
-                    'id' => new external_value(PARAM_INT, 'label id'),
-                    'course' => new external_value(PARAM_INT, 'course id'),
-                    'name' => new external_value(PARAM_TEXT, 'label name'),
-                    'intro' => new external_value(PARAM_RAW, 'intro information'),
-                    'introformat' => new external_value(PARAM_INT, 'intro format', VALUE_OPTIONAL),
-                    'timemodified' => new external_value(PARAM_INT, 'date time')
-                )
-        );
-    }
-
-
-/*--------------------------------------------------*/
-
+    //region _VIETNH
     /**
      * VietNH 23-05-2016
      * Returns description of method parameters
@@ -121,7 +48,8 @@ class local_nccsoft_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_course_content_by_id_parameters() {
+    public static function get_course_content_by_id_parameters()
+    {
         return new external_function_parameters(
             array('courseid' => new external_value(PARAM_INT, 'course id'),
                 'options' => new external_multiple_structure (
@@ -143,17 +71,8 @@ class local_nccsoft_external extends external_api {
             )
         );
     }
-
-    /**
-     * Get course contents
-     *
-     * @param int $courseid course id
-     * @param array $options Options for filtering the results, used since Moodle 2.9
-     * @return array
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
-     */
-    public static function get_course_content_by_id($courseid, $options = array()) {
+    public static function get_course_content_by_id($courseid, $options = array())
+    {
         global $CFG, $DB;
         require_once($CFG->dirroot . "/course/lib.php");
 
@@ -202,43 +121,19 @@ class local_nccsoft_external extends external_api {
         //retrieve the course
         $course = $DB->get_record('course', array('id' => $params['courseid']), '*', MUST_EXIST);
 
-        if ($course->id != SITEID) {
-            // Check course format exist.
-            if (!file_exists($CFG->dirroot . '/course/format/' . $course->format . '/lib.php')) {
-                throw new moodle_exception('cannotgetcoursecontents', 'webservice', '', null,
-                    get_string('courseformatnotfound', 'error', $course->format));
-            } else {
-                require_once($CFG->dirroot . '/course/format/' . $course->format . '/lib.php');
-            }
-        }
-
         // now security checks
         $context = context_course::instance($course->id, IGNORE_MISSING);
-        try {
-            self::validate_context($context);
-        } catch (Exception $e) {
-            $exceptionparam = new stdClass();
-            $exceptionparam->message = $e->getMessage();
-            $exceptionparam->courseid = $course->id;
-            throw new moodle_exception('errorcoursecontextnotvalid', 'webservice', '', $exceptionparam);
-        }
-
-        $canupdatecourse = has_capability('moodle/course:update', $context);
 
         //create return value
         $coursecontents = array();
 
-        if ($canupdatecourse or $course->visible
-            or has_capability('moodle/course:viewhiddencourses', $context)) {
-
+        if ($course->visible) {
             //retrieve sections
             $modinfo = get_fast_modinfo($course);
-
             $sections = $modinfo->get_section_info_all();
 
             //for each sections (first displayed to last displayed)
             $modinfosections = $modinfo->get_sections();
-
             foreach ($sections as $key => $section) {
 
                 if (!$section->uservisible) {
@@ -309,7 +204,7 @@ class local_nccsoft_external extends external_api {
                                     // Note that if we are only filtering by modname we don't break the loop.
                                     $modfound = true;
                                 }
-                            } 
+                            }
                         }
 
                         $module = array();
@@ -324,28 +219,17 @@ class local_nccsoft_external extends external_api {
                         $module['modplural'] = $cm->modplural;
                         $module['modicon'] = $cm->get_icon_url()->out(false);
                         $module['indent'] = $cm->indent;
-
-                        if (!empty($cm->showdescription) or $cm->modname == 'label') {
-                            // We want to use the external format. However from reading get_formatted_content(), $cm->content format is always FORMAT_HTML.
-                            list($module['description'], $descriptionformat) = external_format_text($cm->content,
-                                FORMAT_HTML, $modcontext->id, $cm->modname, 'intro', $cm->id);
-                        }
-
+                        $module['description'] = $cm->content;
                         //url of the module
                         $url = $cm->url;
-                        if ($url) { //labels don't have url
-                            $module['url'] = $url->out(false);
-                        }
+                        if ($url) $module['url'] = $url->out(false);
 
-                        $canviewhidden = has_capability('moodle/course:viewhiddenactivities',
-                            context_module::instance($cm->id));
+
                         //user that can view hidden module should know about the visibility
                         $module['visible'] = $cm->visible;
 
                         // Availability date (also send to user who can see hidden module).
-                        if ($CFG->enableavailability && ($canviewhidden || $canupdatecourse)) {
-                            $module['availability'] = $cm->availability;
-                        }
+                        if ($CFG->enableavailability) $module['availability'] = $cm->availability;
 
                         $baseurl = 'webservice/pluginfile.php';
 
@@ -385,14 +269,8 @@ class local_nccsoft_external extends external_api {
         }
         return $coursecontents;
     }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 2.2
-     */
-    public static function get_course_content_by_id_returns() {
+    public static function get_course_content_by_id_returns()
+    {
         return new external_multiple_structure(
             new external_single_structure(
                 array(
@@ -419,10 +297,10 @@ class local_nccsoft_external extends external_api {
                                     new external_single_structure(
                                         array(
                                             // content info
-                                            'type'=> new external_value(PARAM_TEXT, 'a file or a folder or external link'),
-                                            'filename'=> new external_value(PARAM_FILE, 'filename'),
-                                            'filepath'=> new external_value(PARAM_PATH, 'filepath'),
-                                            'filesize'=> new external_value(PARAM_INT, 'filesize'),
+                                            'type' => new external_value(PARAM_TEXT, 'a file or a folder or external link'),
+                                            'filename' => new external_value(PARAM_FILE, 'filename'),
+                                            'filepath' => new external_value(PARAM_PATH, 'filepath'),
+                                            'filesize' => new external_value(PARAM_INT, 'filesize'),
                                             'fileurl' => new external_value(PARAM_URL, 'downloadable file url', VALUE_OPTIONAL),
                                             'content' => new external_value(PARAM_RAW, 'Raw content, will be used when type is content', VALUE_OPTIONAL),
                                             'timecreated' => new external_value(PARAM_INT, 'Time created'),
@@ -443,6 +321,7 @@ class local_nccsoft_external extends external_api {
             )
         );
     }
+    //endregion
 
     /**
      * Returns description of method parameters

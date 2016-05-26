@@ -483,7 +483,6 @@ function has_capability($capability, context $context, $user = null, $doanything
         $access =& $ACCESSLIB_PRIVATE->accessdatabyuser[$userid];
     }
 
-
     // Load accessdata for below-the-course context if necessary,
     // all contexts at and above all courses are already loaded
     if ($context->contextlevel != CONTEXT_COURSE and $coursecontext = $context->get_course_context(false)) {
@@ -709,7 +708,6 @@ function has_capability_in_accessdata($capability, context $context, array &$acc
         }
         $paths[] = $path;
     }
-
     $roles = array();
     $switchedrole = false;
 
@@ -6919,12 +6917,7 @@ class context_course extends context {
         
         if (!$record = $DB->get_record('context', array('contextlevel'=>CONTEXT_COURSE, 'instanceid'=>$instanceid))) {
         	$course = new StdClass();
-        	try {
-        		$course = $DB->get_record('course', array('id'=>$instanceid), 'id,category', $strictness);
-        	} catch(Exception $e) {
-        		$course = get_remote_enrol_course_by_host();
-        		$course = $course[0];
-        	}
+        	$course = $DB->get_record('course', array('id'=>$instanceid), 'id,category', $strictness);
             if ($course->id) {
                 if ($course->category) {
                     $parentcontext = context_coursecat::instance($course->category);
