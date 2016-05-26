@@ -37,7 +37,8 @@ require_once("$CFG->libdir/externallib.php");
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.2
  */
-class local_nccsoft_external extends external_api {
+class local_nccsoft_external extends external_api
+{
 
     //region _VIETNH
     /**
@@ -71,6 +72,7 @@ class local_nccsoft_external extends external_api {
             )
         );
     }
+
     public static function get_course_content_by_id($courseid, $options = array())
     {
         global $CFG, $DB;
@@ -237,7 +239,7 @@ class local_nccsoft_external extends external_api {
                         //(each module callback take care about checking the capabilities)
 
                         require_once($CFG->dirroot . '/mod/' . $cm->modname . '/lib.php');
-                        $getcontentfunction = $cm->modname.'_export_contents';
+                        $getcontentfunction = $cm->modname . '_export_contents';
                         if (function_exists($getcontentfunction)) {
                             if (empty($filters['excludecontents']) and $contents = $getcontentfunction($cm, $baseurl)) {
                                 $module['contents'] = $contents;
@@ -269,6 +271,7 @@ class local_nccsoft_external extends external_api {
         }
         return $coursecontents;
     }
+
     public static function get_course_content_by_id_returns()
     {
         return new external_multiple_structure(
@@ -322,7 +325,8 @@ class local_nccsoft_external extends external_api {
         );
     }
 
-    public static function get_mod_assign_completion_parameters() {
+    public static function get_mod_assign_completion_parameters()
+    {
         return new external_function_parameters(
             array('assignid' => new external_value(PARAM_INT, 'assignid'),
                 'ip_address' => new external_value(PARAM_TEXT, 'ip_address'),
@@ -346,18 +350,20 @@ class local_nccsoft_external extends external_api {
             )
         );
     }
-    public static function get_mod_assign_completion($assignid, $ip_address, $username, $options = array()) {
+
+    public static function get_mod_assign_completion($assignid, $ip_address, $username, $options = array())
+    {
         global $CFG, $DB;
         //validate parameter
         $params = self::validate_parameters(self::get_mod_assign_completion_parameters(),
-            array('assignid' => $assignid, 'username' => $username , 'ip_address' => $ip_address ,'options' => $options));
+            array('assignid' => $assignid, 'username' => $username, 'ip_address' => $ip_address, 'options' => $options));
 
         // Get mnethost by ipadress
-        $mnethostid =  $DB->get_record('mnet_host', array('ip_address' => $params['ip_address']), 'id', MUST_EXIST);
+        $mnethostid = $DB->get_record('mnet_host', array('ip_address' => $params['ip_address']), 'id', MUST_EXIST);
         // Get user by $username and $mnethost->id
         //echo $params['username'];die;
 
-        $USER =  $DB->get_record('user', array('username' => $params['username'], 'mnethostid' => $mnethostid->id), 'id', MUST_EXIST);
+        $USER = $DB->get_record('user', array('username' => $params['username'], 'mnethostid' => $mnethostid->id), 'id', MUST_EXIST);
         //retrieve the Grading Sumary
         require_once($CFG->dirroot . '/mod/assign/locallib.php');
         list ($course, $cm) = get_course_and_cm_from_cmid($assignid, 'assign');
@@ -372,10 +378,10 @@ class local_nccsoft_external extends external_api {
         }
         //$assign->has
         $postfix = '';
-       /* if ($assign->count()) {
-            echo 1;die;
-            $postfix = $assign->render_area_files('mod_assign', ASSIGN_INTROATTACHMENT_FILEAREA, 0);
-        }*/
+        /* if ($assign->count()) {
+             echo 1;die;
+             $postfix = $assign->render_area_files('mod_assign', ASSIGN_INTROATTACHMENT_FILEAREA, 0);
+         }*/
 
         // Display plugin specific headers.
       /*  $plugins = array_merge($assign->get_submission_plugins(), $assign->get_feedback_plugins());
@@ -429,14 +435,15 @@ class local_nccsoft_external extends external_api {
         $submission = $assign->get_user_submission($USER->id, false);
 
         if ($assign->can_view_submission($USER->id)) {
-           // $o .= $this->view_student_summary($USER, true);
+            // $o .= $this->view_student_summary($USER, true);
         }
-
 
 
         return array($summary);
     }
-    public static function get_mod_assign_completion_returns() {
+
+    public static function get_mod_assign_completion_returns()
+    {
         return new external_multiple_structure(
             new external_single_structure(
                 array(
@@ -468,7 +475,8 @@ class local_nccsoft_external extends external_api {
      * @since Moodle 2.2
      *
      */
-    public static function get_mod_quiz_attempt_parameters() {
+    public static function get_mod_quiz_attempt_parameters()
+    {
         return new external_function_parameters(
             array('quizid' => new external_value(PARAM_INT, 'quiz id'),
                 'ip_address' => new external_value(PARAM_TEXT, 'ip_address'),
@@ -504,21 +512,22 @@ class local_nccsoft_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_mod_quiz_attempt($quizid, $ip_address, $username, $options = array()) {
+    public static function get_mod_quiz_attempt($quizid, $ip_address, $username, $options = array())
+    {
         global $CFG, $DB;
 
         //validate parameter
         $params = self::validate_parameters(self::get_mod_quiz_attempt_parameters(),
-            array('quizid' => $quizid, 'username' => $username , 'ip_address' => $ip_address ,'options' => $options));
+            array('quizid' => $quizid, 'username' => $username, 'ip_address' => $ip_address, 'options' => $options));
 
         // Get mnethost by ipadress
-        $mnethost =  $DB->get_record('mnet_host', array('ip_address' => $params['ip_address']), '*', MUST_EXIST);
+        $mnethost = $DB->get_record('mnet_host', array('ip_address' => $params['ip_address']), '*', MUST_EXIST);
 
         // Get user by $username and $mnethost->id
-        $user =  $DB->get_record('user', array('username' => $params['username'], 'mnethostid' => $mnethost -> id), '*', MUST_EXIST);
+        $user = $DB->get_record('user', array('username' => $params['username'], 'mnethostid' => $mnethost->id), '*', MUST_EXIST);
 
         //retrieve the quiz_attempts
-        $attempt = $DB->get_record('quiz_attempts',  array('quiz' => $params['quizid'], 'userid' => $user -> id), '*', MUST_EXIST);
+        $attempt = $DB->get_record('quiz_attempts', array('quiz' => $params['quizid'], 'userid' => $user->id), '*', MUST_EXIST);
         return $attempt;
     }
 
@@ -529,8 +538,9 @@ class local_nccsoft_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_mod_quiz_attempt_returns() {
-        return  new external_single_structure(
+    public static function get_mod_quiz_attempt_returns()
+    {
+        return new external_single_structure(
             array(
                 'id' => new external_value(PARAM_INT, 'attempt id'),
                 'quiz' => new external_value(PARAM_INT, 'quiz id'),

@@ -502,8 +502,8 @@ define('MOODLE_OFFICIAL_MOBILE_SERVICE', 'moodle_mobile_app');
  */
 define('NCCSOFT_EXTERNAL_SERVICE', 'ncc_ext_service');
 
-define('HOST_TOKEN', 'ff7b438069fe238c62b6f4629eb6ba17');
-define('HOST_TOKEN_M', '2077e39e91a4cfb85c565c550cae7ca8');
+define('HOST_TOKEN', 'a75634b66a82dd8f42f99baedf2690a1');
+define('HOST_TOKEN_M', 'ac52a223f8589b3f26fa456a5dc20bde');
 define('HUB_URL', 'http://192.168.1.252');
 
 /**
@@ -2506,7 +2506,7 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
             $course = $DB->get_record('course', array('id' => $courseorid), '*', MUST_EXIST);
         }
         if ($cm) {
-            if ($cm->course != $course->id) {
+            if ($cm->course != $course->remoteid) {
                 throw new coding_exception('course and cm parameters in require_login() call do not match!!');
             }
             // Make sure we have a $cm from get_fast_modinfo as this contains activity access details.
@@ -2515,6 +2515,7 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
                 // db queries so this is not really a performance concern, however it is obviously
                 // better if you use get_fast_modinfo to get the cm before calling this.
                 $modinfo = get_fast_modinfo($course);
+
                 $cm = $modinfo->get_cm($cm->id);
             }
         }

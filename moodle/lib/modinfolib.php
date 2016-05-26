@@ -53,13 +53,14 @@ if (!defined('MAX_MODINFO_CACHE_SIZE')) {
  * @property-read array $groups Groups that the current user belongs to. Calculated on the first request.
  *     Is an array of grouping id => array of group id => group id. Includes grouping id 0 for 'all groups'
  */
-class course_modinfo {
+class course_modinfo
+{
     /**
      * List of fields from DB table 'course' that are cached in MUC and are always present in course_modinfo::$course
      * @var array
      */
     public static $cachedfields = array('shortname', 'fullname', 'format',
-            'enablecompletion', 'groupmode', 'groupmodeforce', 'cacherev');
+        'enablecompletion', 'groupmode', 'groupmodeforce', 'cacherev');
 
     /**
      * For convenience we store the course object here as it is needed in other parts of code
@@ -127,12 +128,13 @@ class course_modinfo {
      * @param string $name
      * @return mixed
      */
-    public function __get($name) {
+    public function __get($name)
+    {
         if (isset(self::$standardproperties[$name])) {
             $method = self::$standardproperties[$name];
             return $this->$method();
         } else {
-            debugging('Invalid course_modinfo property accessed: '.$name);
+            debugging('Invalid course_modinfo property accessed: ' . $name);
             return null;
         }
     }
@@ -143,7 +145,8 @@ class course_modinfo {
      * @param string $name
      * @return bool
      */
-    public function __isset($name) {
+    public function __isset($name)
+    {
         if (isset(self::$standardproperties[$name])) {
             $value = $this->__get($name);
             return isset($value);
@@ -157,7 +160,8 @@ class course_modinfo {
      * @param string $name
      * @return bool
      */
-    public function __empty($name) {
+    public function __empty($name)
+    {
         if (isset(self::$standardproperties[$name])) {
             $value = $this->__get($name);
             return empty($value);
@@ -173,7 +177,8 @@ class course_modinfo {
      * @param string $name
      * @param mixed $value
      */
-    public function __set($name, $value) {
+    public function __set($name, $value)
+    {
         debugging("It is not allowed to set the property course_modinfo::\${$name}", DEBUG_DEVELOPER);
     }
 
@@ -185,21 +190,24 @@ class course_modinfo {
      *
      * @return stdClass
      */
-    public function get_course() {
+    public function get_course()
+    {
         return $this->course;
     }
 
     /**
      * @return int Course ID
      */
-    public function get_course_id() {
+    public function get_course_id()
+    {
         return $this->course->id;
     }
 
     /**
      * @return int User ID
      */
-    public function get_user_id() {
+    public function get_user_id()
+    {
         return $this->userid;
     }
 
@@ -207,7 +215,8 @@ class course_modinfo {
      * @return array Array from section number (e.g. 0) to array of course-module IDs in that
      *   section; this only includes sections that contain at least one course-module
      */
-    public function get_sections() {
+    public function get_sections()
+    {
         return $this->sections;
     }
 
@@ -215,7 +224,8 @@ class course_modinfo {
      * @return cm_info[] Array from course-module instance to cm_info object within this course, in
      *   order of appearance
      */
-    public function get_cms() {
+    public function get_cms()
+    {
         return $this->cms;
     }
 
@@ -225,18 +235,20 @@ class course_modinfo {
      * @return cm_info Information about that course-module
      * @throws moodle_exception If the course-module does not exist
      */
-    public function get_cm($cmid) {
+    public function get_cm($cmid)
+    {
         if (empty($this->cms[$cmid])) {
             throw new moodle_exception('invalidcoursemodule', 'error');
         }
-        return $this->cms[$cmid];
+        return $this->cms;
     }
 
     /**
      * Obtains all module instances on this course.
      * @return cm_info[][] Array from module name => array from instance id => cm_info
      */
-    public function get_instances() {
+    public function get_instances()
+    {
         return $this->instances;
     }
 
@@ -246,7 +258,8 @@ class course_modinfo {
      * @param bool $plural if true returns the plural form of modules names
      * @return array
      */
-    public function get_used_module_names($plural = false) {
+    public function get_used_module_names($plural = false)
+    {
         $modnames = get_module_types_names($plural);
         $modnamesused = array();
         foreach ($this->get_cms() as $cmid => $mod) {
@@ -263,7 +276,8 @@ class course_modinfo {
      * @param $modname Name of module (not full frankenstyle) e.g. 'label'
      * @return cm_info[] Array from instance id => cm_info for modules on this course; empty if none
      */
-    public function get_instances_of($modname) {
+    public function get_instances_of($modname)
+    {
         if (empty($this->instances[$modname])) {
             return array();
         }
@@ -274,7 +288,8 @@ class course_modinfo {
      * Groups that the current user belongs to organised by grouping id. Calculated on the first request.
      * @return int[][] array of grouping id => array of group id => group id. Includes grouping id 0 for 'all groups'
      */
-    private function get_groups_all() {
+    private function get_groups_all()
+    {
         if (is_null($this->groups)) {
             // NOTE: Performance could be improved here. The system caches user groups
             // in $USER->groupmember[$courseid] => array of groupid=>groupid. Unfortunately this
@@ -292,7 +307,8 @@ class course_modinfo {
      * @param int $groupingid Grouping ID or 0 (default) for all groups
      * @return int[] Array of int (group id) => int (same group id again); empty array if none
      */
-    public function get_groups($groupingid = 0) {
+    public function get_groups($groupingid = 0)
+    {
         $allgroups = $this->get_groups_all();
         if (!isset($allgroups[$groupingid])) {
             return array();
@@ -304,7 +320,8 @@ class course_modinfo {
      * Gets all sections as array from section number => data about section.
      * @return section_info[] Array of section_info objects organised by section number
      */
-    public function get_section_info_all() {
+    public function get_section_info_all()
+    {
         return $this->sectioninfo;
     }
 
@@ -314,7 +331,8 @@ class course_modinfo {
      * @param int $strictness Use MUST_EXIST to throw exception if it doesn't
      * @return section_info Information for numbered section or null if not found
      */
-    public function get_section_info($sectionnumber, $strictness = IGNORE_MISSING) {
+    public function get_section_info($sectionnumber, $strictness = IGNORE_MISSING)
+    {
         if (!array_key_exists($sectionnumber, $this->sectioninfo)) {
             if ($strictness === MUST_EXIST) {
                 throw new moodle_exception('sectionnotexist');
@@ -351,7 +369,8 @@ class course_modinfo {
      *
      * @param null|int|stdClass $courseorid if specified removes only cached value for this course
      */
-    public static function clear_instance_cache($courseorid = null) {
+    public static function clear_instance_cache($courseorid = null)
+    {
         if (empty($courseorid)) {
             self::$instancecache = array();
             self::$cacheaccessed = array();
@@ -386,7 +405,8 @@ class course_modinfo {
      *     Set to 0 for current user (default). Set to -1 to avoid calculation of dynamic user-depended data.
      * @return course_modinfo
      */
-    public static function instance($courseorid, $userid = 0) {
+    public static function instance($courseorid, $userid = 0)
+    {
         global $USER;
         if (is_object($courseorid)) {
             $course = $courseorid;
@@ -399,8 +419,9 @@ class course_modinfo {
 
         if (!empty(self::$instancecache[$course->id])) {
             if (self::$instancecache[$course->id]->userid == $userid &&
-                    (!isset($course->cacherev) ||
-                    $course->cacherev == self::$instancecache[$course->id]->get_course()->cacherev)) {
+                (!isset($course->cacherev) ||
+                    $course->cacherev == self::$instancecache[$course->id]->get_course()->cacherev)
+            ) {
                 // This course's modinfo for the same user was recently retrieved, return cached.
                 self::$cacheaccessed[$course->id] = microtime(true);
                 return self::$instancecache[$course->id];
@@ -409,7 +430,9 @@ class course_modinfo {
                 self::clear_instance_cache($course->id);
             }
         }
+
         $modinfo = new course_modinfo($course, $userid);
+
 
         // We have a limit of MAX_MODINFO_CACHE_SIZE entries to store in static variable.
         if (count(self::$instancecache) >= MAX_MODINFO_CACHE_SIZE) {
@@ -434,9 +457,10 @@ class course_modinfo {
      * @param int $userid User ID
      * @throws moodle_exception if course is not found
      */
-    public function __construct($course, $userid) {
+    public function __construct($course, $userid)
+    {
         global $CFG, $COURSE, $SITE, $DB;
-        
+
         if (!isset($course->cacherev)) {
             // We require presence of property cacherev to validate the course cache.
             // No need to clone the $COURSE or $SITE object here because we clone it below anyway.
@@ -470,8 +494,8 @@ class course_modinfo {
             // (Uncached modules will result in a very slow verification).
             foreach ($coursemodinfo->modinfo as $mod) {
                 if (!context_module::instance($mod->cm, IGNORE_MISSING)) {
-                    debugging('Course cache integrity check failed: course module with id '. $mod->cm.
-                            ' does not have context. Rebuilding cache for course '. $course->id);
+                    debugging('Course cache integrity check failed: course module with id ' . $mod->cm .
+                        ' does not have context. Rebuilding cache for course ' . $course->id);
                     // Re-request the course record from DB as well, don't use get_course() here.
                     $course = $DB->get_record('course', array('id' => $course->id), '*', MUST_EXIST);
                     $coursemodinfo = self::build_course_cache($course);
@@ -484,7 +508,8 @@ class course_modinfo {
         $this->course = fullclone($course);
         foreach ($coursemodinfo as $key => $value) {
             if ($key !== 'modinfo' && $key !== 'sectioncache' &&
-                    (!isset($this->course->$key) || $key === 'cacherev')) {
+                (!isset($this->course->$key) || $key === 'cacherev')
+            ) {
                 $this->course->$key = $value;
             }
         }
@@ -526,7 +551,7 @@ class course_modinfo {
         $this->sectioninfo = array();
         foreach ($coursemodinfo->sectioncache as $number => $data) {
             $this->sectioninfo[$number] = new section_info($data, $number, null, null,
-                    $this, null);
+                $this, null);
         }
     }
 
@@ -541,11 +566,12 @@ class course_modinfo {
      * @param int $courseid Course ID
      * @return array Information about sections, indexed by section number (not id)
      */
-    public static function build_section_cache($courseid) {
+    public static function build_section_cache($courseid)
+    {
         global $DB;
         debugging('Function course_modinfo::build_section_cache() is deprecated. It can only be used internally to build course cache.');
         $course = $DB->get_record('course', array('id' => $course->id),
-                        array_merge(array('id'), self::$cachedfields), MUST_EXIST);
+            array_merge(array('id'), self::$cachedfields), MUST_EXIST);
         return self::build_course_section_cache($course);
     }
 
@@ -557,13 +583,14 @@ class course_modinfo {
      * @param stdClass $course Course object (must contain fields
      * @return array Information about sections, indexed by section number (not id)
      */
-    protected static function build_course_section_cache($course) {
+    protected static function build_course_section_cache($course)
+    {
         global $DB;
 
         // Get section data
         $sections = $DB->get_records('course_sections', array('course' => $course->id), 'section',
-                'section, id, course, name, summary, summaryformat, sequence, visible, ' .
-                'availability');
+            'section, id, course, name, summary, summaryformat, sequence, visible, ' .
+            'availability');
         $compressedsections = array();
 
         $formatoptionsdef = course_get_format($course)->section_format_options();
@@ -597,18 +624,19 @@ class course_modinfo {
      * @throws moodle_exception if course is not found (if $course object misses some of the
      *     necessary fields it is re-requested from database)
      */
-    public static function build_course_cache($course) {
+    public static function build_course_cache($course)
+    {
         global $DB, $CFG;
         require_once("$CFG->dirroot/course/lib.php");
         if (empty($course->id)) {
             throw new coding_exception('Object $course is missing required property \id\'');
         }
-        
+
         // Ensure object has all necessary fields.
         foreach (self::$cachedfields as $key) {
             if (!isset($course->$key)) {
                 $course = $DB->get_record('course', array('id' => $course->id),
-                        implode(',', array_merge(array('id'), self::$cachedfields)), MUST_EXIST);
+                    implode(',', array_merge(array('id'), self::$cachedfields)), MUST_EXIST);
                 break;
             }
         }
@@ -763,7 +791,8 @@ class course_modinfo {
  * @property-read string $afterlink Extra HTML code to display after link - calculated on request
  * @property-read string $afterediticons Extra HTML code to display after editing icons (e.g. more icons) - calculated on request
  */
-class cm_info implements IteratorAggregate {
+class cm_info implements IteratorAggregate
+{
     /**
      * State: Only basic data from modinfo cache is available.
      */
@@ -1133,7 +1162,8 @@ class cm_info implements IteratorAggregate {
      * @param array $arguments
      * @return mixed
      */
-    public function __call($name, $arguments) {
+    public function __call($name, $arguments)
+    {
         global $CFG;
 
         if (in_array($name, self::$standardmethods)) {
@@ -1157,7 +1187,8 @@ class cm_info implements IteratorAggregate {
      * @param string $name
      * @return mixed
      */
-    public function __get($name) {
+    public function __get($name)
+    {
         if (isset(self::$standardproperties[$name])) {
             if ($method = self::$standardproperties[$name]) {
                 return $this->$method();
@@ -1165,7 +1196,7 @@ class cm_info implements IteratorAggregate {
                 return $this->$name;
             }
         } else {
-            debugging('Invalid cm_info property accessed: '.$name);
+            debugging('Invalid cm_info property accessed: ' . $name);
             return null;
         }
     }
@@ -1176,7 +1207,8 @@ class cm_info implements IteratorAggregate {
      *
      * @return ArrayIterator
      */
-    public function getIterator() {
+    public function getIterator()
+    {
         // Make sure dynamic properties are retrieved prior to view properties.
         $this->obtain_dynamic_data();
         $ret = array();
@@ -1197,7 +1229,8 @@ class cm_info implements IteratorAggregate {
      * @param string $name
      * @return bool
      */
-    public function __isset($name) {
+    public function __isset($name)
+    {
         if (isset(self::$standardproperties[$name])) {
             $value = $this->__get($name);
             return isset($value);
@@ -1211,7 +1244,8 @@ class cm_info implements IteratorAggregate {
      * @param string $name
      * @return bool
      */
-    public function __empty($name) {
+    public function __empty($name)
+    {
         if (isset(self::$standardproperties[$name])) {
             $value = $this->__get($name);
             return empty($value);
@@ -1227,7 +1261,8 @@ class cm_info implements IteratorAggregate {
      * @param string $name
      * @param mixed $value
      */
-    public function __set($name, $value) {
+    public function __set($name, $value)
+    {
         debugging("It is not allowed to set the property cm_info::\${$name}", DEBUG_DEVELOPER);
     }
 
@@ -1236,14 +1271,16 @@ class cm_info implements IteratorAggregate {
      *   etc (note: modules may still have a view.php file, but return false if this is not
      *   intended to be linked to from 'normal' parts of the interface; this is what label does).
      */
-    public function has_view() {
+    public function has_view()
+    {
         return !is_null($this->url);
     }
 
     /**
      * @return moodle_url URL to link to for this module, or null if it doesn't have a view page
      */
-    private function get_url() {
+    private function get_url()
+    {
         $this->obtain_dynamic_data();
         return $this->url;
     }
@@ -1253,7 +1290,8 @@ class cm_info implements IteratorAggregate {
      * Note: Will collect view data, if not already obtained.
      * @return string Content to display on main page below link, or empty string if none
      */
-    private function get_content() {
+    private function get_content()
+    {
         $this->obtain_view_data();
         return $this->content;
     }
@@ -1266,7 +1304,8 @@ class cm_info implements IteratorAggregate {
      * @param array|stdClass $options formatting options, see {@link format_text()}
      * @return string
      */
-    public function get_formatted_content($options = array()) {
+    public function get_formatted_content($options = array())
+    {
         $this->obtain_view_data();
         if (empty($this->content)) {
             return '';
@@ -1287,7 +1326,8 @@ class cm_info implements IteratorAggregate {
      * Getter method for property $name, ensures that dynamic data is obtained.
      * @return string
      */
-    private function get_name() {
+    private function get_name()
+    {
         $this->obtain_dynamic_data();
         return $this->name;
     }
@@ -1300,7 +1340,8 @@ class cm_info implements IteratorAggregate {
      * @param array|stdClass $options formatting options, see {@link format_string()}
      * @return string
      */
-    public function get_formatted_name($options = array()) {
+    public function get_formatted_name($options = array())
+    {
         global $CFG;
         $options = (array)$options;
         if (!isset($options['context'])) {
@@ -1312,14 +1353,15 @@ class cm_info implements IteratorAggregate {
         if (!empty($CFG->filterall)) {
             filter_preload_activities($this->get_modinfo());
         }
-        return format_string($this->get_name(), true,  $options);
+        return format_string($this->get_name(), true, $options);
     }
 
     /**
      * Note: Will collect view data, if not already obtained.
      * @return string Extra CSS classes to add to html output for this activity on main page
      */
-    private function get_extra_classes() {
+    private function get_extra_classes()
+    {
         $this->obtain_view_data();
         return $this->extraclasses;
     }
@@ -1328,15 +1370,18 @@ class cm_info implements IteratorAggregate {
      * @return string Content of HTML on-click attribute. This string will be used literally
      * as a string so should be pre-escaped.
      */
-    private function get_on_click() {
+    private function get_on_click()
+    {
         // Does not need view data; may be used by navigation
         $this->obtain_dynamic_data();
         return $this->onclick;
     }
+
     /**
      * @return mixed Optional custom data stored in modinfo cache for this activity, or null if none
      */
-    private function get_custom_data() {
+    private function get_custom_data()
+    {
         return $this->customdata;
     }
 
@@ -1344,7 +1389,8 @@ class cm_info implements IteratorAggregate {
      * Note: Will collect view data, if not already obtained.
      * @return string Extra HTML code to display after link
      */
-    private function get_after_link() {
+    private function get_after_link()
+    {
         $this->obtain_view_data();
         return $this->afterlink;
     }
@@ -1353,7 +1399,8 @@ class cm_info implements IteratorAggregate {
      * Note: Will collect view data, if not already obtained.
      * @return string Extra HTML code to display after editing icons (e.g. more icons)
      */
-    private function get_after_edit_icons() {
+    private function get_after_edit_icons()
+    {
         $this->obtain_view_data();
         return $this->afterediticons;
     }
@@ -1362,7 +1409,8 @@ class cm_info implements IteratorAggregate {
      * @param moodle_core_renderer $output Output render to use, or null for default (global)
      * @return moodle_url Icon URL for a suitable icon to put beside this cm
      */
-    public function get_icon_url($output = null) {
+    public function get_icon_url($output = null)
+    {
         global $OUTPUT;
         $this->obtain_dynamic_data();
         if (!$output) {
@@ -1372,7 +1420,7 @@ class cm_info implements IteratorAggregate {
         if (!empty($this->iconurl)) {
             $icon = $this->iconurl;
 
-        // Fallback to normal local icon + component procesing
+            // Fallback to normal local icon + component procesing
         } else if (!empty($this->icon)) {
             if (substr($this->icon, 0, 4) === 'mod/') {
                 list($modname, $iconname) = explode('/', substr($this->icon, 4), 2);
@@ -1396,12 +1444,13 @@ class cm_info implements IteratorAggregate {
      * @param string $textclasses additionnal classes for grouping label
      * @return string An empty string or HTML grouping label span tag
      */
-    public function get_grouping_label($textclasses = '') {
+    public function get_grouping_label($textclasses = '')
+    {
         $groupinglabel = '';
         if (!empty($this->groupingid) && has_capability('moodle/course:managegroups', context_course::instance($this->course))) {
             $groupings = groups_get_all_groupings($this->course);
-            $groupinglabel = html_writer::tag('span', '('.format_string($groupings[$this->groupingid]->name).')',
-                array('class' => 'groupinglabel '.$textclasses));
+            $groupinglabel = html_writer::tag('span', '(' . format_string($groupings[$this->groupingid]->name) . ')',
+                array('class' => 'groupinglabel ' . $textclasses));
         }
         return $groupinglabel;
     }
@@ -1412,7 +1461,8 @@ class cm_info implements IteratorAggregate {
      * @param bool $plural return plural form
      * @return string
      */
-    public function get_module_type_name($plural = false) {
+    public function get_module_type_name($plural = false)
+    {
         $modnames = get_module_types_names($plural);
         if (isset($modnames[$this->modname])) {
             return $modnames[$this->modname];
@@ -1426,14 +1476,16 @@ class cm_info implements IteratorAggregate {
      *
      * @return string
      */
-    private function get_module_type_name_plural() {
+    private function get_module_type_name_plural()
+    {
         return $this->get_module_type_name(true);
     }
 
     /**
      * @return course_modinfo Modinfo object that this came from
      */
-    public function get_modinfo() {
+    public function get_modinfo()
+    {
         return $this->modinfo;
     }
 
@@ -1449,7 +1501,8 @@ class cm_info implements IteratorAggregate {
      *
      * @return stdClass
      */
-    public function get_course() {
+    public function get_course()
+    {
         return $this->modinfo->get_course();
     }
 
@@ -1458,7 +1511,8 @@ class cm_info implements IteratorAggregate {
      *
      * @return int
      */
-    private function get_course_id() {
+    private function get_course_id()
+    {
         return $this->modinfo->get_course_id();
     }
 
@@ -1467,7 +1521,8 @@ class cm_info implements IteratorAggregate {
      *
      * @return int one of constants NOGROUPS, SEPARATEGROUPS, VISIBLEGROUPS
      */
-    private function get_course_groupmode() {
+    private function get_course_groupmode()
+    {
         return $this->modinfo->get_course()->groupmode;
     }
 
@@ -1476,7 +1531,8 @@ class cm_info implements IteratorAggregate {
      *
      * @return bool
      */
-    private function get_course_groupmodeforce() {
+    private function get_course_groupmodeforce()
+    {
         return $this->modinfo->get_course()->groupmodeforce;
     }
 
@@ -1485,7 +1541,8 @@ class cm_info implements IteratorAggregate {
      *
      * @return int one of constants NOGROUPS, SEPARATEGROUPS, VISIBLEGROUPS
      */
-    private function get_effective_groupmode() {
+    private function get_effective_groupmode()
+    {
         $groupmode = $this->groupmode;
         if ($this->modinfo->get_course()->groupmodeforce) {
             $groupmode = $this->modinfo->get_course()->groupmode;
@@ -1499,7 +1556,8 @@ class cm_info implements IteratorAggregate {
     /**
      * @return context_module Current module context
      */
-    private function get_context() {
+    private function get_context()
+    {
         return context_module::instance($this->id);
     }
 
@@ -1514,7 +1572,8 @@ class cm_info implements IteratorAggregate {
      * @param bool $additionalfields include additional fields 'name', 'modname', 'sectionnum'
      * @return stdClass
      */
-    public function get_course_module_record($additionalfields = false) {
+    public function get_course_module_record($additionalfields = false)
+    {
         $cmrecord = new stdClass();
 
         // Standard fields from table course_modules.
@@ -1544,7 +1603,8 @@ class cm_info implements IteratorAggregate {
      * @param string $content New content as HTML string (empty string if none)
      * @return void
      */
-    public function set_content($content) {
+    public function set_content($content)
+    {
         $this->content = $content;
     }
 
@@ -1553,7 +1613,8 @@ class cm_info implements IteratorAggregate {
      * @param string $extraclasses Extra classes (empty string if none)
      * @return void
      */
-    public function set_extra_classes($extraclasses) {
+    public function set_extra_classes($extraclasses)
+    {
         $this->extraclasses = $extraclasses;
     }
 
@@ -1565,7 +1626,8 @@ class cm_info implements IteratorAggregate {
      * @param moodle_url $iconurl full external url pointing to icon image for activity
      * @return void
      */
-    public function set_icon_url(moodle_url $iconurl) {
+    public function set_icon_url(moodle_url $iconurl)
+    {
         $this->iconurl = $iconurl;
     }
 
@@ -1576,7 +1638,8 @@ class cm_info implements IteratorAggregate {
      *   (empty string if none)
      * @return void
      */
-    public function set_on_click($onclick) {
+    public function set_on_click($onclick)
+    {
         $this->check_not_view_only();
         $this->onclick = $onclick;
     }
@@ -1586,7 +1649,8 @@ class cm_info implements IteratorAggregate {
      * @param string $afterlink HTML string (empty string if none)
      * @return void
      */
-    public function set_after_link($afterlink) {
+    public function set_after_link($afterlink)
+    {
         $this->afterlink = $afterlink;
     }
 
@@ -1595,7 +1659,8 @@ class cm_info implements IteratorAggregate {
      * @param string $afterediticons HTML string (empty string if none)
      * @return void
      */
-    public function set_after_edit_icons($afterediticons) {
+    public function set_after_edit_icons($afterediticons)
+    {
         $this->afterediticons = $afterediticons;
     }
 
@@ -1605,7 +1670,8 @@ class cm_info implements IteratorAggregate {
      * @param string $name Name of activity / link text
      * @return void
      */
-    public function set_name($name) {
+    public function set_name($name)
+    {
         if ($this->state < self::STATE_BUILDING_DYNAMIC) {
             $this->update_user_visible();
         }
@@ -1617,7 +1683,8 @@ class cm_info implements IteratorAggregate {
      * Note: May not be called from _cm_info_view (only _cm_info_dynamic).
      * @return void
      */
-    public function set_no_view_link() {
+    public function set_no_view_link()
+    {
         $this->check_not_view_only();
         $this->url = null;
     }
@@ -1629,7 +1696,8 @@ class cm_info implements IteratorAggregate {
      * @param bool $uservisible
      * @return void
      */
-    public function set_user_visible($uservisible) {
+    public function set_user_visible($uservisible)
+    {
         $this->check_not_view_only();
         $this->uservisible = $uservisible;
     }
@@ -1654,7 +1722,8 @@ class cm_info implements IteratorAggregate {
      *   empty string if not displaying
      * @return void
      */
-    public function set_available($available, $showavailability=0, $availableinfo='') {
+    public function set_available($available, $showavailability = 0, $availableinfo = '')
+    {
         $this->check_not_view_only();
         $this->available = $available;
         if (!$showavailability) {
@@ -1671,10 +1740,11 @@ class cm_info implements IteratorAggregate {
      * module pages).
      * @return void
      */
-    private function check_not_view_only() {
+    private function check_not_view_only()
+    {
         if ($this->state >= self::STATE_DYNAMIC) {
             throw new coding_exception('Cannot set this data from _cm_info_view because it may ' .
-                    'affect other pages as well as view');
+                'affect other pages as well as view');
         }
     }
 
@@ -1686,29 +1756,30 @@ class cm_info implements IteratorAggregate {
      * @param stdClass $mod Module object from the modinfo field of course table
      * @param stdClass $notused2 Argument not used
      */
-    public function __construct(course_modinfo $modinfo, $notused1, $mod, $notused2) {
+    public function __construct(course_modinfo $modinfo, $notused1, $mod, $notused2)
+    {
         $this->modinfo = $modinfo;
 
-        $this->id               = $mod->cm;
-        $this->instance         = $mod->id;
-        $this->modname          = $mod->mod;
-        $this->idnumber         = isset($mod->idnumber) ? $mod->idnumber : '';
-        $this->name             = $mod->name;
-        $this->visible          = $mod->visible;
-        $this->sectionnum       = $mod->section; // Note weirdness with name here
-        $this->groupmode        = isset($mod->groupmode) ? $mod->groupmode : 0;
-        $this->groupingid       = isset($mod->groupingid) ? $mod->groupingid : 0;
-        $this->indent           = isset($mod->indent) ? $mod->indent : 0;
-        $this->extra            = isset($mod->extra) ? $mod->extra : '';
-        $this->extraclasses     = isset($mod->extraclasses) ? $mod->extraclasses : '';
+        $this->id = $mod->cm;
+        $this->instance = $mod->id;
+        $this->modname = $mod->mod;
+        $this->idnumber = isset($mod->idnumber) ? $mod->idnumber : '';
+        $this->name = $mod->name;
+        $this->visible = $mod->visible;
+        $this->sectionnum = $mod->section; // Note weirdness with name here
+        $this->groupmode = isset($mod->groupmode) ? $mod->groupmode : 0;
+        $this->groupingid = isset($mod->groupingid) ? $mod->groupingid : 0;
+        $this->indent = isset($mod->indent) ? $mod->indent : 0;
+        $this->extra = isset($mod->extra) ? $mod->extra : '';
+        $this->extraclasses = isset($mod->extraclasses) ? $mod->extraclasses : '';
         // iconurl may be stored as either string or instance of moodle_url.
-        $this->iconurl          = isset($mod->iconurl) ? new moodle_url($mod->iconurl) : '';
-        $this->onclick          = isset($mod->onclick) ? $mod->onclick : '';
-        $this->content          = isset($mod->content) ? $mod->content : '';
-        $this->icon             = isset($mod->icon) ? $mod->icon : '';
-        $this->iconcomponent    = isset($mod->iconcomponent) ? $mod->iconcomponent : '';
-        $this->customdata       = isset($mod->customdata) ? $mod->customdata : '';
-        $this->showdescription  = isset($mod->showdescription) ? $mod->showdescription : 0;
+        $this->iconurl = isset($mod->iconurl) ? new moodle_url($mod->iconurl) : '';
+        $this->onclick = isset($mod->onclick) ? $mod->onclick : '';
+        $this->content = isset($mod->content) ? $mod->content : '';
+        $this->icon = isset($mod->icon) ? $mod->icon : '';
+        $this->iconcomponent = isset($mod->iconcomponent) ? $mod->iconcomponent : '';
+        $this->customdata = isset($mod->customdata) ? $mod->customdata : '';
+        $this->showdescription = isset($mod->showdescription) ? $mod->showdescription : 0;
         $this->state = self::STATE_BASIC;
 
         $this->section = isset($mod->sectionid) ? $mod->sectionid : 0;
@@ -1722,27 +1793,27 @@ class cm_info implements IteratorAggregate {
         // are actually disabled
         $this->completion = isset($mod->completion) ? $mod->completion : 0;
         $this->completiongradeitemnumber = isset($mod->completiongradeitemnumber)
-                ? $mod->completiongradeitemnumber : null;
+            ? $mod->completiongradeitemnumber : null;
         $this->completionview = isset($mod->completionview)
-                ? $mod->completionview : 0;
+            ? $mod->completionview : 0;
         $this->completionexpected = isset($mod->completionexpected)
-                ? $mod->completionexpected : 0;
+            ? $mod->completionexpected : 0;
         $this->availability = isset($mod->availability) ? $mod->availability : null;
         $this->conditionscompletion = isset($mod->conditionscompletion)
-                ? $mod->conditionscompletion : array();
+            ? $mod->conditionscompletion : array();
         $this->conditionsgrade = isset($mod->conditionsgrade)
-                ? $mod->conditionsgrade : array();
+            ? $mod->conditionsgrade : array();
         $this->conditionsfield = isset($mod->conditionsfield)
-                ? $mod->conditionsfield : array();
+            ? $mod->conditionsfield : array();
 
         static $modviews = array();
         if (!isset($modviews[$this->modname])) {
             $modviews[$this->modname] = !plugin_supports('mod', $this->modname,
-                    FEATURE_NO_VIEW_LINK);
+                FEATURE_NO_VIEW_LINK);
         }
         $this->url = $modviews[$this->modname]
-                ? new moodle_url('/mod/' . $this->modname . '/view.php', array('id'=>$this->id))
-                : null;
+            ? new moodle_url('/mod/' . $this->modname . '/view.php', array('id' => $this->id))
+            : null;
     }
 
     /**
@@ -1753,7 +1824,8 @@ class cm_info implements IteratorAggregate {
      * @param int $userid Optional userid (default to current)
      * @return cm_info|null Object as cm_info, or null if input was null/false
      */
-    public static function create($cm, $userid = 0) {
+    public static function create($cm, $userid = 0)
+    {
         // Null, false, etc. gets passed through as null.
         if (!$cm) {
             return null;
@@ -1784,7 +1856,8 @@ class cm_info implements IteratorAggregate {
      * be called (if it exists).
      * @return void
      */
-    private function obtain_dynamic_data() {
+    private function obtain_dynamic_data()
+    {
         global $CFG;
         $userid = $this->modinfo->get_user_id();
         if ($this->state >= self::STATE_BUILDING_DYNAMIC || $userid == -1) {
@@ -1799,7 +1872,7 @@ class cm_info implements IteratorAggregate {
             // Note that the modinfo currently available only includes minimal details (basic data)
             // but we know that this function does not need anything more than basic data.
             $this->available = $ci->is_available($this->availableinfo, true,
-                    $userid, $this->modinfo);
+                $userid, $this->modinfo);
         } else {
             $this->available = true;
         }
@@ -1827,7 +1900,8 @@ class cm_info implements IteratorAggregate {
      * Getter method for property $uservisible, ensures that dynamic data is retrieved.
      * @return bool
      */
-    private function get_user_visible() {
+    private function get_user_visible()
+    {
         $this->obtain_dynamic_data();
         return $this->uservisible;
     }
@@ -1836,7 +1910,8 @@ class cm_info implements IteratorAggregate {
      * Getter method for property $available, ensures that dynamic data is retrieved
      * @return bool
      */
-    private function get_available() {
+    private function get_available()
+    {
         $this->obtain_dynamic_data();
         return $this->available;
     }
@@ -1848,11 +1923,12 @@ class cm_info implements IteratorAggregate {
      * @return int Zero
      * @deprecated Since Moodle 2.8
      */
-    private function get_deprecated_group_members_only() {
+    private function get_deprecated_group_members_only()
+    {
         debugging('$cm->groupmembersonly has been deprecated and always returns zero. ' .
-                'If used to restrict a list of enrolled users to only those who can ' .
-                'access the module, consider \core_availability\info_module::filter_user_list.',
-                DEBUG_DEVELOPER);
+            'If used to restrict a list of enrolled users to only those who can ' .
+            'access the module, consider \core_availability\info_module::filter_user_list.',
+            DEBUG_DEVELOPER);
         return 0;
     }
 
@@ -1861,7 +1937,8 @@ class cm_info implements IteratorAggregate {
      *
      * @return string Available info (HTML)
      */
-    private function get_available_info() {
+    private function get_available_info()
+    {
         $this->obtain_dynamic_data();
         return $this->availableinfo;
     }
@@ -1873,7 +1950,8 @@ class cm_info implements IteratorAggregate {
      *
      * @return void
      */
-    private function update_user_visible() {
+    private function update_user_visible()
+    {
         $userid = $this->modinfo->get_user_id();
         if ($userid == -1) {
             return null;
@@ -1883,7 +1961,8 @@ class cm_info implements IteratorAggregate {
         // If the user cannot access the activity set the uservisible flag to false.
         // Additional checks are required to determine whether the activity is entirely hidden or just greyed out.
         if ((!$this->visible or !$this->get_available()) and
-                !has_capability('moodle/course:viewhiddenactivities', $this->get_context(), $userid)) {
+            !has_capability('moodle/course:viewhiddenactivities', $this->get_context(), $userid)
+        ) {
 
             $this->uservisible = false;
         }
@@ -1891,7 +1970,7 @@ class cm_info implements IteratorAggregate {
         // Check group membership.
         if ($this->is_user_access_restricted_by_capability()) {
 
-             $this->uservisible = false;
+            $this->uservisible = false;
             // Ensure activity is completely hidden from the user.
             $this->availableinfo = '';
         }
@@ -1907,10 +1986,11 @@ class cm_info implements IteratorAggregate {
      * @return bool False
      * @deprecated Since Moodle 2.8
      */
-    public function is_user_access_restricted_by_group() {
+    public function is_user_access_restricted_by_group()
+    {
         debugging('cm_info::is_user_access_restricted_by_group() ' .
-                'is deprecated and always returns false; use $cm->uservisible ' .
-                'to decide whether the current user can access an activity', DEBUG_DEVELOPER);
+            'is deprecated and always returns false; use $cm->uservisible ' .
+            'to decide whether the current user can access an activity', DEBUG_DEVELOPER);
         return false;
     }
 
@@ -1919,7 +1999,8 @@ class cm_info implements IteratorAggregate {
      *
      * @return bool True if the user access is restricted.
      */
-    public function is_user_access_restricted_by_capability() {
+    public function is_user_access_restricted_by_capability()
+    {
         $userid = $this->modinfo->get_user_id();
         if ($userid == -1) {
             return null;
@@ -1941,11 +2022,12 @@ class cm_info implements IteratorAggregate {
      *
      * @deprecated since 2.7 MDL-44070
      */
-    public function is_user_access_restricted_by_conditional_access() {
+    public function is_user_access_restricted_by_conditional_access()
+    {
         throw new coding_exception('cm_info::is_user_access_restricted_by_conditional_access() ' .
-                'can not be used any more; this function is not needed (use $cm->uservisible ' .
-                'and $cm->availableinfo to decide whether it should be available ' .
-                'or appear)');
+            'can not be used any more; this function is not needed (use $cm->uservisible ' .
+            'and $cm->availableinfo to decide whether it should be available ' .
+            'or appear)');
     }
 
     /**
@@ -1954,7 +2036,8 @@ class cm_info implements IteratorAggregate {
      *   'forum' then it will try to call 'mod_forum_grooblezorb' or 'forum_grooblezorb'
      * @return void
      */
-    private function call_mod_function($type) {
+    private function call_mod_function($type)
+    {
         global $CFG;
         $libfile = $CFG->dirroot . '/mod/' . $this->modname . '/lib.php';
         if (file_exists($libfile)) {
@@ -1985,7 +2068,8 @@ class cm_info implements IteratorAggregate {
      * be called (if it exists).
      * @return void
      */
-    private function obtain_view_data() {
+    private function obtain_view_data()
+    {
         if ($this->state >= self::STATE_BUILDING_VIEW || $this->modinfo->get_user_id() == -1) {
             return;
         }
@@ -2019,9 +2103,12 @@ class cm_info implements IteratorAggregate {
  * @return course_modinfo|null Module information for course, or null if resetting
  * @throws moodle_exception when course is not found (nothing is thrown if resetting)
  */
-function get_fast_modinfo($courseorid, $userid = 0, $resetonly = false) {
+function get_fast_modinfo($courseorid, $userid = 0, $resetonly = false)
+{
     // compartibility with syntax prior to 2.4:
     if ($courseorid === 'reset') {
+        echo "reset";
+        die();
         debugging("Using the string 'reset' as the first argument of get_fast_modinfo() is deprecated. Use get_fast_modinfo(0,0,true) instead.", DEBUG_DEVELOPER);
         $courseorid = 0;
         $resetonly = true;
@@ -2071,7 +2158,8 @@ function get_fast_modinfo($courseorid, $userid = 0, $resetonly = false) {
  * @return array Array with 2 elements $course and $cm
  * @throws moodle_exception If the item doesn't exist or is of wrong module name
  */
-function get_course_and_cm_from_cmid($cmorid, $modulename = '', $courseorid = 0, $userid = 0) {
+function get_course_and_cm_from_cmid($cmorid, $modulename = '', $courseorid = 0, $userid = 0)
+{
     global $DB;
     if (is_object($cmorid)) {
         $cmid = $cmorid->id;
@@ -2147,7 +2235,8 @@ function get_course_and_cm_from_cmid($cmorid, $modulename = '', $courseorid = 0,
  * @return array Array with 2 elements $course and $cm
  * @throws moodle_exception If the item doesn't exist or is of wrong module name
  */
-function get_course_and_cm_from_instance($instanceorid, $modulename, $courseorid = 0, $userid = 0) {
+function get_course_and_cm_from_instance($instanceorid, $modulename, $courseorid = 0, $userid = 0)
+{
     global $DB;
 
     // Get data from parameter.
@@ -2220,7 +2309,8 @@ function get_course_and_cm_from_instance($instanceorid, $modulename, $courseorid
  * @param boolean $clearonly only clear the cache, gets rebuild automatically on the fly.
  *     Recommended to set to true to avoid unnecessary multiple rebuilding.
  */
-function rebuild_course_cache($courseid=0, $clearonly=false) {
+function rebuild_course_cache($courseid = 0, $clearonly = false)
+{
     global $COURSE, $SITE, $DB, $CFG;
 
     // Function rebuild_course_cache() can not be called during upgrade unless it's clear only.
@@ -2272,13 +2362,13 @@ function rebuild_course_cache($courseid=0, $clearonly=false) {
     }
 
     if ($courseid) {
-        $select = array('id'=>$courseid);
+        $select = array('id' => $courseid);
     } else {
         $select = array();
         core_php_time_limit::raise();  // this could take a while!   MDL-10954
     }
 
-    $rs = $DB->get_recordset("course", $select,'','id,'.join(',', course_modinfo::$cachedfields));
+    $rs = $DB->get_recordset("course", $select, '', 'id,' . join(',', course_modinfo::$cachedfields));
     // Rebuild cache for each course.
     foreach ($rs as $course) {
         course_modinfo::build_course_cache($course);
@@ -2295,7 +2385,8 @@ function rebuild_course_cache($courseid=0, $clearonly=false) {
  * use extraclasses and onclick instead). The stdclass object may not contain
  * the new fields defined here (content, extraclasses, customdata).
  */
-class cached_cm_info {
+class cached_cm_info
+{
     /**
      * Name (text of link) for this activity; Leave unset to accept default name
      * @var string
@@ -2389,7 +2480,8 @@ class cached_cm_info {
  *    match course_sections.sequence if later has references to non-existing modules or not modules of not available module types.
  * @property-read course_modinfo $modinfo
  */
-class section_info implements IteratorAggregate {
+class section_info implements IteratorAggregate
+{
     /**
      * Section ID - from course_sections table
      * @var int
@@ -2523,24 +2615,25 @@ class section_info implements IteratorAggregate {
      * @param course_modinfo $modinfo Owner (needed for checking availability)
      * @param int $notused3 argument not used (informaion is available in $modinfo)
      */
-    public function __construct($data, $number, $notused1, $notused2, $modinfo, $notused3) {
+    public function __construct($data, $number, $notused1, $notused2, $modinfo, $notused3)
+    {
         global $CFG;
-        require_once($CFG->dirroot.'/course/lib.php');
+        require_once($CFG->dirroot . '/course/lib.php');
 
         // Data that is always present
         $this->_id = $data->id;
 
         $defaults = self::$sectioncachedefaults +
-                array('conditionscompletion' => array(),
-                    'conditionsgrade' => array(),
-                    'conditionsfield' => array());
+            array('conditionscompletion' => array(),
+                'conditionsgrade' => array(),
+                'conditionsfield' => array());
 
         // Data that may use default values to save cache size
         foreach ($defaults as $field => $value) {
             if (isset($data->{$field})) {
-                $this->{'_'.$field} = $data->{$field};
+                $this->{'_' . $field} = $data->{$field};
             } else {
-                $this->{'_'.$field} = $value;
+                $this->{'_' . $field} = $value;
             }
         }
 
@@ -2554,7 +2647,7 @@ class section_info implements IteratorAggregate {
             // Store list of section format options defined in each used course format.
             // They do not depend on particular course but only on its format.
             self::$sectionformatoptions[$course->format] =
-                    course_get_format($course)->section_format_options();
+                course_get_format($course)->section_format_options();
         }
         foreach (self::$sectionformatoptions[$course->format] as $field => $option) {
             if (!empty($option['cache'])) {
@@ -2573,10 +2666,12 @@ class section_info implements IteratorAggregate {
      * @param string $name name of the property
      * @return bool
      */
-    public function __isset($name) {
-        if (method_exists($this, 'get_'.$name) ||
-                property_exists($this, '_'.$name) ||
-                array_key_exists($name, self::$sectionformatoptions[$this->modinfo->get_course()->format])) {
+    public function __isset($name)
+    {
+        if (method_exists($this, 'get_' . $name) ||
+            property_exists($this, '_' . $name) ||
+            array_key_exists($name, self::$sectionformatoptions[$this->modinfo->get_course()->format])
+        ) {
             $value = $this->__get($name);
             return isset($value);
         }
@@ -2589,10 +2684,12 @@ class section_info implements IteratorAggregate {
      * @param string $name name of the property
      * @return bool
      */
-    public function __empty($name) {
-        if (method_exists($this, 'get_'.$name) ||
-                property_exists($this, '_'.$name) ||
-                array_key_exists($name, self::$sectionformatoptions[$this->modinfo->get_course()->format])) {
+    public function __empty($name)
+    {
+        if (method_exists($this, 'get_' . $name) ||
+            property_exists($this, '_' . $name) ||
+            array_key_exists($name, self::$sectionformatoptions[$this->modinfo->get_course()->format])
+        ) {
             $value = $this->__get($name);
             return empty($value);
         }
@@ -2606,12 +2703,13 @@ class section_info implements IteratorAggregate {
      * @param string $name name of the property
      * @return bool
      */
-    public function __get($name) {
-        if (method_exists($this, 'get_'.$name)) {
-            return $this->{'get_'.$name}();
+    public function __get($name)
+    {
+        if (method_exists($this, 'get_' . $name)) {
+            return $this->{'get_' . $name}();
         }
-        if (property_exists($this, '_'.$name)) {
-            return $this->{'_'.$name};
+        if (property_exists($this, '_' . $name)) {
+            return $this->{'_' . $name};
         }
         if (array_key_exists($name, $this->cachedformatoptions)) {
             return $this->cachedformatoptions[$name];
@@ -2621,7 +2719,7 @@ class section_info implements IteratorAggregate {
             $formatoptions = course_get_format($this->modinfo->get_course())->get_format_options($this);
             return $formatoptions[$name];
         }
-        debugging('Invalid section_info property accessed! '.$name);
+        debugging('Invalid section_info property accessed! ' . $name);
         return null;
     }
 
@@ -2632,7 +2730,8 @@ class section_info implements IteratorAggregate {
      *
      * @return bool
      */
-    private function get_available() {
+    private function get_available()
+    {
         global $CFG;
         $userid = $this->modinfo->get_user_id();
         if ($this->_available !== null || $userid == -1) {
@@ -2645,12 +2744,12 @@ class section_info implements IteratorAggregate {
             // Get availability information.
             $ci = new \core_availability\info_section($this);
             $this->_available = $ci->is_available($this->_availableinfo, true,
-                    $userid, $this->modinfo);
+                $userid, $this->modinfo);
         }
         // Execute the hook from the course format that may override the available/availableinfo properties.
         $currentavailable = $this->_available;
         course_get_format($this->modinfo->get_course())->
-            section_get_available_hook($this, $this->_available, $this->_availableinfo);
+        section_get_available_hook($this, $this->_available, $this->_availableinfo);
         if (!$currentavailable && $this->_available) {
             debugging('section_get_available_hook() can not make unavailable section available', DEBUG_DEVELOPER);
             $this->_available = $currentavailable;
@@ -2663,7 +2762,8 @@ class section_info implements IteratorAggregate {
      *
      * @return string
      */
-    private function get_availableinfo() {
+    private function get_availableinfo()
+    {
         // Calling get_available() will also fill the availableinfo property
         // (or leave it null if there is no userid).
         $this->get_available();
@@ -2676,12 +2776,13 @@ class section_info implements IteratorAggregate {
      *
      * @return ArrayIterator
      */
-    public function getIterator() {
+    public function getIterator()
+    {
         $ret = array();
         foreach (get_object_vars($this) as $key => $value) {
             if (substr($key, 0, 1) == '_') {
-                if (method_exists($this, 'get'.$key)) {
-                    $ret[substr($key, 1)] = $this->{'get'.$key}();
+                if (method_exists($this, 'get' . $key)) {
+                    $ret[substr($key, 1)] = $this->{'get' . $key}();
                 } else {
                     $ret[substr($key, 1)] = $this->$key;
                 }
@@ -2699,7 +2800,8 @@ class section_info implements IteratorAggregate {
      *
      * @return bool
      */
-    private function get_uservisible() {
+    private function get_uservisible()
+    {
         $userid = $this->modinfo->get_user_id();
         if ($this->_uservisible !== null || $userid == -1) {
             // Has already been calculated or does not need calculation.
@@ -2720,7 +2822,8 @@ class section_info implements IteratorAggregate {
      *
      * @return string
      */
-    private function get_sequence() {
+    private function get_sequence()
+    {
         if (!empty($this->modinfo->sections[$this->_section])) {
             return implode(',', $this->modinfo->sections[$this->_section]);
         } else {
@@ -2733,7 +2836,8 @@ class section_info implements IteratorAggregate {
      *
      * @return int
      */
-    private function get_course() {
+    private function get_course()
+    {
         return $this->modinfo->get_course_id();
     }
 
@@ -2742,7 +2846,8 @@ class section_info implements IteratorAggregate {
      *
      * @return course_modinfo
      */
-    private function get_modinfo() {
+    private function get_modinfo()
+    {
         return $this->modinfo;
     }
 
@@ -2753,7 +2858,8 @@ class section_info implements IteratorAggregate {
      * Called by build_section_cache in course_modinfo only; do not use otherwise.
      * @param object $section Raw section data object
      */
-    public static function convert_for_section_cache($section) {
+    public static function convert_for_section_cache($section)
+    {
         global $CFG;
 
         // Course id stored in course table

@@ -1412,14 +1412,14 @@ function redirect_if_major_upgrade_required() {
  */
 function upgrade_ensure_not_running($warningonly = false) {
     global $CFG;
-    if (!empty($CFG->upgraderunning)) {
-        if (!$warningonly) {
-            throw new moodle_exception('cannotexecduringupgrade');
-        } else {
-            debugging(get_string('cannotexecduringupgrade', 'error'), DEBUG_DEVELOPER);
-            return false;
-        }
-    }
+//    if (!empty($CFG->upgraderunning)) {
+//        if (!$warningonly) {
+//            throw new moodle_exception('cannotexecduringupgrade');
+//        } else {
+//            debugging(get_string('cannotexecduringupgrade', 'error'), DEBUG_DEVELOPER);
+//            return false;
+//        }
+//    }
     return true;
 }
 

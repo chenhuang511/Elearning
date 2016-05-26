@@ -46,7 +46,7 @@ function moodle_webservice_client($options = [], $usercache = true)
     ) {
         if ($usercache) {
             $webservicecache = cache::make_from_params(cache_store::MODE_APPLICATION, 'core', 'webservice');
-            $cachekey = 'wes-'.$options['domain'].$options['token'].$options['function_name'];
+            $cachekey = 'wes-' . $options['domain'] . $options['token'] . $options['function_name'];
         }
 
         $serverUrl = $options['domain'] . '/webservice/rest/server.php' . '?wstoken=' . $options['token'] . '&wsfunction=' . $options['function_name'] . '&moodlewsrestformat=json';
@@ -111,8 +111,10 @@ function get_remote_course_module($cmid, $options = [])
         'function_name' => 'core_course_get_course_module',
         'params' => array('cmid' => $cmid),
     )));
-
-    return $result->cm;
+    if ($result) {
+        return $result->cm;
+    }
+    return null;
 }
 
 function get_remote_label_content($labelid, $options = [])
