@@ -100,4 +100,70 @@ class local_nccsoft_external extends external_api
             )
         );
     }
+
+    public static function get_mod_lesson_page_by_id_parameters()
+    {
+        return new external_function_parameters(
+            array('lessonid' => new external_value(PARAM_INT, 'lesson id'),
+                'pageid' => new external_value(PARAM_INT, 'page id'),
+                'isfield' => new external_value(PARAM_BOOL, 'is field'),
+                'options' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHANUM,
+                                'The expected keys (value format) are:
+                                                excludemodules (bool) Do not return modules, return only the sections structure
+                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
+                                                sectionid (int) Return only this section
+                                                sectionnumber (int) Return only this section with number (order)
+                                                cmid (int) Return only this module information (among the whole sections structure)
+                                                modname (string) Return only modules with this name "label, forum, etc..."
+                                                modid (int) Return only the module with this id (to be used with modname'),
+                            'value' => new external_value(PARAM_RAW, 'the value of the option,
+                                                                    this param is personaly validated in the external function.')
+                        )
+                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array()
+                )
+            )
+        );
+    }
+
+    public static function get_mod_lesson_page_by_id($lessonid, $pageid, $isfield, $options = array())
+    {
+        global $DB;
+
+        //validate parameter
+
+        if ($isfield && is_null($pageid)) {
+            $params = self::validate_parameters(self::get_mod_lesson_page_by_id_parameters(),
+                array('lessonid' => $lessonid, 'isfield' => $isfield, 'options' => $options));
+            return $DB->get_field('lesson_pages', 'id', array('lessonid' => $params['lessonid'], 'prevpageid' => 0));
+        }
+
+        $params = self::validate_parameters(self::get_mod_lesson_page_by_id_parameters(),
+            array('pageid' => $pageid, 'lessonid' => $lessonid, 'options' => $options));
+
+        return $DB->get_record('lesson_pages', array('id' => $params['pageid'], 'lessonid' => $params['lessonid']), '*', MUST_EXIST);
+    }
+
+    public static function get_mod_lesson_page_by_id_returns()
+    {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'lesson page id'),
+                'lessonid' => new external_value(PARAM_INT, 'lesson id'),
+                'prevpageid' => new external_value(PARAM_INT, 'prev page id'),
+                'nextpageid' => new external_value(PARAM_INT, 'next page id'),
+                'qtype' => new external_value(PARAM_INT, 'qtype'),
+                'qoption' => new external_value(PARAM_INT, 'q option'),
+                'layout' => new external_value(PARAM_INT, 'layout'),
+                'display' => new external_value(PARAM_INT, 'display'),
+                'timecreated' => new external_value(PARAM_INT, 'time created'),
+                'timemodified' => new external_value(PARAM_INT, 'time modified'),
+                'title' => new external_value(PARAM_TEXT, 'title'),
+                'contents' => new external_value(PARAM_RAW, 'content'),
+                'contentsformat' => new external_value(PARAM_INT, 'contents format')
+            )
+        );
+    }
 }

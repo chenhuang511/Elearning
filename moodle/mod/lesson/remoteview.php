@@ -30,6 +30,7 @@ echo "<pre>";
 print_r($lesson);
 echo "</pre>";
 die();
+
 //require_login($course, false, $coursemodule);
 
 // back to course page
@@ -49,30 +50,25 @@ if ($pageid !== null) {
 // generate header html
 $html .= $OUTPUT->header();
 
-//if ($lesson->deadline != 0 && time() > $lesson->deadline) {
-//    $html .= $OUTPUT->lesson_inaccessible(get_string('lessonclosed', 'lesson', userdate($lesson->deadline)));
-//} else {
-//    $html .= $OUTPUT->lesson_inaccessible(get_string('lessonopen', 'lesson', userdate($lesson->available)));
-//}
-
 // start lesson content
 $html .= $OUTPUT->box_start('c-lesson', "lesson_{$lesson->id}");
 
 //show lesson information
-//echo "<pre>";
-//print_r($lesson);
-//echo "</pre>";
-//die();
 if ($lesson) {
-    echo "in heading: " . $lesson->name;
-    die();
+
     $html .= $OUTPUT->heading($lesson->name);
 
     if (!empty($lesson->intro)) {
         $html .= html_writer::tag('p', $lesson->intro, array('class' => 'c-lesson-intro'));
     }
+    
 
     if (empty($pageid)) {
+
+        echo "<pre>";
+        print_r(get_remote_lesson_page_content($lesson->id, null, true));
+        echo "</pre>"; die();
+
         if (!$pageid = get_remote_lesson_page_content($lesson->id, array('returntype' => 'fieldtype', 'prevpageid' => 0))) {
             print_error('cannotfindfirstpage', 'lesson');
         }

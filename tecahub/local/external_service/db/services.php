@@ -67,7 +67,15 @@ $functions = array(
 		'description' => 'Get lesson content by course',
 		'type'        => 'read',
 		'ajax'        => true
-	)
+	),
+	'local_mod_get_lesson_page_by_id' => array(
+		'classname'   => 'local_nccsoft_external',
+		'methodname'  => 'get_mod_lesson_page_by_id',
+		'classpath'   => 'local/external_service/externallib_lesson.php',
+		'description' => 'Get lessonpage content by lesson',
+		'type'        => 'read',
+		'ajax'        => true
+	),
     // hanv: Get the list of questions needed by this page.
     'local_mod_get_quiz_question' => array(
         'classname'   => 'local_mod_quiz_external',
@@ -89,7 +97,8 @@ $services = array(
 			//HaNV
             /*'local_mod_get_quiz_content_by_id',*/
             'local_mod_get_quiz_attempt',
-			'local_mod_get_lesson_by_id'
+			'local_mod_get_lesson_by_id',
+			'local_mod_get_lesson_page_by_id'
     	),
     	'enabled' => 1,
         'restrictedusers' => 0,

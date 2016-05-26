@@ -178,22 +178,14 @@ function get_remote_lesson_content($lessonid, $options = [])
     ));
 }
 
-function get_remote_lesson_page_content($lessonid, $options = [])
+function get_remote_lesson_page_content($lessonid, $pageid, $isfield = false, $options = [])
 {
-
-    if ((isset($options['returntype']) && $options['returntype'] === 'fieldtype') && isset($options['prevpageid'])) {
-        $params = array('lessonid' => $lessonid, 'prevpageid' => $options['prevpageid']);
-    }
-    if ((isset($options['returntype']) && $options['returntype'] === 'recordtype') && isset($options['pageid'])) {
-        $params = array('id' => $options['pageid'], 'lessonid' => $lessonid);
-    }
-
     return moodle_webservice_client(array_merge($options,
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_lesson_page_by_id',
-            'params' => $params
+            'params' => array('lessonid' => $lessonid, 'pageid' => $pageid, 'isfield' => $isfield)
         )
     ));
 }
