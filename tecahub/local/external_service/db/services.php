@@ -42,6 +42,24 @@ $functions = array(
 		'type'        => 'read',
 		'ajax'        => true
 	),
+    // hanv: api code for handling data about quizzes and the current user's attempt.
+    'local_mod_get_quiz_attempt' => array(
+        'classname'   => 'local_nccsoft_external',
+        'methodname'  => 'get_mod_quiz_attempt',
+        'classpath'   => 'local/external_service/externallib.php',
+        'description' => "Get quiz with the current user's attempt",
+        'type'        => 'read',
+        'ajax'        => true
+    ),
+    // hanv: returns a quiz with all questions
+    'local_mod_get_quiz_content_by_id' => array(
+        'classname'   => 'local_nccsoft_external',
+        'methodname'  => 'get_mod_quiz_content_by_id',
+        'classpath'   => 'local/external_service/externallib.php',
+        'description' => 'Get quiz with all questions',
+        'type'        => 'read',
+        'ajax'        => true
+    ),
     /*'local_mod_get_label_by_id' => array(
         'classname'   => 'local_nccsoft_external',
         'methodname'  => 'get_mod_label_by_id',
@@ -89,6 +107,9 @@ $services = array(
     'NccSoft External Service'  => array(
         'functions' => array (
 			'local_mod_get_course_content_by_id',
+            'local_mod_get_quiz_content_by_id',
+            'local_mod_get_quiz_attempt',
+
         	/*'local_mod_get_label_by_id',
 			'local_mod_get_quiz_by_id',
 			'local_mod_get_page_by_id',

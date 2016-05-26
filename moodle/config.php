@@ -41,9 +41,9 @@ $CFG = new stdClass();
 $CFG->dbtype    = 'mysqli';      // 'pgsql', 'mariadb', 'mysqli', 'mssql', 'sqlsrv' or 'oci'
 $CFG->dblibrary = 'native';     // 'native' only at the moment
 $CFG->dbhost    = 'localhost';  // eg 'localhost' or 'db.isp.com' or IP
-$CFG->dbname    = 'moodle';     // database name, eg moodle
+$CFG->dbname    = 'moodledb';     // database name, eg moodle
 $CFG->dbuser    = 'root';   // your database username
-$CFG->dbpass    = '123456$';   // your database password
+$CFG->dbpass    = '';   // your database password
 $CFG->prefix    = 'mdl_';       // prefix to use for all table names
 $CFG->dboptions = array(
     'dbpersist' => false,       // should persistent database connections be
@@ -61,7 +61,8 @@ $CFG->dboptions = array(
                                 //  default port
 );
 
-$CFG->opensslcnf = 'C:\wamp\bin\apache\apache2.4.9\conf\openssl.cnf';
+$CFG->opensslcnf = 'C:\wamp64\bin\apache\apache2.4.17\conf\openssl.cnf';
+
 
 //=========================================================================
 // 2. WEB SITE LOCATION
@@ -74,7 +75,7 @@ $CFG->opensslcnf = 'C:\wamp\bin\apache\apache2.4.9\conf\openssl.cnf';
 // If you need both intranet and Internet access please read
 // http://docs.moodle.org/en/masquerading
 
-$CFG->wwwroot   = 'http://10.0.0.254:1111';
+$CFG->wwwroot   = 'http://192.168.1.174:69';
 
 
 //=========================================================================
@@ -90,7 +91,7 @@ $CFG->wwwroot   = 'http://10.0.0.254:1111';
 //
 // - On Windows systems you might specify something like 'c:\moodledata'
 
-$CFG->dataroot  = 'D:\Project\Teca_pro\moodledata';
+$CFG->dataroot  = 'C:\wamp64\moodledata';
 
 
 //=========================================================================
@@ -119,9 +120,9 @@ $CFG->directorypermissions = 02777;
 // and purge all caches.
 
 $CFG->admin = 'admin';
-
-$CFG->debug = 6143; 
-$CFG->debugdisplay = 1;
+//
+//$CFG->debug = 6143;
+//$CFG->debugdisplay = 1;
 
 require_once(dirname(__FILE__) . '/lib/setup.php');
 
