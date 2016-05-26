@@ -36,17 +36,17 @@
 $functions = array(
 	//VietNH
 	'local_mod_get_course_content_by_id' => array(
-		'classname'   => 'local_nccsoft_external',
+		'classname'   => 'local_nccsoft_external_course',
 		'methodname'  => 'get_course_content_by_id',
-		'classpath'   => 'local/external_service/externallib.php',
+		'classpath'   => 'local/external_service/externallib_course.php',
 		'description' => 'Get course content by identify',
 		'type'        => 'read',
 		'ajax'        => true
 	),
 	'local_mod_get_assign_completion' => array(
-		'classname'   => 'local_nccsoft_external',
+		'classname'   => 'local_nccsoft_external_assign',
 		'methodname'  => 'get_mod_assign_completion',
-		'classpath'   => 'local/external_service/externallib.php',
+		'classpath'   => 'local/external_service/externallib_assign.php',
 		'description' => "Get assign completion with the current user's complete",
 		'type'        => 'read',
 		'ajax'        => true
