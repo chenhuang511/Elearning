@@ -9479,6 +9479,26 @@ function convert_remote_course_record(&$course) {
     global $DB;
     $cat = $DB->get_record("course_categories", array("remoteid" => $course->category), "id, remoteid", MUST_EXIST);
     $course->category = $cat->id;
+    $course->id = $course->remoteid;
+}
+
+/**
+ * Gets the name of a course to be displayed when showing a list of courses.
+ * By default this is just $course->fullname but user can configure it. The
+ * result of this function should be passed through print_string.
+ * @param stdClass|course_in_list $course Moodle course object
+ * @return string Display name of course (either fullname or short + fullname)
+ */
+function get_local_course_record($courseid) {
+    global $DB;
+    if (is_object($courseid)) {
+        convert_remote_course_record($courseid);
+        return $courseid;
+    }
+
+    $course = $DB->get_record("course", array("remoteid" => $courseid), "*", MUST_EXIST);
+    convert_remote_course_record($course);
+    return $course;
 }
 
 /**

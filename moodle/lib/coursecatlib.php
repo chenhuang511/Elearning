@@ -965,7 +965,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
                     // Load context only if we need to check capability.
                     context_helper::preload_from_record($course);
                     if (!has_capability('moodle/course:viewhiddencourses', context_course::instance($course->id))) {
-                        //unset($list[$course->id]);
+                        unset($list[$course->id]);
                     }
                 }
             }
