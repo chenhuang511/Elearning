@@ -34,11 +34,20 @@
  */
 
 $functions = array(
+	//VietNH
 	'local_mod_get_course_content_by_id' => array(
 		'classname'   => 'local_nccsoft_external',
 		'methodname'  => 'get_course_content_by_id',
 		'classpath'   => 'local/external_service/externallib.php',
 		'description' => 'Get course content by identify',
+		'type'        => 'read',
+		'ajax'        => true
+	),
+	'local_mod_get_assign_completion' => array(
+		'classname'   => 'local_nccsoft_external',
+		'methodname'  => 'get_mod_assign_completion',
+		'classpath'   => 'local/external_service/externallib.php',
+		'description' => "Get assign completion with the current user's complete",
 		'type'        => 'read',
 		'ajax'        => true
 	),
@@ -52,21 +61,24 @@ $functions = array(
         'ajax'        => true
     ),
     // hanv: returns a quiz with all questions
-    'local_mod_get_quiz_content_by_id' => array(
+    /*'local_mod_get_quiz_content_by_id' => array(
         'classname'   => 'local_nccsoft_external',
         'methodname'  => 'get_mod_quiz_content_by_id',
         'classpath'   => 'local/external_service/externallib.php',
         'description' => 'Get quiz with all questions',
         'type'        => 'read',
         'ajax'        => true
-    ),
+    ),*/
 );
 
 $services = array(
     'NccSoft External Service'  => array(
         'functions' => array (
+			//VietNH
 			'local_mod_get_course_content_by_id',
-            'local_mod_get_quiz_content_by_id',
+			'local_mod_get_assign_completion',
+			//HaNV
+            /*'local_mod_get_quiz_content_by_id',*/
             'local_mod_get_quiz_attempt',
     	),
     	'enabled' => 1,
