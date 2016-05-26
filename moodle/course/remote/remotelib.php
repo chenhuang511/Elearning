@@ -45,7 +45,7 @@ function moodle_webservice_client($options = [], $usercache = true)
         isset($options['function_name'])
     ) {
         if ($usercache) {
-            $webservicecache = cache::make(cache_store::MODE_APPLICATION, 'core', 'webservice');
+            $webservicecache = cache::make_from_params(cache_store::MODE_APPLICATION, 'core', 'webservice');
             $cachekey = 'wes-'.$options['domain'].$options['token'].$options['function_name'];
         }
 

@@ -6918,6 +6918,7 @@ class context_course extends context {
         if (!$record = $DB->get_record('context', array('contextlevel'=>CONTEXT_COURSE, 'instanceid'=>$instanceid))) {
         	$course = new StdClass();
         	$course = $DB->get_record('course', array('id'=>$instanceid), 'id,category', $strictness);
+            convert_remote_course_record($course);
             if ($course->id) {
                 if ($course->category) {
                     $parentcontext = context_coursecat::instance($course->category);
