@@ -60,15 +60,15 @@ $functions = array(
         'type'        => 'read',
         'ajax'        => true
     ),
-    // hanv: returns a quiz with all questions
-    /*'local_mod_get_quiz_content_by_id' => array(
-        'classname'   => 'local_nccsoft_external',
-        'methodname'  => 'get_mod_quiz_content_by_id',
-        'classpath'   => 'local/external_service/externallib.php',
-        'description' => 'Get quiz with all questions',
-        'type'        => 'read',
-        'ajax'        => true
-    ),*/
+    // hanv: Get the list of questions needed by this page.
+//    'local_mod_get_quiz_question' => array(
+//        'classname'   => 'local_nccsoft_external',
+//        'methodname'  => 'get_mod_quiz_content_by_id',
+//        'classpath'   => 'local/external_service/externallib.php',
+//        'description' => 'Get quiz with all questions',
+//        'type'        => 'read',
+//        'ajax'        => true
+//    ),
 );
 
 $services = array(
@@ -76,6 +76,7 @@ $services = array(
         'functions' => array (
 			//VietNH
 			'local_mod_get_course_content_by_id',
+//            'local_mod_get_quiz_content_by_id',
 			'local_mod_get_assign_completion',
 			//HaNV
             /*'local_mod_get_quiz_content_by_id',*/

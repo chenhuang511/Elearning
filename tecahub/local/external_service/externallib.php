@@ -45,7 +45,7 @@ class local_nccsoft_external extends external_api {
      * Returns description of method parameters
      *
      * @return external_function_parameters
-     * @since Moodle 2.9 Options available.
+     * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
     public static function get_course_content_by_id_parameters()
@@ -467,7 +467,7 @@ class local_nccsoft_external extends external_api {
     public static function get_mod_quiz_attempt_parameters() {
         return new external_function_parameters(
             array('quizid' => new external_value(PARAM_INT, 'quiz id'),
-                'ip_adress' => new external_value(PARAM_TEXT, 'ip_adress'),
+                'ip_address' => new external_value(PARAM_TEXT, 'ip_address'),
                 'username' => new external_value(PARAM_TEXT, 'username'),
                 'options' => new external_multiple_structure (
                     new external_single_structure(
@@ -500,21 +500,21 @@ class local_nccsoft_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_mod_quiz_attempt($quizid, $ip_adress, $username, $options = array()) {
+    public static function get_mod_quiz_attempt($quizid, $ip_address, $username, $options = array()) {
         global $CFG, $DB;
 
         //validate parameter
         $params = self::validate_parameters(self::get_mod_quiz_attempt_parameters(),
-            array('quizid' => $quizid, 'username' => $username , 'ip_adress' => $ip_adress ,'options' => $options));
+            array('quizid' => $quizid, 'username' => $username , 'ip_address' => $ip_address ,'options' => $options));
 
         // Get mnethost by ipadress
-        $mnethostid =  $DB->get_record('mnet_host', array('ip_address' => $params['ip_adress']), 'id', MUST_EXIST);
+        $mnethost =  $DB->get_record('mnet_host', array('ip_address' => $params['ip_address']), '*', MUST_EXIST);
 
         // Get user by $username and $mnethost->id
-        $userid =  $DB->get_record('user', array('username' => $params['username'], 'mnethostid' => $mnethostid), 'id', MUST_EXIST);
+        $user =  $DB->get_record('user', array('username' => $params['username'], 'mnethostid' => $mnethost -> id), '*', MUST_EXIST);
 
         //retrieve the quiz_attempts
-        $attempt = $DB->get_records_select('quiz_attempts',  array('quiz' => $params['quizid'], 'userid' => $userid), '*', MUST_EXIST);
+        $attempt = $DB->get_record('quiz_attempts',  array('quiz' => $params['quizid'], 'userid' => $user -> id), '*', MUST_EXIST);
         return $attempt;
     }
 
@@ -529,7 +529,7 @@ class local_nccsoft_external extends external_api {
         return  new external_single_structure(
             array(
                 'id' => new external_value(PARAM_INT, 'attempt id'),
-                'quizid' => new external_value(PARAM_INT, 'quiz id'),
+                'quiz' => new external_value(PARAM_INT, 'quiz id'),
                 'userid' => new external_value(PARAM_INT, 'user id'),
                 'uniqueid' => new external_value(PARAM_INT, 'unique id'),
                 'layout' => new external_value(PARAM_TEXT, 'layout format'),
