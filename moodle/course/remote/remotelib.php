@@ -6,11 +6,6 @@ require_once($CFG->dirroot . '/lib/zend/Zend/Http/Client.php');
 require_once($CFG->dirroot . '/mnet/service/enrol/locallib.php');
 require_once($CFG->dirroot . '/lib/additionallib.php');
 
-/*define('MOBILE_SERVICE_TOKEN', 'ac52a223f8589b3f26fa456a5dc20bde');
-define('NCC_SERVICE_TOKEN', 'a75634b66a82dd8f42f99baedf2690a1');
-define('NCC_DOMAIN_NAME', 'http://192.168.1.252');*/
-
-
 function get_remote_enrol_course_by_host()
 {
     global $DB;
@@ -77,7 +72,7 @@ function moodle_webservice_client($options = [], $usercache = true)
 
 }
 
-function get_remote_courses($options = [])
+function get_remote_courses($options = array())
 {
     return moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
         'token' => HOST_TOKEN,
@@ -85,7 +80,7 @@ function get_remote_courses($options = [])
     )));
 }
 
-function get_remote_course_content($courseid, $options = [])
+function get_remote_course_content($courseid, $options = array())
 {
     return moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
         'token' => HOST_TOKEN,
@@ -94,7 +89,7 @@ function get_remote_course_content($courseid, $options = [])
     )));
 }
 
-function get_remote_course_category($ccatid, $options = [])
+function get_remote_course_category($ccatid, $options = array())
 {
     return moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
         'token' => HOST_TOKEN,
@@ -106,17 +101,13 @@ function get_remote_course_category($ccatid, $options = [])
 /*
  * @param int $cmid the course module id
  */
-function get_remote_course_module($cmid, $options = [])
+function get_remote_course_module($cmid, $options = array())
 {
-    $result = moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
+    return moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
         'token' => HOST_TOKEN_M,
         'function_name' => 'core_course_get_course_module',
         'params' => array('cmid' => $cmid),
     )));
-    if ($result) {
-        return $result->cm;
-    }
-    return null;
 }
 
 function get_remote_label_content($labelid, $options = [])
@@ -168,7 +159,7 @@ function get_remote_url_content($urlid, $options = [])
     ));
 }
 
-function get_remote_lesson_content($lessonid, $options = [])
+function get_remote_lesson_by_id($lessonid, $options = array())
 {
     return moodle_webservice_client(array_merge($options,
         array(
