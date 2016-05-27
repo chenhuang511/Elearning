@@ -103,11 +103,40 @@ function get_remote_course_category($ccatid, $options = array())
  */
 function get_remote_course_module($cmid, $options = array())
 {
-    return moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
+    $coursemodule = moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
         'token' => HOST_TOKEN_M,
         'function_name' => 'core_course_get_course_module',
         'params' => array('cmid' => $cmid),
     )));
+
+    $cm = $coursemodule->cm;
+
+    if($cm) {
+        $info = new stdClass();
+        $info->id = strval($cm->id);
+        $info->course = strval($cm->course);
+        $info->module = strval($cm->module);
+        $info->instance = strval($cm->instance);
+        $info->section = strval($cm->section);
+        $info->idnumber = strval($cm->idnumber);
+        $info->added = strval($cm->added);
+        $info->score = strval($cm->score);
+        $info->indent = strval($cm->indent);
+        $info->visible = strval($cm->visible);
+        $info->visibleold = strval($cm->visibleold);
+        $info->groupmode = strval($cm->groupmode);
+        $info->groupingid = strval($cm->groupingid);
+        $info->completion = strval($cm->completion);
+        $info->completiongradeitemnumber = strval($cm->completiongradeitemnumber);
+        $info->completionview = strval($cm->completionview);
+        $info->completionexpected = strval($cm->completionexpected);
+        $info->showdescription = strval($cm->showdescription);
+        $info->availability = strval($cm->availability);
+        $info->name = strval($cm->name);
+        $info->modname = strval($cm->modname);
+    }
+
+    return $info;
 }
 
 function get_remote_label_content($labelid, $options = [])
