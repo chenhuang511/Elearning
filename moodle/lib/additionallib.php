@@ -33,12 +33,17 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * HUB_URL - expected numbers, letters only and _-.
  */
-define('HUB_URL', 'alphanumext');
+define('HUB_URL', 'http://192.168.1.252');
 
 /**
- * HOST_TOKEN - actually checks to make sure the string is a valid auth plugin
+ * HUB TOKEN - Nccsoft External services
  */
-define('HOST_TOKEN',  'auth');
+define('HOST_TOKEN',  'a75634b66a82dd8f42f99baedf2690a1');
+
+/**
+ *  HUB TOKEN - Mobile services
+*/
+define('HOST_TOKEN_M',  'ac52a223f8589b3f26fa456a5dc20bde');
 
 
 function convert_remote_course_record(&$course) {
