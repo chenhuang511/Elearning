@@ -20,6 +20,14 @@ class course_edit_form extends moodleform {
         global $CFG, $PAGE;
 
         $mform    = $this->_form;
+        $filemanageroptions = null;
+
+        if (!is_array($this->_customdata)) {
+            throw new coding_exception('invalid custom data for course_edit_form');
+        }
+
+        $filemanageroptions = $this->_customdata['filemanageroptions'];
+
         $PAGE->requires->yui_module('moodle-course-formatchooser', 'M.course.init_formatchooser',
                 array(array('formid' => $mform->getAttribute('id'))));
 
@@ -132,6 +140,13 @@ class course_edit_form extends moodleform {
             $mform->hardFreeze('idnumber');
             $mform->setConstants('idnumber', $course->idnumber);
         }
+
+        //Profile
+        $mform->addElement('filemanager', 'thumbnailimg', "New Thumbnail", '', $filemanageroptions);
+        $mform->addHelpButton('imagefile', 'newpicture');
+
+        $mform->addElement('checkbox', 'deletethumbnail', "Delete Thumbnail");
+        $mform->setDefault('deletethumbnail', 0);
 
         // Description.
         $mform->addElement('header', 'descriptionhdr', get_string('description'));
