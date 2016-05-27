@@ -4,6 +4,7 @@ defined('MOODLE_INTERNAL') || die;
 set_include_path($CFG->dirroot . '/lib/zend/');
 require_once($CFG->dirroot . '/lib/zend/Zend/Http/Client.php');
 require_once($CFG->dirroot . '/mnet/service/enrol/locallib.php');
+require_once($CFG->dirroot . '/lib/additionallib.php');
 
 /*define('MOBILE_SERVICE_TOKEN', 'ac52a223f8589b3f26fa456a5dc20bde');
 define('NCC_SERVICE_TOKEN', 'a75634b66a82dd8f42f99baedf2690a1');
