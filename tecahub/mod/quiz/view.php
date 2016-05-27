@@ -32,7 +32,6 @@ require_once($CFG->dirroot . '/course/format/lib.php');
 
 $id = optional_param('id', 0, PARAM_INT); // Course Module ID, or ...
 $q = optional_param('q',  0, PARAM_INT);  // Quiz ID.
-
 if ($id) {
     if (!$cm = get_coursemodule_from_id('quiz', $id)) {
         print_error('invalidcoursemodule');
