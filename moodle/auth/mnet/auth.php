@@ -42,9 +42,12 @@ class auth_plugin_mnet extends auth_plugin_base {
     }
 
     /**
-     * Old syntax of class constructor for backward compatibility.
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
      */
     public function auth_plugin_mnet() {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
         self::__construct();
     }
 
@@ -65,7 +68,7 @@ class auth_plugin_mnet extends auth_plugin_base {
      * Return user data for the provided token, compare with user_agent string.
      *
      * @param  string $token    The unique ID provided by remotehost.
-     * @param  string $UA       User Agent string.
+     * @param  string $useragent       User Agent string.
      * @return array  $userdata Array of user info for remote host
      */
     function user_authorise($token, $useragent) {
@@ -114,7 +117,7 @@ class auth_plugin_mnet extends auth_plugin_base {
 
         $sql = "SELECT h.name AS hostname, h.wwwroot, h.id AS hostid,
                        COUNT(c.id) AS count
-                  FROM {course} c
+                  FROM {mnetservice_enrol_courses} c
                   JOIN {mnetservice_enrol_enrolments} e ON (e.hostid = c.hostid AND e.remotecourseid = c.remoteid)
                   JOIN {mnet_host} h ON h.id = c.hostid
                  WHERE e.userid = ? AND c.hostid = ?
@@ -299,7 +302,7 @@ class auth_plugin_mnet extends auth_plugin_base {
             $remoteuser->firstaccess = 0;
             $remoteuser->confirmed = 1;
 
-            $remoteuser->id = $DB->insert_record('user', $remoteuser);
+            $remoteuser->id = user_create_user($remoteuser, false);
             $firsttime = true;
             $localuser = $remoteuser;
         }
@@ -510,7 +513,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         $sql = "SELECT c.remoteid, c.id, c.categoryid AS cat_id, c.categoryname AS cat_name, c.sortorder,
                        c.fullname, c.shortname, c.idnumber, c.summary, c.summaryformat, c.startdate,
                        e.id AS enrolmentid
-                  FROM {course} c
+                  FROM {mnetservice_enrol_courses} c
              LEFT JOIN {mnetservice_enrol_enrolments} e ON (e.hostid = c.hostid AND e.remotecourseid = c.remoteid)
                  WHERE e.userid = ? AND c.hostid = ?";
 
@@ -1028,7 +1031,7 @@ class auth_plugin_mnet extends auth_plugin_base {
      *
      * @see process_new_icon()
      * @uses mnet_remote_client callable via MNet XML-RPC
-     * @param int $userid The id of the user
+     * @param int $username The id of the user
      * @return false|array false if user not found, empty array if no picture exists, array with data otherwise
      */
     function fetch_user_image($username) {

@@ -165,7 +165,7 @@ if (!$canmanage) {
     }
 }
 
-// this is called if a student leaves during a lesson
+    // this is called if a student leaves during a lesson
 if ($pageid == LESSON_UNSEENBRANCHPAGE) {
     $pageid = lesson_unseen_question_jump($lesson, $USER->id, $pageid);
 }
@@ -248,24 +248,24 @@ if (empty($pageid)) {
     // Check to see if end of lesson was reached.
     if ((isset($lastpageseen) && ($lastpageseen != LESSON_EOL))) {
         if (($DB->count_records('lesson_attempts', array('lessonid' => $lesson->id, 'userid' => $USER->id, 'retry' => $retries)) > 0)
-            || $DB->count_records('lesson_branch', array("lessonid" => $lesson->id, "userid" => $USER->id, "retry" => $retries)) > 0) {
+                || $DB->count_records('lesson_branch', array("lessonid" => $lesson->id, "userid" => $USER->id, "retry" => $retries)) > 0) {
 
             echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('leftduringtimedsession', 'lesson'));
             if ($lesson->timelimit) {
                 if ($lesson->retake) {
                     $continuelink = new single_button(new moodle_url('/mod/lesson/view.php',
-                        array('id' => $cm->id, 'pageid' => $lesson->firstpageid, 'startlastseen' => 'no')),
-                        get_string('continue', 'lesson'), 'get');
+                            array('id' => $cm->id, 'pageid' => $lesson->firstpageid, 'startlastseen' => 'no')),
+                            get_string('continue', 'lesson'), 'get');
 
                     echo html_writer::div($lessonoutput->message(get_string('leftduringtimed', 'lesson'), $continuelink),
-                        'center leftduring');
+                            'center leftduring');
 
                 } else {
                     $courselink = new single_button(new moodle_url('/course/view.php',
-                        array('id' => $PAGE->course->id)), get_string('returntocourse', 'lesson'), 'get');
+                            array('id' => $PAGE->course->id)), get_string('returntocourse', 'lesson'), 'get');
 
                     echo html_writer::div($lessonoutput->message(get_string('leftduringtimednoretake', 'lesson'), $courselink),
-                        'center leftduring');
+                            'center leftduring');
                 }
             } else {
                 echo $lessonoutput->continue_links($lesson, $lastpageseen);
@@ -286,7 +286,7 @@ if (empty($pageid)) {
     }
     // start at the first page
     if (!$pageid = $DB->get_field('lesson_pages', 'id', array('lessonid' => $lesson->id, 'prevpageid' => 0))) {
-        print_error('cannotfindfirstpage', 'lesson');
+            print_error('cannotfindfirstpage', 'lesson');
     }
     /// This is the code for starting a timed test
     if(!isset($USER->startlesson[$lesson->id]) && !$canmanage) {
@@ -612,7 +612,7 @@ if ($pageid != LESSON_EOL) {
     $lessoncontent .= html_writer::link($url, get_string('returnto', 'lesson', format_string($course->fullname, true)), array('class'=>'centerpadded lessonbutton standardbutton'));
 
     if (has_capability('gradereport/user:view', context_course::instance($course->id))
-        && $course->showgrades && $lesson->grade != 0 && !$lesson->practice) {
+            && $course->showgrades && $lesson->grade != 0 && !$lesson->practice) {
         $url = new moodle_url('/grade/index.php', array('id' => $course->id));
         $lessoncontent .= html_writer::link($url, get_string('viewgrades', 'lesson'),
             array('class' => 'centerpadded lessonbutton standardbutton'));
