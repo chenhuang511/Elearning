@@ -51,6 +51,7 @@ $functions = array(
 		'type'        => 'read',
 		'ajax'        => true
 	),
+
     // hanv: api code for handling data about quizzes and the current user's attempt.
     'local_mod_get_quiz_attempt' => array(
         'classname'   => 'local_mod_quiz_external',
@@ -77,14 +78,14 @@ $functions = array(
 		'ajax'        => true
 	),
     // hanv: Get the list of questions needed by this page.
-    'local_mod_get_quiz_question' => array(
-        'classname'   => 'local_mod_quiz_external',
-        'methodname'  => 'get_mod_quiz_content_by_id',
-        'classpath'   => 'local/external_service/externallib_quiz.php',
-        'description' => 'Get quiz with all questions',
-        'type'        => 'read',
-        'ajax'        => true
-    ),
+//    'local_mod_get_quiz_question' => array(
+//        'classname'   => 'local_mod_quiz_external',
+//        'methodname'  => 'get_mod_quiz_question',
+//        'classpath'   => 'local/external_service/externallib_quiz.php',
+//        'description' => 'Get quiz with all questions',
+//        'type'        => 'read',
+//        'ajax'        => true
+//    ),
 );
 
 $services = array(
@@ -92,13 +93,12 @@ $services = array(
         'functions' => array (
 			//VietNH
 			'local_mod_get_course_content_by_id',
-//            'local_mod_get_quiz_content_by_id',
 			'local_mod_get_assign_completion',
 			//HaNV
-            /*'local_mod_get_quiz_content_by_id',*/
             'local_mod_get_quiz_attempt',
+//            'local_mod_get_quiz_question',
 			'local_mod_get_lesson_by_id',
-			'local_mod_get_lesson_page_by_id'
+			'local_mod_get_lesson_page_by_id',
     	),
     	'enabled' => 1,
         'restrictedusers' => 0,

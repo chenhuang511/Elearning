@@ -448,7 +448,11 @@ define('MOD_ARCHETYPE_ASSIGNMENT', 2);
 /** System (not user-addable) module archetype */
 define('MOD_ARCHETYPE_SYSTEM', 3);
 
-/** Return this from modname_get_types callback to use default display in activity chooser */
+/**
+ * Return this from modname_get_types callback to use default display in activity chooser.
+ * Deprecated, will be removed in 3.5, TODO MDL-53697.
+ * @deprecated since Moodle 3.1
+ */
 define('MOD_SUBTYPE_NO_CHILDREN', 'modsubtypenochildren');
 
 /**
@@ -498,16 +502,7 @@ define('HUB_MOODLEORGHUBURL', "http://hub.moodle.org");
 define('MOODLE_OFFICIAL_MOBILE_SERVICE', 'moodle_mobile_app');
 
 /**
- * NccSoft External Service
- */
-define('NCCSOFT_EXTERNAL_SERVICE', 'ncc_ext_service');
-
-define('HOST_TOKEN', 'a75634b66a82dd8f42f99baedf2690a1');
-define('HOST_TOKEN_M', 'ac52a223f8589b3f26fa456a5dc20bde');
-define('HUB_URL', 'http://192.168.1.252');
-
-/**
- * Indicates the user has the capabilities required to ignore activity and course file size restrictions.
+ * Indicates the user has the capabilities required to ignore activity and course file size restrictions
  */
 define('USER_CAN_IGNORE_FILE_SIZE_LIMITS', -1);
 
@@ -2506,7 +2501,7 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
             $course = $DB->get_record('course', array('id' => $courseorid), '*', MUST_EXIST);
         }
         if ($cm) {
-            if ($cm->course != $course->remoteid) {
+            if ($cm->course != $course->id) {
                 throw new coding_exception('course and cm parameters in require_login() call do not match!!');
             }
             // Make sure we have a $cm from get_fast_modinfo as this contains activity access details.
@@ -2515,7 +2510,6 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
                 // db queries so this is not really a performance concern, however it is obviously
                 // better if you use get_fast_modinfo to get the cm before calling this.
                 $modinfo = get_fast_modinfo($course);
-
                 $cm = $modinfo->get_cm($cm->id);
             }
         }
@@ -3911,7 +3905,6 @@ function delete_user(stdClass $user) {
     require_once($CFG->libdir.'/grouplib.php');
     require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->dirroot.'/message/lib.php');
-    require_once($CFG->dirroot.'/tag/lib.php');
     require_once($CFG->dirroot.'/user/lib.php');
 
     // Make sure nobody sends bogus record type as parameter.
@@ -3939,6 +3932,15 @@ function delete_user(stdClass $user) {
         return false;
     }
 
+    // Allow plugins to use this user object before we completely delete it.
+    if ($pluginsfunction = get_plugins_with_function('pre_user_delete')) {
+        foreach ($pluginsfunction as $plugintype => $plugins) {
+            foreach ($plugins as $pluginfunction) {
+                $pluginfunction($user);
+            }
+        }
+    }
+
     // Keep user record before updating it, as we have to pass this to user_deleted event.
     $olduser = clone $user;
 
@@ -3954,7 +3956,7 @@ function delete_user(stdClass $user) {
     // TODO: remove from cohorts using standard API here.
 
     // Remove user tags.
-    tag_set('user', $user->id, array(), 'core', $usercontext->id);
+    core_tag_tag::remove_all_item_tags('core', 'user', $user->id);
 
     // Unconditionally unenrol from all courses.
     enrol_user_delete($user);
@@ -4688,6 +4690,15 @@ function delete_course($courseorid, $showfeedback = true) {
         return false;
     }
 
+    // Allow plugins to use this course before we completely delete it.
+    if ($pluginsfunction = get_plugins_with_function('pre_course_delete')) {
+        foreach ($pluginsfunction as $plugintype => $plugins) {
+            foreach ($plugins as $pluginfunction) {
+                $pluginfunction($course);
+            }
+        }
+    }
+
     // Make the course completely empty.
     remove_course_contents($courseid, $showfeedback);
 
@@ -4745,7 +4756,6 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     require_once($CFG->libdir.'/questionlib.php');
     require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->dirroot.'/group/lib.php');
-    require_once($CFG->dirroot.'/tag/lib.php');
     require_once($CFG->dirroot.'/comment/lib.php');
     require_once($CFG->dirroot.'/rating/lib.php');
     require_once($CFG->dirroot.'/notes/lib.php');
@@ -4805,6 +4815,9 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
                     if ($cm = get_coursemodule_from_instance($modname, $instance->id, $course->id)) {
                         // Delete activity context questions and question categories.
                         question_delete_activity($cm,  $showfeedback);
+
+                        // Notify the competency subsystem.
+                        \core_competency\api::hook_course_module_deleted($cm);
                     }
                     if (function_exists($moddelete)) {
                         // This purges all module data in related tables, extra user prefs, settings, etc.
@@ -4920,7 +4933,10 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     $rm->delete_ratings($delopt);
 
     // Delete course tags.
-    tag_set('course', $course->id, array(), 'core', $coursecontext->id);
+    core_tag_tag::remove_all_item_tags('core', 'course', $course->id);
+
+    // Notify the competency subsystem.
+    \core_competency\api::hook_course_deleted($course);
 
     // Delete calendar events.
     $DB->delete_records('event', array('courseid' => $course->id));
@@ -5106,6 +5122,12 @@ function reset_course_userdata($data) {
         $cc->delete_all_completion_data();
         $status[] = array('component' => $componentstr,
                 'item' => get_string('deletecompletiondata', 'completion'), 'error' => false);
+    }
+
+    if (!empty($data->reset_competency_ratings)) {
+        \core_competency\api::hook_course_reset_competency_ratings($data->courseid);
+        $status[] = array('component' => $componentstr,
+            'item' => get_string('deletecompetencyratings', 'core_competency'), 'error' => false);
     }
 
     $componentstr = get_string('roles');
@@ -5446,6 +5468,64 @@ function get_mailer($action='get') {
 }
 
 /**
+ * A helper function to test for email diversion
+ *
+ * @param string $email
+ * @return bool Returns true if the email should be diverted
+ */
+function email_should_be_diverted($email) {
+    global $CFG;
+
+    if (empty($CFG->divertallemailsto)) {
+        return false;
+    }
+
+    if (empty($CFG->divertallemailsexcept)) {
+        return true;
+    }
+
+    $patterns = array_map('trim', explode(',', $CFG->divertallemailsexcept));
+    foreach ($patterns as $pattern) {
+        if (preg_match("/$pattern/", $email)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
+ * Generate a unique email Message-ID using the moodle domain and install path
+ *
+ * @param string $localpart An optional unique message id prefix.
+ * @return string The formatted ID ready for appending to the email headers.
+ */
+function generate_email_messageid($localpart = null) {
+    global $CFG;
+
+    $urlinfo = parse_url($CFG->wwwroot);
+    $base = '@' . $urlinfo['host'];
+
+    // If multiple moodles are on the same domain we want to tell them
+    // apart so we add the install path to the local part. This means
+    // that the id local part should never contain a / character so
+    // we can correctly parse the id to reassemble the wwwroot.
+    if (isset($urlinfo['path'])) {
+        $base = $urlinfo['path'] . $base;
+    }
+
+    if (empty($localpart)) {
+        $localpart = uniqid('', true);
+    }
+
+    // Because we may have an option /installpath suffix to the local part
+    // of the id we need to escape any / chars which are in the $localpart.
+    $localpart = str_replace('/', '%2F', $localpart);
+
+    return '<' . $localpart . $base . '>';
+}
+
+/**
  * Send an email to a specified user
  *
  * @param stdClass $user  A {@link $USER} object
@@ -5465,7 +5545,7 @@ function get_mailer($action='get') {
 function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', $attachment = '', $attachname = '',
                        $usetrueaddress = true, $replyto = '', $replytoname = '', $wordwrapwidth = 79) {
 
-    global $CFG;
+    global $CFG, $PAGE, $SITE;
 
     if (empty($user) or empty($user->id)) {
         debugging('Can not send email to null user', DEBUG_DEVELOPER);
@@ -5493,7 +5573,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
         return true;
     }
 
-    if (!empty($CFG->divertallemailsto)) {
+    if (email_should_be_diverted($user->email)) {
         $subject = "[DIVERTED {$user->email}] $subject";
         $user = clone($user);
         $user->email = $CFG->divertallemailsto;
@@ -5583,8 +5663,6 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
         $tempreplyto[] = array($replyto, $replytoname);
     }
 
-    $mail->Subject = substr($subject, 0, 900);
-
     $temprecipients[] = array($user->email, fullname($user));
 
     // Set word wrap.
@@ -5601,8 +5679,77 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
         }
     }
 
+    // If the X-PHP-Originating-Script email header is on then also add an additional
+    // header with details of where exactly in moodle the email was triggered from,
+    // either a call to message_send() or to email_to_user().
+    if (ini_get('mail.add_x_header')) {
+
+        $stack = debug_backtrace(false);
+        $origin = $stack[0];
+
+        foreach ($stack as $depth => $call) {
+            if ($call['function'] == 'message_send') {
+                $origin = $call;
+            }
+        }
+
+        $originheader = $CFG->wwwroot . ' => ' . gethostname() . ':'
+             . str_replace($CFG->dirroot . '/', '', $origin['file']) . ':' . $origin['line'];
+        $mail->addCustomHeader('X-Moodle-Originating-Script: ' . $originheader);
+    }
+
     if (!empty($from->priority)) {
         $mail->Priority = $from->priority;
+    }
+
+    $renderer = $PAGE->get_renderer('core');
+    $context = array(
+        'sitefullname' => $SITE->fullname,
+        'siteshortname' => $SITE->shortname,
+        'sitewwwroot' => $CFG->wwwroot,
+        'subject' => $subject,
+        'to' => $user->email,
+        'toname' => fullname($user),
+        'from' => $mail->From,
+        'fromname' => $mail->FromName,
+    );
+    if (!empty($tempreplyto[0])) {
+        $context['replyto'] = $tempreplyto[0][0];
+        $context['replytoname'] = $tempreplyto[0][1];
+    }
+    if ($user->id > 0) {
+        $context['touserid'] = $user->id;
+        $context['tousername'] = $user->username;
+    }
+
+    if (!empty($user->mailformat) && $user->mailformat == 1) {
+        // Only process html templates if the user preferences allow html email.
+
+        if ($messagehtml) {
+            // If html has been given then pass it through the template.
+            $context['body'] = $messagehtml;
+            $messagehtml = $renderer->render_from_template('core/email_html', $context);
+
+        } else {
+            // If no html has been given, BUT there is an html wrapping template then
+            // auto convert the text to html and then wrap it.
+            $autohtml = trim(text_to_html($messagetext));
+            $context['body'] = $autohtml;
+            $temphtml = $renderer->render_from_template('core/email_html', $context);
+            if ($autohtml != $temphtml) {
+                $messagehtml = $temphtml;
+            }
+        }
+    }
+
+    $context['body'] = $messagetext;
+    $mail->Subject = $renderer->render_from_template('core/email_subject', $context);
+    $mail->FromName = $renderer->render_from_template('core/email_fromname', $context);
+    $messagetext = $renderer->render_from_template('core/email_text', $context);
+
+    // Autogenerate a MessageID if it's missing.
+    if (empty($mail->MessageID)) {
+        $mail->MessageID = generate_email_messageid();
     }
 
     if ($messagehtml && !empty($user->mailformat) && $user->mailformat == 1) {
@@ -8094,72 +8241,6 @@ function make_grades_menu($gradingtype) {
 }
 
 /**
- * This function returns the number of activities using the given scale in the given course.
- *
- * @param int $courseid The course ID to check.
- * @param int $scaleid The scale ID to check
- * @return int
- */
-function course_scale_used($courseid, $scaleid) {
-    global $CFG, $DB;
-
-    $return = 0;
-
-    if (!empty($scaleid)) {
-        if ($cms = get_course_mods($courseid)) {
-            foreach ($cms as $cm) {
-                // Check cm->name/lib.php exists.
-                if (file_exists($CFG->dirroot.'/mod/'.$cm->modname.'/lib.php')) {
-                    include_once($CFG->dirroot.'/mod/'.$cm->modname.'/lib.php');
-                    $functionname = $cm->modname.'_scale_used';
-                    if (function_exists($functionname)) {
-                        if ($functionname($cm->instance, $scaleid)) {
-                            $return++;
-                        }
-                    }
-                }
-            }
-        }
-
-        // Check if any course grade item makes use of the scale.
-        $return += $DB->count_records('grade_items', array('courseid' => $courseid, 'scaleid' => $scaleid));
-
-        // Check if any outcome in the course makes use of the scale.
-        $return += $DB->count_records_sql("SELECT COUNT('x')
-                                             FROM {grade_outcomes_courses} goc,
-                                                  {grade_outcomes} go
-                                            WHERE go.id = goc.outcomeid
-                                                  AND go.scaleid = ? AND goc.courseid = ?",
-                                          array($scaleid, $courseid));
-    }
-    return $return;
-}
-
-/**
- * This function returns the number of activities using scaleid in the entire site
- *
- * @param int $scaleid
- * @param array $courses
- * @return int
- */
-function site_scale_used($scaleid, &$courses) {
-    $return = 0;
-
-    if (!is_array($courses) || count($courses) == 0) {
-        $courses = get_courses("all", false, "c.id, c.shortname");
-    }
-
-    if (!empty($scaleid)) {
-        if (is_array($courses) && count($courses) > 0) {
-            foreach ($courses as $course) {
-                $return += course_scale_used($course->id, $scaleid);
-            }
-        }
-    }
-    return $return;
-}
-
-/**
  * make_unique_id_code
  *
  * @todo Finish documenting this function
@@ -8951,15 +9032,6 @@ function get_performance_info() {
 }
 
 /**
- * Legacy function.
- *
- * @todo Document this function linux people
- */
-function apd_get_profiling() {
-    return shell_exec('pprofp -u ' . ini_get('apd.dumpdir') . '/pprof.' . getmypid() . '.*');
-}
-
-/**
  * Delete directory or only its content
  *
  * @param string $dir directory path
@@ -9467,39 +9539,6 @@ function get_course_display_name_for_list($course) {
     } else {
         return $course->fullname;
     }
-}
-
-/**
- * Gets the name of a course to be displayed when showing a list of courses.
- * By default this is just $course->fullname but user can configure it. The
- * result of this function should be passed through print_string.
- * @param stdClass|course_in_list $course Moodle course object
- * @return string Display name of course (either fullname or short + fullname)
- */
-function convert_remote_course_record(&$course) {
-    global $DB;
-    $cat = $DB->get_record("course_categories", array("remoteid" => $course->category), "id, remoteid", MUST_EXIST);
-    $course->category = $cat->id;
-    $course->id = $course->remoteid;
-}
-
-/**
- * Gets the name of a course to be displayed when showing a list of courses.
- * By default this is just $course->fullname but user can configure it. The
- * result of this function should be passed through print_string.
- * @param stdClass|course_in_list $course Moodle course object
- * @return string Display name of course (either fullname or short + fullname)
- */
-function get_local_course_record($courseid) {
-    global $DB;
-    if (is_object($courseid)) {
-        convert_remote_course_record($courseid);
-        return $courseid;
-    }
-
-    $course = $DB->get_record("course", array("remoteid" => $courseid), "*", MUST_EXIST);
-    convert_remote_course_record($course);
-    return $course;
 }
 
 /**

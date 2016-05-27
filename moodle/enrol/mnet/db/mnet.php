@@ -38,8 +38,7 @@ $publishes = array(
             'user_enrolments',
             'enrol_user',
             'unenrol_user',
-            'course_enrolments',
-			'category_enrolments'
+            'course_enrolments'
         ),
     ),
 );
@@ -50,6 +49,5 @@ $subscribes = array(
         'enrol_user'        => 'enrol/mnet/enrol.php/enrol_user',
         'unenrol_user'      => 'enrol/mnet/enrol.php/unenrol_user',
         'course_enrolments' => 'enrol/mnet/enrol.php/course_enrolments',
-		'category_enrolments'=>'enrol/mnet/enrol.php/category_enrolments'
     ),
 );

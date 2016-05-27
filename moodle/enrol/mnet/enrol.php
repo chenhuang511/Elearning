@@ -354,20 +354,4 @@ class enrol_mnet_mnetservice_enrol {
 
         return $list;
     }
-    
-    /**
-     * This method to get category by course id in Moodle MNet API
-     *
-     * @uses mnet_remote_client Callable via XML-RPC only
-     * @return array empty array
-     */
-    public function category_enrolments($catid, $roles=null) {
-        global $CFG, $DB;
-
-        if (!$client = get_mnet_remote_client()) {
-            die('Callable via XML-RPC only');
-        }
-        
-		return $DB->get_record("course_categories", array("id"=>$catid), '*', MUST_EXIST);      
-    }
 }
