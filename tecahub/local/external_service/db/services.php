@@ -8,7 +8,7 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
@@ -23,86 +23,67 @@
  * install or upgrade operation. All plugins support this.
  *
  * For more information, take a look to the documentation available:
- *     - Webservices API: {@link http://docs.moodle.org/dev/Web_services_API}
- *     - External API: {@link http://docs.moodle.org/dev/External_functions_API}
- *     - Upgrade API: {@link http://docs.moodle.org/dev/Upgrade_API}
+ *	   - Webservices API: {@link http://docs.moodle.org/dev/Web_services_API}
+ *	   - External API: {@link http://docs.moodle.org/dev/External_functions_API}
+ *	   - Upgrade API: {@link http://docs.moodle.org/dev/Upgrade_API}
  *
- * @package    core_webservice
+ * @package	   core_webservice
  * @category   webservice
  * @copyright  2009 Petr Skodak
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license	   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $functions = array(
 	//VietNH
 	'local_mod_get_course_content_by_id' => array(
-		'classname'   => 'local_mod_course_external',
+		'classname'	  => 'local_mod_course_external',
 		'methodname'  => 'get_course_content_by_id',
-		'classpath'   => 'local/external_service/externallib_course.php',
+		'classpath'	  => 'local/external_service/externallib_course.php',
 		'description' => 'Get course content by identify',
-		'type'        => 'read',
-		'ajax'        => true
+		'type'		  => 'read',
+		'ajax'		  => true
 	),
 	'local_mod_get_assign_completion' => array(
-		'classname'   => 'local_mod_assign_external',
+		'classname'	  => 'local_mod_assign_external',
 		'methodname'  => 'get_mod_assign_completion',
-		'classpath'   => 'local/external_service/externallib_assign.php',
+		'classpath'	  => 'local/external_service/externallib_assign.php',
 		'description' => "Get assign completion with the current user's complete",
-		'type'        => 'read',
-		'ajax'        => true
+		'type'		  => 'read',
+		'ajax'		  => true
 	),
 
-    // hanv: api code for handling data about quizzes and the current user's attempt.
-    'local_mod_get_quiz_attempt' => array(
-        'classname'   => 'local_mod_quiz_external',
-        'methodname'  => 'get_mod_quiz_attempt',
-        'classpath'   => 'local/external_service/externallib_quiz.php',
-        'description' => "Get quiz with the current user's attempt",
-        'type'        => 'read',
-        'ajax'        => true
-    ),
+	// hanv: api code for handling data about quizzes and the current user's attempt.
+	'local_mod_get_quiz_attempt' => array(
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'get_mod_quiz_attempt',
+		'classpath'	  => 'local/external_service/externallib_quiz.php',
+		'description' => "Get quiz with the current user's attempt",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 	'local_mod_get_lesson_by_id' => array(
-		'classname'   => 'local_nccsoft_external',
+		'classname'	  => 'local_mod_lesson_external',
 		'methodname'  => 'get_mod_lesson_by_id',
-		'classpath'   => 'local/external_service/externallib_lesson.php',
+		'classpath'	  => 'local/external_service/externallib_lesson.php',
 		'description' => 'Get lesson content by course',
-		'type'        => 'read',
-		'ajax'        => true
+		'type'		  => 'read',
+		'ajax'		  => true
 	),
-	'local_mod_get_lesson_page_by_id' => array(
-		'classname'   => 'local_nccsoft_external',
-		'methodname'  => 'get_mod_lesson_page_by_id',
-		'classpath'   => 'local/external_service/externallib_lesson.php',
-		'description' => 'Get lessonpage content by lesson',
-		'type'        => 'read',
-		'ajax'        => true
-	),
-    // hanv: Get the list of questions needed by this page.
-//    'local_mod_get_quiz_question' => array(
-//        'classname'   => 'local_mod_quiz_external',
-//        'methodname'  => 'get_mod_quiz_question',
-//        'classpath'   => 'local/external_service/externallib_quiz.php',
-//        'description' => 'Get quiz with all questions',
-//        'type'        => 'read',
-//        'ajax'        => true
-//    ),
 );
 
 $services = array(
-    'NccSoft External Service'  => array(
-        'functions' => array (
+	'NccSoft External Service'	=> array(
+		'functions' => array (
 			//VietNH
 			'local_mod_get_course_content_by_id',
 			'local_mod_get_assign_completion',
 			//HaNV
-            'local_mod_get_quiz_attempt',
-//            'local_mod_get_quiz_question',
+			'local_mod_get_quiz_attempt',
 			'local_mod_get_lesson_by_id',
-			'local_mod_get_lesson_page_by_id',
-    	),
-    	'enabled' => 1,
-        'restrictedusers' => 0,
-        'shortname' => 'ncc_ext_service',
-        'downloadfiles' => 1,
-        'uploadfiles' => 1)
+		),
+		'enabled' => 1,
+		'restrictedusers' => 0,
+		'shortname' => 'ncc_ext_service',
+		'downloadfiles' => 1,
+		'uploadfiles' => 1)
 );
