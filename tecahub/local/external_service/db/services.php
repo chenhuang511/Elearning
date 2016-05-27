@@ -61,6 +61,25 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	//MinhND
+	'local_get_thumbnail_by_id' => array(
+		'classname'   => 'local_mod_course_external',
+		'methodname'  => 'get_thumbnail_by_id',
+		'classpath'   => 'local/external_service/externallib_course.php',
+		'description' => "Get thumbnail url with courses id",
+		'type'        => 'read',
+		'ajax'        => true
+	),
+
+    // hanv: api code for handling data about quizzes and the current user's attempt.
+    'local_mod_get_quiz_attempt' => array(
+        'classname'   => 'local_mod_quiz_external',
+        'methodname'  => 'get_mod_quiz_attempt',
+        'classpath'   => 'local/external_service/externallib_quiz.php',
+        'description' => "Get quiz with the current user's attempt",
+        'type'        => 'read',
+        'ajax'        => true
+    ),
 	'local_mod_get_lesson_by_id' => array(
 		'classname'	  => 'local_mod_lesson_external',
 		'methodname'  => 'get_mod_lesson_by_id',
