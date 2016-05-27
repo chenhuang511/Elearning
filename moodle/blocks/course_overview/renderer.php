@@ -91,6 +91,9 @@ class block_course_overview_renderer extends plugin_renderer_base {
             $html .= $this->output->box_start('coursebox', "course-{$course->id}");
             $html .= html_writer::start_tag('div', array('class' => 'course_title'));
             // If user is editing, then add move icons.
+            $html .= html_writer::empty_tag('img', array('src' => ("https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQuyhDNz_ucGzC60IA5a6_mM4pKPYUHYL7sDKid5C-Jkyo0B6Ia"),
+                'alt' => '123'));
+            //$html .= $this->output->box('<img src ="https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQuyhDNz_ucGzC60IA5a6_mM4pKPYUHYL7sDKid5C-Jkyo0B6Ia"', 'flush');
             if ($userediting && !$ismovingcourse) {
                 $moveicon = html_writer::empty_tag('img',
                         array('src' => $this->pix_url('t/move')->out(false),
@@ -115,9 +118,10 @@ class block_course_overview_renderer extends plugin_renderer_base {
             } else {
                 $html .= $this->output->heading(html_writer::link(
                     new moodle_url('/course/remote/view.php', array('hostid' => $course->hostid, 'remoteid' => $course->remoteid, 'wantsurl' => '/course/view.php?id='.$course->remoteid)),
-                    format_string($course->shortname, true), $attributes) . ' (' . format_string($course->hostname) . ')', 2, 'title');
+                    format_string($course->shortname, true), $attributes) . format_string($course->summary) . '', 2, 'title');
             }
-            $html .= $this->output->box('', 'flush');
+            //$html .= html_writer::start_tag('div',format_string($course->summary) array('class' => 'course_summary'));
+            //$html .= $this->output->box('image', 'flush');
             $html .= html_writer::end_tag('div');
 
             if (!empty($config->showchildren) && ($course->id > 0)) {
