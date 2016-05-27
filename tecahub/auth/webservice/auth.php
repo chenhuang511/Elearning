@@ -41,9 +41,12 @@ class auth_plugin_webservice extends auth_plugin_base {
     }
 
     /**
-     * Old syntax of class constructor for backward compatibility.
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
      */
     public function auth_plugin_webservice() {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
         self::__construct();
     }
 
@@ -57,14 +60,7 @@ class auth_plugin_webservice extends auth_plugin_base {
      * @return bool Authentication success or failure.
      */
     function user_login($username, $password) {
-        global $DB, $CFG;
-        // Retrieve the user matching username.
-        $user = $DB->get_record('user', array('username' => $username,
-            'mnethostid' => $CFG->mnet_localhost_id));
-        // Username must exist and have the right authentication method.
-        if (!empty($user) && ($user->auth == 'webservice')) {            
-            return true;
-        }
+        // normla logins not allowed!
         return false;
     }
 
@@ -75,11 +71,11 @@ class auth_plugin_webservice extends auth_plugin_base {
      * @return bool success
      */
     function user_login_webservice($username, $password) {
-        /*global $CFG, $DB;
+        global $CFG, $DB;
         // special web service login
         if ($user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id))) {
             return validate_internal_user_password($user, $password);
-        }*/
+        }
         return false;
     }
 
@@ -168,209 +164,4 @@ class auth_plugin_webservice extends auth_plugin_base {
         return AUTH_CONFIRM_ERROR;
     }
 
-    function loginpage_hook() {
-    	global $USER, $SESSION, $CFG, $DB;
-    	
-    	$username = $_POST['username'];
-    	$password = $_POST['password'];
-    	
-    	$userinfo = $this->get_remote_user_info($username, $password);
-    	
-    	if (!isset($userinfo["status"]) || !$userinfo["status"])
-    		return;
-
-    	$useremail = $userinfo["data"]["email"];
-    	
-    	// Prohibit login if email belongs to the prohibited domain.
-    	if ($err = email_is_not_allowed($useremail)) {
-    		throw new moodle_exception($err, 'auth_webservice');
-    	}
-
-    	// If email not existing in user database then create a new username (userX).
-    	if (empty($useremail) || $useremail != clean_param($useremail, PARAM_EMAIL)) {
-    		throw new moodle_exception('couldnotgetuseremail', 'auth_webservice');
-    		// TODO: display a link for people to retry.
-    	}
-    	// Get the user.
-    	// Don't bother with auth = googleoauth2 because authenticate_user_login() will fail it if it's not 'googleoauth2'.
-    	$user = $DB->get_record('user',
-    	array('email' => $useremail, 'deleted' => 0, 'mnethostid' => $CFG->mnet_localhost_id));
-  		
-    	// Create the user if it doesn't exist.
-    	if (empty($user)) {
-    		// Deny login if setting "Prevent account creation when authenticating" is on.
-    		if ($CFG->authpreventaccountcreation) {
-    			throw new moodle_exception("noaccountyet", "auth_webservice");
-    		}
-
-    		// Get following incremented username.
-    		$userprefix = get_config('auth/webservice', 'userprefix');
-    		if(empty($userprefix)) {
-    			$userprefix = 'webservice_';
-    			set_config('userprefix', $userprefix, 'auth/webservice');
-    		}
-/*    		
-    		$lastusernumber = get_config('auth/webservice', 'lastusernumber');
-    		$lastusernumber = empty($lastusernumber) ? 1 : $lastusernumber + 1;
-    		// Check the user doesn't exist.
-    		$nextuser = $DB->record_exists('user', array('username' => $userprefix.$lastusernumber));
-    		while ($nextuser) {
-    			$lastusernumber++;
-    			$nextuser = $DB->record_exists('user', array('username' => $userprefix.$lastusernumber));
-    		}
-    		set_config('lastusernumber', $lastusernumber, 'auth/webservice');
- */   		
-    		$username = $userprefix . $username;
-    		create_user_record($username, '', 'webservice');
-    	} else {
-    		$username = $user->username;
-    	}
-    	// Authenticate the user.
-    	$user = authenticate_user_login($username, null);
-    	if ($user) {
-    		// Set a cookie to remember what auth provider was selected.
-    		setcookie('MOODLEAUTHWEBSERVICE_'.$CFG->sessioncookie, "auth_webservice",
-    		time() + (DAYSECS * 60), $CFG->sessioncookiepath,
-    		$CFG->sessioncookiedomain, $CFG->cookiesecure,
-    		$CFG->cookiehttponly);
-
-    		// Prefill more user information if new user.
-    		if (!empty($newuser)) {
-    			$newuser->id = $user->id;
-    			$DB->update_record('user', $newuser);
-    			$user = (object) array_merge((array) $user, (array) $newuser);
-    		}
-
-    		complete_user_login($user);
-
-    		// Let's save/update the access token for this user.
-    		$cansaveaccesstoken = get_config('auth/webservice', 'saveaccesstoken');
-    		if (!empty($cansaveaccesstoken)) {
-    			$existingaccesstoken = $DB->get_record('auth_webservice_user_idps',
-    			array('userid' => $user->id, 'provider' => "auth_webservice"));
-    			if (empty($existingaccesstoken)) {
-    				$accesstokenrow = new stdClass();
-    				$accesstokenrow->userid = $user->id;
-    				$accesstokenrow->provideruserid = $userdetails->uid;
-    				$accesstokenrow->provider = "auth_webservice";
-    				$accesstokenrow->accesstoken = $userinfo["data"]["tokenkey"];
-    				$accesstokenrow->refreshtoken = $userinfo["data"]["tokenkey"];
-    				$accesstokenrow->expires = $userinfo["data"]["tokenkey"];
-    				$DB->insert_record('auth_webservice_user_idps', $accesstokenrow);
-    			} else {
-    				$existingaccesstoken->accesstoken = $userinfo["data"]["tokenkey"];
-    				$DB->update_record('auth_webservice_user_idps', $existingaccesstoken);
-    			}
-    		}
-
-    		// Check if the user picture is the default and retrieve the provider picture.
-    		if (empty($user->picture)) {
-    			$profilepicurl = '';
-    			if (!empty($userdetails->imageUrl)) {
-    				$profilepicurl = $userdetails->imageUrl;
-    			}
-    			if (!empty($profilepicurl)) {
-    				$this->set_profile_picture($user, $profilepicurl);
-    			}
-    		}
-
-    		// Create event for authenticated user.
-    		require_once($CFG->dirroot . '/auth/webservice/user_loggedin.php');
-    		$event = \auth_webservice\event\user_loggedin::create(
-    		array('context' => context_system::instance(),
-                            'objectid' => $user->id, 'relateduserid' => $user->id,
-                            'other' => array('accesstoken' => $userinfo["data"]["tokenkey"])));
-    		$event->trigger();
-    		
-    		// Redirection.
-    		if (user_not_fully_set_up($USER)) {
-    			$urltogo = $CFG->wwwroot.'/user/edit.php';
-    			// We don't delete $SESSION->wantsurl yet, so we get there later.
-    		} else if (isset($SESSION->wantsurl) && (strpos($SESSION->wantsurl, $CFG->wwwroot) === 0)) {
-    			$urltogo = $SESSION->wantsurl;    // Because it's an address in this site.
-    			unset($SESSION->wantsurl);
-    		} else {
-    			// No wantsurl stored or external - go to homepage.
-    			$urltogo = $CFG->wwwroot.'/';
-    			unset($SESSION->wantsurl);
-    		}
-    		$loginrecord = array('userid' => $USER->id, 'time' => time(),
-                        'auth' => 'webservice', 'subtype' => 'auth_webservice');
-    		try {
-    			$DB->insert_record('auth_webservice_logins', $loginrecord);
-    		} catch(Exception $e) {
-    			echo $e->getMessage();
-    		}
-    		redirect($urltogo);
-    	} else {
-    		// Authenticate_user_login() failure, probably email registered by another auth plugin.
-    		// Do a check to confirm this hypothesis.
-    		$userexist = $DB->get_record('user', array('email' => $useremail)); 
-    		if (!empty($userexist) && $userexist->auth != 'webservice') {
-    			$a = new stdClass();
-    			$a->loginpage = (string) new moodle_url(empty($CFG->alternateloginurl) ?
-                            '/login/index.php' : $CFG->alternateloginurl);
-    			$a->forgotpass = (string) new moodle_url('/login/forgot_password.php');
-    			
-    			throw new moodle_exception('couldnotauthenticateuserlogin', 'auth_webservice', '', $a);
-    		} else {
-    			throw new moodle_exception('couldnotauthenticate', 'auth_webservice');
-    		}
-    	}
-    }
-    
-    /**
-     * Read user information from external database and returns it as array().
-     * Function should return all information available. If you are saving
-     * this information to moodle user-table you should honour synchronisation flags
-     *
-     * @param string $username username
-     *
-     * @return mixed array with no magic quotes or false on error
-     */
-    function get_userinfo($username) {
-    	$userprefix = get_config('auth/webservice', 'userprefix');
-    	if(empty($userprefix)) {
-    		$userprefix = 'webservice_';
-    		set_config('userprefix', $userprefix, 'auth/webservice');
-    	}
-
-        $userinfosave = get_config('auth/webservice', 'saveuserinfo_'.core_text::strtolower($userprefix).$username);
-        $userinfosave = empty($userinfosave)? get_config('auth/webservice', 'saveuserinfo_'.$username) : $userinfosave;
-
-        $userinfo = unserialize($userinfosave);
-        
-        return $userinfo;
-    }
-    
-    /**
-     * Call api to get remote userinfo
-     * Enter description here ...
-     */
-    function get_remote_user_info($username, $password) {
-    	global $CFG;
-    	
-    	$serverurl = "http://api.ums.dev:4449/auth/login";
-    	require_once($CFG->dirroot . '/auth/webservice/curl.php');
-		$curl = new auth_webservice_curl();
-		
-		//if rest format == 'xml', then we do not add the param for backward compatibility with Moodle < 2.2
-		//$restformat = ($restformat == 'json')?'&moodlewsrestformat=' . $restformat:'';
-		$params = array("username" => $username, "password" => $password);
-		
-		$resp = $curl->post($serverurl, $params);
-		
-    	$userinfo = json_decode($resp, true);
-    	$data = serialize($userinfo["data"]);
-    	if (isset($userinfo["status"]) && $userinfo["status"] == 1) {
-    		$userprefix = get_config('auth/webservice', 'userprefix');
-    		if(empty($userprefix)) {
-    			$userprefix = 'webservice_';
-    			set_config('userprefix', $userprefix, 'auth/webservice');
-    		}
-
-    		set_config('saveuserinfo_'.core_text::strtolower($userprefix).$username, $data, 'auth/webservice');
-    	}
-    	return $userinfo;
-    }
 }
