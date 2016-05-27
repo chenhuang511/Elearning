@@ -27,6 +27,8 @@
 defined('MOODLE_INTERNAL') || die;
 
 require_once("$CFG->libdir/externallib.php");
+require_once("$CFG->dirroot/user/externallib.php");
+require_once("$CFG->dirroot/mod/assign/locallib.php");
 
 /**
  * Course external functions
@@ -48,140 +50,360 @@ class local_mod_assign_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_mod_assign_completion_parameters() {
+
+    //endregion
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since  Moodle 2.4
+     */
+    public static function get_mod_assignments_parameters() {
         return new external_function_parameters(
-            array('assignid' => new external_value(PARAM_INT, 'assignid'),
+            array(
+                'courseids' => new external_multiple_structure(
+                    new external_value(PARAM_INT, 'course id, empty for retrieving all the courses where the user is enroled in'),
+                    '0 or more course ids',
+                    VALUE_DEFAULT, array()
+                ),
                 'ip_address' => new external_value(PARAM_TEXT, 'ip_address'),
                 'username' => new external_value(PARAM_TEXT, 'username'),
-                'options' => new external_multiple_structure (
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_ALPHANUM,
-                                'The expected keys (value format) are:
-                                                excludemodules (bool) Do not return modules, return only the sections structure
-                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
-                                                sectionid (int) Return only this section
-                                                sectionnumber (int) Return only this section with number (order)
-                                                cmid (int) Return only this module information (among the whole sections structure)
-                                                modname (string) Return only modules with this name "label, forum, etc..."
-                                                modid (int) Return only the module with this id (to be used with modname'),
-                            'value' => new external_value(PARAM_RAW, 'the value of the option,
-                                                                    this param is personaly validated in the external function.')
-                        )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+                'capabilities'  => new external_multiple_structure(
+                    new external_value(PARAM_CAPABILITY, 'capability'),
+                    'list of capabilities used to filter courses',
+                    VALUE_DEFAULT, array()
+                ),
+                'includenotenrolledcourses' => new external_value(PARAM_BOOL, 'whether to return courses that the user can see
+                                                                    even if is not enroled in. This requires the parameter courseids
+                                                                    to not be empty.', VALUE_DEFAULT, false)
             )
         );
     }
-    public static function get_mod_assign_completion($assignid, $ip_address, $username, $options = array()) {
-        global $CFG, $DB;
-        //validate parameter
-        $params = self::validate_parameters(self::get_mod_assign_completion_parameters(),
-            array('assignid' => $assignid, 'username' => $username , 'ip_address' => $ip_address ,'options' => $options));
 
-        // Get mnethost by ipadress
+    /**
+     * Returns an array of courses the user is enrolled, and for each course all of the assignments that the user can
+     * view within that course.
+     *
+     * @param array $courseids An optional array of course ids. If provided only assignments within the given course
+     * will be returned. If the user is not enrolled in or can't view a given course a warning will be generated and returned.
+     * @param array $capabilities An array of additional capability checks you wish to be made on the course context.
+     * @param bool $includenotenrolledcourses Wheter to return courses that the user can see even if is not enroled in.
+     * This requires the parameter $courseids to not be empty.
+     * @return An array of courses and warnings.
+     * @since  Moodle 2.4
+     */
+    public static function get_mod_assignments($courseids = array(),$ip_address="",$username="", $capabilities = array(), $includenotenrolledcourses = false) {
+        global $DB, $CFG;
+
+        $params = self::validate_parameters(
+            self::get_mod_assignments_parameters(),
+            array(
+                'courseids' => $courseids,
+                'ip_address' => $ip_address,
+                'username' => $username,
+                'capabilities' => $capabilities,
+                'includenotenrolledcourses' => $includenotenrolledcourses
+            )
+        );
         $mnethostid =  $DB->get_record('mnet_host', array('ip_address' => $params['ip_address']), 'id', MUST_EXIST);
         // Get user by $username and $mnethost->id
         //echo $params['username'];die;
 
         $USER =  $DB->get_record('user', array('username' => $params['username'], 'mnethostid' => $mnethostid->id), 'id', MUST_EXIST);
-        //retrieve the Grading Sumary
-        require_once($CFG->dirroot . '/mod/assign/locallib.php');
-        list ($course, $cm) = get_course_and_cm_from_cmid($assignid, 'assign');
-        $context = context_module::instance($cm->id);
-        $assign = new assign($context, $cm, $course);
-        $instance = $assign->get_instance();
-        $fs = get_file_storage();
-        $files = $fs->get_area_files($assign->get_context()->id, 'mod_assign', ASSIGN_INTROATTACHMENT_FILEAREA,
-            0, 'id', false);
-        if(count($files)>0){
-            // return file variable
-        }
-        //$assign->has
-        $postfix = '';
-       /* if ($assign->count()) {
-            echo 1;die;
-            $postfix = $assign->render_area_files('mod_assign', ASSIGN_INTROATTACHMENT_FILEAREA, 0);
-        }*/
 
-        // Display plugin specific headers.
-      /*  $plugins = array_merge($assign->get_submission_plugins(), $assign->get_feedback_plugins());
-        foreach ($plugins as $plugin) {
-            if ($plugin->is_enabled() && $plugin->is_visible()) {
-                //$o .= $assign->get_renderer()->render(new assign_plugin_header($plugin));
+        $warnings = array();
+        $courses = array();
+        $fields = 'sortorder,shortname,fullname,timemodified';
+
+        // If the courseids list is empty, we return only the courses where the user is enrolled in.
+        if (empty($params['courseids'])) {
+            $courses = enrol_get_users_courses($USER->id, true, $fields);
+            $courseids = array_keys($courses);
+        } else if ($includenotenrolledcourses) {
+            // In this case, we don't have to check here for enrolmnents. Maybe the user can see the course even if is not enrolled.
+            $courseids = $params['courseids'];
+        } else {
+            // We need to check for enrolments.
+            $mycourses = enrol_get_users_courses($USER->id, true, $fields);
+            $mycourseids = array_keys($mycourses);
+
+            foreach ($params['courseids'] as $courseid) {
+                if (!in_array($courseid, $mycourseids)) {
+                    unset($courses[$courseid]);
+                    $warnings[] = array(
+                        'item' => 'course',
+                        'itemid' => $courseid,
+                        'warningcode' => '2',
+                        'message' => 'User is not enrolled or does not have requested capability'
+                    );
+                } else {
+                    $courses[$courseid] = $mycourses[$courseid];
+                }
             }
-        }*/
+            $courseids = array_keys($courses);
+        }
 
-        if ($assign->can_view_grades()) {
-            $draft = ASSIGN_SUBMISSION_STATUS_DRAFT;
-            $submitted = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
+        foreach ($courseids as $cid) {
 
-            // Group selector will only be displayed if necessary.
-            $activitygroup = groups_get_activity_group($assign->get_course_module());
+            try {
+                $context = context_course::instance($cid);
+                self::validate_context($context);
 
-            if ($instance->teamsubmission) {
-                $defaultteammembers = $assign->get_submission_group_members(0, true);
-                $warnofungroupedusers = (count($defaultteammembers) > 0 && $instance->preventsubmissionnotingroup);
-
-                $summary = new assign_grading_summary($assign->count_teams($activitygroup),
-                    $instance->submissiondrafts,
-                    $assign->count_submissions_with_status($draft),
-                    $assign->is_any_submission_plugin_enabled(),
-                    $assign->count_submissions_with_status($submitted),
-                    $instance->cutoffdate,
-                    $instance->duedate,
-                    $assign->get_course_module()->id,
-                    $assign->count_submissions_need_grading(),
-                    $instance->teamsubmission,
-                    $warnofungroupedusers);
-
-            } else {
-                // The active group has already been updated in groups_print_activity_menu().
-                $countparticipants = $assign->count_participants($activitygroup);
-                $summary = new assign_grading_summary($countparticipants,
-                    $instance->submissiondrafts,
-                    $assign->count_submissions_with_status($draft),
-                    $assign->is_any_submission_plugin_enabled(),
-                    $assign->count_submissions_with_status($submitted),
-                    $instance->cutoffdate,
-                    $instance->duedate,
-                    $assign->get_course_module()->id,
-                    $assign->count_submissions_need_grading(),
-                    $instance->teamsubmission,
-                    false);
-
+                // Check if this course was already loaded (by enrol_get_users_courses).
+                if (!isset($courses[$cid])) {
+                    $courses[$cid] = get_course($cid);
+                }
+            } catch (Exception $e) {
+                unset($courses[$cid]);
+                $warnings[] = array(
+                    'item' => 'course',
+                    'itemid' => $cid,
+                    'warningcode' => '1',
+                    'message' => 'No access rights in course context '.$e->getMessage()
+                );
+                continue;
+            }
+            if (count($params['capabilities']) > 0 && !has_all_capabilities($params['capabilities'], $context)) {
+                unset($courses[$cid]);
             }
         }
-        $grade = $assign->get_user_grade($USER->id, false);
-        $submission = $assign->get_user_submission($USER->id, false);
+        $extrafields='m.id as assignmentid, ' .
+            'm.course, ' .
+            'm.nosubmissions, ' .
+            'm.submissiondrafts, ' .
+            'm.sendnotifications, '.
+            'm.sendlatenotifications, ' .
+            'm.sendstudentnotifications, ' .
+            'm.duedate, ' .
+            'm.allowsubmissionsfromdate, '.
+            'm.grade, ' .
+            'm.timemodified, '.
+            'm.completionsubmit, ' .
+            'm.cutoffdate, ' .
+            'm.teamsubmission, ' .
+            'm.requireallteammemberssubmit, '.
+            'm.teamsubmissiongroupingid, ' .
+            'm.blindmarking, ' .
+            'm.revealidentities, ' .
+            'm.attemptreopenmethod, '.
+            'm.maxattempts, ' .
+            'm.markingworkflow, ' .
+            'm.markingallocation, ' .
+            'm.requiresubmissionstatement, '.
+            'm.intro, '.
+            'm.introformat';
+        $coursearray = array();
+        foreach ($courses as $id => $course) {
+            $assignmentarray = array();
+            // Get a list of assignments for the course.
+            if ($modules = get_coursemodules_in_course('assign', $courses[$id]->id, $extrafields)) {
+                foreach ($modules as $module) {
+                    $context = context_module::instance($module->id);
+                    try {
+                        self::validate_context($context);
+                        require_capability('mod/assign:view', $context);
+                    } catch (Exception $e) {
+                        $warnings[] = array(
+                            'item' => 'module',
+                            'itemid' => $module->id,
+                            'warningcode' => '1',
+                            'message' => 'No access rights in module context'
+                        );
+                        continue;
+                    }
+                    $configrecords = $DB->get_recordset('assign_plugin_config', array('assignment' => $module->assignmentid));
+                    $configarray = array();
+                    foreach ($configrecords as $configrecord) {
+                        $configarray[] = array(
+                            'id' => $configrecord->id,
+                            'assignment' => $configrecord->assignment,
+                            'plugin' => $configrecord->plugin,
+                            'subtype' => $configrecord->subtype,
+                            'name' => $configrecord->name,
+                            'value' => $configrecord->value
+                        );
+                    }
+                    $configrecords->close();
 
-        if ($assign->can_view_submission($USER->id)) {
-           // $o .= $this->view_student_summary($USER, true);
+                    $assignment = array(
+                        'id' => $module->assignmentid,
+                        'cmid' => $module->id,
+                        'course' => $module->course,
+                        'name' => $module->name,
+                        'nosubmissions' => $module->nosubmissions,
+                        'submissiondrafts' => $module->submissiondrafts,
+                        'sendnotifications' => $module->sendnotifications,
+                        'sendlatenotifications' => $module->sendlatenotifications,
+                        'sendstudentnotifications' => $module->sendstudentnotifications,
+                        'duedate' => $module->duedate,
+                        'allowsubmissionsfromdate' => $module->allowsubmissionsfromdate,
+                        'grade' => $module->grade,
+                        'timemodified' => $module->timemodified,
+                        'completionsubmit' => $module->completionsubmit,
+                        'cutoffdate' => $module->cutoffdate,
+                        'teamsubmission' => $module->teamsubmission,
+                        'requireallteammemberssubmit' => $module->requireallteammemberssubmit,
+                        'teamsubmissiongroupingid' => $module->teamsubmissiongroupingid,
+                        'blindmarking' => $module->blindmarking,
+                        'revealidentities' => $module->revealidentities,
+                        'attemptreopenmethod' => $module->attemptreopenmethod,
+                        'maxattempts' => $module->maxattempts,
+                        'markingworkflow' => $module->markingworkflow,
+                        'markingallocation' => $module->markingallocation,
+                        'requiresubmissionstatement' => $module->requiresubmissionstatement,
+                        'configs' => $configarray
+                    );
+
+                    // Return or not intro and file attachments depending on the plugin settings.
+                    $assign = new assign($context, null, null);
+
+                    if ($assign->show_intro()) {
+
+                        list($assignment['intro'], $assignment['introformat']) = external_format_text($module->intro,
+                            $module->introformat, $context->id, 'mod_assign', 'intro', null);
+
+                        $fs = get_file_storage();
+                        if ($files = $fs->get_area_files($context->id, 'mod_assign', ASSIGN_INTROATTACHMENT_FILEAREA,
+                            0, 'timemodified', false)) {
+
+                            $assignment['introattachments'] = array();
+                            foreach ($files as $file) {
+                                $filename = $file->get_filename();
+
+                                $assignment['introattachments'][] = array(
+                                    'filename' => $filename,
+                                    'mimetype' => $file->get_mimetype(),
+                                    'fileurl'  => moodle_url::make_webservice_pluginfile_url(
+                                        $context->id, 'mod_assign', ASSIGN_INTROATTACHMENT_FILEAREA, 0, '/', $filename)->out(false)
+                                );
+                            }
+                        }
+                    }
+
+                    $assignmentarray[] = $assignment;
+
+                }
+            }
+
+            $coursearray[]= array(
+                'id' => $courses[$id]->id,
+                'fullname' => $courses[$id]->fullname,
+                'shortname' => $courses[$id]->shortname,
+                'timemodified' => $courses[$id]->timemodified,
+                'assignments' => $assignmentarray
+            );
         }
+        $result = array(
+            'courses' => $coursearray,
+            'warnings' => $warnings
+        );
 
-
-
-        return array($summary);
+        return $result;
     }
-    public static function get_mod_assign_completion_returns() {
-        return new external_multiple_structure(
-            new external_single_structure(
-                array(
-                    'participantcount' => new external_value(PARAM_INT, 'participantcount'),
-                    'submissiondraftsenabled' => new external_value(PARAM_INT, 'submissiondraftsenabled'),
-                    'submissiondraftscount' => new external_value(PARAM_INT, 'submissiondraftscount'),
-                    'submissionsenabled' => new external_value(PARAM_INT, 'submissionsenabled'),
-                    'submissionssubmittedcount' => new external_value(PARAM_INT, 'submissionssubmittedcount'),
-                    'submissionsneedgradingcount' => new external_value(PARAM_INT, 'submissionsneedgradingcount'),
-                    'duedate' => new external_value(PARAM_INT, 'duedate'),
-                    'cutoffdate' => new external_value(PARAM_INT, 'cutoffdate'),
-                    'coursemoduleid' => new external_value(PARAM_INT, 'coursemoduleid'),
-                    'teamsubmission' => new external_value(PARAM_INT, 'teamsubmission'),
-                    'warnofungroupedusers' => new external_value(PARAM_RAW, 'warnofungroupedusers'),
+
+    /**
+     * Creates an assignment external_single_structure
+     *
+     * @return external_single_structure
+     * @since Moodle 2.4
+     */
+    private static function get_mod_assignments_assignment_structure() {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'assignment id'),
+                'cmid' => new external_value(PARAM_INT, 'course module id'),
+                'course' => new external_value(PARAM_INT, 'course id'),
+                'name' => new external_value(PARAM_TEXT, 'assignment name'),
+                'nosubmissions' => new external_value(PARAM_INT, 'no submissions'),
+                'submissiondrafts' => new external_value(PARAM_INT, 'submissions drafts'),
+                'sendnotifications' => new external_value(PARAM_INT, 'send notifications'),
+                'sendlatenotifications' => new external_value(PARAM_INT, 'send notifications'),
+                'sendstudentnotifications' => new external_value(PARAM_INT, 'send student notifications (default)'),
+                'duedate' => new external_value(PARAM_INT, 'assignment due date'),
+                'allowsubmissionsfromdate' => new external_value(PARAM_INT, 'allow submissions from date'),
+                'grade' => new external_value(PARAM_INT, 'grade type'),
+                'timemodified' => new external_value(PARAM_INT, 'last time assignment was modified'),
+                'completionsubmit' => new external_value(PARAM_INT, 'if enabled, set activity as complete following submission'),
+                'cutoffdate' => new external_value(PARAM_INT, 'date after which submission is not accepted without an extension'),
+                'teamsubmission' => new external_value(PARAM_INT, 'if enabled, students submit as a team'),
+                'requireallteammemberssubmit' => new external_value(PARAM_INT, 'if enabled, all team members must submit'),
+                'teamsubmissiongroupingid' => new external_value(PARAM_INT, 'the grouping id for the team submission groups'),
+                'blindmarking' => new external_value(PARAM_INT, 'if enabled, hide identities until reveal identities actioned'),
+                'revealidentities' => new external_value(PARAM_INT, 'show identities for a blind marking assignment'),
+                'attemptreopenmethod' => new external_value(PARAM_TEXT, 'method used to control opening new attempts'),
+                'maxattempts' => new external_value(PARAM_INT, 'maximum number of attempts allowed'),
+                'markingworkflow' => new external_value(PARAM_INT, 'enable marking workflow'),
+                'markingallocation' => new external_value(PARAM_INT, 'enable marking allocation'),
+                'requiresubmissionstatement' => new external_value(PARAM_INT, 'student must accept submission statement'),
+                'configs' => new external_multiple_structure(self::get_mod_assignments_config_structure(), 'configuration settings'),
+                'intro' => new external_value(PARAM_RAW,
+                    'assignment intro, not allways returned because it deppends on the activity configuration', VALUE_OPTIONAL),
+                'introformat' => new external_format_value('intro', VALUE_OPTIONAL),
+                'introattachments' => new external_multiple_structure(
+                    new external_single_structure(
+                        array (
+                            'filename' => new external_value(PARAM_FILE, 'file name'),
+                            'mimetype' => new external_value(PARAM_RAW, 'mime type'),
+                            'fileurl'  => new external_value(PARAM_URL, 'file download url')
+                        )
+                    ), 'intro attachments files', VALUE_OPTIONAL
                 )
+            ), 'assignment information object');
+    }
+
+    /**
+     * Creates an assign_plugin_config external_single_structure
+     *
+     * @return external_single_structure
+     * @since Moodle 2.4
+     */
+    private static function get_mod_assignments_config_structure() {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'assign_plugin_config id'),
+                'assignment' => new external_value(PARAM_INT, 'assignment id'),
+                'plugin' => new external_value(PARAM_TEXT, 'plugin'),
+                'subtype' => new external_value(PARAM_TEXT, 'subtype'),
+                'name' => new external_value(PARAM_TEXT, 'name'),
+                'value' => new external_value(PARAM_TEXT, 'value')
+            ), 'assignment configuration object'
+        );
+    }
+
+    /**
+     * Creates a course external_single_structure
+     *
+     * @return external_single_structure
+     * @since Moodle 2.4
+     */
+    private static function get_mod_assignments_course_structure() {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'course id'),
+                'fullname' => new external_value(PARAM_TEXT, 'course full name'),
+                'shortname' => new external_value(PARAM_TEXT, 'course short name'),
+                'timemodified' => new external_value(PARAM_INT, 'last time modified'),
+                'assignments' => new external_multiple_structure(self::get_mod_assignments_assignment_structure(), 'assignment info')
+            ), 'course information object'
+        );
+    }
+
+    /**
+     * Describes the return value for get_assignments
+     *
+     * @return external_single_structure
+     * @since Moodle 2.4
+     */
+    public static function get_mod_assignments_returns() {
+        return new external_single_structure(
+            array(
+                'courses' => new external_multiple_structure(self::get_mod_assignments_course_structure(), 'list of courses'),
+                'warnings'  => new external_warnings('item can be \'course\' (errorcode 1 or 2) or \'module\' (errorcode 1)',
+                    'When item is a course then itemid is a course id. When the item is a module then itemid is a module id',
+                    'errorcode can be 1 (no access rights) or 2 (not enrolled or no permissions)')
             )
         );
     }
-    //endregion
 
 
 }
