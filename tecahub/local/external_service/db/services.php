@@ -43,9 +43,9 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
-	'local_mod_get_assign_completion' => array(
+	'local_mod_get_assignments' => array(
 		'classname'	  => 'local_mod_assign_external',
-		'methodname'  => 'get_mod_assign_completion',
+		'methodname'  => 'get_mod_assignments',
 		'classpath'	  => 'local/external_service/externallib_assign.php',
 		'description' => "Get assign completion with the current user's complete",
 		'type'		  => 'read',
@@ -76,7 +76,7 @@ $services = array(
 		'functions' => array (
 			//VietNH
 			'local_mod_get_course_content_by_id',
-			'local_mod_get_assign_completion',
+			'local_mod_get_assignments',
 			//HaNV
 			'local_mod_get_quiz_attempt',
 			'local_mod_get_lesson_by_id',
