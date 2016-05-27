@@ -52,7 +52,7 @@ if (empty($hosts[$hostid])) {
     print_error('wearenotsubscribedtothishost', 'mnetservice_enrol');
 }
 $host   = $hosts[$hostid];
-$course = $DB->get_record('mnetservice_enrol_courses', array('id'=>$courseid, 'hostid'=>$host->id), '*', MUST_EXIST);
+$course = $DB->get_record('course', array('id'=>$courseid, 'hostid'=>$host->id), '*', MUST_EXIST);
 
 echo $OUTPUT->header();
 

@@ -191,7 +191,6 @@ class auth_plugin_webservice extends auth_plugin_base {
     		throw new moodle_exception('couldnotgetuseremail', 'auth_webservice');
     		// TODO: display a link for people to retry.
     	}
-    	
     	// Get the user.
     	// Don't bother with auth = googleoauth2 because authenticate_user_login() will fail it if it's not 'googleoauth2'.
     	$user = $DB->get_record('user',
@@ -226,10 +225,8 @@ class auth_plugin_webservice extends auth_plugin_base {
     	} else {
     		$username = $user->username;
     	}
-		echo "bbbbbbbbbbbbbbbbbbbbbbbbbbbbb";	
     	// Authenticate the user.
     	$user = authenticate_user_login($username, null);
-    	echo "aaaaaaaaaaaaaaaaaaaaaaaaaaa";	
     	if ($user) {
     		// Set a cookie to remember what auth provider was selected.
     		setcookie('MOODLEAUTHWEBSERVICE_'.$CFG->sessioncookie, "auth_webservice",
@@ -259,10 +256,8 @@ class auth_plugin_webservice extends auth_plugin_base {
     				$accesstokenrow->accesstoken = $userinfo["data"]["tokenkey"];
     				$accesstokenrow->refreshtoken = $userinfo["data"]["tokenkey"];
     				$accesstokenrow->expires = $userinfo["data"]["tokenkey"];
-					echo "====================";
     				$DB->insert_record('auth_webservice_user_idps', $accesstokenrow);
     			} else {
-    				echo "====================+++++++++++++++++";
     				$existingaccesstoken->accesstoken = $userinfo["data"]["tokenkey"];
     				$DB->update_record('auth_webservice_user_idps', $existingaccesstoken);
     			}
@@ -285,10 +280,8 @@ class auth_plugin_webservice extends auth_plugin_base {
     		array('context' => context_system::instance(),
                             'objectid' => $user->id, 'relateduserid' => $user->id,
                             'other' => array('accesstoken' => $userinfo["data"]["tokenkey"])));
-    		echo "adfadfadfadf";
     		$event->trigger();
     		
-			echo "DB->insert_record4";
     		// Redirection.
     		if (user_not_fully_set_up($USER)) {
     			$urltogo = $CFG->wwwroot.'/user/edit.php';
@@ -308,10 +301,8 @@ class auth_plugin_webservice extends auth_plugin_base {
     		} catch(Exception $e) {
     			echo $e->getMessage();
     		}
-			echo "URLTOGO " . $urltogo;
     		redirect($urltogo);
     	} else {
-    		echo "bbbbbbbbbbbbbbbbbbbbbbbbbbbbb22222222222222222";
     		// Authenticate_user_login() failure, probably email registered by another auth plugin.
     		// Do a check to confirm this hypothesis.
     		$userexist = $DB->get_record('user', array('email' => $useremail)); 
@@ -321,9 +312,9 @@ class auth_plugin_webservice extends auth_plugin_base {
                             '/login/index.php' : $CFG->alternateloginurl);
     			$a->forgotpass = (string) new moodle_url('/login/forgot_password.php');
     			
-    			//throw new moodle_exception('couldnotauthenticateuserlogin', 'auth_webservice', '', $a);
+    			throw new moodle_exception('couldnotauthenticateuserlogin', 'auth_webservice', '', $a);
     		} else {
-    			//throw new moodle_exception('couldnotauthenticate', 'auth_webservice');
+    			throw new moodle_exception('couldnotauthenticate', 'auth_webservice');
     		}
     	}
     }
@@ -361,7 +352,7 @@ class auth_plugin_webservice extends auth_plugin_base {
     	
     	$serverurl = "http://api.ums.dev:4449/auth/login";
     	require_once($CFG->dirroot . '/auth/webservice/curl.php');
-		$curl = new curl();
+		$curl = new auth_webservice_curl();
 		
 		//if rest format == 'xml', then we do not add the param for backward compatibility with Moodle < 2.2
 		//$restformat = ($restformat == 'json')?'&moodlewsrestformat=' . $restformat:'';

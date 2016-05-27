@@ -4060,3 +4060,64 @@ function course_get_tagged_course_modules($tag, $exclusivemode = false, $fromcon
                 $exclusivemode, $fromcontextid, $contextid, $recursivecontext, $page, $totalpages);
     }
 }
+
+/**
+ * Updates the provided thumbnail based upon the expected fields returned from the edit or edit_advanced forms.
+ *
+ * @global moodle_database $DB
+ * @param stdClass $coursenew An object that contains some information about the user being updated
+ * @param moodleform $courseform The form that was submitted to edit the form
+ * @param array $filemanageroptions
+ * @return bool True if the user was updated, false if it stayed the same.
+ */
+function courseedit_update_thumbnail(stdClass $coursenew, moodleform $courseform, $filemanageroptions = array()) {
+    global $CFG, $DB;
+    require_once("$CFG->libdir/gdlib.php");
+
+    $context = context_course::instance($coursenew->id, MUST_EXIST);
+    $course = $DB->get_record('course', array('id' => $coursenew->id), 'id, thumbnail', MUST_EXIST);
+
+    $newthumbnail = $course->thumbnail;
+    // Get file_storage to process files.
+    $fs = get_file_storage();
+    if (!empty($coursenew->deletethumbnail)) {
+        // The user has chosen to delete the selected thumbnail.
+        $fs->delete_area_files($context->id, 'course', 'thumbnail'); // Drop all images in area.
+        $newthumbnail = 0;
+
+    } else {
+        // Save newly uploaded file, this will avoid context mismatch for newly created course.
+        file_save_draft_area_files($coursenew->thumbnailimg, $context->id, 'user', 'newicon', 0, $filemanageroptions);
+        if (($iconfiles = $fs->get_area_files($context->id, 'user', 'newicon')) && count($iconfiles) == 2) {
+            // Get file which was uploaded in draft area.
+            foreach ($iconfiles as $file) {
+                if (!$file->is_directory()) {
+                    break;
+                }
+            }
+            // Copy file to temporary location and the send it for processing icon.
+            if ($iconfile = $file->copy_content_to_temp()) {
+                // There is a new image that has been uploaded.
+                // Process the new image and set the user to make use of it.
+                // NOTE: Uploaded images always take over Gravatar.
+                $newthumbnail = (int)process_new_icon($context, 'course', 'thumbnail', 0, $iconfile);
+                // Delete temporary file.
+                @unlink($iconfile);
+                // Remove uploaded file.
+                $fs->delete_area_files($context->id, 'user', 'newicon');
+            } else {
+                // Something went wrong while creating temp file.
+                // Remove uploaded file.
+                $fs->delete_area_files($context->id, 'user', 'newicon');
+                return false;
+            }
+        }
+    }
+
+    if ($newthumbnail != $course->thumbnail) {
+        $DB->set_field('course', 'thumbnail', $newthumbnail, array('id' => $course->id));
+        return true;
+    } else {
+        return false;
+    }
+}
