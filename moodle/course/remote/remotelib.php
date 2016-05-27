@@ -1,7 +1,7 @@
 <?php
 defined('MOODLE_INTERNAL') || die;
 
-set_include_path($CFG->dirroot . '/lib/zend/');
+set_include_path(get_include_path().PATH_SEPARATOR.$CFG->dirroot . '/lib/zend/');
 require_once($CFG->dirroot . '/lib/zend/Zend/Http/Client.php');
 require_once($CFG->dirroot . '/mnet/service/enrol/locallib.php');
 require_once($CFG->dirroot . '/lib/additionallib.php');
