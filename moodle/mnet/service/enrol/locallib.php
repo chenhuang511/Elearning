@@ -162,7 +162,7 @@ class mnetservice_enrol {
         }
 
         if ($usecache) {
-            return $DB->get_records('mnetservice_enrol_courses', array('hostid' => $mnethostid), 'sortorder, shortname');
+            return $DB->get_records('course', array('hostid' => $mnethostid), 'sortorder, shortname');
         }
 
         // do not use cache - fetch fresh list from remote MNet host
@@ -323,7 +323,7 @@ class mnetservice_enrol {
         global $CFG, $DB; // $CFG needed!
         require_once $CFG->dirroot.'/mnet/xmlrpc/client.php';
 
-        if (!$DB->record_exists('mnetservice_enrol_courses', array('hostid'=>$mnethostid, 'remoteid'=>$remotecourseid))) {
+        if (!$DB->record_exists('course', array('hostid'=>$mnethostid, 'remoteid'=>$remotecourseid))) {
             return serialize(array('course not available for remote enrolments'));
         }
 
