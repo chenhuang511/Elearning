@@ -62,7 +62,7 @@ $functions = array(
 		'ajax'		  => true
 	),
 	'local_mod_get_lesson_by_id' => array(
-		'classname'	  => 'local_nccsoft_external',
+		'classname'	  => 'local_mod_lesson_external',
 		'methodname'  => 'get_mod_lesson_by_id',
 		'classpath'	  => 'local/external_service/externallib_lesson.php',
 		'description' => 'Get lesson content by course',
