@@ -34,56 +34,13 @@
  */
 
 $functions = array(
-	//VietNH
-	'local_mod_get_course_content_by_id' => array(
-		'classname'	  => 'local_mod_course_external',
-		'methodname'  => 'get_course_content_by_id',
-		'classpath'	  => 'local/external_service/externallib_course.php',
-		'description' => 'Get course content by identify',
-		'type'		  => 'read',
-		'ajax'		  => true
-	),
-	'local_mod_get_assign_completion' => array(
+	'local_mod_get_assignments' => array(
 		'classname'	  => 'local_mod_assign_external',
-		'methodname'  => 'get_mod_assign_completion',
-		'classpath'	  => 'local/external_service/externallib_assign.php',
+		'methodname'  => 'get_mod_assignments',
+		'classpath'	  => 'local/additional/classes/assign.php',
 		'description' => "Get assign completion with the current user's complete",
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
-
-	// hanv: api code for handling data about quizzes and the current user's attempt.
-	'local_mod_get_quiz_attempt' => array(
-		'classname'	  => 'local_mod_quiz_external',
-		'methodname'  => 'get_mod_quiz_attempt',
-		'classpath'	  => 'local/external_service/externallib_quiz.php',
-		'description' => "Get quiz with the current user's attempt",
-		'type'		  => 'read',
-		'ajax'		  => true
-	),
-	'local_mod_get_lesson_by_id' => array(
-		'classname'	  => 'local_mod_lesson_external',
-		'methodname'  => 'get_mod_lesson_by_id',
-		'classpath'	  => 'local/external_service/externallib_lesson.php',
-		'description' => 'Get lesson content by course',
-		'type'		  => 'read',
-		'ajax'		  => true
-	),
 );
 
-$services = array(
-	'NccSoft External Service'	=> array(
-		'functions' => array (
-			//VietNH
-			'local_mod_get_course_content_by_id',
-			'local_mod_get_assign_completion',
-			//HaNV
-			'local_mod_get_quiz_attempt',
-			'local_mod_get_lesson_by_id',
-		),
-		'enabled' => 1,
-		'restrictedusers' => 0,
-		'shortname' => 'ncc_ext_service',
-		'downloadfiles' => 1,
-		'uploadfiles' => 1)
-);

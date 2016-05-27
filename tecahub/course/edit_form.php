@@ -140,10 +140,9 @@ class course_edit_form extends moodleform {
             $mform->hardFreeze('idnumber');
             $mform->setConstants('idnumber', $course->idnumber);
         }
-
+    
         //Profile
         $mform->addElement('filemanager', 'thumbnailimg', "New Thumbnail", '', $filemanageroptions);
-        $mform->addHelpButton('imagefile', 'newpicture');
 
         $mform->addElement('checkbox', 'deletethumbnail', "Delete Thumbnail");
         $mform->setDefault('deletethumbnail', 0);

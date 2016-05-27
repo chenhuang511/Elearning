@@ -38,7 +38,7 @@ require_once("$CFG->libdir/externallib.php");
  * @since Moodle 2.2
  */
 class local_mod_course_external extends external_api {
-
+    
     //region _VIETNH
     /**
      * VietNH 23-05-2016
@@ -321,4 +321,75 @@ class local_mod_course_external extends external_api {
             )
         );
     }
+
+    /** MINHND
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     */
+    public static function get_thumbnail_by_id_parameters() {
+        return new external_function_parameters(
+            array(
+                'courseids' => new external_multiple_structure(new external_value(PARAM_INT, 'course ID')),
+            )
+        );
+    }
+
+    /**
+     * Get thumbnail course information
+     *
+     * @param array $courseid  array of course ids
+     * @return array An array of arrays thumbnail thumbnail
+     */
+    public static function get_thumbnail_by_id($courseids) {
+        global $CFG, $COURSE, $DB;
+        require_once($CFG->dirroot . "/course/lib.php");
+        
+        $params = self::validate_parameters(self::get_thumbnail_by_id_parameters(),
+            array('courseids' => $courseids));
+
+        list($sqlcourseids, $params) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
+        $cselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
+        $ujoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
+        $params['contextlevel'] = CONTEXT_COURSE;
+        $usersql = "SELECT c.* $cselect
+                      FROM {course} c $ujoin
+                     WHERE c.id $sqlcourseids";
+        $courses = $DB->get_recordset_sql($usersql, $params);
+
+        $result = array();
+
+        foreach ($courses as $course){
+            context_helper::preload_from_record($course);
+            $coursecontext = context_course::instance($course->id, IGNORE_MISSING);
+            self::validate_context($coursecontext);
+
+            if($coursearray = course_get_thumbnail($course)){
+                $result[] = $coursearray;
+            }
+        }
+        $course->close();
+
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 2.2
+     * @deprecated Moodle 2.5 MDL-38030 - Please do not call this function any more.
+     * @see core_user_external::get_users_by_field_returns()
+     */
+    public static function get_thumbnail_by_id_returns() {
+        return new external__structure(
+            array(
+                'thumbnailsizesmall' => new external_value(PARAM_URL, 'Thumbnail course URL - small version'),
+                'thumbnailsizemedium' => new external_value(PARAM_URL, 'Thumbnail course URL - medium version'),
+                'thumbnailsizelarge' => new external_value(PARAM_URL, 'Thumbnail course URL - big version'),
+            )
+        );
+    }
 }
+
+

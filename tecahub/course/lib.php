@@ -4121,3 +4121,39 @@ function courseedit_update_thumbnail(stdClass $coursenew, moodleform $courseform
         return false;
     }
 }
+
+
+/**
+ *
+ * Give user record from mdl_course, build an array contains link thumbnail.
+ *
+ * Warning: description file urls are 'webservice/pluginfile.php' is use.
+ *          it can be changed with $CFG->moodlewstextformatlinkstoimagesfile
+ *
+ * @throws moodle_exception
+ * @param stdClass $course moodle course
+ * @return array|null
+ */
+function course_get_thumbnail($course)
+{
+    global $PAGE;
+
+    $coursesdetails = array();
+
+    if ($course->thumbnail == 0){
+        $renderer = $PAGE->get_renderer('core');
+        $coursesdetails['thumbnailsizesmall'] = $renderer->pix_url('u/f1'); // default image
+        $coursesdetails['thumbnailsizemedium'] = $renderer->pix_url('u/f2'); // default image
+        $coursesdetails['thumbnailsizelarge'] = $renderer->pix_url('u/f3'); // default image
+
+    }
+
+    if ($course->thumbnail > 0){
+        $coursesdetails['thumbnailsizesmall'] = moodle_url::make_pluginfile_url($course->contextid, 'course' ,'thumbnail' , NULL , '/' , 'f1' );
+        $coursesdetails['thumbnailsizemedium'] = moodle_url::make_pluginfile_url($course->contextid, 'course' ,'thumbnail' , NULL , '/' , 'f2' );
+        $coursesdetails['thumbnailsizelarge'] = moodle_url::make_pluginfile_url($course->contextid, 'course' ,'thumbnail' , NULL , '/' , 'f3' );
+    }
+
+    return $coursesdetails;
+    
+}
