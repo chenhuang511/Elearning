@@ -181,7 +181,6 @@ class mnetservice_enrol {
 
              // get the currently cached courses key'd on remote id - only need remoteid and id fields
             $cachedcourses = $DB->get_records('course', array('hostid' => $mnethostid), 'remoteid', 'remoteid, id');
-            $cachedcats    = $DB->get_records('course_categories', array('hostid' => $mnethostid), 'remoteid', 'remoteid, id');
 
             foreach ($response as &$remote) {
                 $course                 = new stdclass(); // record in our local cache
@@ -227,7 +226,7 @@ class mnetservice_enrol {
                 $request = new mnet_xmlrpc_client();
                 $request->set_method('enrol/mnet/enrol.php/category_enrolments');
                 $request->add_param((int)$remote['cat_id'], 'int');
-                 $request->send($peer);
+                $request->send($peer);
                 $responsecat = $request->response;
 
                 $category                        = new stdClass();
@@ -254,11 +253,12 @@ class mnetservice_enrol {
                     $DB->update_record('course', $course);
                 }
 
+                $cachedcats = $DB->get_records('course_categories', array('hostid' => $mnethostid), 'remoteid', 'remoteid, id');
                 if (empty($cachedcats[$category->remoteid])) {
-                        $category->id = $DB->insert_record("course_categories", $category);
+                    $category->id = $DB->insert_record("course_categories", $category);
                 } else {
                     $category->id = $cachedcats[$category->remoteid]->id;
-                        $DB->update_record("course_categories", $category);
+                    $DB->update_record("course_categories", $category);
                 }
 
                 $list[$course->remoteid] = $course;
