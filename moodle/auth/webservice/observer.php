@@ -41,7 +41,11 @@ class auth_webservice_observer {
 
         if ($user->auth != 'webservice') {
             $loginrecord = array('userid' => $user->id, 'time' => time(), 'auth' => $user->auth);
-            $DB->insert_record('auth_webservice_logins', $loginrecord);
+            try {
+            	$DB->insert_record('auth_webservice_logins', $loginrecord);
+            } catch(Exception $e) {
+            	echo $e->getMessage();
+            }
         }
     }
 

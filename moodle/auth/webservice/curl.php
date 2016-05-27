@@ -24,7 +24,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
-class curl {
+class auth_webservice_curl {
     /** @var bool */
     public  $cache    = false;
     public  $proxy    = false;
@@ -68,8 +68,8 @@ class curl {
             }
         }
         if (!empty($options['cache'])) {
-            if (class_exists('curl_cache')) {
-                $this->cache = new curl_cache();
+            if (class_exists('auth_webservice_curl_cache')) {
+                $this->cache = new auth_webservice_curl_cache();
             }
         }
     }
@@ -535,7 +535,7 @@ class curl {
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class curl_cache {
+class auth_webservice_curl_cache {
     /** @var string */
     public $dir = '';
     /**

@@ -179,14 +179,15 @@ class mnetservice_enrol {
             $list = array();
             $response = $request->response;
 
-            // get the currently cached courses key'd on remote id - only need remoteid and id fields
-            $cachedcourses = $DB->get_records('mnetservice_enrol_courses', array('hostid' => $mnethostid), 'remoteid', 'remoteid, id');
+             // get the currently cached courses key'd on remote id - only need remoteid and id fields
+            $cachedcourses = $DB->get_records('course', array('hostid' => $mnethostid), 'remoteid', 'remoteid, id');
+            $cachedcats    = $DB->get_records('course_categories', array('hostid' => $mnethostid), 'remoteid', 'remoteid, id');
 
             foreach ($response as &$remote) {
                 $course                 = new stdclass(); // record in our local cache
                 $course->hostid         = $mnethostid;
                 $course->remoteid       = (int)$remote['remoteid'];
-                $course->categoryid     = (int)$remote['cat_id'];
+                $course->category       = (int)$remote['cat_id'];
                 $course->categoryname   = substr($remote['cat_name'], 0, 255);
                 $course->sortorder      = (int)$remote['sortorder'];
                 $course->fullname       = substr($remote['fullname'], 0, 254);
@@ -194,20 +195,70 @@ class mnetservice_enrol {
                 $course->idnumber       = substr($remote['idnumber'], 0, 100);
                 $course->summary        = $remote['summary'];
                 $course->summaryformat  = empty($remote['summaryformat']) ? FORMAT_MOODLE : (int)$remote['summaryformat'];
+                $course->format         = substr($remote['format'], 0, 100);
+                $course->showgrades     = (int)$remote['showgrades'];
+                $course->newsitems      = (int)$remote['newsitems'];
+                $course->marker         = (int)$remote['marker'];
+                $course->maxbytes       = (int)$remote['maxbytes'];
+                $course->legacyfiles    = (int)$remote['legacyfiles'];
+                $course->showreports    = (int)$remote['showreports'];
+                $course->visible        = (int)$remote['visible'];
+                $course->visibleold     = (int)$remote['visibleold'];
+                $course->groupmode      = (int)$remote['groupmode'];
+                $course->groupmodeforce = (int)$remote['groupmodeforce'];
+                $course->defaultgroupingid= (int)$remote['defaultgroupingid'];
+                $course->lang           = substr($remote['lang'], 0, 100);
                 $course->startdate      = (int)$remote['startdate'];
-                $course->roleid         = (int)$remote['defaultroleid'];
-                $course->rolename       = substr($remote['defaultrolename'], 0, 255);
+                $course->calendartype   = substr($remote['calendartype'], 0, 100);
+                $course->theme          = substr($remote['theme'], 0, 100);
+                $course->timecreated    = (int)$remote['timecreated'];
+                $course->timemodified   = (int)$remote['timemodified'];
+                $course->requested      = (int)$remote['requested'];
+                $course->enablecompletion= (int)$remote['enablecompletion'];
+                $course->completionnotify= (int)$remote['enablecompletion'];
+                $course->cacherev       = (int)$remote['cacherev'];
+
                 // We do not cache the following fields returned from peer in 2.0 any more
                 // not cached: cat_description
                 // not cached: cat_descriptionformat
                 // not cached: cost
                 // not cached: currency
 
+                $request = new mnet_xmlrpc_client();
+                $request->set_method('enrol/mnet/enrol.php/category_enrolments');
+                $request->add_param((int)$remote['cat_id'], 'int');
+                 $request->send($peer);
+                $responsecat = $request->response;
+
+                $category                        = new stdClass();
+                $category->remoteid              = (int)$remote['cat_id'];
+                $category->hostid                = $mnethostid;
+                $category->name                  = substr($responsecat['name'], 255);
+                $category->idnumber              = (int)$responsecat['idnumber'];
+                $category->description           = $responsecat['description'];
+                $category->descriptionformat     = (int)$responsecat['descriptionformat'];
+                $category->parent                = (int)$responsecat['parent'];
+                $category->sortorder             = (int)$responsecat['sortorder'];
+                $category->coursecount           = (int)$responsecat['coursecount'];
+                $category->visible               = (int)$responsecat['visible'];
+                $category->visibleold            = (int)$responsecat['visibleold'];
+                $category->timemodified          = (int)$responsecat['timemodified'];
+                $category->depth                 = substr($responsecat['depth'], 100);
+                $category->path                  = substr($responsecat['name'], 255);
+                $category->theme                 = substr($responsecat['name'], 50);
+
                 if (empty($cachedcourses[$course->remoteid])) {
-                    $course->id = $DB->insert_record('mnetservice_enrol_courses', $course);
+                    $course->id = $DB->insert_record('course', $course);
                 } else {
                     $course->id = $cachedcourses[$course->remoteid]->id;
-                    $DB->update_record('mnetservice_enrol_courses', $course);
+                    $DB->update_record('course', $course);
+                }
+
+                if (empty($cachedcats[$category->remoteid])) {
+                        $category->id = $DB->insert_record("course_categories", $category);
+                } else {
+                    $category->id = $cachedcats[$category->remoteid]->id;
+                        $DB->update_record("course_categories", $category);
                 }
 
                 $list[$course->remoteid] = $course;
@@ -225,7 +276,20 @@ class mnetservice_enrol {
                     list($sql, $params) = $DB->get_in_or_equal($staleremoteids, SQL_PARAMS_NAMED);
                     $select = "hostid=:hostid AND remoteid $sql";
                     $params['hostid'] = $mnethostid;
-                    $DB->delete_records_select('mnetservice_enrol_courses', $select, $params);
+                    $DB->delete_records_select('course', $select, $params);
+                }
+            }
+
+            if (!empty($cachedcats)) {
+                foreach ($cachedcats as $cachedcat) {
+                        unset($cachedcats[$cachedcat->remoteid]);
+                }
+                $staleremoteids = array_keys($cachedcats);
+                if (!empty($staleremoteids)) {
+                    list($sql, $params) = $DB->get_in_or_equal($staleremoteids, SQL_PARAMS_NAMED);
+                    $select = "hostid=:hostid AND remoteid $sql";
+                    $params['hostid'] = $mnethostid;
+                    $DB->delete_records_select('course_categories', $select, $params);
                 }
             }
 
@@ -237,6 +301,7 @@ class mnetservice_enrol {
             return serialize($request->error);
         }
     }
+
 
     /**
      * Updates local cache about enrolments of our users in remote courses
