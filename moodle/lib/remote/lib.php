@@ -1,7 +1,8 @@
 <?php
 
-set_include_path(get_include_path().PATH_SEPARATOR.$CFG->dirroot . '/lib/zend/');
-require_once($CFG->dirroot . '/lib/zend/Zend/Http/Client.php');
+set_include_path(get_include_path().PATH_SEPARATOR.$CFG->libdir . '/zend/');
+require_once($CFG->libdir . '/zend/Zend/Http/Client.php');
+require_once($CFG->libdir . '/additionallib.php');
 
 function moodle_webservice_client($options = [], $usercache = true)
 {
