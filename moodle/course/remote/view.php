@@ -1,14 +1,15 @@
 <?php
 
 require_once('../../config.php');
-require_once('remotelib.php');
+require_once('locallib.php');
 
 $courseid = optional_param('remoteid', 0, PARAM_INT);
 $sectionid   = optional_param('sectionid', 0, PARAM_INT);
 $section     = optional_param('section', 0, PARAM_INT);
 $coursemodule = null;
 $html = '';
-$course = get_remote_course_content($courseid, ['function_name' => 'local_get_course_content_by_id'],false);
+$course = get_remote_course_content($courseid);
+
 $PAGE->set_title($course[0]?$course[0]->name:"nccsoft vietnam");
 $PAGE->set_heading($course[0]?$course[0]->name:"nccsoft vietnam");
 
