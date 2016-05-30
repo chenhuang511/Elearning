@@ -36,10 +36,16 @@ $userpassword = optional_param('userpassword','',PARAM_RAW);
 $backtocourse = optional_param('backtocourse', false, PARAM_RAW);
 
 $cm = get_coursemodule_from_id('lesson', $id, 0, false, MUST_EXIST);
+echo "course module: ";
+echo "<pre>";
+var_dump($lesson);
+echo "</pre>";
+die();
 
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
 $lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST));
+echo "lesson: ";
 echo "<pre>";
 var_dump($lesson);
 echo "</pre>";
