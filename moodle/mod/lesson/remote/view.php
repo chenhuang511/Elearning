@@ -23,9 +23,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  **/
 
-require_once(dirname(__FILE__) . '/../../config.php');
-require_once($CFG->dirroot.'/course/remote/remotelib.php');
+require_once(dirname(__FILE__) . '/../../../config.php');
+require_once($CFG->dirroot.'/lib/remote/lib.php');
+require_once($CFG->dirroot.'/course/remote/locallib.php');
 require_once($CFG->dirroot.'/mod/lesson/locallib.php');
+require_once($CFG->dirroot.'/mod/lesson/remote/locallib.php');
 require_once($CFG->dirroot.'/mod/lesson/view_form.php');
 require_once($CFG->libdir . '/completionlib.php');
 require_once($CFG->libdir . '/grade/constants.php');
@@ -39,11 +41,13 @@ $backtocourse = optional_param('backtocourse', false, PARAM_RAW);
 // get course module
 $cm = get_remote_course_module($id);
 
-$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-
+$course = $DB->get_record('course', array('remoteid' => $cm->course), '*', MUST_EXIST);
+$course = reformat_course($course);
 
 //$lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST));
 $lesson = get_remote_lesson_by_id($cm->instance);
+echo 'lesson id: ' .$cm->instance . '<br>';
+echo 'lesson: ';
 echo "<pre>";
 var_dump($lesson);
 echo "</pre>";

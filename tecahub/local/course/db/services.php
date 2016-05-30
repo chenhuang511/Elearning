@@ -33,7 +33,15 @@
  * @license	   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$functions = array(	
+$functions = array(
+	'local_get_course_content_by_id' => array(
+		'classname'   => 'local_mod_course_external',
+		'methodname'  => 'get_course_content_by_id',
+		'classpath'   => 'local/course/externallib.php',
+		'description' => "Get Course Content with courses id",
+		'type'        => 'read',
+		'ajax'        => true
+	),
 	'local_get_thumbnail_by_id' => array(
 		'classname'   => 'local_mod_course_external',
 		'methodname'  => 'get_thumbnail_by_id',

@@ -1,14 +1,15 @@
 <?php
 
 require_once('../../config.php');
-require_once('remotelib.php');
+require_once('locallib.php');
 
 $courseid = optional_param('remoteid', 0, PARAM_INT);
 $sectionid   = optional_param('sectionid', 0, PARAM_INT);
 $section     = optional_param('section', 0, PARAM_INT);
 $coursemodule = null;
 $html = '';
-$course = get_remote_course_content($courseid, ['function_name' => 'local_mod_get_course_content_by_id']);
+$course = get_remote_course_content($courseid);
+
 $PAGE->set_title($course[0]?$course[0]->name:"nccsoft vietnam");
 $PAGE->set_heading($course[0]?$course[0]->name:"nccsoft vietnam");
 
@@ -45,8 +46,10 @@ foreach($course as $key => $section) {
         $html .= $OUTPUT->box_start('avatar', "course_{$module->modname}_box_{$module->id}");
         $html .= html_writer::img($module->modicon,$module->name);
         $html .= html_writer::span("&nbsp;");
-        $html .= html_writer::tag('span', $module->name, array('class' => $module->modname.'-intro'));
+        $linktag = html_writer::tag('a',$module->name , array('href' =>"/mod/{$module->modname}/remote/view.php?courseid={$courseid}&modid={$module->id}"));
+        $html .= html_writer::tag('span', $linktag, array('class' => $module->modname.'-intro'));
         $html .= $OUTPUT->box_end();
+
         $html .= html_writer::tag('div', $module->description, array('class' => $module->modname.'-intro'));
         $html .= $OUTPUT->box_end();
     }
