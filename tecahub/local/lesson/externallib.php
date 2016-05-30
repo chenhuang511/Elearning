@@ -67,20 +67,14 @@ class local_mod_lesson_external extends external_api
         global $DB;
 
         // validate params
-        $params = self::validate_parameters(self::get_lesson_by_id_parameters(),
+        $params = self::validate_parameters(self::get_mod_lesson_by_id_parameters(),
             array(
                 'lessonid' => $lessonid,
                 'options' => $options
             )
         );
 
-        echo "lesson id: " . $params['lessonid'];
-
-        $lesson = $DB->get_record('lesson', array('id' => $params['lessonid']), '*', MUST_EXIST);
-
-        var_dump($lesson); die();
-
-        return null;
+        return $DB->get_record('lesson', array('id' => $params['lessonid']), '*', MUST_EXIST);
     }
 
     /**
