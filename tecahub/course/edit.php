@@ -141,11 +141,12 @@ if (!empty($course)) {
 
 $draftitemid = 0;
 $filemanagercontext = $editoroptions['context'];
-$filemanageroptions = array('maxbytes'       => $CFG->maxbytes,
+$filemanageroptions = array(
+    'maxbytes'=> $CFG->maxbytes,
     'subdirs'        => 0,
     'maxfiles'       => 1,
     'accepted_types' => 'web_image');
-file_prepare_draft_area($draftitemid, $filemanagercontext->id, 'course', 'thumbnail', 0, $filemanageroptions);
+//file_prepare_draft_area($draftitemid, $filemanagercontext->id, 'course', 'thumbnail', 0, $filemanageroptions);
 $course->thumbnailimg = $draftitemid;
 
 // First create the form.

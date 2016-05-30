@@ -4136,23 +4136,35 @@ function courseedit_update_thumbnail(stdClass $coursenew, moodleform $courseform
  */
 function course_get_thumbnail($course)
 {
-    global $PAGE;
-
+    global $COURSE, $DB, $CFG, $PAGE;
+    require_once($CFG->dirroot . "/lib/filelib.php");      // File handling on description and friends.
+    $renderer = $PAGE->get_renderer('core');
+    $context = context_course::instance($course->id);
+    $contextid = $context->id;
     $coursesdetails = array();
 
-    if ($course->thumbnail == 0){
-        $renderer = $PAGE->get_renderer('core');
-        $coursesdetails['thumbnailsizesmall'] = $renderer->pix_url('u/f1'); // default image
-        $coursesdetails['thumbnailsizemedium'] = $renderer->pix_url('u/f2'); // default image
-        $coursesdetails['thumbnailsizelarge'] = $renderer->pix_url('u/f3'); // default image
+    $coursesdetails['id'] = $course->id;
+    
+    $coursesdetails['fullname'] = $course->fullname;
+
+    if($course->thumbnail == 0)
+    {
+        $coursesdetails['thumbnailsizesmall'] = $renderer->pix_url('u/f2')->out(false); // default image
+        $coursesdetails['thumbnailsizemedium'] = $renderer->pix_url('u/f1')->out(false); // default image
+        $coursesdetails['thumbnailsizelarge'] = $renderer->pix_url('u/f3')->out(false); // default image
 
     }
-
-    if ($course->thumbnail > 0){
-        $coursesdetails['thumbnailsizesmall'] = moodle_url::make_pluginfile_url($course->contextid, 'course' ,'thumbnail' , NULL , '/' , 'f1' );
-        $coursesdetails['thumbnailsizemedium'] = moodle_url::make_pluginfile_url($course->contextid, 'course' ,'thumbnail' , NULL , '/' , 'f2' );
-        $coursesdetails['thumbnailsizelarge'] = moodle_url::make_pluginfile_url($course->contextid, 'course' ,'thumbnail' , NULL , '/' , 'f3' );
+    else{
+        $coursesdetails['thumbnailsizesmall'] =  moodle_url::make_pluginfile_url($contextid, 'course','thumbnail' , null , '/' , 'f2')->out(false);// default image
+        $coursesdetails['thumbnailsizemedium'] = moodle_url::make_pluginfile_url($contextid, 'course','thumbnail' , null , '/' , 'f1')->out(false); // default image
+        $coursesdetails['thumbnailsizelarge'] = moodle_url::make_pluginfile_url($contextid, 'course','thumbnail' , null , '/' , 'f3')->out(false); // default image
+//        $coursesdetails['thumbnailsizesmall'] =  moodle_url::make_pluginfile_url(252, 'mod_lesson','page_contents' , 4 , '/' , 'CAP.png')->out(false);// default image
+//        $coursesdetails['thumbnailsizemedium'] = moodle_url::make_pluginfile_url(252, 'mod_lesson','page_contents' , 4 , '/' , 'CAP (1).png')->out(false); // default image
+//        $coursesdetails['thumbnailsizelarge'] = moodle_url::make_pluginfile_url(252, 'mod_lesson','page_contents' , 4 , '/' , 'CAP (2).png')->out(false); // default image
     }
+
+//    echo "<pre>";
+//    var_dump($course);die;
 
     return $coursesdetails;
     
