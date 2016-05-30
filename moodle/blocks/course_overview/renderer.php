@@ -118,7 +118,7 @@ class block_course_overview_renderer extends plugin_renderer_base {
             } else {
                 $html .= $this->output->heading(html_writer::link(
                     new moodle_url('/course/remote/view.php', array('hostid' => $course->hostid, 'remoteid' => $course->remoteid, 'wantsurl' => '/course/view.php?id='.$course->remoteid)),
-                    format_string($course->shortname, true), $attributes) . format_string($course->summary) . '', 2, 'title');
+                    format_string($course->shortname, true), $attributes). '<br>' . '<div class="summary" style="font-family: normal; color: black; font-size: 16px;">'. format_string($course->summary) . '</div>', 2, 'title');
             }
             //$html .= html_writer::start_tag('div',format_string($course->summary) array('class' => 'course_summary'));
             //$html .= $this->output->box('image', 'flush');
