@@ -8,7 +8,7 @@ $sectionid   = optional_param('sectionid', 0, PARAM_INT);
 $section     = optional_param('section', 0, PARAM_INT);
 $coursemodule = null;
 $html = '';
-$course = get_remote_course_content($courseid, ['function_name' => 'local_mod_get_course_content_by_id']);
+$course = get_remote_course_content($courseid, ['function_name' => 'local_get_course_content_by_id'],false);
 $PAGE->set_title($course[0]?$course[0]->name:"nccsoft vietnam");
 $PAGE->set_heading($course[0]?$course[0]->name:"nccsoft vietnam");
 
