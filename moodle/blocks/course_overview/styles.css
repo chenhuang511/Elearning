@@ -52,6 +52,13 @@
     position: relative;
     //font-size: 300%;
 }
+
+.block_course_overview .content h2.title .summary {
+	font-style: normal;
+    color: black;
+    font-size: 16px;
+}
+
 .dir-rtl .block_course_overview .content h2.title {
     float:right;
 }

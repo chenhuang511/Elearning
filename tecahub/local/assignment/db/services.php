@@ -33,13 +33,14 @@
  * @license	   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$functions = array(	
-	'local_get_thumbnail_by_id' => array(
-		'classname'   => 'local_mod_course_external',
-		'methodname'  => 'get_thumbnail_by_id',
-		'classpath'   => 'local/additional/classes/course.php',
-		'description' => "Get thumbnail url with courses id",
-		'type'        => 'read',
-		'ajax'        => true
+$functions = array(
+	'local_mod_get_assignments' => array(
+		'classname'	  => 'local_mod_assign_external',
+		'methodname'  => 'get_mod_assignments',
+		'classpath'	  => 'local/lib/assign.php',
+		'description' => "Get assign completion with the current user's complete",
+		'type'		  => 'read',
+		'ajax'		  => true
 	),
 );
+
