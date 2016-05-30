@@ -382,7 +382,7 @@ class local_mod_course_external extends external_api {
      * @see core_user_external::get_users_by_field_returns()
      */
     public static function get_thumbnail_by_id_returns() {
-        return new external__structure(
+        return new external_single_structure(
             array(
                 'thumbnailsizesmall' => new external_value(PARAM_URL, 'Thumbnail course URL - small version'),
                 'thumbnailsizemedium' => new external_value(PARAM_URL, 'Thumbnail course URL - medium version'),
