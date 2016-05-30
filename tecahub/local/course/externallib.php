@@ -37,8 +37,9 @@ require_once("$CFG->libdir/externallib.php");
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.2
  */
-class local_mod_course_external extends external_api {
-    
+class local_mod_course_external extends external_api
+{
+
     //region _VIETNH
     /**
      * VietNH 23-05-2016
@@ -71,6 +72,7 @@ class local_mod_course_external extends external_api {
             )
         );
     }
+
     public static function get_course_content_by_id($courseid, $options = array())
     {
         global $CFG, $DB;
@@ -236,7 +238,7 @@ class local_mod_course_external extends external_api {
                         //(each module callback take care about checking the capabilities)
 
                         require_once($CFG->dirroot . '/mod/' . $cm->modname . '/lib.php');
-                        $getcontentfunction = $cm->modname.'_export_contents';
+                        $getcontentfunction = $cm->modname . '_export_contents';
                         if (function_exists($getcontentfunction)) {
                             if (empty($filters['excludecontents']) and $contents = $getcontentfunction($cm, $baseurl)) {
                                 $module['contents'] = $contents;
@@ -268,6 +270,7 @@ class local_mod_course_external extends external_api {
         }
         return $coursecontents;
     }
+
     public static function get_course_content_by_id_returns()
     {
         return new external_multiple_structure(
@@ -326,7 +329,8 @@ class local_mod_course_external extends external_api {
      *
      * @return external_function_parameters
      */
-    public static function get_thumbnail_by_id_parameters() {
+    public static function get_thumbnail_by_id_parameters()
+    {
         return new external_function_parameters(
             array(
                 'courseids' => new external_multiple_structure(new external_value(PARAM_INT, 'course ID')),
@@ -337,39 +341,67 @@ class local_mod_course_external extends external_api {
     /**
      * Get thumbnail course information
      *
-     * @param array $courseid  array of course ids
+     * @param array $courseid array of course ids
      * @return array An array of arrays thumbnail thumbnail
      */
-    public static function get_thumbnail_by_id($courseids) {
+    public static function get_thumbnail_by_id($courseids)
+    {
         global $CFG, $COURSE, $DB;
         require_once($CFG->dirroot . "/course/lib.php");
+//        echo "<pre>";
+        //validate parameter
+        $params = self::validate_parameters(self::get_thumbnail_by_id_parameters(), array('courseids' => $courseids));
+
+        // Clean the values.
+        $cleanedvalue = array();
+        foreach ($courseids as $courseid){
+            $cleanedvalue = clean_param($courseid, PARAM_INT);
+            if ( $courseid != $cleanedvalue) {
+                throw new invalid_parameter_exception('Courseid is invalid: ' . $courseid . '(cleaned value: '.$cleanedvalue.')');
+            }
+            $cleanedvalues[] = $cleanedvalue;
+        }
+
+        // Retrieve the courses.
+        $courses = $DB->get_records_list('course', 'id', $cleanedvalues, 'id');
+        $context = context_system::instance();
+        self::validate_context($context);
         
-        $params = self::validate_parameters(self::get_thumbnail_by_id_parameters(),
-            array('courseids' => $courseids));
-
-        list($sqlcourseids, $params) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
-        $cselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
-        $ujoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
-        $params['contextlevel'] = CONTEXT_COURSE;
-        $usersql = "SELECT c.* $cselect
-                      FROM {course} c $ujoin
-                     WHERE c.id $sqlcourseids";
-        $courses = $DB->get_recordset_sql($usersql, $params);
-
-        $result = array();
-
+        // Finally retrieve each courses information.
+        $returnedcourses = array();
+        
         foreach ($courses as $course){
-            context_helper::preload_from_record($course);
-            $coursecontext = context_course::instance($course->id, IGNORE_MISSING);
-            self::validate_context($coursecontext);
+            $coursedetails = course_get_thumbnail($course);
 
-            if($coursearray = course_get_thumbnail($course)){
-                $result[] = $coursearray;
+            if (!empty($coursedetails)) {
+                $returnedcourses[] = $coursedetails;
             }
         }
-        $course->close();
-
-        return $result;
+//        echo "<pre>";
+//        var_dump($returnedcourses);die;
+        return $returnedcourses;
+//        list($sqlcourseids, $params) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
+//
+//        $cselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
+//        $cjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
+//        $params['contextlevel'] = CONTEXT_COURSE;
+//        $usersql = "SELECT c.* $cselect
+//                      FROM {course} c $cjoin
+//                     WHERE c.id $sqlcourseids";
+//
+//        $courses = $DB->get_recordset_sql($usersql, $params);
+//
+//        $result = array();
+//
+//        foreach ($courses as $course) {
+//            if ($coursearray = course_get_thumbnail($course)) {
+//                $result[] = $coursearray;
+//            }
+//        }
+//        $courses->close();
+//        echo "<pre>";
+//        var_dump($result); die;
+//        return $result;
     }
 
     /**
@@ -380,12 +412,17 @@ class local_mod_course_external extends external_api {
      * @deprecated Moodle 2.5 MDL-38030 - Please do not call this function any more.
      * @see core_user_external::get_users_by_field_returns()
      */
-    public static function get_thumbnail_by_id_returns() {
-        return new external_single_structure(
-            array(
-                'thumbnailsizesmall' => new external_value(PARAM_URL, 'Thumbnail course URL - small version'),
-                'thumbnailsizemedium' => new external_value(PARAM_URL, 'Thumbnail course URL - medium version'),
-                'thumbnailsizelarge' => new external_value(PARAM_URL, 'Thumbnail course URL - big version'),
+    public static function get_thumbnail_by_id_returns()
+    {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id'    => new external_value(PARAM_INT, 'ID of the course'),
+                    'fullname'    => new external_value(PARAM_RAW, 'The fullname of the course'),
+                    'thumbnailsizesmall' => new external_value(PARAM_URL, 'Thumbnail course URL - small version'),
+                    'thumbnailsizemedium' => new external_value(PARAM_URL, 'Thumbnail course URL - medium version'),
+                    'thumbnailsizelarge' => new external_value(PARAM_URL, 'Thumbnail course URL - big version'),
+                )
             )
         );
     }
