@@ -216,6 +216,7 @@ class mnetservice_enrol {
                 $course->enablecompletion= (int)$remote['enablecompletion'];
                 $course->completionnotify= (int)$remote['enablecompletion'];
                 $course->cacherev       = (int)$remote['cacherev'];
+                $course->thumbnail      = (int)$remote['thumbnail'];
 
                 // We do not cache the following fields returned from peer in 2.0 any more
                 // not cached: cat_description
