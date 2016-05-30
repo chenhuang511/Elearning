@@ -44,6 +44,7 @@ die();
 
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
+// get lesson
 $lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST));
 echo "lesson: ";
 echo "<pre>";
