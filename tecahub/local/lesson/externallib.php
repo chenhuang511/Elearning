@@ -131,4 +131,58 @@ class local_mod_lesson_external extends external_api
             )
         );
     }
+
+    public static function get_context_by_instanceid_and_contextlevel_parameters()
+    {
+        return new external_function_parameters(
+            array('instanceid' => new external_value(PARAM_INT, 'the instance id'),
+                'contextlevel' => new external_value(PARAM_INT, 'the context level'),
+                'options' => new external_multiple_structure (
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHANUM,
+                                'The expected keys (value format) are:
+                                                excludemodules (bool) Do not return modules, return only the sections structure
+                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
+                                                sectionid (int) Return only this section
+                                                sectionnumber (int) Return only this section with number (order)
+                                                cmid (int) Return only this module information (among the whole sections structure)
+                                                modname (string) Return only modules with this name "label, forum, etc..."
+                                                modid (int) Return only the module with this id (to be used with modname'),
+                            'value' => new external_value(PARAM_RAW, 'the value of the option,
+                                                                    this param is personaly validated in the external function.')
+                        )
+                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+            )
+        );
+    }
+
+    public static function get_context_by_instanceid_and_contextlevel($instanceid, $contextlevel, $options = array()) {
+        global $DB;
+
+        // validate params
+        $params = self::validate_parameters(self::get_context_by_instanceid_and_contextlevel_parameters(),
+            array(
+                'instanceid' => $instanceid,
+                'contextlevel' => $contextlevel,
+                'options' => $options
+            )
+        );
+
+        return $DB->get_record('context', array('contextlevel' => $params['contextlevel'] ,'instanceid' => $params['instanceid']), '*', MUST_EXIST);
+    }
+    
+
+    public static function get_context_by_instanceid_and_contextlevel_returns()
+    {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'context id'),
+                'contextlevel' => new external_value(PARAM_INT, 'context level', VALUE_DEFAULT),
+                'instanceid' => new external_value(PARAM_INT, 'instance id', VALUE_DEFAULT),
+                'path' => new external_value(PARAM_RAW, 'path'),
+                'depth' => new external_value(PARAM_INT, 'depth', VALUE_DEFAULT)
+            )
+        );
+    }
 }

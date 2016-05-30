@@ -42,4 +42,12 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_get_context_by_instanceid_and_contextlevel' => array(
+		'classname'	  => 'local_mod_lesson_external',
+		'methodname'  => 'get_context_by_instanceid_and_contextlevel',
+		'classpath'	  => 'local/lesson/externallib.php',
+		'description' => 'Get context by instaceid and context level',
+		'type'		  => 'read',
+		'ajax'		  => true
+	)
 );
