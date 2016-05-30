@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * HUB_URL - expected numbers, letters only and _-.
  */
-define('HUB_URL', 'http://192.168.1.252');
+define('HUB_URL', 'http://10.0.0.252:10001');
 
 /**
  * HUB TOKEN - Nccsoft External services
