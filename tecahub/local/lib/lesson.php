@@ -58,56 +58,7 @@ class local_mod_lesson_external extends external_api
 
         $warnings = array();
 
-        $lesson = $DB->get_record('lesson', array('id' => $params['lessonid']), '*', MUST_EXIST);
-
-        $info = new stdClass();
-        $info->id = $lesson->id;
-        $info->course = $lesson->course;
-        $info->name = $lesson->name;
-        $info->intro = $lesson->intro;
-        $info->introformat = $lesson->introformat;
-        $info->practice = $lesson->practice;
-        $info->modattempts = $lesson->modattempts;
-        $info->usepassword = $lesson->usepassword;
-        $info->password = $lesson->password;
-        $info->dependency = $lesson->dependency;
-        $info->conditions = $lesson->conditions;
-        $info->grade = $lesson->grade;
-        $info->custom = $lesson->custom;
-        $info->ongoing = $lesson->ongoing;
-        $info->usemaxgrade = $lesson->usemaxgrade;
-        $info->maxanswers = $lesson->maxanswers;
-        $info->maxattempts = $lesson->maxattempts;
-        $info->review = $lesson->review;
-        $info->nextpagedefault = $lesson->nextpagedefault;
-        $info->feedback = $lesson->feedback;
-        $info->minquestions = $lesson->minquestions;
-        $info->maxpages = $lesson->maxpages;
-        $info->timelimit = $lesson->timelimit;
-        $info->retake = $lesson->retake;
-        $info->activitylink = $lesson->activitylink;
-        $info->mediafile = $lesson->mediafile;
-        $info->mediaheight = $lesson->mediaheight;
-        $info->mediawidth = $lesson->mediawidth;
-        $info->mediaclose = $lesson->mediaclose;
-        $info->slideshow = $lesson->slideshow;
-        $info->width = $lesson->width;
-        $info->height = $lesson->height;
-        $info->bgcolor = $lesson->bgcolor;
-        $info->displayleft = $lesson->displayleft;
-        $info->displayleftif = $lesson->displayleftif;
-        $info->progressbar = $lesson->progressbar;
-        $info->available = $lesson->available;
-        $info->deadline = $lesson->deadline;
-        $info->timemodified = $lesson->timemodified;
-        $info->completionendreached = $lesson->completionendreached;
-        $info->completiontimespent = $lesson->completiontimespent;
-
-        $result = array();
-        $result['lesson'] = $info;
-        $result['warnings'] = $warnings;
-
-        return $result;
+        return $DB->get_record('lesson', array('id' => $params['lessonid']), '*', MUST_EXIST);
     }
 
     /**
