@@ -132,3 +132,30 @@ function get_remote_lesson_page_content($lessonid, $pageid, $isfield = false, $o
         )
     ));
 }
+
+function get_remote_context_by_instanceid_and_contextlevel($instanceid, $contextlevel, $options = array()) {
+    return moodle_webservice_client(array_merge($options,
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_context_by_instanceid_and_contextlevel',
+            'params' => array('instanceid' => $instanceid, 'contextlevel' => $contextlevel)
+        )
+    ));
+}
+
+function get_remote_lesson_page($lessonid, $prevpageid, $options = array()) {
+    $lessonpage = moodle_webservice_client(array_merge($options,
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_lesson_page',
+            'params' => array('lessonid' => $lessonid, 'prevpageid' => $prevpageid)
+        )
+    ));
+
+    echo "<pre>";
+    var_dump($lessonpage);
+    echo "</pre>";
+    die();
+}

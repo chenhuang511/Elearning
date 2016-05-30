@@ -185,7 +185,7 @@ if (!defined('CONTEXT_CACHE_MAX_SIZE')) {
     /** maximum size of context cache - it is possible to tweak this config.php or in any script before inclusion of context.php */
     define('CONTEXT_CACHE_MAX_SIZE', 2500);
 }
-
+require_once($CFG->dirroot.'/lib/remote/lib.php');
 /**
  * Although this looks like a global variable, it isn't really.
  *
@@ -7195,8 +7195,8 @@ class context_module extends context {
             return $context;
         }
 
-        if (!$record = $DB->get_record('context', array('contextlevel' => CONTEXT_MODULE, 'instanceid' => $cmid))) {
-            if ($cm = $DB->get_record('course_modules', array('id' => $cmid), 'id,course', $strictness)) {
+        if (!$record = get_remote_context_by_instanceid_and_contextlevel($cmid,CONTEXT_MODULE)) {
+            if ($cm = get_remote_course_module($cmid)) {
                 $parentcontext = context_course::instance($cm->course);
                 $record = context::insert_context_record(CONTEXT_MODULE, $cm->id, $parentcontext->path);
             }

@@ -7,7 +7,7 @@ function reformat_course($course)
     }
 
     $info = new stdClass();
-    $info->id = $course->id;
+    $info->id = $course->remoteid;
     $info->category = $course->category;
     $info->sortorder = $course->sortorder;
     $info->fullname = $course->fullname;
@@ -50,4 +50,52 @@ function reformat_lesson($lesson) {
 
     $info = new stdClass();
     $info->firstpageid = null;
+    $info->lastpageid = null;
+    $info->pages = array();
+    $info->loadedallpages = false;
+    $info->properties = array(
+        'id' => strval($lesson->id),
+        'course' => strval($lesson->course),
+        'name' => strval($lesson->name),
+        'intro' => strval($lesson->intro),
+        'introformat' => strval($lesson->introformat),
+        'practice' => strval($lesson->practice),
+        'modattempts' => strval($lesson->modattempts),
+        'usepassword' => strval($lesson->usepassword),
+        'password' => strval($lesson->password),
+        'dependency' => strval($lesson->dependency),
+        'conditions' => strval($lesson->conditions),
+        'grade' => strval($lesson->grade),
+        'custom' => strval($lesson->custom),
+        'ongoing' => strval($lesson->ongoing),
+        'usemaxgrade' => strval($lesson->usemaxgrade),
+        'maxanswers' => strval($lesson->maxanswers),
+        'maxattempts' => strval($lesson->maxattempts),
+        'review' => strval($lesson->review),
+        'nextpagedefault' => strval($lesson->nextpagedefault),
+        'feedback' => strval($lesson->feedback),
+        'minquestions' => strval($lesson->minquestions),
+        'maxpages' => strval($lesson->maxpages),
+        'timelimit' => strval($lesson->timelimit),
+        'retake' => strval($lesson->retake),
+        'activitylink' => strval($lesson->activitylink),
+        'mediafile' => strval($lesson->mediafile),
+        'mediaheight' => strval($lesson->mediaheight),
+        'mediawidth' => strval($lesson->mediawidth),
+        'mediaclose' => strval($lesson->mediaclose),
+        'slideshow' => strval($lesson->slideshow),
+        'width' => strval($lesson->width),
+        'height' => strval($lesson->height),
+        'bgcolor' => strval($lesson->bgcolor),
+        'displayleft' => strval($lesson->displayleft),
+        'displayleftif' => strval($lesson->displayleftif),
+        'progressbar' => strval($lesson->progressbar),
+        'available' => strval($lesson->available),
+        'deadline' => strval($lesson->deadline),
+        'timemodified' => strval($lesson->timemodified),
+        'completionendreached' => strval($lesson->completionendreached),
+        'completiontimespent' => strval($lesson->completiontimespent)
+    );
+
+    return $info;
 }

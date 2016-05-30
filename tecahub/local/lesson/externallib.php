@@ -190,7 +190,7 @@ class local_mod_lesson_external extends external_api
     {
         return new external_function_parameters(
             array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
-                'prevpageid' => new external_value(PARAM_INT, 'the previous id'),
+                'prevpageid' => new external_value(PARAM_INT, 'the previous page id'),
                 'options' => new external_multiple_structure (
                     new external_single_structure(
                         array(
@@ -231,19 +231,19 @@ class local_mod_lesson_external extends external_api
     {
         return new external_single_structure(
             array(
-                "id" => new external_value(PARAM_INT, "the lesson page id"),
-                "lessonid" => new external_value(PARAM_INT . "lesson id", VALUE_DEFAULT),
-                "prevpageid" => new external_value(PARAM_INT, "previous page id", VALUE_DEFAULT),
-                "nextpageid" => new external_value(PARAM_INT . "next page id", VALUE_DEFAULT),
-                "qtype" => new external_value(PARAM_INT, "qtype", VALUE_DEFAULT),
-                "qoption" => new external_value(PARAM_INT, "qoption", VALUE_DEFAULT),
-                "layout" => new external_value(PARAM_INT, "layout", VALUE_REQUIRED),
-                "display" => new external_value(PARAM_INT, "display", VALUE_REQUIRED),
-                "timecreated" => new external_value(PARAM_INT, "time created", VALUE_DEFAULT),
-                "timemodified" => new external_value(PARAM_INT, "time modified", VALUE_DEFAULT),
-                "title" => new external_value(PARAM_RAW, "title"),
-                "contents" => new external_value(PARAM_RAW, "contents"),
-                "contentsformat" => new external_value(PARAM_INT, "contents format", VALUE_DEFAULT)
+                'id' => new external_value(PARAM_INT, 'the lesson page id'),
+                'lessonid' => new external_value(PARAM_INT . 'lesson id', VALUE_DEFAULT),
+                'prevpageid' => new external_value(PARAM_INT, 'previous page id', VALUE_DEFAULT),
+                'nextpageid' => new external_value(PARAM_INT . 'next page id', VALUE_DEFAULT),
+                'qtype' => new external_value(PARAM_INT, 'qtype', VALUE_DEFAULT),
+                'qoption' => new external_value(PARAM_INT, 'qoption', VALUE_DEFAULT),
+                'layout' => new external_value(PARAM_INT, 'layout', VALUE_REQUIRED),
+                'display' => new external_value(PARAM_INT, 'display', VALUE_REQUIRED),
+                'timecreated' => new external_value(PARAM_INT, 'time created', VALUE_DEFAULT),
+                'timemodified' => new external_value(PARAM_INT, 'time modified', VALUE_DEFAULT),
+                'title' => new external_value(PARAM_RAW, 'title'),
+                'contents' => new external_value(PARAM_RAW, 'contents'),
+                'contentsformat' => new external_value(PARAM_INT, 'contents format', VALUE_DEFAULT)
             )
         );
     }
