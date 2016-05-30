@@ -46,8 +46,10 @@ foreach($course as $key => $section) {
         $html .= $OUTPUT->box_start('avatar', "course_{$module->modname}_box_{$module->id}");
         $html .= html_writer::img($module->modicon,$module->name);
         $html .= html_writer::span("&nbsp;");
-        $html .= html_writer::tag('span', $module->name, array('class' => $module->modname.'-intro'));
+        $linktag = html_writer::tag('a',$module->name , array('href' =>"/mod/{$module->modname}/remote/view.php?courseid={$courseid}&modid={$module->id}"));
+        $html .= html_writer::tag('span', $linktag, array('class' => $module->modname.'-intro'));
         $html .= $OUTPUT->box_end();
+
         $html .= html_writer::tag('div', $module->description, array('class' => $module->modname.'-intro'));
         $html .= $OUTPUT->box_end();
     }
