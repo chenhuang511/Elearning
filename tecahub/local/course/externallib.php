@@ -75,7 +75,6 @@ class local_mod_course_external extends external_api {
     {
         global $CFG, $DB;
         require_once($CFG->dirroot . "/course/lib.php");
-
         //validate parameter
         $params = self::validate_parameters(self::get_course_content_by_id_parameters(),
             array('courseid' => $courseid, 'options' => $options));
