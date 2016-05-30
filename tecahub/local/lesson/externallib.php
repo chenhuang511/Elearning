@@ -157,7 +157,8 @@ class local_mod_lesson_external extends external_api
         );
     }
 
-    public static function get_context_by_instanceid_and_contextlevel($instanceid, $contextlevel, $options = array()) {
+    public static function get_context_by_instanceid_and_contextlevel($instanceid, $contextlevel, $options = array())
+    {
         global $DB;
 
         // validate params
@@ -169,9 +170,8 @@ class local_mod_lesson_external extends external_api
             )
         );
 
-        return $DB->get_record('context', array('contextlevel' => $params['contextlevel'] ,'instanceid' => $params['instanceid']), '*', MUST_EXIST);
+        return $DB->get_record('context', array('contextlevel' => $params['contextlevel'], 'instanceid' => $params['instanceid']), '*', MUST_EXIST);
     }
-    
 
     public static function get_context_by_instanceid_and_contextlevel_returns()
     {
@@ -182,6 +182,68 @@ class local_mod_lesson_external extends external_api
                 'instanceid' => new external_value(PARAM_INT, 'instance id', VALUE_DEFAULT),
                 'path' => new external_value(PARAM_RAW, 'path'),
                 'depth' => new external_value(PARAM_INT, 'depth', VALUE_DEFAULT)
+            )
+        );
+    }
+
+    public static function get_lesson_page_parameters()
+    {
+        return new external_function_parameters(
+            array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
+                'prevpageid' => new external_value(PARAM_INT, 'the previous id'),
+                'options' => new external_multiple_structure (
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHANUM,
+                                'The expected keys (value format) are:
+                                                excludemodules (bool) Do not return modules, return only the sections structure
+                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
+                                                sectionid (int) Return only this section
+                                                sectionnumber (int) Return only this section with number (order)
+                                                cmid (int) Return only this module information (among the whole sections structure)
+                                                modname (string) Return only modules with this name "label, forum, etc..."
+                                                modid (int) Return only the module with this id (to be used with modname'),
+                            'value' => new external_value(PARAM_RAW, 'the value of the option,
+                                                                    this param is personaly validated in the external function.')
+                        )
+                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+            )
+        );
+    }
+
+    public static function get_lesson_page($lessonid, $prevpageid, $options = array())
+    {
+        global $DB;
+
+        // validate params
+        $params = self::validate_parameters(self::get_lesson_page_parameters(),
+            array(
+                'lessonid' => $lessonid,
+                'prevpageid' => $prevpageid,
+                'options' => $options
+            )
+        );
+
+        return $DB->get_record('lesson_pages', array('lessonid' => $params['lessonid'], 'prevpageid' => $params['prevpageid']), '*', MUST_EXIST);
+    }
+
+    public static function get_lesson_page_returns()
+    {
+        return new external_single_structure(
+            array(
+                "id" => new external_value(PARAM_INT, "the lesson page id"),
+                "lessonid" => new external_value(PARAM_INT . "lesson id", VALUE_DEFAULT),
+                "prevpageid" => new external_value(PARAM_INT, "previous page id", VALUE_DEFAULT),
+                "nextpageid" => new external_value(PARAM_INT . "next page id", VALUE_DEFAULT),
+                "qtype" => new external_value(PARAM_INT, "qtype", VALUE_DEFAULT),
+                "qoption" => new external_value(PARAM_INT, "qoption", VALUE_DEFAULT),
+                "layout" => new external_value(PARAM_INT, "layout", VALUE_REQUIRED),
+                "display" => new external_value(PARAM_INT, "display", VALUE_REQUIRED),
+                "timecreated" => new external_value(PARAM_INT, "time created", VALUE_DEFAULT),
+                "timemodified" => new external_value(PARAM_INT, "time modified", VALUE_DEFAULT),
+                "title" => new external_value(PARAM_RAW, "title"),
+                "contents" => new external_value(PARAM_RAW, "contents"),
+                "contentsformat" => new external_value(PARAM_INT, "contents format", VALUE_DEFAULT)
             )
         );
     }

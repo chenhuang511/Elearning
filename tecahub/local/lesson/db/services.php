@@ -49,5 +49,13 @@ $functions = array(
 		'description' => 'Get context by instaceid and context level',
 		'type'		  => 'read',
 		'ajax'		  => true
-	)
+	),
+	'local_mod_get_lesson_page' => array(
+		'classname'	  => 'local_mod_lesson_external',
+		'methodname'  => 'get_lesson_page',
+		'classpath'	  => 'local/lesson/externallib.php',
+		'description' => 'Get lesson page by lesson id and prevpageid',
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 );
