@@ -33,14 +33,13 @@
  * @license	   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$functions = array(
-	'local_mod_get_assignments' => array(
-		'classname'	  => 'local_mod_assign_external',
-		'methodname'  => 'get_mod_assignments',
-		'classpath'	  => 'local/additional/classes/assign.php',
-		'description' => "Get assign completion with the current user's complete",
+$functions = array(	
+	'local_mod_get_lesson_by_id' => array(
+		'classname'	  => 'local_mod_lesson_external',
+		'methodname'  => 'get_mod_lesson_by_id',
+		'classpath'	  => 'local/lib/lesson.php',
+		'description' => 'Get lesson content by course',
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
 );
-

@@ -34,12 +34,12 @@
  */
 
 $functions = array(	
-	'local_mod_get_lesson_by_id' => array(
-		'classname'	  => 'local_mod_lesson_external',
-		'methodname'  => 'get_mod_lesson_by_id',
-		'classpath'	  => 'local/additional/classes/lesson.php',
-		'description' => 'Get lesson content by course',
-		'type'		  => 'read',
-		'ajax'		  => true
+	'local_get_thumbnail_by_id' => array(
+		'classname'   => 'local_mod_course_external',
+		'methodname'  => 'get_thumbnail_by_id',
+		'classpath'   => 'local/lib/course.php',
+		'description' => "Get thumbnail url with courses id",
+		'type'        => 'read',
+		'ajax'        => true
 	),
 );
