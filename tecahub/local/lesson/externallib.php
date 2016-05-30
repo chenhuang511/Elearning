@@ -74,9 +74,13 @@ class local_mod_lesson_external extends external_api
             )
         );
 
-        $warnings = array();
+        echo "lesson id: " . $params['lessonid'];
 
-        return $DB->get_record('lesson', array('id' => $params['lessonid']), '*', MUST_EXIST);
+        $lesson = $DB->get_record('lesson', array('id' => $params['lessonid']), '*', MUST_EXIST);
+
+        var_dump($lesson); die();
+
+        return null;
     }
 
     /**
