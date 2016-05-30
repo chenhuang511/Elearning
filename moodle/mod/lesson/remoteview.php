@@ -36,12 +36,18 @@ $edit    = optional_param('edit', -1, PARAM_BOOL);
 $userpassword = optional_param('userpassword','',PARAM_RAW);
 $backtocourse = optional_param('backtocourse', false, PARAM_RAW);
 
-//$cm = get_coursemodule_from_id('lesson', $id, 0, false, MUST_EXIST);
-$coursemodule = get_remote_course_module($id);
-$cm = $coursemodule->cm;
+// get course module
+$cm = get_remote_course_module($id);
 
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-$lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST));
+
+
+//$lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST));
+$lesson = get_remote_lesson_by_id($cm->instance);
+echo "<pre>";
+var_dump($lesson);
+echo "</pre>";
+die();
 
 require_login($course, false, $cm);
 
