@@ -91,8 +91,12 @@ class block_course_overview_renderer extends plugin_renderer_base {
             $html .= $this->output->box_start('coursebox', "course-{$course->id}");
             $html .= html_writer::start_tag('div', array('class' => 'course_title'));
             // If user is editing, then add move icons.
-            $html .= html_writer::empty_tag('img', array('src' => ("https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQuyhDNz_ucGzC60IA5a6_mM4pKPYUHYL7sDKid5C-Jkyo0B6Ia"),
-                'alt' => '123'));
+            global $CFG;
+            require_once($CFG->libdir.'/remote/lib.php');
+            $thumbOjb = get_remote_course_thumb($course->id);
+//            var_dump($thumbOjb);
+//            die;
+            $html .= html_writer::empty_tag('img', array('src' => $thumbOjb->thumbnailsizesmall));
             //$html .= $this->output->box('<img src ="https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQuyhDNz_ucGzC60IA5a6_mM4pKPYUHYL7sDKid5C-Jkyo0B6Ia"', 'flush');
             if ($userediting && !$ismovingcourse) {
                 $moveicon = html_writer::empty_tag('img',

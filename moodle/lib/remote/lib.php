@@ -80,3 +80,15 @@ function get_remote_course_module($cmid, $options = array())
 
     return $info;
 }
+// create function to get api local_get_thumbnail_by_id
+function get_remote_course_thumb($courseid, $options = [])
+{
+    return moodle_webservice_client(array_merge($options,
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_get_thumbnail_by_id',
+            'params' => array('courseid[0]' => $courseid)
+        )
+    ));
+}
