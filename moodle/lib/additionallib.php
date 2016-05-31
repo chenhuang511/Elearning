@@ -33,6 +33,21 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * HUB_URL - expected numbers, letters only and _-.
  */
+define('MOODLE_MODE_HOST', 0);
+
+/**
+ * HUB_URL - expected numbers, letters only and _-.
+ */
+define('MOODLE_MODE_HUB', 1);
+
+/**
+ * HUB_URL - expected numbers, letters only and _-.
+ */
+define('MOODLE_RUN_MODE', MOODLE_MODE_HUB);
+
+/**
+ * HUB_URL - expected numbers, letters only and _-.
+ */
 define('HUB_URL', 'http://192.168.1.252');
 //define('HUB_URL', 'http://10.0.0.252:10001');
 /**
@@ -59,8 +74,8 @@ function get_local_course_record($courseid) {
         convert_remote_course_record($courseid);
         return $courseid;
     }
-
-    $course = $DB->get_record("course", array("remoteid" => $courseid), "*", MUST_EXIST);
+    $idfield = ((int)$courseid === 1) ? "id" : "remoteid";
+    $course = $DB->get_record("course", array($idfield => $courseid), "*", MUST_EXIST);
     convert_remote_course_record($course);
     return $course;
 }

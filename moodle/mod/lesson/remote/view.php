@@ -49,8 +49,8 @@ $course = get_local_course_record($cm->course);
 $lesson = get_remote_lesson_by_id($cm->instance);
 $lesson = new lesson($lesson);
 
-//require_login($course, false, $cm);
-
+require_login($course, false, $cm);
+die;
 if ($backtocourse) {
     redirect(new moodle_url('/course/view.php', array('id' => $course->id)));
 }

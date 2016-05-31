@@ -999,7 +999,11 @@ function get_array_of_activities($courseid) {
 //  extra - contains extra string to include in any link
     global $CFG, $DB;
 
-    $course = $DB->get_record('course', array('id'=>$courseid));
+    if (MOODLE_RUN_MODE == MOODLE_MODE_HOST) {
+        $course = $DB->get_record('course', array('id'=>$courseid));
+    } else {
+        $course = get_local_course_record($courseid);
+    }
 
     if (empty($course)) {
         throw new moodle_exception('courseidnotfound');

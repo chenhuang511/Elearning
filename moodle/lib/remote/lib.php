@@ -1,10 +1,11 @@
 <?php
 
-set_include_path(get_include_path().PATH_SEPARATOR.$CFG->dirroot . '/lib/zend/');
 require_once($CFG->dirroot . '/lib/zend/Zend/Http/Client.php');
 
 function moodle_webservice_client($options = [], $usercache = true)
 {
+    global $CFG;
+
     if (isset($options['domain']) &&
         isset($options['token']) &&
         isset($options['function_name'])
@@ -15,6 +16,10 @@ function moodle_webservice_client($options = [], $usercache = true)
         }
 
         $serverUrl = $options['domain'] . '/webservice/rest/server.php' . '?wstoken=' . $options['token'] . '&wsfunction=' . $options['function_name'] . '&moodlewsrestformat=json';
+        if (strpos($CFG->libdir . '/zend/', get_include_path()) === false) {
+            set_include_path(get_include_path().PATH_SEPARATOR.$CFG->libdir . '/zend/');
+        }
+        require_once($CFG->libdir . '/zend/Zend/Http/Client.php');
         $client = new Zend_Http_Client($serverUrl);
 
         if (isset($options['params'])) {
@@ -79,7 +84,7 @@ function get_remote_course_module($cmid, $options = array())
 
     return $info;
 }
-// create function to get api local_get_thumbnail_by_id
+
 function get_remote_course_thumb($courseid, $options = [])
 {
     return moodle_webservice_client(array_merge($options,
@@ -90,4 +95,32 @@ function get_remote_course_thumb($courseid, $options = [])
             'params' => array('courseid[0]' => $courseid)
         )
     ));
+}
+
+function get_remote_course_mods($courseid)
+{
+    return moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_get_course_mods',
+            'params' => array('courseid' => $courseid)
+        )
+    );
+}
+
+function get_remote_mapping_userid()
+{
+    global $USER;
+
+    $ipaddress = $_SERVER['SERVER_ADDR'];
+    $userid = $USER->id;
+    return moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_get_remote_mapping_userid',
+            'params' => array('ipadress' => $ipaddress, 'username' => $userid)
+        )
+    );
 }

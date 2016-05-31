@@ -1222,16 +1222,20 @@ function increment_revision_number($table, $field, $select, array $params = null
  * @return array
  */
 function get_course_mods($courseid) {
-    global $DB;
+    if (MOODLE_RUN_MODE == MOODLE_MODE_HOST) { // depends on config
+        global $DB;
 
-    if (empty($courseid)) {
-        return false; // avoid warnings
-    }
+        if (empty($courseid)) {
+            return false; // avoid warnings
+        }
 
-    return $DB->get_records_sql("SELECT cm.*, m.name as modname
+        return $DB->get_records_sql("SELECT cm.*, m.name as modname
                                    FROM {modules} m, {course_modules} cm
                                   WHERE cm.course = ? AND cm.module = m.id AND m.visible = 1",
-                                array($courseid)); // no disabled mods
+            array($courseid)); // no disabled mods
+    } else if (MOODLE_RUN_MODE == MOODLE_MODE_HUB) {
+        return get_remote_course_mods($courseid);
+    }
 }
 
 
@@ -1345,12 +1349,7 @@ function get_coursemodule_from_instance($modulename, $instance, $courseid=0, $se
              WHERE m.id = :instance AND md.name = :modulename
                    $courseselect";
 
-    $coursemodule = $DB->get_record_sql($sql, $params, $strictness);
-    echo "<pre>";
-    var_dump($coursemodule);
-    echo "</pre>";
-    die();
-    return $coursemodule;
+    return $DB->get_record_sql($sql, $params, $strictness);
 }
 
 /**
