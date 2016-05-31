@@ -20,14 +20,7 @@ class course_edit_form extends moodleform {
         global $CFG, $PAGE;
 
         $mform    = $this->_form;
-        $filemanageroptions = null;
-
-        if (!is_array($this->_customdata)) {
-            throw new coding_exception('invalid custom data for course_edit_form');
-        }
-
-        $filemanageroptions = $this->_customdata['filemanageroptions'];
-
+        
         $PAGE->requires->yui_module('moodle-course-formatchooser', 'M.course.init_formatchooser',
                 array(array('formid' => $mform->getAttribute('id'))));
 
@@ -140,12 +133,6 @@ class course_edit_form extends moodleform {
             $mform->hardFreeze('idnumber');
             $mform->setConstants('idnumber', $course->idnumber);
         }
-    
-        //Profile
-        $mform->addElement('filemanager', 'thumbnailimg', "New Thumbnail", '', $filemanageroptions);
-
-        $mform->addElement('checkbox', 'deletethumbnail', "Delete Thumbnail");
-        $mform->setDefault('deletethumbnail', 0);
 
         // Description.
         $mform->addElement('header', 'descriptionhdr', get_string('description'));
@@ -157,7 +144,7 @@ class course_edit_form extends moodleform {
         $summaryfields = 'summary_editor';
 
         if ($overviewfilesoptions = course_overviewfiles_options($course)) {
-            $mform->addElement('filemanager', 'overviewfiles_filemanager', get_string('courseoverviewfiles'), null, $overviewfilesoptions);
+            $mform->addElement('filemanager', 'overviewfiles_filemanager', "Thumbnail Image", null, $overviewfilesoptions);
             $mform->addHelpButton('overviewfiles_filemanager', 'courseoverviewfiles');
             $summaryfields .= ',overviewfiles_filemanager';
         }

@@ -34,20 +34,12 @@
  */
 
 $functions = array(
-	'local_mod_get_quiz_attempt' => array(
+	'local_mod_get_quiz_by_cm_instance' => array(
 		'classname'	  => 'local_mod_quiz_external',
-		'methodname'  => 'get_mod_quiz_attempt',
+		'methodname'  => 'get_mod_quiz_by_cm_instance',
 		'classpath'	  => 'local/quiz/externallib.php',
-		'description' => "Get quiz with the current user's attempt",
+		'description' => "Get quiz by instaceid of course module",
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
-    'local_mod_get_quiz_attempt' => array(
-        'classname'   => 'local_mod_quiz_external',
-        'methodname'  => 'get_mod_quiz_attempt',
-        'classpath'   => 'local/quiz/externallib.php',
-        'description' => "Get quiz with the current user's attempt",
-        'type'        => 'read',
-        'ajax'        => true
-    ),
 );

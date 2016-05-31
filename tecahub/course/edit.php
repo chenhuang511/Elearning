@@ -107,7 +107,6 @@ if ($id) {
 // Prepare course and the editor.
 $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>false, 'noclean'=>true);
 $overviewfilesoptions = course_overviewfiles_options($course);
-
 if (!empty($course)) {
     // Add context for editor.
     $editoroptions['context'] = $coursecontext;
@@ -139,26 +138,14 @@ if (!empty($course)) {
     }
 }
 
-$draftitemid = 0;
-$filemanagercontext = $editoroptions['context'];
-$filemanageroptions = array(
-    'maxbytes'=> $CFG->maxbytes,
-    'subdirs'        => 0,
-    'maxfiles'       => 1,
-    'accepted_types' => 'web_image');
-//file_prepare_draft_area($draftitemid, $filemanagercontext->id, 'course', 'thumbnail', 0, $filemanageroptions);
-$course->thumbnailimg = $draftitemid;
-
 // First create the form.
 $args = array(
     'course' => $course,
     'category' => $category,
     'editoroptions' => $editoroptions,
-    'filemanageroptions' => $filemanageroptions,
     'returnto' => $returnto,
     'returnurl' => $returnurl
 );
-
 $editform = new course_edit_form(null, $args);
 if ($editform->is_cancelled()) {
     // The form has been cancelled, take them back to what ever the return to is.
@@ -168,8 +155,6 @@ if ($editform->is_cancelled()) {
     if (empty($course->id)) {
         // In creating the course.
         $course = create_course($data, $editoroptions);
-        $course->thumbnailimg = $data->thumbnailimg;
-        isset($data->thumbnail) ? $course->thumbnailimg = $data->thumbnailimg : "";
 
         // Get the context of the newly created course.
         $context = context_course::instance($course->id, MUST_EXIST);
@@ -202,9 +187,6 @@ if ($editform->is_cancelled()) {
         // Set the URL to take them too if they choose save and display.
         $courseurl = new moodle_url('/course/view.php', array('id' => $course->id));
     }
-    // Udapte thumbnail
-    courseedit_update_thumbnail($course, $editform, $filemanageroptions);
-
 
     if (isset($data->saveanddisplay)) {
         // Redirect user to newly created/updated course.

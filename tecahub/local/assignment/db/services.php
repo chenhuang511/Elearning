@@ -41,6 +41,6 @@ $functions = array(
 		'description' => "Get assign completion with the current user's complete",
 		'type'		  => 'read',
 		'ajax'		  => true
-	),
+	)
 );
 
