@@ -440,7 +440,7 @@ class local_mod_course_external extends external_api
         global $DB;
 
         //validate parameter
-        $params = self::validate_parameters(self::get_remote_course_mods_parameters(), array('courseid' => $courseid);
+        $params = self::validate_parameters(self::get_remote_course_mods_parameters(), array('courseid' => $courseid));
         return $DB->get_records_sql("SELECT cm.*, m.name as modname
                                        FROM {modules} m, {course_modules} cm
                                       WHERE cm.course = ? AND cm.module = m.id AND m.visible = 1",
@@ -471,7 +471,43 @@ class local_mod_course_external extends external_api
                     'completionexpected' => new external_value(PARAM_INT, 'Thumbnail course URL - big version'),
                     'showdescription'    => new external_value(PARAM_INT, 'The fullname of the course'),
                     'availability' => new external_value(PARAM_RAW, 'Thumbnail course URL - small version'),
-                    'modename' => new external_value(PARAM_TEXT, 'Thumbnail course URL - medium version'),
+                    'modname' => new external_value(PARAM_TEXT, 'Thumbnail course URL - medium version'),
+                )
+            )
+        );
+    }
+	
+	public static function get_remote_course_sessions_parameters()
+    {
+        return new external_function_parameters(
+            array('courseid' => new external_value(PARAM_INT, 'course id'),
+            )
+        );
+    }
+    
+    public static function get_remote_course_sessions($courseid)
+    {       
+        global $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::get_remote_course_sessions_parameters(), array('courseid' => $courseid));
+        return $DB->get_records('course_sections', array('course' => $courseid), 'section ASC', 'id,section,sequence');
+    }
+    
+    public static function get_remote_course_sessions_returns()
+    {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id'    => new external_value(PARAM_INT, 'ID of the course'),
+                    'course'    => new external_value(PARAM_INT, 'The fullname of the course'),
+                    'section' => new external_value(PARAM_INT, 'Thumbnail course URL - big version'),
+                    'name'    => new external_value(PARAM_TEXT, 'The fullname of the course'),
+                    'summary' => new external_value(PARAM_RAW, 'Thumbnail course URL - small version'),
+                    'summaryformat' => new external_value(PARAM_INT, 'Thumbnail course URL - medium version'),
+                    'sequence' => new external_value(PARAM_RAW, 'Thumbnail course URL - big version'),
+                    'visible'    => new external_value(PARAM_INT, 'The fullname of the course'),
+                    'availability' => new external_value(PARAM_RAW, 'Thumbnail course URL - small version'),
                 )
             )
         );
