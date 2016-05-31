@@ -50,4 +50,20 @@ $functions = array(
 		'type'        => 'read',
 		'ajax'        => true
 	),
+	'local_get_course_mods' => array(
+		'classname'   => 'local_mod_course_external',
+		'methodname'  => 'get_remote_course_mods',
+		'classpath'   => 'local/course/externallib.php',
+		'description' => "Get course modules with courses id",
+		'type'        => 'read',
+		'ajax'        => true
+	),
+	'local_get_course_sessions' => array(
+		'classname'   => 'local_mod_course_external',
+		'methodname'  => 'get_remote_course_sessions',
+		'classpath'   => 'local/course/externallib.php',
+		'description' => "Get course sessions with courses id",
+		'type'        => 'read',
+		'ajax'        => true
+	)
 );
