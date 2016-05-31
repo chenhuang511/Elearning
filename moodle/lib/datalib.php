@@ -1345,7 +1345,12 @@ function get_coursemodule_from_instance($modulename, $instance, $courseid=0, $se
              WHERE m.id = :instance AND md.name = :modulename
                    $courseselect";
 
-    return $DB->get_record_sql($sql, $params, $strictness);
+    $coursemodule = $DB->get_record_sql($sql, $params, $strictness);
+    echo "<pre>";
+    var_dump($coursemodule);
+    echo "</pre>";
+    die();
+    return $coursemodule;
 }
 
 /**

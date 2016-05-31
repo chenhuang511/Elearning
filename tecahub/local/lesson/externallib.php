@@ -232,9 +232,9 @@ class local_mod_lesson_external extends external_api
         return new external_single_structure(
             array(
                 'id' => new external_value(PARAM_INT, 'the lesson page id'),
-                'lessonid' => new external_value(PARAM_INT . 'lesson id', VALUE_DEFAULT),
+                'lessonid' => new external_value(PARAM_INT , 'lesson id', VALUE_DEFAULT),
                 'prevpageid' => new external_value(PARAM_INT, 'previous page id', VALUE_DEFAULT),
-                'nextpageid' => new external_value(PARAM_INT . 'next page id', VALUE_DEFAULT),
+                'nextpageid' => new external_value(PARAM_INT , 'next page id', VALUE_DEFAULT),
                 'qtype' => new external_value(PARAM_INT, 'qtype', VALUE_DEFAULT),
                 'qoption' => new external_value(PARAM_INT, 'qoption', VALUE_DEFAULT),
                 'layout' => new external_value(PARAM_INT, 'layout', VALUE_REQUIRED),
