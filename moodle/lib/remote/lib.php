@@ -1,11 +1,11 @@
 <?php
 
-set_include_path(get_include_path().PATH_SEPARATOR.$CFG->libdir . '/zend/');
-require_once($CFG->libdir . '/zend/Zend/Http/Client.php');
 require_once($CFG->libdir . '/additionallib.php');
 
 function moodle_webservice_client($options = [], $usercache = true)
 {
+    global $CFG;
+
     if (isset($options['domain']) &&
         isset($options['token']) &&
         isset($options['function_name'])
@@ -16,6 +16,10 @@ function moodle_webservice_client($options = [], $usercache = true)
         }
 
         $serverUrl = $options['domain'] . '/webservice/rest/server.php' . '?wstoken=' . $options['token'] . '&wsfunction=' . $options['function_name'] . '&moodlewsrestformat=json';
+        if (strpos($CFG->libdir . '/zend/', get_include_path()) === false) {
+            set_include_path(get_include_path().PATH_SEPARATOR.$CFG->libdir . '/zend/');
+        }
+        require_once($CFG->libdir . '/zend/Zend/Http/Client.php');
         $client = new Zend_Http_Client($serverUrl);
 
         if (isset($options['params'])) {
