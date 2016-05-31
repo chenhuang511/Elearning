@@ -65,5 +65,5 @@ $functions = array(
 		'description' => 'Get lesson page by page id and lesson id',
 		'type'		  => 'read',
 		'ajax'		  => true
-	),
+	)
 );
