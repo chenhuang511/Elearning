@@ -65,5 +65,13 @@ $functions = array(
 		'description' => 'Get lesson page by page id and lesson id',
 		'type'		  => 'read',
 		'ajax'		  => true
+	),
+	'local_get_context_by_id' => array(
+		'classname'	  => 'local_mod_lesson_external',
+		'methodname'  => 'get_context_by_id',
+		'classpath'	  => 'local/lesson/externallib.php',
+		'description' => 'Get context by id',
+		'type'		  => 'read',
+		'ajax'		  => true
 	)
 );
