@@ -59,7 +59,7 @@ class local_user_external extends external_api {
      * @since Moodle 2.2
      */
     public static function get_remote_mapping_userid_returns() {
-        return new external_single_structure (
+        return new external_multiple_structure (
 			new external_single_structure(
 				array(
 					'id' => new external_value(PARAM_INT, 'user id'),
