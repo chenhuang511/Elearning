@@ -1,6 +1,6 @@
 <?php
 
-require_once($CFG->dirroot . '/lib/zend/Zend/Http/Client.php');
+require_once($CFG->libdir . '/additionallib.php');
 
 function moodle_webservice_client($options = [], $usercache = true)
 {
