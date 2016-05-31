@@ -53,9 +53,9 @@
     //font-size: 300%;
 }
 
-.block_course_overview .content h2.title .summary {
-	font-style: normal;
+.block_course_overview .course_title .summary {
     color: black;
+    font-weight: normal;
     font-size: 16px;
 }
 
