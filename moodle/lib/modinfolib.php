@@ -2036,7 +2036,6 @@ function get_fast_modinfo($courseorid, $userid = 0, $resetonly = false) {
         course_modinfo::clear_instance_cache($courseorid);
         return null;
     }
-
     // Function is called with $reset = false, retrieve modinfo
     return course_modinfo::instance($courseorid, $userid);
 }

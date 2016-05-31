@@ -186,6 +186,7 @@ if (!defined('CONTEXT_CACHE_MAX_SIZE')) {
     define('CONTEXT_CACHE_MAX_SIZE', 2500);
 }
 require_once($CFG->dirroot.'/lib/remote/lib.php');
+require_once($CFG->dirroot . '/course/remote/locallib.php');
 /**
  * Although this looks like a global variable, it isn't really.
  *
@@ -5445,7 +5446,7 @@ abstract class context extends stdClass implements IteratorAggregate {
     */
     public static function instance_by_id($id, $strictness = MUST_EXIST) {
         global $DB;
-
+        
         if (get_called_class() !== 'context' and get_called_class() !== 'context_helper') {
             // some devs might confuse context->id and instanceid, better prevent these mistakes completely
             throw new coding_exception('use only context::instance_by_id() for real context levels use ::instance() methods');
@@ -5463,7 +5464,8 @@ abstract class context extends stdClass implements IteratorAggregate {
             return $context;
         }
 
-        if ($record = $DB->get_record('context', array('id'=>$id), '*', $strictness)) {
+       // if ($record = $DB->get_record('context', array('id'=>$id), '*', $strictness)) {
+        if ($record = get_remote_context_by_id($id)) {
             return context::create_instance_from_record($record);
         }
 
@@ -6934,7 +6936,8 @@ class context_course extends context {
             return $context;
         }
 
-        if (!$record = $DB->get_record('context', array('contextlevel' => CONTEXT_COURSE, 'instanceid' => $courseid))) {
+        //if (!$record = $DB->get_record('context', array('contextlevel' => CONTEXT_COURSE, 'instanceid' => $courseid))) {
+        if (!$record = get_remote_context_by_instanceid_and_contextlevel($courseid, CONTEXT_COURSE)) {
             if ($course = $DB->get_record('course', array('id' => $courseid), 'id,category', $strictness)) {
                 if ($course->category) {
                     $parentcontext = context_coursecat::instance($course->category);

@@ -41,16 +41,13 @@ $backtocourse = optional_param('backtocourse', false, PARAM_RAW);
 // get course module
 $cm = get_remote_course_module($id);
 
-//$course = $DB->get_record('course', array('remoteid' => $cm->course), '*', MUST_EXIST);
-//$course = reformat_course($course);
 $course = get_local_course_record($cm->course);
 
-//$lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST));
 $lesson = get_remote_lesson_by_id($cm->instance);
 $lesson = new lesson($lesson);
 
-require_login($course, false, $cm);
-die;
+//require_login($course, false, $cm);
+
 if ($backtocourse) {
     redirect(new moodle_url('/course/view.php', array('id' => $course->id)));
 }
@@ -119,7 +116,8 @@ if (!$canmanage) {
             exit();
         }
     } else if ($lesson->dependency) { // check for dependencies
-        if ($dependentlesson = $DB->get_record('lesson', array('id' => $lesson->dependency))) {
+        //if ($dependentlesson = $DB->get_record('lesson', array('id' => $lesson->dependency))) {
+        if ($dependentlesson = get_remote_lesson_by_id($lesson->dependency)) {
             // lesson exists, so we can proceed
             $conditions = unserialize($lesson->conditions);
             // assume false for all
@@ -128,7 +126,8 @@ if (!$canmanage) {
             // check for the timespent condition
             if ($conditions->timespent) {
                 $timespent = false;
-                if ($attempttimes = $DB->get_records('lesson_timer', array("userid" => $USER->id, "lessonid" => $dependentlesson->id))) {
+                // if ($attempttimes = $DB->get_records('lesson_timer', array("userid" => $USER->id, "lessonid" => $dependentlesson->id))) {
+                if ($attempttimes = get_remote_lesson_timer_by_userid_and_lessonid($USER->id, $dependentlesson->id)) {
                     // go through all the times and test to see if any of them satisfy the condition
                     foreach ($attempttimes as $attempttime) {
                         $duration = $attempttime->lessontime - $attempttime->starttime;
@@ -145,7 +144,8 @@ if (!$canmanage) {
             // check for the gradebetterthan condition
             if ($conditions->gradebetterthan) {
                 $gradebetterthan = false;
-                if ($studentgrades = $DB->get_records('lesson_grades', array("userid" => $USER->id, "lessonid" => $dependentlesson->id))) {
+                //if ($studentgrades = $DB->get_records('lesson_grades', array("userid" => $USER->id, "lessonid" => $dependentlesson->id))) {
+                if ($studentgrades = get_remote_lesson_grades_by_userid_and_lessonid($USER->id, $dependentlesson->id)) {
                     // go through all the grades and test to see if any of them satisfy the condition
                     foreach ($studentgrades as $studentgrade) {
                         if ($studentgrade->grade >= $conditions->gradebetterthan) {
@@ -191,7 +191,7 @@ if (empty($pageid)) {
             $lesson->add_message(get_string('lessonnotready2', 'lesson')); // a nice message to the student
         } else {
             if (!$DB->count_records('lesson_pages', array('lessonid' => $lesson->id))) {
-                //redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id"); // no pages - redirect to add pages
+                redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id"); // no pages - redirect to add pages
             } else {
                 $lesson->add_message(get_string('lessonpagelinkingbroken', 'lesson'));  // ok, bad mojo
             }
@@ -302,7 +302,7 @@ if (empty($pageid)) {
     }
 /// This is the code for starting a timed test
     if (!isset($USER->startlesson[$lesson->id]) && !$canmanage) {
-        $lesson->start_timer();
+        //$lesson->start_timer();
     }
 }
 
@@ -314,8 +314,8 @@ $timer = null;
 if ($pageid != LESSON_EOL) {
     /// This is the code updates the lessontime for a timed test
     $startlastseen = optional_param('startlastseen', '', PARAM_ALPHA);
-
     $page = $lesson->load_page($pageid);
+
     // Check if the page is of a special type and if so take any nessecary action
     $newpageid = $page->callback_on_view($canmanage);
     if (is_numeric($newpageid)) {
@@ -347,7 +347,7 @@ if ($pageid != LESSON_EOL) {
             if ($timeleft <= 0) {
                 // Out of time
                 $lesson->add_message(get_string('eolstudentoutoftime', 'lesson'));
-                redirect(new moodle_url('/mod/lesson/view.php', array('id' => $cm->id, 'pageid' => LESSON_EOL, 'outoftime' => 'normal')));
+                redirect(new moodle_url('/mod/lesson/remote/view.php', array('id' => $cm->id, 'pageid' => LESSON_EOL, 'outoftime' => 'normal')));
                 die; // Shouldn't be reached, but make sure
             } else if ($timeleft < 60) {
                 // One minute warning
@@ -460,6 +460,7 @@ if ($pageid != LESSON_EOL) {
     $outoftime = optional_param('outoftime', '', PARAM_ALPHA);
 
     $ntries = $DB->count_records("lesson_grades", array("lessonid" => $lesson->id, "userid" => $USER->id));
+
     if (isset($USER->modattempts[$lesson->id])) {
         $ntries--;  // need to look at the old attempts :)
     }
@@ -488,104 +489,104 @@ if ($pageid != LESSON_EOL) {
         $lessoncontent .= $OUTPUT->box_start('generalbox boxaligncenter');
     }
     if (!$canmanage) {
-        if ($gradelesson) {
-            // Store this now before any modifications to pages viewed.
-            $progressbar = $lessonoutput->progress_bar($lesson);
-            // Update the clock / get time information for this user.
-            $lesson->stop_timer();
-
-            // Update completion state.
-            $completion = new completion_info($course);
-            if ($completion->is_enabled($cm) && $lesson->completionendreached) {
-                $completion->update_state($cm, COMPLETION_COMPLETE);
-            }
-
-            if ($lesson->completiontimespent > 0) {
-                $duration = $DB->get_field_sql(
-                    "SELECT SUM(lessontime - starttime)
-                                   FROM {lesson_timer}
-                                  WHERE lessonid = :lessonid
-                                    AND userid = :userid",
-                    array('userid' => $USER->id, 'lessonid' => $lesson->id));
-                if (!$duration) {
-                    $duration = 0;
-                }
-
-                // If student has not spend enough time in the lesson, display a message.
-                if ($duration < $lesson->completiontimespent) {
-                    $a = new stdClass;
-                    $a->timespent = format_time($duration);
-                    $a->timerequired = format_time($lesson->completiontimespent);
-                    $lessoncontent .= $lessonoutput->paragraph(get_string("notenoughtimespent", "lesson", $a), 'center');
-                }
-            }
-
-
-            if ($gradeinfo->attempts) {
-                if (!$lesson->custom) {
-                    $lessoncontent .= $lessonoutput->paragraph(get_string("numberofpagesviewed", "lesson", $gradeinfo->nquestions), 'center');
-                    if ($lesson->minquestions) {
-                        if ($gradeinfo->nquestions < $lesson->minquestions) {
-                            // print a warning and set nviewed to minquestions
-                            $lessoncontent .= $lessonoutput->paragraph(get_string("youshouldview", "lesson", $lesson->minquestions), 'center');
-                        }
-                    }
-                    $lessoncontent .= $lessonoutput->paragraph(get_string("numberofcorrectanswers", "lesson", $gradeinfo->earned), 'center');
-                }
-                $a = new stdClass;
-                $a->score = $gradeinfo->earned;
-                $a->grade = $gradeinfo->total;
-                if ($gradeinfo->nmanual) {
-                    $a->tempmaxgrade = $gradeinfo->total - $gradeinfo->manualpoints;
-                    $a->essayquestions = $gradeinfo->nmanual;
-                    $lessoncontent .= $OUTPUT->box(get_string("displayscorewithessays", "lesson", $a), 'center');
-                } else {
-                    $lessoncontent .= $OUTPUT->box(get_string("displayscorewithoutessays", "lesson", $a), 'center');
-                }
-                if ($lesson->grade != GRADE_TYPE_NONE) {
-                    $a = new stdClass;
-                    $a->grade = number_format($gradeinfo->grade * $lesson->grade / 100, 1);
-                    $a->total = $lesson->grade;
-                    $lessoncontent .= $lessonoutput->paragraph(get_string("yourcurrentgradeisoutof", "lesson", $a), 'center');
-                }
-
-                $grade = new stdClass();
-                $grade->lessonid = $lesson->id;
-                $grade->userid = $USER->id;
-                $grade->grade = $gradeinfo->grade;
-                $grade->completed = time();
-                if (isset($USER->modattempts[$lesson->id])) { // If reviewing, make sure update old grade record.
-                    if (!$grades = $DB->get_records("lesson_grades",
-                        array("lessonid" => $lesson->id, "userid" => $USER->id), "completed DESC", '*', 0, 1)
-                    ) {
-                        print_error('cannotfindgrade', 'lesson');
-                    }
-                    $oldgrade = array_shift($grades);
-                    $grade->id = $oldgrade->id;
-                    $DB->update_record("lesson_grades", $grade);
-                } else {
-                    $newgradeid = $DB->insert_record("lesson_grades", $grade);
-                }
-            } else {
-                if ($lesson->timelimit) {
-                    if ($outoftime == 'normal') {
-                        $grade = new stdClass();
-                        $grade->lessonid = $lesson->id;
-                        $grade->userid = $USER->id;
-                        $grade->grade = 0;
-                        $grade->completed = time();
-                        $newgradeid = $DB->insert_record("lesson_grades", $grade);
-                        $lessoncontent .= $lessonoutput->paragraph(get_string("eolstudentoutoftimenoanswers", "lesson"));
-                    }
-                } else {
-                    $lessoncontent .= $lessonoutput->paragraph(get_string("welldone", "lesson"));
-                }
-            }
-
-            // update central gradebook
-            lesson_update_grades($lesson, $USER->id);
-            $lessoncontent .= $progressbar;
-        }
+//        if ($gradelesson) {
+//            // Store this now before any modifications to pages viewed.
+//            //$progressbar = $lessonoutput->progress_bar($lesson);
+//            // Update the clock / get time information for this user.
+//            $lesson->stop_timer();
+//
+//            // Update completion state.
+//            $completion = new completion_info($course);
+//            if ($completion->is_enabled($cm) && $lesson->completionendreached) {
+//                $completion->update_state($cm, COMPLETION_COMPLETE);
+//            }
+//
+//            if ($lesson->completiontimespent > 0) {
+//                $duration = $DB->get_field_sql(
+//                    "SELECT SUM(lessontime - starttime)
+//                                   FROM {lesson_timer}
+//                                  WHERE lessonid = :lessonid
+//                                    AND userid = :userid",
+//                    array('userid' => $USER->id, 'lessonid' => $lesson->id));
+//                if (!$duration) {
+//                    $duration = 0;
+//                }
+//
+//                // If student has not spend enough time in the lesson, display a message.
+//                if ($duration < $lesson->completiontimespent) {
+//                    $a = new stdClass;
+//                    $a->timespent = format_time($duration);
+//                    $a->timerequired = format_time($lesson->completiontimespent);
+//                    $lessoncontent .= $lessonoutput->paragraph(get_string("notenoughtimespent", "lesson", $a), 'center');
+//                }
+//            }
+//
+//
+//            if ($gradeinfo->attempts) {
+//                if (!$lesson->custom) {
+//                    $lessoncontent .= $lessonoutput->paragraph(get_string("numberofpagesviewed", "lesson", $gradeinfo->nquestions), 'center');
+//                    if ($lesson->minquestions) {
+//                        if ($gradeinfo->nquestions < $lesson->minquestions) {
+//                            // print a warning and set nviewed to minquestions
+//                            $lessoncontent .= $lessonoutput->paragraph(get_string("youshouldview", "lesson", $lesson->minquestions), 'center');
+//                        }
+//                    }
+//                    $lessoncontent .= $lessonoutput->paragraph(get_string("numberofcorrectanswers", "lesson", $gradeinfo->earned), 'center');
+//                }
+//                $a = new stdClass;
+//                $a->score = $gradeinfo->earned;
+//                $a->grade = $gradeinfo->total;
+//                if ($gradeinfo->nmanual) {
+//                    $a->tempmaxgrade = $gradeinfo->total - $gradeinfo->manualpoints;
+//                    $a->essayquestions = $gradeinfo->nmanual;
+//                    $lessoncontent .= $OUTPUT->box(get_string("displayscorewithessays", "lesson", $a), 'center');
+//                } else {
+//                    $lessoncontent .= $OUTPUT->box(get_string("displayscorewithoutessays", "lesson", $a), 'center');
+//                }
+//                if ($lesson->grade != GRADE_TYPE_NONE) {
+//                    $a = new stdClass;
+//                    $a->grade = number_format($gradeinfo->grade * $lesson->grade / 100, 1);
+//                    $a->total = $lesson->grade;
+//                    $lessoncontent .= $lessonoutput->paragraph(get_string("yourcurrentgradeisoutof", "lesson", $a), 'center');
+//                }
+//
+//                $grade = new stdClass();
+//                $grade->lessonid = $lesson->id;
+//                $grade->userid = $USER->id;
+//                $grade->grade = $gradeinfo->grade;
+//                $grade->completed = time();
+//                if (isset($USER->modattempts[$lesson->id])) { // If reviewing, make sure update old grade record.
+//                    if (!$grades = $DB->get_records("lesson_grades",
+//                        array("lessonid" => $lesson->id, "userid" => $USER->id), "completed DESC", '*', 0, 1)
+//                    ) {
+//                        print_error('cannotfindgrade', 'lesson');
+//                    }
+//                    $oldgrade = array_shift($grades);
+//                    $grade->id = $oldgrade->id;
+//                    $DB->update_record("lesson_grades", $grade);
+//                } else {
+//                    $newgradeid = $DB->insert_record("lesson_grades", $grade);
+//                }
+//            } else {
+//                if ($lesson->timelimit) {
+//                    if ($outoftime == 'normal') {
+//                        $grade = new stdClass();
+//                        $grade->lessonid = $lesson->id;
+//                        $grade->userid = $USER->id;
+//                        $grade->grade = 0;
+//                        $grade->completed = time();
+//                        $newgradeid = $DB->insert_record("lesson_grades", $grade);
+//                        $lessoncontent .= $lessonoutput->paragraph(get_string("eolstudentoutoftimenoanswers", "lesson"));
+//                    }
+//                } else {
+//                    $lessoncontent .= $lessonoutput->paragraph(get_string("welldone", "lesson"));
+//                }
+//            }
+//
+//            // update central gradebook
+//            lesson_update_grades($lesson, $USER->id);
+//            $lessoncontent .= $progressbar;
+//        }
     } else {
         // display for teacher
         if ($lesson->grade != GRADE_TYPE_NONE) {
