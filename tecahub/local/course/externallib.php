@@ -348,12 +348,11 @@ class local_mod_course_external extends external_api
     {
         global $CFG, $COURSE, $DB;
         require_once($CFG->dirroot . "/course/lib.php");
-//        echo "<pre>";
         //validate parameter
         $params = self::validate_parameters(self::get_thumbnail_by_id_parameters(), array('courseids' => $courseids));
 
         // Clean the values.
-        $cleanedvalue = array();
+        $cleanedvalues = array();
         foreach ($courseids as $courseid){
             $cleanedvalue = clean_param($courseid, PARAM_INT);
             if ( $courseid != $cleanedvalue) {
@@ -377,31 +376,7 @@ class local_mod_course_external extends external_api
                 $returnedcourses[] = $coursedetails;
             }
         }
-//        echo "<pre>";
-//        var_dump($returnedcourses);die;
         return $returnedcourses;
-//        list($sqlcourseids, $params) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
-//
-//        $cselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
-//        $cjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
-//        $params['contextlevel'] = CONTEXT_COURSE;
-//        $usersql = "SELECT c.* $cselect
-//                      FROM {course} c $cjoin
-//                     WHERE c.id $sqlcourseids";
-//
-//        $courses = $DB->get_recordset_sql($usersql, $params);
-//
-//        $result = array();
-//
-//        foreach ($courses as $course) {
-//            if ($coursearray = course_get_thumbnail($course)) {
-//                $result[] = $coursearray;
-//            }
-//        }
-//        $courses->close();
-//        echo "<pre>";
-//        var_dump($result); die;
-//        return $result;
     }
 
     /**
@@ -419,9 +394,7 @@ class local_mod_course_external extends external_api
                 array(
                     'id'    => new external_value(PARAM_INT, 'ID of the course'),
                     'fullname'    => new external_value(PARAM_RAW, 'The fullname of the course'),
-                    'thumbnailsizesmall' => new external_value(PARAM_URL, 'Thumbnail course URL - small version'),
-                    'thumbnailsizemedium' => new external_value(PARAM_URL, 'Thumbnail course URL - medium version'),
-                    'thumbnailsizelarge' => new external_value(PARAM_URL, 'Thumbnail course URL - big version'),
+                    'thumbnail_image' => new external_value(PARAM_URL, 'Thumbnail course URL - small version'),
                 )
             )
         );

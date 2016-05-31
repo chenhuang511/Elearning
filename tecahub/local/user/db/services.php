@@ -34,13 +34,12 @@
  */
 
 $functions = array(
-	'local_mod_get_assignments' => array(
-		'classname'	  => 'local_mod_assign_external',
-		'methodname'  => 'get_mod_assignments',
-		'classpath'	  => 'local/assignment/externallib.php',
-		'description' => "Get assign completion with the current user's complete",
+	'local_get_remote_mapping_userid' => array(
+		'classname'	  => 'local_user_external',
+		'methodname'  => 'get_remote_mapping_userid',
+		'classpath'	  => 'local/user/externallib.php',
+		'description' => "Get remote mapping user",
 		'type'		  => 'read',
 		'ajax'		  => true
-	)
+	),
 );
-
