@@ -34,9 +34,9 @@
  */
 
 $functions = array(
-	'local_get_remote_mapping_userid' => array(
+	'local_get_remote_mapping_user' => array(
 		'classname'	  => 'local_user_external',
-		'methodname'  => 'get_remote_mapping_userid',
+		'methodname'  => 'get_remote_mapping_user',
 		'classpath'	  => 'local/user/externallib.php',
 		'description' => "Get remote mapping user",
 		'type'		  => 'read',

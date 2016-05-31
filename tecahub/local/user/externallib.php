@@ -31,14 +31,14 @@ require_once("$CFG->libdir/externallib.php");
 
 class local_user_external extends external_api {
 	
-    public static function get_remote_mapping_userid_parameters() {
+    public static function get_remote_mapping_user_parameters() {
         return new external_function_parameters(
             array('ipaddress' => new external_value(PARAM_TEXT, 'Host IP address'),
                 'username' => new external_value(PARAM_TEXT, 'username'))
         );
     }
 
-    public static function get_remote_mapping_userid($ipaddress, $username) {
+    public static function get_remote_mapping_user($ipaddress, $username) {
         global $CFG, $DB;
 
         //validate parameter
@@ -58,7 +58,7 @@ class local_user_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_remote_mapping_userid_returns() {
+    public static function get_remote_mapping_user_returns() {
         return new external_multiple_structure (
 			new external_single_structure(
 				array(
