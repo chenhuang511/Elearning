@@ -42,13 +42,13 @@ class local_user_external extends external_api {
         global $CFG, $DB;
 
         //validate parameter
-        $params = self::validate_parameters(self::get_remote_mapping_userid_parameters(),
+        $params = self::validate_parameters(self::get_remote_mapping_user_parameters(),
             array('ipaddress' => $ipaddress, 'username' => $username));
 
 		return $DB->get_records_sql("SELECT u.id,u.username,u.email,u.auth FROM {user} u
 									WHERE u.mnethostid = (SELECT id FROM {mnet_host} m 
 									WHERE m.ip_address=?) AND u.username=?",
-            array('ip_address' => $ipaddress, 'username' => $username));
+            array('ip_address' => $params['ipaddress'], 'username' => $params['username']));
     }
 
     /**
