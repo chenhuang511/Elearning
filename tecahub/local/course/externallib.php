@@ -436,7 +436,8 @@ class local_mod_course_external extends external_api
     }
     
     public static function get_remote_course_mods($courseid)
-    {       
+    
+{       
         global $DB;
 
         //validate parameter
@@ -477,7 +478,7 @@ class local_mod_course_external extends external_api
         );
     }
 	
-	public static function get_remote_course_sessions_parameters()
+    public static function get_remote_course_sessions_parameters()
     {
         return new external_function_parameters(
             array('courseid' => new external_value(PARAM_INT, 'course id'),
