@@ -440,7 +440,7 @@ class local_mod_course_external extends external_api
         global $DB;
 
         //validate parameter
-        $params = self::validate_parameters(self::get_remote_course_mods_parameters(), array('courseid' => $courseid);
+        $params = self::validate_parameters(self::get_remote_course_mods_parameters(), array('courseid' => $courseid));
         return $DB->get_records_sql("SELECT cm.*, m.name as modname
                                        FROM {modules} m, {course_modules} cm
                                       WHERE cm.course = ? AND cm.module = m.id AND m.visible = 1",
