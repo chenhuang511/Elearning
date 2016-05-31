@@ -288,7 +288,7 @@ class local_mod_lesson_external extends external_api
         return $DB->get_record('lesson_pages', array('id' => $params['pageid'], 'lessonid' => $params['lessonid']), '*', MUST_EXIST);
     }
 
-    public static function get_mod_lessonpage_by_pageid_and_lessonid_return()
+    public static function get_mod_lessonpage_by_pageid_and_lessonid_returns()
     {
         return new external_single_structure(
             array(
