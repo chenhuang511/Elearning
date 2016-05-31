@@ -109,18 +109,19 @@ function get_remote_course_mods($courseid)
     );
 }
 
-function get_remote_mapping_userid()
+function get_remote_mapping_user()
 {
     global $USER;
 
     $ipaddress = $_SERVER['SERVER_ADDR'];
-    $userid = $USER->id;
+    $username = $USER->username;
+
     return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
-            'function_name' => 'local_get_remote_mapping_userid',
-            'params' => array('ipadress' => $ipaddress, 'username' => $userid)
+            'function_name' => 'local_get_remote_mapping_user',
+            'params' => array('ipaddress' => $ipaddress, 'username' => $username)
         )
     );
 }
