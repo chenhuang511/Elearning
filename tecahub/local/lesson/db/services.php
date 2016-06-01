@@ -73,5 +73,21 @@ $functions = array(
 		'description' => 'Get context by id',
 		'type'		  => 'read',
 		'ajax'		  => true
+	),
+	'local_get_lesson_timer_by_userid_and_lessonid' => array(
+		'classname'	  => 'local_mod_lesson_external',
+		'methodname'  => 'get_lesson_timer_by_userid_and_lessonid',
+		'classpath'	  => 'local/lesson/externallib.php',
+		'description' => 'Get lesson timer by userid and lessonid',
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_get_lesson_grades_by_userid_and_lessonid' => array(
+		'classname'	  => 'local_mod_lesson_external',
+		'methodname'  => 'get_lesson_grades_by_userid_and_lessonid',
+		'classpath'	  => 'local/lesson/externallib.php',
+		'description' => 'Get lesson grades by userid and lessonid',
+		'type'		  => 'read',
+		'ajax'		  => true
 	)
 );

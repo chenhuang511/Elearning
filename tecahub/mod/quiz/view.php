@@ -100,13 +100,12 @@ if ($unfinishedattempt = quiz_get_user_attempt_unfinished($quiz->id, $USER->id))
     $unfinishedattempt = null; // To make it clear we do not use this again.
 }
 $numattempts = count($attempts);
-
 $viewobj->attempts = $attempts;
 $viewobj->attemptobjs = array();
 foreach ($attempts as $attempt) {
     $viewobj->attemptobjs[] = new quiz_attempt($attempt, $quiz, $cm, $course, false);
 }
-
+var_dump($viewobj);die;
 // Work out the final grade, checking whether it was overridden in the gradebook.
 if (!$canpreview) {
     $mygrade = quiz_get_best_grade($quiz, $USER->id);
