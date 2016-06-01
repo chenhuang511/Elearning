@@ -92,7 +92,7 @@ function get_remote_course_thumb($courseid, $options = [])
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_get_thumbnail_by_id',
-            'params' => array('courseid[0]' => $courseid)
+            'params' => array('courseids[0]' => $courseid)
         )
     ));
 }
