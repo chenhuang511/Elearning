@@ -69,7 +69,6 @@ function get_remote_label_content($labelid, $options = [])
     )));
 }
 
-
 function get_remote_page_content($pageid, $options = [])
 {
     return moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
@@ -109,31 +108,8 @@ function get_remote_url_content($urlid, $options = [])
     ));
 }
 
-function get_remote_lesson_by_id($lessonid, $options = array())
+function get_remote_context_by_instanceid_and_contextlevel($instanceid, $contextlevel, $options = array())
 {
-    return moodle_webservice_client(array_merge($options,
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_get_lesson_by_id',
-            'params' => array('lessonid' => $lessonid),
-        )
-    ));
-}
-
-function get_remote_lesson_page_content($lessonid, $pageid, $isfield = false, $options = [])
-{
-    return moodle_webservice_client(array_merge($options,
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_get_lesson_page_by_id',
-            'params' => array('lessonid' => $lessonid, 'pageid' => $pageid, 'isfield' => $isfield)
-        )
-    ));
-}
-
-function get_remote_context_by_instanceid_and_contextlevel($instanceid, $contextlevel, $options = array()) {
     return moodle_webservice_client(array_merge($options,
         array(
             'domain' => HUB_URL,
@@ -144,18 +120,14 @@ function get_remote_context_by_instanceid_and_contextlevel($instanceid, $context
     ));
 }
 
-function get_remote_lesson_page($lessonid, $prevpageid, $options = array()) {
-    $lessonpage = moodle_webservice_client(array_merge($options,
+function get_remote_context_by_id($id, $options = array())
+{
+    return moodle_webservice_client(array_merge($options,
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_get_lesson_page',
-            'params' => array('lessonid' => $lessonid, 'prevpageid' => $prevpageid)
+            'function_name' => 'local_get_context_by_id',
+            'params' => array('id' => $id)
         )
     ));
-
-    echo "<pre>";
-    var_dump($lessonpage);
-    echo "</pre>";
-    die();
 }

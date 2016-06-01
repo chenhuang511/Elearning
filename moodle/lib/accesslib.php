@@ -158,15 +158,15 @@ define('CONTEXT_BLOCK', 80);
 /** Capability allow management of trusts - NOT IMPLEMENTED YET - see {@link http://docs.moodle.org/dev/Hardening_new_Roles_system} */
 define('RISK_MANAGETRUST', 0x0001);
 /** Capability allows changes in system configuration - see {@link http://docs.moodle.org/dev/Hardening_new_Roles_system} */
-define('RISK_CONFIG',      0x0002);
+define('RISK_CONFIG', 0x0002);
 /** Capability allows user to add scripted content - see {@link http://docs.moodle.org/dev/Hardening_new_Roles_system} */
-define('RISK_XSS',         0x0004);
+define('RISK_XSS', 0x0004);
 /** Capability allows access to personal user information - see {@link http://docs.moodle.org/dev/Hardening_new_Roles_system} */
-define('RISK_PERSONAL',    0x0008);
+define('RISK_PERSONAL', 0x0008);
 /** Capability allows users to add content others may see - see {@link http://docs.moodle.org/dev/Hardening_new_Roles_system} */
-define('RISK_SPAM',        0x0010);
+define('RISK_SPAM', 0x0010);
 /** capability allows mass delete of data belonging to other users - see {@link http://docs.moodle.org/dev/Hardening_new_Roles_system} */
-define('RISK_DATALOSS',    0x0020);
+define('RISK_DATALOSS', 0x0020);
 
 /** rolename displays - the name as defined in the role definition, localised if name empty */
 define('ROLENAME_ORIGINAL', 0);
@@ -185,7 +185,8 @@ if (!defined('CONTEXT_CACHE_MAX_SIZE')) {
     /** maximum size of context cache - it is possible to tweak this config.php or in any script before inclusion of context.php */
     define('CONTEXT_CACHE_MAX_SIZE', 2500);
 }
-require_once($CFG->dirroot.'/lib/remote/lib.php');
+require_once($CFG->dirroot . '/lib/remote/lib.php');
+require_once($CFG->dirroot . '/course/remote/locallib.php');
 /**
  * Although this looks like a global variable, it isn't really.
  *
@@ -200,9 +201,9 @@ require_once($CFG->dirroot.'/lib/remote/lib.php');
  */
 global $ACCESSLIB_PRIVATE;
 $ACCESSLIB_PRIVATE = new stdClass();
-$ACCESSLIB_PRIVATE->dirtycontexts    = null;    // Dirty contexts cache, loaded from DB once per page
+$ACCESSLIB_PRIVATE->dirtycontexts = null;    // Dirty contexts cache, loaded from DB once per page
 $ACCESSLIB_PRIVATE->accessdatabyuser = array(); // Holds the cache of $accessdata structure for users (including $USER)
-$ACCESSLIB_PRIVATE->rolepermissions  = array(); // role permissions cache - helps a lot with mem usage
+$ACCESSLIB_PRIVATE->rolepermissions = array(); // role permissions cache - helps a lot with mem usage
 
 /**
  * Clears accesslib's private caches. ONLY BE USED BY UNIT TESTS
@@ -214,7 +215,8 @@ $ACCESSLIB_PRIVATE->rolepermissions  = array(); // role permissions cache - help
  * @access private
  * @return void
  */
-function accesslib_clear_all_caches_for_unit_testing() {
+function accesslib_clear_all_caches_for_unit_testing()
+{
     global $USER;
     if (!PHPUNIT_TEST) {
         throw new coding_exception('You must not call clear_all_caches outside of unit tests.');
@@ -234,12 +236,13 @@ function accesslib_clear_all_caches_for_unit_testing() {
  * @param bool $resetcontexts
  * @return void
  */
-function accesslib_clear_all_caches($resetcontexts) {
+function accesslib_clear_all_caches($resetcontexts)
+{
     global $ACCESSLIB_PRIVATE;
 
-    $ACCESSLIB_PRIVATE->dirtycontexts    = null;
+    $ACCESSLIB_PRIVATE->dirtycontexts = null;
     $ACCESSLIB_PRIVATE->accessdatabyuser = array();
-    $ACCESSLIB_PRIVATE->rolepermissions  = array();
+    $ACCESSLIB_PRIVATE->rolepermissions = array();
 
     if ($resetcontexts) {
         context_helper::reset_caches();
@@ -253,7 +256,8 @@ function accesslib_clear_all_caches($resetcontexts) {
  * @param int $roleid
  * @return array
  */
-function get_role_access($roleid) {
+function get_role_access($roleid)
+{
     global $DB, $ACCESSLIB_PRIVATE;
 
     /* Get it in 1 DB query...
@@ -265,7 +269,7 @@ function get_role_access($roleid) {
 
     $accessdata = get_empty_accessdata();
 
-    $accessdata['ra']['/'.SYSCONTEXTID] = array((int)$roleid => (int)$roleid);
+    $accessdata['ra']['/' . SYSCONTEXTID] = array((int)$roleid => (int)$roleid);
 
     // Overrides for the role IN ANY CONTEXTS down to COURSE - not below -.
 
@@ -284,13 +288,13 @@ function get_role_access($roleid) {
 
     $sql = "SELECT COALESCE(ctx.path, bctx.path) AS path, rc.capability, rc.permission
               FROM {role_capabilities} rc
-         LEFT JOIN {context} ctx ON (ctx.id = rc.contextid AND ctx.contextlevel <= ".CONTEXT_COURSE.")
+         LEFT JOIN {context} ctx ON (ctx.id = rc.contextid AND ctx.contextlevel <= " . CONTEXT_COURSE . ")
          LEFT JOIN ({context} bctx
                     JOIN {block_instances} bi ON (bi.id = bctx.instanceid)
-                    JOIN {context} pctx ON (pctx.id = bi.parentcontextid AND pctx.contextlevel < ".CONTEXT_COURSE.")
-                   ) ON (bctx.id = rc.contextid AND bctx.contextlevel = ".CONTEXT_BLOCK.")
+                    JOIN {context} pctx ON (pctx.id = bi.parentcontextid AND pctx.contextlevel < " . CONTEXT_COURSE . ")
+                   ) ON (bctx.id = rc.contextid AND bctx.contextlevel = " . CONTEXT_BLOCK . ")
              WHERE rc.roleid = :roleid AND (ctx.id IS NOT NULL OR bctx.id IS NOT NULL)";
-    $params = array('roleid'=>$roleid);
+    $params = array('roleid' => $roleid);
 
     // we need extra caching in CLI scripts and cron
     $rs = $DB->get_recordset_sql($sql, $params);
@@ -301,7 +305,7 @@ function get_role_access($roleid) {
     $rs->close();
 
     // share the role definitions
-    foreach ($accessdata['rdef'] as $k=>$unused) {
+    foreach ($accessdata['rdef'] as $k => $unused) {
         if (!isset($ACCESSLIB_PRIVATE->rolepermissions[$k])) {
             $ACCESSLIB_PRIVATE->rolepermissions[$k] = $accessdata['rdef'][$k];
         }
@@ -318,11 +322,12 @@ function get_role_access($roleid) {
  *
  * @return stdClass role record
  */
-function get_guest_role() {
+function get_guest_role()
+{
     global $CFG, $DB;
 
     if (empty($CFG->guestroleid)) {
-        if ($roles = $DB->get_records('role', array('archetype'=>'guest'))) {
+        if ($roles = $DB->get_records('role', array('archetype' => 'guest'))) {
             $guestrole = array_shift($roles);   // Pick the first one
             set_config('guestroleid', $guestrole->id);
             return $guestrole;
@@ -331,7 +336,7 @@ function get_guest_role() {
             return false;
         }
     } else {
-        if ($guestrole = $DB->get_record('role', array('id'=>$CFG->guestroleid))) {
+        if ($guestrole = $DB->get_record('role', array('id' => $CFG->guestroleid))) {
             return $guestrole;
         } else {
             // somebody is messing with guest roles, remove incorrect setting and try to find a new one
@@ -362,7 +367,8 @@ function get_guest_role() {
  * @param boolean $doanything If false, ignores effect of admin role assignment
  * @return boolean true if the user has this capability. Otherwise false.
  */
-function has_capability($capability, context $context, $user = null, $doanything = true) {
+function has_capability($capability, context $context, $user = null, $doanything = true)
+{
     global $USER, $CFG, $SCRIPT, $ACCESSLIB_PRIVATE;
 
     if (during_initial_install()) {
@@ -384,7 +390,7 @@ function has_capability($capability, context $context, $user = null, $doanything
 
     // capability must exist
     if (!$capinfo = get_capability_info($capability)) {
-        debugging('Capability "'.$capability.'" was not found! This has to be fixed in code.');
+        debugging('Capability "' . $capability . '" was not found! This has to be fixed in code.');
         return false;
     }
 
@@ -432,7 +438,7 @@ function has_capability($capability, context $context, $user = null, $doanything
     // context path/depth must be valid
     if (empty($context->path) or $context->depth == 0) {
         // this should not happen often, each upgrade tries to rebuild the context paths
-        debugging('Context id '.$context->id.' does not have valid path, please use context_helper::build_all_paths()');
+        debugging('Context id ' . $context->id . ' does not have valid path, please use context_helper::build_all_paths()');
         if (is_siteadmin($userid)) {
             return true;
         } else {
@@ -509,7 +515,8 @@ function has_capability($capability, context $context, $user = null, $doanything
  * @param boolean $doanything If false, ignore effect of admin role assignment
  * @return boolean true if the user has any of these capabilities. Otherwise false.
  */
-function has_any_capability(array $capabilities, context $context, $user = null, $doanything = true) {
+function has_any_capability(array $capabilities, context $context, $user = null, $doanything = true)
+{
     foreach ($capabilities as $capability) {
         if (has_capability($capability, $context, $user, $doanything)) {
             return true;
@@ -534,7 +541,8 @@ function has_any_capability(array $capabilities, context $context, $user = null,
  * @param boolean $doanything If false, ignore effect of admin role assignment
  * @return boolean true if the user has all of these capabilities. Otherwise false.
  */
-function has_all_capabilities(array $capabilities, context $context, $user = null, $doanything = true) {
+function has_all_capabilities(array $capabilities, context $context, $user = null, $doanything = true)
+{
     foreach ($capabilities as $capability) {
         if (!has_capability($capability, $context, $user, $doanything)) {
             return false;
@@ -558,7 +566,8 @@ function has_all_capabilities(array $capabilities, context $context, $user = nul
  *
  * @throws coding_exception if different type of context submitted
  */
-function guess_if_creator_will_have_course_capability($capability, context $context, $user = null) {
+function guess_if_creator_will_have_course_capability($capability, context $context, $user = null)
+{
     global $CFG;
 
     if ($context->contextlevel != CONTEXT_COURSE and $context->contextlevel != CONTEXT_COURSECAT) {
@@ -607,10 +616,11 @@ function guess_if_creator_will_have_course_capability($capability, context $cont
  *
  * @category access
  *
- * @param  int|stdClass  $user_or_id user id or user object
+ * @param  int|stdClass $user_or_id user id or user object
  * @return bool true if user is one of the administrators, false otherwise
  */
-function is_siteadmin($user_or_id = null) {
+function is_siteadmin($user_or_id = null)
+{
     global $CFG, $USER;
 
     if ($user_or_id === null) {
@@ -650,7 +660,8 @@ function is_siteadmin($user_or_id = null) {
  * @param int $userid
  * @return bool
  */
-function has_coursecontact_role($userid) {
+function has_coursecontact_role($userid)
+{
     global $DB, $CFG;
 
     if (empty($CFG->coursecontact)) {
@@ -659,7 +670,7 @@ function has_coursecontact_role($userid) {
     $sql = "SELECT 1
               FROM {role_assignments}
              WHERE userid = :userid AND roleid IN ($CFG->coursecontact)";
-    return $DB->record_exists_sql($sql, array('userid'=>$userid));
+    return $DB->record_exists_sql($sql, array('userid' => $userid));
 }
 
 /**
@@ -696,13 +707,14 @@ function has_coursecontact_role($userid) {
  * @param array $accessdata
  * @return bool
  */
-function has_capability_in_accessdata($capability, context $context, array &$accessdata) {
+function has_capability_in_accessdata($capability, context $context, array &$accessdata)
+{
     global $CFG;
 
     // Build $paths as a list of current + all parent "paths" with order bottom-to-top
     $path = $context->path;
     $paths = array($path);
-    while($path = rtrim($path, '0123456789')) {
+    while ($path = rtrim($path, '0123456789')) {
         $path = rtrim($path, '/');
         if ($path === '') {
             break;
@@ -719,7 +731,7 @@ function has_capability_in_accessdata($capability, context $context, array &$acc
         foreach ($paths as $path) {
             if (isset($accessdata['rsw'][$path])) {
                 // Found a switchrole assignment - check for that role _plus_ the default user role
-                $roles = array($accessdata['rsw'][$path]=>null, $CFG->defaultuserroleid=>null);
+                $roles = array($accessdata['rsw'][$path] => null, $CFG->defaultuserroleid => null);
                 $switchedrole = true;
                 break;
             }
@@ -779,7 +791,8 @@ function has_capability_in_accessdata($capability, context $context, array &$acc
  * @return void terminates with an error if the user does not have the given capability.
  */
 function require_capability($capability, context $context, $userid = null, $doanything = true,
-                            $errormessage = 'nopermissions', $stringfile = '') {
+                            $errormessage = 'nopermissions', $stringfile = '')
+{
     if (!has_capability($capability, $context, $userid, $doanything)) {
         throw new required_capability_exception($context, $capability, $errormessage, $stringfile);
     }
@@ -800,7 +813,8 @@ function require_capability($capability, context $context, $userid = null, $doan
  * @param int $userid - the id of the user
  * @return array access info array
  */
-function get_user_access_sitewide($userid) {
+function get_user_access_sitewide($userid)
+{
     global $CFG, $DB, $ACCESSLIB_PRIVATE;
 
     /* Get in a few cheap DB queries...
@@ -836,12 +850,12 @@ function get_user_access_sitewide($userid) {
               JOIN {context} ctx
                    ON ctx.id = ra.contextid
          LEFT JOIN {block_instances} bi
-                   ON (ctx.contextlevel = ".CONTEXT_BLOCK." AND bi.id = ctx.instanceid)
+                   ON (ctx.contextlevel = " . CONTEXT_BLOCK . " AND bi.id = ctx.instanceid)
          LEFT JOIN {context} bpctx
                    ON (bpctx.id = bi.parentcontextid)
              WHERE ra.userid = :userid
-                   AND (ctx.contextlevel <= ".CONTEXT_COURSE." OR bpctx.contextlevel < ".CONTEXT_COURSE.")";
-    $params = array('userid'=>$userid);
+                   AND (ctx.contextlevel <= " . CONTEXT_COURSE . " OR bpctx.contextlevel < " . CONTEXT_COURSE . ")";
+    $params = array('userid' => $userid);
     $rs = $DB->get_recordset_sql($sql, $params);
     foreach ($rs as $ra) {
         // RAs leafs are arrays to support multi-role assignments...
@@ -861,11 +875,11 @@ function get_user_access_sitewide($userid) {
     $params = array();
 
     static $cp = 0;
-    foreach ($raparents as $roleid=>$ras) {
+    foreach ($raparents as $roleid => $ras) {
         $cp++;
-        list($sqlcids, $cids) = $DB->get_in_or_equal($ras, SQL_PARAMS_NAMED, 'c'.$cp.'_');
+        list($sqlcids, $cids) = $DB->get_in_or_equal($ras, SQL_PARAMS_NAMED, 'c' . $cp . '_');
         $params = array_merge($params, $cids);
-        $params['r'.$cp] = $roleid;
+        $params['r' . $cp] = $roleid;
         $sqls[] = "(SELECT ctx.path, rc.roleid, rc.capability, rc.permission
                      FROM {role_capabilities} rc
                      JOIN {context} ctx
@@ -873,28 +887,28 @@ function get_user_access_sitewide($userid) {
                      JOIN {context} pctx
                           ON (pctx.id $sqlcids
                               AND (ctx.id = pctx.id
-                                   OR ctx.path LIKE ".$DB->sql_concat('pctx.path',"'/%'")."
-                                   OR pctx.path LIKE ".$DB->sql_concat('ctx.path',"'/%'")."))
+                                   OR ctx.path LIKE " . $DB->sql_concat('pctx.path', "'/%'") . "
+                                   OR pctx.path LIKE " . $DB->sql_concat('ctx.path', "'/%'") . "))
                 LEFT JOIN {block_instances} bi
-                          ON (ctx.contextlevel = ".CONTEXT_BLOCK." AND bi.id = ctx.instanceid)
+                          ON (ctx.contextlevel = " . CONTEXT_BLOCK . " AND bi.id = ctx.instanceid)
                 LEFT JOIN {context} bpctx
                           ON (bpctx.id = bi.parentcontextid)
                     WHERE rc.roleid = :r{$cp}
-                          AND (ctx.contextlevel <= ".CONTEXT_COURSE." OR bpctx.contextlevel < ".CONTEXT_COURSE.")
+                          AND (ctx.contextlevel <= " . CONTEXT_COURSE . " OR bpctx.contextlevel < " . CONTEXT_COURSE . ")
                    )";
     }
 
     // fixed capability order is necessary for rdef dedupe
-    $rs = $DB->get_recordset_sql(implode("\nUNION\n", $sqls). "ORDER BY capability", $params);
+    $rs = $DB->get_recordset_sql(implode("\nUNION\n", $sqls) . "ORDER BY capability", $params);
 
     foreach ($rs as $rd) {
-        $k = $rd->path.':'.$rd->roleid;
+        $k = $rd->path . ':' . $rd->roleid;
         $accessdata['rdef'][$k][$rd->capability] = (int)$rd->permission;
     }
     $rs->close();
 
     // share the role definitions
-    foreach ($accessdata['rdef'] as $k=>$unused) {
+    foreach ($accessdata['rdef'] as $k => $unused) {
         if (!isset($ACCESSLIB_PRIVATE->rolepermissions[$k])) {
             $ACCESSLIB_PRIVATE->rolepermissions[$k] = $accessdata['rdef'][$k];
         }
@@ -916,7 +930,8 @@ function get_user_access_sitewide($userid) {
  * @param array $accessdata accessdata array (modified)
  * @return void modifies $accessdata parameter
  */
-function load_course_context($userid, context_course $coursecontext, &$accessdata) {
+function load_course_context($userid, context_course $coursecontext, &$accessdata)
+{
     global $DB, $CFG, $ACCESSLIB_PRIVATE;
 
     if (empty($coursecontext->path)) {
@@ -945,7 +960,7 @@ function load_course_context($userid, context_course $coursecontext, &$accessdat
         // Interesting role assignments at, above and below the course context
         list($parentsaself, $params) = $DB->get_in_or_equal($coursecontext->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'pc_');
         $params['userid'] = $userid;
-        $params['children'] = $coursecontext->path."/%";
+        $params['children'] = $coursecontext->path . "/%";
         $sql = "SELECT ra.*, ctx.path
                   FROM {role_assignments} ra
                   JOIN {context} ctx ON ra.contextid = ctx.id
@@ -980,7 +995,7 @@ function load_course_context($userid, context_course $coursecontext, &$accessdat
     }
 
     // now get overrides of interesting roles in all interesting contexts (this course + children + parents)
-    $params = array('c'=>$coursecontext->id);
+    $params = array('c' => $coursecontext->id);
     list($parentsaself, $rparams) = $DB->get_in_or_equal($coursecontext->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'pc_');
     $params = array_merge($params, $rparams);
     list($roleids, $rparams) = $DB->get_in_or_equal($roles, SQL_PARAMS_NAMED, 'r_');
@@ -992,14 +1007,14 @@ function load_course_context($userid, context_course $coursecontext, &$accessdat
                       ON (ctx.id = rc.contextid)
                  JOIN {context} cctx
                       ON (cctx.id = :c
-                          AND (ctx.id $parentsaself OR ctx.path LIKE ".$DB->sql_concat('cctx.path',"'/%'")."))
+                          AND (ctx.id $parentsaself OR ctx.path LIKE " . $DB->sql_concat('cctx.path', "'/%'") . "))
                 WHERE rc.roleid $roleids
              ORDER BY rc.capability"; // fixed capability order is necessary for rdef dedupe
     $rs = $DB->get_recordset_sql($sql, $params);
 
     $newrdefs = array();
     foreach ($rs as $rd) {
-        $k = $rd->path.':'.$rd->roleid;
+        $k = $rd->path . ':' . $rd->roleid;
         if (isset($accessdata['rdef'][$k])) {
             continue;
         }
@@ -1008,7 +1023,7 @@ function load_course_context($userid, context_course $coursecontext, &$accessdat
     $rs->close();
 
     // share new role definitions
-    foreach ($newrdefs as $k=>$unused) {
+    foreach ($newrdefs as $k => $unused) {
         if (!isset($ACCESSLIB_PRIVATE->rolepermissions[$k])) {
             $ACCESSLIB_PRIVATE->rolepermissions[$k] = $newrdefs[$k];
         }
@@ -1036,7 +1051,8 @@ function load_course_context($userid, context_course $coursecontext, &$accessdat
  * @param array $accessdata accessdata array (is modified)
  * @return array
  */
-function load_role_access_by_context($roleid, context $context, &$accessdata) {
+function load_role_access_by_context($roleid, context $context, &$accessdata)
+{
     global $DB, $ACCESSLIB_PRIVATE;
 
     /* Get the relevant rolecaps into rdef
@@ -1052,7 +1068,7 @@ function load_role_access_by_context($roleid, context $context, &$accessdata) {
 
     list($parentsaself, $params) = $DB->get_in_or_equal($context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'pc_');
     $params['roleid'] = $roleid;
-    $params['childpath'] = $context->path.'/%';
+    $params['childpath'] = $context->path . '/%';
 
     $sql = "SELECT ctx.path, rc.capability, rc.permission
               FROM {role_capabilities} rc
@@ -1063,7 +1079,7 @@ function load_role_access_by_context($roleid, context $context, &$accessdata) {
 
     $newrdefs = array();
     foreach ($rs as $rd) {
-        $k = $rd->path.':'.$roleid;
+        $k = $rd->path . ':' . $roleid;
         if (isset($accessdata['rdef'][$k])) {
             continue;
         }
@@ -1072,7 +1088,7 @@ function load_role_access_by_context($roleid, context $context, &$accessdata) {
     $rs->close();
 
     // share new role definitions
-    foreach ($newrdefs as $k=>$unused) {
+    foreach ($newrdefs as $k => $unused) {
         if (!isset($ACCESSLIB_PRIVATE->rolepermissions[$k])) {
             $ACCESSLIB_PRIVATE->rolepermissions[$k] = $newrdefs[$k];
         }
@@ -1087,15 +1103,16 @@ function load_role_access_by_context($roleid, context $context, &$accessdata) {
  * @access private
  * @return array empt accessdata
  */
-function get_empty_accessdata() {
-    $accessdata               = array(); // named list
-    $accessdata['ra']         = array();
-    $accessdata['rdef']       = array();
+function get_empty_accessdata()
+{
+    $accessdata = array(); // named list
+    $accessdata['ra'] = array();
+    $accessdata['rdef'] = array();
     $accessdata['rdef_count'] = 0;       // this bloody hack is necessary because count($array) is slooooowwww in PHP
-    $accessdata['rdef_lcc']   = 0;       // rdef_count during the last compression
-    $accessdata['loaded']     = array(); // loaded course contexts
-    $accessdata['time']       = time();
-    $accessdata['rsw']        = array();
+    $accessdata['rdef_lcc'] = 0;       // rdef_count during the last compression
+    $accessdata['loaded'] = array(); // loaded course contexts
+    $accessdata['time'] = time();
+    $accessdata['rsw'] = array();
 
     return $accessdata;
 }
@@ -1108,12 +1125,13 @@ function get_empty_accessdata() {
  * @param bool $preloadonly true means do not return access array
  * @return array accessdata
  */
-function get_user_accessdata($userid, $preloadonly=false) {
+function get_user_accessdata($userid, $preloadonly = false)
+{
     global $CFG, $ACCESSLIB_PRIVATE, $USER;
 
     if (!empty($USER->access['rdef']) and empty($ACCESSLIB_PRIVATE->rolepermissions)) {
         // share rdef from USER session with rolepermissions cache in order to conserve memory
-        foreach ($USER->access['rdef'] as $k=>$v) {
+        foreach ($USER->access['rdef'] as $k => $v) {
             $ACCESSLIB_PRIVATE->rolepermissions[$k] =& $USER->access['rdef'][$k];
         }
         $ACCESSLIB_PRIVATE->accessdatabyuser[$USER->id] = $USER->access;
@@ -1157,7 +1175,8 @@ function get_user_accessdata($userid, $preloadonly=false) {
  * @access private
  * @return void
  */
-function dedupe_user_access() {
+function dedupe_user_access()
+{
     global $USER;
 
     if (CLI_SCRIPT) {
@@ -1177,7 +1196,7 @@ function dedupe_user_access() {
     }
 
     $hashmap = array();
-    foreach ($USER->access['rdef'] as $k=>$def) {
+    foreach ($USER->access['rdef'] as $k => $def) {
         $hash = sha1(serialize($def));
         if (isset($hashmap[$hash])) {
             $USER->access['rdef'][$k] =& $hashmap[$hash];
@@ -1199,7 +1218,8 @@ function dedupe_user_access() {
  * @access private
  * @return void
  */
-function load_all_capabilities() {
+function load_all_capabilities()
+{
     global $USER;
 
     // roles not installed yet - we are in the middle of installation
@@ -1222,7 +1242,7 @@ function load_all_capabilities() {
     unset($USER->mycourses);
 
     // init/reset internal enrol caches - active course enrolments and temp access
-    $USER->enrol = array('enrolled'=>array(), 'tempguest'=>array());
+    $USER->enrol = array('enrolled' => array(), 'tempguest' => array());
 }
 
 /**
@@ -1238,7 +1258,8 @@ function load_all_capabilities() {
  * @access private
  * @return void
  */
-function reload_all_capabilities() {
+function reload_all_capabilities()
+{
     global $USER, $DB, $ACCESSLIB_PRIVATE;
 
     // copy switchroles
@@ -1254,7 +1275,7 @@ function reload_all_capabilities() {
     load_all_capabilities();
 
     foreach ($sw as $path => $roleid) {
-        if ($record = $DB->get_record('context', array('path'=>$path))) {
+        if ($record = $DB->get_record('context', array('path' => $path))) {
             $context = context::instance_by_id($record->id);
             role_switch($roleid, $context);
         }
@@ -1272,7 +1293,8 @@ function reload_all_capabilities() {
  * @param int $roleid
  * @return void
  */
-function load_temp_course_role(context_course $coursecontext, $roleid) {
+function load_temp_course_role(context_course $coursecontext, $roleid)
+{
     global $USER, $SITE;
 
     if (empty($roleid)) {
@@ -1311,7 +1333,8 @@ function load_temp_course_role(context_course $coursecontext, $roleid) {
  * @param context_course $coursecontext
  * @return void
  */
-function remove_temp_course_roles(context_course $coursecontext) {
+function remove_temp_course_roles(context_course $coursecontext)
+{
     global $DB, $USER, $SITE;
 
     if ($coursecontext->instanceid == $SITE->id) {
@@ -1327,10 +1350,10 @@ function remove_temp_course_roles(context_course $coursecontext) {
     $sql = "SELECT DISTINCT ra.roleid AS id
               FROM {role_assignments} ra
              WHERE ra.contextid = :contextid AND ra.userid = :userid";
-    $ras = $DB->get_records_sql($sql, array('contextid'=>$coursecontext->id, 'userid'=>$USER->id));
+    $ras = $DB->get_records_sql($sql, array('contextid' => $coursecontext->id, 'userid' => $USER->id));
 
     $USER->access['ra'][$coursecontext->path] = array();
-    foreach($ras as $r) {
+    foreach ($ras as $r) {
         $USER->access['ra'][$coursecontext->path][(int)$r->id] = (int)$r->id;
     }
 }
@@ -1340,16 +1363,17 @@ function remove_temp_course_roles(context_course $coursecontext) {
  *
  * @return array
  */
-function get_role_archetypes() {
+function get_role_archetypes()
+{
     return array(
-        'manager'        => 'manager',
-        'coursecreator'  => 'coursecreator',
+        'manager' => 'manager',
+        'coursecreator' => 'coursecreator',
         'editingteacher' => 'editingteacher',
-        'teacher'        => 'teacher',
-        'student'        => 'student',
-        'guest'          => 'guest',
-        'user'           => 'user',
-        'frontpage'      => 'frontpage'
+        'teacher' => 'teacher',
+        'student' => 'student',
+        'guest' => 'guest',
+        'user' => 'user',
+        'frontpage' => 'frontpage'
     );
 }
 
@@ -1367,7 +1391,8 @@ function get_role_archetypes() {
  *                      'manager' => CAP_ALLOW
  * @return boolean success or failure.
  */
-function assign_legacy_capabilities($capability, $legacyperms) {
+function assign_legacy_capabilities($capability, $legacyperms)
+{
 
     $archetypes = get_role_archetypes();
 
@@ -1402,7 +1427,8 @@ function assign_legacy_capabilities($capability, $legacyperms) {
  * @return boolean whether this capability is safe - that is, whether people with the
  *      safeoverrides capability should be allowed to change it.
  */
-function is_safe_capability($capability) {
+function is_safe_capability($capability)
+{
     return !((RISK_DATALOSS | RISK_MANAGETRUST | RISK_CONFIG | RISK_XSS | RISK_PERSONAL) & $capability->riskbitmask);
 }
 
@@ -1414,9 +1440,10 @@ function is_safe_capability($capability) {
  * @param string $capability
  * @return stdClass local capability override
  */
-function get_local_override($roleid, $contextid, $capability) {
+function get_local_override($roleid, $contextid, $capability)
+{
     global $DB;
-    return $DB->get_record('role_capabilities', array('roleid'=>$roleid, 'capability'=>$capability, 'contextid'=>$contextid));
+    return $DB->get_record('role_capabilities', array('roleid' => $roleid, 'capability' => $capability, 'contextid' => $contextid));
 }
 
 /**
@@ -1425,28 +1452,29 @@ function get_local_override($roleid, $contextid, $capability) {
  * @param int $contextid
  * @return array of ($context, $course, $cm)
  */
-function get_context_info_array($contextid) {
+function get_context_info_array($contextid)
+{
     global $DB;
 
     $context = context::instance_by_id($contextid, MUST_EXIST);
-    $course  = null;
-    $cm      = null;
+    $course = null;
+    $cm = null;
 
     if ($context->contextlevel == CONTEXT_COURSE) {
-        $course = $DB->get_record('course', array('id'=>$context->instanceid), '*', MUST_EXIST);
+        $course = $DB->get_record('course', array('id' => $context->instanceid), '*', MUST_EXIST);
 
     } else if ($context->contextlevel == CONTEXT_MODULE) {
         $cm = get_coursemodule_from_id('', $context->instanceid, 0, false, MUST_EXIST);
-        $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+        $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
     } else if ($context->contextlevel == CONTEXT_BLOCK) {
         $parent = $context->get_parent_context();
 
         if ($parent->contextlevel == CONTEXT_COURSE) {
-            $course = $DB->get_record('course', array('id'=>$parent->instanceid), '*', MUST_EXIST);
+            $course = $DB->get_record('course', array('id' => $parent->instanceid), '*', MUST_EXIST);
         } else if ($parent->contextlevel == CONTEXT_MODULE) {
             $cm = get_coursemodule_from_id('', $parent->instanceid, 0, false, MUST_EXIST);
-            $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+            $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
         }
     }
 
@@ -1462,7 +1490,8 @@ function get_context_info_array($contextid) {
  * @param string $archetype
  * @return int id or dml_exception
  */
-function create_role($name, $shortname, $description, $archetype = '') {
+function create_role($name, $shortname, $description, $archetype = '')
+{
     global $DB;
 
     if (strpos($archetype, 'moodle/legacy:') !== false) {
@@ -1477,10 +1506,10 @@ function create_role($name, $shortname, $description, $archetype = '') {
 
     // Insert the role record.
     $role = new stdClass();
-    $role->name        = $name;
-    $role->shortname   = $shortname;
+    $role->name = $name;
+    $role->shortname = $shortname;
     $role->description = $description;
-    $role->archetype   = $archetype;
+    $role->archetype = $archetype;
 
     //find free sortorder number
     $role->sortorder = $DB->get_field('role', 'MAX(sortorder) + 1', array());
@@ -1498,26 +1527,27 @@ function create_role($name, $shortname, $description, $archetype = '') {
  * @param int $roleid id of role to delete
  * @return bool always true
  */
-function delete_role($roleid) {
+function delete_role($roleid)
+{
     global $DB;
 
     // first unssign all users
-    role_unassign_all(array('roleid'=>$roleid));
+    role_unassign_all(array('roleid' => $roleid));
 
     // cleanup all references to this role, ignore errors
-    $DB->delete_records('role_capabilities',   array('roleid'=>$roleid));
-    $DB->delete_records('role_allow_assign',   array('roleid'=>$roleid));
-    $DB->delete_records('role_allow_assign',   array('allowassign'=>$roleid));
-    $DB->delete_records('role_allow_override', array('roleid'=>$roleid));
-    $DB->delete_records('role_allow_override', array('allowoverride'=>$roleid));
-    $DB->delete_records('role_names',          array('roleid'=>$roleid));
-    $DB->delete_records('role_context_levels', array('roleid'=>$roleid));
+    $DB->delete_records('role_capabilities', array('roleid' => $roleid));
+    $DB->delete_records('role_allow_assign', array('roleid' => $roleid));
+    $DB->delete_records('role_allow_assign', array('allowassign' => $roleid));
+    $DB->delete_records('role_allow_override', array('roleid' => $roleid));
+    $DB->delete_records('role_allow_override', array('allowoverride' => $roleid));
+    $DB->delete_records('role_names', array('roleid' => $roleid));
+    $DB->delete_records('role_context_levels', array('roleid' => $roleid));
 
     // Get role record before it's deleted.
-    $role = $DB->get_record('role', array('id'=>$roleid));
+    $role = $DB->get_record('role', array('id' => $roleid));
 
     // Finally delete the role itself.
-    $DB->delete_records('role', array('id'=>$roleid));
+    $DB->delete_records('role', array('id' => $roleid));
 
     // Trigger event.
     $event = \core\event\role_deleted::create(
@@ -1530,8 +1560,8 @@ function delete_role($roleid) {
                     'description' => $role->description,
                     'archetype' => $role->archetype
                 )
-            )
-        );
+        )
+    );
     $event->add_record_snapshot('role', $role);
     $event->trigger();
 
@@ -1550,7 +1580,8 @@ function delete_role($roleid) {
  * @param bool $overwrite
  * @return bool always true or exception
  */
-function assign_capability($capability, $permission, $roleid, $contextid, $overwrite = false) {
+function assign_capability($capability, $permission, $roleid, $contextid, $overwrite = false)
+{
     global $USER, $DB;
 
     if ($contextid instanceof context) {
@@ -1564,25 +1595,25 @@ function assign_capability($capability, $permission, $roleid, $contextid, $overw
         return true;
     }
 
-    $existing = $DB->get_record('role_capabilities', array('contextid'=>$context->id, 'roleid'=>$roleid, 'capability'=>$capability));
+    $existing = $DB->get_record('role_capabilities', array('contextid' => $context->id, 'roleid' => $roleid, 'capability' => $capability));
 
     if ($existing and !$overwrite) {   // We want to keep whatever is there already
         return true;
     }
 
     $cap = new stdClass();
-    $cap->contextid    = $context->id;
-    $cap->roleid       = $roleid;
-    $cap->capability   = $capability;
-    $cap->permission   = $permission;
+    $cap->contextid = $context->id;
+    $cap->roleid = $roleid;
+    $cap->capability = $capability;
+    $cap->permission = $permission;
     $cap->timemodified = time();
-    $cap->modifierid   = empty($USER->id) ? 0 : $USER->id;
+    $cap->modifierid = empty($USER->id) ? 0 : $USER->id;
 
     if ($existing) {
         $cap->id = $existing->id;
         $DB->update_record('role_capabilities', $cap);
     } else {
-        if ($DB->record_exists('context', array('id'=>$context->id))) {
+        if ($DB->record_exists('context', array('id' => $context->id))) {
             $DB->insert_record('role_capabilities', $cap);
         }
     }
@@ -1599,7 +1630,8 @@ function assign_capability($capability, $permission, $roleid, $contextid, $overw
  * @param int|context $contextid null means all contexts
  * @return boolean true or exception
  */
-function unassign_capability($capability, $roleid, $contextid = null) {
+function unassign_capability($capability, $roleid, $contextid = null)
+{
     global $DB;
 
     if (!empty($contextid)) {
@@ -1609,9 +1641,9 @@ function unassign_capability($capability, $roleid, $contextid = null) {
             $context = context::instance_by_id($contextid);
         }
         // delete from context rel, if this is the last override in this context
-        $DB->delete_records('role_capabilities', array('capability'=>$capability, 'roleid'=>$roleid, 'contextid'=>$context->id));
+        $DB->delete_records('role_capabilities', array('capability' => $capability, 'roleid' => $roleid, 'contextid' => $context->id));
     } else {
-        $DB->delete_records('role_capabilities', array('capability'=>$capability, 'roleid'=>$roleid));
+        $DB->delete_records('role_capabilities', array('capability' => $capability, 'roleid' => $roleid));
     }
     return true;
 }
@@ -1629,7 +1661,8 @@ function unassign_capability($capability, $roleid, $contextid = null) {
  * @param stdClass $context null means any
  * @return array of role records
  */
-function get_roles_with_capability($capability, $permission = null, $context = null) {
+function get_roles_with_capability($capability, $permission = null, $context = null)
+{
     global $DB;
 
     if ($context) {
@@ -1672,7 +1705,8 @@ function get_roles_with_capability($capability, $permission = null, $context = n
  * @param string $timemodified defaults to current time
  * @return int new/existing id of the assignment
  */
-function role_assign($roleid, $userid, $contextid, $component = '', $itemid = 0, $timemodified = '') {
+function role_assign($roleid, $userid, $contextid, $component = '', $itemid = 0, $timemodified = '')
+{
     global $USER, $DB, $CFG;
 
     // first of all detect if somebody is using old style parameters
@@ -1691,17 +1725,17 @@ function role_assign($roleid, $userid, $contextid, $component = '', $itemid = 0,
 
     if ($itemid) {
         if (strpos($component, '_') === false) {
-            throw new coding_exception('Invalid call to role_assign(), component must start with plugin type such as"enrol_" when itemid specified', 'component:'.$component);
+            throw new coding_exception('Invalid call to role_assign(), component must start with plugin type such as"enrol_" when itemid specified', 'component:' . $component);
         }
     } else {
         $itemid = 0;
         if ($component !== '' and strpos($component, '_') === false) {
-            throw new coding_exception('Invalid call to role_assign(), invalid component string', 'component:'.$component);
+            throw new coding_exception('Invalid call to role_assign(), invalid component string', 'component:' . $component);
         }
     }
 
-    if (!$DB->record_exists('user', array('id'=>$userid, 'deleted'=>0))) {
-        throw new coding_exception('User ID does not exist or is deleted!', 'userid:'.$userid);
+    if (!$DB->record_exists('user', array('id' => $userid, 'deleted' => 0))) {
+        throw new coding_exception('User ID does not exist or is deleted!', 'userid:' . $userid);
     }
 
     if ($contextid instanceof context) {
@@ -1715,7 +1749,7 @@ function role_assign($roleid, $userid, $contextid, $component = '', $itemid = 0,
     }
 
     // Check for existing entry
-    $ras = $DB->get_records('role_assignments', array('roleid'=>$roleid, 'contextid'=>$context->id, 'userid'=>$userid, 'component'=>$component, 'itemid'=>$itemid), 'id');
+    $ras = $DB->get_records('role_assignments', array('roleid' => $roleid, 'contextid' => $context->id, 'userid' => $userid, 'component' => $component, 'itemid' => $itemid), 'id');
 
     if ($ras) {
         // role already assigned - this should not happen
@@ -1723,7 +1757,7 @@ function role_assign($roleid, $userid, $contextid, $component = '', $itemid = 0,
             // very weird - remove all duplicates!
             $ra = array_shift($ras);
             foreach ($ras as $r) {
-                $DB->delete_records('role_assignments', array('id'=>$r->id));
+                $DB->delete_records('role_assignments', array('id' => $r->id));
             }
         } else {
             $ra = reset($ras);
@@ -1735,14 +1769,14 @@ function role_assign($roleid, $userid, $contextid, $component = '', $itemid = 0,
 
     // Create a new entry
     $ra = new stdClass();
-    $ra->roleid       = $roleid;
-    $ra->contextid    = $context->id;
-    $ra->userid       = $userid;
-    $ra->component    = $component;
-    $ra->itemid       = $itemid;
+    $ra->roleid = $roleid;
+    $ra->contextid = $context->id;
+    $ra->userid = $userid;
+    $ra->component = $component;
+    $ra->itemid = $itemid;
     $ra->timemodified = $timemodified;
-    $ra->modifierid   = empty($USER->id) ? 0 : $USER->id;
-    $ra->sortorder    = 0;
+    $ra->modifierid = empty($USER->id) ? 0 : $USER->id;
+    $ra->sortorder = 0;
 
     $ra->id = $DB->insert_record('role_assignments', $ra);
 
@@ -1777,13 +1811,14 @@ function role_assign($roleid, $userid, $contextid, $component = '', $itemid = 0,
  * Removes one role assignment
  *
  * @param int $roleid
- * @param int  $userid
- * @param int  $contextid
+ * @param int $userid
+ * @param int $contextid
  * @param string $component
- * @param int  $itemid
+ * @param int $itemid
  * @return void
  */
-function role_unassign($roleid, $userid, $contextid, $component = '', $itemid = 0) {
+function role_unassign($roleid, $userid, $contextid, $component = '', $itemid = 0)
+{
     // first make sure the params make sense
     if ($roleid == 0 or $userid == 0 or $contextid == 0) {
         throw new coding_exception('Invalid call to role_unassign(), please use role_unassign_all() when removing multiple role assignments');
@@ -1791,16 +1826,16 @@ function role_unassign($roleid, $userid, $contextid, $component = '', $itemid = 
 
     if ($itemid) {
         if (strpos($component, '_') === false) {
-            throw new coding_exception('Invalid call to role_assign(), component must start with plugin type such as "enrol_" when itemid specified', 'component:'.$component);
+            throw new coding_exception('Invalid call to role_assign(), component must start with plugin type such as "enrol_" when itemid specified', 'component:' . $component);
         }
     } else {
         $itemid = 0;
         if ($component !== '' and strpos($component, '_') === false) {
-            throw new coding_exception('Invalid call to role_assign(), invalid component string', 'component:'.$component);
+            throw new coding_exception('Invalid call to role_assign(), invalid component string', 'component:' . $component);
         }
     }
 
-    role_unassign_all(array('roleid'=>$roleid, 'userid'=>$userid, 'contextid'=>$contextid, 'component'=>$component, 'itemid'=>$itemid), false, false);
+    role_unassign_all(array('roleid' => $roleid, 'userid' => $userid, 'contextid' => $contextid, 'component' => $component, 'itemid' => $itemid), false, false);
 }
 
 /**
@@ -1812,7 +1847,8 @@ function role_unassign($roleid, $userid, $contextid, $component = '', $itemid = 
  * @param bool $includemanual include manual role assignments too
  * @return void
  */
-function role_unassign_all(array $params, $subcontexts = false, $includemanual = false) {
+function role_unassign_all(array $params, $subcontexts = false, $includemanual = false)
+{
     global $USER, $CFG, $DB;
     require_once($CFG->libdir . '/coursecatlib.php');
 
@@ -1821,14 +1857,14 @@ function role_unassign_all(array $params, $subcontexts = false, $includemanual =
     }
 
     $allowed = array('roleid', 'userid', 'contextid', 'component', 'itemid');
-    foreach ($params as $key=>$value) {
+    foreach ($params as $key => $value) {
         if (!in_array($key, $allowed)) {
-            throw new coding_exception('Unknown role_unsassign_all() parameter key', 'key:'.$key);
+            throw new coding_exception('Unknown role_unsassign_all() parameter key', 'key:' . $key);
         }
     }
 
     if (isset($params['component']) and $params['component'] !== '' and strpos($params['component'], '_') === false) {
-        throw new coding_exception('Invalid component paramter in role_unsassign_all() call', 'component:'.$params['component']);
+        throw new coding_exception('Invalid component paramter in role_unsassign_all() call', 'component:' . $params['component']);
     }
 
     if ($includemanual) {
@@ -1844,8 +1880,8 @@ function role_unassign_all(array $params, $subcontexts = false, $includemanual =
     }
 
     $ras = $DB->get_records('role_assignments', $params);
-    foreach($ras as $ra) {
-        $DB->delete_records('role_assignments', array('id'=>$ra->id));
+    foreach ($ras as $ra) {
+        $DB->delete_records('role_assignments', array('id' => $ra->id));
         if ($context = context::instance_by_id($ra->contextid, IGNORE_MISSING)) {
             // this is a bit expensive but necessary
             $context->mark_dirty();
@@ -1881,11 +1917,11 @@ function role_unassign_all(array $params, $subcontexts = false, $includemanual =
         if ($context) {
             $contexts = $context->get_child_contexts();
             $mparams = $params;
-            foreach($contexts as $context) {
+            foreach ($contexts as $context) {
                 $mparams['contextid'] = $context->id;
                 $ras = $DB->get_records('role_assignments', $mparams);
-                foreach($ras as $ra) {
-                    $DB->delete_records('role_assignments', array('id'=>$ra->id));
+                foreach ($ras as $ra) {
+                    $DB->delete_records('role_assignments', array('id' => $ra->id));
                     // this is a bit expensive but necessary
                     $context->mark_dirty();
                     // If the user is the current user, then do full reload of capabilities too.
@@ -1893,8 +1929,8 @@ function role_unassign_all(array $params, $subcontexts = false, $includemanual =
                         reload_all_capabilities();
                     }
                     $event = \core\event\role_unassigned::create(
-                        array('context'=>$context, 'objectid'=>$ra->roleid, 'relateduserid'=>$ra->userid,
-                            'other'=>array('id'=>$ra->id, 'component'=>$ra->component, 'itemid'=>$ra->itemid)));
+                        array('context' => $context, 'objectid' => $ra->roleid, 'relateduserid' => $ra->userid,
+                            'other' => array('id' => $ra->id, 'component' => $ra->component, 'itemid' => $ra->itemid)));
                     $event->add_record_snapshot('role_assignments', $ra);
                     $event->trigger();
                     coursecat::role_assignment_changed($ra->roleid, $context);
@@ -1917,7 +1953,8 @@ function role_unassign_all(array $params, $subcontexts = false, $includemanual =
  *
  * @return bool
  */
-function isloggedin() {
+function isloggedin()
+{
     global $USER;
 
     return (!empty($USER->id));
@@ -1931,12 +1968,13 @@ function isloggedin() {
  * @param int|object $user mixed user object or id, $USER if not specified
  * @return bool true if user is the real guest user, false if not logged in or other user
  */
-function isguestuser($user = null) {
+function isguestuser($user = null)
+{
     global $USER, $DB, $CFG;
 
     // make sure we have the user id cached in config table, because we are going to use it a lot
     if (empty($CFG->siteguest)) {
-        if (!$guestid = $DB->get_field('user', 'id', array('username'=>'guest', 'mnethostid'=>$CFG->mnet_localhost_id))) {
+        if (!$guestid = $DB->get_field('user', 'id', array('username' => 'guest', 'mnethostid' => $CFG->mnet_localhost_id))) {
             // guest does not exist yet, weird
             return false;
         }
@@ -1974,7 +2012,8 @@ function isguestuser($user = null) {
  * @param stdClass|int $user
  * @return bool
  */
-function is_guest(context $context, $user = null) {
+function is_guest(context $context, $user = null)
+{
     global $USER;
 
     // first find the course context
@@ -2016,7 +2055,8 @@ function is_guest(context $context, $user = null) {
  * @param string $withcapability extra capability name
  * @return bool
  */
-function is_viewing(context $context, $user = null, $withcapability = '') {
+function is_viewing(context $context, $user = null, $withcapability = '')
+{
     // first find the course context
     $coursecontext = $context->get_course_context();
 
@@ -2053,7 +2093,8 @@ function is_viewing(context $context, $user = null, $withcapability = '') {
  * @param bool $onlyactive consider only active enrolments in enabled plugins and time restrictions
  * @return bool
  */
-function is_enrolled(context $context, $user = null, $withcapability = '', $onlyactive = false) {
+function is_enrolled(context $context, $user = null, $withcapability = '', $onlyactive = false)
+{
     global $USER, $DB;
 
     // first find the course context
@@ -2116,7 +2157,7 @@ function is_enrolled(context $context, $user = null, $withcapability = '', $only
                       JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = :courseid)
                       JOIN {user} u ON u.id = ue.userid
                      WHERE ue.userid = :userid AND u.deleted = 0";
-            $params = array('userid'=>$userid, 'courseid'=>$coursecontext->instanceid);
+            $params = array('userid' => $userid, 'courseid' => $coursecontext->instanceid);
             if (!$DB->record_exists_sql($sql, $params)) {
                 return false;
             }
@@ -2151,7 +2192,8 @@ function is_enrolled(context $context, $user = null, $withcapability = '', $only
  * @param bool $onlyactive consider only active enrolments in enabled plugins and time restrictions
  * @return boolean Returns true if the user is able to access the course
  */
-function can_access_course(stdClass $course, $user = null, $withcapability = '', $onlyactive = false) {
+function can_access_course(stdClass $course, $user = null, $withcapability = '', $onlyactive = false)
+{
     global $DB, $USER;
 
     // this function originally accepted $coursecontext parameter
@@ -2159,7 +2201,7 @@ function can_access_course(stdClass $course, $user = null, $withcapability = '',
         if ($course instanceof context_course) {
             debugging('deprecated context parameter, please use $course record');
             $coursecontext = $course;
-            $course = $DB->get_record('course', array('id'=>$coursecontext->instanceid));
+            $course = $DB->get_record('course', array('id' => $coursecontext->instanceid));
         } else {
             debugging('Invalid context parameter, please use $course record');
             return false;
@@ -2226,9 +2268,9 @@ function can_access_course(stdClass $course, $user = null, $withcapability = '',
     }
 
     // if not enrolled try to gain temporary guest access
-    $instances = $DB->get_records('enrol', array('courseid'=>$course->id, 'status'=>ENROL_INSTANCE_ENABLED), 'sortorder, id ASC');
+    $instances = $DB->get_records('enrol', array('courseid' => $course->id, 'status' => ENROL_INSTANCE_ENABLED), 'sortorder, id ASC');
     $enrols = enrol_get_plugins(true);
-    foreach($instances as $instance) {
+    foreach ($instances as $instance) {
         if (!isset($enrols[$instance->enrol])) {
             continue;
         }
@@ -2263,13 +2305,14 @@ function can_access_course(stdClass $course, $user = null, $withcapability = '',
  * @param bool $onlysuspended inverse of onlyactive, consider only suspended enrolments
  * @return array list($sql, $params)
  */
-function get_enrolled_sql(context $context, $withcapability = '', $groupid = 0, $onlyactive = false, $onlysuspended = false) {
+function get_enrolled_sql(context $context, $withcapability = '', $groupid = 0, $onlyactive = false, $onlysuspended = false)
+{
     global $DB, $CFG;
 
     // use unique prefix just in case somebody makes some SQL magic with the result
     static $i = 0;
     $i++;
-    $prefix = 'eu'.$i.'_';
+    $prefix = 'eu' . $i . '_';
 
     // first find the course context
     $coursecontext = $context->get_course_context();
@@ -2283,7 +2326,7 @@ function get_enrolled_sql(context $context, $withcapability = '', $groupid = 0, 
         throw new coding_exception("onlysuspended is not supported on frontpage; please add your own early-exit!");
     }
 
-    $joins  = array();
+    $joins = array();
     $wheres = array();
     $params = array();
 
@@ -2310,7 +2353,7 @@ function get_enrolled_sql(context $context, $withcapability = '', $groupid = 0, 
                 if (empty($defs[$path])) {
                     continue;
                 }
-                foreach($defs[$path] as $roleid => $perm) {
+                foreach ($defs[$path] as $roleid => $perm) {
                     if ($perm == CAP_PROHIBIT) {
                         $access[$roleid] = CAP_PROHIBIT;
                         continue;
@@ -2325,7 +2368,7 @@ function get_enrolled_sql(context $context, $withcapability = '', $groupid = 0, 
         unset($defs);
 
         // make lists of roles that are needed and prohibited
-        $needed     = array(); // one of these is enough
+        $needed = array(); // one of these is enough
         $prohibited = array(); // must not have any of these
         foreach ($access as $roleid => $perm) {
             if ($perm == CAP_PROHIBIT) {
@@ -2336,7 +2379,7 @@ function get_enrolled_sql(context $context, $withcapability = '', $groupid = 0, 
             }
         }
 
-        $defaultuserroleid      = isset($CFG->defaultuserroleid) ? $CFG->defaultuserroleid : 0;
+        $defaultuserroleid = isset($CFG->defaultuserroleid) ? $CFG->defaultuserroleid : 0;
         $defaultfrontpageroleid = isset($CFG->defaultfrontpageroleid) ? $CFG->defaultfrontpageroleid : 0;
 
         $nobody = false;
@@ -2402,7 +2445,7 @@ function get_enrolled_sql(context $context, $withcapability = '', $groupid = 0, 
         $where1 = "{$prefix}ue.status = :{$prefix}active AND {$prefix}e.status = :{$prefix}enabled";
         $where2 = "{$prefix}ue.timestart < :{$prefix}now1 AND ({$prefix}ue.timeend = 0 OR {$prefix}ue.timeend > :{$prefix}now2)";
         $ejoin = "JOIN {enrol} {$prefix}e ON ({$prefix}e.id = {$prefix}ue.enrolid AND {$prefix}e.courseid = :{$prefix}courseid)";
-        $params[$prefix.'courseid'] = $coursecontext->instanceid;
+        $params[$prefix . 'courseid'] = $coursecontext->instanceid;
 
         if (!$onlysuspended) {
             $joins[] = "JOIN {user_enrolments} {$prefix}ue ON {$prefix}ue.userid = {$prefix}u.id";
@@ -2422,14 +2465,14 @@ function get_enrolled_sql(context $context, $withcapability = '', $groupid = 0, 
 
         if ($onlyactive || $onlysuspended) {
             $now = round(time(), -2); // rounding helps caching in DB
-            $params = array_merge($params, array($prefix.'enabled'=>ENROL_INSTANCE_ENABLED,
-                                                 $prefix.'active'=>ENROL_USER_ACTIVE,
-                                                 $prefix.'now1'=>$now, $prefix.'now2'=>$now));
+            $params = array_merge($params, array($prefix . 'enabled' => ENROL_INSTANCE_ENABLED,
+                $prefix . 'active' => ENROL_USER_ACTIVE,
+                $prefix . 'now1' => $now, $prefix . 'now2' => $now));
         }
     }
 
     $joins = implode("\n", $joins);
-    $wheres = "WHERE ".implode(" AND ", $wheres);
+    $wheres = "WHERE " . implode(" AND ", $wheres);
 
     $sql = "SELECT DISTINCT {$prefix}u.id
               FROM {user} {$prefix}u
@@ -2456,7 +2499,8 @@ function get_enrolled_sql(context $context, $withcapability = '', $groupid = 0, 
  * @return array of user records
  */
 function get_enrolled_users(context $context, $withcapability = '', $groupid = 0, $userfields = 'u.*', $orderby = null,
-        $limitfrom = 0, $limitnum = 0, $onlyactive = false) {
+                            $limitfrom = 0, $limitnum = 0, $onlyactive = false)
+{
     global $DB;
 
     list($esql, $params) = get_enrolled_sql($context, $withcapability, $groupid, $onlyactive);
@@ -2488,7 +2532,8 @@ function get_enrolled_users(context $context, $withcapability = '', $groupid = 0
  * @param bool $onlyactive consider only active enrolments in enabled plugins and time restrictions
  * @return array of user records
  */
-function count_enrolled_users(context $context, $withcapability = '', $groupid = 0, $onlyactive = false) {
+function count_enrolled_users(context $context, $withcapability = '', $groupid = 0, $onlyactive = false)
+{
     global $DB;
 
     list($esql, $params) = get_enrolled_sql($context, $withcapability, $groupid, $onlyactive);
@@ -2510,17 +2555,18 @@ function count_enrolled_users(context $context, $withcapability = '', $groupid =
  * @param string $component full plugin name, examples: 'moodle', 'mod_forum'
  * @return array array of capabilities
  */
-function load_capability_def($component) {
-    $defpath = core_component::get_component_directory($component).'/db/access.php';
+function load_capability_def($component)
+{
+    $defpath = core_component::get_component_directory($component) . '/db/access.php';
 
     $capabilities = array();
     if (file_exists($defpath)) {
         require($defpath);
-        if (!empty(${$component.'_capabilities'})) {
+        if (!empty(${$component . '_capabilities'})) {
             // BC capability array name
             // since 2.0 we prefer $capabilities instead - it is easier to use and matches db/* files
             debugging('componentname_capabilities array is deprecated, please use $capabilities array only in access.php files');
-            $capabilities = ${$component.'_capabilities'};
+            $capabilities = ${$component . '_capabilities'};
         }
     }
 
@@ -2534,13 +2580,14 @@ function load_capability_def($component) {
  * @param string $component - examples: 'moodle', 'mod_forum'
  * @return array array of capabilities
  */
-function get_cached_capabilities($component = 'moodle') {
+function get_cached_capabilities($component = 'moodle')
+{
     global $DB;
     $caps = get_all_capabilities();
     $componentcaps = array();
     foreach ($caps as $cap) {
         if ($cap['component'] == $component) {
-            $componentcaps[] = (object) $cap;
+            $componentcaps[] = (object)$cap;
         }
     }
     return $componentcaps;
@@ -2552,7 +2599,8 @@ function get_cached_capabilities($component = 'moodle') {
  * @param string $archetype role archetype
  * @return array
  */
-function get_default_capabilities($archetype) {
+function get_default_capabilities($archetype)
+{
     global $DB;
 
     if (!$archetype) {
@@ -2570,13 +2618,13 @@ function get_default_capabilities($archetype) {
             $alldefs = array_merge($alldefs, load_capability_def($cap['component']));
         }
     }
-    foreach($alldefs as $name=>$def) {
+    foreach ($alldefs as $name => $def) {
         // Use array 'archetypes if available. Only if not specified, use 'legacy'.
         if (isset($def['archetypes'])) {
             if (isset($def['archetypes'][$archetype])) {
                 $defaults[$name] = $def['archetypes'][$archetype];
             }
-        // 'legacy' is for backward compatibility with 1.9 access.php
+            // 'legacy' is for backward compatibility with 1.9 access.php
         } else {
             if (isset($def['legacy'][$archetype])) {
                 $defaults[$name] = $def['legacy'][$archetype];
@@ -2591,11 +2639,12 @@ function get_default_capabilities($archetype) {
  * Return default roles that can be assigned, overridden or switched
  * by give role archetype.
  *
- * @param string $type  assign|override|switch
+ * @param string $type assign|override|switch
  * @param string $archetype
  * @return array of role ids
  */
-function get_default_role_archetype_allows($type, $archetype) {
+function get_default_role_archetype_allows($type, $archetype)
+{
     global $DB;
 
     if (empty($archetype)) {
@@ -2612,34 +2661,34 @@ function get_default_role_archetype_allows($type, $archetype) {
 
     $defaults = array(
         'assign' => array(
-            'manager'        => array('manager', 'coursecreator', 'editingteacher', 'teacher', 'student'),
-            'coursecreator'  => array(),
+            'manager' => array('manager', 'coursecreator', 'editingteacher', 'teacher', 'student'),
+            'coursecreator' => array(),
             'editingteacher' => array('teacher', 'student'),
-            'teacher'        => array(),
-            'student'        => array(),
-            'guest'          => array(),
-            'user'           => array(),
-            'frontpage'      => array(),
+            'teacher' => array(),
+            'student' => array(),
+            'guest' => array(),
+            'user' => array(),
+            'frontpage' => array(),
         ),
         'override' => array(
-            'manager'        => array('manager', 'coursecreator', 'editingteacher', 'teacher', 'student', 'guest', 'user', 'frontpage'),
-            'coursecreator'  => array(),
+            'manager' => array('manager', 'coursecreator', 'editingteacher', 'teacher', 'student', 'guest', 'user', 'frontpage'),
+            'coursecreator' => array(),
             'editingteacher' => array('teacher', 'student', 'guest'),
-            'teacher'        => array(),
-            'student'        => array(),
-            'guest'          => array(),
-            'user'           => array(),
-            'frontpage'      => array(),
+            'teacher' => array(),
+            'student' => array(),
+            'guest' => array(),
+            'user' => array(),
+            'frontpage' => array(),
         ),
         'switch' => array(
-            'manager'        => array('editingteacher', 'teacher', 'student', 'guest'),
-            'coursecreator'  => array(),
+            'manager' => array('editingteacher', 'teacher', 'student', 'guest'),
+            'coursecreator' => array(),
             'editingteacher' => array('teacher', 'student', 'guest'),
-            'teacher'        => array('student', 'guest'),
-            'student'        => array(),
-            'guest'          => array(),
-            'user'           => array(),
-            'frontpage'      => array(),
+            'teacher' => array('student', 'guest'),
+            'student' => array(),
+            'guest' => array(),
+            'user' => array(),
+            'frontpage' => array(),
         ),
     );
 
@@ -2670,18 +2719,19 @@ function get_default_role_archetype_allows($type, $archetype) {
  *
  * @param int $roleid ID of role to reset capabilities for
  */
-function reset_role_capabilities($roleid) {
+function reset_role_capabilities($roleid)
+{
     global $DB;
 
-    $role = $DB->get_record('role', array('id'=>$roleid), '*', MUST_EXIST);
+    $role = $DB->get_record('role', array('id' => $roleid), '*', MUST_EXIST);
     $defaultcaps = get_default_capabilities($role->archetype);
 
     $systemcontext = context_system::instance();
 
     $DB->delete_records('role_capabilities',
-            array('roleid' => $roleid, 'contextid' => $systemcontext->id));
+        array('roleid' => $roleid, 'contextid' => $systemcontext->id));
 
-    foreach($defaultcaps as $cap=>$permission) {
+    foreach ($defaultcaps as $cap => $permission) {
         assign_capability($cap, $permission, $roleid, $systemcontext->id);
     }
 
@@ -2702,13 +2752,14 @@ function reset_role_capabilities($roleid) {
  * @param string $component examples: 'moodle', 'mod/forum', 'block/quiz_results'
  * @return boolean true if success, exception in case of any problems
  */
-function update_capabilities($component = 'moodle') {
+function update_capabilities($component = 'moodle')
+{
     global $DB, $OUTPUT;
 
     $storedcaps = array();
 
     $filecaps = load_capability_def($component);
-    foreach($filecaps as $capname=>$unused) {
+    foreach ($filecaps as $capname => $unused) {
         if (!preg_match('|^[a-z]+/[a-z_0-9]+:[a-z_0-9]+$|', $capname)) {
             debugging("Coding problem: Invalid capability name '$capname', use 'clonepermissionsfrom' field for migration.");
         }
@@ -2761,7 +2812,8 @@ function update_capabilities($component = 'moodle') {
 
     foreach ($filecaps as $filecap => $def) {
         if (!$storedcaps ||
-                ($storedcaps && in_array($filecap, $storedcaps) === false)) {
+            ($storedcaps && in_array($filecap, $storedcaps) === false)
+        ) {
             if (!array_key_exists('riskbitmask', $def)) {
                 $def['riskbitmask'] = 0; // no risk if not specified
             }
@@ -2772,28 +2824,29 @@ function update_capabilities($component = 'moodle') {
     $existingcaps = $DB->get_records_menu('capabilities', array(), 'id', 'id, name');
     foreach ($newcaps as $capname => $capdef) {
         $capability = new stdClass();
-        $capability->name         = $capname;
-        $capability->captype      = $capdef['captype'];
+        $capability->name = $capname;
+        $capability->captype = $capdef['captype'];
         $capability->contextlevel = $capdef['contextlevel'];
-        $capability->component    = $component;
-        $capability->riskbitmask  = $capdef['riskbitmask'];
+        $capability->component = $component;
+        $capability->riskbitmask = $capdef['riskbitmask'];
 
         $DB->insert_record('capabilities', $capability, false);
 
-        if (isset($capdef['clonepermissionsfrom']) && in_array($capdef['clonepermissionsfrom'], $existingcaps)){
-            if ($rolecapabilities = $DB->get_records('role_capabilities', array('capability'=>$capdef['clonepermissionsfrom']))){
-                foreach ($rolecapabilities as $rolecapability){
+        if (isset($capdef['clonepermissionsfrom']) && in_array($capdef['clonepermissionsfrom'], $existingcaps)) {
+            if ($rolecapabilities = $DB->get_records('role_capabilities', array('capability' => $capdef['clonepermissionsfrom']))) {
+                foreach ($rolecapabilities as $rolecapability) {
                     //assign_capability will update rather than insert if capability exists
                     if (!assign_capability($capname, $rolecapability->permission,
-                                            $rolecapability->roleid, $rolecapability->contextid, true)){
-                         echo $OUTPUT->notification('Could not clone capabilities for '.$capname);
+                        $rolecapability->roleid, $rolecapability->contextid, true)
+                    ) {
+                        echo $OUTPUT->notification('Could not clone capabilities for ' . $capname);
                     }
                 }
             }
-        // we ignore archetype key if we have cloned permissions
+            // we ignore archetype key if we have cloned permissions
         } else if (isset($capdef['archetypes']) && is_array($capdef['archetypes'])) {
             assign_legacy_capabilities($capname, $capdef['archetypes']);
-        // 'legacy' is for backward compatibility with 1.9 access.php
+            // 'legacy' is for backward compatibility with 1.9 access.php
         } else if (isset($capdef['legacy']) && is_array($capdef['legacy'])) {
             assign_legacy_capabilities($capname, $capdef['legacy']);
         }
@@ -2823,7 +2876,8 @@ function update_capabilities($component = 'moodle') {
  *                     compared with the cached capabilities
  * @return int number of deprecated capabilities that have been removed
  */
-function capabilities_cleanup($component, $newcapdef = null) {
+function capabilities_cleanup($component, $newcapdef = null)
+{
     global $DB;
 
     $removedcount = 0;
@@ -2831,16 +2885,17 @@ function capabilities_cleanup($component, $newcapdef = null) {
     if ($cachedcaps = get_cached_capabilities($component)) {
         foreach ($cachedcaps as $cachedcap) {
             if (empty($newcapdef) ||
-                        array_key_exists($cachedcap->name, $newcapdef) === false) {
+                array_key_exists($cachedcap->name, $newcapdef) === false
+            ) {
 
                 // Remove from capabilities cache.
-                $DB->delete_records('capabilities', array('name'=>$cachedcap->name));
+                $DB->delete_records('capabilities', array('name' => $cachedcap->name));
                 $removedcount++;
                 // Delete from roles.
                 if ($roles = get_roles_with_capability($cachedcap->name)) {
-                    foreach($roles as $role) {
+                    foreach ($roles as $role) {
                         if (!unassign_capability($cachedcap->name, $role->id)) {
-                            print_error('cannotunassigncap', 'error', '', (object)array('cap'=>$cachedcap->name, 'role'=>$role->name));
+                            print_error('cannotunassigncap', 'error', '', (object)array('cap' => $cachedcap->name, 'role' => $role->name));
                         }
                     }
                 }
@@ -2860,14 +2915,15 @@ function capabilities_cleanup($component, $newcapdef = null) {
  *
  * @return array all the known types of risk.
  */
-function get_all_risks() {
+function get_all_risks()
+{
     return array(
         'riskmanagetrust' => RISK_MANAGETRUST,
-        'riskconfig'      => RISK_CONFIG,
-        'riskxss'         => RISK_XSS,
-        'riskpersonal'    => RISK_PERSONAL,
-        'riskspam'        => RISK_SPAM,
-        'riskdataloss'    => RISK_DATALOSS,
+        'riskconfig' => RISK_CONFIG,
+        'riskxss' => RISK_XSS,
+        'riskpersonal' => RISK_PERSONAL,
+        'riskspam' => RISK_SPAM,
+        'riskdataloss' => RISK_DATALOSS,
     );
 }
 
@@ -2877,7 +2933,8 @@ function get_all_risks() {
  * @param stdClass $capability a capability - a row from the mdl_capabilities table.
  * @return string the human-readable capability name as a link to Moodle Docs.
  */
-function get_capability_docs_link($capability) {
+function get_capability_docs_link($capability)
+{
     $url = get_docs_url('Capabilities/' . $capability->name);
     return '<a onclick="this.target=\'docspopup\'" href="' . $url . '">' . get_capability_string($capability->name) . '</a>';
 }
@@ -2892,11 +2949,12 @@ function get_capability_docs_link($capability) {
  * @param string $cap capability, optional, defaults to ''
  * @return array Array of capabilities
  */
-function role_context_capabilities($roleid, context $context, $cap = '') {
+function role_context_capabilities($roleid, context $context, $cap = '')
+{
     global $DB;
 
     $contexts = $context->get_parent_context_ids(true);
-    $contexts = '('.implode(',', $contexts).')';
+    $contexts = '(' . implode(',', $contexts) . ')';
 
     $params = array($roleid);
 
@@ -2920,7 +2978,7 @@ function role_context_capabilities($roleid, context $context, $cap = '') {
         // We are traversing via reverse order.
         foreach ($records as $record) {
             // If not set yet (i.e. inherit or not set at all), or currently we have a prohibit
-            if (!isset($capabilities[$record->capability]) || $record->permission<-500) {
+            if (!isset($capabilities[$record->capability]) || $record->permission < -500) {
                 $capabilities[$record->capability] = $record->permission;
             }
         }
@@ -2936,7 +2994,8 @@ function role_context_capabilities($roleid, context $context, $cap = '') {
  * @param context $context
  * @return array
  */
-function get_context_info_list(context $context) {
+function get_context_info_list(context $context)
+{
     $contextids = explode('/', ltrim($context->path, '/'));
     $contextpaths = array();
     $contextids2 = $contextids;
@@ -2956,7 +3015,8 @@ function get_context_info_list(context $context) {
  * @param context $context a context object.
  * @return bool
  */
-function is_inside_frontpage(context $context) {
+function is_inside_frontpage(context $context)
+{
     $frontpagecontext = context_course::instance(SITEID);
     return strpos($context->path . '/', $frontpagecontext->path . '/') === 0;
 }
@@ -2967,7 +3027,8 @@ function is_inside_frontpage(context $context) {
  * @param string $capabilityname
  * @return stdClass or null if capability not found
  */
-function get_capability_info($capabilityname) {
+function get_capability_info($capabilityname)
+{
     global $ACCESSLIB_PRIVATE, $DB; // one request per page only
 
     $caps = get_all_capabilities();
@@ -2976,7 +3037,7 @@ function get_capability_info($capabilityname) {
         return null;
     }
 
-    return (object) $caps[$capabilityname];
+    return (object)$caps[$capabilityname];
 }
 
 /**
@@ -2984,15 +3045,16 @@ function get_capability_info($capabilityname) {
  *
  * @return array All capability records indexed by capability name
  */
-function get_all_capabilities() {
+function get_all_capabilities()
+{
     global $DB;
     $cache = cache::make('core', 'capabilities');
     if (!$allcaps = $cache->get('core_capabilities')) {
         $rs = $DB->get_recordset('capabilities');
         $allcaps = array();
         foreach ($rs as $capability) {
-            $capability->riskbitmask = (int) $capability->riskbitmask;
-            $allcaps[$capability->name] = (array) $capability;
+            $capability->riskbitmask = (int)$capability->riskbitmask;
+            $allcaps[$capability->name] = (array)$capability;
         }
         $rs->close();
         $cache->set('core_capabilities', $allcaps);
@@ -3007,7 +3069,8 @@ function get_all_capabilities() {
  * @param string $capabilityname e.g. mod/choice:readresponses
  * @return string
  */
-function get_capability_string($capabilityname) {
+function get_capability_string($capabilityname)
+{
 
     // Typical capability name is 'plugintype/pluginname:capabilityname'
     list($type, $name, $capname) = preg_split('|[/:]|', $capabilityname);
@@ -3016,12 +3079,12 @@ function get_capability_string($capabilityname) {
         $component = 'core_role';
     } else if ($type === 'quizreport') {
         //ugly hack!!
-        $component = 'quiz_'.$name;
+        $component = 'quiz_' . $name;
     } else {
-        $component = $type.'_'.$name;
+        $component = $type . '_' . $name;
     }
 
-    $stringname = $name.':'.$capname;
+    $stringname = $name . ':' . $capname;
 
     if ($component === 'core_role' or get_string_manager()->string_exists($stringname, $component)) {
         return get_string($stringname, $component);
@@ -3030,7 +3093,7 @@ function get_capability_string($capabilityname) {
     $dir = core_component::get_component_directory($component);
     if (!file_exists($dir)) {
         // plugin broken or does not exist, do not bother with printing of debug message
-        return $capabilityname.' ???';
+        return $capabilityname . ' ???';
     }
 
     // something is wrong in plugin, better print debug
@@ -3044,18 +3107,26 @@ function get_capability_string($capabilityname) {
  * @param int $contextlevel
  * @return string|bool String is success, false if failed
  */
-function get_component_string($component, $contextlevel) {
+function get_component_string($component, $contextlevel)
+{
 
     if ($component === 'moodle' or $component === 'core') {
         switch ($contextlevel) {
             // TODO MDL-46123: this should probably use context level names instead
-            case CONTEXT_SYSTEM:    return get_string('coresystem');
-            case CONTEXT_USER:      return get_string('users');
-            case CONTEXT_COURSECAT: return get_string('categories');
-            case CONTEXT_COURSE:    return get_string('course');
-            case CONTEXT_MODULE:    return get_string('activities');
-            case CONTEXT_BLOCK:     return get_string('block');
-            default:                print_error('unknowncontext');
+            case CONTEXT_SYSTEM:
+                return get_string('coresystem');
+            case CONTEXT_USER:
+                return get_string('users');
+            case CONTEXT_COURSECAT:
+                return get_string('categories');
+            case CONTEXT_COURSE:
+                return get_string('course');
+            case CONTEXT_MODULE:
+                return get_string('activities');
+            case CONTEXT_BLOCK:
+                return get_string('block');
+            default:
+                print_error('unknowncontext');
         }
     }
 
@@ -3063,25 +3134,33 @@ function get_component_string($component, $contextlevel) {
     $dir = core_component::get_plugin_directory($type, $name);
     if (!file_exists($dir)) {
         // plugin not installed, bad luck, there is no way to find the name
-        return $component.' ???';
+        return $component . ' ???';
     }
 
     switch ($type) {
         // TODO MDL-46123: this is really hacky and should be improved.
-        case 'quiz':         return get_string($name.':componentname', $component);// insane hack!!!
-        case 'repository':   return get_string('repository', 'repository').': '.get_string('pluginname', $component);
-        case 'gradeimport':  return get_string('gradeimport', 'grades').': '.get_string('pluginname', $component);
-        case 'gradeexport':  return get_string('gradeexport', 'grades').': '.get_string('pluginname', $component);
-        case 'gradereport':  return get_string('gradereport', 'grades').': '.get_string('pluginname', $component);
-        case 'webservice':   return get_string('webservice', 'webservice').': '.get_string('pluginname', $component);
-        case 'block':        return get_string('block').': '.get_string('pluginname', basename($component));
+        case 'quiz':
+            return get_string($name . ':componentname', $component);// insane hack!!!
+        case 'repository':
+            return get_string('repository', 'repository') . ': ' . get_string('pluginname', $component);
+        case 'gradeimport':
+            return get_string('gradeimport', 'grades') . ': ' . get_string('pluginname', $component);
+        case 'gradeexport':
+            return get_string('gradeexport', 'grades') . ': ' . get_string('pluginname', $component);
+        case 'gradereport':
+            return get_string('gradereport', 'grades') . ': ' . get_string('pluginname', $component);
+        case 'webservice':
+            return get_string('webservice', 'webservice') . ': ' . get_string('pluginname', $component);
+        case 'block':
+            return get_string('block') . ': ' . get_string('pluginname', basename($component));
         case 'mod':
             if (get_string_manager()->string_exists('pluginname', $component)) {
-                return get_string('activity').': '.get_string('pluginname', $component);
+                return get_string('activity') . ': ' . get_string('pluginname', $component);
             } else {
-                return get_string('activity').': '.get_string('modulename', $component);
+                return get_string('activity') . ': ' . get_string('modulename', $component);
             }
-        default: return get_string('pluginname', $component);
+        default:
+            return get_string('pluginname', $component);
     }
 }
 
@@ -3093,7 +3172,8 @@ function get_component_string($component, $contextlevel) {
  * @param context $context
  * @return array
  */
-function get_profile_roles(context $context) {
+function get_profile_roles(context $context)
+{
     global $CFG, $DB;
 
     if (empty($CFG->profileroles)) {
@@ -3127,7 +3207,8 @@ function get_profile_roles(context $context) {
  * @param context $context
  * @return array
  */
-function get_roles_used_in_context(context $context) {
+function get_roles_used_in_context(context $context)
+{
     global $DB;
 
     list($contextlist, $params) = $DB->get_in_or_equal($context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'cl');
@@ -3157,7 +3238,8 @@ function get_roles_used_in_context(context $context) {
  * @param int $courseid
  * @return string
  */
-function get_user_roles_in_course($userid, $courseid) {
+function get_user_roles_in_course($userid, $courseid)
+{
     global $CFG, $DB;
 
     if (empty($CFG->profileroles)) {
@@ -3196,7 +3278,7 @@ function get_user_roles_in_course($userid, $courseid) {
         $rolenames = role_fix_names($roles, $context, ROLENAME_ALIAS, true);   // Substitute aliases
 
         foreach ($rolenames as $roleid => $rolename) {
-            $rolenames[$roleid] = '<a href="'.$CFG->wwwroot.'/user/index.php?contextid='.$context->id.'&amp;roleid='.$roleid.'">'.$rolename.'</a>';
+            $rolenames[$roleid] = '<a href="' . $CFG->wwwroot . '/user/index.php?contextid=' . $context->id . '&amp;roleid=' . $roleid . '">' . $rolename . '</a>';
         }
         $rolestring = implode(',', $rolenames);
     }
@@ -3211,7 +3293,8 @@ function get_user_roles_in_course($userid, $courseid) {
  * @param int $targetroleid - the id of the role you want to assign users to
  * @return boolean
  */
-function user_can_assign(context $context, $targetroleid) {
+function user_can_assign(context $context, $targetroleid)
+{
     global $DB;
 
     // First check to see if the user is a site administrator.
@@ -3228,7 +3311,7 @@ function user_can_assign(context $context, $targetroleid) {
     if ($userroles = get_user_roles($context)) {
         foreach ($userroles as $userrole) {
             // if any in the role_allow_override table, then it's ok
-            if ($DB->get_record('role_allow_assign', array('roleid'=>$userrole->roleid, 'allowassign'=>$targetroleid))) {
+            if ($DB->get_record('role_allow_assign', array('roleid' => $userrole->roleid, 'allowassign' => $targetroleid))) {
                 return true;
             }
         }
@@ -3246,7 +3329,8 @@ function user_can_assign(context $context, $targetroleid) {
  * @param context $context optional context for course role name aliases
  * @return array of role records with optional coursealias property
  */
-function get_all_roles(context $context = null) {
+function get_all_roles(context $context = null)
+{
     global $DB;
 
     if (!$context or !$coursecontext = $context->get_course_context(false)) {
@@ -3258,7 +3342,7 @@ function get_all_roles(context $context = null) {
                   FROM {role} r
              LEFT JOIN {role_names} rn ON (rn.contextid = :coursecontext AND rn.roleid = r.id)
               ORDER BY r.sortorder ASC";
-        return $DB->get_records_sql($sql, array('coursecontext'=>$coursecontext->id));
+        return $DB->get_records_sql($sql, array('coursecontext' => $coursecontext->id));
 
     } else {
         return $DB->get_records('role', array(), 'sortorder ASC');
@@ -3271,9 +3355,10 @@ function get_all_roles(context $context = null) {
  * @param string $archetype
  * @return array of full role records
  */
-function get_archetype_roles($archetype) {
+function get_archetype_roles($archetype)
+{
     global $DB;
-    return $DB->get_records('role', array('archetype'=>$archetype), 'sortorder ASC');
+    return $DB->get_records('role', array('archetype' => $archetype), 'sortorder ASC');
 }
 
 /**
@@ -3288,7 +3373,8 @@ function get_archetype_roles($archetype) {
  * @param string $order defaults to 'c.contextlevel DESC, r.sortorder ASC'
  * @return array
  */
-function get_user_roles(context $context, $userid = 0, $checkparentcontexts = true, $order = 'c.contextlevel DESC, r.sortorder ASC') {
+function get_user_roles(context $context, $userid = 0, $checkparentcontexts = true, $order = 'c.contextlevel DESC, r.sortorder ASC')
+{
     global $USER, $DB;
 
     if (empty($userid)) {
@@ -3317,7 +3403,7 @@ function get_user_roles(context $context, $userid = 0, $checkparentcontexts = tr
                    AND ra.contextid $contextids
           ORDER BY $order";
 
-    return $DB->get_records_sql($sql ,$params);
+    return $DB->get_records_sql($sql, $params);
 }
 
 /**
@@ -3328,7 +3414,8 @@ function get_user_roles(context $context, $userid = 0, $checkparentcontexts = tr
  * @param int $userid optional. Defaults to $USER->id
  * @return array of objects with fields ->userid, ->contextid and ->roleid.
  */
-function get_user_roles_with_special(context $context, $userid = 0) {
+function get_user_roles_with_special(context $context, $userid = 0)
+{
     global $CFG, $USER;
 
     if (empty($userid)) {
@@ -3343,7 +3430,7 @@ function get_user_roles_with_special(context $context, $userid = 0) {
     // Add front-page role if relevant.
     $defaultfrontpageroleid = isset($CFG->defaultfrontpageroleid) ? $CFG->defaultfrontpageroleid : 0;
     $isfrontpage = ($context->contextlevel == CONTEXT_COURSE && $context->instanceid == SITEID) ||
-            is_inside_frontpage($context);
+        is_inside_frontpage($context);
     if ($defaultfrontpageroleid && $isfrontpage) {
         $frontpagecontext = context_course::instance(SITEID);
         $ra = new stdClass();
@@ -3354,7 +3441,7 @@ function get_user_roles_with_special(context $context, $userid = 0) {
     }
 
     // Add authenticated user role if relevant.
-    $defaultuserroleid      = isset($CFG->defaultuserroleid) ? $CFG->defaultuserroleid : 0;
+    $defaultuserroleid = isset($CFG->defaultuserroleid) ? $CFG->defaultuserroleid : 0;
     if ($defaultuserroleid && !isguestuser($userid)) {
         $systemcontext = context_system::instance();
         $ra = new stdClass();
@@ -3374,11 +3461,12 @@ function get_user_roles_with_special(context $context, $userid = 0) {
  * @param int $troleid target roleid
  * @return void
  */
-function allow_override($sroleid, $troleid) {
+function allow_override($sroleid, $troleid)
+{
     global $DB;
 
     $record = new stdClass();
-    $record->roleid        = $sroleid;
+    $record->roleid = $sroleid;
     $record->allowoverride = $troleid;
     $DB->insert_record('role_allow_override', $record);
 }
@@ -3390,11 +3478,12 @@ function allow_override($sroleid, $troleid) {
  * @param int $targetroleid target roleid
  * @return void
  */
-function allow_assign($fromroleid, $targetroleid) {
+function allow_assign($fromroleid, $targetroleid)
+{
     global $DB;
 
     $record = new stdClass();
-    $record->roleid      = $fromroleid;
+    $record->roleid = $fromroleid;
     $record->allowassign = $targetroleid;
     $DB->insert_record('role_allow_assign', $record);
 }
@@ -3406,11 +3495,12 @@ function allow_assign($fromroleid, $targetroleid) {
  * @param int $targetroleid target roleid
  * @return void
  */
-function allow_switch($fromroleid, $targetroleid) {
+function allow_switch($fromroleid, $targetroleid)
+{
     global $DB;
 
     $record = new stdClass();
-    $record->roleid      = $fromroleid;
+    $record->roleid = $fromroleid;
     $record->allowswitch = $targetroleid;
     $DB->insert_record('role_allow_switch', $record);
 }
@@ -3427,7 +3517,8 @@ function allow_switch($fromroleid, $targetroleid) {
  *      if $withusercounts is true, returns a list of three arrays,
  *      $rolenames, $rolecounts, and $nameswithcounts.
  */
-function get_assignable_roles(context $context, $rolenamedisplay = ROLENAME_ALIAS, $withusercounts = false, $user = null) {
+function get_assignable_roles(context $context, $rolenamedisplay = ROLENAME_ALIAS, $withusercounts = false, $user = null)
+{
     global $USER, $DB;
 
     // make sure there is a real user specified
@@ -3461,7 +3552,7 @@ function get_assignable_roles(context $context, $rolenamedisplay = ROLENAME_ALIA
         $assignrestriction = "";
     } else {
         $parents = $context->get_parent_context_ids(true);
-        $contexts = implode(',' , $parents);
+        $contexts = implode(',', $parents);
         $assignrestriction = "JOIN (SELECT DISTINCT raa.allowassign AS id
                                       FROM {role_allow_assign} raa
                                       JOIN {role_assignments} ra ON ra.roleid = raa.roleid
@@ -3510,7 +3601,8 @@ function get_assignable_roles(context $context, $rolenamedisplay = ROLENAME_ALIA
  * @param context $context a context.
  * @return array an array $roleid => $rolename.
  */
-function get_switchable_roles(context $context) {
+function get_switchable_roles(context $context)
+{
     global $USER, $DB;
 
     $params = array();
@@ -3521,7 +3613,7 @@ function get_switchable_roles(context $context) {
         // Others are subject to the additional constraint that the switch-to role must be allowed by
         // 'role_allow_switch' for some role they have assigned in this context or any parent.
         $parents = $context->get_parent_context_ids(true);
-        $contexts = implode(',' , $parents);
+        $contexts = implode(',', $parents);
 
         $extrajoins = "JOIN {role_allow_switch} ras ON ras.allowswitch = rc.roleid
         JOIN {role_assignments} ra ON ra.roleid = ras.roleid";
@@ -3561,7 +3653,8 @@ function get_switchable_roles(context $context) {
  *      if $withusercounts is true, returns a list of three arrays,
  *      $rolenames, $rolecounts, and $nameswithcounts.
  */
-function get_overridable_roles(context $context, $rolenamedisplay = ROLENAME_ALIAS, $withcounts = false) {
+function get_overridable_roles(context $context, $rolenamedisplay = ROLENAME_ALIAS, $withcounts = false)
+{
     global $USER, $DB;
 
     if (!has_any_capability(array('moodle/role:safeoverride', 'moodle/role:override'), $context)) {
@@ -3573,7 +3666,7 @@ function get_overridable_roles(context $context, $rolenamedisplay = ROLENAME_ALI
     }
 
     $parents = $context->get_parent_context_ids(true);
-    $contexts = implode(',' , $parents);
+    $contexts = implode(',', $parents);
 
     $params = array();
     $extrafields = '';
@@ -3638,10 +3731,11 @@ function get_overridable_roles(context $context, $rolenamedisplay = ROLENAME_ALI
  * @param int $addroleid current or default role - always added to list
  * @return array roleid=>localised role name
  */
-function get_default_enrol_roles(context $context, $addroleid = null) {
+function get_default_enrol_roles(context $context, $addroleid = null)
+{
     global $DB;
 
-    $params = array('contextlevel'=>CONTEXT_COURSE);
+    $params = array('contextlevel' => CONTEXT_COURSE);
 
     if ($coursecontext = $context->get_course_context(false)) {
         $params['coursecontext'] = $coursecontext->id;
@@ -3675,10 +3769,11 @@ function get_default_enrol_roles(context $context, $addroleid = null) {
  * @param integer $roleid the id of a role.
  * @return array list of the context levels at which this role may be assigned.
  */
-function get_role_contextlevels($roleid) {
+function get_role_contextlevels($roleid)
+{
     global $DB;
     return $DB->get_records_menu('role_context_levels', array('roleid' => $roleid),
-            'contextlevel', 'id,contextlevel');
+        'contextlevel', 'id,contextlevel');
 }
 
 /**
@@ -3689,10 +3784,11 @@ function get_role_contextlevels($roleid) {
  * @param integer $contextlevel a contextlevel.
  * @return array list of role ids that are assignable at this context level.
  */
-function get_roles_for_contextlevels($contextlevel) {
+function get_roles_for_contextlevels($contextlevel)
+{
     global $DB;
     return $DB->get_records_menu('role_context_levels', array('contextlevel' => $contextlevel),
-            '', 'id,roleid');
+        '', 'id,roleid');
 }
 
 /**
@@ -3702,16 +3798,17 @@ function get_roles_for_contextlevels($contextlevel) {
  *      from the array returned by get_role_archetypes();
  * @return array list of the context levels at which this type of role may be assigned by default.
  */
-function get_default_contextlevels($rolearchetype) {
+function get_default_contextlevels($rolearchetype)
+{
     static $defaults = array(
-        'manager'        => array(CONTEXT_SYSTEM, CONTEXT_COURSECAT, CONTEXT_COURSE),
-        'coursecreator'  => array(CONTEXT_SYSTEM, CONTEXT_COURSECAT),
+        'manager' => array(CONTEXT_SYSTEM, CONTEXT_COURSECAT, CONTEXT_COURSE),
+        'coursecreator' => array(CONTEXT_SYSTEM, CONTEXT_COURSECAT),
         'editingteacher' => array(CONTEXT_COURSE, CONTEXT_MODULE),
-        'teacher'        => array(CONTEXT_COURSE, CONTEXT_MODULE),
-        'student'        => array(CONTEXT_COURSE, CONTEXT_MODULE),
-        'guest'          => array(),
-        'user'           => array(),
-        'frontpage'      => array());
+        'teacher' => array(CONTEXT_COURSE, CONTEXT_MODULE),
+        'student' => array(CONTEXT_COURSE, CONTEXT_MODULE),
+        'guest' => array(),
+        'user' => array(),
+        'frontpage' => array());
 
     if (isset($defaults[$rolearchetype])) {
         return $defaults[$rolearchetype];
@@ -3729,7 +3826,8 @@ function get_default_contextlevels($rolearchetype) {
  *      duplicate levels are removed.
  * @return void
  */
-function set_role_contextlevels($roleid, array $contextlevels) {
+function set_role_contextlevels($roleid, array $contextlevels)
+{
     global $DB;
     $DB->delete_records('role_context_levels', array('roleid' => $roleid));
     $rcl = new stdClass();
@@ -3769,10 +3867,11 @@ function set_role_contextlevels($roleid, array $contextlevels) {
  * @return array of user records
  */
 function get_users_by_capability(context $context, $capability, $fields = '', $sort = '', $limitfrom = '', $limitnum = '',
-                                 $groups = '', $exceptions = '', $doanything_ignored = null, $view_ignored = null, $useviewallgroups = false) {
+                                 $groups = '', $exceptions = '', $doanything_ignored = null, $view_ignored = null, $useviewallgroups = false)
+{
     global $CFG, $DB;
 
-    $defaultuserroleid      = isset($CFG->defaultuserroleid) ? $CFG->defaultuserroleid : 0;
+    $defaultuserroleid = isset($CFG->defaultuserroleid) ? $CFG->defaultuserroleid : 0;
     $defaultfrontpageroleid = isset($CFG->defaultfrontpageroleid) ? $CFG->defaultfrontpageroleid : 0;
 
     $ctxids = trim($context->path, '/');
@@ -3818,7 +3917,7 @@ function get_users_by_capability(context $context, $capability, $fields = '', $s
             if (empty($defs[$cap][$path])) {
                 continue;
             }
-            foreach($defs[$cap][$path] as $roleid => $perm) {
+            foreach ($defs[$cap][$path] as $roleid => $perm) {
                 if ($perm == CAP_PROHIBIT) {
                     $access[$cap][$roleid] = CAP_PROHIBIT;
                     continue;
@@ -3868,11 +3967,11 @@ function get_users_by_capability(context $context, $capability, $fields = '', $s
         // we can compact the needed roles
         $n = array();
         foreach ($needed as $cap) {
-            foreach ($cap as $roleid=>$unused) {
+            foreach ($cap as $roleid => $unused) {
                 $n[$roleid] = true;
             }
         }
-        $needed = array('any'=>$n);
+        $needed = array('any' => $n);
         unset($n);
     }
 
@@ -3900,12 +3999,12 @@ function get_users_by_capability(context $context, $capability, $fields = '', $s
 
     // Prepare query clauses
     $wherecond = array();
-    $params    = array();
-    $joins     = array();
+    $params = array();
+    $joins = array();
 
     // User lastaccess JOIN
     if ((strpos($sort, 'ul.timeaccess') === false) and (strpos($fields, 'ul.timeaccess') === false)) {
-         // user_lastaccess is not required MDL-13810
+        // user_lastaccess is not required MDL-13810
     } else {
         if ($iscoursepage) {
             $joins[] = "LEFT OUTER JOIN {user_lastaccess} ul ON (ul.userid = u.id AND ul.courseid = {$context->instanceid})";
@@ -3928,12 +4027,12 @@ function get_users_by_capability(context $context, $capability, $fields = '', $s
         if ($useviewallgroups) {
             $viewallgroupsusers = get_users_by_capability($context, 'moodle/site:accessallgroups', 'u.id, u.id', '', '', '', '', $exceptions);
             if (!empty($viewallgroupsusers)) {
-                $wherecond[] =  "($grouptest OR u.id IN (" . implode(',', array_keys($viewallgroupsusers)) . '))';
+                $wherecond[] = "($grouptest OR u.id IN (" . implode(',', array_keys($viewallgroupsusers)) . '))';
             } else {
-                $wherecond[] =  "($grouptest)";
+                $wherecond[] = "($grouptest)";
             }
         } else {
-            $wherecond[] =  "($grouptest)";
+            $wherecond[] = "($grouptest)";
         }
     }
 
@@ -3954,13 +4053,13 @@ function get_users_by_capability(context $context, $capability, $fields = '', $s
             $joins[] = "JOIN (SELECT DISTINCT userid
                                 FROM {role_assignments}
                                WHERE contextid IN ($ctxids)
-                                     AND roleid IN (".implode(',', array_keys($needed['any'])) .")
+                                     AND roleid IN (" . implode(',', array_keys($needed['any'])) . ")
                              ) ra ON ra.userid = u.id";
         }
     } else {
         $unions = array();
         $everybody = false;
-        foreach ($needed as $cap=>$unused) {
+        foreach ($needed as $cap => $unused) {
             if (empty($prohibited[$cap])) {
                 if (!empty($needed[$cap][$defaultuserroleid]) or ($isfrontpage and !empty($needed[$cap][$defaultfrontpageroleid]))) {
                     $everybody = true;
@@ -3969,7 +4068,7 @@ function get_users_by_capability(context $context, $capability, $fields = '', $s
                     $unions[] = "SELECT userid
                                    FROM {role_assignments}
                                   WHERE contextid IN ($ctxids)
-                                        AND roleid IN (".implode(',', array_keys($needed[$cap])) .")";
+                                        AND roleid IN (" . implode(',', array_keys($needed[$cap])) . ")";
                 }
             } else {
                 if (!empty($prohibited[$cap][$defaultuserroleid]) or ($isfrontpage and !empty($prohibited[$cap][$defaultfrontpageroleid]))) {
@@ -3983,20 +4082,20 @@ function get_users_by_capability(context $context, $capability, $fields = '', $s
                                   WHERE id NOT IN (SELECT userid
                                                      FROM {role_assignments}
                                                     WHERE contextid IN ($ctxids)
-                                                          AND roleid IN (".implode(',', array_keys($prohibited[$cap])) ."))";
+                                                          AND roleid IN (" . implode(',', array_keys($prohibited[$cap])) . "))";
 
                 } else {
                     $unions[] = "SELECT userid
                                    FROM {role_assignments}
                                   WHERE contextid IN ($ctxids)
-                                        AND roleid IN (".implode(',', array_keys($needed[$cap])) .")
-                                        AND roleid NOT IN (".implode(',', array_keys($prohibited[$cap])) .")";
+                                        AND roleid IN (" . implode(',', array_keys($needed[$cap])) . ")
+                                        AND roleid NOT IN (" . implode(',', array_keys($prohibited[$cap])) . ")";
                 }
             }
         }
         if (!$everybody) {
             if ($unions) {
-                $joins[] = "JOIN (SELECT DISTINCT userid FROM ( ".implode(' UNION ', $unions)." ) us) ra ON ra.userid = u.id";
+                $joins[] = "JOIN (SELECT DISTINCT userid FROM ( " . implode(' UNION ', $unions) . " ) us) ra ON ra.userid = u.id";
             } else {
                 // only prohibits found - nobody can be matched
                 $wherecond[] = "1 = 2";
@@ -4052,15 +4151,16 @@ function get_users_by_capability(context $context, $capability, $fields = '', $s
  * @param string $sortpolicy defaults to locality, more about
  * @return array sorted copy of the array
  */
-function sort_by_roleassignment_authority($users, context $context, $roles = array(), $sortpolicy = 'locality') {
+function sort_by_roleassignment_authority($users, context $context, $roles = array(), $sortpolicy = 'locality')
+{
     global $DB;
 
-    $userswhere = ' ra.userid IN (' . implode(',',array_keys($users)) . ')';
-    $contextwhere = 'AND ra.contextid IN ('.str_replace('/', ',',substr($context->path, 1)).')';
+    $userswhere = ' ra.userid IN (' . implode(',', array_keys($users)) . ')';
+    $contextwhere = 'AND ra.contextid IN (' . str_replace('/', ',', substr($context->path, 1)) . ')';
     if (empty($roles)) {
         $roleswhere = '';
     } else {
-        $roleswhere = ' AND ra.roleid IN ('.implode(',',$roles).')';
+        $roleswhere = ' AND ra.roleid IN (' . implode(',', $roles) . ')';
     }
 
     $sql = "SELECT ra.userid
@@ -4076,13 +4176,13 @@ function sort_by_roleassignment_authority($users, context $context, $roles = arr
     // Default 'locality' policy -- read PHPDoc notes
     // about sort policies...
     $orderby = 'ORDER BY '
-                    .'ctx.depth DESC, '  /* locality wins */
-                    .'r.sortorder ASC, ' /* rolesorting 2nd criteria */
-                    .'ra.id';            /* role assignment order tie-breaker */
+        . 'ctx.depth DESC, '  /* locality wins */
+        . 'r.sortorder ASC, ' /* rolesorting 2nd criteria */
+        . 'ra.id';            /* role assignment order tie-breaker */
     if ($sortpolicy === 'sortorder') {
         $orderby = 'ORDER BY '
-                        .'r.sortorder ASC, ' /* rolesorting 2nd criteria */
-                        .'ra.id';            /* role assignment order tie-breaker */
+            . 'r.sortorder ASC, ' /* rolesorting 2nd criteria */
+            . 'ra.id';            /* role assignment order tie-breaker */
     }
 
     $sortedids = $DB->get_fieldset_sql($sql . $orderby);
@@ -4131,17 +4231,18 @@ function sort_by_roleassignment_authority($users, context $context, $roles = arr
  * @return array
  */
 function get_role_users($roleid, context $context, $parent = false, $fields = '',
-        $sort = null, $all = true, $group = '',
-        $limitfrom = '', $limitnum = '', $extrawheretest = '', $whereorsortparams = array()) {
+                        $sort = null, $all = true, $group = '',
+                        $limitfrom = '', $limitnum = '', $extrawheretest = '', $whereorsortparams = array())
+{
     global $DB;
 
     if (empty($fields)) {
         $allnames = get_all_user_name_fields(true, 'u');
-        $fields = 'u.id, u.confirmed, u.username, '. $allnames . ', ' .
-                  'u.maildisplay, u.mailformat, u.maildigest, u.email, u.emailstop, u.city, '.
-                  'u.country, u.picture, u.idnumber, u.department, u.institution, '.
-                  'u.lang, u.timezone, u.lastaccess, u.mnethostid, r.name AS rolename, r.sortorder, '.
-                  'r.shortname AS roleshortname, rn.name AS rolecoursealias';
+        $fields = 'u.id, u.confirmed, u.username, ' . $allnames . ', ' .
+            'u.maildisplay, u.mailformat, u.maildigest, u.email, u.emailstop, u.city, ' .
+            'u.country, u.picture, u.idnumber, u.department, u.institution, ' .
+            'u.lang, u.timezone, u.lastaccess, u.mnethostid, r.name AS rolename, r.sortorder, ' .
+            'r.shortname AS roleshortname, rn.name AS rolecoursealias';
     }
 
     // Prevent wrong function uses.
@@ -4155,7 +4256,7 @@ function get_role_users($roleid, context $context, $parent = false, $fields = ''
             foreach ($roleid as $id) {
                 // Ignoring duplicated keys keeping the first user appearance.
                 $users = $users + get_role_users($id, $context, $parent, $fields, $sort, $all, $group,
-                    $limitfrom, $limitnum, $extrawheretest, $whereorsortparams);
+                        $limitfrom, $limitnum, $extrawheretest, $whereorsortparams);
             }
             return $users;
         }
@@ -4166,7 +4267,7 @@ function get_role_users($roleid, context $context, $parent = false, $fields = ''
         $parentcontexts = substr($context->path, 1); // kill leading slash
         $parentcontexts = str_replace('/', ',', $parentcontexts);
         if ($parentcontexts !== '') {
-            $parentcontexts = ' OR ra.contextid IN ('.$parentcontexts.' )';
+            $parentcontexts = ' OR ra.contextid IN (' . $parentcontexts . ' )';
         }
     }
 
@@ -4185,11 +4286,11 @@ function get_role_users($roleid, context $context, $parent = false, $fields = ''
     }
 
     if ($group) {
-        $groupjoin   = "JOIN {groups_members} gm ON gm.userid = u.id";
+        $groupjoin = "JOIN {groups_members} gm ON gm.userid = u.id";
         $groupselect = " AND gm.groupid = :groupid ";
         $params['groupid'] = $group;
     } else {
-        $groupjoin   = '';
+        $groupjoin = '';
         $groupselect = '';
     }
 
@@ -4223,7 +4324,7 @@ function get_role_users($roleid, context $context, $parent = false, $fields = ''
     $fields = implode(', ', $fieldsarray);
     if (!empty($addedfields)) {
         $addedfields = implode(', ', $addedfields);
-        debugging('get_role_users() adding '.$addedfields.' to the query result because they were required by $sort but missing in $fields');
+        debugging('get_role_users() adding ' . $addedfields . ' to the query result because they were required by $sort but missing in $fields');
     }
 
     if ($all === null) {
@@ -4263,12 +4364,13 @@ function get_role_users($roleid, context $context, $parent = false, $fields = ''
  * @param bool $parent if true, get list of users assigned in higher context too
  * @return int Returns the result count
  */
-function count_role_users($roleid, context $context, $parent = false) {
+function count_role_users($roleid, context $context, $parent = false)
+{
     global $DB;
 
     if ($parent) {
         if ($contexts = $context->get_parent_context_ids()) {
-            $parentcontexts = ' OR r.contextid IN ('.implode(',', $contexts).')';
+            $parentcontexts = ' OR r.contextid IN (' . implode(',', $contexts) . ')';
         } else {
             $parentcontexts = '';
         }
@@ -4309,27 +4411,28 @@ function count_role_users($roleid, context $context, $parent = false) {
  *   table with sql modifiers (DESC) if needed
  * @return array|bool Array of courses, if none found false is returned.
  */
-function get_user_capability_course($capability, $userid = null, $doanything = true, $fieldsexceptid = '', $orderby = '') {
+function get_user_capability_course($capability, $userid = null, $doanything = true, $fieldsexceptid = '', $orderby = '')
+{
     global $DB;
 
     // Convert fields list and ordering
     $fieldlist = '';
     if ($fieldsexceptid) {
         $fields = explode(',', $fieldsexceptid);
-        foreach($fields as $field) {
-            $fieldlist .= ',c.'.$field;
+        foreach ($fields as $field) {
+            $fieldlist .= ',c.' . $field;
         }
     }
     if ($orderby) {
         $fields = explode(',', $orderby);
         $orderby = '';
-        foreach($fields as $field) {
+        foreach ($fields as $field) {
             if ($orderby) {
                 $orderby .= ',';
             }
-            $orderby .= 'c.'.$field;
+            $orderby .= 'c.' . $field;
         }
-        $orderby = 'ORDER BY '.$orderby;
+        $orderby = 'ORDER BY ' . $orderby;
     }
 
     // Obtain a list of everything relevant about all courses including context.
@@ -4341,7 +4444,7 @@ function get_user_capability_course($capability, $userid = null, $doanything = t
     $courses = array();
     $rs = $DB->get_recordset_sql("SELECT c.id $fieldlist, $contextpreload
                                     FROM {course} c
-                                    JOIN {context} x ON (c.id=x.instanceid AND x.contextlevel=".CONTEXT_COURSE.")
+                                    JOIN {context} x ON (c.id=x.instanceid AND x.contextlevel=" . CONTEXT_COURSE . ")
                                 $orderby");
     // Check capability for each course in turn
     foreach ($rs as $course) {
@@ -4364,13 +4467,14 @@ function get_user_capability_course($capability, $userid = null, $doanything = t
  * @param context $context
  * @return array
  */
-function get_roles_on_exact_context(context $context) {
+function get_roles_on_exact_context(context $context)
+{
     global $DB;
 
     return $DB->get_records_sql("SELECT r.*
                                    FROM {role_assignments} ra, {role} r
                                   WHERE ra.roleid = r.id AND ra.contextid = ?",
-                                array($context->id));
+        array($context->id));
 }
 
 /**
@@ -4390,7 +4494,8 @@ function get_roles_on_exact_context(context $context) {
  * @param context $context the context in which to perform the switch.
  * @return bool success or failure.
  */
-function role_switch($roleid, context $context) {
+function role_switch($roleid, context $context)
+{
     global $USER;
 
     //
@@ -4446,7 +4551,8 @@ function role_switch($roleid, context $context) {
  * @param int $courseid The id of the course to check
  * @return bool True if the user has switched roles within the course.
  */
-function is_role_switched($courseid) {
+function is_role_switched($courseid)
+{
     global $USER;
     $context = context_course::instance($courseid, MUST_EXIST);
     return (!empty($USER->access['rsw'][$context->path]));
@@ -4458,13 +4564,14 @@ function is_role_switched($courseid) {
  * @param context $context The context to check
  * @return array An array of roles
  */
-function get_roles_with_override_on_context(context $context) {
+function get_roles_with_override_on_context(context $context)
+{
     global $DB;
 
     return $DB->get_records_sql("SELECT r.*
                                    FROM {role_capabilities} rc, {role} r
                                   WHERE rc.roleid = r.id AND rc.contextid = ?",
-                                array($context->id));
+        array($context->id));
 }
 
 /**
@@ -4474,13 +4581,14 @@ function get_roles_with_override_on_context(context $context) {
  * @param context $context
  * @return array
  */
-function get_capabilities_from_role_on_context($role, context $context) {
+function get_capabilities_from_role_on_context($role, context $context)
+{
     global $DB;
 
     return $DB->get_records_sql("SELECT *
                                    FROM {role_capabilities}
                                   WHERE contextid = ? AND roleid = ?",
-                                array($context->id, $role->id));
+        array($context->id, $role->id));
 }
 
 /**
@@ -4490,13 +4598,14 @@ function get_capabilities_from_role_on_context($role, context $context) {
  * @return array
  *
  */
-function get_roles_with_assignment_on_context(context $context) {
+function get_roles_with_assignment_on_context(context $context)
+{
     global $DB;
 
     return $DB->get_records_sql("SELECT r.*
                                    FROM {role_assignments} ra, {role} r
                                   WHERE ra.roleid = r.id AND ra.contextid = ?",
-                                array($context->id));
+        array($context->id));
 }
 
 /**
@@ -4506,13 +4615,14 @@ function get_roles_with_assignment_on_context(context $context) {
  * @param context $context
  * @return array
  */
-function get_users_from_role_on_context($role, context $context) {
+function get_users_from_role_on_context($role, context $context)
+{
     global $DB;
 
     return $DB->get_records_sql("SELECT *
                                    FROM {role_assignments}
                                   WHERE contextid = ? AND roleid = ?",
-                                array($context->id, $role->id));
+        array($context->id, $role->id));
 }
 
 /**
@@ -4524,7 +4634,8 @@ function get_users_from_role_on_context($role, context $context) {
  * @param int $contextid empty means any context
  * @return bool
  */
-function user_has_role_assignment($userid, $roleid, $contextid = 0) {
+function user_has_role_assignment($userid, $roleid, $contextid = 0)
+{
     global $DB;
 
     if ($contextid) {
@@ -4544,7 +4655,7 @@ function user_has_role_assignment($userid, $roleid, $contextid = 0) {
         return ($count > 0);
 
     } else {
-        return $DB->record_exists('role_assignments', array('userid'=>$userid, 'roleid'=>$roleid));
+        return $DB->record_exists('role_assignments', array('userid' => $userid, 'roleid' => $roleid));
     }
 }
 
@@ -4558,7 +4669,8 @@ function user_has_role_assignment($userid, $roleid, $contextid = 0) {
  * @param int $rolenamedisplay type of role name
  * @return string localised role name or course role name alias
  */
-function role_get_name(stdClass $role, $context = null, $rolenamedisplay = ROLENAME_ALIAS) {
+function role_get_name(stdClass $role, $context = null, $rolenamedisplay = ROLENAME_ALIAS)
+{
     global $DB;
 
     if ($rolenamedisplay == ROLENAME_SHORT) {
@@ -4571,7 +4683,7 @@ function role_get_name(stdClass $role, $context = null, $rolenamedisplay = ROLEN
 
     if ($coursecontext and !property_exists($role, 'coursealias') and ($rolenamedisplay == ROLENAME_ALIAS or $rolenamedisplay == ROLENAME_BOTH or $rolenamedisplay == ROLENAME_ALIAS_RAW)) {
         $role = clone($role); // Do not modify parameters.
-        if ($r = $DB->get_record('role_names', array('roleid'=>$role->id, 'contextid'=>$coursecontext->id))) {
+        if ($r = $DB->get_record('role_names', array('roleid' => $role->id, 'contextid' => $coursecontext->id))) {
             $role->coursealias = $r->name;
         } else {
             $role->coursealias = null;
@@ -4588,22 +4700,40 @@ function role_get_name(stdClass $role, $context = null, $rolenamedisplay = ROLEN
 
     if (trim($role->name) !== '') {
         // For filtering always use context where was the thing defined - system for roles here.
-        $original = format_string($role->name, true, array('context'=>context_system::instance()));
+        $original = format_string($role->name, true, array('context' => context_system::instance()));
 
     } else {
         // Empty role->name means we want to see localised role name based on shortname,
         // only default roles are supposed to be localised.
         switch ($role->shortname) {
-            case 'manager':         $original = get_string('manager', 'role'); break;
-            case 'coursecreator':   $original = get_string('coursecreators'); break;
-            case 'editingteacher':  $original = get_string('defaultcourseteacher'); break;
-            case 'teacher':         $original = get_string('noneditingteacher'); break;
-            case 'student':         $original = get_string('defaultcoursestudent'); break;
-            case 'guest':           $original = get_string('guest'); break;
-            case 'user':            $original = get_string('authenticateduser'); break;
-            case 'frontpage':       $original = get_string('frontpageuser', 'role'); break;
+            case 'manager':
+                $original = get_string('manager', 'role');
+                break;
+            case 'coursecreator':
+                $original = get_string('coursecreators');
+                break;
+            case 'editingteacher':
+                $original = get_string('defaultcourseteacher');
+                break;
+            case 'teacher':
+                $original = get_string('noneditingteacher');
+                break;
+            case 'student':
+                $original = get_string('defaultcoursestudent');
+                break;
+            case 'guest':
+                $original = get_string('guest');
+                break;
+            case 'user':
+                $original = get_string('authenticateduser');
+                break;
+            case 'frontpage':
+                $original = get_string('frontpageuser', 'role');
+                break;
             // We should not get here, the role UI should require the name for custom roles!
-            default:                $original = $role->shortname; break;
+            default:
+                $original = $role->shortname;
+                break;
         }
     }
 
@@ -4617,7 +4747,7 @@ function role_get_name(stdClass $role, $context = null, $rolenamedisplay = ROLEN
 
     if ($rolenamedisplay == ROLENAME_ALIAS) {
         if ($coursecontext and trim($role->coursealias) !== '') {
-            return format_string($role->coursealias, true, array('context'=>$coursecontext));
+            return format_string($role->coursealias, true, array('context' => $coursecontext));
         } else {
             return $original;
         }
@@ -4625,7 +4755,7 @@ function role_get_name(stdClass $role, $context = null, $rolenamedisplay = ROLEN
 
     if ($rolenamedisplay == ROLENAME_BOTH) {
         if ($coursecontext and trim($role->coursealias) !== '') {
-            return format_string($role->coursealias, true, array('context'=>$coursecontext)) . " ($original)";
+            return format_string($role->coursealias, true, array('context' => $coursecontext)) . " ($original)";
         } else {
             return $original;
         }
@@ -4642,21 +4772,31 @@ function role_get_name(stdClass $role, $context = null, $rolenamedisplay = ROLEN
  * @param stdClass $role
  * @return string localised role name
  */
-function role_get_description(stdClass $role) {
+function role_get_description(stdClass $role)
+{
     if (!html_is_blank($role->description)) {
-        return format_text($role->description, FORMAT_HTML, array('context'=>context_system::instance()));
+        return format_text($role->description, FORMAT_HTML, array('context' => context_system::instance()));
     }
 
     switch ($role->shortname) {
-        case 'manager':         return get_string('managerdescription', 'role');
-        case 'coursecreator':   return get_string('coursecreatorsdescription');
-        case 'editingteacher':  return get_string('defaultcourseteacherdescription');
-        case 'teacher':         return get_string('noneditingteacherdescription');
-        case 'student':         return get_string('defaultcoursestudentdescription');
-        case 'guest':           return get_string('guestdescription');
-        case 'user':            return get_string('authenticateduserdescription');
-        case 'frontpage':       return get_string('frontpageuserdescription', 'role');
-        default:                return '';
+        case 'manager':
+            return get_string('managerdescription', 'role');
+        case 'coursecreator':
+            return get_string('coursecreatorsdescription');
+        case 'editingteacher':
+            return get_string('defaultcourseteacherdescription');
+        case 'teacher':
+            return get_string('noneditingteacherdescription');
+        case 'student':
+            return get_string('defaultcoursestudentdescription');
+        case 'guest':
+            return get_string('guestdescription');
+        case 'user':
+            return get_string('authenticateduserdescription');
+        case 'frontpage':
+            return get_string('frontpageuserdescription', 'role');
+        default:
+            return '';
     }
 }
 
@@ -4672,7 +4812,8 @@ function role_get_description(stdClass $role) {
  * @param bool $returnmenu true means id=>localname, false means id=>rolerecord
  * @return array Array of context-specific role names, or role objects with a ->localname field added.
  */
-function role_get_names(context $context = null, $rolenamedisplay = ROLENAME_ALIAS, $returnmenu = null) {
+function role_get_names(context $context = null, $rolenamedisplay = ROLENAME_ALIAS, $returnmenu = null)
+{
     return role_fix_names(get_all_roles($context), $context, $rolenamedisplay, $returnmenu);
 }
 
@@ -4685,7 +4826,8 @@ function role_get_names(context $context = null, $rolenamedisplay = ROLENAME_ALI
  * @param bool $returnmenu null means keep the same format as $roleoptions, true means id=>localname, false means id=>rolerecord
  * @return array Array of context-specific role names, or role objects with a ->localname field added.
  */
-function role_fix_names($roleoptions, context $context = null, $rolenamedisplay = ROLENAME_ALIAS, $returnmenu = null) {
+function role_fix_names($roleoptions, context $context = null, $rolenamedisplay = ROLENAME_ALIAS, $returnmenu = null)
+{
     global $DB;
 
     if (empty($roleoptions)) {
@@ -4713,7 +4855,7 @@ function role_fix_names($roleoptions, context $context = null, $rolenamedisplay 
     if ($coursecontext and ($rolenamedisplay == ROLENAME_ALIAS_RAW or $rolenamedisplay == ROLENAME_ALIAS or $rolenamedisplay == ROLENAME_BOTH)) {
         $first = reset($roleoptions);
         if (!property_exists($first, 'coursealias')) {
-            $aliasnames = $DB->get_records('role_names', array('contextid'=>$coursecontext->id));
+            $aliasnames = $DB->get_records('role_names', array('contextid' => $coursecontext->id));
             foreach ($aliasnames as $alias) {
                 if (isset($roleoptions[$alias->roleid])) {
                     $roleoptions[$alias->roleid]->coursealias = $alias->name;
@@ -4752,7 +4894,8 @@ function role_fix_names($roleoptions, context $context = null, $rolenamedisplay 
  * @param int $contextlevel
  * @return bool whether 2 component are in different "sections"
  */
-function component_level_changed($cap, $comp, $contextlevel) {
+function component_level_changed($cap, $comp, $contextlevel)
+{
 
     if (strstr($cap->component, '/') && strstr($comp, '/')) {
         $compsa = explode('/', $cap->component);
@@ -4765,7 +4908,8 @@ function component_level_changed($cap, $comp, $contextlevel) {
 
         // we are in gradebook, still
         if (($compsa[0] == 'gradeexport' || $compsa[0] == 'gradeimport' || $compsa[0] == 'gradereport') &&
-            ($compsb[0] == 'gradeexport' || $compsb[0] == 'gradeimport' || $compsb[0] == 'gradereport')) {
+            ($compsb[0] == 'gradeexport' || $compsb[0] == 'gradeimport' || $compsb[0] == 'gradereport')
+        ) {
             return false;
         }
 
@@ -4784,7 +4928,8 @@ function component_level_changed($cap, $comp, $contextlevel) {
  * @param array $allroles array of roles, as returned by get_all_roles();
  * @return array $role->sortorder =-> $role->id with the keys in ascending order.
  */
-function fix_role_sortorder($allroles) {
+function fix_role_sortorder($allroles)
+{
     global $DB;
 
     $rolesort = array();
@@ -4810,7 +4955,8 @@ function fix_role_sortorder($allroles) {
  * @param stdClass $second The second role. Actually, only ->sortorder is used.
  * @return boolean success or failure
  */
-function switch_roles($first, $second) {
+function switch_roles($first, $second)
+{
     global $DB;
     $temp = $DB->get_field('role', 'MAX(sortorder) + 1', array());
     $result = $DB->set_field('role', 'sortorder', $temp, array('sortorder' => $first->sortorder));
@@ -4825,14 +4971,15 @@ function switch_roles($first, $second) {
  * @param stdClass $sourcerole role to copy from
  * @param int $targetrole id of role to copy to
  */
-function role_cap_duplicate($sourcerole, $targetrole) {
+function role_cap_duplicate($sourcerole, $targetrole)
+{
     global $DB;
 
     $systemcontext = context_system::instance();
     $caps = $DB->get_records_sql("SELECT *
                                     FROM {role_capabilities}
                                    WHERE roleid = ? AND contextid = ?",
-                                 array($sourcerole->id, $systemcontext->id));
+        array($sourcerole->id, $systemcontext->id));
     // adding capabilities
     foreach ($caps as $cap) {
         unset($cap->id);
@@ -4851,7 +4998,8 @@ function role_cap_duplicate($sourcerole, $targetrole) {
  * @param string $capability
  * @return array($neededroles, $forbiddenroles)
  */
-function get_roles_with_cap_in_context($context, $capability) {
+function get_roles_with_cap_in_context($context, $capability)
+{
     global $DB;
 
     $ctxids = trim($context->path, '/'); // kill leading slash
@@ -4862,7 +5010,7 @@ function get_roles_with_cap_in_context($context, $capability) {
               JOIN {context} ctx ON ctx.id = rc.contextid
              WHERE rc.capability = :cap AND ctx.id IN ($ctxids)
           ORDER BY rc.roleid ASC, ctx.depth DESC";
-    $params = array('cap'=>$capability);
+    $params = array('cap' => $capability);
 
     if (!$capdefs = $DB->get_records_sql($sql, $params)) {
         // no cap definitions --> no capability
@@ -4870,8 +5018,8 @@ function get_roles_with_cap_in_context($context, $capability) {
     }
 
     $forbidden = array();
-    $needed    = array();
-    foreach($capdefs as $def) {
+    $needed = array();
+    foreach ($capdefs as $def) {
         if (isset($forbidden[$def->roleid])) {
             continue;
         }
@@ -4891,7 +5039,7 @@ function get_roles_with_cap_in_context($context, $capability) {
     unset($capdefs);
 
     // remove all those roles not allowing
-    foreach($needed as $key=>$value) {
+    foreach ($needed as $key => $value) {
         if (!$value) {
             unset($needed[$key]);
         } else {
@@ -4910,10 +5058,11 @@ function get_roles_with_cap_in_context($context, $capability) {
  * @param array $capabilities An array of capabilities
  * @return array of roles with all of the required capabilities
  */
-function get_roles_with_caps_in_context($context, $capabilities) {
+function get_roles_with_caps_in_context($context, $capabilities)
+{
     $neededarr = array();
     $forbiddenarr = array();
-    foreach($capabilities as $caprequired) {
+    foreach ($capabilities as $caprequired) {
         list($neededarr[], $forbiddenarr[]) = get_roles_with_cap_in_context($context, $caprequired);
     }
 
@@ -4924,14 +5073,14 @@ function get_roles_with_caps_in_context($context, $capabilities) {
                 $rolesthatcanrate = $needed;
             } else {
                 //only want roles that have all caps
-                $rolesthatcanrate = array_intersect_key($rolesthatcanrate,$needed);
+                $rolesthatcanrate = array_intersect_key($rolesthatcanrate, $needed);
             }
         }
     }
     if (!empty($forbiddenarr) && !empty($rolesthatcanrate)) {
         foreach ($forbiddenarr as $forbidden) {
-           //remove any roles that are forbidden any of the caps
-           $rolesthatcanrate = array_diff($rolesthatcanrate, $forbidden);
+            //remove any roles that are forbidden any of the caps
+            $rolesthatcanrate = array_diff($rolesthatcanrate, $forbidden);
         }
     }
     return $rolesthatcanrate;
@@ -4945,7 +5094,8 @@ function get_roles_with_caps_in_context($context, $capabilities) {
  * @param array $capabilities An array of capabilities
  * @return array of roles with all of the required capabilities
  */
-function get_role_names_with_caps_in_context($context, $capabilities) {
+function get_role_names_with_caps_in_context($context, $capabilities)
+{
     global $DB;
 
     $rolesthatcanrate = get_roles_with_caps_in_context($context, $capabilities);
@@ -4968,13 +5118,14 @@ function get_role_names_with_caps_in_context($context, $capabilities) {
  * @param string $capability name
  * @return bool
  */
-function prohibit_is_removable($roleid, context $context, $capability) {
+function prohibit_is_removable($roleid, context $context, $capability)
+{
     global $DB;
 
     $ctxids = trim($context->path, '/'); // kill leading slash
     $ctxids = str_replace('/', ',', $ctxids);
 
-    $params = array('roleid'=>$roleid, 'cap'=>$capability, 'prohibit'=>CAP_PROHIBIT);
+    $params = array('roleid' => $roleid, 'cap' => $capability, 'prohibit' => CAP_PROHIBIT);
 
     $sql = "SELECT ctx.id
               FROM {role_capabilities} rc
@@ -5005,7 +5156,8 @@ function prohibit_is_removable($roleid, context $context, $capability) {
  * @param int $permission
  * @return void
  */
-function role_change_permission($roleid, $context, $capname, $permission) {
+function role_change_permission($roleid, $context, $capname, $permission)
+{
     global $DB;
 
     if ($permission == CAP_INHERIT) {
@@ -5017,7 +5169,7 @@ function role_change_permission($roleid, $context, $capname, $permission) {
     $ctxids = trim($context->path, '/'); // kill leading slash
     $ctxids = str_replace('/', ',', $ctxids);
 
-    $params = array('roleid'=>$roleid, 'cap'=>$capname);
+    $params = array('roleid' => $roleid, 'cap' => $capname);
 
     $sql = "SELECT ctx.id, rc.permission, ctx.depth
               FROM {role_capabilities} rc
@@ -5026,7 +5178,7 @@ function role_change_permission($roleid, $context, $capname, $permission) {
           ORDER BY ctx.depth DESC";
 
     if ($existing = $DB->get_records_sql($sql, $params)) {
-        foreach($existing as $e) {
+        foreach ($existing as $e) {
             if ($e->permission == CAP_PROHIBIT) {
                 // prohibit can not be overridden, no point in changing anything
                 return;
@@ -5085,7 +5237,8 @@ function role_change_permission($roleid, $context, $capname, $permission) {
  * @property-read string $path path to context, starts with system context
  * @property-read int $depth
  */
-abstract class context extends stdClass implements IteratorAggregate {
+abstract class context extends stdClass implements IteratorAggregate
+{
 
     /**
      * The context id
@@ -5130,34 +5283,35 @@ abstract class context extends stdClass implements IteratorAggregate {
     /**
      * @var array Context caching info
      */
-    private static $cache_contexts     = array();
+    private static $cache_contexts = array();
 
     /**
      * Context count
      * Why do we do count contexts? Because count($array) is horribly slow for large arrays
      * @var int
      */
-    protected static $cache_count      = 0;
+    protected static $cache_count = 0;
 
     /**
      * @var array Context caching info
      */
-    protected static $cache_preloaded  = array();
+    protected static $cache_preloaded = array();
 
     /**
      * @var context_system The system context once initialised
      */
-    protected static $systemcontext    = null;
+    protected static $systemcontext = null;
 
     /**
      * Resets the cache to remove all data.
      * @static
      */
-    protected static function reset_caches() {
+    protected static function reset_caches()
+    {
         self::$cache_contextsbyid = array();
-        self::$cache_contexts     = array();
-        self::$cache_count        = 0;
-        self::$cache_preloaded    = array();
+        self::$cache_contexts = array();
+        self::$cache_count = 0;
+        self::$cache_preloaded = array();
 
         self::$systemcontext = null;
     }
@@ -5170,7 +5324,8 @@ abstract class context extends stdClass implements IteratorAggregate {
      * @param context $context New context to add
      * @return void
      */
-    protected static function cache_add(context $context) {
+    protected static function cache_add(context $context)
+    {
         if (isset(self::$cache_contextsbyid[$context->id])) {
             // already cached, no need to do anything - this is relatively cheap, we do all this because count() is slow
             return;
@@ -5178,7 +5333,7 @@ abstract class context extends stdClass implements IteratorAggregate {
 
         if (self::$cache_count >= CONTEXT_CACHE_MAX_SIZE) {
             $i = 0;
-            foreach(self::$cache_contextsbyid as $ctx) {
+            foreach (self::$cache_contextsbyid as $ctx) {
                 $i++;
                 if ($i <= 100) {
                     // we want to keep the first contexts to be loaded on this page, hopefully they will be needed again later
@@ -5206,7 +5361,8 @@ abstract class context extends stdClass implements IteratorAggregate {
      * @param context $context Context object to remove
      * @return void
      */
-    protected static function cache_remove(context $context) {
+    protected static function cache_remove(context $context)
+    {
         if (!isset(self::$cache_contextsbyid[$context->id])) {
             // not cached, no need to do anything - this is relatively cheap, we do all this because count() is slow
             return;
@@ -5229,7 +5385,8 @@ abstract class context extends stdClass implements IteratorAggregate {
      * @param int $instance Instance ID
      * @return context|bool Context or false if not in cache
      */
-    protected static function cache_get($contextlevel, $instance) {
+    protected static function cache_get($contextlevel, $instance)
+    {
         if (isset(self::$cache_contexts[$contextlevel][$instance])) {
             return self::$cache_contexts[$contextlevel][$instance];
         }
@@ -5243,7 +5400,8 @@ abstract class context extends stdClass implements IteratorAggregate {
      * @param int $id Context ID
      * @return context|bool Context or false if not in cache
      */
-    protected static function cache_get_by_id($id) {
+    protected static function cache_get_by_id($id)
+    {
         if (isset(self::$cache_contextsbyid[$id])) {
             return self::$cache_contextsbyid[$id];
         }
@@ -5257,22 +5415,28 @@ abstract class context extends stdClass implements IteratorAggregate {
      * @param stdClass $rec
      * @return void (modifies $rec)
      */
-     protected static function preload_from_record(stdClass $rec) {
-         if (empty($rec->ctxid) or empty($rec->ctxlevel) or !isset($rec->ctxinstance) or empty($rec->ctxpath) or empty($rec->ctxdepth)) {
-             // $rec does not have enough data, passed here repeatedly or context does not exist yet
-             return;
-         }
+    protected static function preload_from_record(stdClass $rec)
+    {
+        if (empty($rec->ctxid) or empty($rec->ctxlevel) or !isset($rec->ctxinstance) or empty($rec->ctxpath) or empty($rec->ctxdepth)) {
+            // $rec does not have enough data, passed here repeatedly or context does not exist yet
+            return;
+        }
 
-         // note: in PHP5 the objects are passed by reference, no need to return $rec
-         $record = new stdClass();
-         $record->id           = $rec->ctxid;       unset($rec->ctxid);
-         $record->contextlevel = $rec->ctxlevel;    unset($rec->ctxlevel);
-         $record->instanceid   = $rec->ctxinstance; unset($rec->ctxinstance);
-         $record->path         = $rec->ctxpath;     unset($rec->ctxpath);
-         $record->depth        = $rec->ctxdepth;    unset($rec->ctxdepth);
+        // note: in PHP5 the objects are passed by reference, no need to return $rec
+        $record = new stdClass();
+        $record->id = $rec->ctxid;
+        unset($rec->ctxid);
+        $record->contextlevel = $rec->ctxlevel;
+        unset($rec->ctxlevel);
+        $record->instanceid = $rec->ctxinstance;
+        unset($rec->ctxinstance);
+        $record->path = $rec->ctxpath;
+        unset($rec->ctxpath);
+        $record->depth = $rec->ctxdepth;
+        unset($rec->ctxdepth);
 
-         return context::create_instance_from_record($record);
-     }
+        return context::create_instance_from_record($record);
+    }
 
 
     // ====== magic methods =======
@@ -5282,7 +5446,8 @@ abstract class context extends stdClass implements IteratorAggregate {
      * @param string $name
      * @param mixed $value
      */
-    public function __set($name, $value) {
+    public function __set($name, $value)
+    {
         debugging('Can not change context instance properties!');
     }
 
@@ -5291,16 +5456,22 @@ abstract class context extends stdClass implements IteratorAggregate {
      * @param string $name
      * @return mixed
      */
-    public function __get($name) {
+    public function __get($name)
+    {
         switch ($name) {
-            case 'id':           return $this->_id;
-            case 'contextlevel': return $this->_contextlevel;
-            case 'instanceid':   return $this->_instanceid;
-            case 'path':         return $this->_path;
-            case 'depth':        return $this->_depth;
+            case 'id':
+                return $this->_id;
+            case 'contextlevel':
+                return $this->_contextlevel;
+            case 'instanceid':
+                return $this->_instanceid;
+            case 'path':
+                return $this->_path;
+            case 'depth':
+                return $this->_depth;
 
             default:
-                debugging('Invalid context property accessed! '.$name);
+                debugging('Invalid context property accessed! ' . $name);
                 return null;
         }
     }
@@ -5310,15 +5481,22 @@ abstract class context extends stdClass implements IteratorAggregate {
      * @param string $name
      * @return bool
      */
-    public function __isset($name) {
+    public function __isset($name)
+    {
         switch ($name) {
-            case 'id':           return isset($this->_id);
-            case 'contextlevel': return isset($this->_contextlevel);
-            case 'instanceid':   return isset($this->_instanceid);
-            case 'path':         return isset($this->_path);
-            case 'depth':        return isset($this->_depth);
+            case 'id':
+                return isset($this->_id);
+            case 'contextlevel':
+                return isset($this->_contextlevel);
+            case 'instanceid':
+                return isset($this->_instanceid);
+            case 'path':
+                return isset($this->_path);
+            case 'depth':
+                return isset($this->_depth);
 
-            default: return false;
+            default:
+                return false;
         }
 
     }
@@ -5327,7 +5505,8 @@ abstract class context extends stdClass implements IteratorAggregate {
      * ALl properties are read only, sorry.
      * @param string $name
      */
-    public function __unset($name) {
+    public function __unset($name)
+    {
         debugging('Can not unset context instance properties!');
     }
 
@@ -5339,13 +5518,14 @@ abstract class context extends stdClass implements IteratorAggregate {
      * Now we can convert context object to array using convert_to_array(),
      * and feed it properly to json_encode().
      */
-    public function getIterator() {
+    public function getIterator()
+    {
         $ret = array(
-            'id'           => $this->id,
+            'id' => $this->id,
             'contextlevel' => $this->contextlevel,
-            'instanceid'   => $this->instanceid,
-            'path'         => $this->path,
-            'depth'        => $this->depth
+            'instanceid' => $this->instanceid,
+            'path' => $this->path,
+            'depth' => $this->depth
         );
         return new ArrayIterator($ret);
     }
@@ -5358,12 +5538,13 @@ abstract class context extends stdClass implements IteratorAggregate {
      *
      * @param stdClass $record
      */
-    protected function __construct(stdClass $record) {
-        $this->_id           = (int)$record->id;
+    protected function __construct(stdClass $record)
+    {
+        $this->_id = (int)$record->id;
         $this->_contextlevel = (int)$record->contextlevel;
-        $this->_instanceid   = $record->instanceid;
-        $this->_path         = $record->path;
-        $this->_depth        = $record->depth;
+        $this->_instanceid = $record->instanceid;
+        $this->_path = $record->path;
+        $this->_depth = $record->depth;
     }
 
     /**
@@ -5372,7 +5553,8 @@ abstract class context extends stdClass implements IteratorAggregate {
      * @param stdClass $record
      * @return context instance
      */
-    protected static function create_instance_from_record(stdClass $record) {
+    protected static function create_instance_from_record(stdClass $record)
+    {
         $classname = context_helper::get_class_for_level($record->contextlevel);
 
         if ($context = context::cache_get_by_id($record->id)) {
@@ -5390,7 +5572,8 @@ abstract class context extends stdClass implements IteratorAggregate {
      * we do this in db specific way for perf reasons only.
      * @static
      */
-    protected static function merge_context_temp_table() {
+    protected static function merge_context_temp_table()
+    {
         global $DB;
 
         /* MDL-11347:
@@ -5434,16 +5617,17 @@ abstract class context extends stdClass implements IteratorAggregate {
         $DB->execute($updatesql);
     }
 
-   /**
-    * Get a context instance as an object, from a given context id.
-    *
-    * @static
-    * @param int $id context id
-    * @param int $strictness IGNORE_MISSING means compatible mode, false returned if record not found, debug message if more found;
-    *                        MUST_EXIST means throw exception if no record found
-    * @return context|bool the context object or false if not found
-    */
-    public static function instance_by_id($id, $strictness = MUST_EXIST) {
+    /**
+     * Get a context instance as an object, from a given context id.
+     *
+     * @static
+     * @param int $id context id
+     * @param int $strictness IGNORE_MISSING means compatible mode, false returned if record not found, debug message if more found;
+     *                        MUST_EXIST means throw exception if no record found
+     * @return context|bool the context object or false if not found
+     */
+    public static function instance_by_id($id, $strictness = MUST_EXIST)
+    {
         global $DB;
 
         if (get_called_class() !== 'context' and get_called_class() !== 'context_helper') {
@@ -5463,7 +5647,32 @@ abstract class context extends stdClass implements IteratorAggregate {
             return $context;
         }
 
-        if ($record = $DB->get_record('context', array('id'=>$id), '*', $strictness)) {
+        switch (MOODLE_RUN_MODE) {
+            case MOODLE_MODE_HOST:
+                $record = $DB->get_record('context', array('id' => $id), '*', $strictness);
+                break;
+            case MOODLE_MODE_HUB:
+                $record = get_remote_context_by_id($id);
+                break;
+            default:
+                break;
+        }
+
+        if ($record) {
+            return context::create_instance_from_record($record);
+        }
+        switch (MOODLE_RUN_MODE) {
+            case MOODLE_MODE_HOST:
+                $record = $DB->get_record('context', array('id' => $id), '*', $strictness);
+                break;
+            case MOODLE_MODE_HUB:
+                $record = get_remote_context_by_id($id);
+                break;
+            default:
+                break;
+        }
+
+        if ($record) {
             return context::create_instance_from_record($record);
         }
 
@@ -5476,18 +5685,19 @@ abstract class context extends stdClass implements IteratorAggregate {
      * @param context $newparent
      * @return void
      */
-    public function update_moved(context $newparent) {
+    public function update_moved(context $newparent)
+    {
         global $DB;
 
         $frompath = $this->_path;
-        $newpath  = $newparent->path . '/' . $this->_id;
+        $newpath = $newparent->path . '/' . $this->_id;
 
         $trans = $DB->start_delegated_transaction();
 
         $this->mark_dirty();
 
         $setdepth = '';
-        if (($newparent->depth +1) != $this->_depth) {
+        if (($newparent->depth + 1) != $this->_depth) {
             $diff = $newparent->depth - $this->_depth + 1;
             $setdepth = ", depth = depth + $diff";
         }
@@ -5498,11 +5708,11 @@ abstract class context extends stdClass implements IteratorAggregate {
         $params = array($newpath, $this->_id);
         $DB->execute($sql, $params);
 
-        $this->_path  = $newpath;
+        $this->_path = $newpath;
         $this->_depth = $newparent->depth + 1;
 
         $sql = "UPDATE {context}
-                   SET path = ".$DB->sql_concat("?", $DB->sql_substr("path", strlen($frompath)+1))."
+                   SET path = " . $DB->sql_concat("?", $DB->sql_substr("path", strlen($frompath) + 1)) . "
                        $setdepth
                  WHERE path LIKE ?";
         $params = array($newpath, "{$frompath}/%");
@@ -5521,7 +5731,8 @@ abstract class context extends stdClass implements IteratorAggregate {
      * @param bool $rebuild
      * @return void
      */
-    public function reset_paths($rebuild = true) {
+    public function reset_paths($rebuild = true)
+    {
         global $DB;
 
         if ($this->_path) {
@@ -5530,8 +5741,8 @@ abstract class context extends stdClass implements IteratorAggregate {
         $DB->set_field_select('context', 'depth', 0, "path LIKE '%/$this->_id/%'");
         $DB->set_field_select('context', 'path', NULL, "path LIKE '%/$this->_id/%'");
         if ($this->_contextlevel != CONTEXT_SYSTEM) {
-            $DB->set_field('context', 'depth', 0, array('id'=>$this->_id));
-            $DB->set_field('context', 'path', NULL, array('id'=>$this->_id));
+            $DB->set_field('context', 'depth', 0, array('id' => $this->_id));
+            $DB->set_field('context', 'path', NULL, array('id' => $this->_id));
             $this->_depth = 0;
             $this->_path = null;
         }
@@ -5546,16 +5757,17 @@ abstract class context extends stdClass implements IteratorAggregate {
     /**
      * Delete all data linked to content, do not delete the context record itself
      */
-    public function delete_content() {
+    public function delete_content()
+    {
         global $CFG, $DB;
 
         blocks_delete_all_for_context($this->_id);
         filter_delete_all_for_context($this->_id);
 
         require_once($CFG->dirroot . '/comment/lib.php');
-        comment::delete_comments(array('contextid'=>$this->_id));
+        comment::delete_comments(array('contextid' => $this->_id));
 
-        require_once($CFG->dirroot.'/rating/lib.php');
+        require_once($CFG->dirroot . '/rating/lib.php');
         $delopt = new stdclass();
         $delopt->contextid = $this->_id;
         $rm = new rating_manager();
@@ -5570,20 +5782,21 @@ abstract class context extends stdClass implements IteratorAggregate {
         repository::delete_all_for_context($this->_id);
 
         // delete all advanced grading data attached to this context
-        require_once($CFG->dirroot.'/grade/grading/lib.php');
+        require_once($CFG->dirroot . '/grade/grading/lib.php');
         grading_manager::delete_all_for_context($this->_id);
 
         // now delete stuff from role related tables, role_unassign_all
         // and unenrol should be called earlier to do proper cleanup
-        $DB->delete_records('role_assignments', array('contextid'=>$this->_id));
-        $DB->delete_records('role_capabilities', array('contextid'=>$this->_id));
-        $DB->delete_records('role_names', array('contextid'=>$this->_id));
+        $DB->delete_records('role_assignments', array('contextid' => $this->_id));
+        $DB->delete_records('role_capabilities', array('contextid' => $this->_id));
+        $DB->delete_records('role_names', array('contextid' => $this->_id));
     }
 
     /**
      * Delete the context content and the context record itself
      */
-    public function delete() {
+    public function delete()
+    {
         global $DB;
 
         if ($this->_contextlevel <= CONTEXT_SYSTEM) {
@@ -5591,13 +5804,13 @@ abstract class context extends stdClass implements IteratorAggregate {
         }
 
         // double check the context still exists
-        if (!$DB->record_exists('context', array('id'=>$this->_id))) {
+        if (!$DB->record_exists('context', array('id' => $this->_id))) {
             context::cache_remove($this);
             return;
         }
 
         $this->delete_content();
-        $DB->delete_records('context', array('id'=>$this->_id));
+        $DB->delete_records('context', array('id' => $this->_id));
         // purge static context cache if entry present
         context::cache_remove($this);
 
@@ -5618,20 +5831,21 @@ abstract class context extends stdClass implements IteratorAggregate {
      * @param string $parentpath
      * @return stdClass context record
      */
-    protected static function insert_context_record($contextlevel, $instanceid, $parentpath) {
+    protected static function insert_context_record($contextlevel, $instanceid, $parentpath)
+    {
         global $DB;
 
         $record = new stdClass();
         $record->contextlevel = $contextlevel;
-        $record->instanceid   = $instanceid;
-        $record->depth        = 0;
-        $record->path         = null; //not known before insert
+        $record->instanceid = $instanceid;
+        $record->depth = 0;
+        $record->path = null; //not known before insert
 
         $record->id = $DB->insert_record('context', $record);
 
         // now add path if known - it can be added later
         if (!is_null($parentpath)) {
-            $record->path = $parentpath.'/'.$record->id;
+            $record->path = $parentpath . '/' . $record->id;
             $record->depth = substr_count($record->path, '/');
             $DB->update_record('context', $record);
         }
@@ -5648,7 +5862,8 @@ abstract class context extends stdClass implements IteratorAggregate {
      *      to course contexts
      * @return string the human readable context name.
      */
-    public function get_context_name($withprefix = true, $short = false) {
+    public function get_context_name($withprefix = true, $short = false)
+    {
         // must be implemented in all context levels
         throw new coding_exception('can not get name of abstract context');
     }
@@ -5682,18 +5897,19 @@ abstract class context extends stdClass implements IteratorAggregate {
      *
      * @return array Array of child records
      */
-    public function get_child_contexts() {
+    public function get_child_contexts()
+    {
         global $DB;
 
         if (empty($this->_path) or empty($this->_depth)) {
-            debugging('Can not find child contexts of context '.$this->_id.' try rebuilding of context paths');
+            debugging('Can not find child contexts of context ' . $this->_id . ' try rebuilding of context paths');
             return array();
         }
 
         $sql = "SELECT ctx.*
                   FROM {context} ctx
                  WHERE ctx.path LIKE ?";
-        $params = array($this->_path.'/%');
+        $params = array($this->_path . '/%');
         $records = $DB->get_records_sql($sql, $params);
 
         $result = array();
@@ -5711,7 +5927,8 @@ abstract class context extends stdClass implements IteratorAggregate {
      * @param bool $includeself tre means include self too
      * @return array of context instances
      */
-    public function get_parent_contexts($includeself = false) {
+    public function get_parent_contexts($includeself = false)
+    {
         if (!$contextids = $this->get_parent_context_ids($includeself)) {
             return array();
         }
@@ -5732,7 +5949,8 @@ abstract class context extends stdClass implements IteratorAggregate {
      * @param bool $includeself tre means include self too
      * @return array of context ids
      */
-    public function get_parent_context_ids($includeself = false) {
+    public function get_parent_context_ids($includeself = false)
+    {
         if (empty($this->_path)) {
             return array();
         }
@@ -5751,7 +5969,8 @@ abstract class context extends stdClass implements IteratorAggregate {
      *
      * @return context
      */
-    public function get_parent_context() {
+    public function get_parent_context()
+    {
         if (empty($this->_path) or $this->_id == SYSCONTEXTID) {
             return false;
         }
@@ -5770,7 +5989,8 @@ abstract class context extends stdClass implements IteratorAggregate {
      * @param bool $strict true means throw exception if not found, false means return false if not found
      * @return context_course context of the enclosing course, null if not found or exception
      */
-    public function get_course_context($strict = true) {
+    public function get_course_context($strict = true)
+    {
         if ($strict) {
             throw new coding_exception('Context does not belong to any course.');
         } else {
@@ -5784,7 +6004,8 @@ abstract class context extends stdClass implements IteratorAggregate {
      * @static
      * @return string cleanup SQL
      */
-    protected static function get_cleanup_sql() {
+    protected static function get_cleanup_sql()
+    {
         throw new coding_exception('get_cleanup_sql() method must be implemented in all context levels');
     }
 
@@ -5795,7 +6016,8 @@ abstract class context extends stdClass implements IteratorAggregate {
      * @param bool $force
      * @return void
      */
-    protected static function build_paths($force) {
+    protected static function build_paths($force)
+    {
         throw new coding_exception('build_paths() method must be implemented in all context levels');
     }
 
@@ -5805,7 +6027,8 @@ abstract class context extends stdClass implements IteratorAggregate {
      * @static
      * @return void
      */
-    protected static function create_level_instances() {
+    protected static function create_level_instances()
+    {
         throw new coding_exception('create_level_instances() method must be implemented in all context levels');
     }
 
@@ -5813,7 +6036,8 @@ abstract class context extends stdClass implements IteratorAggregate {
      * Reset all cached permissions and definitions if the necessary.
      * @return void
      */
-    public function reload_if_dirty() {
+    public function reload_if_dirty()
+    {
         global $ACCESSLIB_PRIVATE, $USER;
 
         // Load dirty contexts list if needed
@@ -5829,12 +6053,12 @@ abstract class context extends stdClass implements IteratorAggregate {
                     return;
                 }
                 // no idea why -2 is there, server cluster time difference maybe... (skodak)
-                $ACCESSLIB_PRIVATE->dirtycontexts = get_cache_flags('accesslib/dirtycontexts', $USER->access['time']-2);
+                $ACCESSLIB_PRIVATE->dirtycontexts = get_cache_flags('accesslib/dirtycontexts', $USER->access['time'] - 2);
             }
         }
 
-        foreach ($ACCESSLIB_PRIVATE->dirtycontexts as $path=>$unused) {
-            if ($path === $this->_path or strpos($this->_path, $path.'/') === 0) {
+        foreach ($ACCESSLIB_PRIVATE->dirtycontexts as $path => $unused) {
+            if ($path === $this->_path or strpos($this->_path, $path . '/') === 0) {
                 // reload all capabilities of USER and others - preserving loginas, roleswitches, etc
                 // and then cleanup any marks of dirtyness... at least from our short term memory! :-)
                 reload_all_capabilities();
@@ -5846,7 +6070,8 @@ abstract class context extends stdClass implements IteratorAggregate {
     /**
      * Mark a context as dirty (with timestamp) so as to force reloading of the context.
      */
-    public function mark_dirty() {
+    public function mark_dirty()
+    {
         global $CFG, $USER, $ACCESSLIB_PRIVATE;
 
         if (during_initial_install()) {
@@ -5855,7 +6080,7 @@ abstract class context extends stdClass implements IteratorAggregate {
 
         // only if it is a non-empty string
         if (is_string($this->_path) && $this->_path !== '') {
-            set_cache_flag('accesslib/dirtycontexts', $this->_path, 1, time()+$CFG->sessiontimeout);
+            set_cache_flag('accesslib/dirtycontexts', $this->_path, 1, time() + $CFG->sessiontimeout);
             if (isset($ACCESSLIB_PRIVATE->dirtycontexts)) {
                 $ACCESSLIB_PRIVATE->dirtycontexts[$this->_path] = 1;
             } else {
@@ -5863,7 +6088,7 @@ abstract class context extends stdClass implements IteratorAggregate {
                     $ACCESSLIB_PRIVATE->dirtycontexts = array($this->_path => 1);
                 } else {
                     if (isset($USER->access['time'])) {
-                        $ACCESSLIB_PRIVATE->dirtycontexts = get_cache_flags('accesslib/dirtycontexts', $USER->access['time']-2);
+                        $ACCESSLIB_PRIVATE->dirtycontexts = get_cache_flags('accesslib/dirtycontexts', $USER->access['time'] - 2);
                     } else {
                         $ACCESSLIB_PRIVATE->dirtycontexts = array($this->_path => 1);
                     }
@@ -5890,7 +6115,8 @@ abstract class context extends stdClass implements IteratorAggregate {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.2
  */
-class context_helper extends context {
+class context_helper extends context
+{
 
     /**
      * @var array An array mapping context levels to classes
@@ -5900,32 +6126,35 @@ class context_helper extends context {
     /**
      * Instance does not make sense here, only static use
      */
-    protected function __construct() {
+    protected function __construct()
+    {
     }
 
     /**
      * Reset internal context levels array.
      */
-    public static function reset_levels() {
+    public static function reset_levels()
+    {
         self::$alllevels = null;
     }
 
     /**
      * Initialise context levels, call before using self::$alllevels.
      */
-    private static function init_levels() {
+    private static function init_levels()
+    {
         global $CFG;
 
         if (isset(self::$alllevels)) {
             return;
         }
         self::$alllevels = array(
-            CONTEXT_SYSTEM    => 'context_system',
-            CONTEXT_USER      => 'context_user',
+            CONTEXT_SYSTEM => 'context_system',
+            CONTEXT_USER => 'context_user',
             CONTEXT_COURSECAT => 'context_coursecat',
-            CONTEXT_COURSE    => 'context_course',
-            CONTEXT_MODULE    => 'context_module',
-            CONTEXT_BLOCK     => 'context_block',
+            CONTEXT_COURSE => 'context_course',
+            CONTEXT_MODULE => 'context_module',
+            CONTEXT_BLOCK => 'context_block',
         );
 
         if (empty($CFG->custom_context_classes)) {
@@ -5955,7 +6184,8 @@ class context_helper extends context {
      * @param int $contextlevel (CONTEXT_SYSTEM, etc.)
      * @return string class name of the context class
      */
-    public static function get_class_for_level($contextlevel) {
+    public static function get_class_for_level($contextlevel)
+    {
         self::init_levels();
         if (isset(self::$alllevels[$contextlevel])) {
             return self::$alllevels[$contextlevel];
@@ -5970,7 +6200,8 @@ class context_helper extends context {
      * @static
      * @return array int=>string (level=>level class name)
      */
-    public static function get_all_levels() {
+    public static function get_all_levels()
+    {
         self::init_levels();
         return self::$alllevels;
     }
@@ -5982,12 +6213,13 @@ class context_helper extends context {
      * @static
      * @return void
      */
-    public static function cleanup_instances() {
+    public static function cleanup_instances()
+    {
         global $DB;
         self::init_levels();
 
         $sqls = array();
-        foreach (self::$alllevels as $level=>$classname) {
+        foreach (self::$alllevels as $level => $classname) {
             $sqls[] = $classname::get_cleanup_sql();
         }
 
@@ -6014,9 +6246,10 @@ class context_helper extends context {
      * @param bool $buildpaths
      * @return void
      */
-    public static function create_instances($contextlevel = null, $buildpaths = true) {
+    public static function create_instances($contextlevel = null, $buildpaths = true)
+    {
         self::init_levels();
-        foreach (self::$alllevels as $level=>$classname) {
+        foreach (self::$alllevels as $level => $classname) {
             if ($contextlevel and $level > $contextlevel) {
                 // skip potential sub-contexts
                 continue;
@@ -6035,7 +6268,8 @@ class context_helper extends context {
      * @param bool $force false means add missing only
      * @return void
      */
-    public static function build_all_paths($force = false) {
+    public static function build_all_paths($force = false)
+    {
         self::init_levels();
         foreach (self::$alllevels as $classname) {
             $classname::build_paths($force);
@@ -6049,7 +6283,8 @@ class context_helper extends context {
      * Resets the cache to remove all data.
      * @static
      */
-    public static function reset_caches() {
+    public static function reset_caches()
+    {
         context::reset_caches();
     }
 
@@ -6062,8 +6297,9 @@ class context_helper extends context {
      * @param string $tablealias context table alias in the query
      * @return array (table.column=>alias, ...)
      */
-    public static function get_preload_record_columns($tablealias) {
-        return array("$tablealias.id"=>"ctxid", "$tablealias.path"=>"ctxpath", "$tablealias.depth"=>"ctxdepth", "$tablealias.contextlevel"=>"ctxlevel", "$tablealias.instanceid"=>"ctxinstance");
+    public static function get_preload_record_columns($tablealias)
+    {
+        return array("$tablealias.id" => "ctxid", "$tablealias.path" => "ctxpath", "$tablealias.depth" => "ctxdepth", "$tablealias.contextlevel" => "ctxlevel", "$tablealias.instanceid" => "ctxinstance");
     }
 
     /**
@@ -6075,7 +6311,8 @@ class context_helper extends context {
      * @param string $tablealias context table alias in the query
      * @return string
      */
-    public static function get_preload_record_columns_sql($tablealias) {
+    public static function get_preload_record_columns_sql($tablealias)
+    {
         return "$tablealias.id AS ctxid, $tablealias.path AS ctxpath, $tablealias.depth AS ctxdepth, $tablealias.contextlevel AS ctxlevel, $tablealias.instanceid AS ctxinstance";
     }
 
@@ -6088,9 +6325,10 @@ class context_helper extends context {
      * @param stdClass $rec
      * @return void (modifies $rec)
      */
-     public static function preload_from_record(stdClass $rec) {
-         context::preload_from_record($rec);
-     }
+    public static function preload_from_record(stdClass $rec)
+    {
+        context::preload_from_record($rec);
+    }
 
     /**
      * Preload all contexts instances from course.
@@ -6100,7 +6338,8 @@ class context_helper extends context {
      * @static
      * @param int $courseid
      */
-    public static function preload_course($courseid) {
+    public static function preload_course($courseid)
+    {
         // Users can call this multiple times without doing any harm
         if (isset(context::$cache_preloaded[$courseid])) {
             return;
@@ -6119,11 +6358,12 @@ class context_helper extends context {
      * @param int $instanceid
      * @return void
      */
-    public static function delete_instance($contextlevel, $instanceid) {
+    public static function delete_instance($contextlevel, $instanceid)
+    {
         global $DB;
 
         // double check the context still exists
-        if ($record = $DB->get_record('context', array('contextlevel'=>$contextlevel, 'instanceid'=>$instanceid))) {
+        if ($record = $DB->get_record('context', array('contextlevel' => $contextlevel, 'instanceid' => $instanceid))) {
             $context = context::create_instance_from_record($record);
             $context->delete();
         } else {
@@ -6138,7 +6378,8 @@ class context_helper extends context {
      * @param int $contextlevel
      * @return string name of the context level
      */
-    public static function get_level_name($contextlevel) {
+    public static function get_level_name($contextlevel)
+    {
         $classname = context_helper::get_class_for_level($contextlevel);
         return $classname::get_level_name();
     }
@@ -6146,13 +6387,15 @@ class context_helper extends context {
     /**
      * not used
      */
-    public function get_url() {
+    public function get_url()
+    {
     }
 
     /**
      * not used
      */
-    public function get_capabilities() {
+    public function get_capabilities()
+    {
     }
 }
 
@@ -6166,13 +6409,15 @@ class context_helper extends context {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.2
  */
-class context_system extends context {
+class context_system extends context
+{
     /**
      * Please use context_system::instance() if you need the instance of context.
      *
      * @param stdClass $record
      */
-    protected function __construct(stdClass $record) {
+    protected function __construct(stdClass $record)
+    {
         parent::__construct($record);
         if ($record->contextlevel != CONTEXT_SYSTEM) {
             throw new coding_exception('Invalid $record->contextlevel in context_system constructor.');
@@ -6185,7 +6430,8 @@ class context_system extends context {
      * @static
      * @return string the human readable context level name.
      */
-    public static function get_level_name() {
+    public static function get_level_name()
+    {
         return get_string('coresystem');
     }
 
@@ -6196,7 +6442,8 @@ class context_system extends context {
      * @param boolean $short does not apply to system context
      * @return string the human readable context name.
      */
-    public function get_context_name($withprefix = true, $short = false) {
+    public function get_context_name($withprefix = true, $short = false)
+    {
         return self::get_level_name();
     }
 
@@ -6205,7 +6452,8 @@ class context_system extends context {
      *
      * @return moodle_url
      */
-    public function get_url() {
+    public function get_url()
+    {
         return new moodle_url('/');
     }
 
@@ -6214,7 +6462,8 @@ class context_system extends context {
      *
      * @return array
      */
-    public function get_capabilities() {
+    public function get_capabilities()
+    {
         global $DB;
 
         $sort = 'ORDER BY contextlevel,component,name';   // To group them sensibly for display
@@ -6223,14 +6472,15 @@ class context_system extends context {
         $sql = "SELECT *
                   FROM {capabilities}";
 
-        return $DB->get_records_sql($sql.' '.$sort, $params);
+        return $DB->get_records_sql($sql . ' ' . $sort, $params);
     }
 
     /**
      * Create missing context instances at system context
      * @static
      */
-    protected static function create_level_instances() {
+    protected static function create_level_instances()
+    {
         // nothing to do here, the system context is created automatically in installer
         self::instance(0);
     }
@@ -6244,7 +6494,8 @@ class context_system extends context {
      * @param bool $cache
      * @return context_system context instance
      */
-    public static function instance($instanceid = 0, $strictness = MUST_EXIST, $cache = true) {
+    public static function instance($instanceid = 0, $strictness = MUST_EXIST, $cache = true)
+    {
         global $DB;
 
         if ($instanceid != 0) {
@@ -6254,11 +6505,11 @@ class context_system extends context {
         if (defined('SYSCONTEXTID') and $cache) { // dangerous: define this in config.php to eliminate 1 query/page
             if (!isset(context::$systemcontext)) {
                 $record = new stdClass();
-                $record->id           = SYSCONTEXTID;
+                $record->id = SYSCONTEXTID;
                 $record->contextlevel = CONTEXT_SYSTEM;
-                $record->instanceid   = 0;
-                $record->path         = '/'.SYSCONTEXTID;
-                $record->depth        = 1;
+                $record->instanceid = 0;
+                $record->path = '/' . SYSCONTEXTID;
+                $record->depth = 1;
                 context::$systemcontext = new context_system($record);
             }
             return context::$systemcontext;
@@ -6267,7 +6518,7 @@ class context_system extends context {
 
         try {
             // We ignore the strictness completely because system context must exist except during install.
-            $record = $DB->get_record('context', array('contextlevel'=>CONTEXT_SYSTEM), '*', MUST_EXIST);
+            $record = $DB->get_record('context', array('contextlevel' => CONTEXT_SYSTEM), '*', MUST_EXIST);
         } catch (dml_exception $e) {
             //table or record does not exist
             if (!during_initial_install()) {
@@ -6280,9 +6531,9 @@ class context_system extends context {
         if (!$record) {
             $record = new stdClass();
             $record->contextlevel = CONTEXT_SYSTEM;
-            $record->instanceid   = 0;
-            $record->depth        = 1;
-            $record->path         = null; //not known before insert
+            $record->instanceid = 0;
+            $record->depth = 1;
+            $record->path = null; //not known before insert
 
             try {
                 if ($DB->count_records('context')) {
@@ -6308,10 +6559,10 @@ class context_system extends context {
             debugging('Invalid system context detected');
         }
 
-        if ($record->depth != 1 or $record->path != '/'.$record->id) {
+        if ($record->depth != 1 or $record->path != '/' . $record->id) {
             // fix path if necessary, initial install or path reset
             $record->depth = 1;
-            $record->path  = '/'.$record->id;
+            $record->path = '/' . $record->id;
             $DB->update_record('context', $record);
         }
 
@@ -6330,7 +6581,8 @@ class context_system extends context {
      *
      * @return array
      */
-    public function get_child_contexts() {
+    public function get_child_contexts()
+    {
         global $DB;
 
         debugging('Fetching of system context child courses is strongly discouraged on production servers (it may eat all available memory)!');
@@ -6339,7 +6591,7 @@ class context_system extends context {
         // and hope we don't OOM in the process - don't cache
         $sql = "SELECT c.*
                   FROM {context} c
-                 WHERE contextlevel > ".CONTEXT_SYSTEM;
+                 WHERE contextlevel > " . CONTEXT_SYSTEM;
         $records = $DB->get_records_sql($sql);
 
         $result = array();
@@ -6356,7 +6608,8 @@ class context_system extends context {
      * @static
      * @return string cleanup SQL
      */
-    protected static function get_cleanup_sql() {
+    protected static function get_cleanup_sql()
+    {
         $sql = "
                   SELECT c.*
                     FROM {context} c
@@ -6372,13 +6625,14 @@ class context_system extends context {
      * @static
      * @param bool $force
      */
-    protected static function build_paths($force) {
+    protected static function build_paths($force)
+    {
         global $DB;
 
         /* note: ignore $force here, we always do full test of system context */
 
         // exactly one record must exist
-        $record = $DB->get_record('context', array('contextlevel'=>CONTEXT_SYSTEM), '*', MUST_EXIST);
+        $record = $DB->get_record('context', array('contextlevel' => CONTEXT_SYSTEM), '*', MUST_EXIST);
 
         if ($record->instanceid != 0) {
             debugging('Invalid system context detected');
@@ -6388,10 +6642,10 @@ class context_system extends context {
             debugging('Invalid SYSCONTEXTID detected');
         }
 
-        if ($record->depth != 1 or $record->path != '/'.$record->id) {
+        if ($record->depth != 1 or $record->path != '/' . $record->id) {
             // fix path if necessary, initial install or path reset
-            $record->depth    = 1;
-            $record->path     = '/'.$record->id;
+            $record->depth = 1;
+            $record->path = '/' . $record->id;
             $DB->update_record('context', $record);
         }
     }
@@ -6407,14 +6661,16 @@ class context_system extends context {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.2
  */
-class context_user extends context {
+class context_user extends context
+{
     /**
      * Please use context_user::instance($userid) if you need the instance of context.
      * Alternatively if you know only the context id use context::instance_by_id($contextid)
      *
      * @param stdClass $record
      */
-    protected function __construct(stdClass $record) {
+    protected function __construct(stdClass $record)
+    {
         parent::__construct($record);
         if ($record->contextlevel != CONTEXT_USER) {
             throw new coding_exception('Invalid $record->contextlevel in context_user constructor.');
@@ -6427,7 +6683,8 @@ class context_user extends context {
      * @static
      * @return string the human readable context level name.
      */
-    public static function get_level_name() {
+    public static function get_level_name()
+    {
         return get_string('user');
     }
 
@@ -6438,13 +6695,14 @@ class context_user extends context {
      * @param boolean $short does not apply to user context
      * @return string the human readable context name.
      */
-    public function get_context_name($withprefix = true, $short = false) {
+    public function get_context_name($withprefix = true, $short = false)
+    {
         global $DB;
 
         $name = '';
-        if ($user = $DB->get_record('user', array('id'=>$this->_instanceid, 'deleted'=>0))) {
-            if ($withprefix){
-                $name = get_string('user').': ';
+        if ($user = $DB->get_record('user', array('id' => $this->_instanceid, 'deleted' => 0))) {
+            if ($withprefix) {
+                $name = get_string('user') . ': ';
             }
             $name .= fullname($user);
         }
@@ -6456,13 +6714,14 @@ class context_user extends context {
      *
      * @return moodle_url
      */
-    public function get_url() {
+    public function get_url()
+    {
         global $COURSE;
 
         if ($COURSE->id == SITEID) {
-            $url = new moodle_url('/user/profile.php', array('id'=>$this->_instanceid));
+            $url = new moodle_url('/user/profile.php', array('id' => $this->_instanceid));
         } else {
-            $url = new moodle_url('/user/view.php', array('id'=>$this->_instanceid, 'courseid'=>$COURSE->id));
+            $url = new moodle_url('/user/view.php', array('id' => $this->_instanceid, 'courseid' => $COURSE->id));
         }
         return $url;
     }
@@ -6472,7 +6731,8 @@ class context_user extends context {
      *
      * @return array
      */
-    public function get_capabilities() {
+    public function get_capabilities()
+    {
         global $DB;
 
         $sort = 'ORDER BY contextlevel,component,name';   // To group them sensibly for display
@@ -6481,10 +6741,10 @@ class context_user extends context {
         list($extra, $params) = $DB->get_in_or_equal($extracaps, SQL_PARAMS_NAMED, 'cap');
         $sql = "SELECT *
                   FROM {capabilities}
-                 WHERE contextlevel = ".CONTEXT_USER."
+                 WHERE contextlevel = " . CONTEXT_USER . "
                        OR name $extra";
 
-        return $records = $DB->get_records_sql($sql.' '.$sort, $params);
+        return $records = $DB->get_records_sql($sql . ' ' . $sort, $params);
     }
 
     /**
@@ -6495,7 +6755,8 @@ class context_user extends context {
      * @param int $strictness
      * @return context_user context instance
      */
-    public static function instance($userid, $strictness = MUST_EXIST) {
+    public static function instance($userid, $strictness = MUST_EXIST)
+    {
         global $DB;
 
         if ($context = context::cache_get(CONTEXT_USER, $userid)) {
@@ -6504,7 +6765,7 @@ class context_user extends context {
 
         if (!$record = $DB->get_record('context', array('contextlevel' => CONTEXT_USER, 'instanceid' => $userid))) {
             if ($user = $DB->get_record('user', array('id' => $userid, 'deleted' => 0), 'id', $strictness)) {
-                $record = context::insert_context_record(CONTEXT_USER, $user->id, '/'.SYSCONTEXTID, 0);
+                $record = context::insert_context_record(CONTEXT_USER, $user->id, '/' . SYSCONTEXTID, 0);
             }
         }
 
@@ -6521,15 +6782,16 @@ class context_user extends context {
      * Create missing context instances at user context level
      * @static
      */
-    protected static function create_level_instances() {
+    protected static function create_level_instances()
+    {
         global $DB;
 
-        $sql = "SELECT ".CONTEXT_USER.", u.id
+        $sql = "SELECT " . CONTEXT_USER . ", u.id
                   FROM {user} u
                  WHERE u.deleted = 0
                        AND NOT EXISTS (SELECT 'x'
                                          FROM {context} cx
-                                        WHERE u.id = cx.instanceid AND cx.contextlevel=".CONTEXT_USER.")";
+                                        WHERE u.id = cx.instanceid AND cx.contextlevel=" . CONTEXT_USER . ")";
         $contextdata = $DB->get_recordset_sql($sql);
         foreach ($contextdata as $context) {
             context::insert_context_record(CONTEXT_USER, $context->id, null);
@@ -6543,12 +6805,13 @@ class context_user extends context {
      * @static
      * @return string cleanup SQL
      */
-    protected static function get_cleanup_sql() {
+    protected static function get_cleanup_sql()
+    {
         $sql = "
                   SELECT c.*
                     FROM {context} c
          LEFT OUTER JOIN {user} u ON (c.instanceid = u.id AND u.deleted = 0)
-                   WHERE u.id IS NULL AND c.contextlevel = ".CONTEXT_USER."
+                   WHERE u.id IS NULL AND c.contextlevel = " . CONTEXT_USER . "
                ";
 
         return $sql;
@@ -6560,7 +6823,8 @@ class context_user extends context {
      * @static
      * @param bool $force
      */
-    protected static function build_paths($force) {
+    protected static function build_paths($force)
+    {
         global $DB;
 
         // First update normal users.
@@ -6594,14 +6858,16 @@ class context_user extends context {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.2
  */
-class context_coursecat extends context {
+class context_coursecat extends context
+{
     /**
      * Please use context_coursecat::instance($coursecatid) if you need the instance of context.
      * Alternatively if you know only the context id use context::instance_by_id($contextid)
      *
      * @param stdClass $record
      */
-    protected function __construct(stdClass $record) {
+    protected function __construct(stdClass $record)
+    {
         parent::__construct($record);
         if ($record->contextlevel != CONTEXT_COURSECAT) {
             throw new coding_exception('Invalid $record->contextlevel in context_coursecat constructor.');
@@ -6614,7 +6880,8 @@ class context_coursecat extends context {
      * @static
      * @return string the human readable context level name.
      */
-    public static function get_level_name() {
+    public static function get_level_name()
+    {
         return get_string('category');
     }
 
@@ -6625,13 +6892,14 @@ class context_coursecat extends context {
      * @param boolean $short does not apply to course categories
      * @return string the human readable context name.
      */
-    public function get_context_name($withprefix = true, $short = false) {
+    public function get_context_name($withprefix = true, $short = false)
+    {
         global $DB;
 
         $name = '';
-        if ($category = $DB->get_record('course_categories', array('id'=>$this->_instanceid))) {
-            if ($withprefix){
-                $name = get_string('category').': ';
+        if ($category = $DB->get_record('course_categories', array('id' => $this->_instanceid))) {
+            if ($withprefix) {
+                $name = get_string('category') . ': ';
             }
             $name .= format_string($category->name, true, array('context' => $this));
         }
@@ -6643,7 +6911,8 @@ class context_coursecat extends context {
      *
      * @return moodle_url
      */
-    public function get_url() {
+    public function get_url()
+    {
         return new moodle_url('/course/index.php', array('categoryid' => $this->_instanceid));
     }
 
@@ -6652,7 +6921,8 @@ class context_coursecat extends context {
      *
      * @return array
      */
-    public function get_capabilities() {
+    public function get_capabilities()
+    {
         global $DB;
 
         $sort = 'ORDER BY contextlevel,component,name';   // To group them sensibly for display
@@ -6660,9 +6930,9 @@ class context_coursecat extends context {
         $params = array();
         $sql = "SELECT *
                   FROM {capabilities}
-                 WHERE contextlevel IN (".CONTEXT_COURSECAT.",".CONTEXT_COURSE.",".CONTEXT_MODULE.",".CONTEXT_BLOCK.")";
+                 WHERE contextlevel IN (" . CONTEXT_COURSECAT . "," . CONTEXT_COURSE . "," . CONTEXT_MODULE . "," . CONTEXT_BLOCK . ")";
 
-        return $DB->get_records_sql($sql.' '.$sort, $params);
+        return $DB->get_records_sql($sql . ' ' . $sort, $params);
     }
 
     /**
@@ -6673,7 +6943,8 @@ class context_coursecat extends context {
      * @param int $strictness
      * @return context_coursecat context instance
      */
-    public static function instance($categoryid, $strictness = MUST_EXIST) {
+    public static function instance($categoryid, $strictness = MUST_EXIST)
+    {
         global $DB;
 
         if ($context = context::cache_get(CONTEXT_COURSECAT, $categoryid)) {
@@ -6686,7 +6957,7 @@ class context_coursecat extends context {
                     $parentcontext = context_coursecat::instance($category->parent);
                     $record = context::insert_context_record(CONTEXT_COURSECAT, $category->id, $parentcontext->path);
                 } else {
-                    $record = context::insert_context_record(CONTEXT_COURSECAT, $category->id, '/'.SYSCONTEXTID, 0);
+                    $record = context::insert_context_record(CONTEXT_COURSECAT, $category->id, '/' . SYSCONTEXTID, 0);
                 }
             }
         }
@@ -6706,18 +6977,19 @@ class context_coursecat extends context {
      *
      * @return array
      */
-    public function get_child_contexts() {
+    public function get_child_contexts()
+    {
         global $DB;
 
         if (empty($this->_path) or empty($this->_depth)) {
-            debugging('Can not find child contexts of context '.$this->_id.' try rebuilding of context paths');
+            debugging('Can not find child contexts of context ' . $this->_id . ' try rebuilding of context paths');
             return array();
         }
 
         $sql = "SELECT ctx.*
                   FROM {context} ctx
                  WHERE ctx.path LIKE ? AND (ctx.depth = ? OR ctx.contextlevel = ?)";
-        $params = array($this->_path.'/%', $this->depth+1, CONTEXT_COURSECAT);
+        $params = array($this->_path . '/%', $this->depth + 1, CONTEXT_COURSECAT);
         $records = $DB->get_records_sql($sql, $params);
 
         $result = array();
@@ -6732,14 +7004,15 @@ class context_coursecat extends context {
      * Create missing context instances at course category context level
      * @static
      */
-    protected static function create_level_instances() {
+    protected static function create_level_instances()
+    {
         global $DB;
 
-        $sql = "SELECT ".CONTEXT_COURSECAT.", cc.id
+        $sql = "SELECT " . CONTEXT_COURSECAT . ", cc.id
                   FROM {course_categories} cc
                  WHERE NOT EXISTS (SELECT 'x'
                                      FROM {context} cx
-                                    WHERE cc.id = cx.instanceid AND cx.contextlevel=".CONTEXT_COURSECAT.")";
+                                    WHERE cc.id = cx.instanceid AND cx.contextlevel=" . CONTEXT_COURSECAT . ")";
         $contextdata = $DB->get_recordset_sql($sql);
         foreach ($contextdata as $context) {
             context::insert_context_record(CONTEXT_COURSECAT, $context->id, null);
@@ -6753,12 +7026,13 @@ class context_coursecat extends context {
      * @static
      * @return string cleanup SQL
      */
-    protected static function get_cleanup_sql() {
+    protected static function get_cleanup_sql()
+    {
         $sql = "
                   SELECT c.*
                     FROM {context} c
          LEFT OUTER JOIN {course_categories} cc ON c.instanceid = cc.id
-                   WHERE cc.id IS NULL AND c.contextlevel = ".CONTEXT_COURSECAT."
+                   WHERE cc.id IS NULL AND c.contextlevel = " . CONTEXT_COURSECAT . "
                ";
 
         return $sql;
@@ -6770,24 +7044,25 @@ class context_coursecat extends context {
      * @static
      * @param bool $force
      */
-    protected static function build_paths($force) {
+    protected static function build_paths($force)
+    {
         global $DB;
 
-        if ($force or $DB->record_exists_select('context', "contextlevel = ".CONTEXT_COURSECAT." AND (depth = 0 OR path IS NULL)")) {
+        if ($force or $DB->record_exists_select('context', "contextlevel = " . CONTEXT_COURSECAT . " AND (depth = 0 OR path IS NULL)")) {
             if ($force) {
                 $ctxemptyclause = $emptyclause = '';
             } else {
                 $ctxemptyclause = "AND (ctx.path IS NULL OR ctx.depth = 0)";
-                $emptyclause    = "AND ({context}.path IS NULL OR {context}.depth = 0)";
+                $emptyclause = "AND ({context}.path IS NULL OR {context}.depth = 0)";
             }
 
-            $base = '/'.SYSCONTEXTID;
+            $base = '/' . SYSCONTEXTID;
 
             // Normal top level categories
             $sql = "UPDATE {context}
                        SET depth=2,
-                           path=".$DB->sql_concat("'$base/'", 'id')."
-                     WHERE contextlevel=".CONTEXT_COURSECAT."
+                           path=" . $DB->sql_concat("'$base/'", 'id') . "
+                     WHERE contextlevel=" . CONTEXT_COURSECAT . "
                            AND EXISTS (SELECT 'x'
                                          FROM {course_categories} cc
                                         WHERE cc.id = {context}.instanceid AND cc.depth=1)
@@ -6796,12 +7071,12 @@ class context_coursecat extends context {
 
             // Deeper categories - one query per depthlevel
             $maxdepth = $DB->get_field_sql("SELECT MAX(depth) FROM {course_categories}");
-            for ($n=2; $n<=$maxdepth; $n++) {
+            for ($n = 2; $n <= $maxdepth; $n++) {
                 $sql = "INSERT INTO {context_temp} (id, path, depth)
-                        SELECT ctx.id, ".$DB->sql_concat('pctx.path', "'/'", 'ctx.id').", pctx.depth+1
+                        SELECT ctx.id, " . $DB->sql_concat('pctx.path', "'/'", 'ctx.id') . ", pctx.depth+1
                           FROM {context} ctx
-                          JOIN {course_categories} cc ON (cc.id = ctx.instanceid AND ctx.contextlevel = ".CONTEXT_COURSECAT." AND cc.depth = $n)
-                          JOIN {context} pctx ON (pctx.instanceid = cc.parent AND pctx.contextlevel = ".CONTEXT_COURSECAT.")
+                          JOIN {course_categories} cc ON (cc.id = ctx.instanceid AND ctx.contextlevel = " . CONTEXT_COURSECAT . " AND cc.depth = $n)
+                          JOIN {context} pctx ON (pctx.instanceid = cc.parent AND pctx.contextlevel = " . CONTEXT_COURSECAT . ")
                          WHERE pctx.path IS NOT NULL AND pctx.depth > 0
                                $ctxemptyclause";
                 $trans = $DB->start_delegated_transaction();
@@ -6826,14 +7101,16 @@ class context_coursecat extends context {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.2
  */
-class context_course extends context {
+class context_course extends context
+{
     /**
      * Please use context_course::instance($courseid) if you need the instance of context.
      * Alternatively if you know only the context id use context::instance_by_id($contextid)
      *
      * @param stdClass $record
      */
-    protected function __construct(stdClass $record) {
+    protected function __construct(stdClass $record)
+    {
         parent::__construct($record);
         if ($record->contextlevel != CONTEXT_COURSE) {
             throw new coding_exception('Invalid $record->contextlevel in context_course constructor.');
@@ -6846,7 +7123,8 @@ class context_course extends context {
      * @static
      * @return string the human readable context level name.
      */
-    public static function get_level_name() {
+    public static function get_level_name()
+    {
         return get_string('course');
     }
 
@@ -6857,22 +7135,23 @@ class context_course extends context {
      * @param boolean $short whether to use the short name of the thing.
      * @return string the human readable context name.
      */
-    public function get_context_name($withprefix = true, $short = false) {
+    public function get_context_name($withprefix = true, $short = false)
+    {
         global $DB;
 
         $name = '';
         if ($this->_instanceid == SITEID) {
             $name = get_string('frontpage', 'admin');
         } else {
-            if ($course = $DB->get_record('course', array('id'=>$this->_instanceid))) {
-                if ($withprefix){
-                    $name = get_string('course').': ';
+            if ($course = $DB->get_record('course', array('id' => $this->_instanceid))) {
+                if ($withprefix) {
+                    $name = get_string('course') . ': ';
                 }
-                if ($short){
+                if ($short) {
                     $name .= format_string($course->shortname, true, array('context' => $this));
                 } else {
                     $name .= format_string(get_course_display_name_for_list($course));
-               }
+                }
             }
         }
         return $name;
@@ -6883,9 +7162,10 @@ class context_course extends context {
      *
      * @return moodle_url
      */
-    public function get_url() {
+    public function get_url()
+    {
         if ($this->_instanceid != SITEID) {
-            return new moodle_url('/course/view.php', array('id'=>$this->_instanceid));
+            return new moodle_url('/course/view.php', array('id' => $this->_instanceid));
         }
 
         return new moodle_url('/');
@@ -6896,7 +7176,8 @@ class context_course extends context {
      *
      * @return array
      */
-    public function get_capabilities() {
+    public function get_capabilities()
+    {
         global $DB;
 
         $sort = 'ORDER BY contextlevel,component,name';   // To group them sensibly for display
@@ -6904,9 +7185,9 @@ class context_course extends context {
         $params = array();
         $sql = "SELECT *
                   FROM {capabilities}
-                 WHERE contextlevel IN (".CONTEXT_COURSE.",".CONTEXT_MODULE.",".CONTEXT_BLOCK.")";
+                 WHERE contextlevel IN (" . CONTEXT_COURSE . "," . CONTEXT_MODULE . "," . CONTEXT_BLOCK . ")";
 
-        return $DB->get_records_sql($sql.' '.$sort, $params);
+        return $DB->get_records_sql($sql . ' ' . $sort, $params);
     }
 
     /**
@@ -6915,7 +7196,8 @@ class context_course extends context {
      * @param bool $strict true means throw exception if not found, false means return false if not found
      * @return context_course context of the enclosing course, null if not found or exception
      */
-    public function get_course_context($strict = true) {
+    public function get_course_context($strict = true)
+    {
         return $this;
     }
 
@@ -6927,20 +7209,22 @@ class context_course extends context {
      * @param int $strictness
      * @return context_course context instance
      */
-    public static function instance($courseid, $strictness = MUST_EXIST) {
+    public static function instance($courseid, $strictness = MUST_EXIST)
+    {
         global $DB;
 
         if ($context = context::cache_get(CONTEXT_COURSE, $courseid)) {
             return $context;
         }
 
-        if (!$record = $DB->get_record('context', array('contextlevel' => CONTEXT_COURSE, 'instanceid' => $courseid))) {
+        //if (!$record = $DB->get_record('context', array('contextlevel' => CONTEXT_COURSE, 'instanceid' => $courseid))) {
+        if (!$record = get_remote_context_by_instanceid_and_contextlevel($courseid, CONTEXT_COURSE)) {
             if ($course = $DB->get_record('course', array('id' => $courseid), 'id,category', $strictness)) {
                 if ($course->category) {
                     $parentcontext = context_coursecat::instance($course->category);
                     $record = context::insert_context_record(CONTEXT_COURSE, $course->id, $parentcontext->path);
                 } else {
-                    $record = context::insert_context_record(CONTEXT_COURSE, $course->id, '/'.SYSCONTEXTID, 0);
+                    $record = context::insert_context_record(CONTEXT_COURSE, $course->id, '/' . SYSCONTEXTID, 0);
                 }
             }
         }
@@ -6958,14 +7242,15 @@ class context_course extends context {
      * Create missing context instances at course context level
      * @static
      */
-    protected static function create_level_instances() {
+    protected static function create_level_instances()
+    {
         global $DB;
 
-        $sql = "SELECT ".CONTEXT_COURSE.", c.id
+        $sql = "SELECT " . CONTEXT_COURSE . ", c.id
                   FROM {course} c
                  WHERE NOT EXISTS (SELECT 'x'
                                      FROM {context} cx
-                                    WHERE c.id = cx.instanceid AND cx.contextlevel=".CONTEXT_COURSE.")";
+                                    WHERE c.id = cx.instanceid AND cx.contextlevel=" . CONTEXT_COURSE . ")";
         $contextdata = $DB->get_recordset_sql($sql);
         foreach ($contextdata as $context) {
             context::insert_context_record(CONTEXT_COURSE, $context->id, null);
@@ -6979,12 +7264,13 @@ class context_course extends context {
      * @static
      * @return string cleanup SQL
      */
-    protected static function get_cleanup_sql() {
+    protected static function get_cleanup_sql()
+    {
         $sql = "
                   SELECT c.*
                     FROM {context} c
          LEFT OUTER JOIN {course} co ON c.instanceid = co.id
-                   WHERE co.id IS NULL AND c.contextlevel = ".CONTEXT_COURSE."
+                   WHERE co.id IS NULL AND c.contextlevel = " . CONTEXT_COURSE . "
                ";
 
         return $sql;
@@ -6996,24 +7282,25 @@ class context_course extends context {
      * @static
      * @param bool $force
      */
-    protected static function build_paths($force) {
+    protected static function build_paths($force)
+    {
         global $DB;
 
-        if ($force or $DB->record_exists_select('context', "contextlevel = ".CONTEXT_COURSE." AND (depth = 0 OR path IS NULL)")) {
+        if ($force or $DB->record_exists_select('context', "contextlevel = " . CONTEXT_COURSE . " AND (depth = 0 OR path IS NULL)")) {
             if ($force) {
                 $ctxemptyclause = $emptyclause = '';
             } else {
                 $ctxemptyclause = "AND (ctx.path IS NULL OR ctx.depth = 0)";
-                $emptyclause    = "AND ({context}.path IS NULL OR {context}.depth = 0)";
+                $emptyclause = "AND ({context}.path IS NULL OR {context}.depth = 0)";
             }
 
-            $base = '/'.SYSCONTEXTID;
+            $base = '/' . SYSCONTEXTID;
 
             // Standard frontpage
             $sql = "UPDATE {context}
                        SET depth = 2,
-                           path = ".$DB->sql_concat("'$base/'", 'id')."
-                     WHERE contextlevel = ".CONTEXT_COURSE."
+                           path = " . $DB->sql_concat("'$base/'", 'id') . "
+                     WHERE contextlevel = " . CONTEXT_COURSE . "
                            AND EXISTS (SELECT 'x'
                                          FROM {course} c
                                         WHERE c.id = {context}.instanceid AND c.category = 0)
@@ -7022,10 +7309,10 @@ class context_course extends context {
 
             // standard courses
             $sql = "INSERT INTO {context_temp} (id, path, depth)
-                    SELECT ctx.id, ".$DB->sql_concat('pctx.path', "'/'", 'ctx.id').", pctx.depth+1
+                    SELECT ctx.id, " . $DB->sql_concat('pctx.path', "'/'", 'ctx.id') . ", pctx.depth+1
                       FROM {context} ctx
-                      JOIN {course} c ON (c.id = ctx.instanceid AND ctx.contextlevel = ".CONTEXT_COURSE." AND c.category <> 0)
-                      JOIN {context} pctx ON (pctx.instanceid = c.category AND pctx.contextlevel = ".CONTEXT_COURSECAT.")
+                      JOIN {course} c ON (c.id = ctx.instanceid AND ctx.contextlevel = " . CONTEXT_COURSE . " AND c.category <> 0)
+                      JOIN {context} pctx ON (pctx.instanceid = c.category AND pctx.contextlevel = " . CONTEXT_COURSECAT . ")
                      WHERE pctx.path IS NOT NULL AND pctx.depth > 0
                            $ctxemptyclause";
             $trans = $DB->start_delegated_transaction();
@@ -7048,14 +7335,16 @@ class context_course extends context {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.2
  */
-class context_module extends context {
+class context_module extends context
+{
     /**
      * Please use context_module::instance($cmid) if you need the instance of context.
      * Alternatively if you know only the context id use context::instance_by_id($contextid)
      *
      * @param stdClass $record
      */
-    protected function __construct(stdClass $record) {
+    protected function __construct(stdClass $record)
+    {
         parent::__construct($record);
         if ($record->contextlevel != CONTEXT_MODULE) {
             throw new coding_exception('Invalid $record->contextlevel in context_module constructor.');
@@ -7068,7 +7357,8 @@ class context_module extends context {
      * @static
      * @return string the human readable context level name.
      */
-    public static function get_level_name() {
+    public static function get_level_name()
+    {
         return get_string('activitymodule');
     }
 
@@ -7080,21 +7370,23 @@ class context_module extends context {
      * @param boolean $short does not apply to module context
      * @return string the human readable context name.
      */
-    public function get_context_name($withprefix = true, $short = false) {
+    public function get_context_name($withprefix = true, $short = false)
+    {
         global $DB;
 
         $name = '';
         if ($cm = $DB->get_record_sql("SELECT cm.*, md.name AS modname
                                          FROM {course_modules} cm
                                          JOIN {modules} md ON md.id = cm.module
-                                        WHERE cm.id = ?", array($this->_instanceid))) {
+                                        WHERE cm.id = ?", array($this->_instanceid))
+        ) {
             if ($mod = $DB->get_record($cm->modname, array('id' => $cm->instance))) {
-                    if ($withprefix){
-                        $name = get_string('modulename', $cm->modname).': ';
-                    }
-                    $name .= format_string($mod->name, true, array('context' => $this));
+                if ($withprefix) {
+                    $name = get_string('modulename', $cm->modname) . ': ';
                 }
+                $name .= format_string($mod->name, true, array('context' => $this));
             }
+        }
         return $name;
     }
 
@@ -7103,14 +7395,16 @@ class context_module extends context {
      *
      * @return moodle_url
      */
-    public function get_url() {
+    public function get_url()
+    {
         global $DB;
 
         if ($modname = $DB->get_field_sql("SELECT md.name AS modname
                                              FROM {course_modules} cm
                                              JOIN {modules} md ON md.id = cm.module
-                                            WHERE cm.id = ?", array($this->_instanceid))) {
-            return new moodle_url('/mod/' . $modname . '/view.php', array('id'=>$this->_instanceid));
+                                            WHERE cm.id = ?", array($this->_instanceid))
+        ) {
+            return new moodle_url('/mod/' . $modname . '/view.php', array('id' => $this->_instanceid));
         }
 
         return new moodle_url('/');
@@ -7121,13 +7415,14 @@ class context_module extends context {
      *
      * @return array
      */
-    public function get_capabilities() {
+    public function get_capabilities()
+    {
         global $DB, $CFG;
 
         $sort = 'ORDER BY contextlevel,component,name';   // To group them sensibly for display
 
-        $cm = $DB->get_record('course_modules', array('id'=>$this->_instanceid));
-        $module = $DB->get_record('modules', array('id'=>$cm->module));
+        $cm = $DB->get_record('course_modules', array('id' => $this->_instanceid));
+        $module = $DB->get_record('modules', array('id' => $cm->module));
 
         $subcaps = array();
         $subpluginsfile = "$CFG->dirroot/mod/$module->name/db/subplugins.php";
@@ -7137,7 +7432,7 @@ class context_module extends context {
             if (!empty($subplugins)) {
                 foreach (array_keys($subplugins) as $subplugintype) {
                     foreach (array_keys(core_component::get_plugin_list($subplugintype)) as $subpluginname) {
-                        $subcaps = array_merge($subcaps, array_keys(load_capability_def($subplugintype.'_'.$subpluginname)));
+                        $subcaps = array_merge($subcaps, array_keys(load_capability_def($subplugintype . '_' . $subpluginname)));
                     }
                 }
             }
@@ -7147,7 +7442,7 @@ class context_module extends context {
         $extracaps = array();
         if (file_exists($modfile)) {
             include_once($modfile);
-            $modfunction = $module->name.'_get_extra_capabilities';
+            $modfunction = $module->name . '_get_extra_capabilities';
             if (function_exists($modfunction)) {
                 $extracaps = $modfunction();
             }
@@ -7162,12 +7457,12 @@ class context_module extends context {
         }
         $sql = "SELECT *
                   FROM {capabilities}
-                 WHERE (contextlevel = ".CONTEXT_MODULE."
+                 WHERE (contextlevel = " . CONTEXT_MODULE . "
                        AND (component = :component OR component = 'moodle'))
                        $extra";
         $params['component'] = "mod_$module->name";
 
-        return $DB->get_records_sql($sql.' '.$sort, $params);
+        return $DB->get_records_sql($sql . ' ' . $sort, $params);
     }
 
     /**
@@ -7176,7 +7471,8 @@ class context_module extends context {
      * @param bool $strict true means throw exception if not found, false means return false if not found
      * @return context_course context of the enclosing course, null if not found or exception
      */
-    public function get_course_context($strict = true) {
+    public function get_course_context($strict = true)
+    {
         return $this->get_parent_context();
     }
 
@@ -7188,14 +7484,15 @@ class context_module extends context {
      * @param int $strictness
      * @return context_module context instance
      */
-    public static function instance($cmid, $strictness = MUST_EXIST) {
+    public static function instance($cmid, $strictness = MUST_EXIST)
+    {
         global $DB;
 
         if ($context = context::cache_get(CONTEXT_MODULE, $cmid)) {
             return $context;
         }
 
-        if (!$record = get_remote_context_by_instanceid_and_contextlevel($cmid,CONTEXT_MODULE)) {
+        if (!$record = get_remote_context_by_instanceid_and_contextlevel($cmid, CONTEXT_MODULE)) {
             if ($cm = get_remote_course_module($cmid)) {
                 $parentcontext = context_course::instance($cm->course);
                 $record = context::insert_context_record(CONTEXT_MODULE, $cm->id, $parentcontext->path);
@@ -7215,14 +7512,15 @@ class context_module extends context {
      * Create missing context instances at module context level
      * @static
      */
-    protected static function create_level_instances() {
+    protected static function create_level_instances()
+    {
         global $DB;
 
-        $sql = "SELECT ".CONTEXT_MODULE.", cm.id
+        $sql = "SELECT " . CONTEXT_MODULE . ", cm.id
                   FROM {course_modules} cm
                  WHERE NOT EXISTS (SELECT 'x'
                                      FROM {context} cx
-                                    WHERE cm.id = cx.instanceid AND cx.contextlevel=".CONTEXT_MODULE.")";
+                                    WHERE cm.id = cx.instanceid AND cx.contextlevel=" . CONTEXT_MODULE . ")";
         $contextdata = $DB->get_recordset_sql($sql);
         foreach ($contextdata as $context) {
             context::insert_context_record(CONTEXT_MODULE, $context->id, null);
@@ -7236,12 +7534,13 @@ class context_module extends context {
      * @static
      * @return string cleanup SQL
      */
-    protected static function get_cleanup_sql() {
+    protected static function get_cleanup_sql()
+    {
         $sql = "
                   SELECT c.*
                     FROM {context} c
          LEFT OUTER JOIN {course_modules} cm ON c.instanceid = cm.id
-                   WHERE cm.id IS NULL AND c.contextlevel = ".CONTEXT_MODULE."
+                   WHERE cm.id IS NULL AND c.contextlevel = " . CONTEXT_MODULE . "
                ";
 
         return $sql;
@@ -7253,10 +7552,11 @@ class context_module extends context {
      * @static
      * @param bool $force
      */
-    protected static function build_paths($force) {
+    protected static function build_paths($force)
+    {
         global $DB;
 
-        if ($force or $DB->record_exists_select('context', "contextlevel = ".CONTEXT_MODULE." AND (depth = 0 OR path IS NULL)")) {
+        if ($force or $DB->record_exists_select('context', "contextlevel = " . CONTEXT_MODULE . " AND (depth = 0 OR path IS NULL)")) {
             if ($force) {
                 $ctxemptyclause = '';
             } else {
@@ -7264,10 +7564,10 @@ class context_module extends context {
             }
 
             $sql = "INSERT INTO {context_temp} (id, path, depth)
-                    SELECT ctx.id, ".$DB->sql_concat('pctx.path', "'/'", 'ctx.id').", pctx.depth+1
+                    SELECT ctx.id, " . $DB->sql_concat('pctx.path', "'/'", 'ctx.id') . ", pctx.depth+1
                       FROM {context} ctx
-                      JOIN {course_modules} cm ON (cm.id = ctx.instanceid AND ctx.contextlevel = ".CONTEXT_MODULE.")
-                      JOIN {context} pctx ON (pctx.instanceid = cm.course AND pctx.contextlevel = ".CONTEXT_COURSE.")
+                      JOIN {course_modules} cm ON (cm.id = ctx.instanceid AND ctx.contextlevel = " . CONTEXT_MODULE . ")
+                      JOIN {context} pctx ON (pctx.instanceid = cm.course AND pctx.contextlevel = " . CONTEXT_COURSE . ")
                      WHERE pctx.path IS NOT NULL AND pctx.depth > 0
                            $ctxemptyclause";
             $trans = $DB->start_delegated_transaction();
@@ -7290,14 +7590,16 @@ class context_module extends context {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.2
  */
-class context_block extends context {
+class context_block extends context
+{
     /**
      * Please use context_block::instance($blockinstanceid) if you need the instance of context.
      * Alternatively if you know only the context id use context::instance_by_id($contextid)
      *
      * @param stdClass $record
      */
-    protected function __construct(stdClass $record) {
+    protected function __construct(stdClass $record)
+    {
         parent::__construct($record);
         if ($record->contextlevel != CONTEXT_BLOCK) {
             throw new coding_exception('Invalid $record->contextlevel in context_block constructor');
@@ -7310,7 +7612,8 @@ class context_block extends context {
      * @static
      * @return string the human readable context level name.
      */
-    public static function get_level_name() {
+    public static function get_level_name()
+    {
         return get_string('block');
     }
 
@@ -7321,18 +7624,19 @@ class context_block extends context {
      * @param boolean $short does not apply to block context
      * @return string the human readable context name.
      */
-    public function get_context_name($withprefix = true, $short = false) {
+    public function get_context_name($withprefix = true, $short = false)
+    {
         global $DB, $CFG;
 
         $name = '';
-        if ($blockinstance = $DB->get_record('block_instances', array('id'=>$this->_instanceid))) {
+        if ($blockinstance = $DB->get_record('block_instances', array('id' => $this->_instanceid))) {
             global $CFG;
             require_once("$CFG->dirroot/blocks/moodleblock.class.php");
             require_once("$CFG->dirroot/blocks/$blockinstance->blockname/block_$blockinstance->blockname.php");
             $blockname = "block_$blockinstance->blockname";
             if ($blockobject = new $blockname()) {
-                if ($withprefix){
-                    $name = get_string('block').': ';
+                if ($withprefix) {
+                    $name = get_string('block') . ': ';
                 }
                 $name .= $blockobject->title;
             }
@@ -7346,7 +7650,8 @@ class context_block extends context {
      *
      * @return moodle_url
      */
-    public function get_url() {
+    public function get_url()
+    {
         $parentcontexts = $this->get_parent_context();
         return $parentcontexts->get_url();
     }
@@ -7356,7 +7661,8 @@ class context_block extends context {
      *
      * @return array
      */
-    public function get_capabilities() {
+    public function get_capabilities()
+    {
         global $DB;
 
         $sort = 'ORDER BY contextlevel,component,name';   // To group them sensibly for display
@@ -7373,12 +7679,12 @@ class context_block extends context {
 
         $sql = "SELECT *
                   FROM {capabilities}
-                 WHERE (contextlevel = ".CONTEXT_BLOCK."
+                 WHERE (contextlevel = " . CONTEXT_BLOCK . "
                        AND component = :component)
                        $extra";
         $params['component'] = 'block_' . $bi->blockname;
 
-        return $DB->get_records_sql($sql.' '.$sort, $params);
+        return $DB->get_records_sql($sql . ' ' . $sort, $params);
     }
 
     /**
@@ -7387,7 +7693,8 @@ class context_block extends context {
      * @param bool $strict true means throw exception if not found, false means return false if not found
      * @return context_course context of the enclosing course, null if not found or exception
      */
-    public function get_course_context($strict = true) {
+    public function get_course_context($strict = true)
+    {
         $parentcontext = $this->get_parent_context();
         return $parentcontext->get_course_context($strict);
     }
@@ -7400,7 +7707,8 @@ class context_block extends context {
      * @param int $strictness
      * @return context_block context instance
      */
-    public static function instance($blockinstanceid, $strictness = MUST_EXIST) {
+    public static function instance($blockinstanceid, $strictness = MUST_EXIST)
+    {
         global $DB;
 
         if ($context = context::cache_get(CONTEXT_BLOCK, $blockinstanceid)) {
@@ -7427,7 +7735,8 @@ class context_block extends context {
      * Block do not have child contexts...
      * @return array
      */
-    public function get_child_contexts() {
+    public function get_child_contexts()
+    {
         return array();
     }
 
@@ -7435,14 +7744,15 @@ class context_block extends context {
      * Create missing context instances at block context level
      * @static
      */
-    protected static function create_level_instances() {
+    protected static function create_level_instances()
+    {
         global $DB;
 
-        $sql = "SELECT ".CONTEXT_BLOCK.", bi.id
+        $sql = "SELECT " . CONTEXT_BLOCK . ", bi.id
                   FROM {block_instances} bi
                  WHERE NOT EXISTS (SELECT 'x'
                                      FROM {context} cx
-                                    WHERE bi.id = cx.instanceid AND cx.contextlevel=".CONTEXT_BLOCK.")";
+                                    WHERE bi.id = cx.instanceid AND cx.contextlevel=" . CONTEXT_BLOCK . ")";
         $contextdata = $DB->get_recordset_sql($sql);
         foreach ($contextdata as $context) {
             context::insert_context_record(CONTEXT_BLOCK, $context->id, null);
@@ -7456,12 +7766,13 @@ class context_block extends context {
      * @static
      * @return string cleanup SQL
      */
-    protected static function get_cleanup_sql() {
+    protected static function get_cleanup_sql()
+    {
         $sql = "
                   SELECT c.*
                     FROM {context} c
          LEFT OUTER JOIN {block_instances} bi ON c.instanceid = bi.id
-                   WHERE bi.id IS NULL AND c.contextlevel = ".CONTEXT_BLOCK."
+                   WHERE bi.id IS NULL AND c.contextlevel = " . CONTEXT_BLOCK . "
                ";
 
         return $sql;
@@ -7473,10 +7784,11 @@ class context_block extends context {
      * @static
      * @param bool $force
      */
-    protected static function build_paths($force) {
+    protected static function build_paths($force)
+    {
         global $DB;
 
-        if ($force or $DB->record_exists_select('context', "contextlevel = ".CONTEXT_BLOCK." AND (depth = 0 OR path IS NULL)")) {
+        if ($force or $DB->record_exists_select('context', "contextlevel = " . CONTEXT_BLOCK . " AND (depth = 0 OR path IS NULL)")) {
             if ($force) {
                 $ctxemptyclause = '';
             } else {
@@ -7485,9 +7797,9 @@ class context_block extends context {
 
             // pctx.path IS NOT NULL prevents fatal problems with broken block instances that point to invalid context parent
             $sql = "INSERT INTO {context_temp} (id, path, depth)
-                    SELECT ctx.id, ".$DB->sql_concat('pctx.path', "'/'", 'ctx.id').", pctx.depth+1
+                    SELECT ctx.id, " . $DB->sql_concat('pctx.path', "'/'", 'ctx.id') . ", pctx.depth+1
                       FROM {context} ctx
-                      JOIN {block_instances} bi ON (bi.id = ctx.instanceid AND ctx.contextlevel = ".CONTEXT_BLOCK.")
+                      JOIN {block_instances} bi ON (bi.id = ctx.instanceid AND ctx.contextlevel = " . CONTEXT_BLOCK . ")
                       JOIN {context} pctx ON (pctx.id = bi.parentcontextid)
                      WHERE (pctx.path IS NOT NULL AND pctx.depth > 0)
                            $ctxemptyclause";
@@ -7522,7 +7834,8 @@ class context_block extends context {
  * @param array $params any parameters required by $select.
  * @return array the requested context records.
  */
-function get_sorted_contexts($select, $params = array()) {
+function get_sorted_contexts($select, $params = array())
+{
 
     //TODO: we should probably rewrite all the code that is using this thing, the trouble is we MUST NOT modify the context instances...
 
@@ -7552,7 +7865,8 @@ function get_sorted_contexts($select, $params = array()) {
  * @param array $ignoreusers array of user ids to ignore, e.g. guest
  * @return array list of suspended users.
  */
-function extract_suspended_users($context, &$users, $ignoreusers=array()) {
+function extract_suspended_users($context, &$users, $ignoreusers = array())
+{
     global $DB;
 
     // Get active enrolled users.
@@ -7580,7 +7894,8 @@ function extract_suspended_users($context, &$users, $ignoreusers=array()) {
  * @param bool $usecache Enable or disable (default) the request cache
  * @return array list of suspended user id's.
  */
-function get_suspended_userids(context $context, $usecache = false) {
+function get_suspended_userids(context $context, $usecache = false)
+{
     global $DB;
 
     if ($usecache) {

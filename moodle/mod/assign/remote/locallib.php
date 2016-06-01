@@ -56,8 +56,8 @@ class assign_mod
     public function get_assign_summary_remote()
     {
         // Get course from last parameter if supplied.
-        $responedata = moodle_webservice_client(array_merge($this->option, array('domain' => "http://10.0.0.252:10001",
-            'token' => "552b1ca988aebfffb80f6f63404fbb7a",
+        $responedata = moodle_webservice_client(array_merge($this->option, array('domain' => HUB_URL,
+            'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_assignments',
             'params' => array('courseids[0]' => $this->courseid, "ip_address" => "10.0.0.254", "username" => "admin"),
         )));

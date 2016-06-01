@@ -209,7 +209,6 @@ abstract class base implements \IteratorAggregate {
 
         } else if (!empty($data['contextid'])) {
             $event->context = \context::instance_by_id($data['contextid'], MUST_EXIST);
-
         } else {
             throw new \coding_exception('context (or contextid) is a required event property, system context may be hardcoded in init() method.');
         }

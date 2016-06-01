@@ -450,6 +450,7 @@ if ($pageid != LESSON_EOL) {
     $outoftime = optional_param('outoftime', '', PARAM_ALPHA);
 
     $ntries = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id));
+
     if (isset($USER->modattempts[$lesson->id])) {
         $ntries--;  // need to look at the old attempts :)
     }
