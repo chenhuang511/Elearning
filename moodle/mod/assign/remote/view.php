@@ -15,7 +15,7 @@ $o = new assign_mod($courseid,$assignid);
 $o->setOUTPUT($OUTPUT);
 $o->setPAGE($PAGE);
 
-$html .= $OUTPUT->header();
+
 
 switch ($action){
     case 'grading':
@@ -25,6 +25,7 @@ switch ($action){
         list ($course, $assignobject) = $o->get_assign_summary_remote();
         $PAGE->set_title($assignobject->name);
         $PAGE->set_heading($assignobject->name);
+        $html .= $OUTPUT->header();
         $html .= $o->view_summary();
         break;
 }
