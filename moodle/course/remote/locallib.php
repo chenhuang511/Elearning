@@ -69,6 +69,7 @@ function get_remote_label_content($labelid, $options = [])
     )));
 }
 
+
 function get_remote_page_content($pageid, $options = [])
 {
     return moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
@@ -85,6 +86,22 @@ function get_remote_book_content($bookid, $options = [])
         'function_name' => 'local_mod_get_book_by_id',
         'params' => array('bookid' => $bookid),
     )));
+}
+
+function get_remote_book_chapters_content($bookid, $options = [])
+{
+    $bookchapters = moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
+        'token' => HOST_TOKEN,
+        'function_name' => 'local_mod_get_book_chapters_by_id',
+        'params' => array('bookid' => $bookid),
+    )));
+    $result = array();
+    foreach ($bookchapters as $ch)
+    {
+        $result[$ch->id] = $ch;
+    }
+
+    return $result;
 }
 
 function get_remote_quiz_content($quizid, $options = [])
@@ -108,6 +125,18 @@ function get_remote_url_content($urlid, $options = [])
     ));
 }
 
+function get_remote_lesson_by_id($lessonid, $options = array())
+{
+    return moodle_webservice_client(array_merge($options,
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_lesson_by_id',
+            'params' => array('lessonid' => $lessonid),
+        )
+    ));
+}
+
 function get_remote_context_by_instanceid_and_contextlevel($instanceid, $contextlevel, $options = array())
 {
     return moodle_webservice_client(array_merge($options,
@@ -116,6 +145,30 @@ function get_remote_context_by_instanceid_and_contextlevel($instanceid, $context
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_context_by_instanceid_and_contextlevel',
             'params' => array('instanceid' => $instanceid, 'contextlevel' => $contextlevel)
+        )
+    ));
+}
+
+function get_remote_lesson_page($lessonid, $prevpageid, $options = array())
+{
+    return moodle_webservice_client(array_merge($options,
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_lesson_page',
+            'params' => array('lessonid' => $lessonid, 'prevpageid' => $prevpageid)
+        )
+    ));
+}
+
+function get_remote_lessonpage_by_pageid_and_lessonid($pageid, $lessonid, $options = array())
+{
+    return moodle_webservice_client(array_merge($options,
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_lessonpage_by_pageid_and_lessonid',
+            'params' => array('pageid' => $pageid, 'lessonid' => $lessonid)
         )
     ));
 }
@@ -132,22 +185,26 @@ function get_remote_context_by_id($id, $options = array())
     ));
 }
 
-/**
- * get course module
- *
- * @param $modulename
- * @param $instace
- * @param array $options
- * @return stdClass course_module
- */
-function get_remote_course_module_by_instance($modulename, $instace, $options = array())
+function get_remote_lesson_timer_by_userid_and_lessonid($userid, $lessonid, $options = array())
 {
     return moodle_webservice_client(array_merge($options,
         array(
             'domain' => HUB_URL,
-            'token' => HOST_TOKEN_M,
-            'function_name' => 'core_course_get_course_module_by_instance',
-            'params' => array('module' => $modulename, 'instance' => $instace)
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_get_lesson_timer_by_userid_and_lessonid',
+            'params' => array('userid' => $userid, 'lessonid' => $lessonid)
+        )
+    ));
+}
+
+function get_remote_lesson_grades_by_userid_and_lessonid($userid, $lessonid, $options = array())
+{
+    return moodle_webservice_client(array_merge($options,
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_get_lesson_grades_by_userid_and_lessonid',
+            'params' => array('userid' => $userid, 'lessonid' => $lessonid)
         )
     ));
 }
