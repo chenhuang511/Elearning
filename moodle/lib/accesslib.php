@@ -5661,20 +5661,6 @@ abstract class context extends stdClass implements IteratorAggregate
         if ($record) {
             return context::create_instance_from_record($record);
         }
-        switch (MOODLE_RUN_MODE) {
-            case MOODLE_MODE_HOST:
-                $record = $DB->get_record('context', array('id' => $id), '*', $strictness);
-                break;
-            case MOODLE_MODE_HUB:
-                $record = get_remote_context_by_id($id);
-                break;
-            default:
-                break;
-        }
-
-        if ($record) {
-            return context::create_instance_from_record($record);
-        }
 
         return false;
     }
@@ -7217,8 +7203,7 @@ class context_course extends context
             return $context;
         }
 
-        //if (!$record = $DB->get_record('context', array('contextlevel' => CONTEXT_COURSE, 'instanceid' => $courseid))) {
-        if (!$record = get_remote_context_by_instanceid_and_contextlevel($courseid, CONTEXT_COURSE)) {
+        if (!$record = $DB->get_record('context', array('contextlevel' => CONTEXT_COURSE, 'instanceid' => $courseid))) {
             if ($course = $DB->get_record('course', array('id' => $courseid), 'id,category', $strictness)) {
                 if ($course->category) {
                     $parentcontext = context_coursecat::instance($course->category);
@@ -7492,8 +7477,14 @@ class context_module extends context
             return $context;
         }
 
-        if (!$record = get_remote_context_by_instanceid_and_contextlevel($cmid, CONTEXT_MODULE)) {
-            if ($cm = get_remote_course_module($cmid)) {
+        if (!$record = $DB->get_record('context', array('contextlevel' => CONTEXT_MODULE, 'instanceid' => $cmid))) {
+
+            $coursemodule = get_remote_course_module($cmid);
+            $cm = new stdClass();
+            $cm->id = $coursemodule->id;
+            $cm->course = $coursemodule->course;
+           // if ($cm = $DB->get_record('course_modules', array('id' => $cmid), 'id,course', $strictness)) {\
+            if ($cm) {
                 $parentcontext = context_course::instance($cm->course);
                 $record = context::insert_context_record(CONTEXT_MODULE, $cm->id, $parentcontext->path);
             }

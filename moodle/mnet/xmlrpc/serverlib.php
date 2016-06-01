@@ -524,18 +524,34 @@ function mnet_server_invoke_dangerous_method($includefile, $methodname, $method,
  * @return string                 The XML-RPC response
  */
 function mnet_keyswap($function, $params) {
+
     global $CFG;
+    $myfile = fopen($CFG->dirroot . "/newfile.txt", "w") or die("Unable to open file!");
+    fwrite($myfile, "1");
     $return = array();
     $mnet = get_mnet_environment();
-
+    fwrite($myfile, "2");
     if (!empty($CFG->mnet_register_allhosts)) {
-        $mnet_peer = new mnet_peer();
+        fwrite($myfile, "3");
+        try {
+            $mnet_peer = new mnet_peer();
+        } catch (Exception $e) {
+            fwrite($myfile, $e->getTraceAsString());
+        }
+        fwrite($myfile, "3.1");
         @list($wwwroot, $pubkey, $application) = each($params);
+        fwrite($myfile, "3.2");
         $keyok = $mnet_peer->bootstrap($wwwroot, $pubkey, $application);
+        fwrite($myfile, "4");
         if ($keyok) {
+            fwrite($myfile, "5");
             $mnet_peer->commit();
         }
+        fwrite($myfile, "6");
     }
+
+    fwrite($myfile, "hghjkhkj".$mnet->public_key);
+    fclose($myfile);
     return $mnet->public_key;
 }
 
