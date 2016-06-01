@@ -69,7 +69,6 @@ function get_remote_label_content($labelid, $options = [])
     )));
 }
 
-
 function get_remote_page_content($pageid, $options = [])
 {
     return moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
@@ -109,18 +108,6 @@ function get_remote_url_content($urlid, $options = [])
     ));
 }
 
-function get_remote_lesson_by_id($lessonid, $options = array())
-{
-    return moodle_webservice_client(array_merge($options,
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_get_lesson_by_id',
-            'params' => array('lessonid' => $lessonid),
-        )
-    ));
-}
-
 function get_remote_context_by_instanceid_and_contextlevel($instanceid, $contextlevel, $options = array())
 {
     return moodle_webservice_client(array_merge($options,
@@ -133,30 +120,6 @@ function get_remote_context_by_instanceid_and_contextlevel($instanceid, $context
     ));
 }
 
-function get_remote_lesson_page($lessonid, $prevpageid, $options = array())
-{
-    return moodle_webservice_client(array_merge($options,
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_get_lesson_page',
-            'params' => array('lessonid' => $lessonid, 'prevpageid' => $prevpageid)
-        )
-    ));
-}
-
-function get_remote_lessonpage_by_pageid_and_lessonid($pageid, $lessonid, $options = array())
-{
-    return moodle_webservice_client(array_merge($options,
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_get_lessonpage_by_pageid_and_lessonid',
-            'params' => array('pageid' => $pageid, 'lessonid' => $lessonid)
-        )
-    ));
-}
-
 function get_remote_context_by_id($id, $options = array())
 {
     return moodle_webservice_client(array_merge($options,
@@ -165,30 +128,6 @@ function get_remote_context_by_id($id, $options = array())
             'token' => HOST_TOKEN,
             'function_name' => 'local_get_context_by_id',
             'params' => array('id' => $id)
-        )
-    ));
-}
-
-function get_remote_lesson_timer_by_userid_and_lessonid($userid, $lessonid, $options = array())
-{
-    return moodle_webservice_client(array_merge($options,
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_get_lesson_timer_by_userid_and_lessonid',
-            'params' => array('userid' => $userid, 'lessonid' => $lessonid)
-        )
-    ));
-}
-
-function get_remote_lesson_grades_by_userid_and_lessonid($userid, $lessonid, $options = array())
-{
-    return moodle_webservice_client(array_merge($options,
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_get_lesson_grades_by_userid_and_lessonid',
-            'params' => array('userid' => $userid, 'lessonid' => $lessonid)
         )
     ));
 }

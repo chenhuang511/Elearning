@@ -38,6 +38,14 @@ $edit = optional_param('edit', -1, PARAM_BOOL);
 $userpassword = optional_param('userpassword', '', PARAM_RAW);
 $backtocourse = optional_param('backtocourse', false, PARAM_RAW);
 
+
+require_once($CFG->dirroot . '/mnet/lib.php');
+$hostname = mnet_get_hostname_from_uri($wwwroot);
+// Get the IP address for that host - if this fails, it will return the hostname string
+//$ip_address = gethostbyname($hostname);
+//
+//echo "host " . $hostname . "ip " . $ip_address;
+//die;
 // get course module
 $cm = get_remote_course_module($id);
 
