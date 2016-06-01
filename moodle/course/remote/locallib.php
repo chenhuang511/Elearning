@@ -131,3 +131,23 @@ function get_remote_context_by_id($id, $options = array())
         )
     ));
 }
+
+/**
+ * get course module
+ *
+ * @param $modulename
+ * @param $instace
+ * @param array $options
+ * @return stdClass course_module
+ */
+function get_remote_course_module_by_instance($modulename, $instace, $options = array())
+{
+    return moodle_webservice_client(array_merge($options,
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN_M,
+            'function_name' => 'core_course_get_course_module_by_instance',
+            'params' => array('module' => $modulename, 'instance' => $instace)
+        )
+    ));
+}
