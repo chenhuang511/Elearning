@@ -105,7 +105,7 @@ $viewobj->attemptobjs = array();
 foreach ($attempts as $attempt) {
     $viewobj->attemptobjs[] = new quiz_attempt($attempt, $quiz, $cm, $course, false);
 }
-var_dump($viewobj);die;
+
 // Work out the final grade, checking whether it was overridden in the gradebook.
 if (!$canpreview) {
     $mygrade = quiz_get_best_grade($quiz, $USER->id);

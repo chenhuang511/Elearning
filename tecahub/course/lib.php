@@ -4096,7 +4096,7 @@ function course_get_thumbnail($course)
             $file->get_contextid(),
             $file->get_component(),
             $file->get_filearea(),
-            $file->get_itemid(),
+            null,
             $file->get_filepath(),
             $file->get_filename()
         )->out(false);
