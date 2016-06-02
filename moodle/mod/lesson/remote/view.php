@@ -202,7 +202,13 @@ if (empty($pageid)) {
     }
 
     // if no pageid given see if the lesson has been started
-    $retries = $DB->count_records('lesson_grades', array("lessonid" => $lesson->id, "userid" => $USER->id));
+    //$retries = $DB->count_records('lesson_grades', array("lessonid" => $lesson->id, "userid" => $USER->id));
+    $retries = get_remote_retries_lessongrades_by_lessonid_and_userid($lesson->id, $USER->id);
+
+    echo "<pre>";
+    var_dump($retries);
+    echo "</pre>"; die();
+
     if ($retries > 0) {
         $attemptflag = true;
     }
@@ -216,7 +222,8 @@ if (empty($pageid)) {
     if (!empty($allattempts)) {
         $attempt = end($allattempts);
         $attemptpage = $lesson->load_page($attempt->pageid);
-        $jumpto = $DB->get_field('lesson_answers', 'jumpto', array('id' => $attempt->answerid));
+        //$jumpto = $DB->get_field('lesson_answers', 'jumpto', array('id' => $attempt->answerid));
+        $jumpto = get_remote_lesson_answer_by_id($attempt->answerid)->jumpto;
         // convert the jumpto to a proper page id
         if ($jumpto == 0) {
             // Check if a question has been incorrectly answered AND no more attempts at it are left.
@@ -306,7 +313,7 @@ if (empty($pageid)) {
     }
 /// This is the code for starting a timed test
     if (!isset($USER->startlesson[$lesson->id]) && !$canmanage) {
-        //$lesson->start_timer();
+        $lesson->start_timer();
     }
 }
 

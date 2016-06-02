@@ -130,3 +130,27 @@ function get_remote_lesson_branch_by_lessonid_and_userid_and_retry($lessonid, $u
         )
     ));
 }
+
+function get_remote_retries_lessongrades_by_lessonid_and_userid($lessonid, $userid, $options = array())
+{
+    return moodle_webservice_client(array_merge($options,
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_get_retries_lessongrades_by_lessonid_and_userid',
+            'params' => array('lessonid' => $lessonid, 'userid' => $userid,)
+        )
+    ));
+}
+
+function get_remote_lesson_answer_by_id($id, $options = array())
+{
+    return moodle_webservice_client(array_merge($options,
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_get_lesson_answer_by_id',
+            'params' => array('id' => $id)
+        )
+    ));
+}

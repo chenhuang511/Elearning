@@ -97,4 +97,46 @@ class local_mod_book_external extends external_api
                 )
             ));
     }
+
+    public static function mod_get_book_chapters_by_bookid_chapterid_parameters(){
+        return new external_function_parameters(
+            array(
+                'bookid' => new external_value(PARAM_INT, 'book ID'),
+                'chapterid' => new external_value(PARAM_INT, 'chapter ID')
+            )
+        );
+    }
+
+    public static function mod_get_book_chapters_by_bookid_chapterid($bookid, $chapterid){
+        global $DB;
+        
+        // validate
+        $params = self::validate_parameters(self::mod_get_book_chapters_by_bookid_chapterid_parameters(), 
+            array(
+                'bookid'    =>  $bookid,
+                'chapterid'    => $chapterid
+            )
+        );
+        
+        return $DB->get_record('book_chapters', array('id' => $params['chapterid'], 'bookid' => $params['bookid']), "*", MUST_EXIST);
+    }
+
+    public static function mod_get_book_chapters_by_bookid_chapterid_returns(){
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'book chapters id'),
+                'bookid' => new external_value(PARAM_INT, 'book ID', VALUE_DEFAULT),
+                'pagenum' => new external_value(PARAM_INT, 'page num', VALUE_DEFAULT),
+                'subchapter' => new external_value(PARAM_INT, 'subchapter', VALUE_DEFAULT),
+                'title' => new external_value(PARAM_RAW, 'title'),
+                'content' => new external_value(PARAM_RAW, 'Content chapter'),
+                'contentformat' => new external_value(PARAM_INT, 'Content format', VALUE_DEFAULT),
+                'hidden' => new external_value(PARAM_INT, 'hidden', VALUE_DEFAULT),
+                'timecreated' => new external_value(PARAM_INT, 'time created', VALUE_DEFAULT),
+                'timemodified' => new external_value(PARAM_INT, 'time modified', VALUE_DEFAULT),
+                'importsrc' => new external_value(PARAM_RAW, 'import source'),
+            )
+        );
+    }
 }
+

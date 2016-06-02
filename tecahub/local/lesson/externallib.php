@@ -167,7 +167,7 @@ class local_mod_lesson_external extends external_api
      * Return information about a context.
      *
      * @param int $instanceid the instance id
-     * @param int $contextlevel. the context level
+     * @param int $contextlevel . the context level
      * @return array of warnings and the context
      * @since Moodle 3.0
      * @throws moodle_exception
@@ -312,6 +312,15 @@ class local_mod_lesson_external extends external_api
         );
     }
 
+    /**
+     * get lesson page
+     *
+     * @param $pageid
+     * @param $lessonid
+     * @param array $options
+     * @return mixed
+     * @throws invalid_parameter_exception
+     */
     public static function get_mod_lessonpage_by_pageid_and_lessonid($pageid, $lessonid, $options = array())
     {
         global $DB;
@@ -385,6 +394,14 @@ class local_mod_lesson_external extends external_api
         );
     }
 
+    /**
+     * get context
+     *
+     * @param $id
+     * @param array $options
+     * @return mixed
+     * @throws invalid_parameter_exception
+     */
     public static function get_context_by_id($id, $options = array())
     {
         global $DB;
@@ -450,6 +467,15 @@ class local_mod_lesson_external extends external_api
         );
     }
 
+    /**
+     * get leson timer
+     *
+     * @param $userid
+     * @param $lessonid
+     * @param array $options
+     * @return mixed
+     * @throws invalid_parameter_exception
+     */
     public static function get_lesson_timer_by_userid_and_lessonid($userid, $lessonid, $options = array())
     {
         global $DB;
@@ -517,6 +543,15 @@ class local_mod_lesson_external extends external_api
         );
     }
 
+    /**
+     * get lesson grades
+     *
+     * @param $userid
+     * @param $lessonid
+     * @param array $options
+     * @return mixed
+     * @throws invalid_parameter_exception
+     */
     public static function get_lesson_grades_by_userid_and_lessonid($userid, $lessonid, $options = array())
     {
         global $DB;
@@ -585,6 +620,16 @@ class local_mod_lesson_external extends external_api
         );
     }
 
+    /**
+     * get lesson branch
+     *
+     * @param $lessonid
+     * @param $userid
+     * @param $retry
+     * @param array $options
+     * @return mixed
+     * @throws invalid_parameter_exception
+     */
     public static function get_lesson_branch_by_lessonid_and_userid_and_retry($lessonid, $userid, $retry, $options = array())
     {
         global $DB;
@@ -624,7 +669,138 @@ class local_mod_lesson_external extends external_api
         );
     }
 
-    public static function get_count_lesson_attempt_by_lessonid_and_userid_and_retry($userid, $lessonid, $retry, $options = array()) {
-        
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function get_retries_by_lessonid_and_userid_parameters()
+    {
+        return new external_function_parameters(
+            array('tablename' => new external_value(PARAM_TEXT, 'table name'),
+                'lessonid' => new external_value(PARAM_INT, 'the lesson id'),
+                'userid' => new external_value(PARAM_INT, 'the user id'),
+                'options' => new external_multiple_structure (
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHANUM,
+                                'The expected keys (value format) are:
+                                                excludemodules (bool) Do not return modules, return only the sections structure
+                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
+                                                sectionid (int) Return only this section
+                                                sectionnumber (int) Return only this section with number (order)
+                                                cmid (int) Return only this module information (among the whole sections structure)
+                                                modname (string) Return only modules with this name "label, forum, etc..."
+                                                modid (int) Return only the module with this id (to be used with modname'),
+                            'value' => new external_value(PARAM_RAW, 'the value of the option,
+                                                                    this param is personaly validated in the external function.')
+                        )
+                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+            )
+        );
+    }
+
+    /**
+     * get retries of lesson grades
+     *
+     * @param $lessonid
+     * @param $userid
+     * @param array $options
+     * @return int
+     * @throws invalid_parameter_exception
+     */
+    public static function get_retries_by_lessonid_and_userid($tablename, $lessonid, $userid, $options = array())
+    {
+        global $DB;
+
+        // validate params
+        $params = self::validate_parameters(self::get_retries_by_lessonid_and_userid_parameters(),
+            array(
+                'tablename' => $tablename,
+                'lessonid' => $lessonid,
+                'userid' => $userid,
+                'options' => $options
+            )
+        );
+
+        return $DB->count_records($params['tablename'], array("lessonid" => $params['lessonid'], "userid" => $params['userid']));
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
+    public static function get_retries_by_lessonid_and_userid_returns()
+    {
+        return new external_value(PARAM_INT, 'retries');
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function get_lesson_answers_by_id_parameters()
+    {
+        return new external_function_parameters(
+            array('id' => new external_value(PARAM_INT, 'the lesson answer id'),
+                'options' => new external_multiple_structure (
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHANUM,
+                                'The expected keys (value format) are:
+                                                excludemodules (bool) Do not return modules, return only the sections structure
+                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
+                                                sectionid (int) Return only this section
+                                                sectionnumber (int) Return only this section with number (order)
+                                                cmid (int) Return only this module information (among the whole sections structure)
+                                                modname (string) Return only modules with this name "label, forum, etc..."
+                                                modid (int) Return only the module with this id (to be used with modname'),
+                            'value' => new external_value(PARAM_RAW, 'the value of the option,
+                                                                    this param is personaly validated in the external function.')
+                        )
+                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+            )
+        );
+    }
+
+    public static function get_lesson_answers_by_id($id, $options = array())
+    {
+        global $DB;
+
+        // validate params
+        $params = self::validate_parameters(self::get_lesson_answers_by_id_parameters(),
+            array(
+                'id' => $id,
+                'options' => $options
+            )
+        );
+
+        return $DB->get_record('lesson_answers', array('id' => $params['id']), '*', MUST_EXIST);
+    }
+
+    public static function get_lesson_answers_by_id_returns()
+    {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'id'),
+                'lessonid' => new external_value(PARAM_INT, 'lesson id', VALUE_DEFAULT),
+                'pageid' => new external_value(PARAM_INT, 'page id', VALUE_DEFAULT),
+                'jumpto' => new external_value(PARAM_INT, 'jumpto', VALUE_DEFAULT),
+                'grade' => new external_value(PARAM_INT, 'grade', VALUE_DEFAULT),
+                'score' => new external_value(PARAM_INT, 'score', VALUE_DEFAULT),
+                'flags' => new external_value(PARAM_INT, 'flags', VALUE_DEFAULT),
+                'timecreated' => new external_value(PARAM_INT, 'time created', VALUE_DEFAULT),
+                'timemodified' => new external_value(PARAM_INT, 'time modified', VALUE_DEFAULT),
+                'answer' => new external_value(PARAM_RAW, 'answer'),
+                'answerformat' => new external_value(PARAM_INT, 'answer format', VALUE_DEFAULT),
+                'respone' => new external_value(PARAM_RAW, 'respone'),
+                'responseformat' => new external_value(PARAM_INT, 'respone format', VALUE_DEFAULT),
+            )
+        );
     }
 }
