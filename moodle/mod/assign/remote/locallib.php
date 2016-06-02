@@ -73,7 +73,7 @@ class assign_mod
         $table = new html_table();
         $table->head = array('Name', 'Value');
         $table->data[] = array("Participants", $gradingsummary->participantcount);
-        $table->data[] = array("submissiondraftscount", $gradingsummary->submissiondraftscount);
+        $table->data[] = array("Submission drafts count", $gradingsummary->submissiondraftscount);
         $table->data[] = array("Submitted", $gradingsummary->submissionssubmittedcount);
         $table->data[] = array("Needs grading", $gradingsummary->submissionsneedgradingcount);
         $html .= html_writer::table($table);
@@ -81,9 +81,28 @@ class assign_mod
         $html .= html_writer::tag('a', "View all submissions", array("href" => "/mod/assign/remote/view.php?action=grading&modid={$this->assignid}", 'class' => 'btn'));
         $html .= "&nbsp;";
         $html .= html_writer::tag('a', "Grade", array('class' => 'btn btn-primary'));
+        $html .= $this->view_submission_status($responedata);
         return $html;
     }
-    public function view_grading(){
-
+    public function view_submission_status($responedata){
+        $lastattempt = $responedata->lastattempt;
+        $OUTPUT = $this->getOUTPUT();
+        $html = "";
+        $html .= $OUTPUT->box_start('assign-detail', "assign_{$this->assignid}");
+        $html .= html_writer::tag('h3', "Submission status", array('class' => 'gradingsummary'));
+        $table = new html_table();
+        $table->head = array('Name', 'Value');
+        $table->data[] = array("Submission status", $lastattempt->participantcount);
+        $table->data[] = array("Grading status", $lastattempt->submissiondraftscount);
+        $table->data[] = array("Due date", $lastattempt->submissionssubmittedcount);
+        $table->data[] = array("Time remaining", $lastattempt->submissionssubmittedcount);
+        $table->data[] = array("Last modified", $lastattempt->submissionssubmittedcount);
+        $table->data[] = array("Online text", $lastattempt->submissionssubmittedcount);
+        $html .= html_writer::table($table);
+        $html .= $OUTPUT->box_end();
+        $html .= html_writer::tag('a', "View all submissions", array("href" => "/mod/assign/remote/view.php?action=grading&modid={$this->assignid}", 'class' => 'btn'));
+        $html .= "&nbsp;";
+        $html .= html_writer::tag('a', "Grade", array('class' => 'btn btn-primary'));
+        return $html;
     }
 }
