@@ -98,9 +98,9 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
-	'local_get_retries_lessongrades_by_lessonid_and_userid' => array(
+	'local_get_retries_lessonid_and_userid' => array(
 		'classname'	  => 'local_mod_lesson_external',
-		'methodname'  => 'get_retries_lessongrades_by_lessonid_and_userid',
+		'methodname'  => 'get_retries_by_lessonid_and_userid',
 		'classpath'	  => 'local/lesson/externallib.php',
 		'description' => 'Get retries of lesson grades tabble by lesson id and user id',
 		'type'		  => 'read',
