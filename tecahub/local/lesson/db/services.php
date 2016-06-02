@@ -97,5 +97,21 @@ $functions = array(
 		'description' => 'Get lesson branch by lessonid and userid and retry',
 		'type'		  => 'read',
 		'ajax'		  => true
+	),
+	'local_get_retries_lessongrades_by_lessonid_and_userid' => array(
+		'classname'	  => 'local_mod_lesson_external',
+		'methodname'  => 'get_retries_lessongrades_by_lessonid_and_userid',
+		'classpath'	  => 'local/lesson/externallib.php',
+		'description' => 'Get retries of lesson grades tabble by lesson id and user id',
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_get_lesson_answer_by_id' => array(
+		'classname'	  => 'local_mod_lesson_external',
+		'methodname'  => 'get_lesson_answers_by_id',
+		'classpath'	  => 'local/lesson/externallib.php',
+		'description' => 'Get lesson answer by id',
+		'type'		  => 'read',
+		'ajax'		  => true
 	)
 );
