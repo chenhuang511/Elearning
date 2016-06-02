@@ -27,6 +27,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 require_once("$CFG->libdir/externallib.php");
+require_once($CFG->dirroot . '/course/externallib.php');
 
 /**
  * Course external functions
@@ -485,5 +486,63 @@ class local_mod_course_external extends external_api
                 )
             )
         );
+    }
+
+    /**
+     * @author TiepPT
+     * @description validation parametters
+     * @return external_function_parameters
+     */
+    public static function get_course_module_by_cmid_parameters() {
+        return new external_function_parameters(
+            array(
+                'module' => new external_value(PARAM_COMPONENT, 'The module name'),
+                'id' => new external_value(PARAM_INT, 'The module id'),
+                'options' => new external_multiple_structure (
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHANUM,
+                                'The expected keys (value format) are:
+                                                excludemodules (bool) Do not return modules, return only the sections structure
+                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
+                                                sectionid (int) Return only this section
+                                                sectionnumber (int) Return only this section with number (order)
+                                                cmid (int) Return only this module information (among the whole sections structure)
+                                                modname (string) Return only modules with this name "label, forum, etc..."
+                                                modid (int) Return only the module with this id (to be used with modname'),
+                            'value' => new external_value(PARAM_RAW, 'the value of the option,
+                                                                    this param is personaly validated in the external function.')
+                        )
+                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+            )
+        );
+    }
+
+    /**
+     * @description Get course by module name and id of course module
+     * @param $module
+     * @param $id
+     * @param array $options
+     * @return array
+     * @throws invalid_parameter_exception
+     */
+    public static function get_course_module_by_cmid($module, $id, $options = array()) {
+        //validate parameter
+        $params = self::validate_parameters(self::get_course_module_by_cmid_parameters(),
+            array('module' => $module,'id' => $id,'options' => $options));
+        $warnings = array();
+        $cm = get_coursemodule_from_id($params['module'], $params['id'], 0, false, MUST_EXIST);
+
+        return core_course_external::get_course_module($cm->id);
+    }
+
+    /**
+     * @description Returns description of method parameters
+     * @return external_function_parameters
+     * @since Moodle 2.9 Options available
+     * @since Moodle 2.2
+     */
+    public static function get_course_module_by_cmid_returns() {
+        return core_course_external::get_course_module_returns();
     }
 }

@@ -65,5 +65,13 @@ $functions = array(
 		'description' => "Get course sessions with courses id",
 		'type'        => 'read',
 		'ajax'        => true
-	)
+	),
+	'local_get_course_module_by_cmid' => array(
+		'classname'	  => 'local_mod_course_external',
+		'methodname'  => 'get_course_module_by_cmid',
+		'classpath'	  => 'local/course/externallib.php',
+		'description' => "Get course by module name and id of course module",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 );
