@@ -675,10 +675,11 @@ class local_mod_lesson_external extends external_api
      * @return external_function_parameters
      * @since Moodle 3.0
      */
-    public static function get_retries_lessongrades_by_lessonid_and_userid_parameters()
+    public static function get_retries_by_lessonid_and_userid_parameters()
     {
         return new external_function_parameters(
-            array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
+            array('tablename' => new external_value(PARAM_TEXT, 'table name'),
+                'lessonid' => new external_value(PARAM_INT, 'the lesson id'),
                 'userid' => new external_value(PARAM_INT, 'the user id'),
                 'options' => new external_multiple_structure (
                     new external_single_structure(
@@ -709,20 +710,21 @@ class local_mod_lesson_external extends external_api
      * @return int
      * @throws invalid_parameter_exception
      */
-    public static function get_retries_lessongrades_by_lessonid_and_userid($lessonid, $userid, $options = array())
+    public static function get_retries_by_lessonid_and_userid($tablename, $lessonid, $userid, $options = array())
     {
         global $DB;
 
         // validate params
-        $params = self::validate_parameters(self::get_retries_lessongrades_by_lessonid_and_userid_parameters(),
+        $params = self::validate_parameters(self::get_retries_by_lessonid_and_userid_parameters(),
             array(
+                'tablename' => $tablename,
                 'lessonid' => $lessonid,
                 'userid' => $userid,
                 'options' => $options
             )
         );
 
-        return $DB->count_records('lesson_grades', array("lessonid" => $params['lessonid'], "userid" => $params['userid']));
+        return $DB->count_records($params['tablename'], array("lessonid" => $params['lessonid'], "userid" => $params['userid']));
     }
 
     /**
@@ -731,13 +733,9 @@ class local_mod_lesson_external extends external_api
      * @return external_description
      * @since Moodle 3.0
      */
-    public static function get_retries_lessongrades_by_lessonid_and_userid_returns()
+    public static function get_retries_by_lessonid_and_userid_returns()
     {
-        return new external_single_structure(
-            array(
-                'retries' => new external_value(PARAM_INT, 'retries')
-            )
-        );
+        return new external_value(PARAM_INT, 'retries');
     }
 
     /**
