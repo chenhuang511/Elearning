@@ -228,71 +228,6 @@ class local_mod_assign_external extends external_api {
     }
 
     /**
-     * Return information (files and text fields) for the given plugins in the assignment.
-     *
-     * @param  assign $assign the assignment object
-     * @param  array $assignplugins array of assignment plugins (submission or feedback)
-     * @param  stdClass $item the item object (submission or grade)
-     * @return array an array containing the plugins returned information
-     */
-    private static function get_plugins_data($assign, $assignplugins, $item) {
-        global $CFG;
-
-        $plugins = array();
-        $fs = get_file_storage();
-
-        foreach ($assignplugins as $assignplugin) {
-
-            if (!$assignplugin->is_enabled() or !$assignplugin->is_visible()) {
-                continue;
-            }
-
-            $plugin = array(
-                'name' => $assignplugin->get_name(),
-                'type' => $assignplugin->get_type()
-            );
-            // Subtype is 'assignsubmission', type is currently 'file' or 'onlinetext'.
-            $component = $assignplugin->get_subtype().'_'.$assignplugin->get_type();
-
-            $fileareas = $assignplugin->get_file_areas();
-            foreach ($fileareas as $filearea => $name) {
-                $fileareainfo = array('area' => $filearea);
-                $files = $fs->get_area_files(
-                    $assign->get_context()->id,
-                    $component,
-                    $filearea,
-                    $item->id,
-                    "timemodified",
-                    false
-                );
-                foreach ($files as $file) {
-                    $filepath = $file->get_filepath().$file->get_filename();
-                    $fileurl = file_encode_url($CFG->wwwroot . '/webservice/pluginfile.php', '/' . $assign->get_context()->id .
-                        '/' . $component. '/'. $filearea . '/' . $item->id . $filepath);
-                    $fileinfo = array(
-                        'filepath' => $filepath,
-                        'fileurl' => $fileurl
-                    );
-                    $fileareainfo['files'][] = $fileinfo;
-                }
-                $plugin['fileareas'][] = $fileareainfo;
-            }
-
-            $editorfields = $assignplugin->get_editor_fields();
-            foreach ($editorfields as $name => $description) {
-                $editorfieldinfo = array(
-                    'name' => $name,
-                    'description' => $description,
-                    'text' => $assignplugin->get_editor_text($name, $item->id),
-                    'format' => $assignplugin->get_editor_format($name, $item->id)
-                );
-                $plugin['editorfields'][] = $editorfieldinfo;
-            }
-            $plugins[] = $plugin;
-        }
-        return $plugins;
-    }
-    /**
      * Describes the get_submission_status return value.
      *
      * @return external_single_structure
@@ -363,6 +298,73 @@ class local_mod_assign_external extends external_api {
 
 
     /**
+     * Return information (files and text fields) for the given plugins in the assignment.
+     *
+     * @param  assign $assign the assignment object
+     * @param  array $assignplugins array of assignment plugins (submission or feedback)
+     * @param  stdClass $item the item object (submission or grade)
+     * @return array an array containing the plugins returned information
+     */
+    private static function get_plugins_data($assign, $assignplugins, $item) {
+        global $CFG;
+
+        $plugins = array();
+        $fs = get_file_storage();
+
+        foreach ($assignplugins as $assignplugin) {
+
+            if (!$assignplugin->is_enabled() or !$assignplugin->is_visible()) {
+                continue;
+            }
+
+            $plugin = array(
+                'name' => $assignplugin->get_name(),
+                'type' => $assignplugin->get_type()
+            );
+            // Subtype is 'assignsubmission', type is currently 'file' or 'onlinetext'.
+            $component = $assignplugin->get_subtype().'_'.$assignplugin->get_type();
+
+            $fileareas = $assignplugin->get_file_areas();
+            foreach ($fileareas as $filearea => $name) {
+                $fileareainfo = array('area' => $filearea);
+                $files = $fs->get_area_files(
+                    $assign->get_context()->id,
+                    $component,
+                    $filearea,
+                    $item->id,
+                    "timemodified",
+                    false
+                );
+                foreach ($files as $file) {
+                    $filepath = $file->get_filepath().$file->get_filename();
+                    $fileurl = file_encode_url($CFG->wwwroot . '/webservice/pluginfile.php', '/' . $assign->get_context()->id .
+                        '/' . $component. '/'. $filearea . '/' . $item->id . $filepath);
+                    $fileinfo = array(
+                        'filepath' => $filepath,
+                        'fileurl' => $fileurl
+                    );
+                    $fileareainfo['files'][] = $fileinfo;
+                }
+                $plugin['fileareas'][] = $fileareainfo;
+            }
+
+            $editorfields = $assignplugin->get_editor_fields();
+            foreach ($editorfields as $name => $description) {
+                $editorfieldinfo = array(
+                    'name' => $name,
+                    'description' => $description,
+                    'text' => $assignplugin->get_editor_text($name, $item->id),
+                    'format' => $assignplugin->get_editor_format($name, $item->id)
+                );
+                $plugin['editorfields'][] = $editorfieldinfo;
+            }
+            $plugins[] = $plugin;
+        }
+        return $plugins;
+    }
+   
+
+    /**
      * Creates an assignment plugin structure.
      *
      * @return external_single_structure the plugin structure
@@ -425,20 +427,7 @@ class local_mod_assign_external extends external_api {
         );
     }
 
-    /**
-     * Creates an assign_submissions external_single_structure
-     *
-     * @return external_single_structure
-     * @since Moodle 2.5
-     */
-    private static function get_mod_assign_submissions_structure() {
-        return new external_single_structure(
-            array (
-                'assignmentid' => new external_value(PARAM_INT, 'assignment id'),
-                'submissions' => new external_multiple_structure(self::get_mod_assign_submission_structure())
-            )
-        );
-    }
+
 
     /**
      * Creates a grade single structure.
