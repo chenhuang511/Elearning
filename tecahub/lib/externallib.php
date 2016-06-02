@@ -117,6 +117,9 @@ class external_api {
         // Fetch the parameters description.
         $function->parameters_desc = call_user_func(array($function->classname, $function->parameters_method));
         if (!($function->parameters_desc instanceof external_function_parameters)) {
+            echo $function->classname;
+            echo "<br>";
+            echo $function->parameters_method;
             throw new coding_exception('Invalid parameters description');
         }
 
