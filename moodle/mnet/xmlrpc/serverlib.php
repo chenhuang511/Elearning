@@ -283,7 +283,7 @@ function mnet_server_dispatch($payload) {
     } elseif ('off' == $CFG->mnet_dispatcher_mode) {
         throw new mnet_server_exception(704, 'nosuchservice');
 
-    ////////////////////////////////////// SYSTEM METHODS
+        ////////////////////////////////////// SYSTEM METHODS
     } elseif ($callstack[0] == 'system') {
         $functionname = $callstack[1];
         $xmlrpcserver = xmlrpc_server_create();
@@ -313,7 +313,7 @@ function mnet_server_dispatch($payload) {
         }
         throw new mnet_server_exception(7018, 'nosuchfunction');
 
-    ////////////////////////////////////  NORMAL PLUGIN DISPATCHER
+        ////////////////////////////////////  NORMAL PLUGIN DISPATCHER
     } else {
         // anything else comes from some sort of plugin
         if ($rpcrecord = $DB->get_record('mnet_rpc', array('xmlrpcpath' => $method))) {
@@ -321,8 +321,8 @@ function mnet_server_dispatch($payload) {
             $response = mnet_server_prepare_response($response);
             echo $response;
             return;
-    // if the rpc record isn't found, check to see if dangerous mode is on
-    ////////////////////////////////////// DANGEROUS
+            // if the rpc record isn't found, check to see if dangerous mode is on
+            ////////////////////////////////////// DANGEROUS
         } else if ('dangerous' == $CFG->mnet_dispatcher_mode && $remoteclient->plaintext_is_ok()) {
             $functionname = array_pop($callstack);
 
@@ -439,9 +439,9 @@ function mnet_system($method, $params, $hostinfo) {
         if (is_array($result)) {
             foreach($result as $service) {
                 $services[] = array('name' => $service->name,
-                                    'apiversion' => $service->apiversion,
-                                    'publish' => $service->publish,
-                                    'subscribe' => $service->subscribe);
+                    'apiversion' => $service->apiversion,
+                    'publish' => $service->publish,
+                    'subscribe' => $service->subscribe);
             }
         }
 

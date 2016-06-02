@@ -89,5 +89,13 @@ $functions = array(
 		'description' => 'Get lesson grades by userid and lessonid',
 		'type'		  => 'read',
 		'ajax'		  => true
+	),
+	'local_get_lesson_branch_by_lessonid_and_userid_and_retry' => array(
+		'classname'	  => 'local_mod_lesson_external',
+		'methodname'  => 'get_lesson_branch_by_lessonid_and_userid_and_retry',
+		'classpath'	  => 'local/lesson/externallib.php',
+		'description' => 'Get lesson branch by lessonid and userid and retry',
+		'type'		  => 'read',
+		'ajax'		  => true
 	)
 );
