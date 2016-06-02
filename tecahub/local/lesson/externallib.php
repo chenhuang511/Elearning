@@ -738,6 +738,12 @@ class local_mod_lesson_external extends external_api
         );
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
     public static function get_lesson_answers_by_id_parameters()
     {
         array('id' => new external_value(PARAM_INT, 'id'),
