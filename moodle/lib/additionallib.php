@@ -30,36 +30,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-/**
- * HUB_URL - expected numbers, letters only and _-.
- */
-define('MOODLE_MODE_HOST', 0);
-
-/**
- * HUB_URL - expected numbers, letters only and _-.
- */
-define('MOODLE_MODE_HUB', 1);
-
-/**
- * HUB_URL - expected numbers, letters only and _-.
- */
-define('MOODLE_RUN_MODE', MOODLE_MODE_HUB);
-
-/**
- * HUB_URL - expected numbers, letters only and _-.
- */
-//define('HUB_URL', 'http://192.168.1.252');
-define('HUB_URL', 'http://10.0.0.252:10001');
-/**
- * HUB TOKEN - Nccsoft External services
- */
-define('HOST_TOKEN',  '552b1ca988aebfffb80f6f63404fbb7a');
-
-/**
- *  HUB TOKEN - Mobile services
-*/
-define('HOST_TOKEN_M',  '55112a458cf73292710da6ed382cf668');
-
+require_once($CFG->dirroot . '/fdefine.php');
 
 function convert_remote_course_record(&$course) {
     global $DB;
