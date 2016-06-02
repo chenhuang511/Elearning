@@ -677,13 +677,14 @@ class local_mod_lesson_external extends external_api
      */
     public static function get_retries_lessongrades_by_lessonid_and_userid_parameters()
     {
-        array('lessonid' => new external_value(PARAM_INT, 'lesson id'),
-            'useid' => new external_value(PARAM_INT, 'user id'),
-            'options' => new external_multiple_structure (
-                new external_single_structure(
-                    array(
-                        'name' => new external_value(PARAM_ALPHANUM,
-                            'The expected keys (value format) are:
+        return new external_function_parameters(
+            array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
+                'userid' => new external_value(PARAM_INT, 'the user id'),
+                'options' => new external_multiple_structure (
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHANUM,
+                                'The expected keys (value format) are:
                                                 excludemodules (bool) Do not return modules, return only the sections structure
                                                 excludecontents (bool) Do not return module contents (i.e: files inside a resource)
                                                 sectionid (int) Return only this section
@@ -691,10 +692,11 @@ class local_mod_lesson_external extends external_api
                                                 cmid (int) Return only this module information (among the whole sections structure)
                                                 modname (string) Return only modules with this name "label, forum, etc..."
                                                 modid (int) Return only the module with this id (to be used with modname'),
-                        'value' => new external_value(PARAM_RAW, 'the value of the option,
+                            'value' => new external_value(PARAM_RAW, 'the value of the option,
                                                                     this param is personaly validated in the external function.')
-                    )
-                ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+                        )
+                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+            )
         );
     }
 
