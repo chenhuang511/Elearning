@@ -48,17 +48,17 @@ define('MOODLE_RUN_MODE', MOODLE_MODE_HUB);
 /**
  * HUB_URL - expected numbers, letters only and _-.
  */
-define('HUB_URL', 'http://192.168.1.252');
-//define('HUB_URL', 'http://10.0.0.252:10001');
+//define('HUB_URL', 'http://192.168.1.252');
+define('HUB_URL', 'http://10.0.0.252:10001');
 /**
  * HUB TOKEN - Nccsoft External services
  */
-define('HOST_TOKEN',  'a75634b66a82dd8f42f99baedf2690a1');
+define('HOST_TOKEN',  '552b1ca988aebfffb80f6f63404fbb7a');
 
 /**
  *  HUB TOKEN - Mobile services
 */
-define('HOST_TOKEN_M',  'ac52a223f8589b3f26fa456a5dc20bde');
+define('HOST_TOKEN_M',  '55112a458cf73292710da6ed382cf668');
 
 
 function convert_remote_course_record(&$course) {

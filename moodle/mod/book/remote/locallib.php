@@ -128,3 +128,37 @@ function remote_book_preload_chapters($book) {
 
     return $chapters;
 }
+
+function get_remote_book_content($bookid, $options = [])
+{
+    return moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
+        'token' => HOST_TOKEN,
+        'function_name' => 'local_mod_get_book_by_id',
+        'params' => array('bookid' => $bookid),
+    )));
+}
+
+function get_remote_book_chapters_content($bookid, $options = [])
+{
+    $bookchapters = moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
+        'token' => HOST_TOKEN,
+        'function_name' => 'local_mod_get_book_chapters_by_id',
+        'params' => array('bookid' => $bookid),
+    )));
+    $result = array();
+    foreach ($bookchapters as $ch)
+    {
+        $result[$ch->id] = $ch;
+    }
+
+    return $result;
+}
+
+function get_remote_course_by_id($courseid, $options = array()){
+    $courses = moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
+        'token' => HOST_TOKEN_M,
+        'function_name' => 'core_course_get_courses',
+        'params' => array('options[ids][0]'=> $courseid)
+    )));
+    return reset($courses);
+}
