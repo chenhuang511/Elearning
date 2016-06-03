@@ -598,7 +598,7 @@ class local_mod_lesson_external extends external_api
     {
         return new external_function_parameters(
             array('lessonid' => new external_value(PARAM_INT, 'lesson id'),
-                'useid' => new external_value(PARAM_INT, 'user id'),
+                'userid' => new external_value(PARAM_INT, 'user id'),
                 'retry' => new external_value(PARAM_INT, 'retry'),
                 'options' => new external_multiple_structure (
                     new external_single_structure(
