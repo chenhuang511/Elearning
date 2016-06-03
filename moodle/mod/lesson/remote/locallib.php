@@ -112,11 +112,11 @@ function get_remote_lesson_grades_by_userid_and_lessonid($userid, $lessonid, $op
 /**
  * get lesson branch by lessonid and userid and retry
  *
- * @param int $lessonid. the id of lesson
- * @param int $userid. the id of user
+ * @param int $lessonid . the id of lesson
+ * @param int $userid . the id of user
  * @param int $retry
  * @param array $options
- * 
+ *
  * @return stdClass $lesson_branch
  */
 function get_remote_lesson_branch_by_lessonid_and_userid_and_retry($lessonid, $userid, $retry, $options = array())
@@ -131,14 +131,14 @@ function get_remote_lesson_branch_by_lessonid_and_userid_and_retry($lessonid, $u
     ));
 }
 
-function get_remote_retries_lessongrades_by_lessonid_and_userid($lessonid, $userid, $options = array())
+function get_remote_retries_by_lessonid_and_userid($tablename, $lessonid, $userid, $options = array())
 {
     return moodle_webservice_client(array_merge($options,
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
-            'function_name' => 'local_get_retries_lessongrades_by_lessonid_and_userid',
-            'params' => array('lessonid' => $lessonid, 'userid' => $userid,)
+            'function_name' => 'local_get_retries_lessonid_and_userid',
+            'params' => array('tablename' => $tablename, 'lessonid' => $lessonid, 'userid' => $userid)
         )
     ));
 }
