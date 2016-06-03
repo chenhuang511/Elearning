@@ -16,7 +16,7 @@
 
 
 /**
- * External course API
+ * External Survey API
  *
  * @package    core_course
  * @category   external
@@ -30,7 +30,7 @@ require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/mod/survey/lib.php');
 
 /**
- * Course external functions
+ * Survey external functions
  *
  * @package    core_course
  * @category   external
