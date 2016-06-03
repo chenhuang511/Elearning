@@ -502,6 +502,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
      */
     public function progress_bar(lesson $lesson) {
         global $CFG, $USER, $DB;
+
         $context = context_module::instance($this->page->cm->id);
 
         // lesson setting to turn progress bar on or off

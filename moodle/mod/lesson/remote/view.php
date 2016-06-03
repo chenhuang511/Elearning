@@ -203,11 +203,7 @@ if (empty($pageid)) {
 
     // if no pageid given see if the lesson has been started
     //$retries = $DB->count_records('lesson_grades', array("lessonid" => $lesson->id, "userid" => $USER->id));
-    $retries = get_remote_retries_lessongrades_by_lessonid_and_userid($lesson->id, $USER->id);
-
-    echo "<pre>";
-    var_dump($retries);
-    echo "</pre>"; die();
+    $retries = get_remote_retries_by_lessonid_and_userid('lesson_grades', $lesson->id, $USER->id);
 
     if ($retries > 0) {
         $attemptflag = true;
@@ -241,8 +237,8 @@ if (empty($pageid)) {
             $lastpageseen = $jumpto;
         }
     }
-    
-   // if ($branchtables = $DB->get_records('lesson_branch', array("lessonid" => $lesson->id, "userid" => $USER->id, "retry" => $retries), 'timeseen DESC')) {
+
+    // if ($branchtables = $DB->get_records('lesson_branch', array("lessonid" => $lesson->id, "userid" => $USER->id, "retry" => $retries), 'timeseen DESC')) {
     if ($branchtables = get_remote_lesson_branch_by_lessonid_and_userid_and_retry($lesson->id, $USER->id, $retries)) {
         // in here, user has viewed a branch table
         $lastbranchtable = current($branchtables);
@@ -333,6 +329,10 @@ if ($pageid != LESSON_EOL) {
         $page = $lesson->load_page($newpageid);
     }
 
+    echo "<pre>";
+    var_dump($page);
+    echo "</pre>"; die();
+
     // Trigger module viewed event.
     $event = \mod_lesson\event\course_module_viewed::create(array(
         'objectid' => $lesson->id,
@@ -368,7 +368,8 @@ if ($pageid != LESSON_EOL) {
 
         if ($page->qtype == LESSON_PAGE_BRANCHTABLE && $lesson->minquestions) {
             // tell student how many questions they have seen, how many are required and their grade
-            $ntries = $DB->count_records("lesson_grades", array("lessonid" => $lesson->id, "userid" => $USER->id));
+            //$ntries = $DB->count_records("lesson_grades", array("lessonid" => $lesson->id, "userid" => $USER->id));
+            $ntries = get_remote_retries_by_lessonid_and_userid('lesson_grades', $lesson->id, $USER->id);
             $gradeinfo = lesson_grade($lesson, $ntries);
             if ($gradeinfo->attempts) {
                 if ($gradeinfo->nquestions < $lesson->minquestions) {
@@ -418,7 +419,8 @@ if ($pageid != LESSON_EOL) {
         // this is for modattempts option.  Find the users previous answer to this page,
         //   and then display it below in answer processing
         if (isset($USER->modattempts[$lesson->id])) {
-            $retries = $DB->count_records('lesson_grades', array("lessonid" => $lesson->id, "userid" => $USER->id));
+            //$retries = $DB->count_records('lesson_grades', array("lessonid" => $lesson->id, "userid" => $USER->id));
+            $retries = get_remote_retries_by_lessonid_and_userid('lesson_grades', $lesson->id, $USER->id);
             if (!$attempts = $lesson->get_attempts($retries - 1, false, $page->id)) {
                 print_error('cannotfindpreattempt', 'lesson');
             }
@@ -596,7 +598,7 @@ if ($pageid != LESSON_EOL) {
 
             // update central gradebook
             lesson_update_grades($lesson, $USER->id);
-            $lessoncontent .= $progressbar;
+            //$lessoncontent .= $progressbar;
         }
     } else {
         // display for teacher

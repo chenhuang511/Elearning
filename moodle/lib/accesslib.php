@@ -6938,7 +6938,17 @@ class context_coursecat extends context
         }
 
         if (!$record = $DB->get_record('context', array('contextlevel' => CONTEXT_COURSECAT, 'instanceid' => $categoryid))) {
-            if ($category = $DB->get_record('course_categories', array('id' => $categoryid), 'id,parent', $strictness)) {
+            switch (MOODLE_RUN_MODE) {
+                case MOODLE_MODE_HOST:
+                    $params = array('id' => $categoryid);
+                    break;
+                case MOODLE_MODE_HUB:
+                    $params = array('remoteid' => $categoryid);
+                    break;
+                default:
+                    break;
+            }
+            if ($category = $DB->get_record('course_categories', $params, 'id,parent', $strictness)) {
                 if ($category->parent) {
                     $parentcontext = context_coursecat::instance($category->parent);
                     $record = context::insert_context_record(CONTEXT_COURSECAT, $category->id, $parentcontext->path);
@@ -7206,10 +7216,10 @@ class context_course extends context
         if (!$record = $DB->get_record('context', array('contextlevel' => CONTEXT_COURSE, 'instanceid' => $courseid))) {
             switch (MOODLE_RUN_MODE) {
                 case MOODLE_MODE_HOST:
-                    $params = array('remoteid' => $courseid);
+                    $params = array('id' => $courseid);
                     break;
                 case MOODLE_MODE_HUB:
-                    $params = array('id' => $courseid);
+                    $params = array('remoteid' => $courseid);
                     break;
                 default:
                     break;

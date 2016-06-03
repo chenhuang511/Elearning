@@ -201,7 +201,7 @@ function get_remote_course_sections_by_id($sectionid, $options = array())
 {
     return moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
         'token' => HOST_TOKEN,
-        'function_name' => 'local_mod_get_course_sections_by_id',
+        'function_name' => 'local_get_course_sections_by_id',
         'params' => array(
             'sectionid' => $sectionid,
         ),

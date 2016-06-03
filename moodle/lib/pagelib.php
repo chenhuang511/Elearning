@@ -1847,7 +1847,17 @@ class moodle_page {
      */
     protected function load_category($categoryid) {
         global $DB;
-        $category = $DB->get_record('course_categories', array('id' => $categoryid));
+        switch (MOODLE_RUN_MODE) {
+            case MOODLE_MODE_HOST:
+                $params = array('id' => $categoryid);
+                break;
+            case MOODLE_MODE_HUB:
+                $params = array('remoteid' => $categoryid);
+                break;
+            default:
+                break;
+        }
+        $category = $DB->get_record('course_categories', $params);
         if (!$category) {
             throw new moodle_exception('unknowncategory');
         }

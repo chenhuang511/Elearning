@@ -3128,6 +3128,7 @@ abstract class lesson_page extends lesson_base
     public function get_contents()
     {
         global $PAGE;
+
         if (!empty($this->properties->contents)) {
             if (!isset($this->properties->contentsformat)) {
                 $this->properties->contentsformat = FORMAT_HTML;

@@ -59,14 +59,5 @@ $functions = array(
         'description'   => 'Get book chapters content by bookid & bookchapterid',
         'type'		    => 'read',
         'ajax'		    => true
-    ),
-        
-    'local_mod_get_course_sections_by_id' => array(
-        'classname'     => 'local_mod_book_external',
-        'methodname'    => 'mod_get_course_sections_by_id',
-        'classpath'     => 'local/book/externallib.php',
-        'description'   => 'Get course sections by ID',
-        'type'		    => 'read',
-        'ajax'		    => true
     )
 );

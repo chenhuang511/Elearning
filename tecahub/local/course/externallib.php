@@ -545,4 +545,34 @@ class local_mod_course_external extends external_api
     public static function get_course_module_by_cmid_returns() {
         return core_course_external::get_course_module_returns();
     }
+    
+    // MINHND
+    public static function mod_get_course_sections_by_id_parameters(){
+        return new external_function_parameters(
+            array(
+                'sectionid'    =>  new external_value(PARAM_INT, 'Section ID')
+            )
+        );
+    }
+
+    public static function mod_get_course_sections_by_id($sectionid){
+        global $DB;
+
+        // validate
+        $params = self::validate_parameters(self::mod_get_course_sections_by_id_parameters(),
+            array(
+                'sectionid'    =>  $sectionid,
+            )
+        );
+
+        return $DB->get_record('course_sections', array('id' =>  $params['sectionid']), "section", MUST_EXIST);
+    }
+
+    public static function mod_get_course_sections_by_id_returns(){
+        return new external_single_structure(
+            array(
+                'section' => new external_value(PARAM_INT, 'Section number', VALUE_DEFAULT),
+            )
+        );
+    }
 }
