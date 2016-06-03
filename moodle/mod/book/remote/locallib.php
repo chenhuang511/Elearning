@@ -27,8 +27,8 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->dirroot . '/lib/remote/lib.php');
 require_once($CFG->dirroot . '/lib/additionallib.php');
 
-require_once(dirname(__FILE__).'/../lib.php');
-require_once($CFG->libdir.'/filelib.php');
+require_once(dirname(__FILE__) . '/../lib.php');
+require_once($CFG->libdir . '/filelib.php');
 
 /**
  * The following defines are used to define how the chapters and subchapters of a book should be displayed in that table of contents.
@@ -37,9 +37,9 @@ require_once($CFG->libdir.'/filelib.php');
  * BOOK_NUM_BULLETS     Subchapters are indented and displayed with bullets
  * BOOK_NUM_INDENTED    Subchapters are indented
  */
-define('BOOK_NUM_NONE',     '0');
-define('BOOK_NUM_NUMBERS',  '1');
-define('BOOK_NUM_BULLETS',  '2');
+define('BOOK_NUM_NONE', '0');
+define('BOOK_NUM_NUMBERS', '1');
+define('BOOK_NUM_BULLETS', '2');
 define('BOOK_NUM_INDENTED', '3');
 
 /**
@@ -48,9 +48,9 @@ define('BOOK_NUM_INDENTED', '3');
  * BOOK_LINK_IMAGE      Arrows link to previous/next/exit pages, in addition to the TOC.
  * BOOK_LINK_TEXT       Page names and arrows link to previous/next/exit pages, in addition to the TOC.
  */
-define ('BOOK_LINK_TOCONLY', '0');
-define ('BOOK_LINK_IMAGE', '1');
-define ('BOOK_LINK_TEXT', '2');
+define('BOOK_LINK_TOCONLY', '0');
+define('BOOK_LINK_IMAGE', '1');
+define('BOOK_LINK_TEXT', '2');
 
 /**
  * Preload book chapters and fix toc structure if necessary.
@@ -62,7 +62,8 @@ define ('BOOK_LINK_TEXT', '2');
  * @param  stdClass $book
  * @return array of id=>chapter
  */
-function remote_book_preload_chapters($book) {
+function remote_book_preload_chapters($book)
+{
     $chapters = get_remote_book_chapters_content($book->id);
     if (!$chapters) {
         return array();
@@ -122,11 +123,32 @@ function remote_book_preload_chapters($book) {
                 $ch->number = $j;
             }
         }
-        
+
         $chapters[$id] = $ch;
     }
 
     return $chapters;
+}
+
+function mod_book_get_chapter_title($chid, $chapters, $book)
+{
+    $ch = $chapters[$chid];
+    $title = trim(format_string($ch->title, true));
+    $numbers = array();
+    if ($book->numbering == BOOK_NUM_NUMBERS) {
+        if ($ch->parent and $chapters[$ch->parent]->number) {
+            $numbers[] = $chapters[$ch->parent]->number;
+        }
+        if ($ch->number) {
+            $numbers[] = $ch->number;
+        }
+    }
+
+    if ($numbers) {
+        $title = implode('.', $numbers) . ' ' . $title;
+    }
+
+    return $title;
 }
 
 function get_remote_book_content($bookid, $options = [])
@@ -146,19 +168,42 @@ function get_remote_book_chapters_content($bookid, $options = [])
         'params' => array('bookid' => $bookid),
     )));
     $result = array();
-    foreach ($bookchapters as $ch)
-    {
+    foreach ($bookchapters as $ch) {
         $result[$ch->id] = $ch;
     }
 
     return $result;
 }
 
-function get_remote_course_by_id($courseid, $options = array()){
+function get_remote_book_chapters_content_by_chapterid($bookid, $chapterid, $options = [])
+{
+    return moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
+        'token' => HOST_TOKEN,
+        'function_name' => 'local_mod_get_book_chapters_by_bookid_chapterid',
+        'params' => array(
+            'bookid' => $bookid,
+            'chapterid' => $chapterid
+        ),
+    )));
+}
+
+function get_remote_course_by_id($courseid, $options = array())
+{
     $courses = moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
         'token' => HOST_TOKEN_M,
         'function_name' => 'core_course_get_courses',
-        'params' => array('options[ids][0]'=> $courseid)
+        'params' => array('options[ids][0]' => $courseid)
     )));
     return reset($courses);
+}
+
+function get_remote_course_sections_by_id($sectionid, $options = array())
+{
+    return moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
+        'token' => HOST_TOKEN,
+        'function_name' => 'local_mod_get_course_sections_by_id',
+        'params' => array(
+            'sectionid' => $sectionid,
+        ),
+    )));
 }
