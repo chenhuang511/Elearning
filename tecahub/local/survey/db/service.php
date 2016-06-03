@@ -37,7 +37,7 @@ $functions = array(
         'classname'     => 'local_mod_survey_external',
         'methodname'    => 'get_survey_by_id',
         'classpath'     => 'local/survey/externallib.php',
-        'description'   => "Get survey by id",
+        'description'   => 'Get survey by id',
         'type'          => 'read',
         'ajax'          => true
     ),
