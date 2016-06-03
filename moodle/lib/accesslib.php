@@ -5821,13 +5821,15 @@ abstract class context extends stdClass implements IteratorAggregate
     {
         global $DB;
 
-        $record = new stdClass();
-        $record->contextlevel = $contextlevel;
-        $record->instanceid = $instanceid;
-        $record->depth = 0;
-        $record->path = null; //not known before insert
-
-        $record->id = $DB->insert_record('context', $record);
+        $record =  $DB->get_record('context', array("instanceid" => $instanceid, "contextlevel" => $contextlevel), "*", MUST_EXIST);
+        if (!($record)){
+            $record = new stdClass();
+            $record->contextlevel = $contextlevel;
+            $record->instanceid = $instanceid;
+            $record->depth = 0;
+            $record->path = null; //not known before insert
+            $record->id = $DB->insert_record('context', $record);
+        }
 
         // now add path if known - it can be added later
         if (!is_null($parentpath)) {
