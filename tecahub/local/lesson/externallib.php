@@ -635,7 +635,7 @@ class local_mod_lesson_external extends external_api
         global $DB;
 
         // validate params
-        $params = self::validate_parameters(self::get_lesson_grades_by_userid_and_lessonid_parameters(),
+        $params = self::validate_parameters(self::get_lesson_branch_by_lessonid_and_userid_and_retry_parameters(),
             array(
                 'lessonid' => $lessonid,
                 'userid' => $userid,
