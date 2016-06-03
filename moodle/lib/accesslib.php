@@ -6937,8 +6937,6 @@ class context_coursecat extends context
             return $context;
         }
 
-        $record = $DB->get_record('context', array('contextlevel' => CONTEXT_COURSECAT, 'instanceid' => $categoryid));
-
         if (!$record = $DB->get_record('context', array('contextlevel' => CONTEXT_COURSECAT, 'instanceid' => $categoryid))) {
             switch (MOODLE_RUN_MODE) {
                 case MOODLE_MODE_HOST:
