@@ -721,10 +721,10 @@ class local_mod_lesson_external extends external_api
             'lessonid' => $lessonid
         );
 
-        if (!empty($userid) && $userid > 0) {
+        if ($userid > 0) {
             $arr = array_merge($arr, array('userid' => $userid));
         }
-        if (($arr['tablename'] === 'lesson_attempts' || $arr['tablename'] === 'lesson_branch') && (!empty($retry) && $retry >= 0)) {
+        if (($arr['tablename'] === 'lesson_attempts' || $arr['tablename'] === 'lesson_branch') && $retry >= 0) {
             $arr = array_merge($arr, array('retry' => $retry));
         }
         if (!is_null($orderby) || !empty($orderby)) {
