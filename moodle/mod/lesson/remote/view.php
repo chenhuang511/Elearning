@@ -329,10 +329,6 @@ if ($pageid != LESSON_EOL) {
         $page = $lesson->load_page($newpageid);
     }
 
-    echo "<pre>";
-    var_dump($page);
-    echo "</pre>"; die();
-
     // Trigger module viewed event.
     $event = \mod_lesson\event\course_module_viewed::create(array(
         'objectid' => $lesson->id,

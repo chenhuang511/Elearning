@@ -635,7 +635,7 @@ class local_mod_lesson_external extends external_api
         global $DB;
 
         // validate params
-        $params = self::validate_parameters(self::get_lesson_grades_by_userid_and_lessonid_parameters(),
+        $params = self::validate_parameters(self::get_lesson_branch_by_lessonid_and_userid_and_retry_parameters(),
             array(
                 'lessonid' => $lessonid,
                 'userid' => $userid,
@@ -675,12 +675,14 @@ class local_mod_lesson_external extends external_api
      * @return external_function_parameters
      * @since Moodle 3.0
      */
-    public static function get_retries_by_lessonid_and_userid_parameters()
+    public static function get_count_by_lessonid_and_userid_parameters()
     {
         return new external_function_parameters(
             array('tablename' => new external_value(PARAM_TEXT, 'table name'),
                 'lessonid' => new external_value(PARAM_INT, 'the lesson id'),
-                'userid' => new external_value(PARAM_INT, 'the user id'),
+                'userid' => new external_value(PARAM_INT, 'the user id', VALUE_DEFAULT, 0),
+                'retry' => new external_value(PARAM_INT, 'the retry', VALUE_DEFAULT, -1),
+                'orderby' => new external_value(PARAM_TEXT, 'order by', VALUE_DEFAULT, ''),
                 'options' => new external_multiple_structure (
                     new external_single_structure(
                         array(
@@ -710,21 +712,46 @@ class local_mod_lesson_external extends external_api
      * @return int
      * @throws invalid_parameter_exception
      */
-    public static function get_retries_by_lessonid_and_userid($tablename, $lessonid, $userid, $options = array())
+    public static function get_count_by_lessonid_and_userid($tablename, $lessonid, $userid, $retry, $orderby, $options = array())
     {
         global $DB;
 
-        // validate params
-        $params = self::validate_parameters(self::get_retries_by_lessonid_and_userid_parameters(),
-            array(
-                'tablename' => $tablename,
-                'lessonid' => $lessonid,
-                'userid' => $userid,
-                'options' => $options
-            )
+        $arr = array(
+            'tablename' => $tablename,
+            'lessonid' => $lessonid
         );
 
-        return $DB->count_records($params['tablename'], array("lessonid" => $params['lessonid'], "userid" => $params['userid']));
+        if ($userid > 0) {
+            $arr = array_merge($arr, array('userid' => $userid));
+        }
+        if (($arr['tablename'] === 'lesson_attempts' || $arr['tablename'] === 'lesson_branch') && $retry >= 0) {
+            $arr = array_merge($arr, array('retry' => $retry));
+        }
+        if (!is_null($orderby) || !empty($orderby)) {
+            $arr = array_merge($arr, array('orderby' => $orderby));
+        }
+
+        $arr = array_merge($arr, array('options' => $options));
+
+        // validate params
+        $params = self::validate_parameters(self::get_count_by_lessonid_and_userid_parameters(),
+            $arr
+        );
+
+        $parameters = array("lessonid" => $params['lessonid']);
+
+        if (isset($arr['userid'])) {
+            $parameters = array_merge($parameters, array("userid" => $params['userid']));
+        }
+        if (isset($arr['retry'])) {
+            $parameters = array_merge($parameters, array("retry" => $params['retry']));
+        }
+
+        if (isset($arr['orderby'])) {
+            $show = $arr['orderby'];
+        }
+
+        return $DB->count_records($params['tablename'], $parameters, $show);
     }
 
     /**
@@ -733,7 +760,7 @@ class local_mod_lesson_external extends external_api
      * @return external_description
      * @since Moodle 3.0
      */
-    public static function get_retries_by_lessonid_and_userid_returns()
+    public static function get_count_by_lessonid_and_userid_returns()
     {
         return new external_value(PARAM_INT, 'retries');
     }

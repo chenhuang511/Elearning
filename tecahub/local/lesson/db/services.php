@@ -98,11 +98,11 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
-	'local_get_retries_lessonid_and_userid' => array(
+	'local_get_count_lessonid_and_userid' => array(
 		'classname'	  => 'local_mod_lesson_external',
-		'methodname'  => 'get_retries_by_lessonid_and_userid',
+		'methodname'  => 'get_count_by_lessonid_and_userid',
 		'classpath'	  => 'local/lesson/externallib.php',
-		'description' => 'Get retries of lesson table by lesson id and user id',
+		'description' => 'Get count of lesson table by lesson id and user id',
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
