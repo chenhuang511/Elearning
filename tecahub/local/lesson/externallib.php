@@ -680,9 +680,9 @@ class local_mod_lesson_external extends external_api
         return new external_function_parameters(
             array('tablename' => new external_value(PARAM_TEXT, 'table name'),
                 'lessonid' => new external_value(PARAM_INT, 'the lesson id'),
-                'userid' => new external_value(PARAM_INT, 'the user id'),
-                'retry' => new external_value(PARAM_INT, 'the retry'),
-                'orderby' => new external_value(PARAM_TEXT, 'order by'),
+                'userid' => new external_value(PARAM_INT, 'the user id', VALUE_DEFAULT, 0),
+                'retry' => new external_value(PARAM_INT, 'the retry', VALUE_DEFAULT, -1),
+                'orderby' => new external_value(PARAM_TEXT, 'order by', VALUE_DEFAULT, ''),
                 'options' => new external_multiple_structure (
                     new external_single_structure(
                         array(
@@ -721,10 +721,10 @@ class local_mod_lesson_external extends external_api
             'lessonid' => $lessonid
         );
 
-        if (!is_null($userid)) {
+        if (!empty($userid) && $userid > 0) {
             $arr = array_merge($arr, array('userid' => $userid));
         }
-        if (!is_null($retry)) {
+        if (($arr['tablename'] === 'lesson_attempts' || $arr['tablename'] === 'lesson_branch') && (!empty($retry) && $retry >= 0)) {
             $arr = array_merge($arr, array('retry' => $retry));
         }
         if (!is_null($orderby) || !empty($orderby)) {
@@ -748,7 +748,7 @@ class local_mod_lesson_external extends external_api
         }
 
         if (isset($arr['orderby'])) {
-          $show =  $arr['orderby'];
+            $show = $arr['orderby'];
         }
 
         return $DB->count_records($params['tablename'], $parameters, $show);
