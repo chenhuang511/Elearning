@@ -18,7 +18,7 @@
 /**
  * External Survey API
  *
- * @package    core_course
+ * @package    core_local_survey
  * @category   external
  * @copyright  2009 Petr Skodak
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/mod/survey/lib.php');
 /**
  * Survey external functions
  *
- * @package    core_course
+ * @package    core_local_survey
  * @category   external
  * @copyright  2011 Jerome Mouneyrac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -70,16 +70,14 @@ class local_mod_survey_external extends external_api
         // Entry to return.
         $surveydetails = array();
         if (!empty($params['id'])) {
-            $query = <<<SQL
-            SELECT cm.id AS coursemodule, s.*, cw.section, cm.visible AS visible,
-                cm.groupmode, cm.groupingid 
-            FROM {survey} AS s
-            INNER JOIN {course_modules} AS cm
-            ON s.course = cm.course
-            INNER JOIN {course_sections} AS cw
-            ON cm.section = cw.id
-            WHERE s.id = :id
-SQL;
+            $query = "SELECT cm.id AS coursemodule, s.*, cw.section, cm.visible AS visible,
+                            cm.groupmode, cm.groupingid 
+                        FROM {survey} AS s
+                        INNER JOIN {course_modules} AS cm
+                        ON s.course = cm.course
+                        INNER JOIN {course_sections} AS cw
+                        ON cm.section = cw.id
+                        WHERE s.id = :id";
             $result = $DB->get_records_sql($query, $params);
             $survey = null;
             if (count($result) > 0) {
