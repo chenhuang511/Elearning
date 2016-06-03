@@ -24,10 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-<<<<<<< Updated upstream
 $plugin->version   = 2016052325;        // The current plugin version (Date: YYYYMMDDXX)
-=======
 $plugin->version   = 2016052315;        // The current plugin version (Date: YYYYMMDDXX)
->>>>>>> Stashed changes
-$plugin->requires  = 2016051900;        // Requires this Moodle version
 $plugin->component = 'local_survey';    // Full name of the plugin (used for diagnostics)
