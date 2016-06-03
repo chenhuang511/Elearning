@@ -644,7 +644,7 @@ class local_mod_lesson_external extends external_api
             )
         );
 
-        return $DB->get_record('lesson_branch', array('lessonid' => $params['lessonid'], 'userid' => $params['userid'], 'retry' => $params['retry']), 'timeseen DESC');
+        return $DB->get_records('lesson_branch', array('lessonid' => $params['lessonid'], 'userid' => $params['userid'], 'retry' => $params['retry']), 'timeseen DESC')
     }
 
     /**
