@@ -655,16 +655,18 @@ class local_mod_lesson_external extends external_api
      */
     public static function get_lesson_branch_by_lessonid_and_userid_and_retry_returns()
     {
-        return new external_single_structure(
-            array(
-                'id' => new external_value(PARAM_INT, 'id'),
-                'lessonid' => new external_value(PARAM_INT, 'lesson id', VALUE_DEFAULT),
-                'userid' => new external_value(PARAM_INT, 'user id', VALUE_DEFAULT),
-                'pageid' => new external_value(PARAM_INT, 'page id', VALUE_DEFAULT),
-                'retry' => new external_value(PARAM_INT, 'retry', VALUE_DEFAULT),
-                'flag' => new external_value(PARAM_INT, 'flag', VALUE_DEFAULT),
-                'timeseen' => new external_value(PARAM_INT, 'time seen', VALUE_DEFAULT),
-                'nextpageid' => new external_value(PARAM_INT, 'next page id', VALUE_DEFAULT)
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'id'),
+                    'lessonid' => new external_value(PARAM_INT, 'lesson id', VALUE_DEFAULT),
+                    'userid' => new external_value(PARAM_INT, 'user id', VALUE_DEFAULT),
+                    'pageid' => new external_value(PARAM_INT, 'page id', VALUE_DEFAULT),
+                    'retry' => new external_value(PARAM_INT, 'retry', VALUE_DEFAULT),
+                    'flag' => new external_value(PARAM_INT, 'flag', VALUE_DEFAULT),
+                    'timeseen' => new external_value(PARAM_INT, 'time seen', VALUE_DEFAULT),
+                    'nextpageid' => new external_value(PARAM_INT, 'next page id', VALUE_DEFAULT)
+                ), 'lesson branch'
             )
         );
     }

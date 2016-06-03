@@ -72,7 +72,8 @@ $canmanage = false; //has_capability('mod/lesson:manage', $context);
 $lessonoutput = $PAGE->get_renderer('mod_lesson');
 
 $reviewmode = false;
-$userhasgrade = $DB->count_records("lesson_grades", array("lessonid" => $lesson->id, "userid" => $USER->id));
+//$userhasgrade = $DB->count_records("lesson_grades", array("lessonid" => $lesson->id, "userid" => $USER->id));
+$userhasgrade = get_remote_count_by_lessonid_and_userid('lesson_grades', $lesson->id, $USER->id, -1, '');
 if ($userhasgrade && !$lesson->retake) {
     $reviewmode = true;
 }
@@ -162,7 +163,7 @@ if (!$canmanage) {
             // check for the completed condition
             if ($conditions->completed) {
                 //if (!$DB->count_records('lesson_grades', array('userid' => $USER->id, 'lessonid' => $dependentlesson->id))) {
-                if (!get_remote_lesson_grades_by_userid_and_lessonid($USER->id, $dependentlesson->id)) {
+                if (!get_remote_count_by_lessonid_and_userid('lesson_grades', $dependentlesson->id, $USER->id, -1, '')) {
                     $errors[] = get_string('completederror', 'lesson');
                 }
             }
@@ -193,7 +194,8 @@ if (empty($pageid)) {
         if (!$canmanage) {
             $lesson->add_message(get_string('lessonnotready2', 'lesson')); // a nice message to the student
         } else {
-            if (!$DB->count_records('lesson_pages', array('lessonid' => $lesson->id))) {
+            // if (!$DB->count_records('lesson_pages', array('lessonid' => $lesson->id))) {
+            if (!get_remote_count_by_lessonid_and_userid('lesson_pages', $lesson->id, 0, -1, '')) {
                 redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id"); // no pages - redirect to add pages
             } else {
                 $lesson->add_message(get_string('lessonpagelinkingbroken', 'lesson'));  // ok, bad mojo
@@ -203,7 +205,7 @@ if (empty($pageid)) {
 
     // if no pageid given see if the lesson has been started
     //$retries = $DB->count_records('lesson_grades', array("lessonid" => $lesson->id, "userid" => $USER->id));
-    $retries = get_remote_retries_by_lessonid_and_userid('lesson_grades', $lesson->id, $USER->id);
+    $retries = get_remote_count_by_lessonid_and_userid('lesson_grades', $lesson->id, $USER->id, -1, '');
 
     if ($retries > 0) {
         $attemptflag = true;
@@ -238,7 +240,7 @@ if (empty($pageid)) {
         }
     }
 
-    // if ($branchtables = $DB->get_records('lesson_branch', array("lessonid" => $lesson->id, "userid" => $USER->id, "retry" => $retries), 'timeseen DESC')) {
+     //if ($branchtables = $DB->get_records('lesson_branch', array("lessonid" => $lesson->id, "userid" => $USER->id, "retry" => $retries), 'timeseen DESC')) {
     if ($branchtables = get_remote_lesson_branch_by_lessonid_and_userid_and_retry($lesson->id, $USER->id, $retries)) {
         // in here, user has viewed a branch table
         $lastbranchtable = current($branchtables);
@@ -264,8 +266,11 @@ if (empty($pageid)) {
     }
     // Check to see if end of lesson was reached.
     if ((isset($lastpageseen) && ($lastpageseen != LESSON_EOL))) {
-        if (($DB->count_records('lesson_attempts', array('lessonid' => $lesson->id, 'userid' => $USER->id, 'retry' => $retries)) > 0)
-            || $DB->count_records('lesson_branch', array("lessonid" => $lesson->id, "userid" => $USER->id, "retry" => $retries)) > 0
+//        if (($DB->count_records('lesson_attempts', array('lessonid' => $lesson->id, 'userid' => $USER->id, 'retry' => $retries)) > 0)
+//            || $DB->count_records('lesson_branch', array("lessonid" => $lesson->id, "userid" => $USER->id, "retry" => $retries)) > 0
+//        ) {
+        if ((get_remote_count_by_lessonid_and_userid('lesson_attempts', $lesson->id, $USER->id, $retries, '') > 0)
+            || get_remote_count_by_lessonid_and_userid('lesson_branch', $lesson->id, $USER->id, $retries, '') > 0
         ) {
 
             echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('leftduringtimedsession', 'lesson'));
@@ -365,7 +370,7 @@ if ($pageid != LESSON_EOL) {
         if ($page->qtype == LESSON_PAGE_BRANCHTABLE && $lesson->minquestions) {
             // tell student how many questions they have seen, how many are required and their grade
             //$ntries = $DB->count_records("lesson_grades", array("lessonid" => $lesson->id, "userid" => $USER->id));
-            $ntries = get_remote_retries_by_lessonid_and_userid('lesson_grades', $lesson->id, $USER->id);
+            $ntries = get_remote_count_by_lessonid_and_userid('lesson_grades', $lesson->id, $USER->id, -1, '');
             $gradeinfo = lesson_grade($lesson, $ntries);
             if ($gradeinfo->attempts) {
                 if ($gradeinfo->nquestions < $lesson->minquestions) {
@@ -416,7 +421,7 @@ if ($pageid != LESSON_EOL) {
         //   and then display it below in answer processing
         if (isset($USER->modattempts[$lesson->id])) {
             //$retries = $DB->count_records('lesson_grades', array("lessonid" => $lesson->id, "userid" => $USER->id));
-            $retries = get_remote_retries_by_lessonid_and_userid('lesson_grades', $lesson->id, $USER->id);
+            $retries = get_remote_count_by_lessonid_and_userid('lesson_grades', $lesson->id, $USER->id, -1, '');
             if (!$attempts = $lesson->get_attempts($retries - 1, false, $page->id)) {
                 print_error('cannotfindpreattempt', 'lesson');
             }
@@ -468,7 +473,8 @@ if ($pageid != LESSON_EOL) {
     // Used to check to see if the student ran out of time
     $outoftime = optional_param('outoftime', '', PARAM_ALPHA);
 
-    $ntries = $DB->count_records("lesson_grades", array("lessonid" => $lesson->id, "userid" => $USER->id));
+    //$ntries = $DB->count_records("lesson_grades", array("lessonid" => $lesson->id, "userid" => $USER->id));
+    $ntries = get_remote_count_by_lessonid_and_userid('lesson_grades', $lesson->id, $USER->id, -1, '');
 
     if (isset($USER->modattempts[$lesson->id])) {
         $ntries--;  // need to look at the old attempts :)
