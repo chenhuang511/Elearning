@@ -133,11 +133,11 @@ class quiz {
     /**
      * Load just basic information about all the questions in this quiz.
      */
-    public function preload_questions() {
+    public function preload_questions($quizid) {
         $this->questions = question_preload_questions(null,
                 'slot.maxmark, slot.id AS slotid, slot.slot, slot.page',
                 '{quiz_slots} slot ON slot.quizid = :quizid AND q.id = slot.questionid',
-                array('quizid' => $this->quiz->id), 'slot.slot');
+                array('quizid' => $this->quiz->id), 'slot.slot',$quizid);
     }
 
     /**
@@ -235,9 +235,9 @@ class quiz {
     /**
      * @return whether any questions have been added to this quiz.
      */
-    public function has_questions() {
+    public function has_questions($quizid) {
         if ($this->questions === null) {
-            $this->preload_questions();
+            $this->preload_questions($quizid);
         }
         return !empty($this->questions);
     }

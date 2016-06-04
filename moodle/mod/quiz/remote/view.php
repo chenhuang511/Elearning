@@ -32,26 +32,27 @@ if ($id) {
     if (!$course = $DB->get_record('course', array('remoteid' => $quiz->course))) {
         print_error('invalidcourseid');
     }
-    if (!$cm = get_remote_coursemodule_from_instance("quiz", $quiz->id)) {
+    if (!$cm = get_remote_coursemodule_from_instance("quiz", $quiz->id)->cm) {
         print_error('invalidcoursemodule');
     }
 }
 
-// TODO: Check login and get context.
+// Check login and get context.
+//require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
+require_capability('mod/quiz:view', $context);
 
 // Cache some other capabilities we use several times.
-$canattempt = true;
-$canreviewmine = true;
-$canpreview = true;
+$canattempt = has_capability('mod/quiz:attempt', $context);
+$canreviewmine = has_capability('mod/quiz:reviewmyattempts', $context);
+$canpreview = has_capability('mod/quiz:preview', $context);
 
 // Create an object to manage all the other (non-roles) access rules.
 $timenow = time();
 //$quizobj = quiz::create($cm->instance, $USER->id);
-// accessmanager.php: load_quiz_and_settings
 $rules= get_remote_quiz_access_information($cm->instance);
 $quiz = get_remote_quiz_by_id($cm->instance);
-$quizobj = new quiz($quiz, $cm, $course, false); //false: not get context
+$quizobj = new quiz($quiz, $cm, $course);
 $accessmanager = new quiz_access_manager($quizobj, $timenow,
     false); // set has_capability('mod/quiz:ignoretimelimits', $context, null, false) = false
 $quiz = $quizobj->get_quiz();
@@ -113,8 +114,8 @@ $gradebookfeedback = '';
 $grading_info = grade_get_grades($course->id, 'mod', 'quiz', $quiz->id, $user[0]->id);
 if (!empty($grading_info->items)) {
     $item = $grading_info->items[0];
-    if (isset($item->grades[$USER->id])) {
-        $grade = $item->grades[$USER->id];
+    if (isset($item->grades[$user[0]->id])) {
+        $grade = $item->grades[$user[0]->id];
 
         if ($grade->overridden) {
             $mygrade = $grade->grade + 0; // Convert to number.
@@ -154,8 +155,7 @@ $viewobj->moreattempts = $unfinished ||
 $viewobj->mygradeoverridden = $mygradeoverridden;
 $viewobj->gradebookfeedback = $gradebookfeedback;
 $viewobj->lastfinishedattempt = $lastfinishedattempt;
-//$viewobj->canedit = has_capability('mod/quiz:manage', $context);
-$viewobj->canedit = true;
+$viewobj->canedit = has_capability('mod/quiz:manage', $context);
 $viewobj->editurl = new moodle_url('/mod/quiz/edit.php', array('cmid' => $cm->id));
 $viewobj->backtocourseurl = new moodle_url('/course/view.php', array('id' => $course->id));
 $viewobj->startattempturl = $quizobj->start_attempt_url();
@@ -173,8 +173,64 @@ if ($quiz->attempts != 1) {
     $viewobj->infomessages[] = get_string('gradingmethod', 'quiz',
         quiz_get_grading_option_name($quiz->grademethod));
 }
-//var_dump($viewobj);die;
+
+// Determine wheter a start attempt button should be displayed.
+$viewobj->quizhasquestions = $quizobj->has_questions($quiz->id);
+
+$viewobj->preventmessages = array();
+if (!$viewobj->quizhasquestions) {
+    $viewobj->buttontext = '';
+} else {
+    if ($unfinished) {
+        if ($canattempt) {
+            $viewobj->buttontext = get_string('continueattemptquiz', 'quiz');
+        } else if ($canpreview) {
+            $viewobj->buttontext = get_string('continuepreview', 'quiz');
+        }
+
+    } else {
+        if ($canattempt) {
+            $viewobj->preventmessages = $viewobj->accessmanager->prevent_new_attempt(
+                $viewobj->numattempts, $viewobj->lastfinishedattempt);
+            if ($viewobj->preventmessages) {
+                $viewobj->buttontext = '';
+            } else if ($viewobj->numattempts == 0) {
+                $viewobj->buttontext = get_string('attemptquiznow', 'quiz');
+            } else {
+                $viewobj->buttontext = get_string('reattemptquiz', 'quiz');
+            }
+
+        } else if ($canpreview) {
+            $viewobj->buttontext = get_string('previewquiznow', 'quiz');
+        }
+    }
+
+    // If, so far, we think a button should be printed, so check if they will be
+    // allowed to access it.
+    if ($viewobj->buttontext) {
+        if (!$viewobj->moreattempts) {
+            $viewobj->buttontext = '';
+        } else if ($canattempt
+            && $viewobj->preventmessages = $viewobj->accessmanager->prevent_access()) {
+            $viewobj->buttontext = '';
+        }
+    }
+}
+
+// @TODO: $viewobj->showbacktocourse
+$viewobj->showbacktocourse = false;
 
 echo $OUTPUT->header();
-echo $output->view_page($course, $quiz, $cm, null, $viewobj);
+
+if (isguestuser()) {
+    // Guests can't do a quiz, so offer them a choice of logging in or going back.
+    echo $output->view_page_guest($course, $quiz, $cm, $context, $viewobj->infomessages);
+} else if (!isguestuser() && !($canattempt || $canpreview
+        || $viewobj->canreviewmine)) {
+    // If they are not enrolled in this course in a good enough role, tell them to enrol.
+    echo $output->view_page_notenrolled($course, $quiz, $cm, $context, $viewobj->infomessages);
+} else {
+    echo $output->view_page($course, $quiz, $cm, $context, $viewobj);
+}
+
 echo $OUTPUT->footer();

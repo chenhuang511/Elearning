@@ -193,4 +193,133 @@ class local_mod_quiz_external extends external_api {
             )
         );
     }
+
+    /**
+     * Hanv 04/06/2016
+     * Return a list of ids, load the basic information about a set of questions from the questions table.
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.9 Options available
+     * @since Moodle 2.2
+     *
+     */
+    public static function get_mod_questions_by_quizid_parameters() {
+        return new external_function_parameters(
+            array('id' => new external_value(PARAM_INT, 'id'),
+                'options' => new external_multiple_structure (
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHANUM,
+                                'The expected keys (value format) are:
+                                                excludemodules (bool) Do not return modules, return only the sections structure
+                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
+                                                sectionid (int) Return only this section
+                                                sectionnumber (int) Return only this section with number (order)
+                                                cmid (int) Return only this module information (among the whole sections structure)
+                                                modname (string) Return only modules with this name "label, forum, etc..."
+                                                modid (int) Return only the module with this id (to be used with modname'),
+                            'value' => new external_value(PARAM_RAW, 'the value of the option,
+                                                                    this param is personaly validated in the external function.')
+                        )
+                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+            )
+        );
+    }
+
+    /**
+     * Get Question object
+     *
+     * @param int $id id
+     * @param array $options Options for filtering the results, used since Moodle 2.9
+     * @return array
+     * @since Moodle 2.9 Options available
+     * @since Moodle 2.2
+     */
+    public static function get_mod_questions_by_quizid($id, $options = array()) {
+        global $CFG, $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::get_mod_questions_by_quizid_parameters(),
+            array('id' => $id,'options' => $options));
+        // Thiet lap cac thong so ban dau cua lib/questionlib.php -> question_preload_questions
+        $questionids = null;
+        $extrafields = 'slot.maxmark, slot.id AS slotid, slot.slot, slot.page';
+        $join = '{quiz_slots} slot ON slot.quizid = :quizid AND q.id = slot.questionid';
+        $extraparams = array('quizid' => $params['id']);
+        $orderby = 'slot.slot';
+
+        if ($questionids === null) {
+            $where = '';
+            $params = array();
+        } else {
+            if (empty($questionids)) {
+                return array();
+            }
+
+            list($questionidcondition, $params) = $DB->get_in_or_equal(
+                $questionids, SQL_PARAMS_NAMED, 'qid0000');
+            $where = 'WHERE q.id ' . $questionidcondition;
+        }
+
+        if ($join) {
+            $join = 'JOIN ' . $join;
+        }
+
+        if ($extrafields) {
+            $extrafields = ', ' . $extrafields;
+        }
+
+        if ($orderby) {
+            $orderby = 'ORDER BY ' . $orderby;
+        }
+
+        $sql = "SELECT q.*, qc.contextid{$extrafields}
+              FROM {question} q
+              JOIN {question_categories} qc ON q.category = qc.id
+              {$join}
+             {$where}
+          {$orderby}";
+
+        // Load the questions.
+        $questions = $DB->get_records_sql($sql, $extraparams + $params);
+        foreach ($questions as $question) {
+            $question->_partiallyloaded = true;
+        }
+        return $questions;
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.9 Options available
+     * @since Moodle 2.2
+     */
+    public static function get_mod_questions_by_quizid_returns() {
+        return  new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
+                    'category' => new external_value(PARAM_INT, 'category',VALUE_OPTIONAL),
+                    'parent' => new external_value(PARAM_INT, 'parent', VALUE_OPTIONAL),
+                    'name' => new external_value(PARAM_RAW, 'Question name'),
+                    'questiontext' => new external_value(PARAM_RAW, 'Question introduction text.', VALUE_OPTIONAL),
+                    'questiontextformat' => new external_value(PARAM_INT, 'questiontext format.', VALUE_OPTIONAL),
+                    'generalfeedback' => new external_value(PARAM_RAW, 'generalfeedback.', VALUE_OPTIONAL),
+                    'generalfeedbackformat' => new external_value(PARAM_INT, 'general feedback format.', VALUE_OPTIONAL),
+                    'defaultmark' => new external_value(PARAM_FLOAT, 'default mark.', VALUE_OPTIONAL),
+                    'penalty' => new external_value(PARAM_FLOAT, 'penalty.', VALUE_OPTIONAL),
+                    'qtype' => new external_value(PARAM_RAW, 'qtype', VALUE_OPTIONAL),
+                    'length' => new external_value(PARAM_INT, 'length', VALUE_OPTIONAL),
+                    'stamp' => new external_value(PARAM_RAW, 'stamp'),
+                    'version' => new external_value(PARAM_RAW, 'Question version'),
+                    'hidden' => new external_value(PARAM_INT, '	hidden', VALUE_OPTIONAL),
+                    'timecreated' => new external_value(PARAM_INT, 'The time when the question was added to the question bank.', VALUE_OPTIONAL),
+                    'timemodified' => new external_value(PARAM_INT, 'Last modified time.', VALUE_OPTIONAL),
+                    'createdby' => new external_value(PARAM_INT, 'created by.', VALUE_OPTIONAL),
+                    'modifiedby' => new external_value(PARAM_INT, 'modified by.', VALUE_OPTIONAL),
+                )
+            )
+        );
+    }
 }

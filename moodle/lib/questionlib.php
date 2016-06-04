@@ -36,6 +36,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/question/engine/lib.php');
 require_once($CFG->dirroot . '/question/type/questiontypebase.php');
+require_once($CFG->dirroot.'/mod/quiz/remote/locallib.php');
 
 
 
@@ -667,7 +668,7 @@ function question_preview_popup_params() {
  * on them before they can be properly used.
  */
 function question_preload_questions($questionids = null, $extrafields = '', $join = '',
-        $extraparams = array(), $orderby = '') {
+        $extraparams = array(), $orderby = '', $quizid) {
     global $DB;
 
     if ($questionids === null) {
@@ -704,6 +705,12 @@ function question_preload_questions($questionids = null, $extrafields = '', $joi
 
     // Load the questions.
     $questions = $DB->get_records_sql($sql, $extraparams + $params);
+
+    //hanv: 04/06/2016: get_remote_questions
+    if(!$questions){
+        $questions = get_remote_question($quizid);
+    }
+
     foreach ($questions as $question) {
         $question->_partiallyloaded = true;
     }

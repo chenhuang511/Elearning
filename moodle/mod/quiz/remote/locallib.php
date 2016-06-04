@@ -83,3 +83,14 @@ function get_remote_user_best_grade($quizid,  $userid) {
     );
 }
 
+function get_remote_question($quizid) {
+    return moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_questions_by_quizid',
+            'params' => array('id' => $quizid)
+        )
+    );
+}
+

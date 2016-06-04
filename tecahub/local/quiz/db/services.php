@@ -42,4 +42,12 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_get_questions_by_quizid' => array(
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'get_mod_questions_by_quizid',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Given a list of ids, load the basic information about a set of questions from the questions table.",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 );
