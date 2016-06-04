@@ -131,14 +131,14 @@ function get_remote_lesson_branch_by_lessonid_and_userid_and_retry($lessonid, $u
     ));
 }
 
-function get_remote_retries_by_lessonid_and_userid($tablename, $lessonid, $userid, $options = array())
+function get_remote_count_by_lessonid_and_userid($tablename, $lessonid, $userid, $retry, $orderby, $options = array())
 {
     return moodle_webservice_client(array_merge($options,
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
-            'function_name' => 'local_get_retries_lessonid_and_userid',
-            'params' => array('tablename' => $tablename, 'lessonid' => $lessonid, 'userid' => $userid)
+            'function_name' => 'local_get_count_lessonid_and_userid',
+            'params' => array('tablename' => $tablename, 'lessonid' => $lessonid, 'userid' => $userid, 'retry' => $retry, 'orderby' => $orderby)
         )
     ));
 }

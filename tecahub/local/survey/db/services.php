@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Core external functions and service definitions.
  *
@@ -23,23 +22,23 @@
  * install or upgrade operation. All plugins support this.
  *
  * For more information, take a look to the documentation available:
- *	   - Webservices API: {@link http://docs.moodle.org/dev/Web_services_API}
- *	   - External API: {@link http://docs.moodle.org/dev/External_functions_API}
- *	   - Upgrade API: {@link http://docs.moodle.org/dev/Upgrade_API}
+ *      - Webservices API: {@link http://docs.moodle.org/dev/Web_services_API}
+ *      - External API: {@link http://docs.moodle.org/dev/External_functions_API}
+ *      - Upgrade API: {@link http://docs.moodle.org/dev/Upgrade_API}
  *
- * @package	   core_webservice
- * @category   webservice
- * @copyright  2009 Petr Skodak
- * @license	   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package     core_webservice
+ * @category    webservice
+ * @copyright   2009 Petr Skodak
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $functions = array(
-	'local_survey_mapping_user' => array(
-		'classname'	  => 'local_user_external',
-		'methodname'  => 'get_remote_mapping_user',
-		'classpath'	  => 'local/user/externallib.php',
-		'description' => "Get remote mapping user",
-		'type'		  => 'read',
-		'ajax'		  => true
-	),
+    'local_get_survey_by_id' => array(
+        'classname'     => 'local_mod_survey_external',
+        'methodname'    => 'get_survey_by_id',
+        'classpath'     => 'local/survey/externallib.php',
+        'description'   => 'Get survey by id',
+        'type'          => 'read',
+        'ajax'          => true
+    ),
 );
