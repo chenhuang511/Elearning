@@ -668,7 +668,7 @@ function question_preview_popup_params() {
  * on them before they can be properly used.
  */
 function question_preload_questions($questionids = null, $extrafields = '', $join = '',
-        $extraparams = array(), $orderby = '', $quizid) {
+        $extraparams = array(), $orderby = '', $quizid = null) {
     global $DB;
 
     if ($questionids === null) {
