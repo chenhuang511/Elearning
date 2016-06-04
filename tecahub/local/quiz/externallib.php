@@ -40,16 +40,16 @@ require_once("$CFG->libdir/externallib.php");
 class local_mod_quiz_external extends external_api {
     /**
      * Hanv 24/05/2016
-     * Return all the information about a quiz by cm->instance from course_module
+     * Return all the information about a quiz by quizid or by cm->instance from course_module
      *
      * @return external_function_parameters
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      *
      */
-    public static function get_mod_quiz_by_cm_instance_parameters() {
+    public static function get_mod_quiz_by_id_parameters() {
         return new external_function_parameters(
-            array('instance' => new external_value(PARAM_INT, 'instance'),
+            array('id' => new external_value(PARAM_INT, 'id'),
                 'options' => new external_multiple_structure (
                     new external_single_structure(
                         array(
@@ -73,20 +73,20 @@ class local_mod_quiz_external extends external_api {
     /**
      * Get Quiz object
      *
-     * @param int $instance instance
+     * @param int $id id
      * @param array $options Options for filtering the results, used since Moodle 2.9
      * @return array
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_mod_quiz_by_cm_instance($instance, $options = array()) {
+    public static function get_mod_quiz_by_id($id, $options = array()) {
         global $CFG, $DB;
 
         //validate parameter
-        $params = self::validate_parameters(self::get_mod_quiz_by_cm_instance_parameters(),
-            array('instance' => $instance,'options' => $options));
-        // Get quiz by instanceid
-        $quiz =  $DB->get_record('quiz', array('id' => $params['instance']), '*', MUST_EXIST);
+        $params = self::validate_parameters(self::get_mod_quiz_by_id_parameters(),
+            array('id' => $id,'options' => $options));
+        // Get quiz by id
+        $quiz =  $DB->get_record('quiz', array('id' => $params['id']), '*', MUST_EXIST);
         return $quiz;
     }
 
@@ -97,7 +97,7 @@ class local_mod_quiz_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_mod_quiz_by_cm_instance_returns() {
+    public static function get_mod_quiz_by_id_returns() {
         return  new external_single_structure(
             array(
                 'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),

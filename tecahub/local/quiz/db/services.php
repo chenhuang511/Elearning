@@ -34,11 +34,11 @@
  */
 
 $functions = array(
-	'local_mod_get_quiz_by_cm_instance' => array(
+	'local_mod_get_quiz_by_id' => array(
 		'classname'	  => 'local_mod_quiz_external',
-		'methodname'  => 'get_mod_quiz_by_cm_instance',
+		'methodname'  => 'get_mod_quiz_by_id',
 		'classpath'	  => 'local/quiz/externallib.php',
-		'description' => "Get quiz by instaceid of course module",
+		'description' => "Get quiz by quiz id or by coursemodul instance",
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
