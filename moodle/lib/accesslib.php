@@ -5821,7 +5821,7 @@ abstract class context extends stdClass implements IteratorAggregate
     {
         global $DB;
 
-        $record =  $DB->get_record('context', array("instanceid" => $instanceid, "contextlevel" => $contextlevel), "*", MUST_EXIST);
+        $record =  $DB->get_record('context', array("instanceid" => $instanceid, "contextlevel" => $contextlevel));
         if (!($record) || empty($record->id)){
             $record = new stdClass();
             $record->contextlevel = $contextlevel;

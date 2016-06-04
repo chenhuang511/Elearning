@@ -39,7 +39,6 @@ if ($id) {
 
 // TODO: Check login and get context.
 $context = context_module::instance($cm->id);
-echo 1; die;
 
 // Cache some other capabilities we use several times.
 $canattempt = true;
