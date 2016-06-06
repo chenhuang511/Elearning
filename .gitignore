@@ -9,3 +9,4 @@ tecahub/config.php
 /.idea/Elearning.iml
 /.idea/webServers.xml
 moodle/config.php
+**/node_modules/*
