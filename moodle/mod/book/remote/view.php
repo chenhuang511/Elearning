@@ -27,7 +27,7 @@ else{
 $chapters = remote_book_preload_chapters($book);
 
 if (!$chapters) {
-    redirect('edit.php?modid='.$cm->id); // No chapters - add new one.
+    redirect('edit.php?cmid='.$cm->id); // No chapters - add new one.
 }
 // Check chapterid and read chapter data
 if ($chapterid == '0') { // Go to first chapter if no given.

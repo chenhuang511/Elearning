@@ -26,12 +26,12 @@ require(dirname(__FILE__).'/../../../config.php');
 require_once(dirname(__FILE__).'/locallib.php');
 require_once(dirname(__FILE__).'/../edit_form.php');
 
-$cmid       = required_param('modid', PARAM_INT);  // Book Course Module ID
+$cmid       = required_param('cmid', PARAM_INT);  // Book Course Module ID
 $chapterid  = optional_param('id', 0, PARAM_INT); // Chapter ID
 $pagenum    = optional_param('pagenum', 0, PARAM_INT);
 $subchapter = optional_param('subchapter', 0, PARAM_BOOL);
 
-$cm = get_remote_course_module($id);
+$cm = get_remote_course_module($cmid);
 $course = get_remote_course_by_id($cm->course);
 $book = get_remote_book_content($cm->instance);
 
@@ -46,9 +46,46 @@ if ($chapterid) {
 $chapter->cmid = $cm->id;
 
 $options = array('noclean'=>true, 'subdirs'=>true, 'maxfiles'=>-1, 'maxbytes'=>0, 'context'=>$context);
-$chapter = file_prepare_standard_editor($chapter, 'content', $options, $context, 'mod_book', 'chapter', $chapter->id);
+$chapter = file_prepare_standard_editor($chapter, 'content', $options, null, 'mod_book', 'chapter', $chapter->id);
 
 $mform = new book_chapter_edit_form(null, array('chapter'=>$chapter, 'options'=>$options));
+// If data submitted, then process and store.
+if ($mform->is_cancelled()) {
+    if (empty($chapter->id)) {
+        redirect("view.php?modid=$cm->id");
+    } else {
+        redirect("view.php?modid=$cm->id&chapterid=$chapter->id");
+    }
+
+} else if ($data = $mform->get_data()) {
+
+    if ($data->id) {
+        // store the files
+        $data->timemodified = time();
+        $data = file_postupdate_standard_editor($data, 'content', $options, null, 'mod_book', 'chapter', $data->id);
+        update_remote_book_chapters($data);
+
+    } else {
+        // adding new chapter
+        $data->bookid        = $book->id;
+        $data->hidden        = 0;
+        $data->timecreated   = time();
+        $data->timemodified  = time();
+        $data->importsrc     = '';
+        $data->content       = '';          // updated later
+        $data->contentformat = FORMAT_HTML; // updated later
+
+        $result = create_remote_book_chapters($data);
+
+        $data->id = $result->id;
+        
+        $data = file_postupdate_standard_editor($data, 'content', $options, null, 'mod_book', 'chapter', $result->id);
+        update_remote_book_chapters($data);
+        
+    }
+    remote_book_preload_chapters($book); // fix structure
+    redirect("view.php?modid=$cm->id&chapterid=$data->id");
+}
 
 // Otherwise fill and print the form.
 $PAGE->set_title($book->name);
