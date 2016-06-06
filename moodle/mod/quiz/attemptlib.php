@@ -297,6 +297,21 @@ class quiz {
     }
 
     /**
+     * Return quiz_access_manager and instance of the quiz_access_manager class
+     * for this quiz at this time.
+     * @param int $timenow the current time as a unix timestamp.
+     * @return quiz_access_manager and instance of the quiz_access_manager class
+     *      for this quiz at this time.
+     */
+    public function get_remote_access_manager($timenow) {
+        if (is_null($this->accessmanager)) {
+            $this->accessmanager = new quiz_access_manager($this, $timenow,
+                false);
+        }
+        return $this->accessmanager;
+    }
+
+    /**
      * Wrapper round the has_capability funciton that automatically passes in the quiz context.
      */
     public function has_capability($capability, $userid = null, $doanything = true) {
@@ -317,6 +332,15 @@ class quiz {
     public function view_url() {
         global $CFG;
         return $CFG->wwwroot . '/mod/quiz/view.php?id=' . $this->cm->id;
+    }
+
+    // URLs related to this remote attempt ============================================
+    /**
+     * @return string the URL of this quiz's view page.
+     */
+    public function view_remote_url() {
+        global $CFG;
+        return $CFG->wwwroot . '/mod/quiz/remote/view.php?id=' . $this->cm->id;
     }
 
     /**
@@ -350,6 +374,18 @@ class quiz {
             $params['page'] = $page;
         }
         return new moodle_url('/mod/quiz/startattempt.php', $params);
+    }
+
+    /**
+     * Hanv 06/06/2016
+     * @return string the URL of this quiz's edit page. Needs to be POSTed to with a cmid parameter.
+     */
+    public function start_remote_attempt_url($page = 0) {
+        $params = array('cmid' => $this->cm->id, 'sesskey' => sesskey());
+        if ($page) {
+            $params['page'] = $page;
+        }
+        return new moodle_url('/mod/quiz/remote/startattempt.php', $params);
     }
 
     /**

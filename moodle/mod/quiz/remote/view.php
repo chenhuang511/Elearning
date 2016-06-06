@@ -158,7 +158,7 @@ $viewobj->lastfinishedattempt = $lastfinishedattempt;
 $viewobj->canedit = has_capability('mod/quiz:manage', $context);
 $viewobj->editurl = new moodle_url('/mod/quiz/edit.php', array('cmid' => $cm->id));
 $viewobj->backtocourseurl = new moodle_url('/course/view.php', array('id' => $course->id));
-$viewobj->startattempturl = $quizobj->start_attempt_url();
+$viewobj->startattempturl = $quizobj->start_remote_attempt_url();
 
 if ($accessmanager->is_preflight_check_required($unfinishedattemptid)) {
     $viewobj->preflightcheckform = $accessmanager->get_preflight_check_form(
