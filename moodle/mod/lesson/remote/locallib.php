@@ -131,7 +131,7 @@ function get_remote_lesson_branch_by_lessonid_and_userid_and_retry($lessonid, $u
     ));
 }
 
-function get_remote_count_by_lessonid_and_userid($tablename, $lessonid, $userid, $retry, $orderby, $options = array())
+function get_remote_count_by_lessonid_and_userid($tablename, $lessonid, $userid = 0, $retry = -1, $orderby = '', $options = array())
 {
     return moodle_webservice_client(array_merge($options,
         array(

@@ -42,7 +42,6 @@ function get_remote_courses($options = array())
     )));
 }
 
-
 function get_remote_course_content($courseid, $options = array())
 {
     return moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
@@ -69,7 +68,6 @@ function get_remote_label_content($labelid, $options = [])
         'params' => array('labelid' => $labelid),
     )));
 }
-
 
 function get_remote_page_content($pageid, $options = [])
 {
@@ -113,26 +111,13 @@ function get_remote_course_module_by_instance($modulename, $instace, $options = 
     ));
 }
 
-function get_remote_context_by_instanceid_and_contextlevel($instanceid, $contextlevel, $options = array())
-{
+function get_remote_course_module_by_cmid($modulename, $cmid, $options = array()) {
     return moodle_webservice_client(array_merge($options,
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_get_context_by_instanceid_and_contextlevel',
-            'params' => array('instanceid' => $instanceid, 'contextlevel' => $contextlevel)
-        )
-    ));
-}
-
-function get_remote_context_by_id($id, $options = array())
-{
-    return moodle_webservice_client(array_merge($options,
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_get_context_by_id',
-            'params' => array('id' => $id)
+            'function_name' => 'local_get_course_module_by_cmid',
+            'params' => array('module' => $modulename, 'id' => $cmid)
         )
     ));
 }
