@@ -2,6 +2,10 @@
 
 require_once($CFG->dirroot . '/course/renderer.php');
 
+function frontpage_enrol_course($courses) {
+    
+}
+
 function frontpage_courses($courses)
 {
     // Wrap frontpage course list in div container.
