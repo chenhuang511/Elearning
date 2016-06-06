@@ -3,7 +3,35 @@
 require_once($CFG->dirroot . '/course/renderer.php');
 
 function frontpage_enrol_course($courses) {
-    
+    foreach ($courses as $key => $course) {
+        echo "<div class='courses' style='border: 1px solid #f5f5f5; margin-top: 10px'>";
+                echo "<table>";
+        echo"<tr>";
+        echo"<td rowspan='4'>";
+        echo "<img src='https://www.google.com/intl/en_com/images/srpr/logo3w.png' style='padding:10px 10px' >";
+        echo "</td>";
+        echo "<td class='box1' style='color:dodgerblue; font-size:18px;width:60%;'>";
+        echo "$course->fullname";
+        echo"</td>";
+        echo"</tr>";
+        echo"<tr>";
+        echo"<td class='box2' style='font-size:12px;text-align:left;'>";
+        echo "$course->summary";
+        echo"</td>";
+        echo"<td>";
+        echo "<button style='background-color: #00a3f4; color: white'>";
+        echo "Hoc Ngay";
+        echo "</button>";
+        echo"</td>";
+        echo"</tr>";
+        echo "</table>";
+
+        echo "</div>";
+        echo "<hr style='border: solid 2px #f5f5f5'>";
+        global $CFG;
+        require_once($CFG->libdir . '/remote/lib.php');
+
+    }
 }
 
 function frontpage_courses($courses)
