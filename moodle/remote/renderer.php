@@ -28,9 +28,6 @@ function frontpage_enrol_course($courses) {
 
         echo "</div>";
         echo "<hr style='border: solid 2px #f5f5f5'>";
-        global $CFG;
-        require_once($CFG->libdir . '/remote/lib.php');
-
     }
 }
 

@@ -39,13 +39,13 @@ function convert_remote_course_record(&$course) {
     $course->id       = $course->remoteid;
 }
 
-function get_local_course_record($courseid) {
+function get_local_course_record($courseid, $useid = false) {
     global $DB;
     if (is_object($courseid)) {
         convert_remote_course_record($courseid);
         return $courseid;
     }
-    $idfield = ((int)$courseid === 1) ? "id" : "remoteid";
+    $idfield = ((int)$courseid === 1 || $useid) ? "id" : "remoteid";
     $course = $DB->get_record("course", array($idfield => $courseid), "*", MUST_EXIST);
     convert_remote_course_record($course);
     return $course;
