@@ -164,7 +164,7 @@ a:focus {
 }
 #header .usermenu .moodle-actionmenu .toggle-display .userbutton .usertext {
 		font-size: 16px;
-		color: #fff;
+		color: #333;
 }
 #header .usermenu .moodle-actionmenu .toggle-display .userbutton .avatars {
 		width: 35px;
@@ -216,6 +216,84 @@ a:focus {
 .jsenabled .usermenu .moodle-actionmenu > .menu .filler {
 		background-color: #e8e3e3;
 }
+
+.logo .site-logo-img {
+	max-width: 76px;
+}
+
+.header-main .navbar-inner {
+	border: 0;
+}
+
+.header-main .navbar {
+	margin-right: -20px;
+}
+
+.header-main .logo-section {
+	display: table-cell;
+	vertical-align: middle;
+}
+
+.header-main .logo-title {
+	color: #333;
+	font-size: 20px;
+	word-break: break-word;
+}
+
+.logo a:hover {
+	text-decoration: none;
+}
+
+.btn-theme-blue,
+.usermenu .login .btn-theme-blue {
+	background: #126f9a;
+	border: 1px solid #006495;
+	border-radius: 3px;
+	padding: 10px 20px;
+	color: #fff;
+	display: inline-block;
+}
+
+.usermenu .login {
+	display: inline-block;
+	line-height: 1em;
+	margin-top: 20px;
+}
+
+.navbar .btn-navbar {
+	margin-top: 22px;
+}
+
+.usermenu .login .btn-theme-blue:hover,
+.usermenu .login .btn-theme-blue:focus {
+	color: #c1c1c1;
+}
+
+.banner .banner-content {
+	width: 100%;
+	height: 200px;
+	background: #333 url([[pix:theme|banner/banner-home]]) right center no-repeat;
+	background-size: cover;
+}
+
+@media (min-width: 768px) {
+	.banner .banner-content {
+		height: 320px;
+	}
+}
+
+@media (min-width: 992px) {
+	.banner .banner-content {
+		height: 400px;
+	}
+}
+
+@media (min-width: 1200px) {
+	.banner .banner-content {
+		height: 480px;
+	}
+}
+
 @media(max-width: 767px) {
 		#header {
 			margin-right: -20px;
@@ -289,7 +367,7 @@ a:focus {
 		#header .header-top .navbar .container {
 				width:940px
 		}
-		
+
 		#header .header-top .navbar .nav > li {
 				background: url([[pix:theme|img-nav_divider]]) no-repeat right center;
 				padding: 0 2px 0 0;
@@ -300,7 +378,7 @@ a:focus {
 		}
 		#header .header-top .navbar .nav li:last-child {
 				background: none;
-		}		
+		}
 		#header .header-top .navbar .nav > li > a {
 				font-weight: normal;
 				padding: 25px 20px;
@@ -312,6 +390,7 @@ a:focus {
 				padding: 15px;
 		}
 }
+
 @media(min-width:1200px) {
 		#header .header-top .navbar .container {
 				width:1170px
@@ -321,7 +400,7 @@ a:focus {
 		padding: 12px 0;
 }
 #header .header-main .logo {
-		padding: 10px 0;
+		padding: 0;
 		display: block;
 }
 #header .header-main .logo a {
@@ -710,7 +789,7 @@ input[type="password"],
 input[type="datetime"],
 input[type="datetime-local"],
 input[type="date"],
-input[type="month"],	
+input[type="month"],
 input[type="time"],
 input[type="week"],
 input[type="number"],
@@ -1388,7 +1467,7 @@ div.backup-section + form,
 		min-height: 120px;
 		color: #656565;
 		padding: 20px 0 0;
-		overflow: hidden;		
+		overflow: hidden;
 		position: relative;
 }
 .coursebox > .info > .coursename a {
@@ -1576,7 +1655,7 @@ table.rolecap thead tr th,
 		color: #fff;
 		background: #097eaf;
 }
-table.flexible thead th img, 
+table.flexible thead th img,
 .generaltable thead th img {
 		background: none repeat scroll 0 0;
 }
@@ -1634,23 +1713,23 @@ table.flexible tbody > tr:nth-child(2n+1) > th,
 .generaltable tbody > tr:nth-child(2n+1) > th {
 		background: #f7f7f7;
 }
-.user-enroller-panel .uep-search-results .users tbody tr:hover > td, 
-.user-enroller-panel .uep-search-results .cohorts tbody tr:hover > td, 
-table.grading-report tbody tr:hover > td, 
-.forumheaderlist tbody tr:hover > td, 
-.generaltable tbody tr:hover > td, 
-table.flexible tbody tr:hover > td, 
+.user-enroller-panel .uep-search-results .users tbody tr:hover > td,
+.user-enroller-panel .uep-search-results .cohorts tbody tr:hover > td,
+table.grading-report tbody tr:hover > td,
+.forumheaderlist tbody tr:hover > td,
+.generaltable tbody tr:hover > td,
+table.flexible tbody tr:hover > td,
 .category_subcategories tbody tr:hover > td,
-table#modules tbody tr:hover > td, 
-table#permissions tbody tr:hover > td, 
+table#modules tbody tr:hover > td,
+table#permissions tbody tr:hover > td,
 .user-enroller-panel .uep-search-results .users tbody tr:hover > th,
-.user-enroller-panel .uep-search-results .cohorts tbody tr:hover > th, 
-table.grading-report tbody tr:hover > th, 
-.forumheaderlist tbody tr:hover > th, 
+.user-enroller-panel .uep-search-results .cohorts tbody tr:hover > th,
+table.grading-report tbody tr:hover > th,
+.forumheaderlist tbody tr:hover > th,
 .generaltable tbody tr:hover > th,
-table.flexible tbody tr:hover > th, 
+table.flexible tbody tr:hover > th,
 .category_subcategories tbody tr:hover > th,
-table#modules tbody tr:hover > th, 
+table#modules tbody tr:hover > th,
 table#permissions tbody tr:hover > th {
 		background: #f2f2f2;
 }
@@ -1727,7 +1806,7 @@ table#permissions tbody tr:hover > th {
 		.dir-rtl .userprofile dl.list dd {
 				text-align: center;
 		}
-		
+
 }
 @media (min-width: 480px) {
 		.userprofile .userprofilebox .profilepicture {

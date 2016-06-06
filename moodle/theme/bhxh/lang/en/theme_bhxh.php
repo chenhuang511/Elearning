@@ -1,4 +1,4 @@
-<?php 
+<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@
  * @copyright 2016 NCCSOFT VIETNAM, nccsoft.vn
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-	
+
 $string['about'] = 'About';
 $string['aboutus'] = 'About Us';
 $string['address'] = 'Address';
@@ -43,7 +43,7 @@ Contact: info@nephzat.com<br>
 Website: <a href="http://www.nephzat.com">www.nephzat.com</a><br>
 </p>';
 
-$string['configtitle'] = 'TRƯỜNG ĐÀO TẠO NGHIỆP VỤ BẢO HIỂM XA HỘI';
+$string['configtitle'] = 'Trường Đào Tạo Nghiệp Vụ Bảo Hiểm Xã Hội Việt Nam';
 $string['connectus'] = 'Contact with us';
 $string['contact'] = 'Contact';
 $string['copyright_footer'] = 'Copyright';
@@ -100,7 +100,7 @@ Moodle.com|http://moodle.com/
 $string['logo'] = 'Logo';
 $string['logodesc'] = 'Please upload your custom logo here if you want to add it to the header.
                        <br>The image should be 37px high and any reasonable width (minimum:250px) that suits.';
-																							
+
 $string['newsblockcontent'] = 'News & Events Block Content';
 $string['newsblockcontentdesc'] = 'Whatever you add to this textarea will be displayed in the News & Events Block.';
 $string['newsblockheading'] = 'News & Events Block';
@@ -194,4 +194,4 @@ $string['toggleslideshowdesc'] = 'Choose if you wish to hide or show the slide s
 $string['twurl'] = 'Twitter';
 $string['twurl_default'] = 'https://twitter.com/yourtwittername';
 $string['twurldesc'] = 'The Twitter url of your organisation.';
-
+$string['loggedinnot'] = '';
