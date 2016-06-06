@@ -5647,16 +5647,7 @@ abstract class context extends stdClass implements IteratorAggregate
             return $context;
         }
 
-        switch (MOODLE_RUN_MODE) {
-            case MOODLE_MODE_HOST:
-                $record = $DB->get_record('context', array('id' => $id), '*', $strictness);
-                break;
-            case MOODLE_MODE_HUB:
-                $record = get_remote_context_by_id($id);
-                break;
-            default:
-                break;
-        }
+        $record = $DB->get_record('context', array('id' => $id), '*', $strictness);
 
         if ($record) {
             return context::create_instance_from_record($record);
@@ -7216,16 +7207,13 @@ class context_course extends context
         }
 
         if (!$record = $DB->get_record('context', array('contextlevel' => CONTEXT_COURSE, 'instanceid' => $courseid))) {
-            switch (MOODLE_RUN_MODE) {
-                case MOODLE_MODE_HOST:
-                    $params = array('id' => $courseid);
-                    break;
-                case MOODLE_MODE_HUB:
-                    $params = array('remoteid' => $courseid);
-                    break;
-                default:
-                    break;
+
+            if (MOODLE_RUN_MODE == MOODLE_MODE_HUB && $courseid != 1){
+                $params = array('remoteid' => $courseid);
+            }else {
+                $params = array('id' => $courseid);
             }
+
             if ($course = $DB->get_record('course', $params, 'id,category', $strictness)) {
                 if ($course->category) {
                     $parentcontext = context_coursecat::instance($course->category);
