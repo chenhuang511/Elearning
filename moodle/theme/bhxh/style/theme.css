@@ -368,6 +368,76 @@ a:focus {
     font-size: 16px;
 }
 
+.loginpanel {
+    border: 1px solid #e3e3e3;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    padding: 15px 20px;
+}
+
+.loginpanel .form-group .form-control {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+}
+
+.loginpanel .login-title {
+    position: relative;
+    margin: 0;
+    font-size: 18px;
+    line-height: 1em;
+    color: #333;
+}
+
+.loginpanel .login-title::before {
+    content: '';
+    display: inline-block;
+    position: absolute;
+    z-index: -1;
+    width: 100%;
+    height: 1px;
+    background: #e3e3e3;
+    left: 0;
+    top: 50%;
+    top: calc(50% - 1px);
+}
+
+.loginpanel .login-title .login-title-text {
+    display: inline-block;
+    background: #fff;
+    padding: 5px;
+}
+
+.loginpanel label {
+    font-weight: 400;
+    padding: 0;
+}
+
+.loginpanel .chk-box {
+    margin-left: 0;
+}
+
+.loginpanel .btn-login {
+    margin: 0;
+}
+
+.loginpanel .btn-login:hover {
+    background: #13a9e8;
+    color: #fff;
+}
+
+.loginpanel .forgetpass {
+    margin: 10px 0;
+}
+
+.loginpanel .forgot-cre {
+    color: #4e9ee7;
+}
+
 #frontpage-course-list .coursebox {
     border-top: solid 1px #bebebe;
     border-left: solid 1px #bebebe;
