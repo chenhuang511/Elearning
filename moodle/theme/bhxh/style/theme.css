@@ -275,7 +275,27 @@ a:focus {
 }
 
 .header-main .navbar {
-    margin-right: -20px;
+    margin-top: 20px;
+}
+
+.header-main .navbar .usermenu {
+    margin: 0;
+}
+
+.navbar .usermenu .dropdown a {
+    color: #333;
+}
+
+.header-main .navbar .navbar-toggle {
+    background: #126f9a;
+    border: 1px solid #006495;
+    border-radius: 3px;
+    color: #fff;
+    float: left;
+}
+
+.header-main .navbar .navbar-toggle .icon-bar {
+    background: #fff;
 }
 
 .logo .logo-section {
@@ -293,8 +313,7 @@ a:focus {
     text-decoration: none;
 }
 
-.btn-theme-blue,
-.usermenu .login .btn-theme-blue {
+.navbar-nav>li>.Log.in {
     background: #126f9a;
     border: 1px solid #006495;
     border-radius: 3px;
@@ -313,8 +332,8 @@ a:focus {
     margin-top: 22px;
 }
 
-.usermenu .login .btn-theme-blue:hover,
-.usermenu .login .btn-theme-blue:focus {
+.navbar-nav>li>.Log.in:hover,
+.navbar-nav>li>.Log.in:focus {
     color: #c1c1c1;
 }
 

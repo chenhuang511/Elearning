@@ -2,8 +2,8 @@
 <header id="header">
     <div class="header-main">
         <div class="container">
-            <div class="row-fluid">
-                <div class="span8">
+            <div class="row">
+                <div class="col-sm-6 col-md-8">
                     <div class="logo">
                         <a href="<?php echo $CFG->wwwroot; ?>">
                             <div class="logo-section">
@@ -17,27 +17,28 @@
                         </a>
                     </div>
                 </div>
-                <div class="span4">
+                <div class="col-sm-6 col-md-4">
                     <div class="navbar">
                         <div class="navbar-inner">
-                            <div class="container-fluid">
-                                <button type="button" data-target=".navbar-responsive-collapse" data-toggle="collapse" class="btn btn-navbar">
+                            <div class="clearfix">
+                                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-responsive-collapse" aria-expanded="false">
+                                    <span class="sr-only">Toggle navigation</span>
                                     <span class="icon-bar"></span>
                                     <span class="icon-bar"></span>
                                     <span class="icon-bar"></span>
                                 </button>
                                 <?php if ($CFG->branch > "27"): ?>
-                                    <?php echo $OUTPUT->user_menu(null, null, false); ?>
+                                    <?php echo $OUTPUT->user_menu(); ?>
                                 <?php endif; ?>
-                                <div class="nav-collapse collapse navbar-responsive-collapse">
-                                    <?php echo $OUTPUT->custom_menu(); ?>
-                                    <ul class="nav pull-right">
-                                        <li><?php echo $OUTPUT->page_heading_menu(); ?></li>
-                                        <?php if ($CFG->branch < "28"): ?>
-                                            <li class="navbar-text"><?php echo $OUTPUT->login_info() ?></li>
-                                        <?php endif; ?>
-                                    </ul>
-                                </div>
+                            </div>
+                            <div class="nav-collapse collapse navbar-responsive-collapse clearfix">
+                                <?php echo $OUTPUT->custom_menu(); ?>
+                                <ul class="nav pull-right">
+                                    <li><?php echo $OUTPUT->page_heading_menu(); ?></li>
+                                    <?php if ($CFG->branch < "28"): ?>
+                                        <li class="navbar-text"><?php echo $OUTPUT->login_info() ?></li>
+                                    <?php endif; ?>
+                                </ul>
                             </div>
                         </div>
                     </div>

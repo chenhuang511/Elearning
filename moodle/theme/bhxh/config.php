@@ -26,7 +26,7 @@
 $THEME->name = 'bhxh';
 
 $THEME->doctype = 'html5';
-$THEME->parents = array('bootstrapbase');
+$THEME->parents = array('bootstrap');
 $THEME->sheets = array('custom','theme','font-awesome.min');
 $THEME->supportscssoptimisation = false;
 $THEME->yuicssmodules = array();
