@@ -161,6 +161,67 @@ class core_remote_renderer extends plugin_renderer_base
             $this->render_enrol_course($course);
         }
     }
+
+    public function render_course($course)
+    {
+        $tabname = array('Courseware', 'Course Info', 'Discussion', 'Progress');
+        $tabcontens = array('<p>tab content 1</p>', '<p>tab content 2</p>', '<p>tab content 3</p>', '<p>tab content 4</p>');
+
+        // div course-detail-tabs block contain all content of course
+        $content = html_writer::start_tag('div', array('class' => 'course-detail-tabs'));
+        // div coursetabs
+        $content .= html_writer::start_tag('ul', array('id' => 'coursetabs', 'class' => 'nav nav-tabs', 'role' => 'tablist'));
+        $content .= $this->render_tabs($tabname);
+        $content .= html_writer::end_tag('ul'); // the end coursetabs
+        $content .= html_writer::start_tag('div', array('id' => 'courseTabContent', 'class' => 'tab-content'));
+        // them cac content tab tai day
+        $content .= $this->render_tab_content($tabname, $tabcontens);
+        $content .= html_writer::end_tag('div');
+        $content .= html_writer::end_tag('div'); // the end course-detail-tabs
+        echo $content;
+    }
+
+    private function render_tabs($tabnames)
+    {
+        $html = '';
+        if ($tabnames) {
+            $tabcount = 0;
+            foreach ($tabnames as $tab) {
+                $tabcount++;
+                $classes = '';
+                $expanded = 'false';
+
+                if ($tabcount === 1) {
+                    $classes .= 'active';
+                    $expanded = 'true';
+                }
+
+                $tabid = 'tab-content-' . $tabcount;
+                $tablink = html_writer::link(new moodle_url('#' . $tabid), $tab, array('role' => 'tab', 'data-toggle' => 'tab', 'aria-controls' => $tabid, 'aria-expanded' => $expanded));
+                $html .= html_writer::tag('li', $tablink, array('role' => 'presentation', 'class' => $classes));
+            }
+        }
+
+        return $html;
+    }
+
+    private function render_tab_content($tabnames, $contents)
+    {
+        $html = '';
+        $tabcount = 0;
+        foreach ($tabnames as $key => $tab) {
+            $tabcount++;
+            $classes = 'tab-pane fade ';
+            if ($tabcount === 1) {
+                $classes .= 'active in';
+            }
+            $tabid = 'tab-content-' . $tabcount;
+            $html .= html_writer::start_tag('div', array('role' => 'tabpanel', 'id' => $tabid, 'class' => $classes, 'aria-labelledby' => $key . '-tab'));
+            $html .= $contents[$key];
+            $html .= html_writer::end_tag('div');
+        }
+        return $html;
+    }
 }
 
 class render_helper
