@@ -23,6 +23,9 @@ $PAGE->set_docs_path('');
 $PAGE->set_title($SITE->fullname);
 $PAGE->set_heading($SITE->fullname);
 
+$renderer = $PAGE->get_renderer('core_remote');
+
+
 echo $OUTPUT->header();
 
 $type = 'available';
@@ -39,7 +42,7 @@ foreach (explode(',', $frontpagelayout) as $v) {
     switch ($v) {
         case FRONTPAGEALLCOURSELIST:
             if (!empty($course)) {
-                render($course, $type);
+                $renderer->render_remote_course($course, $type);
             }
             break;
         default:
