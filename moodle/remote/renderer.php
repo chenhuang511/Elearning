@@ -2,7 +2,7 @@
 
 require_once($CFG->dirroot . '/course/renderer.php');
 
-function frontpage_enrol_course($courses) {
+function render_enrol_course($courses) {
     foreach ($courses as $key => $course) {
         echo "<div class='courses' style='border: 1px solid #f5f5f5; margin-top: 10px'>";
                 echo "<table>";
@@ -28,13 +28,10 @@ function frontpage_enrol_course($courses) {
 
         echo "</div>";
         echo "<hr style='border: solid 2px #f5f5f5'>";
-        global $CFG;
-        require_once($CFG->libdir . '/remote/lib.php');
-
     }
 }
 
-function frontpage_courses($courses)
+function render_available_course($courses)
 {
     // Wrap frontpage course list in div container.
     $content = html_writer::start_tag('div', array('id' => 'frontpage-course-list', 'class' => 'container'));
@@ -75,17 +72,29 @@ function frontpage_courses($courses)
         // display course summary
         if (isset($course->summary) && !empty($course->summary)) {
             $content .= html_writer::start_tag('div', array('class' => 'summary'));
-            $content .= html_writer::tag('p', ncc_extend_plugin::truncate($course->summary, 60));
+            $content .= html_writer::tag('p', render_helper::truncate($course->summary, 60));
             $content .= html_writer::end_tag('div'); // .summary
         }
 
         $content .= html_writer::end_tag('div'); // .moreinfo
     }
     $content .= html_writer::end_tag('div');
-    return $content;
+    echo $content;
 }
 
-class ncc_extend_plugin
+/**
+ * @param $course
+ * @param string $type can be 'available' or 'enrol' course
+ */
+function render($course, $type = 'available') {
+    if ($type == 'available') {
+        render_available_course($course);
+    } else if($type == 'enrol') {
+        render_enrol_course($course);
+    }
+}
+
+class render_helper
 {
     public static function truncate($text, $limit)
     {

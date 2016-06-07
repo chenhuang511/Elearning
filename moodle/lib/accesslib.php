@@ -6931,17 +6931,7 @@ class context_coursecat extends context
         }
 
         if (!$record = $DB->get_record('context', array('contextlevel' => CONTEXT_COURSECAT, 'instanceid' => $categoryid))) {
-            switch (MOODLE_RUN_MODE) {
-                case MOODLE_MODE_HOST:
-                    $params = array('id' => $categoryid);
-                    break;
-                case MOODLE_MODE_HUB:
-                    $params = array('remoteid' => $categoryid);
-                    break;
-                default:
-                    break;
-            }
-            if ($category = $DB->get_record('course_categories', $params, 'id,parent', $strictness)) {
+            if ($category = $DB->get_record('course_categories', array('id' => $categoryid), 'id,parent', $strictness)) {
                 if ($category->parent) {
                     $parentcontext = context_coursecat::instance($category->parent);
                     $record = context::insert_context_record(CONTEXT_COURSECAT, $category->id, $parentcontext->path);
