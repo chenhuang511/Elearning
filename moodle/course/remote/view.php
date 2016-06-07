@@ -13,7 +13,7 @@ $course = (empty($courseid)) ? null : get_local_course_record($courseid, true);
 
 require_login($course);
 
-$course = get_remote_course_content($courseid);
+$course = get_remote_course_content($course->remoteid);
 
 $PAGE->set_title($course[0] ? $course[0]->name : "nccsoft vietnam");
 $PAGE->set_heading($course[0] ? $course[0]->name : "nccsoft vietnam");
