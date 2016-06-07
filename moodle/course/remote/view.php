@@ -17,6 +17,7 @@ $course = get_remote_course_content($course->remoteid);
 
 $PAGE->set_title($course[0] ? $course[0]->name : "nccsoft vietnam");
 $PAGE->set_heading($course[0] ? $course[0]->name : "nccsoft vietnam");
+$PAGE->set_url("/course/remote/view.php", array('id' => $courseid, 'sectionid' => $sectionid, 'section' => $section));
 
 $html .= $OUTPUT->header();
 
