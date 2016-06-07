@@ -29,6 +29,7 @@ echo $OUTPUT->doctype() ?>
     <link rel="shortcut icon" href="<?php echo $OUTPUT->favicon(); ?>" />
     <?php echo $OUTPUT->standard_head_html() ?>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,600,700italic,400italic,600italic&subset=latin,vietnamese' rel='stylesheet' type='text/css'>
 </head>
 
 <body <?php echo $OUTPUT->body_attributes(); ?>>

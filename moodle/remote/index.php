@@ -9,6 +9,6 @@ require_login();
 echo $OUTPUT->header();
 
 $courses = get_local_enrol_course();
-render($courses);
+frontpage_enrol_course($courses);
 
 echo $OUTPUT->footer();
