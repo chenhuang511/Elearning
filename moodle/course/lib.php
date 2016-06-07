@@ -1000,7 +1000,7 @@ function get_array_of_activities($courseid) {
     global $CFG, $DB;
 
     try {
-        $course = $DB->get_record('course', array('id'=>$courseid));
+        $course = $DB->get_record('course', array('id'=>$courseid), "*", MUST_EXIST);
     } catch (Exception $e) {
         $course = get_local_course_record($courseid);
     }

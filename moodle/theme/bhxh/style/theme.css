@@ -447,6 +447,17 @@ a:focus {
     height: 365px;
 }
 
+#frontpage-course-list .coursebox .course-image {
+    min-height: 145px;
+    max-height: 145px;
+    overflow: hidden;
+}
+
+#frontpage-course-list .coursebox .coursename,
+#frontpage-course-list .coursebox .summary {
+    padding: 10px;
+}
+
 #frontpage-course-list .coursebox .coursename > .dimmed {
     color: #126f9a;
     font-weight: 600;
