@@ -369,22 +369,12 @@ a:focus {
 }
 
 #frontpage-course-list .coursebox {
-    display: inline-block;
-    width: 21%;
-    float: left;
-    margin-right: 2%;
     border-top: solid 1px #bebebe;
     border-left: solid 1px #bebebe;
     border-right: solid 1px #bebebe;
     border-bottom: solid 2px #126f9a;
     min-height: 365px;
     height: 365px;
-}
-
-#frontpage-course-list .coursebox.last {
-    float: right;
-    margin-left: 0;
-    margin-right: 0 !important;
 }
 
 #frontpage-course-list .coursebox .coursename > .dimmed {

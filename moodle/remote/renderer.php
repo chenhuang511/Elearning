@@ -78,13 +78,14 @@ class core_remote_renderer extends plugin_renderer_base
     {
         // Wrap frontpage course list in div container.
         $content = html_writer::start_tag('div', array('id' => 'frontpage-course-list', 'class' => 'container'));
+        $content .= html_writer::start_tag('div', array('class' => 'row'));
 
         $chelper = new coursecat_helper();
 
         $coursecount = 0;
         foreach ($courses as $course) {
             $coursecount++;
-            $classes = 'coursebox col-sm-3 ';
+            $classes = 'coursebox ';
             $classes .= ($coursecount % 2) ? 'odd' : 'even';
             if ($coursecount == 1) {
                 $classes .= ' first';
@@ -102,6 +103,9 @@ class core_remote_renderer extends plugin_renderer_base
             }
 
             // .coursebox
+            $content .= html_writer::start_tag('div', array(
+                'class' => 'col-sm-3',
+            ));
             $content .= html_writer::start_tag('div', array(
                 'class' => $classes,
                 'data-courseid' => $course->id,
@@ -138,7 +142,9 @@ class core_remote_renderer extends plugin_renderer_base
             }
 
             $content .= html_writer::end_tag('div'); // .moreinfo
+            $content .= html_writer::end_tag('div');
         }
+        $content .= html_writer::end_tag('div');
         $content .= html_writer::end_tag('div');
         echo $content;
     }
