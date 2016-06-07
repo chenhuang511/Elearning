@@ -999,9 +999,9 @@ function get_array_of_activities($courseid) {
 //  extra - contains extra string to include in any link
     global $CFG, $DB;
 
-    if (MOODLE_RUN_MODE == MOODLE_MODE_HOST) {
+    try {
         $course = $DB->get_record('course', array('id'=>$courseid));
-    } else {
+    } catch (Exception $e) {
         $course = get_local_course_record($courseid);
     }
 
