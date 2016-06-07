@@ -25,18 +25,21 @@ $PAGE->set_heading($SITE->fullname);
 
 echo $OUTPUT->header();
 
+$type = 'available';
 if (isloggedin() and !isguestuser() and isset($CFG->frontpageloggedin)) {
     $frontpagelayout = $CFG->frontpageloggedin;
+    $course = get_local_enrol_course();
+    $type = 'enrol';
 } else {
+    $course = get_local_courses_record();
     $frontpagelayout = $CFG->frontpage;
 }
 
 foreach (explode(',', $frontpagelayout) as $v) {
     switch ($v) {
         case FRONTPAGEALLCOURSELIST:
-            $course = get_local_courses_record();
             if (!empty($course)) {
-                echo frontpage_courses($course);
+                render($course, $type);
             }
             break;
         default:
