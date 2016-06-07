@@ -50,7 +50,4 @@ foreach (explode(',', $frontpagelayout) as $v) {
     }
 }
 
-//$courses = get_local_courses_record();
-//render($courses);
-
 echo $OUTPUT->footer();
