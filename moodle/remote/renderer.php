@@ -85,23 +85,23 @@ class core_remote_renderer extends plugin_renderer_base
                 }
 
             }
-                $content .= html_writer::start_tag('div', array('class' => 'course_content')); // start tag course_content
-                    // course name
-                    $coursename = $course->fullname;
-                    $coursenamelink = html_writer::link(new moodle_url('/course/remote/view.php', array('id' => $course->id)),
-                        $coursename, array('class' => $course->visible ? '' : 'dimmed'));
-                    $content .= html_writer::tag($nametag, $coursenamelink, array('class' => 'coursename'));
-                    // display course summary
-                    if (isset($course->summary) && !empty($course->summary)) {
-                        $content .= html_writer::start_tag('div', array('class' => 'summary'));
-                        $content .= html_writer::tag('p', render_helper::truncate($course->summary, 60));
-                        $content .= html_writer::end_tag('div'); // .summary
-                    }
+            $content .= html_writer::start_tag('div', array('class' => 'course_content')); // start tag course_content
+            // course name
+            $coursename = $course->fullname;
+            $coursenamelink = html_writer::link(new moodle_url('/course/remote/view.php', array('id' => $course->id)),
+                $coursename, array('class' => $course->visible ? '' : 'dimmed'));
+            $content .= html_writer::tag($nametag, $coursenamelink, array('class' => 'coursename'));
+            // display course summary
+            if (isset($course->summary) && !empty($course->summary)) {
+                $content .= html_writer::start_tag('div', array('class' => 'summary'));
+                $content .= html_writer::tag('p', render_helper::truncate($course->summary, 60));
+                $content .= html_writer::end_tag('div'); // .summary
+            }
 
-                    $content .= html_writer::start_tag('div', array('class' => 'btn-register'));
-                    $content .= html_writer::tag('button', 'Học ngay', array('class' => 'btn-reg-now'));
-                    $content .= html_writer::end_tag('div'); // .summary
-                $content .= html_writer::end_tag('div'); //end tag course_content
+            $content .= html_writer::start_tag('div', array('class' => 'btn-register'));
+            $content .= html_writer::tag('button', 'Học ngay', array('class' => 'btn-reg-now'));
+            $content .= html_writer::end_tag('div'); // .summary
+            $content .= html_writer::end_tag('div'); //end tag course_content
 
             $content .= html_writer::end_tag('div'); // .moreinfo
             $content .= html_writer::tag('hr', '');
@@ -200,7 +200,7 @@ class core_remote_renderer extends plugin_renderer_base
         }
     }
 
-    public function render_course($course)
+    public function render_course_detail($course)
     {
         $tabname = array('Courseware', 'Course Info', 'Discussion', 'Progress');
         $courseinfo = $this->render_course_info($course);
@@ -262,9 +262,10 @@ class core_remote_renderer extends plugin_renderer_base
         return $html;
     }
 
-    private function render_course_info($course) {
+    private function render_course_info($course)
+    {
         ob_start();
-        include_once('render-course-info.php');
+        include_once('include/render-course-info.php');
         return ob_get_clean();
     }
 }

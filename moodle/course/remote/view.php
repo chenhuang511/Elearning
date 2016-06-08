@@ -23,7 +23,7 @@ $PAGE->set_url("/course/remote/view.php", array('id' => $courseid, 'sectionid' =
 echo $OUTPUT->header();
 
 $renderer = $PAGE->get_renderer('core_remote');
-$renderer->render_course($course);
+$renderer->render_course_detail($course);
 
 
 //$html .= $OUTPUT->box_start('course-detail', "course_detail_{$courseid}");
