@@ -11,6 +11,7 @@
 
         summaryLink.on('click', function(){
             content.html();
+            console.log('vao day');
             content.html(summary.val());
         });
 

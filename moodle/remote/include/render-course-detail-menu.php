@@ -2,9 +2,9 @@
     <?php
     global $CFG; ?>
     <div class="panel panel-default">
-        <div class="panel-heading" role="tab" id="course-summary">
+        <div class="panel-heading" role="tab">
             <h4 class="panel-title">
-                <a id="course-summary" role="button" data-toggle="collapse" data-parent="#section-menu" href="#collapseCourseSummary"
+                <a role="button" data-toggle="collapse" data-parent="#section-menu" href="#collapseCourseSummary"
                    aria-expanded="true" aria-controls="collapseCourseSummary"
                    class="">
                     <i class="fa fa-caret-right" aria-hidden="true"></i> Giới thiệu </a>
@@ -13,7 +13,11 @@
         <div id="collapseCourseSummary" class="panel-collapse collapse in" role="tabpanel"
              aria-labelledby="course-summary"
              aria-expanded="true">
-            <div class="panel-body" style="height: 0;display: none;">
+            <div class="panel-body">
+                <a id="course-summary" class="sublink" href="">
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    Tổng quan
+                </a>
             </div>
         </div>
     </div>
