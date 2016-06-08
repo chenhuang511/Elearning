@@ -61,7 +61,7 @@ class json_moodle_recordset extends moodle_recordset {
         if (!isset($this->data[$this->currentIndex])) {
             return false;
         }
-        $key = reset($this->currentIndex);
+        $key = reset($this->data);
         return $key;
     }
 
@@ -70,7 +70,7 @@ class json_moodle_recordset extends moodle_recordset {
     }
 
     public function valid() {
-        return !empty($this->current());
+        return ($this->currentIndex >= 0 && $this->currentIndex < count($this->data));
     }
 
     public function close() {
