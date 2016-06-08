@@ -1,1 +1,6 @@
-<h1>course detail content</h1>
+<div id="module-content">
+    <?php
+    var_dump($course);
+    ?>
+</div>
+
