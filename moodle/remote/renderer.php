@@ -99,7 +99,7 @@ class core_remote_renderer extends plugin_renderer_base
                             // display course summary
                             if (isset($course->summary) && !empty($course->summary)) {
                                 $content .= html_writer::start_tag('div', array('class' => 'summary col-sm-9')); //start tag summary
-                                $content .= html_writer::tag('p', render_helper::truncate($course->summary, 60));
+                                $content .= remote_render_helper::token_truncate($course->summary, 100);
                                 $content .= html_writer::end_tag('div'); // .summary
                             }
 
@@ -240,7 +240,7 @@ class core_remote_renderer extends plugin_renderer_base
             // display course summary
             if (isset($course->summary) && !empty($course->summary)) {
                 $content .= html_writer::start_tag('div', array('class' => 'summary'));
-                $content .= html_writer::tag('p', render_helper::truncate($course->summary, 60));
+                $content .= remote_render_helper::token_truncate($course->summary, 100);
                 $content .= html_writer::end_tag('div'); // .summary
             }
             $content .= html_writer::end_tag('div'); // .moreinfo
@@ -373,19 +373,22 @@ class core_remote_renderer extends plugin_renderer_base
     }
 }
 
-class render_helper
+class remote_render_helper
 {
-    public static function truncate($text, $limit)
-    {
-        $strings = $text;
-        if (strlen($text) > $limit) {
-            $words = str_word_count($text, 2);
-            $pos = array_keys($words);
-            if (sizeof($pos) > $limit) {
-                $text = substr($text, 0, $pos[$limit]) . '...';
-            }
-            return $text;
+    public static function token_truncate($string, $width) {
+        $string = strip_tags($string);
+        $parts = preg_split('/([\s\n\r]+)/', $string, null, PREG_SPLIT_DELIM_CAPTURE);
+        $parts_count = count($parts);
+
+        $length = 0;
+        $last_part = 0;
+        for (; $last_part < $parts_count; ++$last_part) {
+            $length += strlen($parts[$last_part]);
+            if ($length > $width) { break; }
         }
-        return $text;
+
+        $retval = implode(array_slice($parts, 0, $last_part));
+        $retval .= ' [...]';
+        return $retval;
     }
 }
