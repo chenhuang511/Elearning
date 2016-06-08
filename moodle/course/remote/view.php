@@ -17,9 +17,9 @@ $coursesummary = $course->summary;
 context_helper::preload_course($course->id);
 $context = context_course::instance($course->id, MUST_EXIST);
 
-require_capability('moodle/course:view', $context);
-
 require_login($course);
+
+require_capability('moodle/course:view', $context);
 
 // Switchrole - sanity check in cost-order...
 $reset_user_allowed_editing = false;
