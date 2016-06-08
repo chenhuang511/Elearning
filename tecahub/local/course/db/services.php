@@ -42,7 +42,7 @@ $functions = array(
 		'type'        => 'read',
 		'ajax'        => true
 	),
-	'local_get_thumbnail_by_id' => array(
+	'local_get_course_thumbnail_by_id' => array(
 		'classname'   => 'local_mod_course_external',
 		'methodname'  => 'get_thumbnail_by_id',
 		'classpath'   => 'local/course/externallib.php',
