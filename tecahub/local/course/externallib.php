@@ -466,7 +466,7 @@ class local_mod_course_external extends external_api
 
         //validate parameter
         $params = self::validate_parameters(self::get_remote_course_sections_parameters(), array('courseid' => $courseid));
-        return $DB->get_records('course_sections', array('course' => $courseid), 'section ASC', 'id,section,sequence');
+        return $DB->get_records('course_sections', array('course' => $courseid), 'section ASC', 'id,course,section,name,sequence');
     }
     
     public static function get_remote_course_sections_returns()
@@ -478,11 +478,7 @@ class local_mod_course_external extends external_api
                     'course'    => new external_value(PARAM_INT, 'The fullname of the course'),
                     'section' => new external_value(PARAM_INT, 'Thumbnail course URL - big version'),
                     'name'    => new external_value(PARAM_TEXT, 'The fullname of the course'),
-                    'summary' => new external_value(PARAM_RAW, 'Thumbnail course URL - small version'),
-                    'summaryformat' => new external_value(PARAM_INT, 'Thumbnail course URL - medium version'),
                     'sequence' => new external_value(PARAM_RAW, 'Thumbnail course URL - big version'),
-                    'visible'    => new external_value(PARAM_INT, 'The fullname of the course'),
-                    'availability' => new external_value(PARAM_RAW, 'Thumbnail course URL - small version'),
                 )
             )
         );
