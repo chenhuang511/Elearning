@@ -641,7 +641,8 @@ ul#coursetabs > li.active > a, ul#coursetabs > li > a:focus, ul#coursetabs > li 
 }
 
 #section-menu .panel .panel-heading .panel-title > a:focus,
-#section-menu .panel .panel-heading .panel-title > a:hover {
+#section-menu .panel .panel-heading .panel-title > a:hover,
+#section-menu .panel .panel-heading .panel-title > a[aria-expanded='true'] {
     color: #126f9a;
     text-decoration: none;
 }

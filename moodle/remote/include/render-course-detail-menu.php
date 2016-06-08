@@ -1,34 +1,50 @@
 <div class="panel-group" id="section-menu" role="tablist" aria-multiselectable="true">
     <?php
-    global $CFG;
-    foreach ($course as $key => $section) {
+    global $CFG; ?>
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="course-summary">
+            <h4 class="panel-title">
+                <a role="button" data-toggle="collapse" data-parent="#section-menu" href="#collapseCourseSummary"
+                   aria-expanded="true" aria-controls="collapseCourseSummary"
+                   class="active">
+                    <i class="fa fa-caret-right" aria-hidden="true"></i> Giới thiệu </a>
+            </h4>
+        </div>
+        <div id="collapseCourseSummary" class="panel-collapse collapse in" role="tabpanel"
+             aria-labelledby="course-summary"
+             aria-expanded="true">
+            <div class="panel-body" style="height: 0;display: none;">
+            </div>
+        </div>
+    </div>
+    <?php foreach ($course as $key => $section) {
         $heading = 'mod-' . $section->id;
         $collapse = 'collapseMod' . $section->id;
-        $expanded = $key > 0 ? 'false' : 'true';
-        $classes = ' ';
-        if ($expanded === 'true') {
-            $classes = 'in';
-        }
+        ?>
 
-        if ($section->modules) {
+        <?php if ($section->modules) {
             ?>
             <div class="panel panel-default">
                 <div class="panel-heading" role="tab" id="<?php echo $heading ?>">
                     <h4 class="panel-title">
-                        <a role="button" data-toggle="collapse" data-parent="#section-menu" href="#<?php echo $collapse ?>"
-                           aria-expanded="<?php echo $expanded ?>" aria-controls="<?php echo $collapse ?>"
-                           class="<?php $expanded === 'true' ? '' : 'collapsed' ?>">
+                        <a role="button" data-toggle="collapse" data-parent="#section-menu"
+                           href="#<?php echo $collapse ?>"
+                           aria-expanded="false" aria-controls="<?php echo $collapse ?>"
+                           class="collapsed'">
                             <i class="fa fa-caret-right" aria-hidden="true"></i> <?php echo $section->name ?> </a>
                     </h4>
                 </div>
-                <div id="<?php echo $collapse ?>" class="panel-collapse collapse <?php echo $classes ?>" role="tabpanel"
+                <div id="<?php echo $collapse ?>" class="panel-collapse collapse" role="tabpanel"
                      aria-labelledby="<?php echo $heading ?>"
-                     aria-expanded="<?php echo $expanded ?>">
+                     aria-expanded="false">
                     <div class="panel-body">
                         <?php foreach ($section->modules as $keymod => $module) {
                             if ($module->modname !== 'forum' && $module->modname !== 'label') {
                                 ?>
-                                <a class="sublink" href="<?php echo $CFG->wwwroot . '/mod/' . $module->modname . '/remote/view.php?id=' . $module->id ?>"><i class="fa fa-angle-double-right" aria-hidden="true"></i> <?php echo $module->name ?></a>
+                                <a class="sublink"
+                                   href="<?php echo $CFG->wwwroot . '/mod/' . $module->modname . '/remote/view.php?id=' . $module->id ?>"><i
+                                        class="fa fa-angle-double-right"
+                                        aria-hidden="true"></i> <?php echo $module->name ?></a>
                             <?php }
                         } ?>
                     </div>

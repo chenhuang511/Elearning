@@ -204,11 +204,11 @@ class core_remote_renderer extends plugin_renderer_base
         }
     }
 
-    public function render_course_detail($course)
+    public function render_course_detail($course, $summary)
     {
         $tabname = array('Courseware', 'Course Info', 'Discussion', 'Progress');
         $courseinfo = $this->render_course_info($course);
-        $coursewaretab = $this->render_courseware($course);
+        $coursewaretab = $this->render_courseware($course, $summary);
         $courseprogress = $this->render_course_progress($course);
         $tabcontens = array($coursewaretab, $courseinfo, '<p>tab content 3</p>', $courseprogress);
 
@@ -268,7 +268,7 @@ class core_remote_renderer extends plugin_renderer_base
         return $html;
     }
 
-    private function render_courseware($course)
+    private function render_courseware($course, $summary)
     {
         $html = html_writer::start_tag('div', array('class' => 'coursware-block'));
         $html .= html_writer::start_tag('div', array('class' => 'row'));
@@ -276,7 +276,7 @@ class core_remote_renderer extends plugin_renderer_base
         $html .= $this->render_module_menu($course);
         $html .= html_writer::end_tag('div');
         $html .= html_writer::start_tag('div', array('class' => 'col-sm-9'));
-        $html .= "Content ...";
+        $html .= $summary;
         $html .= html_writer::end_tag('div');
         $html .= html_writer::end_tag('div');
         $html .= html_writer::end_tag('div');
