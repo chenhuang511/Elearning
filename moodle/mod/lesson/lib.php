@@ -1444,8 +1444,9 @@ function lesson_update_media_file($lessonid, $context, $draftitemid) {
  *                        will know about (most noticeably, an icon).
  */
 function lesson_get_coursemodule_info($coursemodule) {
-    global $CFG, $DB;
+    global $CFG;
 
+    require_once($CFG->wwwroot . '/mod/lesson/lib.php');
     $lesson = get_remote_lesson_by_id($coursemodule->instance);
 
     $result = new cached_cm_info();
