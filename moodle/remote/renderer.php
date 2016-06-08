@@ -209,7 +209,8 @@ class core_remote_renderer extends plugin_renderer_base
         $tabname = array('Courseware', 'Course Info', 'Discussion', 'Progress');
         $courseinfo = $this->render_course_info($course);
         $coursewaretab = $this->render_courseware($course);
-        $tabcontens = array($coursewaretab, $courseinfo, '<p>tab content 3</p>', '<p>tab content 4</p>');
+        $courseprogress = $this->render_course_progress($course);
+        $tabcontens = array($coursewaretab, $courseinfo, '<p>tab content 3</p>', $courseprogress);
 
         // div course-detail-tabs block contain all content of course
         $content = html_writer::start_tag('div', array('class' => 'course-detail-tabs container'));
@@ -291,6 +292,13 @@ class core_remote_renderer extends plugin_renderer_base
     {
         ob_start();
         include_once('include/render-course-detail-menu.php');
+        return ob_get_clean();
+    }
+
+    private function render_course_progress($course)
+    {
+        ob_start();
+        include_once('include/render-course-progress.php');
         return ob_get_clean();
     }
 }

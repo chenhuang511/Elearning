@@ -7,17 +7,17 @@ body {
 h1, h2, h3, h4, h5, h6 {
     font-weight: normal;
     font-family: 'Open Sans', Arial, Helvetica, sans-serif;
-    color: #ff6600
+    color: #333
 }
 
 a {
-    color: #ff6600;
+    color: #333;
 }
 
 a:hover,
 a:active,
 a:focus {
-    color: #ff6600;
+    color: #333;
     outline: none;
 }
 
@@ -438,6 +438,75 @@ a:focus {
     color: #4e9ee7;
 }
 
+.content-wrap.course-progress {
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    border: 1px solid #e3e3e3;
+    padding: 20px;
+}
+
+.course-progress .proress-title {
+    margin-top: 10px;
+}
+
+.course-progress .progress-wrap {
+    margin-bottom: 20px;
+}
+
+.course-progress .course-section {
+    border-bottom: 1px solid #e3e3e3;
+    padding: 10px 0;
+}
+
+.course-progress .course-section:last-child {
+    border-bottom: 0;
+}
+
+.course-section .section-name {
+    font-size: 18px;
+    line-height: 1em;
+    margin-top: 10px;
+}
+
+.course-section .section-module-name {
+    margin-top: 10px;
+    font-size: 16px;
+    line-height: 1em;
+    color: #0079c2;
+}
+
+.course-section .section-module-type,
+.course-section .section-module-name .section-module-name-complete {
+    color: #989a97;
+}
+
+.course-section .section-module-type,
+.course-section .section-module-complete{
+    font-size: 14px;
+    line-height: 1.1em;
+}
+
+.course-section .section-module-complete {
+    color: #666769;
+}
+
+.course-section .section-module-complete .module-score {
+    color: #000103;
+}
+
+.progress-graph .chart-placeholder {
+    display: block;
+    height: 300px;
+    background: url([[pix:theme|home/charts]]) center center no-repeat;
+    -webkit-background-size: cover;
+    background-size: cover;
+}
+
+.course-section .section-module {
+    padding-bottom: 20px;
+}
+
 #frontpage-course-list .coursebox {
     border-top: solid 1px #bebebe;
     border-left: solid 1px #bebebe;
@@ -577,11 +646,22 @@ ul#coursetabs > li.active > a, ul#coursetabs > li > a:focus, ul#coursetabs > li 
     .foot-links .foot-link-item .foot-link-text {
         display: inline-block;
     }
+
+    .course-section .section-module-list {
+        border-left: 2px dashed #e3e3e3;
+        padding-left: 20px;
+    }
 }
 
 @media (min-width: 992px) {
     .banner .banner-content {
         height: 400px;
+    }
+    .content-wrap.course-progress {
+        padding: 30px;
+    }
+    .progress-graph .chart-placeholder {
+        height: 410px;
     }
 }
 
