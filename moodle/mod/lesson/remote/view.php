@@ -67,7 +67,7 @@ if ($pageid !== null) {
 $PAGE->set_url($url);
 
 $context = context_module::instance($cm->id);
-$canmanage = false; //has_capability('mod/lesson:manage', $context);
+$canmanage = has_capability('mod/lesson:manage', $context);
 
 $lessonoutput = $PAGE->get_renderer('mod_lesson');
 
