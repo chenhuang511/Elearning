@@ -1016,12 +1016,13 @@ function get_array_of_activities($courseid) {
         return $mod; // always return array
     }
 
-    if ($sections = $DB->get_records('course_sections', array('course' => $courseid), 'section ASC', 'id,section,sequence')) {
+    $sections = get_remote_course_sections($course->id);
+    if ($sections) {
         // First check and correct obvious mismatches between course_sections.sequence and course_modules.section.
         if ($errormessages = course_integrity_check($courseid, $rawmods, $sections)) {
             debugging(join('<br>', $errormessages));
             $rawmods = get_course_mods($courseid);
-            $sections = $DB->get_records('course_sections', array('course' => $courseid), 'section ASC', 'id,section,sequence');
+            $sections = get_remote_course_sections($courseid);
         }
         // Build array of activities.
        foreach ($sections as $section) {
@@ -1111,8 +1112,7 @@ function get_array_of_activities($courseid) {
                    // but showdescriptions is enabled, then we use the 'intro'
                    // and 'introformat' fields in the module table
                    if (!$hasfunction && $rawmods[$seq]->showdescription) {
-                       if ($modvalues = $DB->get_record($rawmods[$seq]->modname,
-                               array('id' => $rawmods[$seq]->instance), 'name, intro, introformat')) {
+                       if ($modvalues = get_remote_cm_info($rawmods[$seq]->modname, $rawmods[$seq]->instance)) {
                            // Set content from intro and introformat. Filters are disabled
                            // because we  filter it with format_text at display time
                            $mod[$seq]->content = format_module_intro($rawmods[$seq]->modname,

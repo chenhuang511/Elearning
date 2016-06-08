@@ -629,6 +629,31 @@ ul#coursetabs > li.active > a, ul#coursetabs > li > a:focus, ul#coursetabs > li 
     border-color: transparent;
     border: none;
     box-shadow: none;
+    border-bottom: solid 1px #ddd;
+}
+
+#section-menu .panel .panel-heading {
+    background-color: transparent;
+}
+
+#section-menu .panel .panel-heading .panel-title {
+    font-size: 15px;
+}
+
+#section-menu .panel .panel-heading .panel-title > a:focus,
+#section-menu .panel .panel-heading .panel-title > a:hover {
+    color: #126f9a;
+    text-decoration: none;
+}
+
+#section-menu .panel .panel-body a.sublink {
+    display: block;
+    color: #126f9a;
+    padding: 5px 5px 5px 10px;
+}
+
+#section-menu .panel .panel-body a.sublink > i.fa {
+
 }
 
 
