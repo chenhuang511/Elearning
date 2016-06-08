@@ -66,6 +66,14 @@ $functions = array(
 		'type'        => 'read',
 		'ajax'        => true
 	),
+	'local_get_course_module_info' => array(
+		'classname'	  => 'local_mod_course_external',
+		'methodname'  => 'get_course_module_info',
+		'classpath'	  => 'local/course/externallib.php',
+		'description' => "Get course module info by give module name and instance id",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 	'local_get_course_module_by_cmid' => array(
 		'classname'	  => 'local_mod_course_external',
 		'methodname'  => 'get_course_module_by_cmid',

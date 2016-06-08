@@ -451,7 +451,7 @@ class local_mod_course_external extends external_api
             )
         );
     }
-	
+    
     public static function get_remote_course_sections_parameters()
     {
         return new external_function_parameters(
@@ -579,4 +579,34 @@ class local_mod_course_external extends external_api
             )
         );
     }
+    
+    public static function get_course_module_info_parameters()
+    {
+        return new external_function_parameters(
+            array('modname' => new external_value(PARAM_TEXT, 'module name'),
+            array('instanceid' => new external_value(PARAM_TEXT, 'instance id'),            
+            )
+        );
+    }
+    
+    public static function get_course_module_info($modname, $instanceid)
+    {       
+        global $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::get_course_module_info_parameters(), array('modname' => $modname, 'instanceid' => $instanceid));
+        
+        return $DB->get_record($modname, array('id' => $instanceid), 'name, intro, introformat', MUST_EXIST);
+    }
+    
+    public static function get_course_module_info_returns()
+    {
+        return new external_single_structure(
+            array(
+                'name'          => new external_value(PARAM_TEXT, 'The fullname of the course'),
+                'intro'         => new external_value(PARAM_RAW,  'Thumbnail course URL - big version'),
+                'introformat'   => new external_value(PARAM_INT,  'The fullname of the course'),
+            )
+        );
+    }   
 }
