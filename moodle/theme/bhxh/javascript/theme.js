@@ -12,7 +12,6 @@ $(function () {
 });
 
 (function ($) {
-    console.log(123);
     $(document).ready(function() {
         var courseRemote = $('.get-remote-content');
         if (courseRemote && courseRemote.length > 0) {
@@ -23,7 +22,7 @@ $(function () {
                     var el = $(this);
                     var module = el.attr('data-module') || '';
                     var id = el.attr('data-remote-id') || 0;
-                    getHTMLContent(module, id)
+                    getHTMLContent(module, id);
                 })
             });
         }
@@ -31,7 +30,7 @@ $(function () {
             var url = '/mod/' + module + '/remote/api-view.php?id=' + id;
             var target = $('#module-content');
             switch (module) {
-                default  :
+                default :
                     $.ajax({
                         url: url,
                         beforeSend: function () {
