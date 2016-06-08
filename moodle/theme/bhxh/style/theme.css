@@ -538,6 +538,31 @@ a:focus {
     margin: 20px 0;
 }
 
+/************************* COURSE TABS ****************************/
+ul#coursetabs {
+    border-bottom: solid 1px #126f9a;
+    margin-bottom: 15px;
+    margin-left: 0 !important;
+}
+ul#coursetabs > li > a {
+    border-radius: 0;
+    border: none;
+    color: #126f9a;
+}
+ul#coursetabs > li.active > a, ul#coursetabs > li > a:focus, ul#coursetabs > li > a:hover {
+    background-color: #126f9a;
+    color: #fff;
+}
+
+/****************** section menu *****************************/
+#section-menu .panel {
+    border-radius: 0;
+    border-color: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+
 /*  End_enrol_course_renderer*/
 
 @media (min-width: 768px) {
