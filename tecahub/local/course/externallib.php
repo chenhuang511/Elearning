@@ -452,7 +452,7 @@ class local_mod_course_external extends external_api
         );
     }
 	
-    public static function get_remote_course_sessions_parameters()
+    public static function get_remote_course_sections_parameters()
     {
         return new external_function_parameters(
             array('courseid' => new external_value(PARAM_INT, 'course id'),
@@ -460,16 +460,16 @@ class local_mod_course_external extends external_api
         );
     }
     
-    public static function get_remote_course_sessions($courseid)
+    public static function get_remote_course_sections($courseid)
     {       
         global $DB;
 
         //validate parameter
-        $params = self::validate_parameters(self::get_remote_course_sessions_parameters(), array('courseid' => $courseid));
+        $params = self::validate_parameters(self::get_remote_course_sections_parameters(), array('courseid' => $courseid));
         return $DB->get_records('course_sections', array('course' => $courseid), 'section ASC', 'id,section,sequence');
     }
     
-    public static function get_remote_course_sessions_returns()
+    public static function get_remote_course_sections_returns()
     {
         return new external_multiple_structure(
             new external_single_structure(
@@ -547,35 +547,6 @@ class local_mod_course_external extends external_api
     }
     
     // MINHND
-    public static function mod_get_course_sections_by_id_parameters(){
-        return new external_function_parameters(
-            array(
-                'sectionid'    =>  new external_value(PARAM_INT, 'Section ID')
-            )
-        );
-    }
-
-    public static function mod_get_course_sections_by_id($sectionid){
-        global $DB;
-
-        // validate
-        $params = self::validate_parameters(self::mod_get_course_sections_by_id_parameters(),
-            array(
-                'sectionid'    =>  $sectionid,
-            )
-        );
-
-        return $DB->get_record('course_sections', array('id' =>  $params['sectionid']), "section", MUST_EXIST);
-    }
-
-    public static function mod_get_course_sections_by_id_returns(){
-        return new external_single_structure(
-            array(
-                'section' => new external_value(PARAM_INT, 'Section number', VALUE_DEFAULT),
-            )
-        );
-    }
-
     public static function get_course_info_by_course_id_parameters(){
         return new external_function_parameters(
             array('courseid' => new external_value(PARAM_INT, 'course id'),

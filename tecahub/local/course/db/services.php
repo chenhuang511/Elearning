@@ -58,9 +58,9 @@ $functions = array(
 		'type'        => 'read',
 		'ajax'        => true
 	),
-	'local_get_course_sessions' => array(
+	'local_get_course_sections' => array(
 		'classname'   => 'local_mod_course_external',
-		'methodname'  => 'get_remote_course_sessions',
+		'methodname'  => 'get_remote_course_sections',
 		'classpath'   => 'local/course/externallib.php',
 		'description' => "Get course sessions with courses id",
 		'type'        => 'read',
@@ -73,17 +73,7 @@ $functions = array(
 		'description' => "Get course by module name and id of course module",
 		'type'		  => 'read',
 		'ajax'		  => true
-	),
-
-	'local_get_course_sections_by_id' => array(
-		'classname'     => 'local_mod_course_external',
-		'methodname'    => 'mod_get_course_sections_by_id',
-		'classpath'     => 'local/course/externallib.php',
-		'description'   => 'Get course sections by ID',
-		'type'		    => 'read',
-		'ajax'		    => true
-	),
-	
+	),	
 	'local_get_course_info_by_course_id' => array(
 		'classname'     => 'local_mod_course_external',
 		'methodname'    => 'get_course_info_by_course_id',
