@@ -33,6 +33,10 @@ require_once($CFG->dirroot . '/course/renderer.php');
  */
 class core_remote_renderer extends plugin_renderer_base
 {
+    public function __construct()
+    {
+
+    }
 
     /**
      * Renders a user enrolment action

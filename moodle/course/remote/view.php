@@ -12,7 +12,33 @@ $html = '';
 
 $course = (empty($courseid)) ? null : get_local_course_record($courseid, true);
 
+context_helper::preload_course($course->id);
+$context = context_course::instance($course->id, MUST_EXIST);
+
+require_capability('moodle/course:view', $context);
+
 require_login($course);
+
+// Switchrole - sanity check in cost-order...
+$reset_user_allowed_editing = false;
+if ($switchrole > 0 && confirm_sesskey() &&
+    has_capability('moodle/role:switchroles', $context)) {
+    // is this role assignable in this context?
+    // inquiring minds want to know...
+    $aroles = get_switchable_roles($context);
+    if (is_array($aroles) && isset($aroles[$switchrole])) {
+        role_switch($switchrole, $context);
+        // Double check that this role is allowed here
+        require_login($course);
+    }
+    // reset course page state - this prevents some weird problems ;-)
+    $USER->activitycopy = false;
+    $USER->activitycopycourse = NULL;
+    unset($USER->activitycopyname);
+    unset($SESSION->modform);
+    $USER->editing = 0;
+    $reset_user_allowed_editing = true;
+}
 
 $course = get_remote_course_content($course->remoteid);
 
