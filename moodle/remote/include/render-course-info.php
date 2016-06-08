@@ -4,7 +4,7 @@
 
         </div>
         <?php
-            var_dump($course[0]->modules);
+            var_dump($course);
         ?>
     </div>
 </div>

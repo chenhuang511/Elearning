@@ -275,6 +275,9 @@ class core_remote_renderer extends plugin_renderer_base
         $html .= html_writer::start_tag('div', array('class' => 'col-sm-3'));
         $html .= $this->render_module_menu($course);
         $html .= html_writer::end_tag('div');
+        $html .= html_writer::start_tag('div', array('class' => 'col-sm-9'));
+        $html .= $this->render_module_content($course);
+        $html .= html_writer::end_tag('div');
         $html .= html_writer::end_tag('div');
         $html .= html_writer::end_tag('div');
 
@@ -292,6 +295,13 @@ class core_remote_renderer extends plugin_renderer_base
     {
         ob_start();
         include_once('include/render-course-detail-menu.php');
+        return ob_get_clean();
+    }
+
+    private function render_module_content($course)
+    {
+        ob_start();
+        include_once('include/render-course-detail-content.php');
         return ob_get_clean();
     }
 
