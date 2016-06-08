@@ -544,7 +544,7 @@ class course_modinfo {
     public static function build_section_cache($courseid) {
         global $DB;
         debugging('Function course_modinfo::build_section_cache() is deprecated. It can only be used internally to build course cache.');
-        $course = $DB->get_record('course', array('id' => $course->id),
+        $course = $DB->get_record('course', array('id' => $courseid),
                         array_merge(array('id'), self::$cachedfields), MUST_EXIST);
         return self::build_course_section_cache($course);
     }
@@ -559,13 +559,8 @@ class course_modinfo {
      */
     protected static function build_course_section_cache($course) {
         global $DB;
-
-        // Get section data
-        $sections = $DB->get_records('course_sections', array('course' => $course->id), 'section',
-                'section, id, course, name, summary, summaryformat, sequence, visible, ' .
-                'availability');
+        $sections = get_remote_course_sections($course->id);
         $compressedsections = array();
-
         $formatoptionsdef = course_get_format($course)->section_format_options();
         // Remove unnecessary data and add availability
         foreach ($sections as $number => $section) {
