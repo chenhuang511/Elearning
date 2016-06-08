@@ -111,9 +111,11 @@ function get_remote_course_mods($courseid)
 
 function get_remote_mapping_user()
 {
-    global $USER;
+    global $USER, $CFG;
 
-    $ipaddress = $_SERVER['SERVER_ADDR'];
+    require_once($CFG->dirroot . '/mnet/lib.php');
+    $hostname = mnet_get_hostname_from_uri($CFG->wwwroot);
+    $hostip = gethostbyname($hostname);
     $username = $USER->username;
 
     return moodle_webservice_client(
@@ -121,7 +123,7 @@ function get_remote_mapping_user()
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_get_remote_mapping_user',
-            'params' => array('ipaddress' => $ipaddress, 'username' => $username)
+            'params' => array('ipaddress' => $hostip, 'username' => $username)
         )
     );
 }

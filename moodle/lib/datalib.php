@@ -585,17 +585,13 @@ function get_course($courseid, $clone = true) {
     } else if (!empty($SITE->id) && $SITE->id == $courseid) {
         return $clone ? clone($SITE) : $SITE;
     } else {
-        switch (MOODLE_RUN_MODE) {
-            case MOODLE_MODE_HOST:
-                $params = array('id' => $courseid);
-                break;
-            case MOODLE_MODE_HUB:
-                $params = array('remoteid' => $courseid);
-                break;
-            default:
-                break;
+        try {
+            $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+        } catch (Exception $e) {
+            $course = $DB->get_record('course', array('remoteid' => $courseid), '*', MUST_EXIST);
         }
-        return $DB->get_record('course', $params, '*', MUST_EXIST);
+
+        return $course;
     }
 }
 

@@ -3265,7 +3265,7 @@ EOD;
      * @param bool $withlinks true if a dropdown should be built.
      * @return string HTML fragment.
      */
-    public function user_menu($user = null, $withlinks = null, $uselang = true) {
+    public function user_menu($user = null, $withlinks = null) {
         global $USER, $CFG;
         require_once($CFG->dirroot . '/user/lib.php');
 
@@ -3297,15 +3297,9 @@ EOD;
         $loginurl = get_login_url();
         // If not logged in, show the typical not-logged-in string.
         if (!isloggedin()) {
-            if ($uselang) {
-                $returnstr = get_string('loggedinnot', 'moodle');
-            }
+            $returnstr = get_string('loggedinnot', 'moodle');
             if (!$loginpage) {
-                if ($uselang) {
-                    $returnstr .= " (<a href=\"$loginurl\">" . get_string('login') . '</a>)';
-                } else {
-                    $returnstr .= "<a class=\"btn-login btn-theme-blue\" href=\"$loginurl\">" . get_string('login') . '</a>';
-                }
+                $returnstr .= " (<a href=\"$loginurl\">" . get_string('login') . '</a>)';
             }
             return html_writer::div(
                 html_writer::span(

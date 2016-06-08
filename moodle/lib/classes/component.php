@@ -406,6 +406,7 @@ $cache = '.var_export($cache, true).';
             'user'        => $CFG->dirroot.'/user',
             'userkey'     => null,
             'webservice'  => $CFG->dirroot.'/webservice',
+            'remote'      => $CFG->dirroot.'/remote',
         );
 
         return $info;

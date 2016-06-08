@@ -269,10 +269,33 @@ a:focus {
 .header-main .navbar-inner {
     border: 0;
     background: transparent;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
 }
 
 .header-main .navbar {
-    margin-right: -20px;
+    margin-top: 20px;
+}
+
+.header-main .navbar .usermenu {
+    margin: 0;
+}
+
+.navbar .usermenu .dropdown a {
+    color: #333;
+}
+
+.header-main .navbar .navbar-toggle {
+    background: #126f9a;
+    border: 1px solid #006495;
+    border-radius: 3px;
+    color: #fff;
+    float: left;
+}
+
+.header-main .navbar .navbar-toggle .icon-bar {
+    background: #fff;
 }
 
 .logo .logo-section {
@@ -290,8 +313,7 @@ a:focus {
     text-decoration: none;
 }
 
-.btn-theme-blue,
-.usermenu .login .btn-theme-blue {
+.navbar-nav>li>.Log.in {
     background: #126f9a;
     border: 1px solid #006495;
     border-radius: 3px;
@@ -310,8 +332,8 @@ a:focus {
     margin-top: 22px;
 }
 
-.usermenu .login .btn-theme-blue:hover,
-.usermenu .login .btn-theme-blue:focus {
+.navbar-nav>li>.Log.in:hover,
+.navbar-nav>li>.Log.in:focus {
     color: #c1c1c1;
 }
 
@@ -346,11 +368,77 @@ a:focus {
     font-size: 16px;
 }
 
-#frontpage-course-list .coursebox {
+.loginpanel {
+    border: 1px solid #e3e3e3;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    padding: 15px 20px;
+}
+
+.loginpanel .form-group .form-control {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+}
+
+.loginpanel .login-title {
+    position: relative;
+    margin: 0;
+    font-size: 18px;
+    line-height: 1em;
+    color: #333;
+}
+
+.loginpanel .login-title::before {
+    content: '';
     display: inline-block;
-    width: 21%;
-    float: left;
-    margin-right: 2%;
+    position: absolute;
+    z-index: -1;
+    width: 100%;
+    height: 1px;
+    background: #e3e3e3;
+    left: 0;
+    top: 50%;
+    top: calc(50% - 1px);
+}
+
+.loginpanel .login-title .login-title-text {
+    display: inline-block;
+    background: #fff;
+    padding: 5px;
+}
+
+.loginpanel label {
+    font-weight: 400;
+    padding: 0;
+}
+
+.loginpanel .chk-box {
+    margin-left: 0;
+}
+
+.loginpanel .btn-login {
+    margin: 0;
+}
+
+.loginpanel .btn-login:hover {
+    background: #13a9e8;
+    color: #fff;
+}
+
+.loginpanel .forgetpass {
+    margin: 10px 0;
+}
+
+.loginpanel .forgot-cre {
+    color: #4e9ee7;
+}
+
+#frontpage-course-list .coursebox {
     border-top: solid 1px #bebebe;
     border-left: solid 1px #bebebe;
     border-right: solid 1px #bebebe;
@@ -359,17 +447,98 @@ a:focus {
     height: 365px;
 }
 
-#frontpage-course-list .coursebox.last {
-    float: right;
-    margin-left: 0;
-    margin-right: 0 !important;
+#frontpage-course-list .coursebox .course-image {
+    min-height: 145px;
+    max-height: 145px;
+    overflow: hidden;
+}
+
+#frontpage-course-list .coursebox .coursename,
+#frontpage-course-list .coursebox .summary {
+    padding: 10px;
 }
 
 #frontpage-course-list .coursebox .coursename > .dimmed {
-    color: #126f9a;
-    font-weight: 600;
+    color: #0078bf;
+    font-weight: 24px;
     font-size: 16px;
 }
+
+#frontpage-course-list .coursebox .course-image .course-thumbnail > img {
+    max-width: 100%;
+    display: block;
+}
+
+/*Enrol_course_render*/
+
+#enrol-course-list .coursebox {
+    position: relative;
+    width: 70%;
+    display: inline-block;
+    float: left;
+    border: solid 1px #f5f5f5;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+#enrol-course-list .coursebox .summary{
+    padding-top: 20px;
+    width: 60%;
+    float: left;
+}
+
+#enrol-course-list .coursebox .btn-register{
+    position: absolute;
+    bottom: 10px;
+    right: 15px;
+    float: left;
+    width: 40%;
+}
+
+#enrol-course-list .coursebox .btn-register .btn-reg-now{
+    float: right;
+    color: #3d70af;
+    border: 1px solid #3d70af;
+    background-color: #ffffff;
+    border-radius: 5px;
+    font-weight: normal;
+}
+
+#enrol-course-list .coursebox .course_content{
+    display: block;
+    float: left;
+    width: 70%;
+}
+
+#enrol-course-list .coursebox .coursename > .dimmed {
+    color: #126f9a;
+    font-weight: 600;
+    font-size: 26px;
+}
+
+#enrol-course-list .coursebox .course-image{
+    float: left;
+    display: block;
+    width: 30%;
+    height: 160px;
+    margin: 0px;
+}
+
+#enrol-course-list .coursebox .course-image .course-thumbnail > img {
+    width: 200px;
+    height: 130px;
+    display: block;
+}
+
+#enrol-course-list hr{
+    display: inline-block;
+    border: 4px solid #f5f5f5;
+    float: left;
+    width: 71%;
+    margin: 20px 0;
+}
+
+/*  End_enrol_course_renderer*/
 
 @media (min-width: 768px) {
     .banner .banner-content {
