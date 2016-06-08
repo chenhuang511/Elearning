@@ -4,9 +4,9 @@
     <div class="panel panel-default">
         <div class="panel-heading" role="tab" id="course-summary">
             <h4 class="panel-title">
-                <a role="button" data-toggle="collapse" data-parent="#section-menu" href="#collapseCourseSummary"
+                <a id="course-summary" role="button" data-toggle="collapse" data-parent="#section-menu" href="#collapseCourseSummary"
                    aria-expanded="true" aria-controls="collapseCourseSummary"
-                   class="active">
+                   class="">
                     <i class="fa fa-caret-right" aria-hidden="true"></i> Giới thiệu </a>
             </h4>
         </div>
