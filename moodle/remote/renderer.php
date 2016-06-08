@@ -275,6 +275,9 @@ class core_remote_renderer extends plugin_renderer_base
         $html .= html_writer::start_tag('div', array('class' => 'col-sm-3'));
         $html .= $this->render_module_menu($course);
         $html .= html_writer::end_tag('div');
+        $html .= html_writer::start_tag('div', array('class' => 'col-sm-9'));
+        $html .= "Content ...";
+        $html .= html_writer::end_tag('div');
         $html .= html_writer::end_tag('div');
         $html .= html_writer::end_tag('div');
 
