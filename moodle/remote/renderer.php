@@ -208,10 +208,11 @@ class core_remote_renderer extends plugin_renderer_base
     {
         $tabname = array('Courseware', 'Course Info', 'Discussion', 'Progress');
         $courseinfo = $this->render_course_info($course);
-        $tabcontens = array('<p>tab content 1</p>', $courseinfo, '<p>tab content 3</p>', '<p>tab content 4</p>');
+        $coursewaretab = $this->render_courseware($course);
+        $tabcontens = array($coursewaretab, $courseinfo, '<p>tab content 3</p>', '<p>tab content 4</p>');
 
         // div course-detail-tabs block contain all content of course
-        $content = html_writer::start_tag('div', array('class' => 'course-detail-tabs'));
+        $content = html_writer::start_tag('div', array('class' => 'course-detail-tabs container'));
         // div coursetabs
         $content .= html_writer::start_tag('ul', array('id' => 'coursetabs', 'class' => 'nav nav-tabs', 'role' => 'tablist'));
         $content .= $this->render_tabs($tabname);
@@ -266,10 +267,30 @@ class core_remote_renderer extends plugin_renderer_base
         return $html;
     }
 
+    private function render_courseware($course)
+    {
+        $html = html_writer::start_tag('div', array('class' => 'coursware-block'));
+        $html .= html_writer::start_tag('div', array('class' => 'row'));
+        $html .= html_writer::start_tag('div', array('class' => 'col-sm-3'));
+        $html .= $this->render_module_menu($course);
+        $html .= html_writer::end_tag('div');
+        $html .= html_writer::end_tag('div');
+        $html .= html_writer::end_tag('div');
+
+        return $html;
+    }
+
     private function render_course_info($course)
     {
         ob_start();
         include_once('include/render-course-info.php');
+        return ob_get_clean();
+    }
+
+    private function render_module_menu($course)
+    {
+        ob_start();
+        include_once('include/render-course-detail-menu.php');
         return ob_get_clean();
     }
 }
