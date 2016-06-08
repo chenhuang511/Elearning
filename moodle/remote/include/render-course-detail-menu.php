@@ -41,10 +41,12 @@
                         <?php foreach ($section->modules as $keymod => $module) {
                             if ($module->modname !== 'forum' && $module->modname !== 'label') {
                                 ?>
-                                <a class="sublink"
-                                   href="<?php echo $CFG->wwwroot . '/mod/' . $module->modname . '/remote/view.php?id=' . $module->id ?>"><i
-                                        class="fa fa-angle-double-right"
-                                        aria-hidden="true"></i> <?php echo $module->name ?></a>
+                                <a class="sublink get-remote-content" data-module="<?php echo $module->modname; ?>"
+                                   data-remote-id="<?php echo $module->id; ?>"
+                                   href="#">
+                                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                                    <?php echo $module->name ?>
+                                </a>
                             <?php }
                         } ?>
                     </div>

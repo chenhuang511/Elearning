@@ -23,22 +23,6 @@ function get_remote_quiz_by_id($id) {
     );
 }
 
-function get_remote_user_mapping_userid() {
-    global $USER;
-//    $ipaddress = $_SERVER['SERVER_ADDR'];
-    $ipaddress = $_SERVER['LOCAL_ADDR'];
-    $username = $USER->username;
-
-    return moodle_webservice_client(
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_get_remote_mapping_user',
-            'params' => array('ipaddress' => $ipaddress, 'username' => $username)
-        )
-    );
-}
-
 function get_remote_user_attemps($quizid, $userid, $status, $includepreviews) {
     return moodle_webservice_client(
         array(
