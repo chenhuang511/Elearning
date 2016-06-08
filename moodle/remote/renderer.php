@@ -336,7 +336,7 @@ class core_remote_renderer extends plugin_renderer_base
         $html .= $this->render_module_menu($course);
         $html .= html_writer::end_tag('div');
         $html .= html_writer::start_tag('div', array('class' => 'col-sm-9'));
-        $html .= "Content ...";
+        $html .= $this->render_module_content($course);
         $html .= html_writer::end_tag('div');
         $html .= html_writer::end_tag('div');
         $html .= html_writer::end_tag('div');
@@ -358,6 +358,13 @@ class core_remote_renderer extends plugin_renderer_base
         return ob_get_clean();
     }
 
+    private function render_module_content($course)
+    {
+        ob_start();
+        include_once('include/render-course-detail-content.php');
+        return ob_get_clean();
+    }
+
     private function render_course_progress($course)
     {
         ob_start();
@@ -370,7 +377,7 @@ class render_helper
 {
     public static function truncate($text, $limit)
     {
-        //$strings = $text;
+        $strings = $text;
         if (strlen($text) > $limit) {
             $words = str_word_count($text, 2);
             $pos = array_keys($words);
