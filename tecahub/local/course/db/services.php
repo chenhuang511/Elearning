@@ -83,4 +83,13 @@ $functions = array(
 		'type'		    => 'read',
 		'ajax'		    => true
 	),
+	
+	'local_get_course_info_by_course_id' => array(
+		'classname'     => 'local_mod_course_external',
+		'methodname'    => 'get_course_info_by_course_id',
+		'classpath'     => 'local/course/externallib.php',
+		'description'   => 'Get course information by course id',
+		'type'		    => 'read',
+		'ajax'		    => true
+	),
 );

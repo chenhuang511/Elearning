@@ -575,4 +575,41 @@ class local_mod_course_external extends external_api
             )
         );
     }
+
+    public static function get_course_info_by_course_id_parameters(){
+        return new external_function_parameters(
+            array('courseid' => new external_value(PARAM_INT, 'course id'),
+            )
+        );
+    }
+
+    public static function get_course_info_by_course_id($courseid){
+        global $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::get_course_info_by_course_id_parameters(), array('courseid' => $courseid));
+
+        $course = $DB->get_record('course', array('id' =>  $params['courseid']), "*", MUST_EXIST);
+        $courseinfo = $DB->get_record('course_info', array('course' =>  $params['courseid']), "*", MUST_EXIST);
+
+        $results = array(
+            'coursename' => $course->fullname,
+            'courseinfo' => $courseinfo->info,
+            'validatetime' => $courseinfo->validatetime,
+            'note' => $courseinfo->note,
+        );
+
+        return $results;
+    }
+
+    public static function get_course_info_by_course_id_returns(){
+        return new external_single_structure(
+            array(
+                'coursename' => new external_value(PARAM_RAW, 'Course fullname'),
+                'courseinfo' => new external_value(PARAM_RAW, 'Course infomation'),
+                'validatetime' => new external_value(PARAM_INT, 'Validate Time', VALUE_DEFAULT),
+                'note' => new external_value(PARAM_RAW, 'Note'),
+            )
+        );
+    }
 }
