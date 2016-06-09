@@ -29,15 +29,20 @@ $(function () {
         function getHTMLContent(module, id) {
             var url = '/mod/' + module + '/remote/api-view.php?id=' + id;
             var target = $('#module-content');
+            var loading = $('#loading');
             switch (module) {
                 default :
                     $.ajax({
                         url: url,
                         beforeSend: function () {
+                            target.hide();
+                            loading.show();
                             target.empty();
                         },
                         success: function (data) {
                             target.html(data);
+                            loading.hide();
+                            target.show();
                         },
                         error: function (err) {
                             target.html(err);
