@@ -12,6 +12,7 @@ $html = '';
 
 $course = (empty($courseid)) ? null : get_local_course_record($courseid, true);
 
+$coursename = $course->fullname;
 $coursesummary = $course->summary;
 
 context_helper::preload_course($course->id);
@@ -52,6 +53,7 @@ $PAGE->set_url("/course/remote/view.php", array('id' => $courseid, 'sectionid' =
 
 echo $OUTPUT->header();
 
+echo '<input id="hidden-coursename" type="hidden" value="'  . htmlspecialchars($coursename) . '">';
 echo '<input id="hidden-summary" type="hidden" value="'  . htmlspecialchars($coursesummary) . '">';
 $renderer = $PAGE->get_renderer('core_remote');
 $renderer->render_course_detail($course);

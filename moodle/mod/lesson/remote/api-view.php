@@ -210,7 +210,7 @@ if (empty($pageid)) {
     }
     // If there are any questions that have been answered correctly (or not) in this attempt.
     //$allattempts = $lesson->get_attempts($retries);
-    $allattempts = get_remote_lesson_attempts_by_lessonid_and_userid($lesson->id, $USER->id, $retries);
+    $allattempts = get_remote_lesson_attempts_by_lessonid_and_userid($lesson->id, $USER->id, $retries, 0, -1);
     if (!empty($allattempts)) {
         $attempt = end($allattempts);
         $attemptpage = $lesson->load_page($attempt->pageid);

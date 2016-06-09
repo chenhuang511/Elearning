@@ -4,6 +4,7 @@
 <script>
     (function ($) {
         var summary = $('#hidden-summary'),
+            coursename = $('#hidden-coursename'),
             content = $('#module-content'),
             summaryLink = $('#course-summary'),
             loading = $('#loading');
@@ -49,12 +50,15 @@
             });
         }
 
-        content.html(summary.val());
+        var htmlContent = '<h3>' + coursename.val() + '</h3><br>' + summary.val();
+
+        content.html(htmlContent);
 
         summaryLink.on('click', function () {
             content.hide();
             $(loading).show();
-            changeContent(content, summary.val());
+            var htmlContent = '<h3>' + coursename.val() + '</h3><br>' + summary.val();
+            changeContent(content, htmlContent);
             content.show();
         });
 

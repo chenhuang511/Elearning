@@ -16,7 +16,7 @@
             <div class="panel-body">
                 <a id="course-summary" class="sublink" href="#tongquan">
                     <i class="fa fa-angle-double-right" aria-hidden="true"></i>
-                    Tổng quan
+                    Khóa học
                 </a>
             </div>
         </div>
