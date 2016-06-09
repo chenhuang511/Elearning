@@ -18,11 +18,11 @@ $infolink = theme_bhxh_get_setting('infolink');
             <div class="container">
                 <div class="row-fluid">
                     <div class="foot-links-wrap">
-                        <ul class="foot-links clearfix">
+                        <div class="clearfix">
                             <?php
                             echo $OUTPUT->custom_menu();
                             ?>
-                        </ul>
+                        </div>
                     </div>
                 </div>
                 <div class="row-fluid">

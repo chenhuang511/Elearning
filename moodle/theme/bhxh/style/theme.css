@@ -348,14 +348,16 @@ a:focus {
     list-style-type: none;
 }
 
-.foot-links .foot-link-item .foot-link-text {
+.foot-links .foot-link-item .foot-link-text,
+.foot-links li a {
     padding: 5px;
     display: block;
     color: #fff;
     font-size: 18px;
 }
 
-.foot-links .foot-link-item .foot-link-text:hover {
+.foot-links .foot-link-item .foot-link-text:hover,
+.foot-links li a:hover {
     color: #fff;
 }
 
@@ -764,11 +766,13 @@ ul#coursetabs > li.active > a, ul#coursetabs > li > a:focus, ul#coursetabs > li 
         height: 320px;
     }
 
-    .foot-links .foot-link-item {
+    .foot-links .foot-link-item,
+    .foot-links li {
         float: left;
     }
 
-    .foot-links .foot-link-item .foot-link-text {
+    .foot-links .foot-link-item .foot-link-text,
+    .foot-links li a {
         display: inline-block;
     }
 

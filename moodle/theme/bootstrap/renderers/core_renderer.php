@@ -86,7 +86,7 @@ class theme_bootstrap_core_renderer extends core_renderer {
         // Add the lang_menu to the left of the menu.
         $this->add_lang_menu($menu);
 
-        $content = '<ul class="nav navbar-nav pull-right">';
+        $content = '<ul class="foot-links">';
         foreach ($menu->get_children() as $item) {
             $content .= $this->render_custom_menu_item($item, 1);
         }
