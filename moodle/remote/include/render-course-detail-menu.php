@@ -31,10 +31,10 @@
             <div class="panel panel-default">
                 <div class="panel-heading" role="tab" id="<?php echo $heading ?>">
                     <h4 class="panel-title">
-                        <a role="button" data-toggle="collapse" data-parent="#section-menu"
+                        <a id="csec-<?php echo $section->id ?>" role="button" data-toggle="collapse" data-parent="#section-menu"
                            href="#<?php echo $collapse ?>"
                            aria-expanded="false" aria-controls="<?php echo $collapse ?>"
-                           class="collapsed'">
+                           class="collapsed'" data-summary="<?php echo htmlspecialchars($section->summary) ?>">
                             <i class="fa fa-caret-right" aria-hidden="true"></i> <?php echo $section->name ?> </a>
                     </h4>
                 </div>
@@ -43,7 +43,7 @@
                      aria-expanded="false">
                     <div class="panel-body">
                         <?php foreach ($section->modules as $keymod => $module) {
-                            if ($module->modname !== 'forum' && $module->modname !== 'label') {
+                            if ($module->modname !== 'forum' && $module->modname !== 'label' && $module->modname !== 'wiki') {
                                 ?>
                                 <a class="sublink get-remote-content" data-module="<?php echo $module->modname; ?>"
                                    data-remote-id="<?php echo $module->id; ?>"
