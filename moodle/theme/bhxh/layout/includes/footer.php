@@ -10,7 +10,6 @@ $address = theme_bhxh_get_setting('address');
 $emailid = theme_bhxh_get_setting('emailid');
 $phoneno = theme_bhxh_get_setting('phoneno');
 $copyright_footer = theme_bhxh_get_setting('copyright_footer');
-$infolink = theme_bhxh_get_setting('infolink');
 
 ?>
     <footer id="footer">
