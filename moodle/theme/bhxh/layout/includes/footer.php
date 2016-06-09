@@ -17,11 +17,11 @@ $copyright_footer = theme_bhxh_get_setting('copyright_footer');
             <div class="container">
                 <div class="row-fluid">
                     <div class="foot-links-wrap">
-                        <div class="clearfix">
+                        <ul class="foot-links clearfix">
                             <?php
                             echo $OUTPUT->custom_menu();
                             ?>
-                        </div>
+                        </ul>
                     </div>
                 </div>
                 <div class="row-fluid">

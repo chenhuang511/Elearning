@@ -671,6 +671,90 @@ class local_mod_lesson_external extends external_api
         );
     }
 
+    public static function get_lesson_attempts_by_lessonid_and_userid_parameters() {
+        return new external_function_parameters(
+            array('lessonid' => new external_value(PARAM_INT, 'lesson id'),
+                'userid' => new external_value(PARAM_INT, 'user id'),
+                'correct' => new external_value(PARAM_INT, 'correct', VALUE_DEFAULT, 0),
+                'pageid' => new external_value(PARAM_INT, 'page id', VALUE_DEFAULT, -1),
+                'retry' => new external_value(PARAM_INT, 'retry'),
+                'options' => new external_multiple_structure (
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHANUM,
+                                'The expected keys (value format) are:
+                                                excludemodules (bool) Do not return modules, return only the sections structure
+                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
+                                                sectionid (int) Return only this section
+                                                sectionnumber (int) Return only this section with number (order)
+                                                cmid (int) Return only this module information (among the whole sections structure)
+                                                modname (string) Return only modules with this name "label, forum, etc..."
+                                                modid (int) Return only the module with this id (to be used with modname'),
+                            'value' => new external_value(PARAM_RAW, 'the value of the option,
+                                                                    this param is personaly validated in the external function.')
+                        )
+                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+            )
+        );
+    }
+
+    public static function get_lesson_attempts_by_lessonid_and_userid($lessonid, $userid, $correct, $pageid, $retry, $options = array()) {
+        global $DB;
+
+        $arr = array(
+            'lessonid' => $lessonid,
+            'userid' => $userid,
+            'retry' => $retry,
+            'options' => $options
+        );
+
+        if($correct === 1) { // 0: false, 1: true
+            $arr = array_merge($arr, array('correct' => 1));
+        }
+        if($pageid !== -1) { // -1: null
+            $arr = array_merge($arr, array('pageid' => $pageid));
+        }
+
+        // validate params
+        $params = self::validate_parameters(self::get_lesson_attempts_by_lessonid_and_userid_parameters(),
+            $arr
+        );
+
+        $parameters = [
+            'lessonid' => $params['lessonid'],
+            'userid' => $params['userid'],
+            'retry' => $params['retry'],
+            'options' => $params['options']
+        ];
+
+        if(isset($arr['correct'])) {
+            $parameters = array_merge($parameters, array('correct' => $params['correct']));
+        }
+        if(isset($arr['pageid'])) {
+            $parameters = array_merge($parameters, array('pageid' => $params['pageid']));
+        }
+
+        return $DB->get_records('lesson_attempts', $parameters, 'timeseen ASC');
+    }
+
+    public static function get_lesson_attempts_by_lessonid_and_userid_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, ''),
+                    'lessonid' => new external_value(PARAM_INT, 'lesson id', VALUE_DEFAULT),
+                    'pageid' => new external_value(PARAM_INT, 'page id', VALUE_DEFAULT),
+                    'userid' => new external_value(PARAM_INT, 'user id', VALUE_DEFAULT),
+                    'answerid' => new external_value(PARAM_INT, 'answer id', VALUE_DEFAULT),
+                    'retry' => new external_value(PARAM_INT, 'retry', VALUE_DEFAULT),
+                    'correct' => new external_value(PARAM_INT, 'correct', VALUE_DEFAULT),
+                    'useranswer' => new external_value(PARAM_RAW, 'user answer'),
+                    'timeseen' => new external_value(PARAM_INT, 'time seen', VALUE_DEFAULT)
+                )
+            ), 'lesson attempts'
+        );
+    }
+
     /**
      * Returns description of method parameters
      *
