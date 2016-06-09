@@ -3287,18 +3287,20 @@ class navbar extends navigation_node {
             }
         }
 
-        // Don't show the 'course' node if enrolled in this course.
-        if (!is_enrolled(context_course::instance($this->page->course->id, null, '', true))) {
-            $courses = $this->page->navigation->get('courses');
-            if (!$courses) {
-                // Courses node may not be present.
-                $courses = breadcrumb_navigation_node::create(
-                    get_string('courses'),
-                    new moodle_url('/course/index.php'),
-                    self::TYPE_CONTAINER
-                );
+        if (MOODLE_RUN_MODE == MOODLE_MODE_HOST) {
+            // Don't show the 'course' node if enrolled in this course.
+            if (!is_enrolled(context_course::instance($this->page->course->id, null, '', true))) {
+                $courses = $this->page->navigation->get('courses');
+                if (!$courses) {
+                    // Courses node may not be present.
+                    $courses = breadcrumb_navigation_node::create(
+                        get_string('courses'),
+                        new moodle_url('/course/index.php'),
+                        self::TYPE_CONTAINER
+                    );
+                }
+                $categories[] = $courses;
             }
-            $categories[] = $courses;
         }
 
         return $categories;

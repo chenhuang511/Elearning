@@ -42,14 +42,6 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
-	'local_mod_get_context_by_instanceid_and_contextlevel' => array(
-		'classname'	  => 'local_mod_lesson_external',
-		'methodname'  => 'get_context_by_instanceid_and_contextlevel',
-		'classpath'	  => 'local/lesson/externallib.php',
-		'description' => 'Get context by instaceid and context level',
-		'type'		  => 'read',
-		'ajax'		  => true
-	),
 	'local_mod_get_lesson_page' => array(
 		'classname'	  => 'local_mod_lesson_external',
 		'methodname'  => 'get_lesson_page',
@@ -66,15 +58,7 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
-	'local_get_context_by_id' => array(
-		'classname'	  => 'local_mod_lesson_external',
-		'methodname'  => 'get_context_by_id',
-		'classpath'	  => 'local/lesson/externallib.php',
-		'description' => 'Get context by id',
-		'type'		  => 'read',
-		'ajax'		  => true
-	),
-	'local_get_lesson_timer_by_userid_and_lessonid' => array(
+	'local_mod_get_lesson_timer_by_userid_and_lessonid' => array(
 		'classname'	  => 'local_mod_lesson_external',
 		'methodname'  => 'get_lesson_timer_by_userid_and_lessonid',
 		'classpath'	  => 'local/lesson/externallib.php',
@@ -82,7 +66,7 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
-	'local_get_lesson_grades_by_userid_and_lessonid' => array(
+	'local_mod_get_lesson_grades_by_userid_and_lessonid' => array(
 		'classname'	  => 'local_mod_lesson_external',
 		'methodname'  => 'get_lesson_grades_by_userid_and_lessonid',
 		'classpath'	  => 'local/lesson/externallib.php',
@@ -90,7 +74,7 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
-	'local_get_lesson_branch_by_lessonid_and_userid_and_retry' => array(
+	'local_mod_get_lesson_branch_by_lessonid_and_userid_and_retry' => array(
 		'classname'	  => 'local_mod_lesson_external',
 		'methodname'  => 'get_lesson_branch_by_lessonid_and_userid_and_retry',
 		'classpath'	  => 'local/lesson/externallib.php',
@@ -98,7 +82,7 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
-	'local_get_count_lessonid_and_userid' => array(
+	'local_mod_get_count_lessonid_and_userid' => array(
 		'classname'	  => 'local_mod_lesson_external',
 		'methodname'  => 'get_count_by_lessonid_and_userid',
 		'classpath'	  => 'local/lesson/externallib.php',
@@ -106,7 +90,7 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
-	'local_get_lesson_answer_by_id' => array(
+	'local_mod_get_lesson_answer_by_id' => array(
 		'classname'	  => 'local_mod_lesson_external',
 		'methodname'  => 'get_lesson_answers_by_id',
 		'classpath'	  => 'local/lesson/externallib.php',

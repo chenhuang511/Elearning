@@ -5647,16 +5647,7 @@ abstract class context extends stdClass implements IteratorAggregate
             return $context;
         }
 
-        switch (MOODLE_RUN_MODE) {
-            case MOODLE_MODE_HOST:
-                $record = $DB->get_record('context', array('id' => $id), '*', $strictness);
-                break;
-            case MOODLE_MODE_HUB:
-                $record = get_remote_context_by_id($id);
-                break;
-            default:
-                break;
-        }
+        $record = $DB->get_record('context', array('id' => $id), '*', $strictness);
 
         if ($record) {
             return context::create_instance_from_record($record);
@@ -6940,17 +6931,12 @@ class context_coursecat extends context
         }
 
         if (!$record = $DB->get_record('context', array('contextlevel' => CONTEXT_COURSECAT, 'instanceid' => $categoryid))) {
-            switch (MOODLE_RUN_MODE) {
-                case MOODLE_MODE_HOST:
-                    $params = array('id' => $categoryid);
-                    break;
-                case MOODLE_MODE_HUB:
-                    $params = array('remoteid' => $categoryid);
-                    break;
-                default:
-                    break;
+            try {
+                $category = $DB->get_record('course_categories', array('id' => $categoryid), 'id,parent', $strictness);
+            } catch (Exception $e) {
+                $category = $DB->get_record('course_categories', array('remoteid' => $categoryid), 'id,parent', $strictness);
             }
-            if ($category = $DB->get_record('course_categories', $params, 'id,parent', $strictness)) {
+            if ($category) {
                 if ($category->parent) {
                     $parentcontext = context_coursecat::instance($category->parent);
                     $record = context::insert_context_record(CONTEXT_COURSECAT, $category->id, $parentcontext->path);
@@ -7216,17 +7202,12 @@ class context_course extends context
         }
 
         if (!$record = $DB->get_record('context', array('contextlevel' => CONTEXT_COURSE, 'instanceid' => $courseid))) {
-            switch (MOODLE_RUN_MODE) {
-                case MOODLE_MODE_HOST:
-                    $params = array('id' => $courseid);
-                    break;
-                case MOODLE_MODE_HUB:
-                    $params = array('remoteid' => $courseid);
-                    break;
-                default:
-                    break;
+            try {
+                $course = $DB->get_record('course', array('id' => $courseid), 'id,category', $strictness);
+            } catch (Exception $e) {
+                $course = $DB->get_record('course', array('remoteid' => $courseid), 'id,category', $strictness);
             }
-            if ($course = $DB->get_record('course', $params, 'id,category', $strictness)) {
+            if ($course) {
                 if ($course->category) {
                     $parentcontext = context_coursecat::instance($course->category);
                     $record = context::insert_context_record(CONTEXT_COURSE, $course->id, $parentcontext->path);

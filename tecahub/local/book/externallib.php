@@ -23,6 +23,7 @@ require_once("$CFG->libdir/externallib.php");
  */
 class local_mod_book_external extends external_api
 {
+    // Get book by ID
     public static function mod_get_book_by_id_parameters()
     {
         return new external_function_parameters(
@@ -63,6 +64,7 @@ class local_mod_book_external extends external_api
         );
     }
 
+    // Get book chapters by id
     public static function mod_get_book_chapters_by_id_parameters()
     {
         return new external_function_parameters(
@@ -98,7 +100,9 @@ class local_mod_book_external extends external_api
             ));
     }
 
-    public static function mod_get_book_chapters_by_bookid_chapterid_parameters(){
+    // Get book chapters by bookid & chaptersip
+    public static function mod_get_book_chapters_by_bookid_chapterid_parameters()
+    {
         return new external_function_parameters(
             array(
                 'bookid' => new external_value(PARAM_INT, 'book ID'),
@@ -107,21 +111,23 @@ class local_mod_book_external extends external_api
         );
     }
 
-    public static function mod_get_book_chapters_by_bookid_chapterid($bookid, $chapterid){
+    public static function mod_get_book_chapters_by_bookid_chapterid($bookid, $chapterid)
+    {
         global $DB;
-        
+
         // validate
-        $params = self::validate_parameters(self::mod_get_book_chapters_by_bookid_chapterid_parameters(), 
+        $params = self::validate_parameters(self::mod_get_book_chapters_by_bookid_chapterid_parameters(),
             array(
-                'bookid'    =>  $bookid,
-                'chapterid'    => $chapterid
+                'bookid' => $bookid,
+                'chapterid' => $chapterid
             )
         );
-        
+
         return $DB->get_record('book_chapters', array('id' => $params['chapterid'], 'bookid' => $params['bookid']), "*", MUST_EXIST);
     }
 
-    public static function mod_get_book_chapters_by_bookid_chapterid_returns(){
+    public static function mod_get_book_chapters_by_bookid_chapterid_returns()
+    {
         return new external_single_structure(
             array(
                 'id' => new external_value(PARAM_INT, 'book chapters id'),
@@ -138,6 +144,118 @@ class local_mod_book_external extends external_api
             )
         );
     }
-    
-}
 
+    // Create book chapters
+    public static function mod_create_book_chapters_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'data' => new external_single_structure(
+                    array(
+                        'title' => new external_value(PARAM_RAW, 'Title Book chapters'),
+                        'subchapter' => new external_value(PARAM_INT, 'Sub chapter'),
+                        'id' => new external_value(PARAM_INT, 'book chapters id'),
+                        'cmid' => new external_value(PARAM_INT, 'course module ID'),
+                        'pagenum' => new external_value(PARAM_INT, 'page num'),
+                        'bookid' => new external_value(PARAM_INT, 'book ID'),
+                        'hidden' => new external_value(PARAM_INT, 'Hidden'),
+                        'timecreated' => new external_value(PARAM_INT, 'Time created'),
+                        'timemodified' => new external_value(PARAM_INT, 'Time modified'),
+                        'importsrc' => new external_value(PARAM_RAW, 'Import source'),
+                        'content' => new external_value(PARAM_RAW, 'Content book chapter'),
+                        'contentformat' => new external_value(PARAM_INT, 'Format content'),
+                    )
+                )
+            )
+        );
+    }
+
+
+    public static function mod_create_book_chapters($data)
+    {
+        global $DB;
+
+        // validate
+        $params = self::validate_parameters(self::mod_create_book_chapters_parameters(),
+            array('data' => $data)
+        );
+
+        $param = reset($params);
+
+        // make room for new page
+        $sql = "UPDATE {book_chapters}
+                   SET pagenum = pagenum + 1
+                 WHERE bookid = ? AND pagenum >= ?";
+        $DB->execute($sql, array($param['bookid'], $param['pagenum']));
+
+        $param['id'] = $DB->insert_record('book_chapters', $param);
+
+        $result = array('id' => $param['id'], 'title' => $param['title']);
+
+        return $result;
+    }
+
+    public static function mod_create_book_chapters_returns()
+    {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'book chapters id'),
+                'title' => new external_value(PARAM_RAW, 'title'),
+            )
+        );
+    }
+
+    // Update book chapter
+    public static function mod_update_book_chapters_parameters(){
+        return new external_function_parameters(
+            array(
+                'data' => new external_single_structure(
+                    array(
+                        'title' => new external_value(PARAM_RAW, 'Title Book chapters'),
+                        'subchapter' => new external_value(PARAM_INT, 'Sub chapter'),
+                        'id' => new external_value(PARAM_INT, 'book chapters id'),
+                        'cmid' => new external_value(PARAM_INT, 'course module ID'),
+                        'pagenum' => new external_value(PARAM_INT, 'page num'),
+                        'bookid' => new external_value(PARAM_INT, 'book ID'),
+                        'hidden' => new external_value(PARAM_INT, 'Hidden'),
+                        'timecreated' => new external_value(PARAM_INT, 'Time created'),
+                        'timemodified' => new external_value(PARAM_INT, 'Time modified'),
+                        'importsrc' => new external_value(PARAM_RAW, 'Import source'),
+                        'content' => new external_value(PARAM_RAW, 'Content book chapter'),
+                        'contentformat' => new external_value(PARAM_INT, 'Format content'),
+                        'contenttrust' => new external_value(PARAM_INT, 'Content trust'),
+                    )
+                )
+            )
+        );
+    }
+
+    public static function mod_update_book_chapters($data){
+        global $DB;
+
+        $params = self::validate_parameters(self::mod_update_book_chapters_parameters(),
+            array('data' => $data)
+        );
+
+        $param = reset($params);
+
+        $book = $DB->get_record('book', array('id'=>$param['bookid']), '*', MUST_EXIST);
+        $DB->update_record('book_chapters', $param);
+
+        $DB->set_field('book', 'revision', $book->revision+1, array('id'=>$book->id));
+
+        return array(
+            'title' => $param['title'], 
+            'content' => $param['content']
+        );
+    }
+    
+    public static function mod_update_book_chapters_returns(){
+        return new external_single_structure(
+            array(
+                'title' => new external_value(PARAM_RAW, 'title book chapters'),
+                'content' => new external_value(PARAM_RAW, 'content book chapters'),
+            )
+        );
+    }
+}

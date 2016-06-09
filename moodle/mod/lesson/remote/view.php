@@ -47,7 +47,7 @@ $course = get_local_course_record($cm->course);
 $lesson = get_remote_lesson_by_id($cm->instance);
 $lesson = new lesson($lesson);
 
-//require_login($course, false, $cm);
+require_login($course, false, $cm);
 
 if ($backtocourse) {
     redirect(new moodle_url('/course/view.php', array('id' => $course->id)));
@@ -67,7 +67,7 @@ if ($pageid !== null) {
 $PAGE->set_url($url);
 
 $context = context_module::instance($cm->id);
-$canmanage = false; //has_capability('mod/lesson:manage', $context);
+$canmanage = has_capability('mod/lesson:manage', $context);
 
 $lessonoutput = $PAGE->get_renderer('mod_lesson');
 
@@ -214,7 +214,7 @@ if (empty($pageid)) {
     if (isset($USER->modattempts[$lesson->id])) {
         unset($USER->modattempts[$lesson->id]);  // if no pageid, then student is NOT reviewing
     }
-
+die;
     // If there are any questions that have been answered correctly (or not) in this attempt.
     $allattempts = $lesson->get_attempts($retries);
     if (!empty($allattempts)) {

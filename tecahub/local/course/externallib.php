@@ -451,8 +451,8 @@ class local_mod_course_external extends external_api
             )
         );
     }
-	
-    public static function get_remote_course_sessions_parameters()
+    
+    public static function get_remote_course_sections_parameters()
     {
         return new external_function_parameters(
             array('courseid' => new external_value(PARAM_INT, 'course id'),
@@ -460,16 +460,16 @@ class local_mod_course_external extends external_api
         );
     }
     
-    public static function get_remote_course_sessions($courseid)
+    public static function get_remote_course_sections($courseid)
     {       
         global $DB;
 
         //validate parameter
-        $params = self::validate_parameters(self::get_remote_course_sessions_parameters(), array('courseid' => $courseid));
-        return $DB->get_records('course_sections', array('course' => $courseid), 'section ASC', 'id,section,sequence');
+        $params = self::validate_parameters(self::get_remote_course_sections_parameters(), array('courseid' => $courseid));
+        return $DB->get_records('course_sections', array('course' => $courseid), 'section ASC', 'id,course,section,name,sequence');
     }
     
-    public static function get_remote_course_sessions_returns()
+    public static function get_remote_course_sections_returns()
     {
         return new external_multiple_structure(
             new external_single_structure(
@@ -478,11 +478,7 @@ class local_mod_course_external extends external_api
                     'course'    => new external_value(PARAM_INT, 'The fullname of the course'),
                     'section' => new external_value(PARAM_INT, 'Thumbnail course URL - big version'),
                     'name'    => new external_value(PARAM_TEXT, 'The fullname of the course'),
-                    'summary' => new external_value(PARAM_RAW, 'Thumbnail course URL - small version'),
-                    'summaryformat' => new external_value(PARAM_INT, 'Thumbnail course URL - medium version'),
                     'sequence' => new external_value(PARAM_RAW, 'Thumbnail course URL - big version'),
-                    'visible'    => new external_value(PARAM_INT, 'The fullname of the course'),
-                    'availability' => new external_value(PARAM_RAW, 'Thumbnail course URL - small version'),
                 )
             )
         );
@@ -547,32 +543,70 @@ class local_mod_course_external extends external_api
     }
     
     // MINHND
-    public static function mod_get_course_sections_by_id_parameters(){
+    public static function get_course_info_by_course_id_parameters(){
         return new external_function_parameters(
-            array(
-                'sectionid'    =>  new external_value(PARAM_INT, 'Section ID')
+            array('courseid' => new external_value(PARAM_INT, 'course id'),
             )
         );
     }
 
-    public static function mod_get_course_sections_by_id($sectionid){
+    public static function get_course_info_by_course_id($courseid){
         global $DB;
 
-        // validate
-        $params = self::validate_parameters(self::mod_get_course_sections_by_id_parameters(),
-            array(
-                'sectionid'    =>  $sectionid,
-            )
+        //validate parameter
+        $params = self::validate_parameters(self::get_course_info_by_course_id_parameters(), array('courseid' => $courseid));
+
+        $course = $DB->get_record('course', array('id' =>  $params['courseid']), "*", MUST_EXIST);
+        $courseinfo = $DB->get_record('course_info', array('course' =>  $params['courseid']), "*", MUST_EXIST);
+
+        $results = array(
+            'coursename' => $course->fullname,
+            'courseinfo' => $courseinfo->info,
+            'validatetime' => $courseinfo->validatetime,
+            'note' => $courseinfo->note,
         );
 
-        return $DB->get_record('course_sections', array('id' =>  $params['sectionid']), "section", MUST_EXIST);
+        return $results;
     }
 
-    public static function mod_get_course_sections_by_id_returns(){
+    public static function get_course_info_by_course_id_returns(){
         return new external_single_structure(
             array(
-                'section' => new external_value(PARAM_INT, 'Section number', VALUE_DEFAULT),
+                'coursename' => new external_value(PARAM_RAW, 'Course fullname'),
+                'courseinfo' => new external_value(PARAM_RAW, 'Course infomation'),
+                'validatetime' => new external_value(PARAM_INT, 'Validate Time', VALUE_DEFAULT),
+                'note' => new external_value(PARAM_RAW, 'Note'),
             )
         );
     }
+    
+    public static function get_course_module_info_parameters()
+    {
+        return new external_function_parameters(
+            array('modname' => new external_value(PARAM_TEXT, 'module name'),
+            array('instanceid' => new external_value(PARAM_TEXT, 'instance id'),            
+            )
+        );
+    }
+    
+    public static function get_course_module_info($modname, $instanceid)
+    {       
+        global $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::get_course_module_info_parameters(), array('modname' => $modname, 'instanceid' => $instanceid));
+        
+        return $DB->get_record($modname, array('id' => $instanceid), 'name, intro, introformat', MUST_EXIST);
+    }
+    
+    public static function get_course_module_info_returns()
+    {
+        return new external_single_structure(
+            array(
+                'name'          => new external_value(PARAM_TEXT, 'The fullname of the course'),
+                'intro'         => new external_value(PARAM_RAW,  'Thumbnail course URL - big version'),
+                'introformat'   => new external_value(PARAM_INT,  'The fullname of the course'),
+            )
+        );
+    }   
 }

@@ -112,7 +112,7 @@ function get_remote_course_module_by_instance($modulename, $instace, $options = 
 }
 
 function get_remote_course_module_by_cmid($modulename, $cmid, $options = array()) {
-    return moodle_webservice_client(array_merge($options,
+    $resp = moodle_webservice_client(array_merge($options,
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
@@ -120,4 +120,6 @@ function get_remote_course_module_by_cmid($modulename, $cmid, $options = array()
             'params' => array('module' => $modulename, 'id' => $cmid)
         )
     ));
+
+    return $resp->cm;
 }

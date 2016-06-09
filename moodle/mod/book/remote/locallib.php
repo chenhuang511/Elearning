@@ -126,7 +126,12 @@ function remote_book_preload_chapters($book)
 
         $chapters[$id] = $ch;
     }
-
+    
+    if ($oldch->subchapter != $ch->subchapter or $oldch->pagenum != $ch->pagenum or $oldch->hidden != $ch->hidden) {
+        // update only if something changed
+        update_remote_book_chapters($ch);
+    }
+    
     return $chapters;
 }
 
@@ -204,6 +209,51 @@ function get_remote_course_sections_by_id($sectionid, $options = array())
         'function_name' => 'local_get_course_sections_by_id',
         'params' => array(
             'sectionid' => $sectionid,
+        ),
+    )));
+}
+
+function create_remote_book_chapters($data, $options = array())
+{
+    return moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
+        'token' => HOST_TOKEN,
+        'function_name' => 'local_mod_create_book_chapters',
+        'params' => array(
+            'data[title]' => $data->title,
+            'data[subchapter]' => $data->subchapter,
+            'data[id]' => $data->id,
+            'data[cmid]' => $data->cmid,
+            'data[pagenum]' => $data->pagenum,
+            'data[bookid]' => $data->bookid,
+            'data[hidden]' => $data->hidden,
+            'data[timecreated]' => $data->timecreated,
+            'data[timemodified]' => $data->timemodified,
+            'data[importsrc]' => $data->importsrc,
+            'data[content]' => $data->content,
+            'data[contentformat]' => $data->contentformat,
+        ),
+    )));
+}
+
+function update_remote_book_chapters($data, $options = array())
+{
+    return moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
+        'token' => HOST_TOKEN,
+        'function_name' => 'local_mod_update_book_chapters',
+        'params' => array(
+            'data[title]' => $data->title,
+            'data[subchapter]' => $data->subchapter,
+            'data[id]' => $data->id,
+            'data[cmid]' => $data->cmid,
+            'data[pagenum]' => $data->pagenum,
+            'data[bookid]' => $data->bookid,
+            'data[hidden]' => $data->hidden,
+            'data[timecreated]' => $data->timecreated,
+            'data[timemodified]' => $data->timemodified,
+            'data[importsrc]' => $data->importsrc,
+            'data[content]' => $data->content,
+            'data[contentformat]' => $data->contentformat,
+            'data[contenttrust]' => $data->contenttrust,
         ),
     )));
 }

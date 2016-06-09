@@ -39,14 +39,45 @@ function convert_remote_course_record(&$course) {
     $course->id       = $course->remoteid;
 }
 
-function get_local_course_record($courseid) {
+function get_local_course_record($courseid, $useid = false) {
     global $DB;
     if (is_object($courseid)) {
         convert_remote_course_record($courseid);
         return $courseid;
     }
-    $idfield = ((int)$courseid === 1) ? "id" : "remoteid";
+    $idfield = ((int)$courseid === 1 || $useid) ? "id" : "remoteid";
     $course = $DB->get_record("course", array($idfield => $courseid), "*", MUST_EXIST);
     convert_remote_course_record($course);
     return $course;
+}
+
+function get_local_courses_record() {
+    global $CFG, $DB;
+
+    require_once($CFG->dirroot . '/mnet/lib.php');
+    $hubname = mnet_get_hostname_from_uri(HUB_URL);
+    // Get the IP address for that host - if this fails, it will return the hostname string
+    $hubip = gethostbyname($hubname);
+    $hostid = $DB->get_record("mnet_host", array('ip_address' => $hubip), "id", MUST_EXIST);
+    $hostid = $hostid->id;
+
+    $courses = $DB->get_records_sql('SELECT * FROM {course} WHERE hostid = ?', array('hostid' => $hostid));
+
+    return $courses;
+}
+
+
+function get_local_enrol_course() {
+    global $DB, $USER, $CFG;
+
+    require_once($CFG->dirroot . '/mnet/lib.php');
+    $hubname = mnet_get_hostname_from_uri(HUB_URL);
+    // Get the IP address for that host - if this fails, it will return the hostname string
+    $hubip = gethostbyname($hubname);
+    $hostid = $DB->get_record("mnet_host", array('ip_address' => $hubip), "id", MUST_EXIST);
+    $hostid = $hostid->id;
+
+    $sql = 'SELECT * FROM {course} c JOIN  {mnetservice_enrol_enrolments} e ON (c.remoteid = e.remotecourseid AND e.hostid = ? AND e.userid = ?)';
+
+    return $DB->get_records_sql($sql, array('hostid' => $hostid, 'userid' => $USER->id));
 }

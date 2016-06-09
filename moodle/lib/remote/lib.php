@@ -91,7 +91,7 @@ function get_remote_course_thumb($courseid, $options = [])
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
-            'function_name' => 'local_get_thumbnail_by_id',
+            'function_name' => 'local_get_course_thumbnail_by_id',
             'params' => array('courseids[0]' => $courseid)
         )
     ));
@@ -99,7 +99,7 @@ function get_remote_course_thumb($courseid, $options = [])
 
 function get_remote_course_mods($courseid)
 {
-    return moodle_webservice_client(
+    $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
@@ -107,13 +107,52 @@ function get_remote_course_mods($courseid)
             'params' => array('courseid' => $courseid)
         )
     );
+
+    $retval = array();
+    foreach($resp as $val) {
+        $retval[$val->id] = $val;
+    }
+
+    return $retval;
+}
+
+function get_remote_course_sections($courseid)
+{
+    global $DB;
+
+    $sections = new StdClass();
+    switch(MOODLE_RUN_MODE) {
+        case MOODLE_MODE_HOST:
+            // Get section data
+            $sections = $DB->get_records('course_sections', array('course' => $courseid), 'section ASC', 'id,section,sequence');
+            break;
+        case MOODLE_MODE_HUB:
+            $sections = moodle_webservice_client(
+                array(
+                    'domain' => HUB_URL,
+                    'token' => HOST_TOKEN,
+                    'function_name' => 'local_get_course_sections',
+                    'params' => array('courseid' => $courseid)
+                )
+            );
+            break;
+        default:
+            break;
+    }
+    $retval = array();
+    foreach($sections as $val) {
+        $retval[$val->id] = $val;
+    }
+    return $retval;
 }
 
 function get_remote_mapping_user()
 {
-    global $USER;
+    global $USER, $CFG;
 
-    $ipaddress = $_SERVER['SERVER_ADDR'];
+    require_once($CFG->dirroot . '/mnet/lib.php');
+    $hostname = mnet_get_hostname_from_uri($CFG->wwwroot);
+    $hostip = gethostbyname($hostname);
     $username = $USER->username;
 
     return moodle_webservice_client(
@@ -121,7 +160,33 @@ function get_remote_mapping_user()
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_get_remote_mapping_user',
-            'params' => array('ipaddress' => $ipaddress, 'username' => $username)
+            'params' => array('ipaddress' => $hostip, 'username' => $username)
         )
     );
+}
+
+function get_remote_cm_info($modname, $instanceid) {
+    global $DB;
+
+    $modinfo = new StdClass();
+    switch(MOODLE_RUN_MODE) {
+        case MOODLE_MODE_HOST:
+            // Get section data
+            $modinfo = $DB->get_record($modname, array('id' => $instanceid), 'name, intro, introformat');
+            break;
+        case MOODLE_MODE_HUB:
+            $modinfo = moodle_webservice_client(
+                array(
+                    'domain' => HUB_URL,
+                    'token' => HOST_TOKEN,
+                    'function_name' => 'local_get_course_module_info',
+                    'params' => array('modname' => $modname, 'instanceid' => $instanceid)
+                )
+            );
+            break;
+        default:
+            break;
+    }
+
+    return $modinfo;
 }
