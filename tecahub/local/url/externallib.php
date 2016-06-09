@@ -73,11 +73,7 @@ class local_mod_url_external extends external_api
                         url.externalurl, url.display, url.displayoptions, url.parameters, url.timemodified
                         FROM {url} AS url
                         WHERE url.id = ?";
-            $result = $DB->get_records_sql($query, $params);
-            if (count($result) > 0) {
-                $url = $result[0];
-            }
-            
+            $url = $DB->get_record_sql($query, $params);
         }
         $return = array();
         $return['url'] = $url;
