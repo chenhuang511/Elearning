@@ -725,6 +725,12 @@ ul#coursetabs > li.active > a, ul#coursetabs > li > a:focus, ul#coursetabs > li 
     color: #fff;
 }
 
+.course-content-block {
+    border: solid 1px #ddd;
+    min-height: 500px;
+
+}
+
 /****************** section menu *****************************/
 #section-menu {
     background-color: #eee;
