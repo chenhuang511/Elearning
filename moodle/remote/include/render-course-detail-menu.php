@@ -31,7 +31,8 @@
             <div class="panel panel-default">
                 <div class="panel-heading" role="tab" id="<?php echo $heading ?>">
                     <h4 class="panel-title">
-                        <a id="csec-<?php echo $section->id ?>" role="button" data-toggle="collapse" data-parent="#section-menu"
+                        <a id="csec-<?php echo $section->id ?>" role="button" data-toggle="collapse"
+                           data-parent="#section-menu"
                            href="#<?php echo $collapse ?>"
                            aria-expanded="false" aria-controls="<?php echo $collapse ?>"
                            class="collapsed'" data-summary="<?php echo htmlspecialchars($section->summary) ?>">
@@ -43,14 +44,22 @@
                      aria-expanded="false">
                     <div class="panel-body">
                         <?php foreach ($section->modules as $keymod => $module) {
-                            if ($module->modname !== 'forum' && $module->modname !== 'label' && $module->modname !== 'wiki') {
-                                ?>
-                                <a class="sublink get-remote-content" data-module="<?php echo $module->modname; ?>"
-                                   data-remote-id="<?php echo $module->id; ?>"
-                                   href="#">
-                                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
-                                    <?php echo $module->name ?>
-                                </a>
+                            if ($module->modname !== 'forum' && $module->modname !== 'wiki') {
+                                if ($module->modname === 'label') {
+                                    ?>
+                                    <a id="mlabel-<?php echo $module->id ?>" class="sublink" href="#mlabel-<?php echo $module->id?>" data-description="<?php echo htmlspecialchars($module->description) ?>">
+                                        <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                                        <?php echo $module->name ?>
+                                    </a>
+                                    <?php
+                                } else { ?>
+                                    <a class="sublink get-remote-content" data-module="<?php echo $module->modname; ?>"
+                                       data-remote-id="<?php echo $module->id; ?>"
+                                       href="#">
+                                        <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                                        <?php echo $module->name ?>
+                                    </a>
+                                <?php } ?>
                             <?php }
                         } ?>
                     </div>

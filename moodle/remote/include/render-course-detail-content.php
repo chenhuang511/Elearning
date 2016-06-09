@@ -8,6 +8,7 @@
             summaryLink = $('#course-summary');
 
         var sections = $('a[id^="csec-"]');
+        var labels = $('a[id^="mlabel-"]');
 
         var changeContent = function (element, cnt) {
             // remove now content
@@ -16,12 +17,23 @@
             element.html(cnt);
         }
 
-        $.each(sections, function (index, element) {
-            $(sections[index]).on('click', function () {
-                var sectionSummary = $(this).attr('data-summary');
-                changeContent(content, sectionSummary);
+        if (sections) {
+            $.each(sections, function (index, element) {
+                $(sections[index]).on('click', function () {
+                    var sectionSummary = $(this).attr('data-summary');
+                    changeContent(content, sectionSummary);
+                });
             });
-        });
+        }
+
+        if(labels) {
+            $.each(labels, function (index, element){
+                $(labels[index]).on('click', function() {
+                    var description = $(this).attr('data-description');
+                    changeContent(content, description);
+                });
+            });
+        }
 
         content.html(summary.val());
 
