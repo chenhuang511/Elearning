@@ -452,7 +452,59 @@ class local_mod_assign_external extends external_api {
         );
     }
 
+	/**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function get_mod_assign_by_id_parameters()
+    {
+        return new external_function_parameters(
+			array('assignid' => new external_value(PARAM_INT, 'the assign id'))
+        );
+    }
 
+    /**
+     * Return information about a lesson.
+     *
+     * @param int $lessonid the lesson id
+     * @return array of warnings and the lesson
+     * @since Moodle 3.0
+     * @throws moodle_exception
+     */
+    public static function get_mod_assign_by_id($assignid)
+    {
+        global $DB;
 
+        // validate params
+        $params = self::validate_parameters(self::get_mod_assign_by_id_parameters(),
+            array(
+                'assignid' => $assignid,
+                'options' => $options
+            )
+        );
 
+        return $DB->get_record('assign', array('id' => $params['assignid']), 'id, name, alwaysshowdescription, allowsubmissionsfromdate, intro, introformat', MUST_EXIST);
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
+    public static function get_mod_assign_by_id_returns()
+    {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'assign id'),
+                'name' => new external_value(PARAM_RAW, 'assign name'),
+                'intro' => new external_value(PARAM_RAW, 'assign intro'),
+                'introformat' => new external_value(PARAM_INT, 'intro format', VALUE_DEFAULT),
+				'alwaysshowdescription' => new external_value(PARAM_INT, 'always show description'),
+				'allowsubmissionsfromdate' => new external_value(PARAM_INT, 'allow submissions from date'),
+            )
+        );
+    }	
 }

@@ -34,6 +34,14 @@
  */
 
 $functions = array(
+    'local_mod_assign_get_assign_by_id' => array(
+		'classname'	  => 'local_mod_assign_external',
+		'methodname'  => 'get_mod_assign_by_id',
+		'classpath'	  => 'local/assignment/externallib.php',
+		'description' => "Get assign Submition status",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 	'local_mod_assign_get_submission_status' => array(
 		'classname'	  => 'local_mod_assign_external',
 		'methodname'  => 'get_mod_assign_submission_status',
@@ -41,6 +49,6 @@ $functions = array(
 		'description' => "Get assign Submition status",
 		'type'		  => 'read',
 		'ajax'		  => true
-	)
+	),
 );
 
