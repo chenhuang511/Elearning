@@ -71,7 +71,7 @@ class local_mod_url_external extends external_api
         if (!empty($params['id'])) {
             $query = "SELECT url.id, url.course, url.name, url.intro, url.introformat, 
                         url.externalurl, url.display, url.displayoptions, url.parameters, url.timemodified
-                        FROM {url} AS url
+                        FROM {url} url
                         WHERE url.id = ?";
             $url = $DB->get_record_sql($query, $params);
         }
