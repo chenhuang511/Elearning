@@ -19,17 +19,17 @@ $id = optional_param('id', 0, PARAM_INT); // Course Module ID, or ...
 $q = optional_param('q',  0, PARAM_INT);  // Quiz ID.
 
 if ($id) {
-    if (!$cm = get_remote_course_module($id)) {
+    if (!$cm = get_remote_course_module_by_cmid("quiz", $id)) {
         print_error('invalidcoursemodule');
     }
-    if (!$course = $DB->get_record('course', array('remoteid' => $cm->course))) {
+    if (!$course = get_local_course_record($cm->course)) {
         print_error('coursemisconf');
     }
 } else {
     if (!$quiz = get_remote_quiz_by_id($q)) {
         print_error('invalidquizid', 'quiz');
     }
-    if (!$course = $DB->get_record('course', array('remoteid' => $quiz->course))) {
+    if (!$course = get_local_course_record($quiz->course)) {
         print_error('invalidcourseid');
     }
     if (!$cm = get_remote_coursemodule_from_instance("quiz", $quiz->id)->cm) {
@@ -38,7 +38,7 @@ if ($id) {
 }
 
 // Check login and get context.
-//require_login($course, false, $cm);
+require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/quiz:view', $context);
 
@@ -158,7 +158,7 @@ $viewobj->lastfinishedattempt = $lastfinishedattempt;
 $viewobj->canedit = has_capability('mod/quiz:manage', $context);
 $viewobj->editurl = new moodle_url('/mod/quiz/edit.php', array('cmid' => $cm->id));
 $viewobj->backtocourseurl = new moodle_url('/course/view.php', array('id' => $course->id));
-$viewobj->startattempturl = $quizobj->start_attempt_url();
+$viewobj->startattempturl = $quizobj->start_remote_attempt_url();
 
 if ($accessmanager->is_preflight_check_required($unfinishedattemptid)) {
     $viewobj->preflightcheckform = $accessmanager->get_preflight_check_form(
@@ -220,6 +220,8 @@ if (!$viewobj->quizhasquestions) {
 // @TODO: $viewobj->showbacktocourse
 $viewobj->showbacktocourse = false;
 
+echo $OUTPUT->header();
+
 if (isguestuser()) {
     // Guests can't do a quiz, so offer them a choice of logging in or going back.
     echo $output->view_page_guest($course, $quiz, $cm, $context, $viewobj->infomessages);
@@ -230,3 +232,5 @@ if (isguestuser()) {
 } else {
     echo $output->view_page($course, $quiz, $cm, $context, $viewobj);
 }
+
+echo $OUTPUT->footer();
