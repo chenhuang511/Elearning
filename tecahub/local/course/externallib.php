@@ -584,8 +584,8 @@ class local_mod_course_external extends external_api
     {
         return new external_function_parameters(
             array('modname' => new external_value(PARAM_TEXT, 'module name'),
-            array('instanceid' => new external_value(PARAM_TEXT, 'instance id'),            
-            )
+            	  'instanceid' => new external_value(PARAM_TEXT, 'instance id'),
+            )            
         );
     }
     
