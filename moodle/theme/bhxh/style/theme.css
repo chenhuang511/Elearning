@@ -440,6 +440,63 @@ a:focus {
     color: #4e9ee7;
 }
 
+/************ course info ***********/
+
+section.container-course-info{
+    padding-left: 0px;
+    padding-right: 30px;
+}
+
+section.container-course-info div.info-wrapper{
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+    border-radius: 3px;
+    border: 1px solid #aaa;
+    background: #fff;
+}
+
+section.container-course-info div.info-wrapper section.updates{
+    box-sizing: border-box;
+    display: table-cell;
+    padding: 0em 2.5em;
+    vertical-align: top;
+    float: none;
+}
+
+section.container-course-info div.info-wrapper section.updates h1{
+    border-bottom: 1px solid #c8c8c8;
+    text-align: left;
+    font-size: 1.5em;
+    font-weight: 100;
+    padding-bottom: 1em;
+    margin-bottom: 30px;
+}
+
+section.container-course-info div.info-wrapper section.updates section{
+    padding-left: 0; list-style: none; display: block;
+}
+
+section.container-course-info div.info-wrapper section.title{
+    padding: 0px 30px;
+    margin: 0;
+    border-radius: 0 4px 4px 0;
+    border-left: 1px solid #ddd;
+    box-shadow: none;
+    font-size: 14px; box-sizing: border-box;
+    display: table-cell;position: relative;
+    vertical-align: top; background: #f6f6f6;float: none
+}
+
+section.container-course-info div.info-wrapper section.title h1 {
+    text-align: left;
+    margin-bottom: 0;
+    padding: 12px 26px 20px 0;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: bold;
+}
+/************************************/
 .content-wrap.course-progress {
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
