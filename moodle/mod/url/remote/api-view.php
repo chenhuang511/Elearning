@@ -28,6 +28,8 @@ require_once($CFG->dirroot .'/mod/url/lib.php');
 require_once($CFG->dirroot .'/mod/url/locallib.php');
 require_once($CFG->libdir . '/completionlib.php');
 require_once($CFG->dirroot .'/course/remote/locallib.php');
+require_once($CFG->dirroot .'/course/format/lib.php');
+require_once($CFG->dirroot .'/course/lib.php');
 require_once('locallib.php');
 
 $id       = optional_param('id', 0, PARAM_INT);        // Course module ID
@@ -96,7 +98,7 @@ if ($redirect) {
                     get_string('pageshouldredirect'), 10);
         }
     }
-    redirect($fullurl);
+//    redirect($fullurl);
 }
 
 switch ($displaytype) {
