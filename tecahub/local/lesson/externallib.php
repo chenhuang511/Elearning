@@ -675,8 +675,8 @@ class local_mod_lesson_external extends external_api
         return new external_function_parameters(
             array('lessonid' => new external_value(PARAM_INT, 'lesson id'),
                 'userid' => new external_value(PARAM_INT, 'user id'),
-                'correct' => new external_value(PARAM_INT, 'correct'),
-                'pageid' => new external_value(PARAM_INT, 'page id'),
+                'correct' => new external_value(PARAM_INT, 'correct', VALUE_DEFAULT, 0),
+                'pageid' => new external_value(PARAM_INT, 'page id', VALUE_DEFAULT, -1),
                 'retry' => new external_value(PARAM_INT, 'retry'),
                 'options' => new external_multiple_structure (
                     new external_single_structure(
@@ -701,18 +701,18 @@ class local_mod_lesson_external extends external_api
     public static function get_lesson_attempts_by_lessonid_and_userid($lessonid, $userid, $correct, $pageid, $retry, $options = array()) {
         global $DB;
 
-        $arr = [
+        $arr = array(
             'lessonid' => $lessonid,
             'userid' => $userid,
             'retry' => $retry,
             'options' => $options
-        ];
+        );
 
         if($correct === 1) { // 0: false, 1: true
-            $arr['correct'] = 1;
+            $arr = array_merge($arr, array('correct' => 1));
         }
         if($pageid !== -1) { // -1: null
-            $arr['pageid'] = $pageid;
+            $arr = array_merge($arr, array('pageid' => $pageid));
         }
 
         // validate params
@@ -728,10 +728,10 @@ class local_mod_lesson_external extends external_api
         ];
 
         if(isset($arr['correct'])) {
-            $parameters['correct'] = $params['correct'];
+            $parameters = array_merge($parameters, array('correct' => $params['correct']));
         }
         if(isset($arr['pageid'])) {
-            $parameters['pageid'] = $params['pageid'];
+            $parameters = array_merge($parameters, array('pageid' => $params['pageid']));
         }
 
         return $DB->get_records('lesson_attempts', $parameters, 'timeseen ASC');
