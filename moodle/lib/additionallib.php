@@ -77,7 +77,7 @@ function get_local_enrol_course() {
     $hostid = $DB->get_record("mnet_host", array('ip_address' => $hubip), "id", MUST_EXIST);
     $hostid = $hostid->id;
 
-    $sql = 'SELECT * FROM {course} c JOIN  {mnetservice_enrol_enrolments} e ON (c.remoteid = e.remotecourseid AND e.hostid = ? AND e.userid = ?)';
+    $sql = 'SELECT * FROM {course} WHERE id in (SELECT remotecourseid FROM {mnetservice_enrol_enrolments} e WHERE e.hostid = ? AND e.userid = ?)';
 
     return $DB->get_records_sql($sql, array('hostid' => $hostid, 'userid' => $USER->id));
 }
