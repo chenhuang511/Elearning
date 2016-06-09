@@ -14,7 +14,7 @@
              aria-labelledby="course-summary"
              aria-expanded="true">
             <div class="panel-body">
-                <a id="course-summary" class="sublink" href="">
+                <a id="course-summary" class="sublink" href="#tongquan">
                     <i class="fa fa-angle-double-right" aria-hidden="true"></i>
                     Tổng quan
                 </a>

@@ -15,14 +15,14 @@ if ($id) {
     if (!$cm = get_remote_course_module_by_cmid("quiz", $id)) {
         print_error('invalidcoursemodule');
     }
-    if (!$course = $DB->get_record('course', array('remoteid' => $cm->course))) {
+    if (!$course = get_local_course_record($cm->course)) {
         print_error('coursemisconf');
     }
 } else {
     if (!$quiz = get_remote_quiz_by_id($q)) {
         print_error('invalidquizid', 'quiz');
     }
-    if (!$course = $DB->get_record('course', array('remoteid' => $quiz->course))) {
+    if (!$course = get_local_course_record($quiz->course)) {
         print_error('invalidcourseid');
     }
     if (!$cm = get_remote_coursemodule_from_instance("quiz", $quiz->id)->cm) {
@@ -31,7 +31,7 @@ if ($id) {
 }
 
 // Check login and get context.
-//require_login($course, false, $cm);
+require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/quiz:view', $context);
 
@@ -213,6 +213,8 @@ if (!$viewobj->quizhasquestions) {
 // @TODO: $viewobj->showbacktocourse
 $viewobj->showbacktocourse = false;
 
+echo $OUTPUT->header();
+
 if (isguestuser()) {
     // Guests can't do a quiz, so offer them a choice of logging in or going back.
     echo $output->view_page_guest($course, $quiz, $cm, $context, $viewobj->infomessages);
@@ -223,3 +225,5 @@ if (isguestuser()) {
 } else {
     echo $output->view_page($course, $quiz, $cm, $context, $viewobj);
 }
+
+echo $OUTPUT->footer();

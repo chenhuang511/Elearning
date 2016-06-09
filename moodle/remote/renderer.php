@@ -335,7 +335,10 @@ class core_remote_renderer extends plugin_renderer_base
         $html .= html_writer::start_tag('div', array('class' => 'col-sm-3'));
         $html .= $this->render_module_menu($course);
         $html .= html_writer::end_tag('div');
-        $html .= html_writer::start_tag('div', array('class' => 'col-sm-9'));
+        $html .= html_writer::start_tag('div', array('class' => 'col-sm-9 course-content-block'));
+        $html .= html_writer::start_tag('div',array('id' => 'loading', 'class' => 'clearfix', 'style' => 'display: none'));
+        $html .= html_writer::empty_tag('img', array('src' => $CFG->wwwroot . '/loading.gif', 'width' => '40px'));
+        $html .= html_writer::end_tag('div');
         $html .= $this->render_module_content($course);
         $html .= html_writer::end_tag('div');
         $html .= html_writer::end_tag('div');
