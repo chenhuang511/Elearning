@@ -56,7 +56,7 @@ function get_remote_course_module($cmid, $options = array())
     )));
 
     $cm = $coursemodule->cm;
-
+    
     if($cm) {
         $info = new stdClass();
         $info->id = strval($cm->id);

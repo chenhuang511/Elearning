@@ -3,7 +3,42 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->dirroot . '/lib/remote/lib.php');
 
-class assign_mod
+/**
+ * get lesson by id
+ *
+ * @param int $lessonid . the id of lesson
+ * @param array $options . the options
+ *
+ * @return stdClass $lesson
+ */
+function get_remote_assign_by_id($assignid, $options = array())
+{
+    return moodle_webservice_client(array_merge($options,
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_get_assign_by_id',
+            'params' => array('assignid' => $assignid),
+        )
+    ));
+}
+
+function get_remote_assign_submission_status($assignid) {
+    global $CFG, $USER;
+
+    require_once($CFG->dirroot . '/mnet/lib.php');
+    $hostname = mnet_get_hostname_from_uri($CFG->wwwroot);
+    // Get the IP address for that host - if this fails, it will return the hostname string
+    $hostip = gethostbyname($hostname);
+
+    return moodle_webservice_client(array('domain' => HUB_URL,
+        'token' => HOST_TOKEN,
+        'function_name' => 'local_mod_assign_get_submission_status',
+        'params' => array('assignid' => $assignid, "ip_address" => $hostip, "username" => $USER->username),
+    ));
+}
+
+class remote_assign_mod
 {
     private $cmid;
     private $assignid;
@@ -12,7 +47,6 @@ class assign_mod
     private $OUTPUT;
     private $PAGE;
     private $course;
-    private $cm;
 
     /**
      * @return mixed
@@ -46,25 +80,18 @@ class assign_mod
         $this->OUTPUT = $OUTPUT;
     }
 
-
-    public function __construct($cmid, $option = [])
+    public function __construct($cm, $option = [])
     {
-        $this->cmid = $cmid;
+        $this->cmid = $cm->id;
         $this->option = $option;
-        $cmd = get_remote_course_module($cmid);
-        $this->assignid = $cmd->instance;
-        $this->coursemodule = $cmd;
+        $this->assignid = $cm->instance;
+        $this->coursemodule = $cm;
     }
-
 
     //View
     public function view_summary()
     {
-        $responedata = moodle_webservice_client(array_merge($this->option, array('domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_assign_get_submission_status',
-            'params' => array('assignid' => $this->assignid, "ip_address" => "10.0.0.254", "username" => "admin"),
-        )));
+        $responedata = get_remote_assign_submission_status($this->assignid);
         $gradingsummary = $responedata->gradingsummary;
         $OUTPUT = $this->getOUTPUT();
         $html = "";
@@ -84,6 +111,7 @@ class assign_mod
         $html .= $this->view_submission_status($responedata);
         return $html;
     }
+
     public function view_submission_status($responedata){
         $lastattempt = $responedata->lastattempt;
         $OUTPUT = $this->getOUTPUT();

@@ -305,10 +305,17 @@ function assign_extend_settings_navigation(settings_navigation $settings, naviga
 function assign_get_coursemodule_info($coursemodule) {
     global $CFG, $DB;
 
-    $dbparams = array('id'=>$coursemodule->instance);
-    $fields = 'id, name, alwaysshowdescription, allowsubmissionsfromdate, intro, introformat';
-    if (! $assignment = $DB->get_record('assign', $dbparams, $fields)) {
-        return false;
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+        $dbparams = array('id' => $coursemodule->instance);
+        $fields = 'id, name, alwaysshowdescription, allowsubmissionsfromdate, intro, introformat';
+        if (!$assignment = $DB->get_record('assign', $dbparams, $fields)) {
+            return false;
+        }
+    } else if(MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        require_once($CFG->dirroot . '/mod/assign/remote/locallib.php');
+        if (!$assignment = get_remote_assign_by_id($coursemodule->instance)) {
+            return false;
+        }
     }
 
     $result = new cached_cm_info();
@@ -319,6 +326,7 @@ function assign_get_coursemodule_info($coursemodule) {
             $result->content = format_module_intro('assign', $assignment, $coursemodule->id, false);
         }
     }
+    
     return $result;
 }
 
