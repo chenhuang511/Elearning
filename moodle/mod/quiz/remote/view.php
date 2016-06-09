@@ -19,7 +19,7 @@ $id = optional_param('id', 0, PARAM_INT); // Course Module ID, or ...
 $q = optional_param('q',  0, PARAM_INT);  // Quiz ID.
 
 if ($id) {
-    if (!$cm = get_remote_course_module_by_cmid("quiz", $id)->cm) {
+    if (!$cm = get_remote_course_module_by_cmid("quiz", $id)) {
         print_error('invalidcoursemodule');
     }
     if (!$course = $DB->get_record('course', array('remoteid' => $cm->course))) {
@@ -69,7 +69,7 @@ $viewobj->canreviewmine = $canreviewmine;
 
 // Get this user's attempts.
 //get user mapping
-$user = get_remote_user_mapping_userid();
+$user = get_remote_mapping_user();
 $attempts = get_remote_user_attemps($quiz->id, $user[0]->id, 'finished', true)->attempts;
 $lastfinishedattempt = end($attempts);
 $unfinished = false;
