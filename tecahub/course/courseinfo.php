@@ -72,7 +72,20 @@ if ($infoform->is_cancelled()) {
         $data->timecreated = time();
         $data->timemodified = time();
 
-        $data->id = $DB->insert_record('course_info', $data );
+
+        $row = $DB->get_record_sql('SELECT id FROM {course_info} WHERE id = ( SELECT max(id) FROM {course_info} )');
+        $data->id = (empty($row)) ? 1 : $row->id + 1;
+	$insertdata              = new StdClass();
+        $insertdata->id          = $data->id;
+        $insertdata->course      = $data->course;
+        $insertdata->info        = $data->info;
+        $insertdata->validatetime= $data->validatetime;
+        $insertdata->timecreated = $data->timecreated;
+        $insertdata->timemodified= $data->timemodified;
+        $insertdata->infoformat  = $data->infoformat;
+        $insertdata->note        = $data->note;
+
+        $DB->insert_record_raw('course_info', $insertdata, true, false, true);
         
         // store the files
         $data = file_postupdate_standard_editor($data, 'info', $editoptions, $coursecontext, 'course', 'info', $data->id);
