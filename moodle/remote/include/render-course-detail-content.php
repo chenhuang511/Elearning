@@ -41,7 +41,7 @@
             $.each(labels, function (index, element){
                 $(labels[index]).on('click', function() {
                     content.hide();
-                    loading.show();
+                    $(loading).show();
                     var description = $(this).attr('data-description');
                     changeContent(content, description);
                     content.show();
@@ -52,7 +52,10 @@
         content.html(summary.val());
 
         summaryLink.on('click', function () {
+            content.hide();
+            $(loading).show();
             changeContent(content, summary.val());
+            content.show();
         });
 
     })(jQuery)
