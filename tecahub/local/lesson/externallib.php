@@ -708,10 +708,10 @@ class local_mod_lesson_external extends external_api
             'options' => $options
         );
 
-        if($correct === 1) { // 0: false, 1: true
+        if(!empty($correct) && $correct != 0) { // 0: false, 1: true
             $arr = array_merge($arr, array('correct' => 1));
         }
-        if($pageid !== -1) { // -1: null
+        if(!empty($pageid) && $pageid != -1) { // -1: null
             $arr = array_merge($arr, array('pageid' => $pageid));
         }
 
