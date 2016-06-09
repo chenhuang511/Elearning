@@ -723,8 +723,7 @@ class local_mod_lesson_external extends external_api
         $parameters = [
             'lessonid' => $params['lessonid'],
             'userid' => $params['userid'],
-            'retry' => $params['retry'],
-            'options' => $params['options']
+            'retry' => $params['retry']
         ];
 
         if(isset($arr['correct'])) {
