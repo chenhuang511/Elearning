@@ -507,6 +507,11 @@ a:focus {
     padding-bottom: 20px;
 }
 
+.resourcecontent iframe {
+    width: 100%;
+    height: 100vh;
+}
+
 #frontpage-course-list .coursebox {
     border-top: solid 1px #bebebe;
     border-left: solid 1px #bebebe;

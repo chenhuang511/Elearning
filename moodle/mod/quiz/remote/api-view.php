@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: vanha
- * Date: 27/05/2016
- * Time: 2:52 CH
- */
-
 require_once(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->dirroot . '/course/remote/locallib.php');
 require_once($CFG->dirroot.'/mod/quiz/remote/locallib.php');
@@ -19,7 +12,7 @@ $id = optional_param('id', 0, PARAM_INT); // Course Module ID, or ...
 $q = optional_param('q',  0, PARAM_INT);  // Quiz ID.
 
 if ($id) {
-    if (!$cm = get_remote_course_module($id)) {
+    if (!$cm = get_remote_course_module_by_cmid("quiz", $id)) {
         print_error('invalidcoursemodule');
     }
     if (!$course = $DB->get_record('course', array('remoteid' => $cm->course))) {
@@ -158,7 +151,7 @@ $viewobj->lastfinishedattempt = $lastfinishedattempt;
 $viewobj->canedit = has_capability('mod/quiz:manage', $context);
 $viewobj->editurl = new moodle_url('/mod/quiz/edit.php', array('cmid' => $cm->id));
 $viewobj->backtocourseurl = new moodle_url('/course/view.php', array('id' => $course->id));
-$viewobj->startattempturl = $quizobj->start_attempt_url();
+$viewobj->startattempturl = $quizobj->start_remote_attempt_url();
 
 if ($accessmanager->is_preflight_check_required($unfinishedattemptid)) {
     $viewobj->preflightcheckform = $accessmanager->get_preflight_check_form(
