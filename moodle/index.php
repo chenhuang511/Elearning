@@ -41,7 +41,7 @@ if (isloggedin() and !isguestuser() and isset($CFG->frontpageloggedin)) {
 foreach (explode(',', $frontpagelayout) as $v) {
     switch ($v) {
         case FRONTPAGEALLCOURSELIST:
-            if (!empty($course)) {
+            if (!empty($courses)) {
                 $renderer->render_remote_course($courses, $type);
             }
             break;
