@@ -27,7 +27,7 @@ $id = required_param('cmid', PARAM_INT); // Course module id
 $forcenew = optional_param('forcenew', false, PARAM_BOOL); // Used to force a new preview
 $page = optional_param('page', -1, PARAM_INT); // Page to jump to in the attempt.
 
-if (!$cm = get_remote_course_module($id)) {
+if (!$cm = get_remote_course_module_by_cmid("quiz", $id)->cm) {
     print_error('invalidcoursemodule');
 }
 if (!$course = $DB->get_record('course', array('remoteid' => $cm->course))) {
@@ -35,7 +35,6 @@ if (!$course = $DB->get_record('course', array('remoteid' => $cm->course))) {
 }
 
 //$quizobj = quiz::create($cm->instance, $USER->id);
-$rules= get_remote_quiz_access_information($cm->instance);
 $quiz = get_remote_quiz_by_id($cm->instance);
 $quizobj = new quiz($quiz, $cm, $course);
 
@@ -62,10 +61,11 @@ $accessmanager = $quizobj->get_remote_access_manager($timenow);
 
 // Validate permissions for creating a new attempt and start a new preview attempt if required.
 list($currentattemptid, $attemptnumber, $lastattempt, $messages, $page) =
-    quiz_validate_new_attempt($quizobj, $accessmanager, $forcenew, $page, true);
+    quiz_remote_validate_new_attempt($quizobj, $accessmanager, $forcenew, $page, true);
 
 // Check access.
 if (!$quizobj->is_preview_user() && $messages) {
+    // @TODO ???
     $output = $PAGE->get_renderer('mod_quiz');
     print_error('attempterror', 'quiz', $quizobj->view_url(),
         $output->access_messages($messages));
@@ -74,7 +74,7 @@ if (!$quizobj->is_preview_user() && $messages) {
 if ($accessmanager->is_preflight_check_required($currentattemptid)) {
     // Need to do some checks before allowing the user to continue.
     $mform = $accessmanager->get_preflight_check_form(
-        $quizobj->start_attempt_url($page), $currentattemptid);
+        $quizobj->start_remote_attempt_url($page), $currentattemptid);
 
     if ($mform->is_cancelled()) {
         $accessmanager->back_to_view_page($PAGE->get_renderer('mod_quiz'));
@@ -82,7 +82,7 @@ if ($accessmanager->is_preflight_check_required($currentattemptid)) {
     } else if (!$mform->get_data()) {
 
         // Form not submitted successfully, re-display it and stop.
-        $PAGE->set_url($quizobj->start_attempt_url($page));
+        $PAGE->set_url($quizobj->start_remote_attempt_url($page));
         $PAGE->set_title($quizobj->get_quiz_name());
         $accessmanager->setup_attempt_page($PAGE);
         $output = $PAGE->get_renderer('mod_quiz');
@@ -101,11 +101,11 @@ if ($currentattemptid) {
     if ($lastattempt->state == quiz_attempt::OVERDUE) {
         redirect($quizobj->summary_url($lastattempt->id));
     } else {
-        redirect($quizobj->attempt_url($currentattemptid, $page));
+        redirect($quizobj->attempt_remote_url($currentattemptid, $page));
     }
 }
 
-$attempt = quiz_prepare_and_start_new_attempt($quizobj, $attemptnumber, $lastattempt);
+$attempt = get_remote_quiz_start_attempt($quiz->id)->attempt;
 
 // Redirect to the attempt page.
-redirect($quizobj->attempt_url($attempt->id, $page));
+redirect($quizobj->attempt_remote_url($attempt->id, $page));

@@ -14,12 +14,14 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__) . '/../../config.php');
+require_once(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+require_once($CFG->dirroot.'/mod/quiz/remote/locallib.php');
 
 // Look for old-style URLs, such as may be in the logs, and redirect them to startattemtp.php.
+// @TODO check lại các trường hợp
 if ($id = optional_param('id', 0, PARAM_INT)) {
-    redirect($CFG->wwwroot . '/mod/quiz/startattempt.php?cmid=' . $id . '&sesskey=' . sesskey());
+    redirect($CFG->wwwroot . '/mod/quiz/remote/startattempt.php?cmid=' . $id . '&sesskey=' . sesskey());
 } else if ($qid = optional_param('q', 0, PARAM_INT)) {
     if (!$cm = get_coursemodule_from_instance('quiz', $qid)) {
         print_error('invalidquizid', 'quiz');
@@ -32,12 +34,21 @@ if ($id = optional_param('id', 0, PARAM_INT)) {
 $attemptid = required_param('attempt', PARAM_INT);
 $page = optional_param('page', 0, PARAM_INT);
 
+// Create atemptobj : $attemptobj = quiz_attempt::create($attemptid);
+$attempt = get_remote_attempt_by_attemptid($attemptid);
+$quiz = get_remote_quiz_by_id($attempt->quiz);
+$course = $DB->get_record('course', array('remoteid' => $quiz->course), '*', MUST_EXIST);
+$cm = get_remote_coursemodule_from_instance("quiz", $quiz->id)->cm;
+// @TODO $quiz = quiz_update_effective_access($quiz, $attempt->userid);
+//$attemptobj = new quiz_attempt($attempt, $quiz, $cm, $course,false);
+$attemptobj = new quiz_attempt($attempt, $quiz, $cm, $course);
+
 $attemptobj = quiz_attempt::create($attemptid);
 $page = $attemptobj->force_page_number_into_range($page);
 $PAGE->set_url($attemptobj->attempt_url(null, $page));
 
 // Check login.
-require_login($attemptobj->get_course(), false, $attemptobj->get_cm());
+//require_login($attemptobj->get_course(), false, $attemptobj->get_cm());
 
 // Check that this attempt belongs to this user.
 if ($attemptobj->get_userid() != $USER->id) {

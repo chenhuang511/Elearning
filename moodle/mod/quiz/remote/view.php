@@ -19,7 +19,7 @@ $id = optional_param('id', 0, PARAM_INT); // Course Module ID, or ...
 $q = optional_param('q',  0, PARAM_INT);  // Quiz ID.
 
 if ($id) {
-    if (!$cm = get_remote_course_module($id)) {
+    if (!$cm = get_remote_course_module_by_cmid("quiz", $id)->cm) {
         print_error('invalidcoursemodule');
     }
     if (!$course = $DB->get_record('course', array('remoteid' => $cm->course))) {

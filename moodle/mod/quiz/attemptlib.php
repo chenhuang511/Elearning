@@ -366,6 +366,21 @@ class quiz {
     }
 
     /**
+     * hanv 06/06/2016
+     * @param int $attemptid the id of an attempt.
+     * @param int $page optional page number to go to in the attempt.
+     * @return string the URL of that attempt.
+     */
+    public function attempt_remote_url($attemptid, $page = 0) {
+        global $CFG;
+        $url = $CFG->wwwroot . '/mod/quiz/remote/attempt.php?attempt=' . $attemptid;
+        if ($page) {
+            $url .= '&page=' . $page;
+        }
+        return $url;
+    }
+
+    /**
      * @return string the URL of this quiz's edit page. Needs to be POSTed to with a cmid parameter.
      */
     public function start_attempt_url($page = 0) {
@@ -603,8 +618,14 @@ class quiz_attempt {
         $this->slots = $DB->get_records('quiz_slots',
                 array('quizid' => $this->get_quizid()), 'slot',
                 'slot, requireprevious, questionid');
+//        if(!$this->slots){
+//            echo 1; die;
+//        }
         $this->sections = array_values($DB->get_records('quiz_sections',
                 array('quizid' => $this->get_quizid()), 'firstslot'));
+//        if(!$this->sections){
+//            echo 2; die;
+//        }
 
         $this->link_sections_and_slots();
         $this->determine_layout();
