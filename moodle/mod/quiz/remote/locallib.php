@@ -28,7 +28,7 @@ function get_remote_user_attemps($quizid, $userid, $status, $includepreviews) {
     return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
+            'token' => HOST_TOKEN_M,
             'function_name' => 'mod_quiz_get_user_attempts',
             'params' => array('quizid' => $quizid, 'userid' => $userid, 'status' => $status, 'includepreviews' => $includepreviews)
         )

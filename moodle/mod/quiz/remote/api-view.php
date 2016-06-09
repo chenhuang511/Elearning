@@ -68,7 +68,7 @@ $lastfinishedattempt = end($attempts);
 $unfinished = false;
 $unfinishedattemptid = null;
 $unfinishedattempt = get_remote_user_attemps($quiz->id, $user[0]->id, 'unfinished', true)->attempts;
-if($unfinishedattempt[0]){
+if(count($unfinishedattempt) > 0 && $unfinishedattempt[0]){
     $attempts = $unfinishedattempt;
 
     // @TODO: $quizobj->create_attempt_object($unfinishedattempt)->handle_if_time_expired(time(), false);
