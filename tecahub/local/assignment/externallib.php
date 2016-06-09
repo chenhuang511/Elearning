@@ -480,8 +480,7 @@ class local_mod_assign_external extends external_api {
         // validate params
         $params = self::validate_parameters(self::get_mod_assign_by_id_parameters(),
             array(
-                'assignid' => $assignid,
-                'options' => $options
+                'assignid' => $assignid
             )
         );
 
