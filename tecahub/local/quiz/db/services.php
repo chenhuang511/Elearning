@@ -34,7 +34,7 @@
  */
 
 $functions = array(
-	'local_mod_get_quiz_by_id' => array(
+	'local_mod_quiz_get_quiz_by_id' => array(
 		'classname'	  => 'local_mod_quiz_external',
 		'methodname'  => 'get_mod_quiz_by_id',
 		'classpath'	  => 'local/quiz/externallib.php',
@@ -42,11 +42,43 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
-	'local_mod_get_questions_by_quizid' => array(
+	'local_mod_quiz_get_questions_by_quizid' => array(
 		'classname'	  => 'local_mod_quiz_external',
 		'methodname'  => 'get_mod_questions_by_quizid',
 		'classpath'	  => 'local/quiz/externallib.php',
 		'description' => "Given a list of ids, load the basic information about a set of questions from the questions table.",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_quiz_get_attempt_by_attemptid' => array(
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'get_mod_attempt_by_attemptid',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Get attempt data from attemptid.",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_quiz_load_questions_usage_by_activity' => array(
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'get_mod_load_questions_usage_by_activity',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Get quba for quiz_attempt _construct.",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_quiz_get_slots_by_quizid' => array(
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'get_mod_slots_by_quizid',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Get slots for quiz_attempt _construct.",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_quiz_get_sections_by_quizid' => array(
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'get_mod_sections_by_quizid',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Get sections for quiz_attempt _construct.",
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
