@@ -44,11 +44,13 @@ function get_remote_courses($options = array())
 
 function get_remote_course_content($courseid, $options = array())
 {
-    return moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
+    $coursedetail = moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
         'token' => HOST_TOKEN,
         'function_name' => 'local_get_course_content_by_id',
         'params' => array('courseid' => $courseid),
     )));
+
+    return array('courseid' => $courseid, 'content' => $coursedetail);
 }
 
 function get_remote_course_category($ccatid, $options = array())
@@ -123,3 +125,17 @@ function get_remote_course_module_by_cmid($modulename, $cmid, $options = array()
 
     return $resp->cm;
 }
+
+function get_remote_course_info($courseid, $options = array()) {
+    $courseinfo = moodle_webservice_client(array_merge($options,
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_get_course_info_by_course_id',
+            'params' => array('courseid' => $courseid),
+        )
+    ));
+
+    return $courseinfo;
+}
+

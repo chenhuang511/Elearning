@@ -4,7 +4,7 @@
 
         </div>
         <?php
-            var_dump($course);
+            var_dump($courseinfo);
         ?>
     </div>
 </div>
