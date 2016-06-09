@@ -213,8 +213,6 @@ if (!$viewobj->quizhasquestions) {
 // @TODO: $viewobj->showbacktocourse
 $viewobj->showbacktocourse = false;
 
-echo $OUTPUT->header();
-
 if (isguestuser()) {
     // Guests can't do a quiz, so offer them a choice of logging in or going back.
     echo $output->view_page_guest($course, $quiz, $cm, $context, $viewobj->infomessages);
@@ -225,5 +223,3 @@ if (isguestuser()) {
 } else {
     echo $output->view_page($course, $quiz, $cm, $context, $viewobj);
 }
-
-echo $OUTPUT->footer();
