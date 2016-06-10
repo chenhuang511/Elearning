@@ -747,11 +747,6 @@ section.container-course-info div.info-wrapper section.title h1 {
     padding: 5px 16px;
 }
 
-.course-content-block {
-    position: relative;
-    display: block;
-}
-
 #loading {
     z-index: 9999;
     text-align: center;
@@ -785,6 +780,10 @@ ul#coursetabs > li > a {
 ul#coursetabs > li.active > a, ul#coursetabs > li > a:focus, ul#coursetabs > li > a:hover {
     background-color: #126f9a;
     color: #fff;
+}
+
+#module-content {
+    padding: 15px 0 15px 0;
 }
 
 /****************** section menu *****************************/
@@ -830,11 +829,33 @@ ul#coursetabs > li.active > a, ul#coursetabs > li > a:focus, ul#coursetabs > li 
 
 }
 
-.coursware-block {
+.courseware-block {
     border: solid 1px #ddd;
     -webkit-border-radius: 2px;
     -moz-border-radius: 2px;
     border-radius: 2px;
+}
+
+.courseware-block .section-courseware {
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+}
+
+.courseware-block .section-courseware .courseware-menu {
+    box-sizing: border-box;
+    display: table-cell;
+    vertical-align: top;
+    float: none;
+    background-color: #eee;
+}
+
+.courseware-block .section-courseware .course-content-block {
+    position: relative;
+    display: table-cell;
+    box-sizing: border-box;
+    vert-align: top;
+    float: none;
 }
 
 .course-detail-tabs {

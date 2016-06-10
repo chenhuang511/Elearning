@@ -343,9 +343,9 @@ class core_remote_renderer extends plugin_renderer_base
 
     private function render_courseware($course)
     {
-        $html = html_writer::start_tag('div', array('class' => 'coursware-block'));
-        $html .= html_writer::start_tag('div', array('class' => 'row'));
-        $html .= html_writer::start_tag('div', array('class' => 'col-sm-3'));
+        $html = html_writer::start_tag('div', array('class' => 'courseware-block'));
+        $html .= html_writer::start_tag('div', array('class' => 'section-courseware'));
+        $html .= html_writer::start_tag('div', array('class' => 'col-sm-3 courseware-menu'));
         $html .= $this->render_module_menu($course);
         $html .= html_writer::end_tag('div');
         $html .= html_writer::start_tag('div', array('class' => 'col-sm-9 course-content-block'));
