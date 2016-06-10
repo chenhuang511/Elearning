@@ -7,17 +7,34 @@
             coursename = $('#hidden-coursename'),
             content = $('#module-content'),
             summaryLink = $('#course-summary'),
-            loading = $('#loading');
+            loading = $('#loading'),
+            newpost = $('#newpost');
 
-        $(document).ready(function(){
+        var tabs = ['#coursewaretab', '#courseinfotab', '#forumtab', '#wikitab', '#processtab'];
+
+        $(document).ready(function () {
             loading.hide();
+        });
+
+        $.each(tabs, function (index, element) {
+            $(tabs[index]).on('click', function () {
+                if (tabs[index] == '#forumtab') {
+                    if (newpost.is(':hidden')) {
+                        newpost.show();
+                    }
+                } else {
+                    if (newpost.is(':visible')) {
+                        newpost.hide();
+                    }
+                }
+            });
         });
 
         var sections = $('a[id^="csec-"]');
         var labels = $('a[id^="mlabel-"]');
 
         var changeContent = function (element, cnt) {
-            setInterval(function() {
+            setInterval(function () {
                 $(loading).hide();
             }, 3000);
             // remove now content
@@ -38,9 +55,9 @@
             });
         }
 
-        if(labels) {
-            $.each(labels, function (index, element){
-                $(labels[index]).on('click', function() {
+        if (labels) {
+            $.each(labels, function (index, element) {
+                $(labels[index]).on('click', function () {
                     content.hide();
                     $(loading).show();
                     var description = $(this).attr('data-description');
