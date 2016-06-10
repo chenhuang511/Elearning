@@ -459,15 +459,51 @@ class local_mod_quiz_external extends external_api {
         $params = self::validate_parameters(self::get_mod_load_questions_usage_by_activity_parameters(),
             array('unique' => $unique,'options' => $options));
 
-        $qubadata = question_engine::load_questions_usage_by_activity($params['unique']);
-        $quba = new stdClass();
-        $quba->id = $qubadata->get_id();
-        $quba->preferredbehaviour = $qubadata->get_preferred_behaviour();
-        $quba->context = $qubadata->get_owning_context();
-        $quba->owningcomponent = $qubadata->get_owning_component();
-//        $quba->questionattempts = $qubadata->get_attempt_iterator();
-        $quba->observer = $qubadata->get_observer();
-        return $quba;
+        $records = $DB->get_records_sql("
+SELECT
+    quba.id AS qubaid,
+    quba.contextid,
+    quba.component,
+    quba.preferredbehaviour,
+    qa.id AS questionattemptid,
+    qa.questionusageid,
+    qa.slot,
+    qa.behaviour,
+    qa.questionid,
+    qa.variant,
+    qa.maxmark,
+    qa.minfraction,
+    qa.maxfraction,
+    qa.flagged,
+    qa.questionsummary,
+    qa.rightanswer,
+    qa.responsesummary,
+    qa.timemodified,
+    qas.id AS attemptstepid,
+    qas.sequencenumber,
+    qas.state,
+    qas.fraction,
+    qas.timecreated,
+    qas.userid,
+    qasd.name,
+    qasd.value
+
+FROM      {question_usages}            quba
+LEFT JOIN {question_attempts}          qa   ON qa.questionusageid    = quba.id
+LEFT JOIN {question_attempt_steps}     qas  ON qas.questionattemptid = qa.id
+LEFT JOIN {question_attempt_step_data} qasd ON qasd.attemptstepid    = qas.id
+
+WHERE
+    quba.id = :qubaid
+
+ORDER BY
+    qa.slot,
+    qas.sequencenumber
+    ", array('qubaid' => $params['unique']));
+//        var_dump($records);die;
+//        $records = array_values($records);
+//        if(count($records)>0) $records = $records[0];
+        return $records;
     }
 
     /**
@@ -476,54 +512,52 @@ class local_mod_quiz_external extends external_api {
      * @return external_single_structure the attempt structure
      */
     public static function get_mod_load_questions_usage_by_activity_returns() {
-        return new external_single_structure(
-            array(
-                "current" => new external_single_structure(
-                    array(
-                        'qubaid' => new external_value(PARAM_INT, 'question_usages id.',
-                            VALUE_OPTIONAL),
-                        'contextid' => new external_value(PARAM_INT, 'context id in question_usages.',
-                            VALUE_OPTIONAL),
-                        'component' => new external_value(PARAM_RAW, 'component in question_usages.',
-                            VALUE_OPTIONAL),
-                        'preferredbehaviour' => new external_value(PARAM_RAW, 'preferredbehaviour in question_usages.',
-                            VALUE_OPTIONAL),
-                        'questionattemptid' => new external_value(PARAM_INT, 'questionattemptid is question_attempt id.',
-                            VALUE_OPTIONAL),
-                        'questionusageid' => new external_value(PARAM_INT, 'questionusageid.',
-                            VALUE_OPTIONAL),
-                        'slot' => new external_value(PARAM_INT, 'slot.', VALUE_OPTIONAL),
-                        'behaviour' => new external_value(PARAM_RAW, 'behaviour.',
-                            VALUE_OPTIONAL),
-                        'questionid' => new external_value(PARAM_INT, 'question id.', VALUE_OPTIONAL),
-                        'variant' => new external_value(PARAM_INT, 'variant.',
-                            VALUE_OPTIONAL),
-                        'maxmark' => new external_value(PARAM_FLOAT, 'max mark.',
-                            VALUE_OPTIONAL),
-                        'minfraction' => new external_value(PARAM_FLOAT, 'min fraction.',
-                            VALUE_OPTIONAL),
-                        'maxfraction' => new external_value(PARAM_FLOAT, 'max fraction.', VALUE_OPTIONAL),
-                        'flagged' => new external_value(PARAM_INT, 'flagged.',
-                            VALUE_OPTIONAL),
-                        'questionsummary' => new external_value(PARAM_RAW, 'question summary.',
-                            VALUE_OPTIONAL),
-                        'rightanswer' => new external_value(PARAM_RAW, 'right answer.',
-                            VALUE_OPTIONAL),
-                        'responsesummary' => new external_value(PARAM_RAW, 'response summary.',
-                            VALUE_OPTIONAL),
-                        'timemodified' => new external_value(PARAM_INT, 'Last modified time.', VALUE_OPTIONAL),
-                        'attemptstepid' => new external_value(PARAM_INT, 'question_attempt_steps id.', VALUE_OPTIONAL),
-                        'sequencenumber' => new external_value(PARAM_INT, 'sequence number.', VALUE_OPTIONAL),
-                        'state' => new external_value(PARAM_RAW, 'state.', VALUE_OPTIONAL),
-                        'fraction' => new external_value(PARAM_FLOAT, 'fraction.', VALUE_OPTIONAL),
-                        'timecreated' => new external_value(PARAM_INT, 'The time create.',
-                            VALUE_OPTIONAL),
-                        'userid' => new external_value(PARAM_INT, 'user id.', VALUE_OPTIONAL),
-                        'name' => new external_value(PARAM_RAW, 'name.', VALUE_OPTIONAL),
-                        'value' => new external_value(PARAM_RAW, 'value.', VALUE_OPTIONAL),
-                    )
-                )
-            )
+        return new external_multiple_structure( 
+			new external_single_structure(
+				array(
+					'qubaid' => new external_value(PARAM_INT, 'question_usages id.',
+						VALUE_OPTIONAL),
+					'contextid' => new external_value(PARAM_INT, 'context id in question_usages.',
+						VALUE_OPTIONAL),
+					'component' => new external_value(PARAM_RAW, 'component in question_usages.',
+						VALUE_OPTIONAL),
+					'preferredbehaviour' => new external_value(PARAM_RAW, 'preferredbehaviour in question_usages.',
+						VALUE_OPTIONAL),
+					'questionattemptid' => new external_value(PARAM_INT, 'questionattemptid is question_attempt id.',
+						VALUE_OPTIONAL),
+					'questionusageid' => new external_value(PARAM_INT, 'questionusageid.',
+						VALUE_OPTIONAL),
+					'slot' => new external_value(PARAM_INT, 'slot.', VALUE_OPTIONAL),
+					'behaviour' => new external_value(PARAM_RAW, 'behaviour.',
+						VALUE_OPTIONAL),
+					'questionid' => new external_value(PARAM_INT, 'question id.', VALUE_OPTIONAL),
+					'variant' => new external_value(PARAM_INT, 'variant.',
+						VALUE_OPTIONAL),
+					'maxmark' => new external_value(PARAM_FLOAT, 'max mark.',
+						VALUE_OPTIONAL),
+					'minfraction' => new external_value(PARAM_FLOAT, 'min fraction.',
+						VALUE_OPTIONAL),
+					'maxfraction' => new external_value(PARAM_FLOAT, 'max fraction.', VALUE_OPTIONAL),
+					'flagged' => new external_value(PARAM_INT, 'flagged.',
+						VALUE_OPTIONAL),
+					'questionsummary' => new external_value(PARAM_RAW, 'question summary.',
+						VALUE_OPTIONAL),
+					'rightanswer' => new external_value(PARAM_RAW, 'right answer.',
+						VALUE_OPTIONAL),
+					'responsesummary' => new external_value(PARAM_RAW, 'response summary.',
+						VALUE_OPTIONAL),
+					'timemodified' => new external_value(PARAM_INT, 'Last modified time.', VALUE_OPTIONAL),
+					'attemptstepid' => new external_value(PARAM_INT, 'question_attempt_steps id.', VALUE_OPTIONAL),
+					'sequencenumber' => new external_value(PARAM_INT, 'sequence number.', VALUE_OPTIONAL),
+					'state' => new external_value(PARAM_RAW, 'state.', VALUE_OPTIONAL),
+					'fraction' => new external_value(PARAM_FLOAT, 'fraction.', VALUE_OPTIONAL),
+					'timecreated' => new external_value(PARAM_INT, 'The time create.',
+						VALUE_OPTIONAL),
+					'userid' => new external_value(PARAM_INT, 'user id.', VALUE_OPTIONAL),
+					'name' => new external_value(PARAM_RAW, 'name.', VALUE_OPTIONAL),
+					'value' => new external_value(PARAM_RAW, 'value.', VALUE_OPTIONAL),
+				)
+			)
         );
     }
 
