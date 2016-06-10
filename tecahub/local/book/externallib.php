@@ -83,7 +83,7 @@ class local_mod_book_external extends external_api
             )
         );
 
-        return $DB->get_records('book_chapters', array('bookid' => $params['bookid']), 'pagenum', 'id, pagenum, subchapter, title, hidden');
+        return $DB->get_records('book_chapters', array('bookid' => $params['bookid']), 'pagenum', '*');
     }
 
     public static function mod_get_book_chapters_by_id_returns()
@@ -95,6 +95,8 @@ class local_mod_book_external extends external_api
                     'pagenum' => new external_value(PARAM_INT, 'page num', VALUE_DEFAULT),
                     'subchapter' => new external_value(PARAM_INT, 'subchapter', VALUE_DEFAULT),
                     'title' => new external_value(PARAM_RAW, 'title'),
+                    'content' => new external_value(PARAM_RAW, 'Content chapter'),
+                    'contentformat' => new external_value(PARAM_INT, 'Content format', VALUE_DEFAULT),
                     'hidden' => new external_value(PARAM_INT, 'hidden', VALUE_DEFAULT),
                 )
             ));
