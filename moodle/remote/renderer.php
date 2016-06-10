@@ -279,7 +279,9 @@ class core_remote_renderer extends plugin_renderer_base
         $courseinfo = $this->render_course_info($courseid);
         $coursewaretab = $this->render_courseware($course['content']);
         $courseprogress = $this->render_course_progress($course['content']);
-        $tabcontens = array($coursewaretab, $courseinfo, '<p>tab diễn đàn</p>', '<p>tab wiki</p>', $courseprogress);
+        $courseforumtab = $this->render_course_forum();
+        $coursewikitab = $this->render_course_wiki();
+        $tabcontens = array($coursewaretab, $courseinfo, $courseforumtab, $coursewikitab, $courseprogress);
 
         // div course-detail-tabs block contain all content of course
         $content = html_writer::start_tag('div', array('class' => 'course-detail-tabs container'));
@@ -386,6 +388,20 @@ class core_remote_renderer extends plugin_renderer_base
     {
         ob_start();
         include_once('include/render-course-progress.php');
+        return ob_get_clean();
+    }
+
+    private function render_course_forum($course)
+    {
+        ob_start();
+        include_once('include/render-course-forum.php');
+        return ob_get_clean();
+    }
+
+    private function render_course_wiki($course)
+    {
+        ob_start();
+        include_once('include/render-course-wiki.php');
         return ob_get_clean();
     }
 }

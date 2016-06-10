@@ -500,8 +500,173 @@ section.container-course-info div.info-wrapper section.title h1 {
     font-style: normal;
     font-weight: bold;
 }
-
 /************************************/
+
+/***********tab course forum***********/
+section#discussion-container.discussion.container{
+    padding: 0px;
+    padding-right: 15px;
+}
+
+section#discussion-container.discussion.container div.discussion-body{
+    display: block;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    line-height: 1.4;
+    table-layout: fixed;
+    width: 100%;
+    border-radius: 3px;
+}
+
+section#discussion-container.discussion.container div.discussion-body div.forum-nav{
+    top: 0px; height: 552px;
+    box-sizing: border-box;
+    float: left;
+    position: relative;
+    width: 31%;
+    border: 1px solid #aaa;
+    border-radius: 3px;
+    line-height: 1.4;
+    padding: 0;
+    margin-right: 15px;
+}
+
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header{
+    box-sizing: border-box;
+    display: table;
+    border-bottom: 1px solid #acacac;
+    width: 100%;
+    background-color: #c8c8c8;
+}
+
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header div.btn-group{
+    width: 100%;
+    padding-top: 10px;
+}
+
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header div.btn-group button.btn.btn-default.dropdown-toggle{
+    box-sizing: border-box;
+    display: table-cell;
+    vertical-align: middle;border: none;
+    background-color: transparent;
+    padding-top: 3px;
+    padding-left: 15px;
+}
+
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header a.forum-nav-browse{
+    box-sizing: border-box;
+    display: table-cell;
+    vertical-align: middle;
+    width: 50%;
+    padding: 5px;
+}
+
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header form.forum-nav-search{
+    box-sizing: border-box;
+    display: table-cell;
+    position: relative;
+    vertical-align: middle;
+    width: 50%;
+    padding: 5px;
+}
+
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header form.forum-nav-search div.forum-nav-search-ff-position-fix{
+    position: relative;
+}
+
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header form.forum-nav-search div.forum-nav-search-ff-position-fix label{
+    margin-bottom: 0;
+    padding-top: 5px;
+}
+
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header form.forum-nav-search div.forum-nav-search-ff-position-fix label input.forum-nav-search-input{
+    box-shadow: none !important;
+    border: 1px solid #acacac !important;
+    border-radius: 3px !important;
+    height: auto !important;
+    padding-left: 5px !important;
+    padding-right: 22px !important;
+    font-size: 12px !important;
+}
+
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header form.forum-nav-search div.forum-nav-search-ff-position-fix label input.forum-nav-search-input i.forum-nav-search .icon{
+    font-size: 12px;
+    position: absolute;
+    margin-top: -6px;
+    top: 50%;
+    right: 11px;
+}
+
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-thread-list-wrapper div.forum-nav-refine-bar{
+    font-size: 11px;
+    border-bottom: 1px solid #c8c8c8;
+    background-color: #f1f1f1;
+    padding: 0px 10px;
+    color: #000;
+}
+
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-thread-list-wrapper div.forum-nav-refine-bar label.forum-nav-filter-main{
+    font: inherit;
+    line-height: 1em;
+    margin-bottom: 0;
+    box-sizing: border-box;
+    display: inline-block;
+    width: 50%;
+    text-align: left;
+    padding-top: 0px;
+}
+
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-thread-list-wrapper div.forum-nav-refine-bar label.forum-nav-filter-main select.forum-nav-filter-main-control{
+    border: none;
+    max-width: 100%;
+    background-color: transparent;
+    font: inherit;
+}
+
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-thread-list-wrapper div.forum-nav-refine-bar label.forum-nav-filter-main select.forum-nav-filter-main-control option {
+    font-weight: normal;
+    display: block;
+    white-space: pre;
+    min-height: 1.2em;
+    padding: 0px 2px 1px;
+    font:inherit;
+}
+
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-thread-list-wrapper div.forum-nav-refine-bar label.forum-nav-sort{
+    font: inherit;
+    line-height: 1em;
+    margin-bottom: 0;
+    box-sizing: border-box;
+    display: inline-block;
+    text-align: right;
+    padding-top: 0px;
+}
+
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-thread-list-wrapper div.forum-nav-refine-bar label.forum-nav-sort select.forum-nav-sort-control{
+    border: none;
+    max-width: 100%;
+    background-color: transparent;
+    font: inherit;
+}
+
+section#discussion-container.discussion.container div.discussion-body div#discussion-column.discussion-column{
+    float: left;
+    box-sizing: border-box;
+    max-width: 800px;
+    min-height: 550px;
+    border: 1px solid #aaa;
+    border-radius: 3px;
+    height: 32px;
+}
+
+section#discussion-container.discussion.container div.discussion-body div#discussion-column.discussion-column div.forum-content div.discussion-article.view-discussion-home{
+    position: relative;
+    min-height: 550px;
+    padding: 40px 40px 10px;
+}
+/**************************************/
+
 .content-wrap.course-progress {
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
