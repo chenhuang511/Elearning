@@ -8,7 +8,7 @@
             content = $('#module-content'),
             summaryLink = $('#course-summary'),
             loading = $('#loading');
-            newpost = $('#newpost');
+        newpost = $('#newpost');
 
         var tabs = ['#coursewaretab', '#courseinfotab', '#forumtab', '#wikitab', '#processtab'];
 
@@ -33,6 +33,7 @@
         var sections = $('a[id^="csec-"]');
         var labels = $('a[id^="mlabel-"]');
 
+
         var changeContent = function (element, cnt) {
             setInterval(function () {
                 $(loading).hide();
@@ -41,11 +42,38 @@
             element.html();
             // add new content
             element.html(cnt);
-        }
+        };
+
+        var changeIcon = function (el) {
+            $.each(sections, function (index, element) {
+                if (sections[index] != el) {
+                    var ico = $(this).find('i');
+                    if (ico.hasClass('fa-caret-down')) {
+                        ico.removeClass('fa-caret-down');
+                        ico.addClass('fa-caret-right');
+                    }
+                }
+            });
+        };
 
         if (sections) {
             $.each(sections, function (index, element) {
                 $(sections[index]).on('click', function () {
+
+                    changeIcon(sections[index]);
+
+                    var ico = $(this).find('i');
+
+                    if (ico.hasClass('fa-caret-right')) {
+                        ico.removeClass('fa-caret-right');
+                        ico.addClass('fa-caret-down');
+                    } else {
+                        if (ico.hasClass('fa-caret-down')) {
+                            ico.removeClass('fa-caret-down');
+                            ico.addClass('fa-caret-right');
+                        }
+                    }
+
                     content.hide();
                     $(loading).show();
                     var sectionSummary = $(this).attr('data-summary');

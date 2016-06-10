@@ -814,10 +814,6 @@ ul#coursetabs > li.active > a, ul#coursetabs > li > a:focus, ul#coursetabs > li 
     text-decoration: none;
 }
 
-#section-menu .panel .panel-body {
-    background-color: #f2f2f2;
-}
-
 #section-menu .panel .panel-body a.sublink {
     display: block;
     color: #126f9a;

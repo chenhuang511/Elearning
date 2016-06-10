@@ -4,10 +4,10 @@
     <div class="panel panel-default">
         <div class="panel-heading" role="tab">
             <h4 class="panel-title">
-                <a role="button" data-toggle="collapse" data-parent="#section-menu" href="#collapseCourseSummary"
+                <a id="csec-0" role="button" data-toggle="collapse" data-parent="#section-menu" href="#collapseCourseSummary"
                    aria-expanded="true" aria-controls="collapseCourseSummary"
                    class="">
-                    <i class="fa fa-caret-right" aria-hidden="true"></i> Giới thiệu </a>
+                    <i class="fa fa-caret-down" aria-hidden="true"></i> Giới thiệu </a>
             </h4>
         </div>
         <div id="collapseCourseSummary" class="panel-collapse collapse in" role="tabpanel"
@@ -47,7 +47,9 @@
                             if ($module->modname !== 'forum' && $module->modname !== 'wiki') {
                                 if ($module->modname === 'label') {
                                     ?>
-                                    <a id="mlabel-<?php echo $module->id ?>" class="sublink" href="#mlabel-<?php echo $module->id?>" data-description="<?php echo htmlspecialchars($module->description) ?>">
+                                    <a id="mlabel-<?php echo $module->id ?>" class="sublink"
+                                       href="#mlabel-<?php echo $module->id ?>"
+                                       data-description="<?php echo htmlspecialchars($module->description) ?>">
                                         <i class="fa fa-angle-double-right" aria-hidden="true"></i>
                                         <?php echo $module->name ?>
                                     </a>
@@ -68,3 +70,4 @@
         <?php }
     } ?>
 </div>
+
