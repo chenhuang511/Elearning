@@ -105,5 +105,13 @@ $functions = array(
 		'description' => 'Get lesson answer by id',
 		'type'		  => 'read',
 		'ajax'		  => true
-	)
+	),
+	'local_mod_get_field_lesson_page_by_lessonid_and_prevpageid' => array(
+	'classname'	  => 'local_mod_lesson_external',
+	'methodname'  => 'get_field_lessonpage_by_lessonid_and_prevpageid',
+	'classpath'	  => 'local/lesson/externallib.php',
+	'description' => 'Get id of lesson page by lessonid and prevpageid',
+	'type'		  => 'read',
+	'ajax'		  => true
+)
 );
