@@ -1810,6 +1810,17 @@ class core_renderer extends renderer_base {
                             'disabled' => $button->disabled ? 'disabled' : null,
                             'title'    => $button->tooltip);
 
+        // params for hidden fields
+        $params = $button->url->params();
+        if ($button->method === 'post') {
+            $params['sesskey'] = sesskey();
+        }
+        
+        if (!isset($button->params['useajax'])) {
+            $attributes['class'] = "sublink get-remote-content";
+            $attributes['data-module'] = json_encode($params);
+        }
+
         if ($button->actions) {
             $id = html_writer::random_id('single_button');
             $attributes['id'] = $id;
@@ -1820,12 +1831,7 @@ class core_renderer extends renderer_base {
 
         // first the input element
         $output = html_writer::empty_tag('input', $attributes);
-
-        // then hidden fields
-        $params = $button->url->params();
-        if ($button->method === 'post') {
-            $params['sesskey'] = sesskey();
-        }
+        
         foreach ($params as $var => $val) {
             $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => $var, 'value' => $val));
         }
@@ -1845,6 +1851,7 @@ class core_renderer extends renderer_base {
         $attributes = array('method' => $button->method,
                             'action' => $url,
                             'id'     => $button->formid);
+
         $output = html_writer::tag('form', $output, $attributes);
 
         // and finally one more wrapper with class

@@ -27,6 +27,7 @@ $(function () {
             });
         }
         function getHTMLContent(module, id) {
+            //TODO: get base url from config
             var url = '/mod/' + module + '/remote/api-view.php?id=' + id;
             var target = $('#module-content');
             var loading = $('#loading');
