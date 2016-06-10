@@ -2,7 +2,7 @@
 
 require_once($CFG->libdir . '/additionallib.php');
 
-function moodle_webservice_client($options = [], $usercache = true)
+function moodle_webservice_client($options = [], $usecache = true, $assoc = false)
 {
     global $CFG;
 
@@ -10,7 +10,7 @@ function moodle_webservice_client($options = [], $usercache = true)
         isset($options['token']) &&
         isset($options['function_name'])
     ) {
-        if ($usercache) {
+        if ($usecache) {
             $webservicecache = cache::make_from_params(cache_store::MODE_APPLICATION, 'core', 'webservice');
             $cachekey = 'wes-' . $options['domain'] . $options['token'] . $options['function_name'];
         }
@@ -24,12 +24,12 @@ function moodle_webservice_client($options = [], $usercache = true)
 
         if (isset($options['params'])) {
             $client->setParameterPost($options['params']);
-            if ($usercache) {
+            if ($usecache) {
                 $cachekey .= implode('-', $options['params']);
             }
         }
 
-        if ($usercache) {
+        if ($usecache) {
             $result = $webservicecache->get($cachekey);
             if ($result !== false) {
                 return $result;
@@ -37,9 +37,10 @@ function moodle_webservice_client($options = [], $usercache = true)
         }
 
         $response = $client->request(Zend_Http_Client::POST);
-        $result = json_decode($response->getBody());
-        $webservicecache->set($cachekey, $result);
-
+        $result = json_decode($response->getBody(), $assoc);
+        if ($usecache) {
+            $webservicecache->set($cachekey, $result);
+        }
         return $result;
     }
 }
