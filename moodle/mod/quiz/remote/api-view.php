@@ -38,7 +38,7 @@ if ($id) {
 }
 
 // Check login and get context.
-require_login($course, false, $cm);
+//require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/quiz:view', $context);
 
@@ -220,7 +220,7 @@ if (!$viewobj->quizhasquestions) {
 // @TODO: $viewobj->showbacktocourse
 $viewobj->showbacktocourse = false;
 
-echo $OUTPUT->header();
+//echo $OUTPUT->header();
 
 if (isguestuser()) {
     // Guests can't do a quiz, so offer them a choice of logging in or going back.
@@ -233,4 +233,4 @@ if (isguestuser()) {
     echo $output->view_page($course, $quiz, $cm, $context, $viewobj);
 }
 
-echo $OUTPUT->footer();
+//echo $OUTPUT->footer();

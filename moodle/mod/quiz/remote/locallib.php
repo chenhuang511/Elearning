@@ -8,6 +8,8 @@
  */
 
 defined('MOODLE_INTERNAL') || die;
+require_once($CFG->dirroot . '/lib/dml/json_moodle_recordset.php');
+require_once($CFG->dirroot . '/lib/dml/mysqli_native_moodle_recordset.php');
 
 require_once($CFG->dirroot . '/lib/remote/lib.php');
 require_once($CFG->dirroot . '/lib/additionallib.php');
@@ -115,7 +117,7 @@ function quiz_remote_validate_new_attempt(quiz $quizobj, quiz_access_manager $ac
 
     // Look for an existing attempt.
     //get user mapping
-    $user = get_remote_user_mapping_userid();
+    $user = get_remote_mapping_user();
     $attempts = get_remote_user_attemps($quizobj->get_quizid(), $user[0]->id, 'all', true)->attempts;
     $lastattempt = end($attempts);
 
@@ -192,7 +194,7 @@ function get_remote_attempt_by_attemptid($attemptid) {
 }
 
 function get_remote_load_questions_usage_by_activity($unique) {
-    return moodle_webservice_client(
+    $record =  moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
@@ -200,6 +202,8 @@ function get_remote_load_questions_usage_by_activity($unique) {
             'params' => array('unique' => $unique)
         )
     );
+    $a =  new json_moodle_recordset($record);
+    return $a;
 }
 
 function get_remote_get_slots_by_quizid($quizid) {

@@ -27,10 +27,10 @@ $id = required_param('cmid', PARAM_INT); // Course module id
 $forcenew = optional_param('forcenew', false, PARAM_BOOL); // Used to force a new preview
 $page = optional_param('page', -1, PARAM_INT); // Page to jump to in the attempt.
 
-if (!$cm = get_remote_course_module_by_cmid("quiz", $id)->cm) {
+if (!$cm = get_remote_course_module_by_cmid("quiz", $id)) {
     print_error('invalidcoursemodule');
 }
-if (!$course = $DB->get_record('course', array('remoteid' => $cm->course))) {
+if (!$course = get_local_course_record($cm->course)) {
     print_error("coursemisconf");
 }
 
@@ -97,6 +97,7 @@ if ($accessmanager->is_preflight_check_required($currentattemptid)) {
     // Pre-flight check passed.
     $accessmanager->notify_preflight_check_passed($currentattemptid);
 }
+
 if ($currentattemptid) {
     if ($lastattempt->state == quiz_attempt::OVERDUE) {
         redirect($quizobj->summary_url($lastattempt->id));
@@ -104,7 +105,6 @@ if ($currentattemptid) {
         redirect($quizobj->attempt_remote_url($currentattemptid, $page));
     }
 }
-
 $attempt = get_remote_quiz_start_attempt($quiz->id)->attempt;
 
 // Redirect to the attempt page.
