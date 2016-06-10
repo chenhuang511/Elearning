@@ -52,15 +52,6 @@ $functions = array(
         'ajax'		    => true
     ),
     
-    'local_mod_get_book_chapters_by_bookid_chapterid' => array(
-        'classname'     => 'local_mod_book_external',
-        'methodname'    => 'mod_get_book_chapters_by_bookid_chapterid',
-        'classpath'     => 'local/book/externallib.php',
-        'description'   => 'Get book chapters content by bookid & bookchapterid',
-        'type'		    => 'read',
-        'ajax'		    => true
-    ),
-    
     'local_mod_create_book_chapters' => array(
         'classname'     => 'local_mod_book_external',
         'methodname'    => 'mod_create_book_chapters',
