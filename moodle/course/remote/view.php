@@ -4,7 +4,7 @@ require_once('../../config.php');
 require_once('locallib.php');
 require_once($CFG->dirroot . '/remote/renderer.php');
 
-$courseid = optional_param('remoteid', 0, PARAM_INT);
+$courseid = optional_param('id', 0, PARAM_INT);
 $sectionid = optional_param('sectionid', 0, PARAM_INT);
 $section = optional_param('section', 0, PARAM_INT);
 $coursemodule = null;
