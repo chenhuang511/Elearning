@@ -625,7 +625,6 @@ section.container-course-info div.info-wrapper section.title h1 {
     position: relative;
     display: inline-block;
     float: left;
-    border: solid 1px #f5f5f5;
     padding: 10px 0 10px 10px;
     margin-bottom: 10px;
 }
@@ -656,7 +655,7 @@ section.container-course-info div.info-wrapper section.title h1 {
     color: #3d70af;
     border: 1px solid #3d70af;
     background-color: #ffffff;
-    border-radius: 5px;
+    border-radius: 2px;
     font-weight: normal;
 }
 
@@ -704,8 +703,8 @@ section.container-course-info div.info-wrapper section.title h1 {
 }
 
 #enrol-course-list .container-block {
-    border-top: 1px solid #c4c4c4;
-    padding-left: 0px;
+    border: 1px solid #c4c4c4;
+    padding-left: 55px;
     margin-top: 55px;
     padding-bottom: 20px;
     float: left;
@@ -742,14 +741,9 @@ section.container-course-info div.info-wrapper section.title h1 {
     color: #3d70af;
     border: 1px solid #3d70af;
     background-color: #ffffff;
-    border-radius: 5px;
+    border-radius: 2px;
     font-weight: normal;
     padding: 5px 16px;
-}
-
-.course-content-block {
-    position: relative;
-    display: block;
 }
 
 #loading {
@@ -785,6 +779,10 @@ ul#coursetabs > li > a {
 ul#coursetabs > li.active > a, ul#coursetabs > li > a:focus, ul#coursetabs > li > a:hover {
     background-color: #126f9a;
     color: #fff;
+}
+
+#module-content {
+    padding: 15px 0 15px 0;
 }
 
 /****************** section menu *****************************/
@@ -830,11 +828,33 @@ ul#coursetabs > li.active > a, ul#coursetabs > li > a:focus, ul#coursetabs > li 
 
 }
 
-.coursware-block {
+.courseware-block {
     border: solid 1px #ddd;
     -webkit-border-radius: 2px;
     -moz-border-radius: 2px;
     border-radius: 2px;
+}
+
+.courseware-block .section-courseware {
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+}
+
+.courseware-block .section-courseware .courseware-menu {
+    box-sizing: border-box;
+    display: table-cell;
+    vertical-align: top;
+    float: none;
+    background-color: #eee;
+}
+
+.courseware-block .section-courseware .course-content-block {
+    position: relative;
+    display: table-cell;
+    box-sizing: border-box;
+    vert-align: top;
+    float: none;
 }
 
 .course-detail-tabs {
