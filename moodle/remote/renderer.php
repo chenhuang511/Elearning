@@ -99,7 +99,7 @@ class core_remote_renderer extends plugin_renderer_base
                             // display course summary
                             if (isset($course->summary) && !empty($course->summary)) {
                                 $content .= html_writer::start_tag('div', array('class' => 'summary col-sm-9')); //start tag summary
-                                $content .= remote_render_helper::token_truncate($course->summary, 100);
+                                $content .= remote_render_helper::token_truncate($course->summary, 200);
                                 $content .= html_writer::end_tag('div'); // .summary
                             }
 
@@ -243,7 +243,7 @@ class core_remote_renderer extends plugin_renderer_base
             // display course summary
             if (isset($course->summary) && !empty($course->summary)) {
                 $content .= html_writer::start_tag('div', array('class' => 'summary'));
-                $content .= remote_render_helper::token_truncate($course->summary, 100);
+                $content .= remote_render_helper::token_truncate($course->summary, 200);
                 $content .= html_writer::end_tag('div'); // .summary
             }
             $content .= html_writer::end_tag('div'); // .moreinfo

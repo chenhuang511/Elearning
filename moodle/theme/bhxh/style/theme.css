@@ -451,8 +451,7 @@ section.container-course-info div.info-wrapper{
     table-layout: fixed;
     width: 100%;
     border-radius: 3px;
-    border: 1px solid #aaa;
-    background: #fff;
+    border: 1px solid #ddd;
 }
 
 section.container-course-info div.info-wrapper section.updates{
