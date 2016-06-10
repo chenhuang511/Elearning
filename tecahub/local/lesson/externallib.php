@@ -281,6 +281,51 @@ class local_mod_lesson_external extends external_api
         );
     }
 
+    public static function get_field_lessonpage_by_lessonid_and_prevpageid_parameters() {
+        return new external_function_parameters(
+            array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
+                'prevpageid' => new external_value(PARAM_INT, 'the previous page id'),
+                'options' => new external_multiple_structure (
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHANUM,
+                                'The expected keys (value format) are:
+                                                excludemodules (bool) Do not return modules, return only the sections structure
+                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
+                                                sectionid (int) Return only this section
+                                                sectionnumber (int) Return only this section with number (order)
+                                                cmid (int) Return only this module information (among the whole sections structure)
+                                                modname (string) Return only modules with this name "label, forum, etc..."
+                                                modid (int) Return only the module with this id (to be used with modname'),
+                            'value' => new external_value(PARAM_RAW, 'the value of the option,
+                                                                    this param is personaly validated in the external function.')
+                        )
+                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+            )
+        );
+    }
+
+    public static function get_field_lessonpage_by_lessonid_and_prevpageid($lessonid, $prevpageid, $options = array())
+    {
+        global $DB;
+
+        // validate params
+        $params = self::validate_parameters(self::get_lesson_page_parameters(),
+            array(
+                'lessonid' => $lessonid,
+                'prevpageid' => $prevpageid,
+                'options' => $options
+            )
+        );
+
+        return $DB->get_field('lesson_pages', 'id', array('lessonid' => $params['lessonid'], 'prevpageid' => $params['prevpageid']));
+    }
+
+    public static function get_field_lessonpage_by_lessonid_and_prevpageid_returns()
+    {
+        return new external_value(PARAM_INT, 'id');
+    }
+
     /**
      * Returns description of method parameters
      *
@@ -360,78 +405,6 @@ class local_mod_lesson_external extends external_api
                 'title' => new external_value(PARAM_RAW, 'title'),
                 'contents' => new external_value(PARAM_RAW, 'contents'),
                 'contentsformat' => new external_value(PARAM_INT, 'contents format', VALUE_DEFAULT)
-            )
-        );
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.0
-     */
-    public static function get_context_by_id_parameters()
-    {
-        return new external_function_parameters(
-            array('id' => new external_value(PARAM_INT, 'the context id'),
-                'options' => new external_multiple_structure (
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_ALPHANUM,
-                                'The expected keys (value format) are:
-                                                excludemodules (bool) Do not return modules, return only the sections structure
-                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
-                                                sectionid (int) Return only this section
-                                                sectionnumber (int) Return only this section with number (order)
-                                                cmid (int) Return only this module information (among the whole sections structure)
-                                                modname (string) Return only modules with this name "label, forum, etc..."
-                                                modid (int) Return only the module with this id (to be used with modname'),
-                            'value' => new external_value(PARAM_RAW, 'the value of the option,
-                                                                    this param is personaly validated in the external function.')
-                        )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
-            )
-        );
-    }
-
-    /**
-     * get context
-     *
-     * @param $id
-     * @param array $options
-     * @return mixed
-     * @throws invalid_parameter_exception
-     */
-    public static function get_context_by_id($id, $options = array())
-    {
-        global $DB;
-
-        // validate params
-        $params = self::validate_parameters(self::get_context_by_id_parameters(),
-            array(
-                'id' => $id,
-                'options' => $options
-            )
-        );
-
-        return $DB->get_record('context', array('id' => $params['id']), '*', MUST_EXIST);
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 3.0
-     */
-    public static function get_context_by_id_returns()
-    {
-        return new external_single_structure(
-            array(
-                'id' => new external_value(PARAM_INT, 'context id'),
-                'contextlevel' => new external_value(PARAM_INT, 'context level', VALUE_DEFAULT),
-                'instanceid' => new external_value(PARAM_INT, 'instance id', VALUE_DEFAULT),
-                'path' => new external_value(PARAM_RAW, 'path'),
-                'depth' => new external_value(PARAM_INT, 'depth', VALUE_DEFAULT)
             )
         );
     }
@@ -671,7 +644,8 @@ class local_mod_lesson_external extends external_api
         );
     }
 
-    public static function get_lesson_attempts_by_lessonid_and_userid_parameters() {
+    public static function get_lesson_attempts_by_lessonid_and_userid_parameters()
+    {
         return new external_function_parameters(
             array('lessonid' => new external_value(PARAM_INT, 'lesson id'),
                 'userid' => new external_value(PARAM_INT, 'user id'),
@@ -698,7 +672,8 @@ class local_mod_lesson_external extends external_api
         );
     }
 
-    public static function get_lesson_attempts_by_lessonid_and_userid($lessonid, $userid, $correct, $pageid, $retry, $options = array()) {
+    public static function get_lesson_attempts_by_lessonid_and_userid($lessonid, $userid, $correct, $pageid, $retry, $options = array())
+    {
         global $DB;
 
         $arr = array(
@@ -708,10 +683,10 @@ class local_mod_lesson_external extends external_api
             'options' => $options
         );
 
-        if(!empty($correct) && $correct != 0) { // 0: false, 1: true
+        if (!empty($correct) && $correct != 0) { // 0: false, 1: true
             $arr = array_merge($arr, array('correct' => 1));
         }
-        if(!empty($pageid) && $pageid != -1) { // -1: null
+        if (!empty($pageid) && $pageid != -1) { // -1: null
             $arr = array_merge($arr, array('pageid' => $pageid));
         }
 
@@ -726,17 +701,18 @@ class local_mod_lesson_external extends external_api
             'retry' => $params['retry']
         ];
 
-        if(isset($arr['correct'])) {
+        if (isset($arr['correct'])) {
             $parameters = array_merge($parameters, array('correct' => $params['correct']));
         }
-        if(isset($arr['pageid'])) {
+        if (isset($arr['pageid'])) {
             $parameters = array_merge($parameters, array('pageid' => $params['pageid']));
         }
 
         return $DB->get_records('lesson_attempts', $parameters, 'timeseen ASC');
     }
 
-    public static function get_lesson_attempts_by_lessonid_and_userid_returns() {
+    public static function get_lesson_attempts_by_lessonid_and_userid_returns()
+    {
         return new external_multiple_structure(
             new external_single_structure(
                 array(
