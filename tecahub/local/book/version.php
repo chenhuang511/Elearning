@@ -8,6 +8,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2016060602;        // The current plugin version (Date: YYYYMMDDXX)
+$plugin->version   = 2016060603;        // The current plugin version (Date: YYYYMMDDXX)
 $plugin->requires  = 2016051900;        // Requires this Moodle version
 $plugin->component = 'local_book'; 			// Full name of the plugin (used for diagnostics)
