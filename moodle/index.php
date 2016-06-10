@@ -31,18 +31,18 @@ echo $OUTPUT->header();
 $type = 'available';
 if (isloggedin() and !isguestuser() and isset($CFG->frontpageloggedin)) {
     $frontpagelayout = $CFG->frontpageloggedin;
-    $course = get_local_enrol_course();
+    $courses = get_local_enrol_course();
     $type = 'enrol';
 } else {
-    $course = get_local_courses_record();
+    $courses = get_local_courses_record();
     $frontpagelayout = $CFG->frontpage;
 }
 
 foreach (explode(',', $frontpagelayout) as $v) {
     switch ($v) {
         case FRONTPAGEALLCOURSELIST:
-            if (!empty($course)) {
-                $renderer->render_remote_course($course, $type);
+            if (!empty($courses)) {
+                $renderer->render_remote_course($courses, $type);
             }
             break;
         default:

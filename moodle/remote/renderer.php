@@ -105,7 +105,10 @@ class core_remote_renderer extends plugin_renderer_base
 
                             // display button
                             $content .= html_writer::start_tag('div', array('class' => 'btn-register col-sm-3')); //start tag button
-                            $content .= html_writer::tag('button', 'Học ngay', array('class' => 'btn-reg-now'));
+                            $buttonname = 'Học ngay';
+                            $buttonlink = html_writer::link(new moodle_url('/course/remote/view.php', array('id' => $course->id)),
+                                $buttonname, array('class' => $course->visible ? '' : 'button'));
+                            $content .= html_writer::tag($buttonname, $buttonlink, array('class' => 'btn-reg-now'));
                             $content .= html_writer::end_tag('div'); // end button
                         $content .= html_writer::end_tag('div'); //end tag sum-btn
                     $content .= html_writer::end_tag('div'); //end tag course_content
@@ -255,21 +258,22 @@ class core_remote_renderer extends plugin_renderer_base
      * @param $course
      * @param string $type can be 'available' or 'enrol' course
      */
-    public function render_remote_course($course, $type = 'available')
+    public function render_remote_course($courses, $type = 'available')
     {
         if ($type == 'available') {
-            $this->render_available_course($course);
+            $this->render_available_course($courses);
         } else if ($type == 'enrol') {
-            $this->render_enrol_course($course);
+            $this->render_enrol_course($courses);
         }
     }
 
     public function render_course_detail($course)
     {
+        $courseid = $course['courseid'];
         $tabname = array('Tổng quan', 'Thông tin', 'Diễn đàn', 'Wiki', 'Tiến độ học');
-        $courseinfo = $this->render_course_info($course);
-        $coursewaretab = $this->render_courseware($course);
-        $courseprogress = $this->render_course_progress($course);
+        $courseinfo = $this->render_course_info($courseid);
+        $coursewaretab = $this->render_courseware($course['content']);
+        $courseprogress = $this->render_course_progress($course['content']);
         $tabcontens = array($coursewaretab, $courseinfo, '<p>tab diễn đàn</p>', '<p>tab wiki</p>', $courseprogress);
 
         // div course-detail-tabs block contain all content of course
@@ -347,8 +351,9 @@ class core_remote_renderer extends plugin_renderer_base
         return $html;
     }
 
-    private function render_course_info($course)
+    private function render_course_info($courseid)
     {
+        $courseinfo = get_remote_course_info($courseid);
         ob_start();
         include_once('include/render-course-info.php');
         return ob_get_clean();

@@ -58,8 +58,7 @@ function get_local_courses_record() {
     $hubname = mnet_get_hostname_from_uri(HUB_URL);
     // Get the IP address for that host - if this fails, it will return the hostname string
     $hubip = gethostbyname($hubname);
-    $hostid = $DB->get_record("mnet_host", array('ip_address' => $hubip), "id", MUST_EXIST);
-    $hostid = $hostid->id;
+    $hostid = $DB->get_field('mnet_host', 'id', array('ip_address' => $hubip));
 
     $courses = $DB->get_records_sql('SELECT * FROM {course} WHERE hostid = ?', array('hostid' => $hostid));
 
@@ -74,8 +73,7 @@ function get_local_enrol_course() {
     $hubname = mnet_get_hostname_from_uri(HUB_URL);
     // Get the IP address for that host - if this fails, it will return the hostname string
     $hubip = gethostbyname($hubname);
-    $hostid = $DB->get_record("mnet_host", array('ip_address' => $hubip), "id", MUST_EXIST);
-    $hostid = $hostid->id;
+    $hostid = $DB->get_field('mnet_host', 'id', array('ip_address' => $hubip));
 
     $sql = 'SELECT * FROM {course} WHERE id in (SELECT remotecourseid FROM {mnetservice_enrol_enrolments} e WHERE e.hostid = ? AND e.userid = ?)';
 

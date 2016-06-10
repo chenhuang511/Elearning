@@ -10,7 +10,6 @@ $address = theme_bhxh_get_setting('address');
 $emailid = theme_bhxh_get_setting('emailid');
 $phoneno = theme_bhxh_get_setting('phoneno');
 $copyright_footer = theme_bhxh_get_setting('copyright_footer');
-$infolink = theme_bhxh_get_setting('infolink');
 
 ?>
     <footer id="footer">
@@ -20,17 +19,7 @@ $infolink = theme_bhxh_get_setting('infolink');
                     <div class="foot-links-wrap">
                         <ul class="foot-links clearfix">
                             <?php
-                            $info_settings = explode("\n", $infolink);
-
-                            foreach ($info_settings as $key => $settingval) {
-                                $exp_set = explode("|", $settingval);
-                                list($ltxt, $lurl) = $exp_set;
-                                $ltxt = trim($ltxt);
-                                $lurl = trim($lurl);
-                                if (empty($ltxt))
-                                    continue;
-                                echo '<li class="foot-link-item"><a class="foot-link-text" href="' . $lurl . '" target="_blank">' . $ltxt . '</a></li>';
-                            }
+                            echo $OUTPUT->custom_menu();
                             ?>
                         </ul>
                     </div>
