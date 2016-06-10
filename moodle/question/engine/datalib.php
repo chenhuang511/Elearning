@@ -454,7 +454,13 @@ ORDER BY
     ", array('qubaid' => $qubaid));
 
         if (!$records->valid()) {
-            throw new coding_exception('Failed to load questions_usage_by_activity ' . $qubaid);
+            if(!$records = get_remote_load_questions_usage_by_activity($qubaid)) {
+                throw new coding_exception('Failed to load questions_usage_by_activity ' . $qubaid);
+            }
+//            var_dump($records);die;
+            else{
+                $quba = question_usage_by_activity::load_from_records($records, $qubaid);
+            }
         }
 
         $quba = question_usage_by_activity::load_from_records($records, $qubaid);
