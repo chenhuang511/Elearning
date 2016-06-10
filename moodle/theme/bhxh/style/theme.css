@@ -625,7 +625,6 @@ section.container-course-info div.info-wrapper section.title h1 {
     position: relative;
     display: inline-block;
     float: left;
-    border: solid 1px #f5f5f5;
     padding: 10px 0 10px 10px;
     margin-bottom: 10px;
 }
@@ -656,7 +655,7 @@ section.container-course-info div.info-wrapper section.title h1 {
     color: #3d70af;
     border: 1px solid #3d70af;
     background-color: #ffffff;
-    border-radius: 5px;
+    border-radius: 2px;
     font-weight: normal;
 }
 
@@ -704,8 +703,8 @@ section.container-course-info div.info-wrapper section.title h1 {
 }
 
 #enrol-course-list .container-block {
-    border-top: 1px solid #c4c4c4;
-    padding-left: 0px;
+    border: 1px solid #c4c4c4;
+    padding-left: 55px;
     margin-top: 55px;
     padding-bottom: 20px;
     float: left;
@@ -742,7 +741,7 @@ section.container-course-info div.info-wrapper section.title h1 {
     color: #3d70af;
     border: 1px solid #3d70af;
     background-color: #ffffff;
-    border-radius: 5px;
+    border-radius: 2px;
     font-weight: normal;
     padding: 5px 16px;
 }
