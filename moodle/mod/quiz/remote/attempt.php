@@ -38,12 +38,11 @@ $page = optional_param('page', 0, PARAM_INT);
 $attempt = get_remote_attempt_by_attemptid($attemptid);
 $quiz = get_remote_quiz_by_id($attempt->quiz);
 $course = $DB->get_record('course', array('remoteid' => $quiz->course), '*', MUST_EXIST);
-$cm = get_remote_coursemodule_from_instance("quiz", $quiz->id)->cm;
-// @TODO $quiz = quiz_update_effective_access($quiz, $attempt->userid);
-//$attemptobj = new quiz_attempt($attempt, $quiz, $cm, $course,false);
-$attemptobj = new quiz_attempt($attempt, $quiz, $cm, $course);
+$cm = get_remote_course_module_by_cmid("quiz", $id);
 
-$attemptobj = quiz_attempt::create($attemptid);
+$attemptobj = new quiz_attempt($attempt, $quiz, $cm, $course);
+echo 777777777777;die;
+//$attemptobj = quiz_attempt::create($attemptid);
 $page = $attemptobj->force_page_number_into_range($page);
 $PAGE->set_url($attemptobj->attempt_url(null, $page));
 

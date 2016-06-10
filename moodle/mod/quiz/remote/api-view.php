@@ -1,4 +1,11 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: vanha
+ * Date: 27/05/2016
+ * Time: 2:52 CH
+ */
+
 require_once(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->dirroot . '/course/remote/locallib.php');
 require_once($CFG->dirroot.'/mod/quiz/remote/locallib.php');
