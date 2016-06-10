@@ -114,7 +114,6 @@ class core_remote_renderer extends plugin_renderer_base
             $content .= html_writer::end_tag('div'); //end tag course_content
 
             $content .= html_writer::end_tag('div');
-            $content .= html_writer::tag('hr', '');
         }
         $content .= html_writer::end_tag('div');
 
