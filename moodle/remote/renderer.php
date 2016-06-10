@@ -326,6 +326,7 @@ class core_remote_renderer extends plugin_renderer_base
     {
         $html = '';
         $tabcount = 0;
+        $index = 0;
         foreach ($tabnames as $key => $tab) {
             $tabcount++;
             $classes = 'tab-pane fade ';
@@ -334,7 +335,8 @@ class core_remote_renderer extends plugin_renderer_base
             }
             $tabid = 'tab-content-' . $tabcount;
             $html .= html_writer::start_tag('div', array('role' => 'tabpanel', 'id' => $tabid, 'class' => $classes, 'aria-labelledby' => $key . '-tab'));
-            $html .= $contents[$key];
+            $html .= $contents[$index];
+            $index++;
             $html .= html_writer::end_tag('div');
         }
         return $html;

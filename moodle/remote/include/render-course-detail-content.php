@@ -7,7 +7,7 @@
             coursename = $('#hidden-coursename'),
             content = $('#module-content'),
             summaryLink = $('#course-summary'),
-            loading = $('#loading'),
+            loading = $('#loading');
             newpost = $('#newpost');
 
         var tabs = ['#coursewaretab', '#courseinfotab', '#forumtab', '#wikitab', '#processtab'];
