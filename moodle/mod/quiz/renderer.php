@@ -422,12 +422,17 @@ class mod_quiz_renderer extends plugin_renderer_base {
 
     public function start_attempt_page(quiz $quizobj, mod_quiz_preflight_check_form $mform) {
         $output = '';
-        $output .= $this->header();
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+            $output .= $this->header();
+        }
         $output .= $this->heading(format_string($quizobj->get_quiz_name(), true,
             array("context" => $quizobj->get_context())));
         $output .= $this->quiz_intro($quizobj->get_quiz(), $quizobj->get_cm());
         $output .= $mform->render();
-        $output .= $this->footer();
+
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+            $output .= $this->footer();
+        }
         return $output;
     }
 

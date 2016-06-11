@@ -1815,10 +1815,12 @@ class core_renderer extends renderer_base {
         if ($button->method === 'post') {
             $params['sesskey'] = sesskey();
         }
-        
+
+        if (empty($button->formid)) {
+            $button->formid = time();
+        }
         if (!isset($button->params['useajax'])) {
-            $attributes['class'] = "sublink get-remote-content";
-            $attributes['data-module'] = json_encode($params);
+            $attributes['onClick'] = "return getHTMLContentForm('{$button->formid}');";
         }
 
         if ($button->actions) {

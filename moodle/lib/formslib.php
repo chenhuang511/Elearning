@@ -1210,17 +1210,23 @@ abstract class moodleform {
         if (is_null($submitlabel)){
             $submitlabel = get_string('savechanges');
         }
+
         $mform =& $this->_form;
+
+        $attributes['onClick'] = "return getHTMLContentForm('{$this->_form->getAttribute('id')}');";
+        $el = &$mform->createElement('submit', 'submitbutton', $submitlabel);
+        $el->updateAttributes($attributes);
+
         if ($cancel){
             //when two elements we need a group
             $buttonarray=array();
-            $buttonarray[] = &$mform->createElement('submit', 'submitbutton', $submitlabel);
-            $buttonarray[] = &$mform->createElement('cancel');
+            $buttonarray[] = $el;
+            $buttonarray[] = &$mform->createElement('cancel');//->updateAttributes(array('onClick' => 'return false;'));
             $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
             $mform->closeHeaderBefore('buttonar');
         } else {
             //no group needed
-            $mform->addElement('submit', 'submitbutton', $submitlabel);
+            $mform->addElement($el);
             $mform->closeHeaderBefore('submitbutton');
         }
     }

@@ -55,11 +55,10 @@
                                     </a>
                                     <?php
                                 } else { ?>
-                                    <a class="sublink get-remote-content" data-module="<?php echo $module->modname; ?>"
-                                       data-remote-id="<?php echo $module->id; ?>"
+                                    <a class="sublink get-remote-content" data-module='<?php echo json_encode(array('url'=>$CFG->wwwroot . '/mod/' . $module->modname . '/remote/api-view.php', 'params' => array('id' => $module->id), 'method' => 'get' )); ?>'
                                        href="#">
                                         <i class="fa fa-angle-double-right" aria-hidden="true"></i>
-                                        <?php echo $module->name ?>
+                                        <?php echo $module->name; ?>
                                     </a>
                                 <?php } ?>
                             <?php }

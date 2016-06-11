@@ -11,46 +11,74 @@ $(function () {
     });
 });
 
-(function ($) {
-    $(document).ready(function() {
-        var courseRemote = $('.get-remote-content');
-        if (courseRemote && courseRemote.length > 0) {
-            courseRemote.each(function (index, item) {
-                var course = $(item);
-                course.bind('click', function (e) {
-                    e.preventDefault();
-                    var el = $(this);
-                    var module = el.attr('data-module') || '';
-                    var id = el.attr('data-remote-id') || 0;
-                    getHTMLContent(module, id);
-                })
-            });
-        }
-        function getHTMLContent(module, id) {
-            //TODO: get base url from config
-            var url = '/mod/' + module + '/remote/api-view.php?id=' + id;
-            var target = $('#module-content');
-            var loading = $('#loading');
-            switch (module) {
-                default :
-                    $.ajax({
-                        url: url,
-                        beforeSend: function () {
-                            target.hide();
-                            loading.show();
-                            target.empty();
-                        },
-                        success: function (data) {
-                            target.html(data);
-                            loading.hide();
-                            target.show();
-                        },
-                        error: function (err) {
-                            target.html(err);
-                        }
-                    });
-                    break;
-            }
+function arrayToUrlParmas(params) {
+    var out = new Array();
+    for (key in params) {
+        out.push(key + '=' + encodeURIComponent(params[key]));
+    }
+    return out.join('&');
+}
+
+function getHTMLContentForm(formid) {
+    var module = {};
+
+    module['url'] = $('#' + formid).attr('action');
+    module['method'] = $('#' + formid).attr('method');
+    module['params'] = $('#' + formid).serialize();
+
+    return getHTMLContent(module, false);
+}
+
+function getHTMLContentJson(module) {
+    var moduleObj = jQuery.parseJSON(module);
+    return getHTMLContent(moduleObj, true);
+}
+
+function getHTMLContent(module, encode) {
+    var url = module.url + '?';
+    url += (encode)?arrayToUrlParmas(module.params):module.params;
+    var target = $('#module-content');
+    var loading = $('#loading');
+
+    $.ajax({
+        url: url,
+        method: module.method,
+        data: module.params,
+        beforeSend: function () {
+            target.hide();
+            loading.show();
+            target.empty();
+        },
+        success: function (data) {
+            target.html(data);
+            loading.hide();
+            target.show();
+        },
+        error: function (err) {
+            target.html(err);
         }
     });
+
+    return false;
+}
+
+function loadRemoteContent() {
+    var courseRemote = $('.get-remote-content');
+    if (courseRemote && courseRemote.length > 0) {
+        courseRemote.each(function (index, item) {
+            var course = $(item);
+            course.bind('click', function (e) {
+                e.preventDefault();
+                var el = $(this);
+                var module = el.attr('data-module') || '';
+                getHTMLContentJson(module);
+            })
+        });
+    }
+
+}
+
+(function ($) {
+    var datacontent = $('#module-content');
+    $(document).ready(loadRemoteContent);
 }).call(this, jQuery);
