@@ -71,27 +71,23 @@ function formEventHandler(e) {
     getHTMLContentForm(formId);
 }
 
+function linkClickEventHandler(e) {
+    e.preventDefault();
+    var el = $(this);
+    var module = el.attr('data-module') || '';
+    getHTMLContentJson(module);
+}
+
 function loadRemoteContent() {
     var courseRemote = $('.get-remote-content');
     if (courseRemote && courseRemote.length > 0) {
         courseRemote.each(function (index, item) {
             var course = $(item);
-            course.bind('click', function (e) {
-                e.preventDefault();
-                var el = $(this);
-                var module = el.attr('data-module') || '';
-                getHTMLContentJson(module);
-            })
+            course.bind('click', linkClickEventHandler);
         });
     }
-    $('#module-content').on('click', '.remote-link-action', function (e) {
-        e.preventDefault();
-        var el = $(this);
-        var module = el.attr('data-module') || '';
-        getHTMLContentJson(module);
-    });
+    $('#module-content').on('click', '.remote-link-action', linkClickEventHandler);
     $('#module-content').on('click submit', '.remote-form-action', formEventHandler);
-
 }
 
 (function ($) {
