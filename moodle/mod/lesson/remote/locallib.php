@@ -46,7 +46,8 @@ function get_remote_lesson_page($lessonid, $prevpageid, $options = array())
     ));
 }
 
-function get_remote_field_lesson_page($lessonid, $prevpageid, $options = array()) {
+function get_remote_field_lesson_page($lessonid, $prevpageid, $options = array())
+{
     return moodle_webservice_client(array_merge($options,
         array(
             'domain' => HUB_URL,
@@ -166,7 +167,8 @@ function get_remote_lesson_answer_by_id($id, $options = array())
     ));
 }
 
-function get_remote_lesson_attempts_by_lessonid_and_userid($lessonid, $userid, $retry, $correct = 0, $pageid = -1, $orderby = 'asc', $options = array()) {
+function get_remote_lesson_attempts_by_lessonid_and_userid($lessonid, $userid, $retry, $correct = 0, $pageid = -1, $orderby = 'asc', $options = array())
+{
     return moodle_webservice_client(array_merge($options,
         array(
             'domain' => HUB_URL,
@@ -175,4 +177,16 @@ function get_remote_lesson_attempts_by_lessonid_and_userid($lessonid, $userid, $
             'params' => array('lessonid' => $lessonid, 'userid' => $userid, 'retry' => $retry, 'correct' => $correct, 'pageid' => $pageid, 'orderby' => $orderby)
         )
     ));
+}
+
+function get_remote_lesson_answers_by_pageid_and_lessonid($pageid, $lessonid)
+{
+    return moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_lesson_answer_by_pageid_and_lessonid',
+            'params' => array('pageid' => $pageid,'lessonid' => $lessonid)
+        )
+    );
 }

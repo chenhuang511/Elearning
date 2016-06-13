@@ -12,8 +12,8 @@ $(function () {
 });
 
 function arrayToUrlParmas(params) {
-    var out = new Array();
-    for (key in params) {
+    var out = [];
+    for (var key in params) {
         out.push(key + '=' + encodeURIComponent(params[key]));
     }
     return out.join('&');
