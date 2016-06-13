@@ -652,6 +652,7 @@ class local_mod_lesson_external extends external_api
                 'correct' => new external_value(PARAM_INT, 'correct', VALUE_DEFAULT, 0),
                 'pageid' => new external_value(PARAM_INT, 'page id', VALUE_DEFAULT, -1),
                 'retry' => new external_value(PARAM_INT, 'retry'),
+                'orderby' => new external_value(PARAM_TEXT, 'timeseen order by', VALUE_DEFAULT, 'asc'),
                 'options' => new external_multiple_structure (
                     new external_single_structure(
                         array(
@@ -672,7 +673,7 @@ class local_mod_lesson_external extends external_api
         );
     }
 
-    public static function get_lesson_attempts_by_lessonid_and_userid($lessonid, $userid, $correct, $pageid, $retry, $options = array())
+    public static function get_lesson_attempts_by_lessonid_and_userid($lessonid, $userid, $correct, $pageid, $retry, $orderby, $options = array())
     {
         global $DB;
 
@@ -708,7 +709,12 @@ class local_mod_lesson_external extends external_api
             $parameters = array_merge($parameters, array('pageid' => $params['pageid']));
         }
 
-        return $DB->get_records('lesson_attempts', $parameters, 'timeseen ASC');
+        $timeseen = 'timeseen ASC';
+        if(!empty($orderby) && $orderby === 'desc') {
+            $timeseen = 'timeseen DESC';
+        }
+
+        return $DB->get_records('lesson_attempts', $parameters, $timeseen);
     }
 
     public static function get_lesson_attempts_by_lessonid_and_userid_returns()
