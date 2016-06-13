@@ -1408,7 +1408,8 @@ class lesson extends lesson_base
         global $DB;
         if ($this->firstpageid == null) {
             if (!$this->loadedallpages) {
-                $firstpageid = $DB->get_field('lesson_pages', 'id', array('lessonid' => $this->properties->id, 'prevpageid' => 0));
+                $firstpageid = get_remote_field_lesson_page($this->properties->id, 0);
+                //$firstpageid = $DB->get_field('lesson_pages', 'id', array('lessonid' => $this->properties->id, 'prevpageid' => 0));
                 if (!$firstpageid) {
                     print_error('cannotfindfirstpage', 'lesson');
                 }
