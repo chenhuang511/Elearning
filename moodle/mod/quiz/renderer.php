@@ -450,10 +450,10 @@ class mod_quiz_renderer extends plugin_renderer_base {
     public function attempt_page($attemptobj, $page, $accessmanager, $messages, $slots, $id,
                                  $nextpage, $attemptremote=null) {
         $output = '';
-        $output .= $this->header();
+        //$output .= $this->header();
         $output .= $this->quiz_notices($messages);
         $output .= $this->attempt_form($attemptobj, $page, $slots, $id, $nextpage, $attemptremote);
-        $output .= $this->footer();
+        //$output .= $this->footer();
         return $output;
     }
 

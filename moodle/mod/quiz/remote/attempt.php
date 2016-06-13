@@ -40,7 +40,7 @@ $attemptremote = get_remote_get_attempt_data($attemptid, $page);
 
 $attempt = get_remote_attempt_by_attemptid($attemptid);
 $quiz = get_remote_quiz_by_id($attempt->quiz);
-$course = $DB->get_record('course', array('remoteid' => $quiz->course), '*', MUST_EXIST);
+$course = get_local_course_record($quiz->course);
 $cm = get_remote_coursemodule_from_instance("quiz", $quiz->id);
 $attemptobj = new quiz_attempt($attempt, $quiz, $cm, $course);
 

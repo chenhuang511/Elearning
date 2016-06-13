@@ -1206,7 +1206,7 @@ abstract class moodleform {
      * @param bool $cancel whether to show cancel button, default true
      * @param string $submitlabel label for submit button, defaults to get_string('savechanges')
      */
-    function add_action_buttons($cancel = true, $submitlabel=null){
+    function add_action_buttons($cancel = true, $submitlabel=null, $useajax = false){
         if (is_null($submitlabel)){
             $submitlabel = get_string('savechanges');
         }
@@ -1215,7 +1215,11 @@ abstract class moodleform {
 
         $attributes['onClick'] = "return getHTMLContentForm('{$this->_form->getAttribute('id')}');";
         $el = &$mform->createElement('submit', 'submitbutton', $submitlabel);
-        $el->updateAttributes($attributes);
+
+        if ($useajax) {
+            $attributes['onClick'] = "return getHTMLContentForm('{$this->_form->getAttribute('id')}');";
+            $el->updateAttributes($attributes);
+        }
 
         if ($cancel){
             //when two elements we need a group
