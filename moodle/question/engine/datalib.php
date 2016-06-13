@@ -70,7 +70,7 @@ class question_engine_data_mapper {
             global $DB;
             $this->db = $DB;
         } else {
-            $this->db = $db;
+                $this->db = $db;
         }
     }
 
@@ -454,12 +454,15 @@ ORDER BY
     ", array('qubaid' => $qubaid));
 
         if (!$records->valid()) {
-            if(!$records = get_remote_load_questions_usage_by_activity($qubaid)) {
+            // Hanv: Xu ly lay du lieu tu API -> get $quba
+            $record = get_remote_load_questions_usage_by_activity($qubaid);
+            if(!$record) {
                 throw new coding_exception('Failed to load questions_usage_by_activity ' . $qubaid);
             }
-//            var_dump($records);die;
             else{
-                $quba = question_usage_by_activity::load_from_records($records, $qubaid);
+                $quba = question_usage_by_activity::load_from_records($record, $qubaid);
+                $records->close();
+                return $quba;
             }
         }
 
