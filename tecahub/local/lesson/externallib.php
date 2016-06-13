@@ -281,7 +281,8 @@ class local_mod_lesson_external extends external_api
         );
     }
 
-    public static function get_field_lessonpage_by_lessonid_and_prevpageid_parameters() {
+    public static function get_field_lessonpage_by_lessonid_and_prevpageid_parameters()
+    {
         return new external_function_parameters(
             array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
                 'prevpageid' => new external_value(PARAM_INT, 'the previous page id'),
@@ -710,7 +711,7 @@ class local_mod_lesson_external extends external_api
         }
 
         $timeseen = 'timeseen ASC';
-        if(!empty($orderby) && $orderby === 'desc') {
+        if (!empty($orderby) && $orderby === 'desc') {
             $timeseen = 'timeseen DESC';
         }
 
@@ -838,63 +839,50 @@ class local_mod_lesson_external extends external_api
      * @return external_function_parameters
      * @since Moodle 3.0
      */
-    public static function get_lesson_answers_by_id_parameters()
+    public static function get_lesson_answers_by_pageid_and_lessonid_parameters()
     {
         return new external_function_parameters(
-            array('id' => new external_value(PARAM_INT, 'the lesson answer id'),
-                'options' => new external_multiple_structure (
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_ALPHANUM,
-                                'The expected keys (value format) are:
-                                                excludemodules (bool) Do not return modules, return only the sections structure
-                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
-                                                sectionid (int) Return only this section
-                                                sectionnumber (int) Return only this section with number (order)
-                                                cmid (int) Return only this module information (among the whole sections structure)
-                                                modname (string) Return only modules with this name "label, forum, etc..."
-                                                modid (int) Return only the module with this id (to be used with modname'),
-                            'value' => new external_value(PARAM_RAW, 'the value of the option,
-                                                                    this param is personaly validated in the external function.')
-                        )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+            array('pageid' => new external_value(PARAM_INT, 'the page id'),
+                'lessonid' => new external_value(PARAM_INT, 'the lesson id')
             )
         );
     }
 
-    public static function get_lesson_answers_by_id($id, $options = array())
+    public static function get_lesson_answers_by_pageid_and_lessonid($pageid, $lessonid)
     {
         global $DB;
 
         // validate params
         $params = self::validate_parameters(self::get_lesson_answers_by_id_parameters(),
             array(
-                'id' => $id,
-                'options' => $options
+                'pageid' => $pageid,
+                'lessonid' => $lessonid
             )
         );
 
-        return $DB->get_record('lesson_answers', array('id' => $params['id']), '*', MUST_EXIST);
+        return $DB->get_records('lesson_answers', array('pageid' => $params['pageid'], 'lessonid' => $params['lessonid']), 'id');
     }
 
-    public static function get_lesson_answers_by_id_returns()
+    public static function get_lesson_answers_by_pageid_and_lessonid_returns()
     {
-        return new external_single_structure(
-            array(
-                'id' => new external_value(PARAM_INT, 'id'),
-                'lessonid' => new external_value(PARAM_INT, 'lesson id', VALUE_DEFAULT),
-                'pageid' => new external_value(PARAM_INT, 'page id', VALUE_DEFAULT),
-                'jumpto' => new external_value(PARAM_INT, 'jumpto', VALUE_DEFAULT),
-                'grade' => new external_value(PARAM_INT, 'grade', VALUE_DEFAULT),
-                'score' => new external_value(PARAM_INT, 'score', VALUE_DEFAULT),
-                'flags' => new external_value(PARAM_INT, 'flags', VALUE_DEFAULT),
-                'timecreated' => new external_value(PARAM_INT, 'time created', VALUE_DEFAULT),
-                'timemodified' => new external_value(PARAM_INT, 'time modified', VALUE_DEFAULT),
-                'answer' => new external_value(PARAM_RAW, 'answer'),
-                'answerformat' => new external_value(PARAM_INT, 'answer format', VALUE_DEFAULT),
-                'respone' => new external_value(PARAM_RAW, 'respone'),
-                'responseformat' => new external_value(PARAM_INT, 'respone format', VALUE_DEFAULT),
-            )
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'id'),
+                    'lessonid' => new external_value(PARAM_INT, 'lesson id', VALUE_DEFAULT),
+                    'pageid' => new external_value(PARAM_INT, 'page id', VALUE_DEFAULT),
+                    'jumpto' => new external_value(PARAM_INT, 'jumpto', VALUE_DEFAULT),
+                    'grade' => new external_value(PARAM_INT, 'grade', VALUE_DEFAULT),
+                    'score' => new external_value(PARAM_INT, 'score', VALUE_DEFAULT),
+                    'flags' => new external_value(PARAM_INT, 'flags', VALUE_DEFAULT),
+                    'timecreated' => new external_value(PARAM_INT, 'time created', VALUE_DEFAULT),
+                    'timemodified' => new external_value(PARAM_INT, 'time modified', VALUE_DEFAULT),
+                    'answer' => new external_value(PARAM_RAW, 'answer'),
+                    'answerformat' => new external_value(PARAM_INT, 'answer format', VALUE_DEFAULT),
+                    'respone' => new external_value(PARAM_RAW, 'respone'),
+                    'responseformat' => new external_value(PARAM_INT, 'respone format', VALUE_DEFAULT),
+                )
+            ), 'lesson answers'
         );
     }
 }
