@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Vivi
- * Date: 5/26/2016
- * Time: 4:41 PM
- */
 
 require_once('../../../config.php');
 require_once('locallib.php');
@@ -24,13 +18,15 @@ $o->setOUTPUT($OUTPUT);
 $o->setPAGE($PAGE);
 $html = '';
 
-
 switch ($action){
     case 'grading':
-        
+        $html = 'do grading';
+        break;
+    case 'editsubmission':
+        $html = 'do edit';
         break;
     default:
-        $html .= $o->view_summary();
+        $html = $o->view_summary();
         break;
 }
 echo $html;

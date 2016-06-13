@@ -867,41 +867,47 @@ section#discussion-container.discussion.container div.discussion-body div#discus
     border-bottom: solid 1px #ddd;
 }
 
-#enrol-course-list .container-block {
+#enrol-course-list .right-block{
+    padding-right: 0px;
+    padding-left: 0px;
+}
+
+#enrol-course-list .right-block .container-block {
     border: 1px solid #c4c4c4;
-    padding-left: 55px;
-    margin-top: 55px;
-    padding-bottom: 20px;
+    padding-left: 20px;
+    padding-right: 10px;
+    margin-top: 20px;
+    padding-bottom: 10px;
     float: left;
 }
 
-#enrol-course-list .container-block .block-title {
+#enrol-course-list .right-block .container-block .block-title {
     text-transform: uppercase;
     font-size: 20px;
     color: #000;
     padding-top: 20px;
 }
 
-#enrol-course-list .container-block .coursebox {
+#enrol-course-list .right-block .container-block .coursebox {
     padding-left: 0px;
     float: left;
 }
 
-#enrol-course-list .container-block .coursebox .course-image {
+#enrol-course-list .right-block .container-block .coursebox .course-image {
     float: left;
     display: block;
     margin: 0px;
     padding: 0px;
 }
 
-#enrol-course-list .container-block .coursebox .course-image .course-thumbnail > img {
+#enrol-course-list .right-block .container-block .coursebox .course-image .course-thumbnail > img {
     height: 60px;
     display: block;
     max-width: 90px;
     width: 100%;
 }
 
-#enrol-course-list .container-block .btn-readmore {
+#enrol-course-list .right-block .container-block .btn-readmore {
     float: right;
     color: #3d70af;
     border: 1px solid #3d70af;

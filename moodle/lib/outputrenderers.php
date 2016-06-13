@@ -1816,12 +1816,8 @@ class core_renderer extends renderer_base {
             $params['sesskey'] = sesskey();
         }
 
-        if (empty($button->formid)) {
-            $button->formid = time();
-        }
         if (!isset($button->params['useajax'])) {
-//            $attributes['onClick'] = "return getHTMLContentForm('{$button->formid}');";
-            $attributes['class'] .= ' remote-assign-action ';
+            $attributes['class'] .= ' remote-form-action ';
         }
 
         if ($button->actions) {

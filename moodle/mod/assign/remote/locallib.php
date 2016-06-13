@@ -91,6 +91,7 @@ class remote_assign_mod
     //View
     public function view_summary()
     {
+        global $CFG;
         $responedata = get_remote_assign_submission_status($this->assignid);
         $gradingsummary = $responedata->gradingsummary;
         $OUTPUT = $this->getOUTPUT();
@@ -105,7 +106,18 @@ class remote_assign_mod
         $table->data[] = array("Needs grading", $gradingsummary->submissionsneedgradingcount);
         $html .= html_writer::table($table);
         $html .= $OUTPUT->box_end();
-        $html .= html_writer::tag('a', "View all submissions", array("href" => "/mod/assign/remote/view.php?action=grading&modid={$this->assignid}", 'class' => 'btn'));
+        $html .= html_writer::tag('a', "View all submissions", array(
+            "href" => "#",
+            'class' => 'btn remote-link-action',
+            'data-module' => json_encode(array(
+                'url' => $CFG->wwwroot . '/mod/assign/remote/api-view.php',
+                'params' => array(
+                    'id' => $this->cmid,
+                    'action' => 'grading',
+                ),
+                'method' => 'get',
+            )),
+        ));
         $html .= "&nbsp;";
         $html .= html_writer::tag('a', "Grade", array('class' => 'btn btn-primary'));
         $html .= $this->view_submission_status($responedata);
@@ -113,6 +125,7 @@ class remote_assign_mod
     }
 
     public function view_submission_status($responedata){
+        global $CFG;
         $lastattempt = $responedata->lastattempt;
         $OUTPUT = $this->getOUTPUT();
         $html = "";
@@ -128,9 +141,18 @@ class remote_assign_mod
         $table->data[] = array("Online text", $lastattempt->submissionssubmittedcount);
         $html .= html_writer::table($table);
         $html .= $OUTPUT->box_end();
-        $html .= html_writer::tag('a', "View all submissions", array("href" => "/mod/assign/remote/view.php?action=grading&modid={$this->assignid}", 'class' => 'btn'));
-        $html .= "&nbsp;";
-        $html .= html_writer::tag('a', "Grade", array('class' => 'btn btn-primary'));
+        $html .= html_writer::tag('a', "Add submissions", array(
+            "href" => "#",
+            'class' => 'btn remote-link-action assign-action-edit',
+            'data-module' => json_encode(array(
+                'url' => $CFG->wwwroot . '/mod/assign/remote/api-view.php',
+                'params' => array(
+                    'id' => $this->cmid,
+                    'action' => 'editsubmission',
+                ),
+                'method' => 'get',
+            )),
+        ));
         return $html;
     }
 }
