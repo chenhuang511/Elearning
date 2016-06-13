@@ -90,11 +90,11 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
-	'local_mod_get_lesson_answer_by_id' => array(
+	'local_mod_get_lesson_answer_by_pageid_and_lessonid' => array(
 		'classname'	  => 'local_mod_lesson_external',
-		'methodname'  => 'get_lesson_answers_by_id',
+		'methodname'  => 'get_lesson_answers_by_pageid_and_lessonid',
 		'classpath'	  => 'local/lesson/externallib.php',
-		'description' => 'Get lesson answer by id',
+		'description' => 'Get lesson answer by pageid and lessonid',
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
@@ -102,7 +102,7 @@ $functions = array(
 		'classname'	  => 'local_mod_lesson_external',
 		'methodname'  => 'get_lesson_attempts_by_lessonid_and_userid',
 		'classpath'	  => 'local/lesson/externallib.php',
-		'description' => 'Get lesson answer by id',
+		'description' => 'Get lesson attempts by lesson id and user id',
 		'type'		  => 'read',
 		'ajax'		  => true
 	),

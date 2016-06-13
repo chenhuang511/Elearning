@@ -25,31 +25,33 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-class mod_lesson_renderer extends plugin_renderer_base {
+class mod_lesson_renderer extends plugin_renderer_base
+{
     /**
      * Returns the header for the lesson module
      *
      * @param lesson $lesson a lesson object.
      * @param string $currenttab current tab that is shown.
-     * @param bool   $extraeditbuttons if extra edit buttons should be displayed.
-     * @param int    $lessonpageid id of the lesson page that needs to be displayed.
+     * @param bool $extraeditbuttons if extra edit buttons should be displayed.
+     * @param int $lessonpageid id of the lesson page that needs to be displayed.
      * @param string $extrapagetitle String to appent to the page title.
      * @return string
      */
-    public function header($lesson, $cm, $currenttab = '', $extraeditbuttons = false, $lessonpageid = null, $extrapagetitle = null) {
+    public function header($lesson, $cm, $currenttab = '', $extraeditbuttons = false, $lessonpageid = null, $extrapagetitle = null)
+    {
         global $CFG;
 
         $activityname = format_string($lesson->name, true, $lesson->course);
         if (empty($extrapagetitle)) {
-            $title = $this->page->course->shortname.": ".$activityname;
+            $title = $this->page->course->shortname . ": " . $activityname;
         } else {
-            $title = $this->page->course->shortname.": ".$activityname.": ".$extrapagetitle;
+            $title = $this->page->course->shortname . ": " . $activityname . ": " . $extrapagetitle;
         }
 
         // Build the buttons
         $context = context_module::instance($cm->id);
 
-    /// Header setup
+        /// Header setup
         $this->page->set_title($title);
         $this->page->set_heading($this->page->course->fullname);
         lesson_add_header_buttons($cm, $context, $extraeditbuttons, $lessonpageid);
@@ -60,7 +62,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
 
             if (!empty($currenttab)) {
                 ob_start();
-                include($CFG->dirroot.'/mod/lesson/tabs.php');
+                include($CFG->dirroot . '/mod/lesson/tabs.php');
                 $output .= ob_get_contents();
                 ob_end_clean();
             }
@@ -79,7 +81,8 @@ class mod_lesson_renderer extends plugin_renderer_base {
      * Returns the footer
      * @return string
      */
-    public function footer() {
+    public function footer()
+    {
         return $this->output->footer();
     }
 
@@ -89,14 +92,15 @@ class mod_lesson_renderer extends plugin_renderer_base {
      * @param string $message
      * @return <type>
      */
-    public function lesson_inaccessible($message) {
+    public function lesson_inaccessible($message)
+    {
         global $CFG;
-        $output  =  $this->output->box_start('generalbox boxaligncenter');
-        $output .=  $this->output->box_start('center');
-        $output .=  $message;
-        $output .=  $this->output->box('<a href="'.$CFG->wwwroot.'/course/view.php?id='. $this->page->course->id .'">'. get_string('returnto', 'lesson', format_string($this->page->course->fullname, true)) .'</a>', 'lessonbutton standardbutton');
-        $output .=  $this->output->box_end();
-        $output .=  $this->output->box_end();
+        $output = $this->output->box_start('generalbox boxaligncenter');
+        $output .= $this->output->box_start('center');
+        $output .= $message;
+        $output .= $this->output->box('<a href="' . $CFG->wwwroot . '/course/view.php?id=' . $this->page->course->id . '">' . get_string('returnto', 'lesson', format_string($this->page->course->fullname, true)) . '</a>', 'lessonbutton standardbutton');
+        $output .= $this->output->box_end();
+        $output .= $this->output->box_end();
         return $output;
     }
 
@@ -106,24 +110,25 @@ class mod_lesson_renderer extends plugin_renderer_base {
      * @param bool $failedattempt
      * @return string
      */
-    public function login_prompt(lesson $lesson, $failedattempt = false) {
+    public function login_prompt(lesson $lesson, $failedattempt = false)
+    {
         global $CFG;
-        $output  = $this->output->box_start('password-form');
+        $output = $this->output->box_start('password-form');
         $output .= $this->output->box_start('generalbox boxaligncenter');
-        $output .=  '<form id="password" method="post" action="'.$CFG->wwwroot.'/mod/lesson/view.php" autocomplete="off">';
-        $output .=  '<fieldset class="invisiblefieldset center">';
-        $output .=  '<input type="hidden" name="id" value="'. $this->page->cm->id .'" />';
-        $output .=  '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+        $output .= '<form id="password" method="post" action="' . $CFG->wwwroot . '/mod/lesson/view.php" autocomplete="off">';
+        $output .= '<fieldset class="invisiblefieldset center">';
+        $output .= '<input type="hidden" name="id" value="' . $this->page->cm->id . '" />';
+        $output .= '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
         if ($failedattempt) {
-            $output .=  $this->output->notification(get_string('loginfail', 'lesson'));
+            $output .= $this->output->notification(get_string('loginfail', 'lesson'));
         }
-        $output .= get_string('passwordprotectedlesson', 'lesson', format_string($lesson->name)).'<br /><br />';
-        $output .= get_string('enterpassword', 'lesson')." <input type=\"password\" name=\"userpassword\" /><br /><br />";
-        $output .= "<div class='lessonbutton standardbutton submitbutton'><input type='submit' value='".get_string('continue', 'lesson')."' /></div>";
-        $output .= " <div class='lessonbutton standardbutton submitbutton'><input type='submit' name='backtocourse' value='".get_string('cancel', 'lesson')."' /></div>";
-        $output .=  '</fieldset></form>';
-        $output .=  $this->output->box_end();
-        $output .=  $this->output->box_end();
+        $output .= get_string('passwordprotectedlesson', 'lesson', format_string($lesson->name)) . '<br /><br />';
+        $output .= get_string('enterpassword', 'lesson') . " <input type=\"password\" name=\"userpassword\" /><br /><br />";
+        $output .= "<div class='lessonbutton standardbutton submitbutton'><input type='submit' value='" . get_string('continue', 'lesson') . "' /></div>";
+        $output .= " <div class='lessonbutton standardbutton submitbutton'><input type='submit' name='backtocourse' value='" . get_string('cancel', 'lesson') . "' /></div>";
+        $output .= '</fieldset></form>';
+        $output .= $this->output->box_end();
+        $output .= $this->output->box_end();
         return $output;
     }
 
@@ -134,10 +139,11 @@ class mod_lesson_renderer extends plugin_renderer_base {
      * @param array $errors
      * @return string
      */
-    public function dependancy_errors($dependentlesson, $errors) {
-        $output  = $this->output->box_start('generalbox boxaligncenter');
+    public function dependancy_errors($dependentlesson, $errors)
+    {
+        $output = $this->output->box_start('generalbox boxaligncenter');
         $output .= get_string('completethefollowingconditions', 'lesson', $dependentlesson->name);
-        $output .= $this->output->box(implode('<br />'.get_string('and', 'lesson').'<br />', $errors),'center');
+        $output .= $this->output->box(implode('<br />' . get_string('and', 'lesson') . '<br />', $errors), 'center');
         $output .= $this->output->box_end();
         return $output;
     }
@@ -148,8 +154,9 @@ class mod_lesson_renderer extends plugin_renderer_base {
      * @param single_button $button
      * @return string
      */
-    public function message($message, single_button $button = null) {
-        $output  = $this->output->box_start('generalbox boxaligncenter');
+    public function message($message, single_button $button = null)
+    {
+        $output = $this->output->box_start('generalbox boxaligncenter');
         $output .= $message;
         if ($button !== null) {
             $output .= $this->output->box($this->output->render($button), 'lessonbutton standardbutton');
@@ -164,17 +171,17 @@ class mod_lesson_renderer extends plugin_renderer_base {
      * @param int $lastpageseen
      * @return string
      */
-    public function continue_links(lesson $lesson, $lastpageseenid) {
+    public function continue_links(lesson $lesson, $lastpageseenid)
+    {
         global $CFG;
-        $output = $this->output->box(get_string('youhaveseen','lesson'), 'generalbox boxaligncenter');
+        $output = $this->output->box(get_string('youhaveseen', 'lesson'), 'generalbox boxaligncenter');
         $output .= $this->output->box_start('center');
-
-        $yeslink = html_writer::link(new moodle_url('/mod/lesson/view.php', array('id'=>$this->page->cm->id, 'pageid'=>$lastpageseenid, 'startlastseen'=>'yes')), get_string('yes'));
-        $output .= html_writer::tag('span', $yeslink, array('class'=>'lessonbutton standardbutton'));
+        $yeslink = html_writer::link('#', get_string('yes'), array('class' => 'remote-lesson-button', 'data-module' => json_encode(array('url' => $CFG->wwwroot . '/mod/lesson/remote/api-view.php', 'params' => array('id' => $this->page->cm->id, 'pageid' => $lastpageseenid, 'startlastseen' => 'yes'), 'method' => 'get'))));
+        $output .= html_writer::tag('span', $yeslink, array('class' => 'lessonbutton standardbutton'));
         $output .= '&nbsp;';
 
-        $nolink = html_writer::link(new moodle_url('/mod/lesson/view.php', array('id'=>$this->page->cm->id, 'pageid'=>$lesson->firstpageid, 'startlastseen'=>'no')), get_string('no'));
-        $output .= html_writer::tag('span', $nolink, array('class'=>'lessonbutton standardbutton'));
+        $nolink = html_writer::link('#', get_string('no'), array('class' => 'remote-lesson-button', 'data-module' => json_encode(array('url' => $CFG->wwwroot . '/mod/lesson/remote/api-view.php', 'params' => array('id' => $this->page->cm->id, 'pageid' => $lesson->firstpageid, 'startlastseen' => 'no'), 'method' => 'get'))));
+        $output .= html_writer::tag('span', $nolink, array('class' => 'lessonbutton standardbutton'));
 
         $output .= $this->output->box_end();
         return $output;
@@ -187,7 +194,8 @@ class mod_lesson_renderer extends plugin_renderer_base {
      * @param object $attempt
      * @return string
      */
-    public function display_page(lesson $lesson, lesson_page $page, $attempt) {
+    public function display_page(lesson $lesson, lesson_page $page, $attempt)
+    {
         // We need to buffer here as there is an mforms display call
         ob_start();
         echo $page->display($this, $attempt);
@@ -203,7 +211,8 @@ class mod_lesson_renderer extends plugin_renderer_base {
      * @param int $pageid
      * @return string
      */
-    public function display_edit_collapsed(lesson $lesson, $pageid) {
+    public function display_edit_collapsed(lesson $lesson, $pageid)
+    {
         global $DB, $CFG;
 
         $manager = lesson_page_type_manager::get($lesson);
@@ -226,8 +235,8 @@ class mod_lesson_renderer extends plugin_renderer_base {
             $page = $lesson->load_page($pageid);
             $data = array();
             $url = new moodle_url('/mod/lesson/edit.php', array(
-                'id'     => $this->page->cm->id,
-                'mode'   => 'single',
+                'id' => $this->page->cm->id,
+                'mode' => 'single',
                 'pageid' => $page->id
             ));
             $data[] = html_writer::link($url, format_string($page->title, true), array('id' => 'lesson-' . $page->id));
@@ -254,7 +263,8 @@ class mod_lesson_renderer extends plugin_renderer_base {
      * @param bool $single
      * @return string
      */
-    public function display_edit_full(lesson $lesson, $pageid, $prevpageid, $single=false) {
+    public function display_edit_full(lesson $lesson, $pageid, $prevpageid, $single = false)
+    {
         global $DB, $CFG;
 
         $manager = lesson_page_type_manager::get($lesson);
@@ -270,11 +280,11 @@ class mod_lesson_renderer extends plugin_renderer_base {
         $options = new stdClass;
         $options->noclean = true;
 
-        while ($pageid != 0 && $single!=='stop') {
+        while ($pageid != 0 && $single !== 'stop') {
             $page = $lesson->load_page($pageid);
 
             $pagetable = new html_table();
-            $pagetable->align = array('right','left');
+            $pagetable->align = array('right', 'left');
             $pagetable->width = '100%';
             $pagetable->tablealign = 'center';
             $pagetable->cellspacing = 0;
@@ -286,7 +296,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
 
             $pageheading->text = format_string($page->title);
             if ($canedit) {
-                $pageheading->text .= ' '.$this->page_action_links($page, $npages);
+                $pageheading->text .= ' ' . $this->page_action_links($page, $npages);
             }
             $pageheading->style = 'text-align:center';
             $pageheading->colspan = 2;
@@ -302,7 +312,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
             $cell = new html_table_cell();
             $cell->colspan = 2;
             $cell->style = 'text-align:center';
-            $cell->text = '<strong>'.$qtypes[$page->qtype] . $page->option_description_string().'</strong>';
+            $cell->text = '<strong>' . $qtypes[$page->qtype] . $page->option_description_string() . '</strong>';
             $pagetable->data[] = new html_table_row(array($cell));
 
             $pagetable = $page->display_answers($pagetable);
@@ -343,20 +353,21 @@ class mod_lesson_renderer extends plugin_renderer_base {
      * @param int $prevpageid
      * @return string
      */
-    public function add_page_links(lesson $lesson, $prevpageid=false) {
+    public function add_page_links(lesson $lesson, $prevpageid = false)
+    {
         global $CFG;
 
         $links = array();
 
-        $importquestionsurl = new moodle_url('/mod/lesson/import.php',array('id'=>$this->page->cm->id, 'pageid'=>$prevpageid));
+        $importquestionsurl = new moodle_url('/mod/lesson/import.php', array('id' => $this->page->cm->id, 'pageid' => $prevpageid));
         $links[] = html_writer::link($importquestionsurl, get_string('importquestions', 'lesson'));
 
         $manager = lesson_page_type_manager::get($lesson);
-        foreach($manager->get_add_page_type_links($prevpageid) as $link) {
+        foreach ($manager->get_add_page_type_links($prevpageid) as $link) {
             $links[] = html_writer::link($link['addurl'], $link['name']);
         }
 
-        $addquestionurl = new moodle_url('/mod/lesson/editpage.php', array('id'=>$this->page->cm->id, 'pageid'=>$prevpageid));
+        $addquestionurl = new moodle_url('/mod/lesson/editpage.php', array('id' => $this->page->cm->id, 'pageid' => $prevpageid));
         $links[] = html_writer::link($addquestionurl, get_string('addaquestionpagehere', 'lesson'));
 
         return $this->output->box(implode(" | \n", $links), 'addlinks');
@@ -367,14 +378,15 @@ class mod_lesson_renderer extends plugin_renderer_base {
      * @param lesson $lesson
      * @return string
      */
-    public function add_first_page_links(lesson $lesson) {
+    public function add_first_page_links(lesson $lesson)
+    {
         global $CFG;
         $prevpageid = 0;
 
         $output = $this->output->heading(get_string("whatdofirst", "lesson"), 3);
         $links = array();
 
-        $importquestionsurl = new moodle_url('/mod/lesson/import.php',array('id'=>$this->page->cm->id, 'pageid'=>$prevpageid));
+        $importquestionsurl = new moodle_url('/mod/lesson/import.php', array('id' => $this->page->cm->id, 'pageid' => $prevpageid));
         $links[] = html_writer::link($importquestionsurl, get_string('importquestions', 'lesson'));
 
         $manager = lesson_page_type_manager::get($lesson);
@@ -383,10 +395,10 @@ class mod_lesson_renderer extends plugin_renderer_base {
             $links[] = html_writer::link($link['addurl'], $link['name']);
         }
 
-        $addquestionurl = new moodle_url('/mod/lesson/editpage.php', array('id'=>$this->page->cm->id, 'pageid'=>$prevpageid, 'firstpage'=>1));
+        $addquestionurl = new moodle_url('/mod/lesson/editpage.php', array('id' => $this->page->cm->id, 'pageid' => $prevpageid, 'firstpage' => 1));
         $links[] = html_writer::link($addquestionurl, get_string('addaquestionpage', 'lesson'));
 
-        return $this->output->box($output.'<p>'.implode('</p><p>', $links).'</p>', 'generalbox firstpageoptions');
+        return $this->output->box($output . '<p>' . implode('</p><p>', $links) . '</p>', 'generalbox firstpageoptions');
     }
 
     /**
@@ -397,14 +409,15 @@ class mod_lesson_renderer extends plugin_renderer_base {
      * @param bool $printaddpage
      * @return string
      */
-    public function page_action_links(lesson_page $page, $printmove, $printaddpage=false) {
+    public function page_action_links(lesson_page $page, $printmove, $printaddpage = false)
+    {
         global $CFG;
 
         $actions = array();
 
         if ($printmove) {
             $url = new moodle_url('/mod/lesson/lesson.php',
-                    array('id' => $this->page->cm->id, 'action' => 'move', 'pageid' => $page->id, 'sesskey' => sesskey()));
+                array('id' => $this->page->cm->id, 'action' => 'move', 'pageid' => $page->id, 'sesskey' => sesskey()));
             $label = get_string('movepagenamed', 'lesson', format_string($page->title));
             $img = html_writer::img($this->output->pix_url('t/move'), $label, array('class' => 'iconsmall'));
             $actions[] = html_writer::link($url, $img, array('title' => $label));
@@ -420,7 +433,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
         $actions[] = html_writer::link($url, $img, array('title' => $label));
 
         $url = new moodle_url('/mod/lesson/lesson.php',
-                array('id' => $this->page->cm->id, 'action' => 'confirmdelete', 'pageid' => $page->id, 'sesskey' => sesskey()));
+            array('id' => $this->page->cm->id, 'action' => 'confirmdelete', 'pageid' => $page->id, 'sesskey' => sesskey()));
         $label = get_string('deletepagenamed', 'lesson', format_string($page->title));
         $img = html_writer::img($this->output->pix_url('t/delete'), $label, array('class' => 'iconsmall'));
         $actions[] = html_writer::link($url, $img, array('title' => $label));
@@ -434,8 +447,8 @@ class mod_lesson_renderer extends plugin_renderer_base {
             }
             $options[0] = get_string('question', 'lesson');
 
-            $addpageurl = new moodle_url('/mod/lesson/editpage.php', array('id'=>$this->page->cm->id, 'pageid'=>$page->id, 'sesskey'=>sesskey()));
-            $addpageselect = new single_select($addpageurl, 'qtype', $options, null, array(''=>get_string('addanewpage', 'lesson').'...'), 'addpageafter'.$page->id);
+            $addpageurl = new moodle_url('/mod/lesson/editpage.php', array('id' => $this->page->cm->id, 'pageid' => $page->id, 'sesskey' => sesskey()));
+            $addpageselect = new single_select($addpageurl, 'qtype', $options, null, array('' => get_string('addanewpage', 'lesson') . '...'), 'addpageafter' . $page->id);
             $addpageselector = $this->output->render($addpageselect);
         }
 
@@ -458,25 +471,26 @@ class mod_lesson_renderer extends plugin_renderer_base {
      * @return void
      **/
 
-     /**
-      * Prints the on going message to the user.
-      *
-      * With custom grading On, displays points
-      * earned out of total points possible thus far.
-      * With custom grading Off, displays number of correct
-      * answers out of total attempted.
-      *
-      * @param lesson $lesson
-      * @return string
-      */
-    public function ongoing_score(lesson $lesson) {
+    /**
+     * Prints the on going message to the user.
+     *
+     * With custom grading On, displays points
+     * earned out of total points possible thus far.
+     * With custom grading Off, displays number of correct
+     * answers out of total attempted.
+     *
+     * @param lesson $lesson
+     * @return string
+     */
+    public function ongoing_score(lesson $lesson)
+    {
         global $USER, $DB;
 
         $context = context_module::instance($this->page->cm->id);
         if (has_capability('mod/lesson:manage', $context)) {
             return $this->output->box(get_string('teacherongoingwarning', 'lesson'), "ongoing center");
         } else {
-            $ntries = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id));
+            $ntries = $DB->count_records("lesson_grades", array("lessonid" => $lesson->id, "userid" => $USER->id));
             if (isset($USER->modattempts[$lesson->id])) {
                 $ntries--;
             }
@@ -500,7 +514,8 @@ class mod_lesson_renderer extends plugin_renderer_base {
      * @param lesson $lesson
      * @return string
      */
-    public function progress_bar(lesson $lesson) {
+    public function progress_bar(lesson $lesson)
+    {
         global $CFG, $USER, $DB;
 
         $context = context_module::instance($this->page->cm->id);
@@ -526,21 +541,21 @@ class mod_lesson_renderer extends plugin_renderer_base {
             }
 
             // current attempt number
-            if (!$ntries = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id))) {
+            if (!$ntries = $DB->count_records("lesson_grades", array("lessonid" => $lesson->id, "userid" => $USER->id))) {
                 $ntries = 0;  // may not be necessary
             }
 
             $viewedpageids = array();
             if ($attempts = $lesson->get_attempts($ntries, false)) {
-                foreach($attempts as $attempt) {
+                foreach ($attempts as $attempt) {
                     $viewedpageids[$attempt->pageid] = $attempt;
                 }
             }
 
             $viewedbranches = array();
             // collect all of the branch tables viewed
-            if ($branches = $DB->get_records("lesson_branch", array ("lessonid"=>$lesson->id, "userid"=>$USER->id, "retry"=>$ntries), 'timeseen ASC', 'id, pageid')) {
-                foreach($branches as $branch) {
+            if ($branches = $DB->get_records("lesson_branch", array("lessonid" => $lesson->id, "userid" => $USER->id, "retry" => $ntries), 'timeseen ASC', 'id, pageid')) {
+                foreach ($branches as $branch) {
                     $viewedbranches[$branch->pageid] = $branch;
                 }
                 $viewedpageids = array_merge($viewedpageids, $viewedbranches);
@@ -558,13 +573,13 @@ class mod_lesson_renderer extends plugin_renderer_base {
             }
 
             // progress calculation as a percent
-            $progress = round(count($viewedpageids)/count($validpages), 2) * 100;
+            $progress = round(count($viewedpageids) / count($validpages), 2) * 100;
         } else {
             $progress = 100;
         }
 
         // print out the Progress Bar.  Attempted to put as much as possible in the style sheets.
-        $content = '<br />' . html_writer::tag('div', $progress . '%', array('class' => 'progress_bar_completed', 'style' => 'width: '. $progress . '%;'));
+        $content = '<br />' . html_writer::tag('div', $progress . '%', array('class' => 'progress_bar_completed', 'style' => 'width: ' . $progress . '%;'));
         $printprogress = html_writer::tag('div', get_string('progresscompleted', 'lesson', $progress) . $content, array('class' => 'progress_bar'));
 
         return $this->output->box($printprogress, 'progress_bar');
@@ -574,27 +589,32 @@ class mod_lesson_renderer extends plugin_renderer_base {
      * Returns HTML to show the start of a slideshow
      * @param lesson $lesson
      */
-    public function slideshow_start(lesson $lesson) {
+    public function slideshow_start(lesson $lesson)
+    {
         $attributes = array();
         $attributes['class'] = 'slideshow';
-        $attributes['style'] = 'background-color:'.$lesson->properties()->bgcolor.';height:'.
-                $lesson->properties()->height.'px;width:'.$lesson->properties()->width.'px;';
+        $attributes['style'] = 'background-color:' . $lesson->properties()->bgcolor . ';height:' .
+            $lesson->properties()->height . 'px;width:' . $lesson->properties()->width . 'px;';
         $output = html_writer::start_tag('div', $attributes);
         return $output;
     }
+
     /**
      * Returns HTML to show the end of a slideshow
      */
-    public function slideshow_end() {
+    public function slideshow_end()
+    {
         $output = html_writer::end_tag('div');
         return $output;
     }
+
     /**
      * Returns a P tag containing contents
      * @param string $contents
      * @param string $class
      */
-    public function paragraph($contents, $class='') {
+    public function paragraph($contents, $class = '')
+    {
         $attributes = array();
         if ($class !== '') {
             $attributes['class'] = $class;
