@@ -117,7 +117,9 @@ class core_remote_renderer extends plugin_renderer_base
         }
         $content .= html_writer::end_tag('div');
 
-        $content .= html_writer::start_tag('div', array('class' => 'container-block col-sm-3'));
+        $content .= html_writer::start_tag('div', array('class' => 'right-block col-sm-3'));
+
+        $content .= html_writer::start_tag('div', array('class' => 'container-block'));
 
         $content .= html_writer::tag('div', 'suggested course', array('class' => 'block-title'));
         $course3 = array_slice($courses,0,3);
@@ -152,7 +154,7 @@ class core_remote_renderer extends plugin_renderer_base
         $content .= html_writer::tag('button', 'Đọc thêm', array('class' => 'btn-readmore'));
         $content .= html_writer::end_tag('div');
 
-        $content .= html_writer::start_tag('div', array('class' => 'container-block col-sm-3'));
+        $content .= html_writer::start_tag('div', array('class' => 'container-block'));
 
         $content .= html_writer::tag('div', 'finished course', array('class' => 'block-title'));
         $course3 = array_slice($courses,0,3);
