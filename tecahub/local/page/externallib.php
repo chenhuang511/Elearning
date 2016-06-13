@@ -69,7 +69,7 @@ class local_mod_page_external extends external_api {
 
         //validate parameter
         $params = self::validate_parameters(self::get_mod_page_by_id_parameters(),
-            array('id' => $id);
+            array('id' => $id));
 
         $page =  $DB->get_record('page', array('id' => $params['id']), '*', MUST_EXIST);
         return $page;
