@@ -19,12 +19,18 @@ function arrayToUrlParmas(params) {
     return out.join('&');
 }
 
-function getHTMLContentForm(formid) {
+function getHTMLContentForm(form) {
+    if (typeof form === 'string') {
+        form = $('#' + form);
+    }
+    if (!form) {
+        return;
+    }
     var module = {};
 
-    module['url'] = $('#' + formid).attr('action');
-    module['method'] = $('#' + formid).attr('method');
-    module['params'] = $('#' + formid).serialize();
+    module['url'] = form.attr('action');
+    module['method'] = form.attr('method');
+    module['params'] = form.serialize();
 
     return getHTMLContent(module, false);
 }
@@ -66,9 +72,9 @@ function formEventHandler(e) {
     e.preventDefault();
     var el = $(this);
     var formParent = $(el.closest('form'));
-    console.log(formParent);
-    var formId = formParent.attr('id') || null;
-    getHTMLContentForm(formId);
+    if (formParent) {
+        getHTMLContentForm(formParent);
+    }
 }
 
 function linkClickEventHandler(e) {
