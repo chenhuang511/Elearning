@@ -1821,7 +1821,7 @@ class core_renderer extends renderer_base {
         }
         if (!isset($button->params['useajax'])) {
 //            $attributes['onClick'] = "return getHTMLContentForm('{$button->formid}');";
-            $attributes['class'] .= ' remote-assign-action ';
+            $attributes['class'] .= ' remote-form-action ';
         }
 
         if ($button->actions) {

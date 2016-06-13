@@ -62,6 +62,15 @@ function getHTMLContent(module, encode) {
     return false;
 }
 
+function formEventHandler(e) {
+    e.preventDefault();
+    var el = $(this);
+    var formParent = $(el.closest('form'));
+    console.log(formParent);
+    var formId = formParent.attr('id') || null;
+    getHTMLContentForm(formId);
+}
+
 function loadRemoteContent() {
     var courseRemote = $('.get-remote-content');
     if (courseRemote && courseRemote.length > 0) {
@@ -75,13 +84,13 @@ function loadRemoteContent() {
             })
         });
     }
-    $('#module-content').on('click', '.remote-assign-action', function (e) {
+    $('#module-content').on('click', '.remote-link-action', function (e) {
         e.preventDefault();
         var el = $(this);
-        console.log(el);
         var module = el.attr('data-module') || '';
         getHTMLContentJson(module);
     });
+    $('#module-content').on('click submit', '.remote-form-action', formEventHandler);
 
 }
 
