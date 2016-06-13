@@ -12,8 +12,8 @@ $(function () {
 });
 
 function arrayToUrlParmas(params) {
-    var out = [];
-    for (var key in params) {
+    var out = new Array();
+    for (key in params) {
         out.push(key + '=' + encodeURIComponent(params[key]));
     }
     return out.join('&');
@@ -88,6 +88,7 @@ function loadRemoteContent() {
     }
     $('#module-content').on('click', '.remote-link-action', linkClickEventHandler);
     $('#module-content').on('click submit', '.remote-form-action', formEventHandler);
+    $('#module-content').on('click', '.remote-lesson-button', linkClickEventHandler);
 }
 
 (function ($) {

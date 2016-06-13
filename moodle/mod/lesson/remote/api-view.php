@@ -254,9 +254,6 @@ if (empty($pageid)) {
     }
     // Check to see if end of lesson was reached.
     if ((isset($lastpageseen) && ($lastpageseen != LESSON_EOL))) {
-        $countattempts = get_remote_count_by_lessonid_and_userid('lesson_attempts', $lesson->id, $USER->id, $retries);
-        $countbranch = get_remote_count_by_lessonid_and_userid('lesson_branch', $lesson->id, $USER->id, $retries);
-
         if ((get_remote_count_by_lessonid_and_userid('lesson_attempts', $lesson->id, $USER->id, $retries) > 0)
             || get_remote_count_by_lessonid_and_userid('lesson_branch', $lesson->id, $USER->id, $retries) > 0
         ) {
@@ -403,7 +400,6 @@ if ($pageid != LESSON_EOL) {
         // this is for modattempts option.  Find the users previous answer to this page,
         //   and then display it below in answer processing
         if (isset($USER->modattempts[$lesson->id])) {
-            //$retries = $DB->count_records('lesson_grades', array("lessonid" => $lesson->id, "userid" => $USER->id));
             $retries = get_remote_count_by_lessonid_and_userid('lesson_grades', $lesson->id, $USER->id);
             if (!$attempts = $lesson->get_attempts($retries - 1, false, $page->id)) {
                 print_error('cannotfindpreattempt', 'lesson');
