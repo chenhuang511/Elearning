@@ -49,10 +49,6 @@ $lesson = new lesson($lesson);
 
 require_login($course, false, $cm);
 
-if ($backtocourse) {
-    redirect(new moodle_url('/course/view.php', array('id' => $course->id)));
-}
-
 // Apply overrides.
 $lesson->update_effective_access($USER->id);
 
@@ -184,7 +180,7 @@ $attemptflag = false;
 if (empty($pageid)) {
     // make sure there are pages to view
     //if (!$DB->get_field('lesson_pages', 'id', array('lessonid' => $lesson->id, 'prevpageid' => 0))) {
-    if (!get_remote_lesson_page($lesson->id, 0)->id) {
+    if (!get_remote_field_lesson_page($lesson->id, 0)) {
         if (!$canmanage) {
             $lesson->add_message(get_string('lessonnotready2', 'lesson')); // a nice message to the student
         } else {
@@ -299,7 +295,7 @@ if (empty($pageid)) {
     }
     // start at the first page
     //if (!$pageid = $DB->get_field('lesson_pages', 'id', array('lessonid' => $lesson->id, 'prevpageid' => 0))) {
-    if (!$pageid = get_remote_lesson_page($lesson->id, 0)->id) {
+    if (!$pageid = get_remote_field_lesson_page($lesson->id, 0)) {
         print_error('cannotfindfirstpage', 'lesson');
     }
 /// This is the code for starting a timed test

@@ -46,6 +46,17 @@ function get_remote_lesson_page($lessonid, $prevpageid, $options = array())
     ));
 }
 
+function get_remote_field_lesson_page($lessonid, $prevpageid, $options = array()) {
+    return moodle_webservice_client(array_merge($options,
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_field_lesson_page_by_lessonid_and_prevpageid',
+            'params' => array('lessonid' => $lessonid, 'prevpageid' => $prevpageid)
+        )
+    ));
+}
+
 /**
  * get lesson page by pageid and lessonid
  *
