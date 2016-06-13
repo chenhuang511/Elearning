@@ -75,6 +75,13 @@ function loadRemoteContent() {
             })
         });
     }
+    $('#module-content').on('click', '.remote-assign-action', function (e) {
+        e.preventDefault();
+        var el = $(this);
+        console.log(el);
+        var module = el.attr('data-module') || '';
+        getHTMLContentJson(module);
+    });
 
 }
 
