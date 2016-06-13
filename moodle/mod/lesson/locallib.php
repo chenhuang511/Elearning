@@ -112,12 +112,14 @@ function lesson_unseen_question_jump($lesson, $user, $pageid)
     global $DB;
 
     // get the number of retakes
-    if (!$retakes = $DB->count_records("lesson_grades", array("lessonid" => $lesson->id, "userid" => $user))) {
+    $retakes = get_remote_count_by_lessonid_and_userid('lesson_grades', $lesson->id, $user);
+    if (!$retakes) {
         $retakes = 0;
     }
 
     // get all the lesson_attempts aka what the user has seen
-    if ($viewedpages = $DB->get_records("lesson_attempts", array("lessonid" => $lesson->id, "userid" => $user, "retry" => $retakes), "timeseen DESC")) {
+    $viewedpages = get_remote_lesson_attempts_by_lessonid_and_userid($lesson->id, $user, 0, -1, 'desc');
+    if ($viewedpages) {
         foreach ($viewedpages as $viewed) {
             $seenpages[] = $viewed->pageid;
         }
@@ -3448,8 +3450,8 @@ class lesson_page_type_manager
     public function load_page($pageid, lesson $lesson)
     {
         global $DB;
-        //if (!($page =$DB->get_record('lesson_pages', array('id'=>$pageid, 'lessonid'=>$lesson->id)))) {
-        if (!($page = get_remote_lessonpage_by_pageid_and_lessonid($pageid, $lesson->id))) {
+        $page = get_remote_lessonpage_by_pageid_and_lessonid($pageid, $lesson->id);
+        if (!$page) {
             print_error('cannotfindpages', 'lesson');
         }
         $pagetype = get_class($this->types[$page->qtype]);

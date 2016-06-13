@@ -63,12 +63,14 @@ if ($pageid !== null) {
 $PAGE->set_url($url);
 
 $context = context_module::instance($cm->id);
-$canmanage = has_capability('mod/lesson:manage', $context);
+//$canmanage = has_capability('mod/lesson:manage', $context);\
+
+// logined with student
+$canmanage = false;
 
 $lessonoutput = $PAGE->get_renderer('mod_lesson');
 
 $reviewmode = false;
-//$userhasgrade = $DB->count_records("lesson_grades", array("lessonid" => $lesson->id, "userid" => $USER->id));
 $userhasgrade = get_remote_count_by_lessonid_and_userid('lesson_grades', $lesson->id, $USER->id);
 if ($userhasgrade && !$lesson->retake) {
     $reviewmode = true;
@@ -179,12 +181,11 @@ if ($pageid == LESSON_UNSEENBRANCHPAGE) {
 $attemptflag = false;
 if (empty($pageid)) {
     // make sure there are pages to view
-    //if (!$DB->get_field('lesson_pages', 'id', array('lessonid' => $lesson->id, 'prevpageid' => 0))) {
-    if (!get_remote_field_lesson_page($lesson->id, 0)) {
+    $lessonpageid = get_remote_field_lesson_page($lesson->id, 0);
+    if (!$lessonpageid) {
         if (!$canmanage) {
             $lesson->add_message(get_string('lessonnotready2', 'lesson')); // a nice message to the student
         } else {
-            // if (!$DB->count_records('lesson_pages', array('lessonid' => $lesson->id))) {
             if (!get_remote_count_by_lessonid_and_userid('lesson_pages', $lesson->id)) {
                 redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id"); // no pages - redirect to add pages
             } else {
@@ -205,7 +206,6 @@ if (empty($pageid)) {
         unset($USER->modattempts[$lesson->id]);  // if no pageid, then student is NOT reviewing
     }
     // If there are any questions that have been answered correctly (or not) in this attempt.
-    //$allattempts = $lesson->get_attempts($retries);
     $allattempts = get_remote_lesson_attempts_by_lessonid_and_userid($lesson->id, $USER->id, $retries, 0, -1);
     if (!empty($allattempts)) {
         $attempt = end($allattempts);
@@ -230,7 +230,6 @@ if (empty($pageid)) {
         }
     }
 
-    //if ($branchtables = $DB->get_records('lesson_branch', array("lessonid" => $lesson->id, "userid" => $USER->id, "retry" => $retries), 'timeseen DESC')) {
     if ($branchtables = get_remote_lesson_branch_by_lessonid_and_userid_and_retry($lesson->id, $USER->id, $retries)) {
         // in here, user has viewed a branch table
         $lastbranchtable = current($branchtables);
@@ -256,9 +255,9 @@ if (empty($pageid)) {
     }
     // Check to see if end of lesson was reached.
     if ((isset($lastpageseen) && ($lastpageseen != LESSON_EOL))) {
-//        if (($DB->count_records('lesson_attempts', array('lessonid' => $lesson->id, 'userid' => $USER->id, 'retry' => $retries)) > 0)
-//            || $DB->count_records('lesson_branch', array("lessonid" => $lesson->id, "userid" => $USER->id, "retry" => $retries)) > 0
-//        ) {
+        $countattempts = get_remote_count_by_lessonid_and_userid('lesson_attempts', $lesson->id, $USER->id, $retries);
+        $countbranch = get_remote_count_by_lessonid_and_userid('lesson_branch', $lesson->id, $USER->id, $retries);
+
         if ((get_remote_count_by_lessonid_and_userid('lesson_attempts', $lesson->id, $USER->id, $retries) > 0)
             || get_remote_count_by_lessonid_and_userid('lesson_branch', $lesson->id, $USER->id, $retries) > 0
         ) {
@@ -294,7 +293,6 @@ if (empty($pageid)) {
         }
     }
     // start at the first page
-    //if (!$pageid = $DB->get_field('lesson_pages', 'id', array('lessonid' => $lesson->id, 'prevpageid' => 0))) {
     if (!$pageid = get_remote_field_lesson_page($lesson->id, 0)) {
         print_error('cannotfindfirstpage', 'lesson');
     }
