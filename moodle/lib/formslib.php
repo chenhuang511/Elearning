@@ -1213,11 +1213,10 @@ abstract class moodleform {
 
         $mform =& $this->_form;
 
-        $attributes['onClick'] = "return getHTMLContentForm('{$this->_form->getAttribute('id')}');";
         $el = &$mform->createElement('submit', 'submitbutton', $submitlabel);
 
         if ($useajax) {
-            $attributes['onClick'] = "return getHTMLContentForm('{$this->_form->getAttribute('id')}');";
+            $attributes['class'] .= ' remote-form-action ';
             $el->updateAttributes($attributes);
         }
 
