@@ -297,6 +297,7 @@ class quiz {
     }
 
     /**
+     * hanv
      * Return quiz_access_manager and instance of the quiz_access_manager class
      * for this quiz at this time.
      * @param int $timenow the current time as a unix timestamp.
@@ -618,14 +619,15 @@ class quiz_attempt {
         $this->slots = $DB->get_records('quiz_slots',
                 array('quizid' => $this->get_quizid()), 'slot',
                 'slot, requireprevious, questionid');
-//        if(!$this->slots){
-//            echo 1; die;
-//        }
+        if(!$this->slots){
+            $this->slots = get_remote_get_slots_by_quizid($this->get_quizid());
+        }
+
         $this->sections = array_values($DB->get_records('quiz_sections',
                 array('quizid' => $this->get_quizid()), 'firstslot'));
-//        if(!$this->sections){
-//            echo 2; die;
-//        }
+        if(!$this->sections){
+            $this->sections = get_remote_get_sections_by_quizid($this->get_quizid());
+        }
 
         $this->link_sections_and_slots();
         $this->determine_layout();

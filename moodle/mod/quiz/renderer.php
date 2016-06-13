@@ -448,11 +448,11 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @param int $nextpage The number of the next page
      */
     public function attempt_page($attemptobj, $page, $accessmanager, $messages, $slots, $id,
-                                 $nextpage) {
+                                 $nextpage, $attemptremote=null) {
         $output = '';
         $output .= $this->header();
         $output .= $this->quiz_notices($messages);
-        $output .= $this->attempt_form($attemptobj, $page, $slots, $id, $nextpage);
+        $output .= $this->attempt_form($attemptobj, $page, $slots, $id, $nextpage, $attemptremote);
         $output .= $this->footer();
         return $output;
     }
@@ -479,7 +479,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @param int $id ID of the attempt
      * @param int $nextpage Next page number
      */
-    public function attempt_form($attemptobj, $page, $slots, $id, $nextpage) {
+    public function attempt_form($attemptobj, $page, $slots, $id, $nextpage, $attemptremote=null) {
         $output = '';
 
         // Start the form.
@@ -490,9 +490,17 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $output .= html_writer::start_tag('div');
 
         // Print all the questions.
+//        foreach ($slots as $slot) {
+//            $output .= $attemptobj->render_question($slot, false, $this,
+//                $attemptobj->attempt_url($slot, $page), $this);
+//        }
+
         foreach ($slots as $slot) {
-            $output .= $attemptobj->render_question($slot, false, $this,
-                $attemptobj->attempt_url($slot, $page), $this);
+            $viewhtml = $attemptremote->questions[($slot-1)]->html;
+            if(!$viewhtml){
+                $viewhtml = $attemptremote->questions[0]->html;
+            }
+            $output .= $viewhtml;
         }
 
         $output .= $this->attempt_navigation_buttons($page, $attemptobj->is_last_page($page));

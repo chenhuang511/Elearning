@@ -35,39 +35,21 @@ $attemptid = required_param('attempt', PARAM_INT);
 $page = optional_param('page', 0, PARAM_INT);
 
 // Create atemptobj : $attemptobj = quiz_attempt::create($attemptid);
+$attemptremote = get_remote_get_attempt_data($attemptid, $page);
+//var_dump($attemptremote);die;
+
 $attempt = get_remote_attempt_by_attemptid($attemptid);
 $quiz = get_remote_quiz_by_id($attempt->quiz);
 $course = $DB->get_record('course', array('remoteid' => $quiz->course), '*', MUST_EXIST);
-$cm = get_remote_course_module_by_cmid("quiz", $id);
-
+$cm = get_remote_coursemodule_from_instance("quiz", $quiz->id);
 $attemptobj = new quiz_attempt($attempt, $quiz, $cm, $course);
-echo 777777777777;die;
-//$attemptobj = quiz_attempt::create($attemptid);
+
 $page = $attemptobj->force_page_number_into_range($page);
-$PAGE->set_url($attemptobj->attempt_url(null, $page));
+$PAGE->set_url($attemptobj->attempt_url(null, $page)); // @TODO: set lai
 
-// Check login.
-//require_login($attemptobj->get_course(), false, $attemptobj->get_cm());
-
-// Check that this attempt belongs to this user.
-if ($attemptobj->get_userid() != $USER->id) {
-    if ($attemptobj->has_capability('mod/quiz:viewreports')) {
-        redirect($attemptobj->review_url(null, $page));
-    } else {
-        throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'notyourattempt');
-    }
-}
-
+// @TODO: check login
+// @TODO: Check that this attempt belongs to this user.
 // Check capabilities and block settings.
-if (!$attemptobj->is_preview_user()) {
-    $attemptobj->require_capability('mod/quiz:attempt');
-    if (empty($attemptobj->get_quiz()->showblocks)) {
-        $PAGE->blocks->show_only_fake_blocks();
-    }
-
-} else {
-    navigation_node::override_active_url($attemptobj->start_attempt_url());
-}
 
 // If the attempt is already closed, send them to the review page.
 if ($attemptobj->is_finished()) {
@@ -76,7 +58,7 @@ if ($attemptobj->is_finished()) {
     redirect($attemptobj->summary_url());
 }
 
-// Check the access rules.
+// Check the access rules. @TODO: check lai
 $accessmanager = $attemptobj->get_access_manager(time());
 $accessmanager->setup_attempt_page($PAGE);
 $output = $PAGE->get_renderer('mod_quiz');
@@ -89,7 +71,7 @@ if ($accessmanager->is_preflight_check_required($attemptobj->get_attemptid())) {
     redirect($attemptobj->start_attempt_url(null, $page));
 }
 
-// Set up auto-save if required.
+// Set up auto-save if required. @TODO: check lai
 $autosaveperiod = get_config('quiz', 'autosaveperiod');
 if ($autosaveperiod) {
     $PAGE->requires->yui_module('moodle-mod_quiz-autosave',
@@ -107,7 +89,7 @@ if (empty($slots)) {
     throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'noquestionsfound');
 }
 
-// Update attempt page, redirecting the user if $page is not valid.
+// Update attempt page, redirecting the user if $page is not valid. @TODO: viet lai ham nay
 if (!$attemptobj->set_currentpage($page)) {
     redirect($attemptobj->start_attempt_url(null, $attemptobj->get_currentpage()));
 }
@@ -132,4 +114,4 @@ if ($attemptobj->is_last_page($page)) {
     $nextpage = $page + 1;
 }
 
-echo $output->attempt_page($attemptobj, $page, $accessmanager, $messages, $slots, $id, $nextpage);
+echo $output->attempt_page($attemptobj, $page, $accessmanager, $messages, $slots, $id, $nextpage, $attemptremote);

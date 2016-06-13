@@ -32,13 +32,13 @@ if ($id) {
     if (!$course = get_local_course_record($quiz->course)) {
         print_error('invalidcourseid');
     }
-    if (!$cm = get_remote_coursemodule_from_instance("quiz", $quiz->id)->cm) {
+    if (!$cm = get_remote_coursemodule_from_instance("quiz", $quiz->id)) {
         print_error('invalidcoursemodule');
     }
 }
 
 // Check login and get context.
-require_login($course, false, $cm);
+//require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/quiz:view', $context);
 
@@ -57,7 +57,8 @@ $accessmanager = new quiz_access_manager($quizobj, $timenow,
     false); // set has_capability('mod/quiz:ignoretimelimits', $context, null, false) = false
 $quiz = $quizobj->get_quiz();
 
-// @TODO: Trigger course_module_viewed event and completion.
+// Trigger course_module_viewed event and completion.
+get_remote_quiz_view_quiz($id || $quiz->id);
 
 // Initialize $PAGE, compute blocks.
 $PAGE->set_url('/mod/quiz/remote/view.php', array('id' => $cm->id));

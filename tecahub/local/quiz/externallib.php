@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once("$CFG->libdir/externallib.php");
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+require_once($CFG->dirroot . '/question/engine/lib.php');
 
 /**
  * Course external functions
@@ -459,7 +460,7 @@ class local_mod_quiz_external extends external_api {
         $params = self::validate_parameters(self::get_mod_load_questions_usage_by_activity_parameters(),
             array('unique' => $unique,'options' => $options));
 
-        $records = $DB->get_records_sql("
+        $records = $DB->get_recordset_sql("
 SELECT
     quba.id AS qubaid,
     quba.contextid,
@@ -500,10 +501,13 @@ ORDER BY
     qa.slot,
     qas.sequencenumber
     ", array('qubaid' => $params['unique']));
-//        var_dump($records);die;
-//        $records = array_values($records);
-//        if(count($records)>0) $records = $records[0];
-        return $records;
+
+        $result = array();
+        while ($records->valid()) {
+            $result[] = $records->current();
+            $records->next();
+        }
+        return $result;
     }
 
     /**
@@ -512,7 +516,7 @@ ORDER BY
      * @return external_single_structure the attempt structure
      */
     public static function get_mod_load_questions_usage_by_activity_returns() {
-        return new external_multiple_structure( 
+        return new external_multiple_structure(
 			new external_single_structure(
 				array(
 					'qubaid' => new external_value(PARAM_INT, 'question_usages id.',
