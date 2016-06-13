@@ -40,6 +40,10 @@ $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST)
 
 // get lesson
 $lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST));
+echo "<pre>";
+var_dump($lesson);
+echo "<pre>";
+die();
 
 require_login($course, false, $cm);
 

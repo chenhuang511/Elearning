@@ -53,7 +53,7 @@ function get_remote_quiz_access_information($quizid) {
     return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
+            'token' => HOST_TOKEN_M,
             'function_name' => 'mod_quiz_get_quiz_access_information',
             'params' => array('quizid'=>$quizid)
         )
@@ -64,7 +64,7 @@ function get_remote_quiz_view_quiz($quizid) {
     return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
+            'token' => HOST_TOKEN_M,
             'function_name' => 'mod_quiz_view_quiz',
             'params' => array('quizid'=>$quizid)
         )
@@ -75,7 +75,7 @@ function get_remote_user_best_grade($quizid,  $userid) {
     return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
+            'token' => HOST_TOKEN_M,
             'function_name' => 'mod_quiz_get_user_best_grade',
             'params' => array('quizid' => $quizid, 'userid' => $userid)
         )
@@ -187,7 +187,7 @@ function get_remote_quiz_start_attempt($quizid) {
     return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
+            'token' => HOST_TOKEN_M,
             'function_name' => 'mod_quiz_start_attempt',
             'params' => array('quizid' => $quizid)
         )
@@ -244,7 +244,7 @@ function get_remote_get_attempt_data($attemptid, $page = null) {
     $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
+            'token' => HOST_TOKEN_M,
             'function_name' => 'mod_quiz_get_attempt_data',
             'params' => array('attemptid' => $attemptid, 'page' => $page)
         )
