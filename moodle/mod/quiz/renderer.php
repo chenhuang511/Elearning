@@ -495,11 +495,6 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $output .= html_writer::start_tag('div');
 
         // Print all the questions.
-//        foreach ($slots as $slot) {
-//            $output .= $attemptobj->render_question($slot, false, $this,
-//                $attemptobj->attempt_url($slot, $page), $this);
-//        }
-
         foreach ($slots as $slot) {
             $viewhtml = $attemptremote->questions[($slot-1)]->html;
             if(!$viewhtml){
