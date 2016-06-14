@@ -646,6 +646,41 @@ class assign_attempt_history_chooser implements renderable, templatable {
 }
 
 /**
+ * Renderable remote header
+ * @package   mod_assign
+ * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class assign_remote_header implements renderable {
+    /** @var stdClass the assign record  */
+    public $assign = null;
+    /** @var mixed context|null the context record  */
+    public $context = null;
+    /** @var bool $showintro - show or hide the intro */
+    public $showintro = false;
+    /** @var int coursemoduleid - The course module id */
+    public $coursemoduleid = 0;
+
+    /**
+     * Constructor
+     *
+     * @param stdClass $assign  - the assign database record
+     * @param mixed $context context|null the course module context
+     * @param bool $showintro  - show or hide the intro
+     * @param int $coursemoduleid  - the course module id
+     */
+    public function __construct(stdClass $assign,
+                                $context,
+                                $showintro,
+                                $coursemoduleid) {
+        $this->assign = $assign;
+        $this->context = $context;
+        $this->showintro = $showintro;
+        $this->coursemoduleid = $coursemoduleid;
+    }
+}
+
+/**
  * Renderable header
  * @package   mod_assign
  * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
