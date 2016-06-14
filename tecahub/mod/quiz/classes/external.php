@@ -902,7 +902,7 @@ class mod_quiz_external extends external_api {
                 'type' => $attemptobj->get_question_type_name($slot),
                 'page' => $attemptobj->get_question_page($slot),
                 'flagged' => $attemptobj->is_question_flagged($slot),
-                'html' => $attemptobj->render_question($slot, $review, $renderer) . $PAGE->requires->get_end_code()
+                'html' => $attemptobj->render_question($slot, $review, $renderer)/* . $PAGE->requires->get_end_code()*/ //remove js for ajax view
             );
 
             if ($attemptobj->is_real_question($slot)) {
