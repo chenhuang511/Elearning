@@ -484,7 +484,7 @@ class local_mod_assign_external extends external_api {
             )
         );
 
-        return $DB->get_record('assign', array('id' => $params['assignid']), 'id, name, alwaysshowdescription, allowsubmissionsfromdate, intro, introformat', MUST_EXIST);
+        return $DB->get_record('assign', array('id' => $params['assignid']), '*', MUST_EXIST);
     }
 
     /**
@@ -498,11 +498,33 @@ class local_mod_assign_external extends external_api {
         return new external_single_structure(
             array(
                 'id' => new external_value(PARAM_INT, 'assign id'),
+                'course' => new external_value(PARAM_INT, 'course id'),
                 'name' => new external_value(PARAM_RAW, 'assign name'),
                 'intro' => new external_value(PARAM_RAW, 'assign intro'),
                 'introformat' => new external_value(PARAM_INT, 'intro format', VALUE_DEFAULT),
 				'alwaysshowdescription' => new external_value(PARAM_INT, 'always show description'),
+				'nosubmissions' => new external_value(PARAM_INT, 'no submissions'),
+				'submissiondrafts' => new external_value(PARAM_INT, 'submission drafts'),
+				'sendnotifications' => new external_value(PARAM_INT, 'send notifications'),
+				'sendlatenotifications' => new external_value(PARAM_INT, 'send late notifications'),
+				'duedate' => new external_value(PARAM_INT, 'Due date'),
 				'allowsubmissionsfromdate' => new external_value(PARAM_INT, 'allow submissions from date'),
+				'grade' => new external_value(PARAM_INT, 'grade'),
+				'timemodified' => new external_value(PARAM_INT, 'time modified'),
+				'requiresubmissionstatement' => new external_value(PARAM_INT, 'required submission statement'),
+				'completionsubmit' => new external_value(PARAM_INT, 'completetion submit'),
+				'cutoffdate' => new external_value(PARAM_INT, 'cut off date'),
+				'teamsubmission' => new external_value(PARAM_INT, 'team submission'),
+				'requireallteammemberssubmit' => new external_value(PARAM_INT, 'require all team members submits'),
+				'teamsubmissiongroupingid' => new external_value(PARAM_INT, 'team submission grouping id'),
+				'blindmarking' => new external_value(PARAM_INT, 'blind marking'),
+				'revealidentities' => new external_value(PARAM_INT, 'reveal identities'),
+				'attemptreopenmethod' => new external_value(PARAM_RAW, 'attempt reopen method'),
+				'maxattempts' => new external_value(PARAM_INT, 'maxattempts'),
+				'markingworkflow' => new external_value(PARAM_INT, 'marking workflow'),
+				'markingallocation' => new external_value(PARAM_INT, 'marking all location'),
+				'sendstudentnotifications' => new external_value(PARAM_INT, 'send student notifications'),
+				'preventsubmissionnotingroup' => new external_value(PARAM_INT, 'prevent submission not in group'),
             )
         );
     }	
