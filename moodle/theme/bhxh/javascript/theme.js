@@ -92,9 +92,8 @@ function loadRemoteContent() {
             course.bind('click', linkClickEventHandler);
         });
     }
-    $('#module-content').on('click', '.remote-link-action', linkClickEventHandler);
-    $('#module-content').on('click submit', '.remote-form-action', formEventHandler);
-    $('#module-content').on('click', '.remote-lesson-button', linkClickEventHandler);
+    $('#module-content').on('click', '.remote-link-action, .remote-lesson-button', linkClickEventHandler);
+    $('#module-content').on('click submit', '.remote-form-action, .mod_quiz-next-nav', formEventHandler);
 }
 
 (function ($) {
