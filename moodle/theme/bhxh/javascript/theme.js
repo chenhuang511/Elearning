@@ -92,11 +92,19 @@ function loadRemoteContent() {
             course.bind('click', linkClickEventHandler);
         });
     }
-    $('#module-content').on('click', '.remote-link-action, .remote-lesson-button', linkClickEventHandler);
-    $('#module-content').on('click submit', '.remote-form-action, .mod_quiz-next-nav', formEventHandler);
+    var datacontent = $('#module-content');
+    var linkDelegate = [
+        '.remote-link-action',
+        '.remote-lesson-button',
+    ];
+    var submitDelegate = [
+        '.remote-form-action',
+        '.mod_quiz-next-nav',
+    ];
+    datacontent.on('click', linkDelegate.join(','), linkClickEventHandler);
+    datacontent.on('click submit', submitDelegate.join(','), formEventHandler);
 }
 
 (function ($) {
-    var datacontent = $('#module-content');
     $(document).ready(loadRemoteContent);
 }).call(this, jQuery);
