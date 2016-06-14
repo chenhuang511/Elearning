@@ -26,8 +26,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once("$CFG->libdir/externallib.php");
-
+require_once($CFG->libdir . '/externallib.php');
+require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
 class local_user_external extends external_api {
 	
