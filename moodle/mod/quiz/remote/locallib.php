@@ -187,7 +187,7 @@ function get_remote_quiz_start_attempt($quizid, $remoteuserid) {
     return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
-            'token' => HOST_TOKEN_M,
+            'token' => HOST_TOKEN,
             'function_name' => 'local_mod_quiz_start_remote_attempt',
             'params' => array('quizid' => $quizid, $remoteuserid, 'preflightdata' => array(), 'forcenew' => true)
         )
