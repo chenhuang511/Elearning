@@ -88,7 +88,7 @@ class lesson_page_type_multichoice extends lesson_page {
         global $CFG, $PAGE;
         $answers = $this->get_used_answers();
         shuffle($answers);
-        $action = $CFG->wwwroot.'/mod/lesson/continue.php';
+        $action = $CFG->wwwroot.'/mod/lesson/remote/api-continue.php';
         $params = array('answers'=>$answers, 'lessonid'=>$this->lesson->id, 'contents'=>$this->get_contents(), 'attempt'=>$attempt);
         if ($this->properties->qoption) {
             $mform = new lesson_display_answer_form_multichoice_multianswer($action, $params);
@@ -124,7 +124,7 @@ class lesson_page_type_multichoice extends lesson_page {
 
         $answers = $this->get_used_answers();
         shuffle($answers);
-        $action = $CFG->wwwroot.'/mod/lesson/continue.php';
+        $action = $CFG->wwwroot.'/mod/lesson/remote/api-continue.php';
         $params = array('answers'=>$answers, 'lessonid'=>$this->lesson->id, 'contents'=>$this->get_contents());
         if ($this->properties->qoption) {
             $mform = new lesson_display_answer_form_multichoice_multianswer($action, $params);
@@ -135,7 +135,7 @@ class lesson_page_type_multichoice extends lesson_page {
         require_sesskey();
 
         if (!$data) {
-            redirect(new moodle_url('/mod/lesson/view.php', array('id'=>$PAGE->cm->id, 'pageid'=>$this->properties->id)));
+            redirect(new moodle_url('/mod/lesson/remote/api-view.php', array('id'=>$PAGE->cm->id, 'pageid'=>$this->properties->id)));
         }
 
         if ($this->properties->qoption) {
@@ -258,7 +258,8 @@ class lesson_page_type_multichoice extends lesson_page {
                 return $result;
             }
             $result->answerid = $data->answerid;
-            if (!$answer = $DB->get_record("lesson_answers", array("id" => $result->answerid))) {
+            $answer = get_remote_lesson_answers_by_id($result->answerid);
+            if (!$answer) {
                 print_error("Continue: answer record not found");
             }
             $answer = parent::rewrite_answers_urls($answer);
@@ -531,7 +532,7 @@ class lesson_display_answer_form_multichoice_singleanswer extends moodleform {
         if ($hasattempt) {
             $this->add_action_buttons(null, get_string("nextpage", "lesson"));
         } else {
-            $this->add_action_buttons(null, get_string("submit", "lesson"));
+            $this->add_action_buttons(null, get_string("submit", "lesson"), true);
         }
     }
 

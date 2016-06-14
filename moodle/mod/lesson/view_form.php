@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
  * Include formslib if it has not already been included
  */
 
-require_once($CFG->libdir . '/formslib.php');
+require_once($CFG->libdir.'/formslib.php');
 
 /**
  * Lesson page without answers
@@ -37,11 +37,9 @@ require_once($CFG->libdir . '/formslib.php');
  * @copyright  2009 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
-class lesson_page_without_answers extends moodleform
-{
+class lesson_page_without_answers extends moodleform {
 
-    public function definition()
-    {
+    public function definition() {
         global $OUTPUT;
 
         $mform = $this->_form;
@@ -66,7 +64,7 @@ class lesson_page_without_answers extends moodleform
         $mform->addElement('hidden', 'newpageid');
         $mform->setType('newpageid', PARAM_INT);
 
-        $this->add_action_buttons(null, get_string("continue", "lesson"), true);
+        $this->add_action_buttons(null, get_string("continue", "lesson"));
 
     }
 

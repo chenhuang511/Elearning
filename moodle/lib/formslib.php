@@ -1216,7 +1216,7 @@ abstract class moodleform {
         $el = &$mform->createElement('submit', 'submitbutton', $submitlabel);
 
         if ($useajax) {
-            $attributes['class'] .= ' remote-form-action ';
+            $attributes['class'] .= ' ncc-submit remote-form-action ';
             $el->updateAttributes($attributes);
         }
 

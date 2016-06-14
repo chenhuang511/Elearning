@@ -190,3 +190,15 @@ function get_remote_lesson_answers_by_pageid_and_lessonid($pageid, $lessonid, $o
         )
     ));
 }
+
+function get_remote_lesson_answers_by_id($id, $options = array())
+{
+    return moodle_webservice_client(array_merge($options,
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_lesson_answers_by_id',
+            'params' => array('id' => $id)
+        )
+    ));
+}
