@@ -51,7 +51,7 @@ class local_mod_page_external extends external_api {
      */
     public static function get_mod_page_by_id_parameters() {
         return new external_function_parameters(
-            array('id' => new external_value(PARAM_INT, 'id'))
+            array('id' => new external_value(PARAM_INT, 'page id'))
         );
     }
 
@@ -86,19 +86,33 @@ class local_mod_page_external extends external_api {
         return  new external_single_structure(
             array(
                 'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
-                'course' => new external_value(PARAM_INT, 'Foreign key reference to the course this quiz is part of.'),
-                'name' => new external_value(PARAM_RAW, 'Quiz name.'),
-                'intro' => new external_value(PARAM_RAW, 'Quiz introduction text.', VALUE_OPTIONAL),
+                'course' => new external_value(PARAM_INT, 'Foreign key reference to the course this page is part of.', VALUE_OPTIONAL),
+                'name' => new external_value(PARAM_RAW, 'Page name.'),
+                'intro' => new external_value(PARAM_RAW, 'Page introduction text.'),
                 'introformat' => new external_format_value('intro', VALUE_OPTIONAL),
 				'content' => new external_value(PARAM_RAW, 'Standard Moodle primary key.'),
-                'contentformat' => new external_value(PARAM_INT, 'Foreign key reference to the course this quiz is part of.'),
-                'legacyfiles' => new external_value(PARAM_INT, 'Quiz name.'),
-                'legacyfileslast' => new external_value(PARAM_RAW, 'Quiz introduction text.', VALUE_OPTIONAL),
-                'display' => new external_format_value(PARAM_INT, 'Display or Not'),
-				'displayoptions' => new external_value(PARAM_RAW, 'Quiz name.'),
-                'revision' => new external_value(PARAM_INT, 'Quiz introduction text.'),
+                'contentformat' => new external_value(PARAM_INT, 'Foreign key reference to the course this quiz is part of.', VALUE_OPTIONAL),
+                'legacyfiles' => new external_value(PARAM_INT, 'Page name.', VALUE_OPTIONAL),
+                'legacyfileslast' => new external_value(PARAM_RAW, 'Page introduction text.'),
+                'display' => new external_format_value(PARAM_INT, 'Display or Not', VALUE_OPTIONAL),
+				'displayoptions' => new external_value(PARAM_RAW, 'Page name.'),
+                'revision' => new external_value(PARAM_INT, 'Page introduction text.', VALUE_OPTIONAL),
                 'timemodified' => new external_format_value('intro', VALUE_OPTIONAL)						
             )
         );
     }
 }
+
+//| id              | bigint(10)   | NO   | PRI | NULL    | auto_increment |
+//| course          | bigint(10)   | NO   | MUL | 0       |                |
+//| name            | varchar(255) | NO   |     |         |                |
+//| intro           | longtext     | YES  |     | NULL    |                |
+//| introformat     | smallint(4)  | NO   |     | 0       |                |
+//| content         | longtext     | YES  |     | NULL    |                |
+//| contentformat   | smallint(4)  | NO   |     | 0       |                |
+//| legacyfiles     | smallint(4)  | NO   |     | 0       |                |
+//| legacyfileslast | bigint(10)   | YES  |     | NULL    |                |
+//| display         | smallint(4)  | NO   |     | 0       |                |
+//| displayoptions  | longtext     | YES  |     | NULL    |                |
+//| revision        | bigint(10)   | NO   |     | 0       |                |
+//| timemodified    | bigint(10)   | NO   |     | 0

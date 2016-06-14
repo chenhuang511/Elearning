@@ -23,9 +23,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require('../../config.php');
+require('../../../config.php');
 require_once($CFG->dirroot.'/mod/page/lib.php');
-require_once($CFG->dirroot.'/mod/page/locallib.php');
+require_once($CFG->dirroot.'/mod/page/remote/locallib.php');
 require_once($CFG->libdir.'/completionlib.php');
 
 $id      = optional_param('id', 0, PARAM_INT); // Course Module ID
@@ -47,7 +47,7 @@ if ($p) {
 
 $course = get_local_course_record($cm->course);
 
-require_course_login($course, true, $cm);
+//require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/page:view', $context);
 
@@ -58,15 +58,18 @@ $PAGE->set_url('/mod/page/view.php', array('id' => $cm->id));
 
 $options = empty($page->displayoptions) ? array() : unserialize($page->displayoptions);
 
-if ($inpopup and $page->display == RESOURCELIB_DISPLAY_POPUP) {
+//if ($inpopup and $page->display == RESOURCELIB_DISPLAY_POPUP) {
+$page->display == RESOURCELIB_DISPLAY_POPUP;
     $PAGE->set_pagelayout('popup');
+
     $PAGE->set_title($course->shortname.': '.$page->name);
     $PAGE->set_heading($course->fullname);
-} else {
-    $PAGE->set_title($course->shortname.': '.$page->name);
-    $PAGE->set_heading($course->fullname);
-    $PAGE->set_activity_record($page);
-}
+//var_dump($page);
+//} else {
+//    $PAGE->set_title($course->shortname.': '.$page->name);
+//    $PAGE->set_heading($course->fullname);
+//    $PAGE->set_activity_record($page);
+//}
 echo $OUTPUT->header();
 if (!isset($options['printheading']) || !empty($options['printheading'])) {
     echo $OUTPUT->heading(format_string($page->name), 2);
@@ -75,7 +78,8 @@ if (!isset($options['printheading']) || !empty($options['printheading'])) {
 if (!empty($options['printintro'])) {
     if (trim(strip_tags($page->intro))) {
         echo $OUTPUT->box_start('mod_introbox', 'pageintro');
-        echo format_module_intro('page', $page, $cm->id);
+        echo format_module_intro('page', $PAGE, $cm->id);
+        echo "12345";
         echo $OUTPUT->box_end();
     }
 }
