@@ -214,6 +214,27 @@ class mod_assign_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Render the new header.
+     *
+     * @param assign_header $header
+     * @return string
+     */
+    public function render_assign_remote_header(assign_remote_header $header){
+        $o = '';
+        
+        $heading = format_string($header->assign->name, false, array('context' => $header->context));
+        $o .= $this->output->heading($heading);
+
+        if ($header->showintro) {
+            $o .= $this->output->box_start('generalbox boxaligncenter', 'intro');
+            $o .= format_module_intro('assign', $header->assign, $header->coursemoduleid);
+            $o .= $this->output->box_end();
+        }
+
+        return $o;
+    }
+
+    /**
      * Render the header.
      *
      * @param assign_header $header

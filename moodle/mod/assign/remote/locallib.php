@@ -1,7 +1,12 @@
 <?php
 defined('MOODLE_INTERNAL') || die;
 
+/** General rendering target, usually normal browser page */
+define('RENDERER_TARGET_GENERAL', 'general');
+
 require_once($CFG->dirroot . '/lib/remote/lib.php');
+require_once($CFG->dirroot . '/mod/assign/renderable.php');
+
 
 /**
  * get lesson by id
@@ -60,119 +65,123 @@ function get_list_user_id_from_submissions($submissions = array()) {
 
 class remote_assign_mod
 {
-    private $cmid;
-    private $assignid;
-    private $coursemodule;
-    private $option;
-    private $OUTPUT;
-    private $PAGE;
+    /** @var stdClass the assignment record that contains the global settings for this assign instance */
+    private $instance;
+
+    /** @var stdClass the course this assign instance belongs to */
     private $course;
 
-    /**
-     * @return mixed
-     */
-    public function getPAGE()
+    /** @var assign_renderer the custom renderer for this module */
+    private $output;
+
+    /** @var cm_info the course module for this assign instance */
+    private $coursemodule;
+
+    public function __construct($coursemodulecontext, $coursemodule, $course)
     {
-        return $this->PAGE;
+        $this->context = $coursemodulecontext;
+        $this->course = $course;
+
+        $this->coursemodule = $coursemodule;
     }
 
     /**
-     * @param mixed $PAGE
+     * Get the current course module.
+     *
+     * @return cm_info|null The course module or null if not known
      */
-    public function setPAGE($PAGE)
+    public function get_course_module()
     {
-        $this->PAGE = $PAGE;
+        return $this->coursemodule;
     }
 
     /**
-     * @return mixed
+     * Lazy load the page renderer and expose the renderer to plugins.
+     *
+     * @return assign_renderer
      */
-    public function getOUTPUT()
-    {
-        return $this->OUTPUT;
+    public function get_renderer() {
+        global $PAGE;
+
+        if ($this->output) {
+            return $this->output;
+        }
+
+        $this->output = $PAGE->get_renderer('mod_assign', null, RENDERER_TARGET_GENERAL);
+
+        return $this->output;
     }
 
     /**
-     * @param mixed $OUTPUT
+     * Get the settings for the current instance of this assignment
+     *
+     * @return stdClass The settings
      */
-    public function setOUTPUT($OUTPUT)
+    public function get_instance()
     {
-        $this->OUTPUT = $OUTPUT;
+        $this->instance = get_remote_assign_by_id($this->get_course_module()->instance);
+
+        return $this->instance;
     }
 
-    public function __construct($cm, $option = [])
-    {
-        $this->cmid = $cm->id;
-        $this->option = $option;
-        $this->assignid = $cm->instance;
-        $this->coursemodule = $cm;
+
+    /**
+     * Based on the current assignment settings should we display the intro.
+     *
+     * @return bool showintro
+     */
+    public function show_intro() {
+        if ($this->get_instance()->alwaysshowdescription ||
+            time() > $this->get_instance()->allowsubmissionsfromdate) {
+            return true;
+        }
+        return false;
     }
 
-    //View
-    public function view_summary()
+    /**
+     * Display the assignment, used by view.php
+     *
+     * The assignment is displayed differently depending on your role,
+     * the settings for the assignment and the status of the assignment.
+     *
+     * @param string $action The current action if any.
+     * @param array $args Optional arguments to pass to the view (instead of getting them from GET and POST).
+     * @return string - The page output.
+     */
+    public function view($action = '', $args = array())
     {
-        global $CFG;
-        $responedata = get_remote_assign_submission_status($this->assignid);
-        $gradingsummary = $responedata->gradingsummary;
-        $OUTPUT = $this->getOUTPUT();
-        $html = "";
-        $html .= $OUTPUT->box_start('assign-detail', "assign_{$this->assignid}");
-        $html .= html_writer::tag('h3', $this->coursemodule->name, array('class' => 'gradingsummary'));
-        $table = new html_table();
-        $table->head = array('Name', 'Value');
-        $table->data[] = array("Participants", $gradingsummary->participantcount);
-        $table->data[] = array("Submission drafts count", $gradingsummary->submissiondraftscount);
-        $table->data[] = array("Submitted", $gradingsummary->submissionssubmittedcount);
-        $table->data[] = array("Needs grading", $gradingsummary->submissionsneedgradingcount);
-        $html .= html_writer::table($table);
-        $html .= $OUTPUT->box_end();
-        $html .= html_writer::tag('a', "View all submissions", array(
-            "href" => "#",
-            'class' => 'btn remote-link-action',
-            'data-module' => json_encode(array(
-                'url' => $CFG->wwwroot . '/mod/assign/remote/api-view.php',
-                'params' => array(
-                    'id' => $this->cmid,
-                    'action' => 'grading',
-                ),
-                'method' => 'get',
-            )),
-        ));
-        $html .= "&nbsp;";
-        $html .= html_writer::tag('a', "Grade", array('class' => 'btn btn-primary'));
-        $html .= $this->view_submission_status($responedata);
-        return $html;
+        global $PAGE;
+
+        $o = '';
+        $mform = null;
+
+        if ($action) {
+
+        } else {
+            $o .= $this->view_submission_remote_page();
+        }
+        return $o;
     }
 
-    public function view_submission_status($responedata){
-        global $CFG;
-        $lastattempt = $responedata->lastattempt;
-        $OUTPUT = $this->getOUTPUT();
-        $html = "";
-        $html .= $OUTPUT->box_start('assign-detail', "assign_{$this->assignid}");
-        $html .= html_writer::tag('h3', "Submission status", array('class' => 'gradingsummary'));
-        $table = new html_table();
-        $table->head = array('Name', 'Value');
-        $table->data[] = array("Submission status", $lastattempt->participantcount);
-        $table->data[] = array("Grading status", $lastattempt->submissiondraftscount);
-        $table->data[] = array("Due date", $lastattempt->submissionssubmittedcount);
-        $table->data[] = array("Time remaining", $lastattempt->submissionssubmittedcount);
-        $table->data[] = array("Last modified", $lastattempt->submissionssubmittedcount);
-        $table->data[] = array("Online text", $lastattempt->submissionssubmittedcount);
-        $html .= html_writer::table($table);
-        $html .= $OUTPUT->box_end();
-        $html .= html_writer::tag('a', "Add submissions", array(
-            "href" => "#",
-            'class' => 'btn remote-link-action assign-action-edit',
-            'data-module' => json_encode(array(
-                'url' => $CFG->wwwroot . '/mod/assign/remote/api-view.php',
-                'params' => array(
-                    'id' => $this->cmid,
-                    'action' => 'editsubmission',
-                ),
-                'method' => 'get',
-            )),
-        ));
-        return $html;
+    /**
+     * View submissions page (contains details of current submission).
+     *
+     * @return string
+     */
+    protected function view_submission_remote_page()
+    {
+        global $CFG, $DB, $USER, $PAGE;
+
+        $instance = $this->get_instance();
+
+        $o = '';
+
+        $o .= $this->get_renderer()->render( new assign_remote_header($instance,
+                                                        $this->context,
+                                                        $this->show_intro(),
+                                                        $this->get_course_module()->id),
+                                                        '','','');
+
+        return $o;
     }
 }
