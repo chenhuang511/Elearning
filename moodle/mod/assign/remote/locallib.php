@@ -38,6 +38,26 @@ function get_remote_assign_submission_status($assignid) {
     ));
 }
 
+function get_remote_submissions_by_assign_id($assignmentids, $options = array())
+{
+    return moodle_webservice_client(array_merge($options,
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN_M,
+            'function_name' => 'mod_assign_get_submissions',
+            'params' => array('assignmentids' => $assignmentids),
+        )
+    ));
+}
+
+function get_list_user_id_from_submissions($submissions = array()) {
+    $usersid = array();
+    foreach ($submissions as $submission) {
+        $usersid[] = $submission->userid;
+    }
+    return $usersid;
+}
+
 class remote_assign_mod
 {
     private $cmid;

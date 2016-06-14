@@ -252,3 +252,26 @@ function get_remote_get_attempt_data($attemptid, $page = null) {
     return $resp;
 }
 
+function get_remote_get_attempt_review($attemptid, $page = null) {
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN_M,
+            'function_name' => 'mod_quiz_get_attempt_review',
+            'params' => array('attemptid' => $attemptid, 'page' => $page)
+        )
+    );
+    return $resp;
+}
+
+function get_remote_view_attempt_review($attemptid) {
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN_M,
+            'function_name' => 'mod_quiz_view_attempt_review',
+            'params' => array('attemptid' => $attemptid)
+        )
+    );
+    return $resp;
+}

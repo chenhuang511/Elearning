@@ -931,6 +931,15 @@ section#discussion-container.discussion.container div.discussion-body div#discus
     padding-top: 26%;
 }
 
+.bhxh-buttons {
+    display: block;
+    margin-top: 25px;
+}
+
+.bhxh-buttons .lessonbutton {
+    margin-right: 10px;
+}
+
 /*  End_enrol_course_renderer*/
 
 /************************* COURSE TABS ****************************/

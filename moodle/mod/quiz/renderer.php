@@ -47,13 +47,13 @@ class mod_quiz_renderer extends plugin_renderer_base {
      */
     public function review_page(quiz_attempt $attemptobj, $slots, $page, $showall,
                                 $lastpage, mod_quiz_display_options $displayoptions,
-                                $summarydata) {
+                                $summarydata, $reviewobj = null) {
 
         $output = '';
         $output .= $this->header();
         $output .= $this->review_summary_table($summarydata, $page);
         $output .= $this->review_form($page, $showall, $displayoptions,
-            $this->questions($attemptobj, true, $slots, $page, $showall, $displayoptions),
+            $this->questions($attemptobj, true, $slots, $page, $showall, $displayoptions, $reviewobj),
             $attemptobj);
 
         $output .= $this->review_next_navigation($attemptobj, $page, $lastpage, $showall);
@@ -180,11 +180,12 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @param mod_quiz_display_options $displayoptions instance of mod_quiz_display_options
      */
     public function questions(quiz_attempt $attemptobj, $reviewing, $slots, $page, $showall,
-                              mod_quiz_display_options $displayoptions) {
+                              mod_quiz_display_options $displayoptions, $reviewobj = null) {
         $output = '';
         foreach ($slots as $slot) {
-            $output .= $attemptobj->render_question($slot, $reviewing, $this,
-                $attemptobj->review_url($slot, $page, $showall));
+            $viewhtml = $reviewobj->questions[($slot-1)]->html;
+            $output .= $viewhtml;
+
         }
         return $output;
     }
@@ -199,7 +200,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @param quiz_attempt $attemptobj instance of quiz_attempt
      * @param bool $showall if true display attempt on one page
      */
-    public function review_form($page, $showall, $displayoptions, $content, $attemptobj) {
+    public function review_form($page, $showall, $displayoptions, $content, $attemptobj, $reviewobj = null) {
         if ($displayoptions->flags != question_display_options::EDITABLE) {
             return $content;
         }
@@ -494,11 +495,6 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $output .= html_writer::start_tag('div');
 
         // Print all the questions.
-//        foreach ($slots as $slot) {
-//            $output .= $attemptobj->render_question($slot, false, $this,
-//                $attemptobj->attempt_url($slot, $page), $this);
-//        }
-
         foreach ($slots as $slot) {
             $viewhtml = $attemptremote->questions[($slot-1)]->html;
             if(!$viewhtml){

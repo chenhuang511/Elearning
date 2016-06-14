@@ -77,6 +77,8 @@ class quiz {
     protected $accessmanager = null;
     /** @var bool whether the current user has capability mod/quiz:preview. */
     protected $ispreviewuser = null;
+    /** @var bool whether instance is using in remote or local mode. */
+    protected $isremote = null;
 
     // Constructor =============================================================
     /**
@@ -413,6 +415,15 @@ class quiz {
     }
 
     /**
+     * Hanv: 14/06/2016
+     * @param int $attemptid the id of an attempt.
+     * @return string the URL of the review of that attempt.
+     */
+    public function review_remote_url($attemptid) {
+        return new moodle_url('/mod/quiz/remote/review.php', array('attempt' => $attemptid));
+    }
+
+    /**
      * @param int $attemptid the id of an attempt.
      * @return string the URL of the review of that attempt.
      */
@@ -605,7 +616,7 @@ class quiz_attempt {
      * @param bool $loadquestions (optional) if true, the default, load all the details
      *      of the state of each question. Else just set up the basic details of the attempt.
      */
-    public function __construct($attempt, $quiz, $cm, $course, $loadquestions = true) {
+    public function __construct($attempt, $quiz, $cm, $course, $loadquestions = true, $isremote = false) {
         global $DB;
 
         $this->attempt = $attempt;
@@ -614,6 +625,8 @@ class quiz_attempt {
         if (!$loadquestions) {
             return;
         }
+
+        $this->isremote = $isremote;
 
         $this->quba = question_engine::load_questions_usage_by_activity($this->attempt->uniqueid);
         $this->slots = $DB->get_records('quiz_slots',
@@ -1445,6 +1458,7 @@ class quiz_attempt {
      * @return string the URL of this quiz's summary page.
      */
     public function summary_url() {
+        $url = ($this->isremote) ? '/mod/quiz/remote/summary.php' : '/mod/quiz/summary.php';
         return new moodle_url('/mod/quiz/summary.php', array('attempt' => $this->attempt->id));
     }
 
@@ -1452,7 +1466,8 @@ class quiz_attempt {
      * @return string the URL of this quiz's summary page.
      */
     public function processattempt_url() {
-        return new moodle_url('/mod/quiz/processattempt.php');
+        $url = ($this->isremote) ? '/mod/quiz/remote/processattempt.php' : '/mod/quiz/processattempt.php';
+        return new moodle_url($url);
     }
 
     /**
@@ -2146,7 +2161,8 @@ class quiz_attempt {
             return new moodle_url($fragment);
 
         } else {
-            $url = new moodle_url('/mod/quiz/' . $script . '.php' . $fragment,
+            $url = ($this->isremote)?'/mod/quiz/remote/':'/mod/quiz/';
+            $url = new moodle_url($url . $script . '.php' . $fragment,
                     array('attempt' => $this->attempt->id));
             if ($page == 0 && $showall != $defaultshowall) {
                 $url->param('showall', (int) $showall);

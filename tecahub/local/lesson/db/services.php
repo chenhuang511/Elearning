@@ -23,95 +23,103 @@
  * install or upgrade operation. All plugins support this.
  *
  * For more information, take a look to the documentation available:
- *	   - Webservices API: {@link http://docs.moodle.org/dev/Web_services_API}
- *	   - External API: {@link http://docs.moodle.org/dev/External_functions_API}
- *	   - Upgrade API: {@link http://docs.moodle.org/dev/Upgrade_API}
+ *       - Webservices API: {@link http://docs.moodle.org/dev/Web_services_API}
+ *       - External API: {@link http://docs.moodle.org/dev/External_functions_API}
+ *       - Upgrade API: {@link http://docs.moodle.org/dev/Upgrade_API}
  *
- * @package	   core_webservice
+ * @package       core_webservice
  * @category   webservice
  * @copyright  2009 Petr Skodak
- * @license	   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$functions = array(	
-	'local_mod_get_lesson_by_id' => array(
-		'classname'	  => 'local_mod_lesson_external',
-		'methodname'  => 'get_mod_lesson_by_id',
-		'classpath'	  => 'local/lesson/externallib.php',
-		'description' => 'Get lesson content by course',
-		'type'		  => 'read',
-		'ajax'		  => true
-	),
-	'local_mod_get_lesson_page' => array(
-		'classname'	  => 'local_mod_lesson_external',
-		'methodname'  => 'get_lesson_page',
-		'classpath'	  => 'local/lesson/externallib.php',
-		'description' => 'Get lesson page by lesson id and prevpageid',
-		'type'		  => 'read',
-		'ajax'		  => true
-	),
-	'local_mod_get_lessonpage_by_pageid_and_lessonid' => array(
-		'classname'	  => 'local_mod_lesson_external',
-		'methodname'  => 'get_mod_lessonpage_by_pageid_and_lessonid',
-		'classpath'	  => 'local/lesson/externallib.php',
-		'description' => 'Get lesson page by page id and lesson id',
-		'type'		  => 'read',
-		'ajax'		  => true
-	),
-	'local_mod_get_lesson_timer_by_userid_and_lessonid' => array(
-		'classname'	  => 'local_mod_lesson_external',
-		'methodname'  => 'get_lesson_timer_by_userid_and_lessonid',
-		'classpath'	  => 'local/lesson/externallib.php',
-		'description' => 'Get lesson timer by userid and lessonid',
-		'type'		  => 'read',
-		'ajax'		  => true
-	),
-	'local_mod_get_lesson_grades_by_userid_and_lessonid' => array(
-		'classname'	  => 'local_mod_lesson_external',
-		'methodname'  => 'get_lesson_grades_by_userid_and_lessonid',
-		'classpath'	  => 'local/lesson/externallib.php',
-		'description' => 'Get lesson grades by userid and lessonid',
-		'type'		  => 'read',
-		'ajax'		  => true
-	),
-	'local_mod_get_lesson_branch_by_lessonid_and_userid_and_retry' => array(
-		'classname'	  => 'local_mod_lesson_external',
-		'methodname'  => 'get_lesson_branch_by_lessonid_and_userid_and_retry',
-		'classpath'	  => 'local/lesson/externallib.php',
-		'description' => 'Get lesson branch by lessonid and userid and retry',
-		'type'		  => 'read',
-		'ajax'		  => true
-	),
-	'local_mod_get_count_lessonid_and_userid' => array(
-		'classname'	  => 'local_mod_lesson_external',
-		'methodname'  => 'get_count_by_lessonid_and_userid',
-		'classpath'	  => 'local/lesson/externallib.php',
-		'description' => 'Get count of lesson table by lesson id and user id',
-		'type'		  => 'read',
-		'ajax'		  => true
-	),
-	'local_mod_get_lesson_answer_by_pageid_and_lessonid' => array(
-		'classname'	  => 'local_mod_lesson_external',
-		'methodname'  => 'get_lesson_answers_by_pageid_and_lessonid',
-		'classpath'	  => 'local/lesson/externallib.php',
-		'description' => 'Get lesson answer by pageid and lessonid',
-		'type'		  => 'read',
-		'ajax'		  => true
-	),
-	'local_mod_get_lesson_attempts_by_lessonid_and_userid' => array(
-		'classname'	  => 'local_mod_lesson_external',
-		'methodname'  => 'get_lesson_attempts_by_lessonid_and_userid',
-		'classpath'	  => 'local/lesson/externallib.php',
-		'description' => 'Get lesson attempts by lesson id and user id',
-		'type'		  => 'read',
-		'ajax'		  => true
-	),
-	'local_mod_get_field_lesson_page_by_lessonid_and_prevpageid' => array(
-	'classname'	  => 'local_mod_lesson_external',
-	'methodname'  => 'get_field_lessonpage_by_lessonid_and_prevpageid',
-	'classpath'	  => 'local/lesson/externallib.php',
-	'description' => 'Get id of lesson page by lessonid and prevpageid',
-	'type'		  => 'read',
-	'ajax'		  => true
-)
+$functions = array(
+    'local_mod_get_lesson_by_id' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_mod_lesson_by_id',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get lesson content by course',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_lesson_page' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_lesson_page',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get lesson page by lesson id and prevpageid',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_lessonpage_by_pageid_and_lessonid' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_mod_lessonpage_by_pageid_and_lessonid',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get lesson page by page id and lesson id',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_lesson_timer_by_userid_and_lessonid' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_lesson_timer_by_userid_and_lessonid',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get lesson timer by userid and lessonid',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_lesson_grades_by_userid_and_lessonid' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_lesson_grades_by_userid_and_lessonid',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get lesson grades by userid and lessonid',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_lesson_branch_by_lessonid_and_userid_and_retry' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_lesson_branch_by_lessonid_and_userid_and_retry',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get lesson branch by lessonid and userid and retry',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_count_lessonid_and_userid' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_count_by_lessonid_and_userid',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get count of lesson table by lesson id and user id',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_lesson_answer_by_pageid_and_lessonid' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_lesson_answers_by_pageid_and_lessonid',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get lesson answer by pageid and lessonid',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_lesson_attempts_by_lessonid_and_userid' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_lesson_attempts_by_lessonid_and_userid',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get lesson attempts by lesson id and user id',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_field_lesson_page_by_lessonid_and_prevpageid' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_field_lessonpage_by_lessonid_and_prevpageid',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get id of lesson page by lessonid and prevpageid',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_lesson_answers_by_id' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_lesson_answer_by_id',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get lesson answers by id',
+        'type' => 'read',
+        'ajax' => true
+    )
 );

@@ -38,7 +38,7 @@ if ($id) {
 }
 
 // Check login and get context.
-require_login($course, false, $cm);
+//require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/quiz:view', $context);
 
@@ -78,9 +78,7 @@ $unfinishedattempt = get_remote_user_attemps($quiz->id, $user[0]->id, 'unfinishe
 if(count($unfinishedattempt) > 0 && $unfinishedattempt[0]){
     $attempts = $unfinishedattempt;
 
-    // If the attempt is now overdue, deal with that - and pass isonline = false.
-    // We want the student notified in this case.
-    $quizobj->create_attempt_object($unfinishedattempt)->handle_if_time_expired(time(), false);
+    // @TODO: If the attempt is now overdue, deal with that - and pass isonline = false. We want the student notified in this case.
 
     $unfinished = $unfinishedattempt[0]->state == quiz_attempt::IN_PROGRESS ||
         $unfinishedattempt[0]->state == quiz_attempt::OVERDUE;
