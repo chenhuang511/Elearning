@@ -280,7 +280,7 @@ class mod_quiz_external extends external_api {
      * @return array array containing the quiz, course, context and course module objects
      * @since  Moodle 3.1
      */
-    protected static function validate_quiz($quizid) {
+    public static function validate_quiz($quizid) {
         global $DB;
 
         // Request and permission validation.
@@ -421,7 +421,7 @@ class mod_quiz_external extends external_api {
      *
      * @return external_single_structure the attempt structure
      */
-    private static function attempt_structure() {
+    public static function attempt_structure() {
         return new external_single_structure(
             array(
                 'id' => new external_value(PARAM_INT, 'Attempt id.', VALUE_OPTIONAL),
