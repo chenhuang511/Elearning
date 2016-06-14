@@ -59,12 +59,14 @@ $PAGE->set_url('/mod/page/view.php', array('id' => $cm->id));
 $options = empty($page->displayoptions) ? array() : unserialize($page->displayoptions);
 
 //if ($inpopup and $page->display == RESOURCELIB_DISPLAY_POPUP) {
-$page->display == RESOURCELIB_DISPLAY_POPUP;
     $PAGE->set_pagelayout('popup');
-
     $PAGE->set_title($course->shortname.': '.$page->name);
     $PAGE->set_heading($course->fullname);
 //var_dump($page);
+echo $OUTPUT->box_start('mod_introbox', 'pageintro');
+echo "$page->content";
+echo $OUTPUT->box_end();
+
 //} else {
 //    $PAGE->set_title($course->shortname.': '.$page->name);
 //    $PAGE->set_heading($course->fullname);
@@ -78,8 +80,7 @@ if (!isset($options['printheading']) || !empty($options['printheading'])) {
 if (!empty($options['printintro'])) {
     if (trim(strip_tags($page->intro))) {
         echo $OUTPUT->box_start('mod_introbox', 'pageintro');
-        echo format_module_intro('page', $PAGE, $cm->id);
-        echo "12345";
+        echo format_module_intro('page', $page, $cm->id);
         echo $OUTPUT->box_end();
     }
 }
