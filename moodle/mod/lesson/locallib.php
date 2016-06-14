@@ -2448,7 +2448,6 @@ abstract class lesson_page extends lesson_base
             $lessonid = $this->lesson->properties->id;
 
             $answers = get_remote_lesson_answers_by_pageid_and_lessonid($pageid, $lessonid);
-            //$answers = $DB->get_records('lesson_answers', array('pageid' => $this->properties->id, 'lessonid' => $this->lesson->id), 'id');
             if (!$answers) {
                 // It is possible that a lesson upgraded from Moodle 1.9 still
                 // contains questions without any answers [MDL-25632].
@@ -2509,6 +2508,7 @@ abstract class lesson_page extends lesson_base
         } else {
             if (!has_capability('mod/lesson:manage', $context)) {
                 $nretakes = $DB->count_records("lesson_grades", array("lessonid" => $this->lesson->id, "userid" => $USER->id));
+                $nretakes = get_remote_count_by_lessonid_and_userid('lesson_grades', $this->lesson->properties->id, $USER->id);
 
                 // Get the number of attempts that have been made on this question for this student and retake,
                 $nattempts = $DB->count_records('lesson_attempts', array('lessonid' => $this->lesson->id,
@@ -2603,7 +2603,7 @@ abstract class lesson_page extends lesson_base
             }
 
             if ($result->response) {
-                if ($this->lesson->review && !$result->correctanswer && !$result->isessayquestion) {
+                if ($this->lesson->properties->review && !$result->correctanswer && !$result->isessayquestion) {
                     $nretakes = $DB->count_records("lesson_grades", array("lessonid" => $this->lesson->id, "userid" => $USER->id));
                     $qattempts = $DB->count_records("lesson_attempts", array("userid" => $USER->id, "retry" => $nretakes, "pageid" => $this->properties->id));
                     if ($qattempts == 1) {

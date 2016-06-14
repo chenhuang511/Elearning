@@ -41,9 +41,7 @@ $backtocourse = optional_param('backtocourse', false, PARAM_RAW);
 
 // get course module
 $cm = get_remote_course_module_by_cmid('lesson', $id);
-
 $course = get_local_course_record($cm->course);
-
 $lesson = get_remote_lesson_by_id($cm->instance);
 $lesson = new lesson($lesson);
 
@@ -411,7 +409,7 @@ if ($pageid != LESSON_EOL) {
             'title' => $page->title,
             'contents' => $page->get_contents()
         );
-        $mform = new lesson_page_without_answers($CFG->wwwroot . '/mod/lesson/continue.php', $customdata);
+        $mform = new lesson_page_without_answers($CFG->wwwroot . '/mod/lesson/remote/api-continue.php', $customdata);
         $mform->set_data($data);
         ob_start();
         $mform->display();
