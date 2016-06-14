@@ -34,9 +34,7 @@ if ($id = optional_param('id', 0, PARAM_INT)) {
 $attemptid = required_param('attempt', PARAM_INT);
 $page = optional_param('page', 0, PARAM_INT);
 
-// Create atemptobj : $attemptobj = quiz_attempt::create($attemptid);
 $attemptremote = get_remote_get_attempt_data($attemptid, $page);
-//var_dump($attemptremote);die;
 
 $attempt = get_remote_attempt_by_attemptid($attemptid);
 $quiz = get_remote_quiz_by_id($attempt->quiz);

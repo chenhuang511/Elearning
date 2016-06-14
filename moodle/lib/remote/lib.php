@@ -155,13 +155,14 @@ function get_remote_mapping_user()
     $hostname = mnet_get_hostname_from_uri($CFG->wwwroot);
     $hostip = gethostbyname($hostname);
     $username = $USER->username;
+    $email = $USER->email;
 
     return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_get_remote_mapping_user',
-            'params' => array('ipaddress' => $hostip, 'username' => $username)
+            'params' => array('ipaddress' => $hostip, 'username' => $username, 'email' => $email)
         )
     );
 }

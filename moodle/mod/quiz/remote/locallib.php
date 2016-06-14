@@ -183,13 +183,13 @@ function quiz_remote_validate_new_attempt(quiz $quizobj, quiz_access_manager $ac
 }
 
 // Sử dụng API có sẵn mod_quiz_start_attempt để thay thế cho hàm xử lý quiz_prepare_and_start_new_attempt trong startattempt.php
-function get_remote_quiz_start_attempt($quizid) {
+function get_remote_quiz_start_attempt($quizid, $remoteuserid) {
     return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN_M,
-            'function_name' => 'mod_quiz_start_attempt',
-            'params' => array('quizid' => $quizid, 'preflightdata' => array(), 'forcenew' => true)
+            'function_name' => 'local_mod_quiz_start_remote_attempt',
+            'params' => array('quizid' => $quizid, $remoteuserid, 'preflightdata' => array(), 'forcenew' => true)
         )
     );
 }
