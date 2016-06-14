@@ -44,7 +44,7 @@ class local_user_external extends external_api {
 
         //validate parameter
         $params = self::validate_parameters(self::get_remote_mapping_user_parameters(),
-            array('ipaddress' => $ipaddress, 'username' => $username));
+            array('ipaddress' => $ipaddress, 'username' => $username, 'email' => $email));
 
 		return $DB->get_records_sql("SELECT u.id,u.username,u.email,u.auth FROM {user} u
 									WHERE u.mnethostid = (SELECT id FROM {mnet_host} m 
