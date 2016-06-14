@@ -74,7 +74,8 @@ require_login($attemptobj->get_course(), false, $attemptobj->get_cm());
 require_sesskey();
 
 // Check that this attempt belongs to this user.
-if ($attemptobj->get_userid() != $USER->id) {
+$user = get_remote_mapping_user();
+if ($attemptobj->get_userid() != $user[0]->id) {
     throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'notyourattempt');
 }
 

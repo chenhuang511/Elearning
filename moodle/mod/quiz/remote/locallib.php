@@ -189,7 +189,7 @@ function get_remote_quiz_start_attempt($quizid, $remoteuserid) {
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_quiz_start_remote_attempt',
-            'params' => array('quizid' => $quizid, $remoteuserid, 'preflightdata' => array(), 'forcenew' => true)
+            'params' => array('quizid' => $quizid, 'remoteuserid' => $remoteuserid, 'preflightdata' => array(), 'forcenew' => true)
         )
     );
 }
