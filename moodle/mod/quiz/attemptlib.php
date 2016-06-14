@@ -413,6 +413,15 @@ class quiz {
     }
 
     /**
+     * Hanv: 14/06/2016
+     * @param int $attemptid the id of an attempt.
+     * @return string the URL of the review of that attempt.
+     */
+    public function review_remote_url($attemptid) {
+        return new moodle_url('/mod/quiz/remote/review.php', array('attempt' => $attemptid));
+    }
+
+    /**
      * @param int $attemptid the id of an attempt.
      * @return string the URL of the review of that attempt.
      */
