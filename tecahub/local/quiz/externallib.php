@@ -785,7 +785,7 @@ ORDER BY
                     throw new moodle_quiz_exception($quizobj, 'attemptstillinprogress');
                 }
             }
-            $attempt = quiz_prepare_and_start_new_attempt($quizobj, $attemptnumber, $lastattempt);
+            $attempt = quiz_prepare_and_start_new_attempt($quizobj, $attemptnumber, $lastattempt, $remoteuserid);
         }
 
         $result = array();
