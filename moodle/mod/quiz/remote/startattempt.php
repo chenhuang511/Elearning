@@ -101,7 +101,8 @@ if ($currentattemptid) {
     }
 }
 
-$attemptremote = get_remote_quiz_start_attempt($quiz->id);
+$user = get_remote_mapping_user();
+$attemptremote = get_remote_quiz_start_attempt($quiz->id, $user[0]->id);
 if($attemptremote->errorcode == 'attemptstillinprogress'){
     print_error('attemptstillinprogress', 'quiz', $quizobj->view_url());
 }

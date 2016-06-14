@@ -38,7 +38,7 @@ if ($id) {
 }
 
 // Check login and get context.
-//require_login($course, false, $cm);
+require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/quiz:view', $context);
 
@@ -67,8 +67,7 @@ $viewobj = new mod_quiz_view_object();
 $viewobj->accessmanager = $accessmanager;
 $viewobj->canreviewmine = $canreviewmine;
 
-// Get this user's attempts.
-//get user mapping
+// Get this user's attempts. User should map from host to hub
 $user = get_remote_mapping_user();
 $attempts = get_remote_user_attemps($quiz->id, $user[0]->id, 'finished', true)->attempts;
 $lastfinishedattempt = end($attempts);
@@ -79,7 +78,6 @@ if(count($unfinishedattempt) > 0 && $unfinishedattempt[0]){
     $attempts = $unfinishedattempt;
 
     // @TODO: If the attempt is now overdue, deal with that - and pass isonline = false. We want the student notified in this case.
-
     $unfinished = $unfinishedattempt[0]->state == quiz_attempt::IN_PROGRESS ||
         $unfinishedattempt[0]->state == quiz_attempt::OVERDUE;
     if (!$unfinished) {
