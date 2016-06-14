@@ -243,50 +243,11 @@ class local_mod_quiz_external extends external_api {
         //validate parameter
         $params = self::validate_parameters(self::get_mod_questions_by_quizid_parameters(),
             array('id' => $id,'options' => $options));
-        // Thiet lap cac thong so ban dau cua lib/questionlib.php -> question_preload_questions
-        $questionids = null;
-        $extrafields = 'slot.maxmark, slot.id AS slotid, slot.slot, slot.page';
-        $join = '{quiz_slots} slot ON slot.quizid = :quizid AND q.id = slot.questionid';
-        $extraparams = array('quizid' => $params['id']);
-        $orderby = 'slot.slot';
 
-        if ($questionids === null) {
-            $where = '';
-            $params = array();
-        } else {
-            if (empty($questionids)) {
-                return array();
-            }
-
-            list($questionidcondition, $params) = $DB->get_in_or_equal(
-                $questionids, SQL_PARAMS_NAMED, 'qid0000');
-            $where = 'WHERE q.id ' . $questionidcondition;
-        }
-
-        if ($join) {
-            $join = 'JOIN ' . $join;
-        }
-
-        if ($extrafields) {
-            $extrafields = ', ' . $extrafields;
-        }
-
-        if ($orderby) {
-            $orderby = 'ORDER BY ' . $orderby;
-        }
-
-        $sql = "SELECT q.*, qc.contextid{$extrafields}
-              FROM {question} q
-              JOIN {question_categories} qc ON q.category = qc.id
-              {$join}
-             {$where}
-          {$orderby}";
-
-        // Load the questions.
-        $questions = $DB->get_records_sql($sql, $extraparams + $params);
-        foreach ($questions as $question) {
-            $question->_partiallyloaded = true;
-        }
+        $questions = question_preload_questions(null,
+            'slot.maxmark, slot.id AS slotid, slot.slot, slot.page',
+            '{quiz_slots} slot ON slot.quizid = :quizid AND q.id = slot.questionid',
+            array('quizid' => $params['id']), 'slot.slot');
         return $questions;
     }
 
@@ -320,6 +281,13 @@ class local_mod_quiz_external extends external_api {
                     'timemodified' => new external_value(PARAM_INT, 'Last modified time.', VALUE_OPTIONAL),
                     'createdby' => new external_value(PARAM_INT, 'created by.', VALUE_OPTIONAL),
                     'modifiedby' => new external_value(PARAM_INT, 'modified by.', VALUE_OPTIONAL),
+                    'contextid' => new external_value(PARAM_INT, 'comtext id.'),
+                    'maxmark' => new external_value(PARAM_FLOAT, 'max mark.', VALUE_OPTIONAL),
+                    'slotid' => new external_value(PARAM_INT, 'slot id.'),
+                    'slot' => new external_value(PARAM_INT, 'slot.'),
+                    'page' => new external_value(PARAM_INT, 'page.'),
+                    '_partiallyloaded' => new external_value(PARAM_BOOL, '_partiallyloaded.'),
+
                 )
             )
         );

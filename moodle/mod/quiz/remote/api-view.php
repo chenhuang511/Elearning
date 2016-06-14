@@ -53,15 +53,14 @@ $timenow = time();
 $rules= get_remote_quiz_access_information($cm->instance);
 $quiz = get_remote_quiz_by_id($cm->instance);
 $quizobj = new quiz($quiz, $cm, $course);
-$accessmanager = new quiz_access_manager($quizobj, $timenow,
-    false); // set has_capability('mod/quiz:ignoretimelimits', $context, null, false) = false
+$accessmanager = new quiz_access_manager($quizobj, $timenow, false); // set has_capability('mod/quiz:ignoretimelimits', $context, null, false) = false
 $quiz = $quizobj->get_quiz();
 
 // Trigger course_module_viewed event and completion.
-get_remote_quiz_view_quiz($id || $quiz->id);
+get_remote_quiz_view_quiz($quiz->id);
 
 // Initialize $PAGE, compute blocks.
-$PAGE->set_url('/mod/quiz/remote/view.php', array('id' => $cm->id));
+$PAGE->set_url('/mod/quiz/remote/api-view.php', array('id' => $cm->id));
 
 // Create view object which collects all the information the renderer will need.
 $viewobj = new mod_quiz_view_object();
@@ -79,7 +78,9 @@ $unfinishedattempt = get_remote_user_attemps($quiz->id, $user[0]->id, 'unfinishe
 if(count($unfinishedattempt) > 0 && $unfinishedattempt[0]){
     $attempts = $unfinishedattempt;
 
-    // @TODO: $quizobj->create_attempt_object($unfinishedattempt)->handle_if_time_expired(time(), false);
+    // If the attempt is now overdue, deal with that - and pass isonline = false.
+    // We want the student notified in this case.
+    $quizobj->create_attempt_object($unfinishedattempt)->handle_if_time_expired(time(), false);
 
     $unfinished = $unfinishedattempt[0]->state == quiz_attempt::IN_PROGRESS ||
         $unfinishedattempt[0]->state == quiz_attempt::OVERDUE;
