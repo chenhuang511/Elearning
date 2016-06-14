@@ -38,7 +38,7 @@ if ($id) {
 }
 
 // Check login and get context.
-//require_login($course, false, $cm);
+require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/quiz:view', $context);
 
