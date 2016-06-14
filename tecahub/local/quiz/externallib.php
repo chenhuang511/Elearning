@@ -680,4 +680,132 @@ ORDER BY
             )
         );
     }
+		
+
+	/**
+     * Describes the parameters for start_attempt.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function start_remote_attempt_parameters() {
+        return new external_function_parameters (
+            array(
+                'quizid' => new external_value(PARAM_INT, 'quiz instance id'),
+				'remoteuserid' => new external_value(PARAM_INT, 'remote user id'),
+                'preflightdata' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHANUMEXT, 'data name'),
+                            'value' => new external_value(PARAM_RAW, 'data value'),
+                        )
+                    ), 'Preflight required data (like passwords)', VALUE_DEFAULT, array()
+                ),
+                'forcenew' => new external_value(PARAM_BOOL, 'Whether to force a new attempt or not.', VALUE_DEFAULT, false),
+
+            )
+        );
+    }
+
+    /**
+     * Starts a new attempt at a quiz.
+     *
+     * @param int $quizid quiz instance id
+     * @param array $preflightdata preflight required data (like passwords)
+     * @param bool $forcenew Whether to force a new attempt or not.
+     * @return array of warnings and the attempt basic data
+     * @since Moodle 3.1
+     * @throws moodle_quiz_exception
+     */
+    public static function start_remote_attempt($quizid, $remoteuserid, $preflightdata = array(), $forcenew = false) {
+        global $DB, $USER;
+
+        $warnings = array();
+        $attempt = array();
+
+        $params = array(
+            'quizid' => $quizid,
+            'preflightdata' => $preflightdata,
+            'forcenew' => $forcenew,
+        );
+        $params = self::validate_parameters(self::start_remote_attempt_parameters(), $params);
+        $forcenew = $params['forcenew'];
+
+        list($quiz, $course, $cm, $context) = self::validate_quiz($params['quizid']);
+
+        $quizobj = quiz::create($cm->instance, $remoteuserid);
+
+        // Check questions.
+        if (!$quizobj->has_questions()) {
+            throw new moodle_quiz_exception($quizobj, 'noquestionsfound');
+        }
+
+        // Create an object to manage all the other (non-roles) access rules.
+        $timenow = time();
+        $accessmanager = $quizobj->get_access_manager($timenow);
+
+        // Validate permissions for creating a new attempt and start a new preview attempt if required.
+        list($currentattemptid, $attemptnumber, $lastattempt, $messages, $page) =
+            quiz_validate_new_attempt($quizobj, $accessmanager, $forcenew, -1, false);
+
+        // Check access.
+        if (!$quizobj->is_preview_user() && $messages) {
+            // Create warnings with the exact messages.
+            foreach ($messages as $message) {
+                $warnings[] = array(
+                    'item' => 'quiz',
+                    'itemid' => $quiz->id,
+                    'warningcode' => '1',
+                    'message' => clean_text($message, PARAM_TEXT)
+                );
+            }
+        } else {
+            if ($accessmanager->is_preflight_check_required($currentattemptid)) {
+                // Need to do some checks before allowing the user to continue.
+
+                $provideddata = array();
+                foreach ($params['preflightdata'] as $data) {
+                    $provideddata[$data['name']] = $data['value'];
+                }
+
+                $errors = $accessmanager->validate_preflight_check($provideddata, [], $currentattemptid);
+
+                if (!empty($errors)) {
+                    throw new moodle_quiz_exception($quizobj, array_shift($errors));
+                }
+
+                // Pre-flight check passed.
+                $accessmanager->notify_preflight_check_passed($currentattemptid);
+            }
+
+            if ($currentattemptid) {
+                if ($lastattempt->state == quiz_attempt::OVERDUE) {
+                    throw new moodle_quiz_exception($quizobj, 'stateoverdue');
+                } else {
+                    throw new moodle_quiz_exception($quizobj, 'attemptstillinprogress');
+                }
+            }
+            $attempt = quiz_prepare_and_start_new_attempt($quizobj, $attemptnumber, $lastattempt);
+        }
+
+        $result = array();
+        $result['attempt'] = $attempt;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the start_attempt return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function start_remote_attempt_returns() {
+        return new external_single_structure(
+            array(
+                'attempt' => self::attempt_structure(),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
 }

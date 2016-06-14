@@ -82,4 +82,12 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_quiz_start_remote_attempt' => array(
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'start_remote_attempt',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Start quiz attempt for remote user.",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 );
