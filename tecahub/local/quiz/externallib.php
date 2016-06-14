@@ -26,7 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once("$CFG->libdir/externallib.php");
+require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 require_once($CFG->dirroot . '/question/engine/lib.php');
 
@@ -805,6 +805,40 @@ ORDER BY
             array(
                 'attempt' => self::attempt_structure(),
                 'warnings' => new external_warnings(),
+            )
+        );
+    }
+	
+	/**
+     * Describes a single attempt structure.
+     *
+     * @return external_single_structure the attempt structure
+     */
+    private static function attempt_structure() {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'Attempt id.', VALUE_OPTIONAL),
+                'quiz' => new external_value(PARAM_INT, 'Foreign key reference to the quiz that was attempted.',
+                                                VALUE_OPTIONAL),
+                'userid' => new external_value(PARAM_INT, 'Foreign key reference to the user whose attempt this is.',
+                                                VALUE_OPTIONAL),
+                'attempt' => new external_value(PARAM_INT, 'Sequentially numbers this students attempts at this quiz.',
+                                                VALUE_OPTIONAL),
+                'uniqueid' => new external_value(PARAM_INT, 'Foreign key reference to the question_usage that holds the
+                                                    details of the the question_attempts that make up this quiz
+                                                    attempt.', VALUE_OPTIONAL),
+                'layout' => new external_value(PARAM_RAW, 'Attempt layout.', VALUE_OPTIONAL),
+                'currentpage' => new external_value(PARAM_INT, 'Attempt current page.', VALUE_OPTIONAL),
+                'preview' => new external_value(PARAM_INT, 'Whether is a preview attempt or not.', VALUE_OPTIONAL),
+                'state' => new external_value(PARAM_ALPHA, 'The current state of the attempts. \'inprogress\',
+                                                \'overdue\', \'finished\' or \'abandoned\'.', VALUE_OPTIONAL),
+                'timestart' => new external_value(PARAM_INT, 'Time when the attempt was started.', VALUE_OPTIONAL),
+                'timefinish' => new external_value(PARAM_INT, 'Time when the attempt was submitted.
+                                                    0 if the attempt has not been submitted yet.', VALUE_OPTIONAL),
+                'timemodified' => new external_value(PARAM_INT, 'Last modified time.', VALUE_OPTIONAL),
+                'timecheckstate' => new external_value(PARAM_INT, 'Next time quiz cron should check attempt for
+                                                        state changes.  NULL means never check.', VALUE_OPTIONAL),
+                'sumgrades' => new external_value(PARAM_FLOAT, 'Total marks for this attempt.', VALUE_OPTIONAL),
             )
         );
     }
