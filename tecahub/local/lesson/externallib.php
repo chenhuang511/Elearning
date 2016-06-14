@@ -886,18 +886,18 @@ class local_mod_lesson_external extends external_api
             new external_single_structure(
                 array(
                     'id' => new external_value(PARAM_INT, 'id'),
-                    'lessonid' => new external_value(PARAM_INT, 'lesson id', VALUE_DEFAULT),
-                    'pageid' => new external_value(PARAM_INT, 'page id', VALUE_DEFAULT),
-                    'jumpto' => new external_value(PARAM_INT, 'jumpto', VALUE_DEFAULT),
-                    'grade' => new external_value(PARAM_INT, 'grade', VALUE_DEFAULT),
-                    'score' => new external_value(PARAM_INT, 'score', VALUE_DEFAULT),
-                    'flags' => new external_value(PARAM_INT, 'flags', VALUE_DEFAULT),
-                    'timecreated' => new external_value(PARAM_INT, 'time created', VALUE_DEFAULT),
-                    'timemodified' => new external_value(PARAM_INT, 'time modified', VALUE_DEFAULT),
+                    'lessonid' => new external_value(PARAM_INT, 'lesson id'),
+                    'pageid' => new external_value(PARAM_INT, 'page id'),
+                    'jumpto' => new external_value(PARAM_INT, 'jumpto'),
+                    'grade' => new external_value(PARAM_INT, 'grade'),
+                    'score' => new external_value(PARAM_INT, 'score'),
+                    'flags' => new external_value(PARAM_INT, 'flags'),
+                    'timecreated' => new external_value(PARAM_INT, 'time created'),
+                    'timemodified' => new external_value(PARAM_INT, 'time modified'),
                     'answer' => new external_value(PARAM_RAW, 'answer'),
-                    'answerformat' => new external_value(PARAM_INT, 'answer format', VALUE_DEFAULT),
-                    'respone' => new external_value(PARAM_RAW, 'respone'),
-                    'responseformat' => new external_value(PARAM_INT, 'respone format', VALUE_DEFAULT),
+                    'answerformat' => new external_value(PARAM_INT, 'answer format'),
+                    'response' => new external_value(PARAM_RAW, 'response'),
+                    'responseformat' => new external_value(PARAM_INT, 'response format')
                 )
             ), 'lesson answers'
         );
