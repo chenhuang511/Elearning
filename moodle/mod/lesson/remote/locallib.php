@@ -179,14 +179,14 @@ function get_remote_lesson_attempts_by_lessonid_and_userid($lessonid, $userid, $
     ));
 }
 
-function get_remote_lesson_answers_by_pageid_and_lessonid($pageid, $lessonid)
+function get_remote_lesson_answers_by_pageid_and_lessonid($pageid, $lessonid, $options = array())
 {
-    return moodle_webservice_client(
+    return moodle_webservice_client(array_merge($options,
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_lesson_answer_by_pageid_and_lessonid',
             'params' => array('pageid' => $pageid,'lessonid' => $lessonid)
         )
-    );
+    ));
 }

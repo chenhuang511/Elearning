@@ -2444,7 +2444,10 @@ abstract class lesson_page extends lesson_base
         global $DB;
         if ($this->answers === null) {
             $this->answers = array();
-            $answers = get_remote_lesson_answers_by_pageid_and_lessonid($this->properties->id, $this->lesson->properties->id);
+            $pageid = $this->properties->id;
+            $lessonid = $this->lesson->properties->id;
+
+            $answers = get_remote_lesson_answers_by_pageid_and_lessonid($pageid, $lessonid);
             //$answers = $DB->get_records('lesson_answers', array('pageid' => $this->properties->id, 'lessonid' => $this->lesson->id), 'id');
             if (!$answers) {
                 // It is possible that a lesson upgraded from Moodle 1.9 still
