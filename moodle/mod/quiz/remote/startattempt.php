@@ -46,13 +46,9 @@ require_login($quizobj->get_course(), false, $quizobj->get_cm());
 require_sesskey();
 $PAGE->set_heading($quizobj->get_course()->fullname);
 
-// If no questions have been set up yet redirect to edit.php or display an error.
-if (!$quizobj->has_questions($quiz->id)) {
-    if ($quizobj->has_capability('mod/quiz:manage')) {
-        redirect($quizobj->edit_url());
-    } else {
-        print_error('cannotstartnoquestions', 'quiz', $quizobj->view_url());
-    }
+// Check questions.
+if (!$quizobj->has_questions()) {
+    print_error('cannotstartnoquestions', 'quiz', $quizobj->view_url());
 }
 
 // Create an object to manage all the other (non-roles) access rules.
@@ -65,7 +61,6 @@ list($currentattemptid, $attemptnumber, $lastattempt, $messages, $page) =
 
 // Check access.
 if (!$quizobj->is_preview_user() && $messages) {
-    // @TODO ???
     $output = $PAGE->get_renderer('mod_quiz');
     print_error('attempterror', 'quiz', $quizobj->view_url(),
         $output->access_messages($messages));
@@ -105,7 +100,11 @@ if ($currentattemptid) {
         redirect($quizobj->attempt_remote_url($currentattemptid, $page));
     }
 }
-$attempt = get_remote_quiz_start_attempt($quiz->id)->attempt;
 
+$attemptremote = get_remote_quiz_start_attempt($quiz->id);
+if($attemptremote->errorcode == 'attemptstillinprogress'){
+    print_error('attemptstillinprogress', 'quiz', $quizobj->view_url());
+}
+$attempt = $attemptremote->attempt;
 // Redirect to the attempt page.
 redirect($quizobj->attempt_remote_url($attempt->id, $page));

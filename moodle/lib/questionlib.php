@@ -709,6 +709,7 @@ function question_preload_questions($questionids = null, $extrafields = '', $joi
     //hanv: 04/06/2016: get_remote_questions
     if(!$questions){
         $questions = get_remote_question($quizid);
+        return $questions;
     }
 
     foreach ($questions as $question) {
