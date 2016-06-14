@@ -42,7 +42,7 @@ $attempt = get_remote_attempt_by_attemptid($attemptid);
 $quiz = get_remote_quiz_by_id($attempt->quiz);
 $course = get_local_course_record($quiz->course);
 $cm = get_remote_coursemodule_from_instance("quiz", $quiz->id);
-$attemptobj = new quiz_attempt($attempt, $quiz, $cm, $course);
+$attemptobj = new quiz_attempt($attempt, $quiz, $cm, $course, true, true);
 
 $page = $attemptobj->force_page_number_into_range($page);
 $PAGE->set_url($attemptobj->attempt_url(null, $page)); // @TODO: set lai
