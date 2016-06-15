@@ -26,28 +26,38 @@
 defined('MOODLE_INTERNAL') || die();
 
 /** True/False question type */
-define("LESSON_PAGE_TRUEFALSE",     "2");
+define("LESSON_PAGE_TRUEFALSE", "2");
 
-class lesson_page_type_truefalse extends lesson_page {
+require_once($CFG->dirroot . '/mod/lesson/remote/locallib.php');
+
+class lesson_page_type_truefalse extends lesson_page
+{
 
     protected $type = lesson_page::TYPE_QUESTION;
     protected $typeidstring = 'truefalse';
     protected $typeid = LESSON_PAGE_TRUEFALSE;
     protected $string = null;
 
-    public function get_typeid() {
+    public function get_typeid()
+    {
         return $this->typeid;
     }
-    public function get_typestring() {
-        if ($this->string===null) {
+
+    public function get_typestring()
+    {
+        if ($this->string === null) {
             $this->string = get_string($this->typeidstring, 'lesson');
         }
         return $this->string;
     }
-    public function get_idstring() {
+
+    public function get_idstring()
+    {
         return $this->typeidstring;
     }
-    public function display($renderer, $attempt) {
+
+    public function display($renderer, $attempt)
+    {
         global $USER, $CFG, $PAGE;
         $answers = $this->get_answers();
         foreach ($answers as $key => $answer) {
@@ -55,8 +65,8 @@ class lesson_page_type_truefalse extends lesson_page {
         }
         shuffle($answers);
 
-        $params = array('answers'=>$answers, 'lessonid'=>$this->lesson->id, 'contents'=>$this->get_contents(), 'attempt'=>$attempt);
-        $mform = new lesson_display_answer_form_truefalse($CFG->wwwroot.'/mod/lesson/continue.php', $params);
+        $params = array('answers' => $answers, 'lessonid' => $this->lesson->id, 'contents' => $this->get_contents(), 'attempt' => $attempt);
+        $mform = new lesson_display_answer_form_truefalse($CFG->wwwroot . '/mod/lesson/remote/api-continue.php', $params);
         $data = new stdClass;
         $data->id = $PAGE->cm->id;
         $data->pageid = $this->properties->id;
@@ -67,15 +77,17 @@ class lesson_page_type_truefalse extends lesson_page {
             'context' => context_module::instance($PAGE->cm->id),
             'objectid' => $this->properties->id,
             'other' => array(
-                    'pagetype' => $this->get_typestring()
-                )
-            );
+                'pagetype' => $this->get_typestring()
+            )
+        );
 
         $event = \mod_lesson\event\question_viewed::create($eventparams);
         $event->trigger();
         return $mform->display();
     }
-    public function check_answer() {
+
+    public function check_answer()
+    {
         global $DB, $CFG;
         $formattextdefoptions = new stdClass();
         $formattextdefoptions->noclean = true;
@@ -83,8 +95,8 @@ class lesson_page_type_truefalse extends lesson_page {
 
         $answers = $this->get_answers();
         shuffle($answers);
-        $params = array('answers'=>$answers, 'lessonid'=>$this->lesson->id, 'contents'=>$this->get_contents());
-        $mform = new lesson_display_answer_form_truefalse($CFG->wwwroot.'/mod/lesson/continue.php', $params);
+        $params = array('answers' => $answers, 'lessonid' => $this->lesson->id, 'contents' => $this->get_contents());
+        $mform = new lesson_display_answer_form_truefalse($CFG->wwwroot . '/mod/lesson/remote/api-continue.php', $params);
         $data = $mform->get_data();
         require_sesskey();
 
@@ -95,7 +107,7 @@ class lesson_page_type_truefalse extends lesson_page {
             return $result;
         }
         $result->answerid = $data->answerid;
-        $answer = $DB->get_record("lesson_answers", array("id" => $result->answerid), '*', MUST_EXIST);
+        $answer = get_remote_lesson_answers_by_id($result->answerid);
         $answer = parent::rewrite_answers_urls($answer);
         if ($this->lesson->jumpto_is_correct($this->properties->id, $answer->jumpto)) {
             $result->correctanswer = true;
@@ -108,12 +120,13 @@ class lesson_page_type_truefalse extends lesson_page {
             }
         }
         $result->newpageid = $answer->jumpto;
-        $result->response  = format_text($answer->response, $answer->responseformat, $formattextdefoptions);
+        $result->response = format_text($answer->response, $answer->responseformat, $formattextdefoptions);
         $result->studentanswer = $result->userresponse = $answer->answer;
         return $result;
     }
 
-    public function display_answers(html_table $table) {
+    public function display_answers(html_table $table)
+    {
         $answers = $this->get_answers();
         $options = new stdClass();
         $options->noclean = true;
@@ -124,35 +137,35 @@ class lesson_page_type_truefalse extends lesson_page {
             $cells = array();
             if ($this->lesson->custom && $answer->score > 0) {
                 // if the score is > 0, then it is correct
-                $cells[] = '<span class="labelcorrect">'.get_string("answer", "lesson")." $i</span>: \n";
+                $cells[] = '<span class="labelcorrect">' . get_string("answer", "lesson") . " $i</span>: \n";
             } else if ($this->lesson->custom) {
-                $cells[] = '<span class="label">'.get_string("answer", "lesson")." $i</span>: \n";
+                $cells[] = '<span class="label">' . get_string("answer", "lesson") . " $i</span>: \n";
             } else if ($this->lesson->jumpto_is_correct($this->properties->id, $answer->jumpto)) {
                 // underline correct answers
-                $cells[] = '<span class="correct">'.get_string("answer", "lesson")." $i</span>: \n";
+                $cells[] = '<span class="correct">' . get_string("answer", "lesson") . " $i</span>: \n";
             } else {
-                $cells[] = '<span class="labelcorrect">'.get_string("answer", "lesson")." $i</span>: \n";
+                $cells[] = '<span class="labelcorrect">' . get_string("answer", "lesson") . " $i</span>: \n";
             }
             $cells[] = format_text($answer->answer, $answer->answerformat, $options);
             $table->data[] = new html_table_row($cells);
 
             $cells = array();
-            $cells[] = "<span class=\"label\">".get_string("response", "lesson")." $i</span>";
+            $cells[] = "<span class=\"label\">" . get_string("response", "lesson") . " $i</span>";
             $cells[] = format_text($answer->response, $answer->responseformat, $options);
             $table->data[] = new html_table_row($cells);
 
             $cells = array();
-            $cells[] = "<span class=\"label\">".get_string("score", "lesson").'</span>';
+            $cells[] = "<span class=\"label\">" . get_string("score", "lesson") . '</span>';
             $cells[] = $answer->score;
             $table->data[] = new html_table_row($cells);
 
             $cells = array();
-            $cells[] = "<span class=\"label\">".get_string("jump", "lesson").'</span>';
+            $cells[] = "<span class=\"label\">" . get_string("jump", "lesson") . '</span>';
             $cells[] = $this->get_jump_name($answer->jumpto);
             $table->data[] = new html_table_row($cells);
 
-            if ($i === 1){
-                $table->data[count($table->data)-1]->cells[0]->style = 'width:20%;';
+            if ($i === 1) {
+                $table->data[count($table->data) - 1]->cells[0]->style = 'width:20%;';
             }
 
             $i++;
@@ -168,13 +181,14 @@ class lesson_page_type_truefalse extends lesson_page {
      * @param stdClass $properties
      * @return bool
      */
-    public function update($properties, $context = null, $maxbytes = null) {
+    public function update($properties, $context = null, $maxbytes = null)
+    {
         global $DB, $PAGE;
-        $answers  = $this->get_answers();
+        $answers = $this->get_answers();
         $properties->id = $this->properties->id;
         $properties->lessonid = $this->lesson->id;
         $properties->timemodified = time();
-        $properties = file_postupdate_standard_editor($properties, 'contents', array('noclean'=>true, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$PAGE->course->maxbytes), context_module::instance($PAGE->cm->id), 'mod_lesson', 'page_contents', $properties->id);
+        $properties = file_postupdate_standard_editor($properties, 'contents', array('noclean' => true, 'maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes' => $PAGE->course->maxbytes), context_module::instance($PAGE->cm->id), 'mod_lesson', 'page_contents', $properties->id);
         $DB->update_record("lesson_pages", $properties);
 
         // Trigger an event: page updated.
@@ -209,23 +223,24 @@ class lesson_page_type_truefalse extends lesson_page {
                     $this->answers[$i]->score = $properties->score[$i];
                 }
                 if (!isset($this->answers[$i]->id)) {
-                    $this->answers[$i]->id =  $DB->insert_record("lesson_answers", $this->answers[$i]);
+                    $this->answers[$i]->id = $DB->insert_record("lesson_answers", $this->answers[$i]);
                 } else {
                     $DB->update_record("lesson_answers", $this->answers[$i]->properties());
                 }
                 // Save files in answers and responses.
                 $this->save_answers_files($context, $maxbytes, $this->answers[$i],
-                        $properties->answer_editor[$i], $properties->response_editor[$i]);
+                    $properties->answer_editor[$i], $properties->response_editor[$i]);
             } else if (isset($this->answers[$i]->id)) {
-                $DB->delete_records('lesson_answers', array('id'=>$this->answers[$i]->id));
+                $DB->delete_records('lesson_answers', array('id' => $this->answers[$i]->id));
                 unset($this->answers[$i]);
             }
         }
         return true;
     }
 
-    public function stats(array &$pagestats, $tries) {
-        if(count($tries) > $this->lesson->maxattempts) { // if there are more tries than the max that is allowed, grab the last "legal" attempt
+    public function stats(array &$pagestats, $tries)
+    {
+        if (count($tries) > $this->lesson->maxattempts) { // if there are more tries than the max that is allowed, grab the last "legal" attempt
             $temp = $tries[$this->lesson->maxattempts - 1];
         } else {
             // else, user attempted the question less than the max, so grab the last one
@@ -255,7 +270,8 @@ class lesson_page_type_truefalse extends lesson_page {
         return true;
     }
 
-    public function report_answers($answerpage, $answerdata, $useranswer, $pagestats, &$i, &$n) {
+    public function report_answers($answerpage, $answerdata, $useranswer, $pagestats, &$i, &$n)
+    {
         $answers = $this->get_answers();
         $formattextdefoptions = new stdClass(); //I'll use it widely in this page
         $formattextdefoptions->para = false;
@@ -286,7 +302,7 @@ class lesson_page_type_truefalse extends lesson_page {
                     }
                     if (!isset($answerdata->score)) {
                         if ($this->lesson->custom) {
-                            $answerdata->score = get_string("pointsearned", "lesson").": ".$answer->score;
+                            $answerdata->score = get_string("pointsearned", "lesson") . ": " . $answer->score;
                         } elseif ($useranswer->correct) {
                             $answerdata->score = get_string("receivedcredit", "lesson");
                         } else {
@@ -298,7 +314,7 @@ class lesson_page_type_truefalse extends lesson_page {
                     $data = "<input type=\"checkbox\" readonly=\"readonly\" name=\"answer[$i]\" value=\"0\" disabled=\"disabled\" />";
                 }
                 if (($answer->score > 0 && $this->lesson->custom) || ($this->lesson->jumpto_is_correct($this->properties->id, $answer->jumpto) && !$this->lesson->custom)) {
-                    $data .= "<div class=highlight>".format_text($answer->answer, $answer->answerformat, $formattextdefoptions)."</div>";
+                    $data .= "<div class=highlight>" . format_text($answer->answer, $answer->answerformat, $formattextdefoptions) . "</div>";
                 } else {
                     $data .= format_text($answer->answer, $answer->answerformat, $formattextdefoptions);
                 }
@@ -316,7 +332,7 @@ class lesson_page_type_truefalse extends lesson_page {
                         $answerdata->response = format_text($answer->response, $answer->responseformat, $formattextdefoptions);
                     }
                     if ($this->lesson->custom) {
-                        $answerdata->score = get_string("pointsearned", "lesson").": ".$answer->score;
+                        $answerdata->score = get_string("pointsearned", "lesson") . ": " . $answer->score;
                     } elseif ($useranswer->correct) {
                         $answerdata->score = get_string("receivedcredit", "lesson");
                     } else {
@@ -327,7 +343,7 @@ class lesson_page_type_truefalse extends lesson_page {
                     $data = "<input type=\"checkbox\" readonly=\"readonly\" name=\"answer[$i]\" value=\"0\" disabled=\"disabled\" />";
                 }
                 if (($answer->score > 0 && $this->lesson->custom) || ($this->lesson->jumpto_is_correct($this->properties->id, $answer->jumpto) && !$this->lesson->custom)) {
-                    $data .= "<div class=\"highlight\">".format_text($answer->answer, $answer->answerformat, $formattextdefoptions)."</div>";
+                    $data .= "<div class=\"highlight\">" . format_text($answer->answer, $answer->answerformat, $formattextdefoptions) . "</div>";
                 } else {
                     $data .= format_text($answer->answer, $answer->answerformat, $formattextdefoptions);
                 }
@@ -335,7 +351,7 @@ class lesson_page_type_truefalse extends lesson_page {
             if (isset($pagestats[$this->properties->id][$answer->id])) {
                 $percent = $pagestats[$this->properties->id][$answer->id] / $pagestats[$this->properties->id]["total"] * 100;
                 $percent = round($percent, 2);
-                $percent .= "% ".get_string("checkedthisone", "lesson");
+                $percent .= "% " . get_string("checkedthisone", "lesson");
             } else {
                 $percent = get_string("noonecheckedthis", "lesson");
             }
@@ -347,14 +363,16 @@ class lesson_page_type_truefalse extends lesson_page {
     }
 }
 
-class lesson_add_page_form_truefalse extends lesson_add_page_form_base {
+class lesson_add_page_form_truefalse extends lesson_add_page_form_base
+{
 
     public $qtype = 'truefalse';
     public $qtypestring = 'truefalse';
     protected $answerformat = LESSON_ANSWER_HTML;
     protected $responseformat = LESSON_ANSWER_HTML;
 
-    public function custom_definition() {
+    public function custom_definition()
+    {
         $this->_form->addElement('header', 'answertitle0', get_string('correctresponse', 'lesson'));
         $this->add_answer(0, null, true, $this->get_answer_format());
         $this->add_response(0);
@@ -369,9 +387,11 @@ class lesson_add_page_form_truefalse extends lesson_add_page_form_base {
     }
 }
 
-class lesson_display_answer_form_truefalse extends moodleform {
+class lesson_display_answer_form_truefalse extends moodleform
+{
 
-    public function definition() {
+    public function definition()
+    {
         global $USER, $OUTPUT;
         $mform = $this->_form;
         $answers = $this->_customdata['answers'];
@@ -434,7 +454,7 @@ class lesson_display_answer_form_truefalse extends moodleform {
         if ($hasattempt) {
             $this->add_action_buttons(null, get_string("nextpage", "lesson"));
         } else {
-            $this->add_action_buttons(null, get_string("submit", "lesson"));
+            $this->add_action_buttons(null, get_string("submit", "lesson"), true);
         }
 
     }
