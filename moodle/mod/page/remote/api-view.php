@@ -63,10 +63,6 @@ $options = empty($page->displayoptions) ? array() : unserialize($page->displayop
     $PAGE->set_title($course->shortname.': '.$page->name);
     $PAGE->set_heading($course->fullname);
 //var_dump($page);
-echo $OUTPUT->box_start('mod_introbox', 'pageintro');
-echo "$page->content";
-echo $OUTPUT->box_end();
-
 //} else {
 //    $PAGE->set_title($course->shortname.': '.$page->name);
 //    $PAGE->set_heading($course->fullname);
@@ -85,7 +81,12 @@ if (!empty($options['printintro'])) {
     }
 }
 
+echo $OUTPUT->box_start('mod_introbox', 'pageintro');
+echo "$page->content";
+echo $OUTPUT->box_end();
+
 $content = file_rewrite_pluginfile_urls($page->content, 'pluginfile.php', $context->id, 'mod_page', 'content', $page->revision);
+var_dump($content);
 $formatoptions = new stdClass;
 $formatoptions->noclean = true;
 $formatoptions->overflowdiv = true;
