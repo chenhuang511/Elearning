@@ -998,7 +998,7 @@ class local_mod_lesson_external extends external_api
                 'options' => $options
             )
         );
-        return $DB->get_records_select('lesson_answers', array('lessonid' => $params['lessonid']));
+        return $DB->get_records_select("lesson_answers", "lessonid = :lessonid", array('lessonid' => $params['lessonid']));
     }
 
     public static function get_lesson_answers_returns()
