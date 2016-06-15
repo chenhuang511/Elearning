@@ -50,14 +50,18 @@ class mod_quiz_renderer extends plugin_renderer_base {
                                 $summarydata, $reviewobj = null) {
 
         $output = '';
-        $output .= $this->header();
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+            $output .= $this->header();
+        }
         $output .= $this->review_summary_table($summarydata, $page);
         $output .= $this->review_form($page, $showall, $displayoptions,
             $this->questions($attemptobj, true, $slots, $page, $showall, $displayoptions, $reviewobj),
             $attemptobj);
 
         $output .= $this->review_next_navigation($attemptobj, $page, $lastpage, $showall);
-        $output .= $this->footer();
+        if (MOODLE_RUN_MODE == MOODLE_MODE_HOST) {
+            $output .= $this->footer();
+        }
         return $output;
     }
 
@@ -244,7 +248,8 @@ class mod_quiz_renderer extends plugin_renderer_base {
 
         } else {
             return html_writer::link($url, get_string('finishreview', 'quiz'),
-                array('class' => 'mod_quiz-next-nav'));
+                array('class' => 'mod_quiz-next-nav remote-link-action',
+                    'data-module' => json_encode(array('url' => $url, 'params' => array(), 'method' => 'get'))));
         }
     }
 
@@ -491,6 +496,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $output .= html_writer::start_tag('form',
             array('action' => $attemptobj->processattempt_url(), 'method' => 'post',
                 'enctype' => 'multipart/form-data', 'accept-charset' => 'utf-8',
+                'enctype' => 'multipart/form-data', 'accept-charset' => 'utf-8',
                 'id' => 'responseform'));
         $output .= html_writer::start_tag('div');
 
@@ -641,12 +647,16 @@ class mod_quiz_renderer extends plugin_renderer_base {
      */
     public function summary_page($attemptobj, $displayoptions) {
         $output = '';
-        $output .= $this->header();
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+            $output .= $this->header();
+        }
         $output .= $this->heading(format_string($attemptobj->get_quiz_name()));
         $output .= $this->heading(get_string('summaryofattempt', 'quiz'), 3);
         $output .= $this->summary_table($attemptobj, $displayoptions);
         $output .= $this->summary_page_controls($attemptobj);
-        $output .= $this->footer();
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+            $output .= $this->footer();
+        }
         return $output;
     }
 

@@ -32,6 +32,20 @@ function getHTMLContentForm(form) {
     module['method'] = form.attr('method');
     module['params'] = form.serialize();
 
+    var submits = form.find('[type=submit]');
+    var s = '';
+    submits.each(function(index, item) {
+        var input = $(item);
+        var name = input.attr('name');
+        var value = input.attr('value');
+        if (name) {
+            s += '&' + name + '=' + value;
+        }
+    });
+    module['params'] += s;
+
+    console.log(module);
+
     return getHTMLContent(module, false);
 }
 

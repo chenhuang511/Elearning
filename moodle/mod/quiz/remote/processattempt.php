@@ -45,11 +45,10 @@ $finishattempt = optional_param('finishattempt', false, PARAM_BOOL);
 $timeup        = optional_param('timeup',        0,      PARAM_BOOL); // True if form was submitted by timer.
 $scrollpos     = optional_param('scrollpos',     '',     PARAM_RAW);
 
-
 $attempt = get_remote_attempt_by_attemptid($attemptid);
 $quiz = get_remote_quiz_by_id($attempt->quiz);
 $course = get_local_course_record($quiz->course);
-$cm = get_remote_coursemodule_from_instance("quiz", $quiz->id);
+$cm = get_remote_course_module_by_instance("quiz", $quiz->id)->cm;
 $attemptobj = new quiz_attempt($attempt, $quiz, $cm, $course, true, true);
 
 // Set $nexturl now.
@@ -99,7 +98,8 @@ foreach ($_POST as $key => $value) {
 }
 
 // Process the attempt, getting the new status for the attempt.
-$status = get_mod_quiz_process_attempt($attemptid, $data);
+$status = get_mod_quiz_process_attempt($attemptid, $data, $finishattempt, $timeup);
+$status = $status->state;
 
 if ($status == quiz_attempt::OVERDUE) {
     redirect($attemptobj->summary_url());

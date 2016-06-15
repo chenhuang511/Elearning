@@ -22,7 +22,7 @@ function get_remote_quiz_by_id($id) {
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_quiz_get_quiz_by_id',
             'params' => array('id'=>$id)
-        )
+        ), false
     );
 }
 
@@ -33,20 +33,8 @@ function get_remote_user_attemps($quizid, $userid, $status, $includepreviews) {
             'token' => HOST_TOKEN_M,
             'function_name' => 'mod_quiz_get_user_attempts',
             'params' => array('quizid' => $quizid, 'userid' => $userid, 'status' => $status, 'includepreviews' => $includepreviews)
-        )
+        ), false
     );
-}
-
-function get_remote_coursemodule_from_instance($module, $instance) {
-    $resp = moodle_webservice_client(
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'core_course_get_course_module_by_instance',
-            'params' => array('module'=>$module, 'instance'=>$instance)
-        )
-    );
-    return $resp->cm;
 }
 
 function get_remote_quiz_access_information($quizid) {
@@ -56,7 +44,7 @@ function get_remote_quiz_access_information($quizid) {
             'token' => HOST_TOKEN_M,
             'function_name' => 'mod_quiz_get_quiz_access_information',
             'params' => array('quizid'=>$quizid)
-        )
+        ), false
     );
 }
 
@@ -67,7 +55,7 @@ function get_remote_quiz_view_quiz($quizid) {
             'token' => HOST_TOKEN_M,
             'function_name' => 'mod_quiz_view_quiz',
             'params' => array('quizid'=>$quizid)
-        )
+        ), false
     );
 }
 
@@ -78,7 +66,7 @@ function get_remote_user_best_grade($quizid,  $userid) {
             'token' => HOST_TOKEN_M,
             'function_name' => 'mod_quiz_get_user_best_grade',
             'params' => array('quizid' => $quizid, 'userid' => $userid)
-        )
+        ), false
     );
 }
 
@@ -89,7 +77,7 @@ function get_remote_question($quizid) {
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_quiz_get_questions_by_quizid',
             'params' => array('id' => $quizid)
-        )
+        ), false
     );
 }
 
@@ -190,7 +178,7 @@ function get_remote_quiz_start_attempt($quizid, $remoteuserid) {
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_quiz_start_remote_attempt',
             'params' => array('quizid' => $quizid, 'remoteuserid' => $remoteuserid, 'preflightdata' => array(), 'forcenew' => true)
-        )
+        ), false
     );
 }
 
@@ -201,7 +189,7 @@ function get_remote_attempt_by_attemptid($attemptid) {
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_quiz_get_attempt_by_attemptid',
             'params' => array('attemptid' => $attemptid)
-        )
+        ), false
     );
 }
 
@@ -212,7 +200,7 @@ function get_remote_load_questions_usage_by_activity($unique) {
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_quiz_load_questions_usage_by_activity',
             'params' => array('unique' => $unique)
-        )
+        ), false
     );
     $a =  new json_moodle_recordset($record);
     return $a;
@@ -225,7 +213,7 @@ function get_remote_get_slots_by_quizid($quizid) {
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_quiz_get_slots_by_quizid',
             'params' => array('quizid' => $quizid)
-        )
+        ), false
     );
 }
 
@@ -236,7 +224,7 @@ function get_remote_get_sections_by_quizid($quizid) {
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_quiz_get_sections_by_quizid',
             'params' => array('quizid' => $quizid)
-        )
+        ), false
     );
 }
 
@@ -247,7 +235,7 @@ function get_remote_get_attempt_data($attemptid, $page = null) {
             'token' => HOST_TOKEN_M,
             'function_name' => 'mod_quiz_get_attempt_data',
             'params' => array('attemptid' => $attemptid, 'page' => $page)
-        )
+        ), false
     );
     return $resp;
 }
@@ -259,7 +247,7 @@ function get_remote_get_attempt_review($attemptid, $page = null) {
             'token' => HOST_TOKEN_M,
             'function_name' => 'mod_quiz_get_attempt_review',
             'params' => array('attemptid' => $attemptid, 'page' => $page)
-        )
+        ), false
     );
     return $resp;
 }
@@ -271,19 +259,18 @@ function get_remote_view_attempt_review($attemptid) {
             'token' => HOST_TOKEN_M,
             'function_name' => 'mod_quiz_view_attempt_review',
             'params' => array('attemptid' => $attemptid)
-        )
+        ), false
     );
     return $resp;
 }
 
-function get_mod_quiz_process_attempt($attemptid, $data) {
-    $resp = moodle_webservice_client(
+function get_mod_quiz_process_attempt($attemptid, $data, $finishattempt, $timeup) {
+    return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN_M,
             'function_name' => 'mod_quiz_process_attempt',
-            'params' => array_merge(array('attemptid' => $attemptid), $data)
-        )
+            'params' => array_merge(array('attemptid' => $attemptid, 'finishattempt' => $finishattempt, 'timeup' => $timeup), $data)
+        ), false
     );
-    return $resp;
 }
