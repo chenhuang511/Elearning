@@ -12,7 +12,7 @@ function moodle_webservice_client($options = [], $usecache = true, $assoc = fals
     ) {
         if ($usecache) {
             $webservicecache = cache::make_from_params(cache_store::MODE_APPLICATION, 'core', 'webservice');
-            $cachekey = 'wes-' . implode(null, $options);
+            $cachekey = 'wes-' . $options['domain'] . $options['token'] . $options['function_name'];
         }
 
         $serverUrl = $options['domain'] . '/webservice/rest/server.php' . '?wstoken=' . $options['token'] . '&wsfunction=' . $options['function_name'] . '&moodlewsrestformat=json';

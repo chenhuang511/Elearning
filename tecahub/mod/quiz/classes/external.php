@@ -790,7 +790,7 @@ class mod_quiz_external extends external_api {
 
         // Check that this attempt belongs to this user.
         if ($attemptobj->get_userid() != $USER->id) {
-            throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'notyourattempt');
+            //throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'notyourattempt');
         }
 
         // General capabilities check.

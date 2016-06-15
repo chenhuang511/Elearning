@@ -116,9 +116,17 @@ $functions = array(
     ),
     'local_mod_get_lesson_answers_by_id' => array(
         'classname' => 'local_mod_lesson_external',
-        'methodname' => 'get_lesson_answer_by_id',
+        'methodname' => 'get_lesson_answers_by_id',
         'classpath' => 'local/lesson/externallib.php',
         'description' => 'Get lesson answers by id',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_lesson_answers' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_lesson_answers',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get lesson answers',
         'type' => 'read',
         'ajax' => true
     )

@@ -90,8 +90,16 @@ if ($attemptobj->is_finished()) {
             'attemptalreadyclosed', null, $attemptobj->review_url());
 }
 
+$data = array();
+$i = 0;
+foreach ($_POST as $key => $value) {
+    $data["data[$i][name]"]=$key;
+    $data["data[$i][value]"]=$value;
+    $i++;
+}
+
 // Process the attempt, getting the new status for the attempt.
-$status = $attemptobj->process_attempt($timenow, $finishattempt, $timeup, $thispage);
+$status = get_mod_quiz_process_attempt($attemptid, $data);
 
 if ($status == quiz_attempt::OVERDUE) {
     redirect($attemptobj->summary_url());

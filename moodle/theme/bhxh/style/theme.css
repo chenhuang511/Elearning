@@ -502,7 +502,22 @@ section.container-course-info div.info-wrapper section.title h1 {
 }
 /************************************/
 
-/***********tab course forum***********/
+/************ course wiki ***********/
+
+section.container-course-wiki {
+    padding-left: 0px;
+}
+
+section.container-course-wiki div.wiki-wrapper{
+    width: 100%;
+    border-radius: 3px;
+    border: 1px solid #ddd;
+    min-height: 320px;
+}
+
+/************************************/
+
+/***********tab course forum*********/
 section#discussion-container.discussion.container{
     padding: 0px;
     padding-right: 15px;
