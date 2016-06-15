@@ -52,7 +52,7 @@ class qbehaviour_interactive_renderer extends qbehaviour_renderer {
             'id' => $qa->get_behaviour_field_name('tryagain'),
             'name' => $qa->get_behaviour_field_name('tryagain'),
             'value' => get_string('tryagain', 'qbehaviour_interactive'),
-            'class' => 'submit btn',
+            'class' => 'submit btn remote-submit-btn',
         );
         if ($options->readonly !== qbehaviour_interactive::READONLY_EXCEPT_TRY_AGAIN) {
             $attributes['disabled'] = 'disabled';
