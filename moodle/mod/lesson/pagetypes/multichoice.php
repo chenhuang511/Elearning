@@ -28,6 +28,8 @@ defined('MOODLE_INTERNAL') || die();
 /** Multichoice question type */
 define("LESSON_PAGE_MULTICHOICE",   "3");
 
+require_once($CFG->dirroot . '/mod/lesson/remote/locallib.php');
+
 class lesson_page_type_multichoice extends lesson_page {
 
     protected $type = lesson_page::TYPE_QUESTION;

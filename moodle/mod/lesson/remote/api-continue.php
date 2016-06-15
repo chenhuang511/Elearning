@@ -42,8 +42,7 @@ require_sesskey();
 $lesson->update_effective_access($USER->id);
 
 $context = context_module::instance($cm->id);
-$canmanage = false;
-//$canmanage = has_capability('mod/lesson:manage', $context);
+$canmanage = has_capability('mod/lesson:manage', $context);
 $lessonoutput = $PAGE->get_renderer('mod_lesson');
 
 $url = new moodle_url('/mod/lesson/remote/api-continue.php', array('id' => $cm->id));
@@ -61,7 +60,7 @@ if (!$canmanage) {
         if ($timeleft <= 0) {
             // Out of time
             $lesson->add_message(get_string('eolstudentoutoftime', 'lesson'));
-            redirect(new moodle_url('/mod/lesson/view.php', array('id' => $cm->id, 'pageid' => LESSON_EOL, 'outoftime' => 'normal')));
+            redirect(new moodle_url('/mod/lesson/remote/api-view.php', array('id' => $cm->id, 'pageid' => LESSON_EOL, 'outoftime' => 'normal')));
         } else if ($timeleft < 60) {
             // One minute warning
             $lesson->add_message(get_string("studentoneminwarning", "lesson"));
@@ -150,7 +149,7 @@ if (isset($USER->modattempts[$lesson->id])) {
 
 if ($result->nodefaultresponse) {
     // Don't display feedback
-    redirect(new moodle_url('/mod/lesson/view.php', array('id' => $cm->id, 'pageid' => $result->newpageid)));
+    redirect(new moodle_url('/mod/lesson/remote/api-view.php', array('id' => $cm->id, 'pageid' => $result->newpageid)));
 }
 
 /// Set Messages
@@ -192,7 +191,7 @@ if (!$reviewmode) {
 
 // User is modifying attempts - save button and some instructions
 if (isset($USER->modattempts[$lesson->id])) {
-    $url = $CFG->wwwroot . '/mod/lesson/view.php';
+    $url = $CFG->wwwroot . '/mod/lesson/remote/api-view.php';
     $content = $OUTPUT->box(get_string("gotoendoflesson", "lesson"), 'center');
     $content .= $OUTPUT->box(get_string("or", "lesson"), 'center');
     $content .= $OUTPUT->box(get_string("continuetonextpage", "lesson"), 'center');
@@ -204,7 +203,7 @@ if (isset($USER->modattempts[$lesson->id])) {
 
 // Review button back
 if (!$result->correctanswer && !$result->noanswer && !$result->isessayquestion && !$reviewmode && $lesson->review && !$result->maxattemptsreached) {
-    $url = $CFG->wwwroot . '/mod/lesson/view.php';
+    $url = $CFG->wwwroot . '/mod/lesson/remote/api-view.php';
     $content = html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'id', 'value' => $cm->id));
     $content .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'pageid', 'value' => $page->id));
     $content .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'submit', 'value' => get_string('reviewquestionback', 'lesson')));

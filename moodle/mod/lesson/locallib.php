@@ -82,7 +82,9 @@ function lesson_display_teacher_warning($lesson)
 
     // get all of the lesson answers
     $params = array("lessonid" => $lesson->id);
-    if (!$lessonanswers = $DB->get_records_select("lesson_answers", "lessonid = :lessonid", $params)) {
+    $lessonanswers = get_remote_lesson_answers($lesson->id);
+    //if (!$lessonanswers = $DB->get_records_select("lesson_answers", "lessonid = :lessonid", $params)) {
+    if (!$lessonanswers) {
         // no answers, then not using cluster or unseen
         return false;
     }
