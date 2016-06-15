@@ -275,3 +275,15 @@ function get_remote_view_attempt_review($attemptid) {
     );
     return $resp;
 }
+
+function get_mod_quiz_process_attempt($attemptid, $data) {
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN_M,
+            'function_name' => 'mod_quiz_process_attempt',
+            'params' => array_merge(array('attemptid' => $attemptid), $data)
+        )
+    );
+    return $resp;
+}

@@ -99,6 +99,7 @@ function loadRemoteContent() {
     ];
     var submitDelegate = [
         '.remote-form-action',
+        '.remote-submit-btn',
         '.mod_quiz-next-nav',
     ];
     datacontent.on('click', linkDelegate.join(','), linkClickEventHandler);
