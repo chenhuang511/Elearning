@@ -51,7 +51,7 @@ $canpreview = has_capability('mod/quiz:preview', $context);
 $timenow = time();
 $rules= get_remote_quiz_access_information($cm->instance);
 $quiz = get_remote_quiz_by_id($cm->instance);
-$quizobj = new quiz($quiz, $cm, $course);
+$quizobj = new quiz($quiz, $cm, $course, true, true);
 $accessmanager = new quiz_access_manager($quizobj, $timenow, false); // set has_capability('mod/quiz:ignoretimelimits', $context, null, false) = false
 $quiz = $quizobj->get_quiz();
 

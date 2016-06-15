@@ -1212,7 +1212,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
 
         } else {
             return html_writer::link($url, get_string('review', 'quiz'),
-                array('title' => get_string('reviewthisattempt', 'quiz')));
+                array('title' => get_string('reviewthisattempt', 'quiz'), 'class' => 'remote-form-action', 'module-data'=>array('url'=>$url, 'params'=>array(), 'method'=>'get')));
         }
     }
 

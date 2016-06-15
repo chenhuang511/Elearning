@@ -89,7 +89,7 @@ class quiz {
      * @param object $course the row from the course table for the course we belong to.
      * @param bool $getcontext intended for testing - stops the constructor getting the context.
      */
-    public function __construct($quiz, $cm, $course, $getcontext = true) {
+    public function __construct($quiz, $cm, $course, $getcontext = true, $isremote = false) {
         $this->quiz = $quiz;
         $this->cm = $cm;
         $this->quiz->cmid = $this->cm->id;
@@ -97,6 +97,8 @@ class quiz {
         if ($getcontext && !empty($cm->id)) {
             $this->context = context_module::instance($cm->id);
         }
+
+        $this->isremote = $isremote;
     }
 
     /**
@@ -412,16 +414,8 @@ class quiz {
      * @return string the URL of the review of that attempt.
      */
     public function review_url($attemptid) {
-        return new moodle_url('/mod/quiz/review.php', array('attempt' => $attemptid));
-    }
-
-    /**
-     * Hanv: 14/06/2016
-     * @param int $attemptid the id of an attempt.
-     * @return string the URL of the review of that attempt.
-     */
-    public function review_remote_url($attemptid) {
-        return new moodle_url('/mod/quiz/remote/review.php', array('attempt' => $attemptid));
+        $url = ($this->isremote)?'/mod/quiz/remote/review.php':'/mod/quiz/review.php';
+        return new moodle_url($url, array('attempt' => $attemptid));
     }
 
     /**
@@ -429,7 +423,8 @@ class quiz {
      * @return string the URL of the review of that attempt.
      */
     public function summary_url($attemptid) {
-        return new moodle_url('/mod/quiz/summary.php', array('attempt' => $attemptid));
+        $url = ($this->isremote)?'/mod/quiz/remote/summary.php':'/mod/quiz/summary.php';
+        return new moodle_url($url, array('attempt' => $attemptid));
     }
 
     // Bits of content =========================================================
