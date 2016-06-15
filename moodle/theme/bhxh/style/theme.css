@@ -940,7 +940,7 @@ section#discussion-container.discussion.container div.discussion-body div#discus
     margin-right: 10px;
 }
 
-input#id_submitbutton.ncc-submit {
+input#id_submitbutton.el-submit {
     background: #126f9a !important;
     border-radius: 4px;
     padding: 11px 22px;
