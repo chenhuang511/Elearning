@@ -932,7 +932,7 @@ class local_mod_lesson_external extends external_api
         global $DB;
 
         // validate params
-        $params = self::validate_parameters(self::get_lesson_answer_by_id_parameters(),
+        $params = self::validate_parameters(self::get_lesson_answers_by_id_parameters(),
             array(
                 'id' => $id,
                 'options' => $options
