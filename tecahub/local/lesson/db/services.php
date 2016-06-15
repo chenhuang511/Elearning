@@ -129,5 +129,13 @@ $functions = array(
         'description' => 'Get lesson answers',
         'type' => 'read',
         'ajax' => true
+    ),
+    'local_mod_get_lesson_grades_by' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_lesson_grades_by',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get lesson grades by lessonid and userid. Return list',
+        'type' => 'read',
+        'ajax' => true
     )
 );
