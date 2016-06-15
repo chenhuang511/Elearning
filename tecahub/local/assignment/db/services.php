@@ -50,11 +50,11 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
-	'local_mod_assign_get_submission_by_host_ip' => array(
+	'local_mod_assign_get_submissions_by_host_ip' => array(
 		'classname'	  => 'local_mod_assign_external',
 		'methodname'  => 'get_submissions_by_host_ip',
 		'classpath'	  => 'local/assignment/externallib.php',
-		'description' => "Get assign Submition by assign ids and host ip",
+		'description' => "Get assign Submitions by assign ids and host ip",
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
