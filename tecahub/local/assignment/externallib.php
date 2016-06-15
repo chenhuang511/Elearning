@@ -26,9 +26,10 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once("$CFG->libdir/externallib.php");
-require_once("$CFG->dirroot/user/externallib.php");
-require_once("$CFG->dirroot/mod/assign/locallib.php");
+require_once($CFG->libdir . '/externallib.php');
+require_once($CFG->dirroot . '/user/externallib.php');
+require_once($CFG->dirroot . '/mod/assign/locallib.php');
+require_once($CFG->dirroot . '/mod/assign/externallib.php');
 
 /**
  * Course external functions
@@ -527,5 +528,152 @@ class local_mod_assign_external extends external_api {
 				'preventsubmissionnotingroup' => new external_value(PARAM_INT, 'prevent submission not in group'),
             )
         );
-    }	
+    }
+
+    /**
+     * validate params
+     * @return external_function_parameters
+     */
+    public static function get_submissions_by_host_ip_parameters() {
+        return new external_function_parameters(
+            array(
+                'assignmentids' => new external_multiple_structure(
+                    new external_value(PARAM_INT, 'assignment id'),
+                    '1 or more assignment ids',
+                    VALUE_REQUIRED),
+                'ip' => new external_value(PARAM_HOST, 'host ip', VALUE_REQUIRED),
+                'status' => new external_value(PARAM_ALPHA, 'status', VALUE_DEFAULT, ''),
+                'since' => new external_value(PARAM_INT, 'submitted since', VALUE_DEFAULT, 0),
+                'before' => new external_value(PARAM_INT, 'submitted before', VALUE_DEFAULT, 0)
+            )
+        );
+    }
+
+    /**
+     * get submissions by assignment ids and ip
+     * @param $assignmentids
+     * @param $ip
+     * @param string $status
+     * @param int $since
+     * @param int $before
+     * @return array
+     * @throws invalid_parameter_exception
+     */
+    public static function get_submissions_by_host_ip($assignmentids, $ip, $status = '', $since = 0, $before = 0) {
+        global $DB, $CFG;
+
+        $params = self::validate_parameters(self::get_submissions_by_host_ip_parameters(),
+            array('assignmentids' => $assignmentids,
+                'ip' => $ip,
+                'status' => $status,
+                'since' => $since,
+                'before' => $before));
+
+        $warnings = array();
+        $assignments = array();
+
+        // Check the user is allowed to get the submissions for the assignments requested.
+        $placeholders = array();
+        list($inorequalsql, $placeholders) = $DB->get_in_or_equal($params['assignmentids'], SQL_PARAMS_NAMED);
+        $sql = "SELECT cm.id, cm.instance FROM {course_modules} cm JOIN {modules} md ON md.id = cm.module ".
+            "WHERE md.name = :modname AND cm.instance ".$inorequalsql;
+        $placeholders['modname'] = 'assign';
+        $cms = $DB->get_records_sql($sql, $placeholders);
+        $assigns = array();
+        foreach ($cms as $cm) {
+            try {
+                $context = context_module::instance($cm->id);
+                self::validate_context($context);
+                require_capability('mod/assign:grade', $context);
+                $assign = new assign($context, null, null);
+                $assigns[] = $assign;
+            } catch (Exception $e) {
+                $warnings[] = array(
+                    'item' => 'assignment',
+                    'itemid' => $cm->instance,
+                    'warningcode' => '1',
+                    'message' => 'No access rights in module context'
+                );
+            }
+        }
+
+        foreach ($assigns as $assign) {
+            $submissions = array();
+            $placeholders = array('assignid1' => $assign->get_instance()->id,
+                'assignid2' => $assign->get_instance()->id,
+                'ip' => $params['ip'],
+            );
+
+            $submissionmaxattempt = 'SELECT mxs.userid, MAX(mxs.attemptnumber) AS maxattempt
+                                     FROM {assign_submission} mxs
+                                     WHERE mxs.assignment = :assignid1 GROUP BY mxs.userid';
+
+            $sql = "SELECT mas.id, mas.assignment,mas.userid,".
+                "mas.timecreated,mas.timemodified,mas.status,mas.groupid,mas.attemptnumber ".
+                "FROM {assign_submission} mas ".
+                "JOIN ( " . $submissionmaxattempt . " ) smx ON mas.userid = smx.userid ".
+                "WHERE mas.assignment = :assignid2 AND mas.attemptnumber = smx.maxattempt".
+                " AND mas.userid in ( SELECT u.id FROM {user} u ".
+                "JOIN {mnet_host} h ON u.mnethostid = h.id WHERE h.ip_address = :ip ) ";
+
+            if (!empty($params['status'])) {
+                $placeholders['status'] = $params['status'];
+                $sql = $sql." AND mas.status = :status";
+            }
+            if (!empty($params['before'])) {
+                $placeholders['since'] = $params['since'];
+                $placeholders['before'] = $params['before'];
+                $sql = $sql." AND mas.timemodified BETWEEN :since AND :before";
+            } else {
+                $placeholders['since'] = $params['since'];
+                $sql = $sql." AND mas.timemodified >= :since";
+            }
+
+            $submissionrecords = $DB->get_records_sql($sql, $placeholders);
+
+            if (!empty($submissionrecords)) {
+                $submissionplugins = $assign->get_submission_plugins();
+                foreach ($submissionrecords as $submissionrecord) {
+                    $submission = array(
+                        'id' => $submissionrecord->id,
+                        'userid' => $submissionrecord->userid,
+                        'timecreated' => $submissionrecord->timecreated,
+                        'timemodified' => $submissionrecord->timemodified,
+                        'status' => $submissionrecord->status,
+                        'attemptnumber' => $submissionrecord->attemptnumber,
+                        'groupid' => $submissionrecord->groupid,
+                        'plugins' => self::get_plugins_data($assign, $submissionplugins, $submissionrecord)
+                    );
+                    $submissions[] = $submission;
+                }
+            } else {
+                $warnings[] = array(
+                    'item' => 'module',
+                    'itemid' => $assign->get_instance()->id,
+                    'warningcode' => '3',
+                    'message' => 'No submissions found'
+                );
+            }
+
+            $assignments[] = array(
+                'assignmentid' => $assign->get_instance()->id,
+                'submissions' => $submissions
+            );
+
+        }
+
+        $result = array(
+            'assignments' => $assignments,
+            'warnings' => $warnings
+        );
+        return $result;
+    }
+
+    /**
+     * return value
+     * @return external_single_structure
+     */
+    public static function get_submissions_by_host_ip_returns() {
+        return mod_assign_external::get_submissions_returns();
+    }
 }
