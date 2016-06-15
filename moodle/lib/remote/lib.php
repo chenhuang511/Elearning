@@ -2,7 +2,7 @@
 
 require_once($CFG->libdir . '/additionallib.php');
 
-function moodle_webservice_client($options = [], $usecache = true, $assoc = false)
+function moodle_webservice_client($options, $usecache = true, $assoc = false)
 {
     global $CFG;
 

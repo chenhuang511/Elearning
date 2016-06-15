@@ -332,9 +332,10 @@ class quiz {
     /**
      * @return string the URL of this quiz's view page.
      */
-    public function view_url() {
+    public function view_url($isremote = false) {
         global $CFG;
-        return $CFG->wwwroot . '/mod/quiz/view.php?id=' . $this->cm->id;
+        $path = ($isremote)?'/mod/quiz/remote/api-view.php?id=':'/mod/quiz/view.php?id=';
+        return $CFG->wwwroot . $path . $this->cm->id;
     }
 
     // URLs related to this remote attempt ============================================
@@ -1425,7 +1426,7 @@ class quiz_attempt {
      * @return string quiz view url.
      */
     public function view_url() {
-        return $this->quizobj->view_url();
+        return $this->quizobj->view_url($this->isremote);
     }
 
     /**
@@ -1459,7 +1460,7 @@ class quiz_attempt {
      */
     public function summary_url() {
         $url = ($this->isremote) ? '/mod/quiz/remote/summary.php' : '/mod/quiz/summary.php';
-        return new moodle_url('/mod/quiz/summary.php', array('attempt' => $this->attempt->id));
+        return new moodle_url($url, array('attempt' => $this->attempt->id));
     }
 
     /**

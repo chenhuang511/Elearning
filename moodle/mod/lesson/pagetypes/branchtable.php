@@ -129,7 +129,7 @@ class lesson_page_type_branchtable extends lesson_page {
             $params['pageid'] = $this->properties->id;
             $params['sesskey'] = sesskey();
             $params['jumpto'] = $answer->jumpto;
-            $url = new moodle_url('/mod/lesson/continue.php', $params);
+            $url = new moodle_url('/mod/lesson/remote/api-continue.php', $params);
             $buttons[] = $renderer->single_button($url, strip_tags(format_text($answer->answer, FORMAT_MOODLE, $options)));
             $i++;
         }
@@ -168,7 +168,9 @@ class lesson_page_type_branchtable extends lesson_page {
         } else {
             $branchflag = 0;
         }
-        if ($grades = $DB->get_records("lesson_grades", array("lessonid" => $this->lesson->id, "userid" => $USER->id), "grade DESC")) {
+        $grades = get_remote_lesson_grades_by($this->lesson->id, $USER->id);
+       // if ($grades = $DB->get_records("lesson_grades", array("lessonid" => $this->lesson->id, "userid" => $USER->id), "grade DESC")) {
+        if ($grades) {
             $retries = count($grades);
         } else {
             $retries = 0;
@@ -210,7 +212,7 @@ class lesson_page_type_branchtable extends lesson_page {
         $branch->nextpageid = $newpageid;
         $DB->insert_record("lesson_branch", $branch);
 
-        redirect(new moodle_url('/mod/lesson/view.php', array('id' => $PAGE->cm->id, 'pageid' => $newpageid)));
+        redirect(new moodle_url('/mod/lesson/remote/api-view.php', array('id' => $PAGE->cm->id, 'pageid' => $newpageid)));
     }
 
     public function display_answers(html_table $table) {

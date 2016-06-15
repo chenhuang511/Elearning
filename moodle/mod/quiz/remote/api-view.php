@@ -32,7 +32,7 @@ if ($id) {
     if (!$course = get_local_course_record($quiz->course)) {
         print_error('invalidcourseid');
     }
-    if (!$cm = get_remote_coursemodule_from_instance("quiz", $quiz->id)) {
+    if (!$cm = get_remote_course_module_by_instance("quiz", $quiz->id)->cm) {
         print_error('invalidcoursemodule');
     }
 }
@@ -49,7 +49,6 @@ $canpreview = has_capability('mod/quiz:preview', $context);
 
 // Create an object to manage all the other (non-roles) access rules.
 $timenow = time();
-//$quizobj = quiz::create($cm->instance, $USER->id);
 $rules= get_remote_quiz_access_information($cm->instance);
 $quiz = get_remote_quiz_by_id($cm->instance);
 $quizobj = new quiz($quiz, $cm, $course);
