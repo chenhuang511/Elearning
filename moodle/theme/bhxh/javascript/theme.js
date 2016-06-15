@@ -19,7 +19,7 @@ function arrayToUrlParmas(params) {
     return out.join('&');
 }
 
-function getHTMLContentForm(form) {
+function getHTMLContentForm(form, addSubmitField) {
     if (typeof form === 'string') {
         form = $('#' + form);
     }
@@ -32,19 +32,19 @@ function getHTMLContentForm(form) {
     module['method'] = form.attr('method');
     module['params'] = form.serialize();
 
-    var submits = form.find('[type=submit]');
-    var s = '';
-    submits.each(function(index, item) {
-        var input = $(item);
-        var name = input.attr('name');
-        var value = input.attr('value');
-        if (name) {
-            s += '&' + name + '=' + value;
-        }
-    });
-    module['params'] += s;
-
-    console.log(module);
+    if (addSubmitField) {
+        var submits = form.find('[type=submit]');
+        var s = '';
+        submits.each(function (index, item) {
+            var input = $(item);
+            var name = input.attr('name');
+            var value = input.attr('value');
+            if (name) {
+                s += '&' + name + '=' + value;
+            }
+        });
+        module['params'] += s;
+    }
 
     return getHTMLContent(module, false);
 }
@@ -82,12 +82,21 @@ function getHTMLContent(module, encode) {
     return false;
 }
 
+function hubFormEventHandler(e) {
+    e.preventDefault();
+    var el = $(this);
+    var formParent = $(el.closest('form'));
+    if (formParent) {
+        getHTMLContentForm(formParent, false);
+    }
+}
+
 function formEventHandler(e) {
     e.preventDefault();
     var el = $(this);
     var formParent = $(el.closest('form'));
     if (formParent) {
-        getHTMLContentForm(formParent);
+        getHTMLContentForm(formParent, true);
     }
 }
 
@@ -116,8 +125,12 @@ function loadRemoteContent() {
         '.remote-submit-btn',
         '.mod_quiz-next-nav',
     ];
+    var hubSubmitDelegate = [
+        '.hub-submit-btn'
+    ];
     datacontent.on('click', linkDelegate.join(','), linkClickEventHandler);
     datacontent.on('click submit', submitDelegate.join(','), formEventHandler);
+    datacontent.on('click submit', hubSubmitDelegate.join(','), hubFormEventHandler);
 }
 
 (function ($) {
