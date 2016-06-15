@@ -202,3 +202,15 @@ function get_remote_lesson_answers_by_id($id, $options = array())
         )
     ));
 }
+
+function get_remote_lesson_answers($lessonid, $options = array())
+{
+    return moodle_webservice_client(array_merge($options,
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_lesson_answers',
+            'params' => array('lessonid' => $lessonid)
+        )
+    ));
+}

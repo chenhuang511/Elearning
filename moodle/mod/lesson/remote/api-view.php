@@ -61,16 +61,14 @@ if ($pageid !== null) {
 $PAGE->set_url($url);
 
 $context = context_module::instance($cm->id);
-//$canmanage = has_capability('mod/lesson:manage', $context);\
-
-// logined with student
-$canmanage = false;
+$canmanage = has_capability('mod/lesson:manage', $context);
 
 $lessonoutput = $PAGE->get_renderer('mod_lesson');
 
 $reviewmode = false;
 $userhasgrade = get_remote_count_by_lessonid_and_userid('lesson_grades', $lesson->id, $USER->id);
-if ($userhasgrade && !$lesson->retake) {
+$retake = $lesson->retake;
+if ($userhasgrade && !$retake) {
     $reviewmode = true;
 }
 
@@ -281,7 +279,7 @@ if (empty($pageid)) {
 
     if ($attemptflag) {
         if (!$lesson->retake) {
-            $courselink = new single_button(new moodle_url('/course/view.php', array('id' => $PAGE->course->id)), get_string('returntocourse', 'lesson'), 'get');
+            $courselink = new single_button(new moodle_url('/course/remote/view.php', array('id' => $PAGE->course->id)), get_string('returntocourse', 'lesson'), 'get');
             echo $lessonoutput->message(get_string("noretake", "lesson"), $courselink);
             exit();
         }
