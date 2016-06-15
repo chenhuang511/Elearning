@@ -55,6 +55,17 @@ function get_remote_submissions_by_assign_id($assignmentids, $options = array())
     ));
 }
 
+function get_remote_submissions_by_assign_ids_and_ip($assignmentids, $ip, $options = array()) {
+    return moodle_webservice_client(array_merge($options,
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_get_submissions_by_host_ip',
+            'params' => array('assignmentids' => $assignmentids, 'ip' => $ip),
+        )
+    ));
+}
+
 function get_list_user_id_from_submissions($submissions = array()) {
     $usersid = array();
     foreach ($submissions as $submission) {
