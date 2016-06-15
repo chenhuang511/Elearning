@@ -2540,11 +2540,14 @@ abstract class quiz_nav_panel_base {
     protected abstract function get_question_url($slot);
 
     public function user_picture() {
-        global $DB;
+        global $USER, $DB;
         if ($this->attemptobj->get_quiz()->showuserpicture == QUIZ_SHOWIMAGE_NONE) {
             return null;
         }
         $user = $DB->get_record('user', array('id' => $this->attemptobj->get_userid()));
+        if(!$user) {
+            $user = $DB->get_record('user', array('id' => $USER->id));
+        }
         $userpicture = new user_picture($user);
         $userpicture->courseid = $this->attemptobj->get_courseid();
         if ($this->attemptobj->get_quiz()->showuserpicture == QUIZ_SHOWIMAGE_LARGE) {
