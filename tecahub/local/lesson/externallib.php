@@ -1084,11 +1084,13 @@ class local_mod_lesson_external extends external_api
     {
         return new external_function_parameters (
             array(
-                'data' => new external_single_structure(
-                    array(
-                        'name' => new external_value(PARAM_RAW, 'data name'),
-                        'value' => new external_value(PARAM_RAW, 'data value'),
-                    )
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'data name'),
+                            'value' => new external_value(PARAM_RAW, 'data value'),
+                        )
+                    ), 'the data to be saved'
                 )
             )
         );
@@ -1108,8 +1110,8 @@ class local_mod_lesson_external extends external_api
 
         $branch = new stdClass();
 
-        foreach ($params['data'] as $key => $value) {
-            $branch->$key = $value;
+        foreach ($params['data'] as $arr) {
+            $branch->$arr['name'] = $arr['value'];
         }
 
         $transaction = $DB->start_delegated_transaction();
