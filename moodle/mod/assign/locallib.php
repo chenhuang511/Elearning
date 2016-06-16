@@ -77,6 +77,7 @@ require_once($CFG->dirroot . '/mod/assign/gradingtable.php');
 require_once($CFG->libdir . '/eventslib.php');
 require_once($CFG->libdir . '/portfolio/caller.php');
 require_once($CFG->dirroot . '/mod/assign/remote/locallib.php');
+require_once('remote/locallib.php');
 
 use \mod_assign\output\grading_app;
 
@@ -1228,13 +1229,11 @@ class assign {
      * @return stdClass The settings
      */
     public function get_instance() {
-        global $DB;
         if ($this->instance) {
             return $this->instance;
         }
         if ($this->get_course_module()) {
-            $params = array('id' => $this->get_course_module()->instance);
-            $this->instance = $DB->get_record('assign', $params, '*', MUST_EXIST);
+            $this->instance = get_remote_assign_by_id($this->get_course_module()->instance);
         }
         if (!$this->instance) {
             throw new coding_exception('Improper use of the assignment class. ' .
