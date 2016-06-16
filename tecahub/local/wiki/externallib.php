@@ -85,17 +85,18 @@ class local_mod_wiki_external extends external_api {
             array(
                 'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
                 'course' => new external_value(PARAM_INT, 'Foreign key reference to the course this page is part of.', VALUE_OPTIONAL),
-                'name' => new external_value(PARAM_RAW, 'Page name.'),
+                'name' => new external_value(PARAM_TEXT, 'Page name.'),
                 'intro' => new external_value(PARAM_RAW, 'Page introduction text.'),
                 'introformat' => new external_format_value(PARAM_INT,'intro', VALUE_OPTIONAL),
 				'timecreated' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
-                'firstpagetitle' => new external_value(PARAM_RAW, 'Foreign key reference to the course this quiz is part of.', VALUE_OPTIONAL),
-                'wikimode' => new external_value(PARAM_INT, 'Page name.', VALUE_OPTIONAL),
-                'defaultformat' => new external_value(PARAM_RAW, 'Page introduction text.'),
+                'firstpagetitle' => new external_value(PARAM_TEXT, 'Foreign key reference to the course this quiz is part of.', VALUE_OPTIONAL),
+                'wikimode' => new external_value(PARAM_TEXT, 'Page name.', VALUE_OPTIONAL),
+                'defaultformat' => new external_value(PARAM_TEXT, 'Page introduction text.'),
                 'editbegin' => new external_format_value(PARAM_INT, 'Display or Not', VALUE_OPTIONAL),
-				'editend' => new external_value(PARAM_RAW, 'Page name.'),
+				'editend' => new external_value(PARAM_INT, 'Page name.'),
                 'timemodified' => new external_format_value(PARAM_INT, 'intro', VALUE_OPTIONAL)						
             )
         );
     }
 }
+
