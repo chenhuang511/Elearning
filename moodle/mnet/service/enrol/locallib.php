@@ -452,6 +452,30 @@ class mnetservice_enrol {
                 // $enrolment->rolename not known now, must be re-fetched
                 // $enrolment->enroltime not known now, must be re-fetched
                 $DB->insert_record('mnetservice_enrol_enrolments', $enrolment);
+
+                $instance = $DB->get_record('enrol', array('courseid'=>$remotecourse->id, 'enrol'=>'mnet'), '*', IGNORE_MISSING);
+                if ($instance === false) {
+                    $instance = new stdClass();
+                    $instance->enrol          = 'mnet';
+                    $instance->status         = ENROL_INSTANCE_ENABLED;
+                    $instance->courseid       = $remotecourse->id;
+                    $instance->enrolstartdate = 0;
+                    $instance->enrolenddate   = 0;
+                    $instance->timemodified   = time();
+                    $instance->timecreated    = $instance->timemodified;
+                    $instance->sortorder      = $DB->get_field('enrol', 'COALESCE(MAX(sortorder), -1) + 1', array('courseid'=>$remotecourse->id));
+                    $instance->id = $DB->insert_record('enrol', $instance);
+                }
+
+                if (!$enrol = enrol_get_plugin('mnet')) {
+                    throw new mnet_server_exception(5018, 'couldnotinstantiate', 'enrol_mnet');
+                }
+                try {
+                    $enrol->enrol_user($instance, $user->id, null, time());
+                } catch (Exception $e) {
+                    throw new mnet_server_exception(5019, 'couldnotenrol', 'enrol_mnet', $e->getMessage());
+                }
+
                 return true;
 
             } else {
@@ -490,6 +514,22 @@ class mnetservice_enrol {
                 // clear the cached information
                 $DB->delete_records('mnetservice_enrol_enrolments',
                     array('hostid'=>$peer->id, 'userid'=>$user->id, 'remotecourseid'=>$remotecourse->remoteid, 'enroltype'=>'mnet'));
+
+                // try to load host specific enrol_mnet instance first
+                $instance = $DB->get_record('enrol', array('courseid'=>$remotecourse->id, 'enrol'=>'mnet'), '*', IGNORE_MISSING);
+                if ($instance === false) {
+                    return false;
+                }
+                if (!$enrol = enrol_get_plugin('mnet')) {
+                    return false;
+                }
+                if ($DB->record_exists('user_enrolments', array('enrolid'=>$instance->id, 'userid'=>$user->id))) {
+                    try {
+                        $enrol->unenrol_user($instance, $user->id);
+                    } catch (Exception $e) {
+                        throw new mnet_server_exception(5020, 'couldnotunenrol', 'enrol_mnet', $e->getMessage());
+                    }
+                }
                 return true;
 
             } else {
