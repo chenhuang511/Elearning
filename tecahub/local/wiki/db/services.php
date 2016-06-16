@@ -36,7 +36,7 @@
 $functions = array(
 	'local_mod_wiki_get_wiki_by_id' => array(
 		'classname'	  => 'local_mod_wiki_external',
-		'methodname'  => 'local_mod_wiki_by_id',
+		'methodname'  => 'get_mod_wiki_by_id',
 		'classpath'	  => 'local/wiki/externallib.php',
 		'description' => "Get wiki by wiki id or by wiki identify",
 		'type'		  => 'read',
