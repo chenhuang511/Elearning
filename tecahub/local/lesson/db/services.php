@@ -137,5 +137,13 @@ $functions = array(
         'description' => 'Get lesson grades by lessonid and userid. Return list',
         'type' => 'read',
         'ajax' => true
+    ),
+    'local_mod_save_lesson_branch' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'save_lesson_branch',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'insert new lesson branch',
+        'type' => 'read',
+        'ajax' => true
     )
 );
