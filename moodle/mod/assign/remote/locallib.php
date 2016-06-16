@@ -1,11 +1,7 @@
 <?php
 defined('MOODLE_INTERNAL') || die;
 
-/** General rendering target, usually normal browser page */
-define('RENDERER_TARGET_GENERAL', 'general');
-
 require_once($CFG->dirroot . '/lib/remote/lib.php');
-require_once($CFG->dirroot . '/mod/assign/renderable.php');
 
 
 /**

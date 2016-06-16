@@ -4056,9 +4056,13 @@ class assign {
         if (!$this->is_active_user($userid) && !has_capability('moodle/course:viewsuspendedusers', $this->context)) {
             return false;
         }
-        if (!is_enrolled($this->get_course_context(), $userid)) {
-            return false;
+
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            if (!is_enrolled($this->get_course_context(), $userid)) {
+                return false;
+            }
         }
+
         if (has_any_capability(array('mod/assign:viewgrades', 'mod/assign:grade'), $this->context)) {
             return true;
         }
@@ -4375,7 +4379,8 @@ class assign {
      * @param bool $showlinks return plain text or links to the profile
      * @return assign_submission_status renderable object
      */
-    public function get_assign_submission_status_renderable($user, $showlinks) {
+    public function get_assign_submission_status_renderable($user, $showlinks)
+    {
         global $PAGE;
 
         $instance = $this->get_instance();
@@ -4396,8 +4401,8 @@ class assign {
         }
 
         $showedit = $showlinks &&
-                    ($this->is_any_submission_plugin_enabled()) &&
-                    $this->can_edit_submission($user->id);
+            ($this->is_any_submission_plugin_enabled()) &&
+            $this->can_edit_submission($user->id);
 
         $gradelocked = ($flags && $flags->locked) || $this->grading_disabled($user->id, false);
 
@@ -4422,6 +4427,42 @@ class assign {
 
         $gradingstatus = $this->get_grading_status($user->id);
         $usergroups = $this->get_all_groups($user->id);
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $user = get_remote_mapping_user();
+            $remotesubmission = get_remote_get_submission_status($instance->id, $user['0']->id)->lastattempt;
+            $submissionstatus = new assign_submission_status($instance->allowsubmissionsfromdate,
+                $instance->alwaysshowdescription,
+                $remotesubmission->submission,
+                $instance->teamsubmission,
+                '',
+                '',
+                '',
+                $this->is_any_submission_plugin_enabled(),
+                $remotesubmission->locked,
+                $remotesubmission->graded,
+                $instance->duedate,
+                $instance->cutoffdate,
+                '',
+                $this->get_return_action(),
+                $this->get_return_params(),
+                $this->get_course_module()->id,
+                $this->get_course()->id,
+                assign_submission_status::STUDENT_VIEW,
+                $remotesubmission->canedit,
+                $remotesubmission->cansubmit,
+                $viewfullnames,
+                $remotesubmission->extensionduedate,
+                $this->get_context(),
+                $remotesubmission->blindmarking,
+                $gradingcontrollerpreview,
+                $instance->attemptreopenmethod,
+                $instance->maxattempts,
+                $remotesubmission->gradingstatus,
+                $instance->preventsubmissionnotingroup,
+                $remotesubmission->usergroups);
+            return $submissionstatus;
+        }
+
         $submissionstatus = new assign_submission_status($instance->allowsubmissionsfromdate,
                                                           $instance->alwaysshowdescription,
                                                           $submission,

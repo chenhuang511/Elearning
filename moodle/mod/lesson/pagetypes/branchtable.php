@@ -25,10 +25,13 @@
 
 defined('MOODLE_INTERNAL') || die();
 
- /** Branch Table page */
-define("LESSON_PAGE_BRANCHTABLE",   "20");
+/** Branch Table page */
+define("LESSON_PAGE_BRANCHTABLE", "20");
 
-class lesson_page_type_branchtable extends lesson_page {
+require_once($CFG->dirroot . '/mod/lesson/remote/locallib.php');
+
+class lesson_page_type_branchtable extends lesson_page
+{
 
     protected $type = lesson_page::TYPE_STRUCTURE;
     protected $typeid = LESSON_PAGE_BRANCHTABLE;
@@ -36,11 +39,14 @@ class lesson_page_type_branchtable extends lesson_page {
     protected $string = null;
     protected $jumpto = null;
 
-    public function get_typeid() {
+    public function get_typeid()
+    {
         return $this->typeid;
     }
-    public function get_typestring() {
-        if ($this->string===null) {
+
+    public function get_typestring()
+    {
+        if ($this->string === null) {
             $this->string = get_string($this->typeidstring, 'lesson');
         }
         return $this->string;
@@ -51,10 +57,11 @@ class lesson_page_type_branchtable extends lesson_page {
      *
      * @return array
      */
-    public function get_jumps() {
+    public function get_jumps()
+    {
         global $DB;
         $jumps = array();
-        $params = array ("lessonid" => $this->lesson->id, "pageid" => $this->properties->id);
+        $params = array("lessonid" => $this->lesson->id, "pageid" => $this->properties->id);
         if ($answers = $this->get_answers()) {
             foreach ($answers as $answer) {
                 if ($answer->answer === '') {
@@ -71,7 +78,8 @@ class lesson_page_type_branchtable extends lesson_page {
         return $jumps;
     }
 
-    public static function get_jumptooptions($firstpage, lesson $lesson) {
+    public static function get_jumptooptions($firstpage, lesson $lesson)
+    {
         global $DB, $PAGE;
         $jump = array();
         $jump[0] = get_string("thispage", "lesson");
@@ -83,26 +91,32 @@ class lesson_page_type_branchtable extends lesson_page {
         $jump[LESSON_RANDOMBRANCH] = get_string("randombranch", "lesson");
 
         if (!$firstpage) {
-            if (!$apageid = $DB->get_field("lesson_pages", "id", array("lessonid" => $lesson->id, "prevpageid" => 0))) {
+            if (!$apageid = get_remote_field_lesson_pages_by_lessonid_and_prevpageid($lesson->id, 0)) {
                 print_error('cannotfindfirstpage', 'lesson');
             }
             while (true) {
                 if ($apageid) {
-                    $title = $DB->get_field("lesson_pages", "title", array("id" => $apageid));
+                    //$title = $DB->get_field("lesson_pages", "title", array("id" => $apageid));
+                    $title = get_remote_get_field_lesson_pages_by_id($apageid);
                     $jump[$apageid] = $title;
-                    $apageid = $DB->get_field("lesson_pages", "nextpageid", array("id" => $apageid));
+                    //$apageid = $DB->get_field("lesson_pages", "nextpageid", array("id" => $apageid));
+                    $apageid = intval(get_remote_get_field_lesson_pages_by_id($apageid, 'nextpageid'));
                 } else {
                     // last page reached
                     break;
                 }
             }
-         }
+        }
         return $jump;
     }
-    public function get_idstring() {
+
+    public function get_idstring()
+    {
         return $this->typeidstring;
     }
-    public function display($renderer, $attempt) {
+
+    public function display($renderer, $attempt)
+    {
         global $PAGE, $CFG;
 
         $output = '';
@@ -149,7 +163,7 @@ class lesson_page_type_branchtable extends lesson_page {
         $eventparams = array(
             'context' => context_module::instance($PAGE->cm->id),
             'objectid' => $this->properties->id
-            );
+        );
 
         $event = \mod_lesson\event\content_page_viewed::create($eventparams);
         $event->trigger();
@@ -157,7 +171,8 @@ class lesson_page_type_branchtable extends lesson_page {
         return $output;
     }
 
-    public function check_answer() {
+    public function check_answer()
+    {
         global $USER, $DB, $PAGE, $CFG;
 
         require_sesskey();
@@ -168,8 +183,8 @@ class lesson_page_type_branchtable extends lesson_page {
         } else {
             $branchflag = 0;
         }
-        $grades = get_remote_lesson_grades_by($this->lesson->id, $USER->id);
-       // if ($grades = $DB->get_records("lesson_grades", array("lessonid" => $this->lesson->id, "userid" => $USER->id), "grade DESC")) {
+        $grades = get_remote_lesson_grades_by_lessonid_and_userid($this->lesson->id, $USER->id);
+
         if ($grades) {
             $retries = count($grades);
         } else {
@@ -178,11 +193,11 @@ class lesson_page_type_branchtable extends lesson_page {
 
         //  this is called when jumping to random from a branch table
         $context = context_module::instance($PAGE->cm->id);
-        if($newpageid == LESSON_UNSEENBRANCHPAGE) {
+        if ($newpageid == LESSON_UNSEENBRANCHPAGE) {
             if (has_capability('mod/lesson:manage', $context)) {
-                 $newpageid = LESSON_NEXTPAGE;
+                $newpageid = LESSON_NEXTPAGE;
             } else {
-                 $newpageid = lesson_unseen_question_jump($this->lesson, $USER->id, $this->properties->id);  // this may return 0
+                $newpageid = lesson_unseen_question_jump($this->lesson, $USER->id, $this->properties->id);  // this may return 0
             }
         }
         // convert jumpto page into a proper page id
@@ -202,20 +217,30 @@ class lesson_page_type_branchtable extends lesson_page {
         }
 
         // Record this page in lesson_branch.
-        $branch = new stdClass;
-        $branch->lessonid = $this->lesson->id;
-        $branch->userid = $USER->id;
-        $branch->pageid = $this->properties->id;
-        $branch->retry = $retries;
-        $branch->flag = $branchflag;
-        $branch->timeseen = time();
-        $branch->nextpageid = $newpageid;
-        $DB->insert_record("lesson_branch", $branch);
+        $data = array();
+
+        $data['data[0][name]'] = 'lessonid';
+        $data['data[0][value]'] = $this->lesson->id;
+        $data['data[1][name]'] = 'userid';
+        $data['data[1][value]'] = $USER->id;
+        $data['data[2][name]'] = 'pageid';
+        $data['data[2][value]'] = $this->properties->id;
+        $data['data[3][name]'] = 'retry';
+        $data['data[3][value]'] = $retries;
+        $data['data[4][name]'] = 'flag';
+        $data['data[4][value]'] = $branchflag;
+        $data['data[5][name]'] = 'timeseen';
+        $data['data[5][value]'] = time();
+        $data['data[6][name]'] = 'timeseen';
+        $data['data[6][value]'] = $newpageid;
+
+        $result = save_remote_lesson_branch($data);
 
         redirect(new moodle_url('/mod/lesson/remote/api-view.php', array('id' => $PAGE->cm->id, 'pageid' => $newpageid)));
     }
 
-    public function display_answers(html_table $table) {
+    public function display_answers(html_table $table)
+    {
         $answers = $this->get_answers();
         $options = new stdClass;
         $options->noclean = true;
@@ -227,33 +252,37 @@ class lesson_page_type_branchtable extends lesson_page {
                 continue;
             }
             $cells = array();
-            $cells[] = "<span class=\"label\">".get_string("branch", "lesson")." $i<span>: ";
+            $cells[] = "<span class=\"label\">" . get_string("branch", "lesson") . " $i<span>: ";
             $cells[] = format_text($answer->answer, $answer->answerformat, $options);
             $table->data[] = new html_table_row($cells);
 
             $cells = array();
-            $cells[] = "<span class=\"label\">".get_string("jump", "lesson")." $i<span>: ";
+            $cells[] = "<span class=\"label\">" . get_string("jump", "lesson") . " $i<span>: ";
             $cells[] = $this->get_jump_name($answer->jumpto);
             $table->data[] = new html_table_row($cells);
 
-            if ($i === 1){
-                $table->data[count($table->data)-1]->cells[0]->style = 'width:20%;';
+            if ($i === 1) {
+                $table->data[count($table->data) - 1]->cells[0]->style = 'width:20%;';
             }
             $i++;
         }
         return $table;
     }
-    public function get_grayout() {
+
+    public function get_grayout()
+    {
         return 1;
     }
-    public function report_answers($answerpage, $answerdata, $useranswer, $pagestats, &$i, &$n) {
+
+    public function report_answers($answerpage, $answerdata, $useranswer, $pagestats, &$i, &$n)
+    {
         $answers = $this->get_answers();
         $formattextdefoptions = new stdClass;
         $formattextdefoptions->para = false;  //I'll use it widely in this page
         $formattextdefoptions->context = $answerpage->context;
 
         foreach ($answers as $answer) {
-            $data = "<input type=\"button\" name=\"$answer->id\" value=\"".s(strip_tags(format_text($answer->answer, FORMAT_MOODLE,$formattextdefoptions)))."\" disabled=\"disabled\"> ";
+            $data = "<input type=\"button\" name=\"$answer->id\" value=\"" . s(strip_tags(format_text($answer->answer, FORMAT_MOODLE, $formattextdefoptions))) . "\" disabled=\"disabled\"> ";
             $data .= get_string('jumpsto', 'lesson', $this->get_jump_name($answer->jumpto));
             $answerdata->answers[] = array($data, "");
             $answerpage->answerdata = $answerdata;
@@ -261,7 +290,8 @@ class lesson_page_type_branchtable extends lesson_page {
         return $answerpage;
     }
 
-    public function update($properties, $context = null, $maxbytes = null) {
+    public function update($properties, $context = null, $maxbytes = null)
+    {
         if (empty($properties->display)) {
             $properties->display = '0';
         }
@@ -270,15 +300,21 @@ class lesson_page_type_branchtable extends lesson_page {
         }
         return parent::update($properties);
     }
-    public function add_page_link($previd) {
+
+    public function add_page_link($previd)
+    {
         global $PAGE, $CFG;
-        $addurl = new moodle_url('/mod/lesson/editpage.php', array('id'=>$PAGE->cm->id, 'pageid'=>$previd, 'qtype'=>LESSON_PAGE_BRANCHTABLE));
-        return array('addurl'=>$addurl, 'type'=>LESSON_PAGE_BRANCHTABLE, 'name'=>get_string('addabranchtable', 'lesson'));
+        $addurl = new moodle_url('/mod/lesson/editpage.php', array('id' => $PAGE->cm->id, 'pageid' => $previd, 'qtype' => LESSON_PAGE_BRANCHTABLE));
+        return array('addurl' => $addurl, 'type' => LESSON_PAGE_BRANCHTABLE, 'name' => get_string('addabranchtable', 'lesson'));
     }
-    protected function get_displayinmenublock() {
+
+    protected function get_displayinmenublock()
+    {
         return true;
     }
-    public function is_unseen($param) {
+
+    public function is_unseen($param)
+    {
         global $USER, $DB;
         if (is_array($param)) {
             $seenpages = $param;
@@ -291,7 +327,7 @@ class lesson_page_type_branchtable extends lesson_page {
             return true;
         } else {
             $nretakes = $param;
-            if (!$DB->count_records("lesson_attempts", array("pageid"=>$this->properties->id, "userid"=>$USER->id, "retry"=>$nretakes))) {
+            if (!$DB->count_records("lesson_attempts", array("pageid" => $this->properties->id, "userid" => $USER->id, "retry" => $nretakes))) {
                 return true;
             }
             return false;
@@ -299,13 +335,15 @@ class lesson_page_type_branchtable extends lesson_page {
     }
 }
 
-class lesson_add_page_form_branchtable extends lesson_add_page_form_base {
+class lesson_add_page_form_branchtable extends lesson_add_page_form_base
+{
 
     public $qtype = LESSON_PAGE_BRANCHTABLE;
     public $qtypestring = 'branchtable';
     protected $standard = false;
 
-    public function custom_definition() {
+    public function custom_definition()
+    {
         global $PAGE;
 
         $mform = $this->_form;
@@ -324,11 +362,11 @@ class lesson_add_page_form_branchtable extends lesson_add_page_form_base {
         $mform->addElement('hidden', 'qtype');
         $mform->setType('qtype', PARAM_INT);
 
-        $mform->addElement('text', 'title', get_string("pagetitle", "lesson"), array('size'=>70));
+        $mform->addElement('text', 'title', get_string("pagetitle", "lesson"), array('size' => 70));
         $mform->setType('title', PARAM_TEXT);
         $mform->addRule('title', null, 'required', null, 'server');
 
-        $this->editoroptions = array('noclean'=>true, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$PAGE->course->maxbytes);
+        $this->editoroptions = array('noclean' => true, 'maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes' => $PAGE->course->maxbytes);
         $mform->addElement('editor', 'contents_editor', get_string("pagecontents", "lesson"), null, $this->editoroptions);
         $mform->setType('contents_editor', PARAM_RAW);
 
@@ -339,14 +377,14 @@ class lesson_add_page_form_branchtable extends lesson_add_page_form_base {
         $mform->setDefault('display', true);
 
         for ($i = 0; $i < $lesson->maxanswers; $i++) {
-            $mform->addElement('header', 'headeranswer'.$i, get_string('branch', 'lesson').' '.($i+1));
+            $mform->addElement('header', 'headeranswer' . $i, get_string('branch', 'lesson') . ' ' . ($i + 1));
             $this->add_answer($i, get_string("description", "lesson"), $i == 0);
 
-            $mform->addElement('select', 'jumpto['.$i.']', get_string("jump", "lesson"), $jumptooptions);
+            $mform->addElement('select', 'jumpto[' . $i . ']', get_string("jump", "lesson"), $jumptooptions);
             if ($i === 0) {
-                $mform->setDefault('jumpto['.$i.']', 0);
+                $mform->setDefault('jumpto[' . $i . ']', 0);
             } else {
-                $mform->setDefault('jumpto['.$i.']', LESSON_NEXTPAGE);
+                $mform->setDefault('jumpto[' . $i . ']', LESSON_NEXTPAGE);
             }
         }
     }
