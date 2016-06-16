@@ -86,7 +86,6 @@ echo "$page->content";
 echo $OUTPUT->box_end();
 
 $content = file_rewrite_pluginfile_urls($page->content, 'pluginfile.php', $context->id, 'mod_page', 'content', $page->revision);
-var_dump($content);
 $formatoptions = new stdClass;
 $formatoptions->noclean = true;
 $formatoptions->overflowdiv = true;

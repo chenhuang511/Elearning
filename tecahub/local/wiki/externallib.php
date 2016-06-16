@@ -37,7 +37,7 @@ require_once("$CFG->libdir/externallib.php");
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.2
  */
-class local_mod_page_external extends external_api {
+class local_mod_wiki_external extends external_api {
     /**
      * Hanv 24/05/2016
      * Return all the information about a quiz by quizid or by cm->instance from course_module
@@ -47,9 +47,9 @@ class local_mod_page_external extends external_api {
      * @since Moodle 2.2
      *
      */
-    public static function get_mod_page_by_id_parameters() {
+    public static function get_mod_wiki_by_id_parameters() {
         return new external_function_parameters(
-            array('id' => new external_value(PARAM_INT, 'page id'))
+            array('id' => new external_value(PARAM_INT, 'wiki id'))
         );
     }
 
@@ -62,15 +62,15 @@ class local_mod_page_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_mod_page_by_id($id) {
+    public static function get_mod_wiki_by_id($id) {
         global $CFG, $DB;
 
         //validate parameter
-        $params = self::validate_parameters(self::get_mod_page_by_id_parameters(),
+        $params = self::validate_parameters(self::get_mod_wiki_by_id_parameters(),
             array('id' => $id));
 
-        $page =  $DB->get_record('page', array('id' => $params['id']), '*', MUST_EXIST);
-        return $page;
+        $wiki =  $DB->get_record('wiki', array('id' => $params['id']), '*', MUST_EXIST);
+        return $wiki;
     }
 
     /**
@@ -80,23 +80,23 @@ class local_mod_page_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_mod_page_by_id_returns() {
+    public static function get_mod_wiki_by_id_returns() {
         return  new external_single_structure(
             array(
                 'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
                 'course' => new external_value(PARAM_INT, 'Foreign key reference to the course this page is part of.', VALUE_OPTIONAL),
-                'name' => new external_value(PARAM_RAW, 'Page name.'),
+                'name' => new external_value(PARAM_TEXT, 'Page name.'),
                 'intro' => new external_value(PARAM_RAW, 'Page introduction text.'),
-                'introformat' => new external_format_value('intro', VALUE_OPTIONAL),
-				'content' => new external_value(PARAM_RAW, 'Standard Moodle primary key.'),
-                'contentformat' => new external_value(PARAM_INT, 'Foreign key reference to the course this quiz is part of.', VALUE_OPTIONAL),
-                'legacyfiles' => new external_value(PARAM_INT, 'Page name.', VALUE_OPTIONAL),
-                'legacyfileslast' => new external_value(PARAM_RAW, 'Page introduction text.'),
-                'display' => new external_format_value(PARAM_INT, 'Display or Not', VALUE_OPTIONAL),
-				'displayoptions' => new external_value(PARAM_RAW, 'Page name.'),
-                'revision' => new external_value(PARAM_INT, 'Page introduction text.', VALUE_OPTIONAL),
-                'timemodified' => new external_format_value('intro', VALUE_OPTIONAL)						
+                'introformat' => new external_format_value(PARAM_INT,'intro', VALUE_OPTIONAL),
+				'timecreated' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
+                'firstpagetitle' => new external_value(PARAM_TEXT, 'Foreign key reference to the course this quiz is part of.', VALUE_OPTIONAL),
+                'wikimode' => new external_value(PARAM_TEXT, 'Page name.', VALUE_OPTIONAL),
+                'defaultformat' => new external_value(PARAM_TEXT, 'Page introduction text.'),
+                'editbegin' => new external_format_value(PARAM_INT, 'Display or Not', VALUE_OPTIONAL),
+				'editend' => new external_value(PARAM_INT, 'Page name.'),
+                'timemodified' => new external_format_value(PARAM_INT, 'intro', VALUE_OPTIONAL)						
             )
         );
     }
 }
+

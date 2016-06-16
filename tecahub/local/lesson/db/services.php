@@ -36,25 +36,41 @@
 $functions = array(
     'local_mod_get_lesson_by_id' => array(
         'classname' => 'local_mod_lesson_external',
-        'methodname' => 'get_mod_lesson_by_id',
+        'methodname' => 'get_lesson_by_id',
         'classpath' => 'local/lesson/externallib.php',
-        'description' => 'Get lesson content by course',
+        'description' => 'Get lesson by id',
         'type' => 'read',
         'ajax' => true
     ),
-    'local_mod_get_lesson_page' => array(
+    'local_mod_get_lesson_pages_by_lessonid_and_prevpageid' => array(
         'classname' => 'local_mod_lesson_external',
-        'methodname' => 'get_lesson_page',
+        'methodname' => 'get_lesson_pages_by_lessonid_and_prevpageid',
         'classpath' => 'local/lesson/externallib.php',
-        'description' => 'Get lesson page by lesson id and prevpageid',
+        'description' => 'Get lesson pages by lessonid and prevpageid',
         'type' => 'read',
         'ajax' => true
     ),
-    'local_mod_get_lessonpage_by_pageid_and_lessonid' => array(
+    'local_mod_get_lesson_pages_by_pageid_and_lessonid' => array(
         'classname' => 'local_mod_lesson_external',
-        'methodname' => 'get_mod_lessonpage_by_pageid_and_lessonid',
+        'methodname' => 'get_lesson_pages_by_pageid_and_lessonid',
         'classpath' => 'local/lesson/externallib.php',
         'description' => 'Get lesson page by page id and lesson id',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_field_lesson_pages_by_id' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_field_lesson_pages_by_id',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'get field of lesson pages by id',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_field_lesson_pages_by_lessonid_and_prevpageid' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_field_lesson_pages_by_lessonid_and_prevpageid',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get id of lesson page by lessonid and prevpageid',
         'type' => 'read',
         'ajax' => true
     ),
@@ -66,19 +82,19 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
-    'local_mod_get_lesson_grades_by_userid_and_lessonid' => array(
-        'classname' => 'local_mod_lesson_external',
-        'methodname' => 'get_lesson_grades_by_userid_and_lessonid',
-        'classpath' => 'local/lesson/externallib.php',
-        'description' => 'Get lesson grades by userid and lessonid',
-        'type' => 'read',
-        'ajax' => true
-    ),
     'local_mod_get_lesson_branch_by_lessonid_and_userid_and_retry' => array(
         'classname' => 'local_mod_lesson_external',
         'methodname' => 'get_lesson_branch_by_lessonid_and_userid_and_retry',
         'classpath' => 'local/lesson/externallib.php',
         'description' => 'Get lesson branch by lessonid and userid and retry',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_save_lesson_branch' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'save_lesson_branch',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'insert new lesson branch',
         'type' => 'read',
         'ajax' => true
     ),
@@ -90,14 +106,6 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
-    'local_mod_get_lesson_answer_by_pageid_and_lessonid' => array(
-        'classname' => 'local_mod_lesson_external',
-        'methodname' => 'get_lesson_answers_by_pageid_and_lessonid',
-        'classpath' => 'local/lesson/externallib.php',
-        'description' => 'Get lesson answer by pageid and lessonid',
-        'type' => 'read',
-        'ajax' => true
-    ),
     'local_mod_get_lesson_attempts_by_lessonid_and_userid' => array(
         'classname' => 'local_mod_lesson_external',
         'methodname' => 'get_lesson_attempts_by_lessonid_and_userid',
@@ -106,11 +114,11 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
-    'local_mod_get_field_lesson_page_by_lessonid_and_prevpageid' => array(
+    'local_mod_get_lesson_answer_by_pageid_and_lessonid' => array(
         'classname' => 'local_mod_lesson_external',
-        'methodname' => 'get_field_lessonpage_by_lessonid_and_prevpageid',
+        'methodname' => 'get_lesson_answers_by_pageid_and_lessonid',
         'classpath' => 'local/lesson/externallib.php',
-        'description' => 'Get id of lesson page by lessonid and prevpageid',
+        'description' => 'Get lesson answer by pageid and lessonid',
         'type' => 'read',
         'ajax' => true
     ),
@@ -122,28 +130,20 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
-    'local_mod_get_lesson_answers' => array(
+    'local_mod_get_lesson_answers_by_lessonid' => array(
         'classname' => 'local_mod_lesson_external',
-        'methodname' => 'get_lesson_answers',
+        'methodname' => 'get_lesson_answers_by_lessonid',
         'classpath' => 'local/lesson/externallib.php',
-        'description' => 'Get lesson answers',
+        'description' => 'Get list lesson answers by lessonid',
         'type' => 'read',
         'ajax' => true
     ),
-    'local_mod_get_lesson_grades_by' => array(
+    'local_mod_get_lesson_grades_by_lessonid_and_userid' => array(
         'classname' => 'local_mod_lesson_external',
-        'methodname' => 'get_lesson_grades_by',
+        'methodname' => 'get_lesson_grades_by_lessonid_and_userid',
         'classpath' => 'local/lesson/externallib.php',
         'description' => 'Get lesson grades by lessonid and userid. Return list',
         'type' => 'read',
         'ajax' => true
     ),
-    'local_mod_save_lesson_branch' => array(
-        'classname' => 'local_mod_lesson_external',
-        'methodname' => 'save_lesson_branch',
-        'classpath' => 'local/lesson/externallib.php',
-        'description' => 'insert new lesson branch',
-        'type' => 'read',
-        'ajax' => true
-    )
 );

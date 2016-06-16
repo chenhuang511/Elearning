@@ -32,7 +32,6 @@ require_once($CFG->dirroot . '/mod/lesson/view_form.php');
 require_once($CFG->libdir . '/completionlib.php');
 require_once($CFG->libdir . '/grade/constants.php');
 
-
 $id = required_param('id', PARAM_INT);             // Course Module ID
 $pageid = optional_param('pageid', null, PARAM_INT);   // Lesson Page ID
 $edit = optional_param('edit', -1, PARAM_BOOL);
@@ -54,7 +53,7 @@ $lesson->update_effective_access($USER->id);
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
 
-$url = new moodle_url('/mod/lesson/view.php', array('id' => $id));
+$url = new moodle_url('/mod/lesson/remote/api-view.php', array('id' => $id));
 if ($pageid !== null) {
     $url->param('pageid', $pageid);
 }
@@ -136,8 +135,7 @@ if (!$canmanage) {
             // check for the gradebetterthan condition
             if ($conditions->gradebetterthan) {
                 $gradebetterthan = false;
-                //if ($studentgrades = $DB->get_records('lesson_grades', array("userid" => $USER->id, "lessonid" => $dependentlesson->id))) {
-                if ($studentgrades = get_remote_lesson_grades_by_userid_and_lessonid($USER->id, $dependentlesson->id)) {
+                if ($studentgrades = get_remote_lesson_grades_by_lessonid_and_userid($dependentlesson->id, $USER->id)) {
                     // go through all the grades and test to see if any of them satisfy the condition
                     foreach ($studentgrades as $studentgrade) {
                         if ($studentgrade->grade >= $conditions->gradebetterthan) {
@@ -177,7 +175,7 @@ if ($pageid == LESSON_UNSEENBRANCHPAGE) {
 $attemptflag = false;
 if (empty($pageid)) {
     // make sure there are pages to view
-    $lessonpageid = get_remote_field_lesson_page($lesson->id, 0);
+    $lessonpageid = get_remote_field_lesson_pages_by_lessonid_and_prevpageid($lesson->id, 0);
     if (!$lessonpageid) {
         if (!$canmanage) {
             $lesson->add_message(get_string('lessonnotready2', 'lesson')); // a nice message to the student
@@ -285,7 +283,7 @@ if (empty($pageid)) {
         }
     }
     // start at the first page
-    if (!$pageid = get_remote_field_lesson_page($lesson->id, 0)) {
+    if (!$pageid = get_remote_field_lesson_pages_by_lessonid_and_prevpageid($lesson->id, 0)) {
         print_error('cannotfindfirstpage', 'lesson');
     }
 /// This is the code for starting a timed test
@@ -580,7 +578,7 @@ if ($pageid != LESSON_EOL) {
         // $ntries is decremented above
         if (!$attempts = $lesson->get_attempts($ntries)) {
             $attempts = array();
-            $url = new moodle_url('/mod/lesson/view.php', array('id' => $PAGE->cm->id));
+            $url = new moodle_url('/mod/lesson/remote/api-view.php', array('id' => $PAGE->cm->id));
         } else {
             $firstattempt = current($attempts);
             $pageid = $firstattempt->pageid;
@@ -589,7 +587,7 @@ if ($pageid != LESSON_EOL) {
             $lastattempt = end($attempts);
             $USER->modattempts[$lesson->id] = $lastattempt->pageid;
 
-            $url = new moodle_url('/mod/lesson/view.php', array('id' => $PAGE->cm->id, 'pageid' => $pageid));
+            $url = new moodle_url('/mod/lesson/remote/api-view.php', array('id' => $PAGE->cm->id, 'pageid' => $pageid));
         }
         $lessoncontent .= html_writer::link($url, get_string('reviewlesson', 'lesson'), array('class' => 'centerpadded lessonbutton standardbutton'));
     } elseif ($lesson->modattempts && $canmanage) {
