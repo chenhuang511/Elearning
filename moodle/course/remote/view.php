@@ -47,8 +47,8 @@ if ($switchrole > 0 && confirm_sesskey() &&
 $course = get_remote_course_content($course->remoteid);
 
 
-$PAGE->set_title($course[0] ? $course[0]->name : "nccsoft vietnam");
-$PAGE->set_heading($course[0] ? $course[0]->name : "nccsoft vietnam");
+$PAGE->set_title($coursename);
+$PAGE->set_heading($coursesummary);
 $PAGE->set_url("/course/remote/view.php", array('id' => $courseid, 'sectionid' => $sectionid, 'section' => $section));
 
 echo $OUTPUT->header();
