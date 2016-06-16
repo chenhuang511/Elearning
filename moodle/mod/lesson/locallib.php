@@ -182,7 +182,8 @@ function lesson_unseen_branch_jump($lesson, $userid)
 {
     global $DB;
 
-    if (!$retakes = $DB->count_records("lesson_grades", array("lessonid" => $lesson->id, "userid" => $userid))) {
+    $retakes = get_remote_count_by_lessonid_and_userid('lesson_grades', $lesson->id, $userid);
+    if (!$retakes) {
         $retakes = 0;
     }
 
@@ -243,8 +244,8 @@ function lesson_random_question_jump($lesson, $pageid)
     global $DB;
 
     // get the lesson pages
-    $params = array("lessonid" => $lesson->id);
-    if (!$lessonpages = $DB->get_records_select("lesson_pages", "lessonid = :lessonid", $params)) {
+    $lessonpages = get_remote_get_lesson_pages_by_lessonid($lesson->id);
+    if (!$lessonpages) {
         print_error('cannotfindpages', 'lesson');
     }
 
@@ -301,10 +302,8 @@ function lesson_grade($lesson, $ntries, $userid = 0)
     $total = 0;
     $earned = 0;
 
-    $params = array("lessonid" => $lesson->id, "userid" => $userid, "retry" => $ntries);
-    if ($useranswers = $DB->get_records_select("lesson_attempts", "lessonid = :lessonid AND
-            userid = :userid AND retry = :retry", $params, "timeseen")
-    ) {
+    $useranswers = get_remote_get_lesson_attempts_by_lessonid_and_userid_and_retry($lesson->id, $userid, $ntries);
+    if ($useranswers) {
         // group each try with its page
         $attemptset = array();
         foreach ($useranswers as $useranswer) {

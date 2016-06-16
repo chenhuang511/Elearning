@@ -1,11 +1,7 @@
 <?php
 defined('MOODLE_INTERNAL') || die;
 
-/** General rendering target, usually normal browser page */
-define('RENDERER_TARGET_GENERAL', 'general');
-
 require_once($CFG->dirroot . '/lib/remote/lib.php');
-require_once($CFG->dirroot . '/mod/assign/renderable.php');
 
 
 /**
@@ -84,6 +80,17 @@ function get_remote_get_submission_status($assignid, $userid = null)
             'token' => HOST_TOKEN_M,
             'function_name' => 'mod_assign_get_submission_status',
             'params' => array('assignid' => $assignid,'userid' => $userid),
+        )
+    ));
+}
+
+function get_remote_enrolled_users($courseid, $options = array()) {
+    return moodle_webservice_client(array_merge($options,
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN_M,
+            'function_name' => 'core_enrol_get_enrolled_users',
+            'params' => array('courseid' => $courseid),
         )
     ));
 }

@@ -58,6 +58,14 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_get_lesson_pages_by_lessonid' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_lesson_pages_by_lessonid',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get lesson page bylesson id. Return a list',
+        'type' => 'read',
+        'ajax' => true
+    ),
     'local_mod_get_field_lesson_pages_by_id' => array(
         'classname' => 'local_mod_lesson_external',
         'methodname' => 'get_field_lesson_pages_by_id',
@@ -111,6 +119,14 @@ $functions = array(
         'methodname' => 'get_lesson_attempts_by_lessonid_and_userid',
         'classpath' => 'local/lesson/externallib.php',
         'description' => 'Get lesson attempts by lesson id and user id',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_lesson_attempts_by_lessonid_and_userid_and_retry' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_lesson_attempts_by_lessonid_and_userid_and_retry',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get lesson attempts by lessonid, userid and retry',
         'type' => 'read',
         'ajax' => true
     ),

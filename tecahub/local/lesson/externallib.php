@@ -57,7 +57,7 @@ class local_mod_lesson_external extends external_api
     /**
      * Get lesson by id
      *
-     * @param int $id. The lesson id
+     * @param int $id . The lesson id
      * @return array of warnings and the lesson
      * @since Moodle 3.0
      * @throws moodle_exception
@@ -167,7 +167,7 @@ class local_mod_lesson_external extends external_api
      * Get lesson pages by lessonid and prevpageid
      *
      * @param int $lessonid the lesson id
-     * @param int $prevpageid. The previous page id
+     * @param int $prevpageid . The previous page id
      * @return array of warnings and the lesson
      * @since Moodle 3.0
      * @throws moodle_exception
@@ -249,8 +249,8 @@ class local_mod_lesson_external extends external_api
     /**
      * Get field of lesson pages by lessonid and prevpageid
      *
-     * @param $lessonid. The id of lesson
-     * @param $prevpageid. The previous page id
+     * @param $lessonid . The id of lesson
+     * @param $prevpageid . The previous page id
      * @param array $options
      * @return mixed
      * @throws invalid_parameter_exception
@@ -316,8 +316,8 @@ class local_mod_lesson_external extends external_api
     /**
      * Get field of lesson page by id
      *
-     * @param $id. The id
-     * @param $field. The field in lesson page
+     * @param $id . The id
+     * @param $field . The field in lesson page
      * @param array $options
      * @return mixed
      * @throws invalid_parameter_exception
@@ -1132,6 +1132,60 @@ class local_mod_lesson_external extends external_api
      * @return external_function_parameters
      * @since Moodle 3.0
      */
+    public static function get_lesson_attempts_by_lessonid_and_userid_and_retry_parameters()
+    {
+        return new external_function_parameters(
+            array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
+                'userid' => new external_value(PARAM_INT, 'the user id'),
+                'retry' => new external_value(PARAM_INT, 'the retry'),
+                'options' => new external_multiple_structure (
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHANUM,
+                                'The expected keys (value format) are:
+                                                excludemodules (bool) Do not return modules, return only the sections structure
+                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
+                                                sectionid (int) Return only this section
+                                                sectionnumber (int) Return only this section with number (order)
+                                                cmid (int) Return only this module information (among the whole sections structure)
+                                                modname (string) Return only modules with this name "label, forum, etc..."
+                                                modid (int) Return only the module with this id (to be used with modname'),
+                            'value' => new external_value(PARAM_RAW, 'the value of the option,
+                                                                    this param is personaly validated in the external function.')
+                        )
+                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+            )
+        );
+    }
+
+    public static function get_lesson_attempts_by_lessonid_and_userid_and_retry($lessonid, $userid, $retry, $options = array())
+    {
+        global $DB;
+
+        // validate params
+        $params = self::validate_parameters(self::get_lesson_attempts_by_lessonid_and_userid_and_retry_parameters(),
+            array(
+                'lessonid' => $lessonid,
+                'userid' => $userid,
+                'retry' => $retry,
+                'options' => $options
+            )
+        );
+        return $DB->get_records_select("lesson_attempts", "lessonid = :lessonid AND userid = :userid AND retry = :retry",
+            array('lessonid' => $params['lessonid'], 'userid' => $params['userid'], 'retry' => $params['retry']), "timeseen");
+    }
+
+    public static function get_lesson_attempts_by_lessonid_and_userid_and_retry_returns()
+    {
+        return self::get_lesson_attempts_by_lessonid_and_userid_returns();
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
     public static function get_lesson_grades_by_lessonid_and_userid_parameters()
     {
         return new external_function_parameters(
@@ -1276,6 +1330,88 @@ class local_mod_lesson_external extends external_api
                 'status' => new external_value(PARAM_BOOL, 'status: true if success'),
                 'warnings' => new external_warnings(),
             )
+        );
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function get_lesson_pages_by_lessonid_parameters()
+    {
+        return new external_function_parameters(
+            array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
+                'options' => new external_multiple_structure (
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHANUM,
+                                'The expected keys (value format) are:
+                                                excludemodules (bool) Do not return modules, return only the sections structure
+                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
+                                                sectionid (int) Return only this section
+                                                sectionnumber (int) Return only this section with number (order)
+                                                cmid (int) Return only this module information (among the whole sections structure)
+                                                modname (string) Return only modules with this name "label, forum, etc..."
+                                                modid (int) Return only the module with this id (to be used with modname'),
+                            'value' => new external_value(PARAM_RAW, 'the value of the option,
+                                                                    this param is personaly validated in the external function.')
+                        )
+                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+            )
+        );
+    }
+
+    /**
+     * Get list lesson page by lessonid
+     *
+     * @param $lessonid
+     * @param array $options
+     * @return array
+     * @throws invalid_parameter_exception
+     */
+    public static function get_lesson_pages_by_lessonid($lessonid, $options = array())
+    {
+        global $DB;
+
+        // validate params
+        $params = self::validate_parameters(self::get_lesson_pages_by_lessonid_parameters(),
+            array(
+                'lessonid' => $lessonid,
+                'options' => $options
+            )
+        );
+
+        return $DB->get_records_select("lesson_pages", "lessonid = :lessonid", array('lessonid' => $params['lessonid']));
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
+    public static function get_lesson_pages_by_lessonid_returns()
+    {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'the lesson page id'),
+                    'lessonid' => new external_value(PARAM_INT, 'lesson id', VALUE_DEFAULT),
+                    'prevpageid' => new external_value(PARAM_INT, 'previous page id', VALUE_DEFAULT),
+                    'nextpageid' => new external_value(PARAM_INT, 'next page id', VALUE_DEFAULT),
+                    'qtype' => new external_value(PARAM_INT, 'qtype', VALUE_DEFAULT),
+                    'qoption' => new external_value(PARAM_INT, 'qoption', VALUE_DEFAULT),
+                    'layout' => new external_value(PARAM_INT, 'layout', VALUE_REQUIRED),
+                    'display' => new external_value(PARAM_INT, 'display', VALUE_REQUIRED),
+                    'timecreated' => new external_value(PARAM_INT, 'time created', VALUE_DEFAULT),
+                    'timemodified' => new external_value(PARAM_INT, 'time modified', VALUE_DEFAULT),
+                    'title' => new external_value(PARAM_RAW, 'title'),
+                    'contents' => new external_value(PARAM_RAW, 'contents'),
+                    'contentsformat' => new external_value(PARAM_INT, 'contents format', VALUE_DEFAULT)
+                )
+            ), 'lesson pages'
         );
     }
 }
