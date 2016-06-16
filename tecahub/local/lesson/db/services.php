@@ -36,9 +36,9 @@
 $functions = array(
     'local_mod_get_lesson_by_id' => array(
         'classname' => 'local_mod_lesson_external',
-        'methodname' => 'get_mod_lesson_by_id',
+        'methodname' => 'get_lesson_by_id',
         'classpath' => 'local/lesson/externallib.php',
-        'description' => 'Get lesson content by course',
+        'description' => 'Get lesson by id',
         'type' => 'read',
         'ajax' => true
     ),
