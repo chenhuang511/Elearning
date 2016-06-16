@@ -735,3 +735,38 @@ function wiki_page_view($wiki, $page, $course, $cm, $context, $uid = null, $othe
     $completion = new completion_info($course);
     $completion->set_module_viewed($cm);
 }
+
+/**
+ * Add a get_coursemodule_info function in case any assignment type wants to add 'extra' information
+ * for the course (see resource).
+ *
+ * Given a course_module object, this function returns any "extra" information that may be needed
+ * when printing this activity in a course listing.  See get_array_of_activities() in course/lib.php.
+ *
+ * @param stdClass $coursemodule The coursemodule object (record).
+ * @return cached_cm_info An object on information that the courses
+ *                        will know about (most noticeably, an icon).
+ */
+function wiki_get_coursemodule_info($coursemodule) {
+    global $CFG, $DB;
+
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+        $dbparams = array('id' => $coursemodule->instance);
+        if (!$wiki = $DB->get_record('wiki', $dbparams)) {
+            return false;
+        }
+    } else if(MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        require_once($CFG->dirroot . '/mod/wiki/remote/locallib.php');
+        if (!$wiki = get_remote_wiki_by_id($coursemodule->instance)) {
+            return false;
+        }
+    }
+
+    $result = new cached_cm_info();
+    $result->name = $wiki->name;
+
+    // Convert intro to html. Do not filter cached version, filters run at display time.
+    $result->content = format_module_intro('wiki', $wiki, $coursemodule->id, false);
+
+    return $result;
+}
