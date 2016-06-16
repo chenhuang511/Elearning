@@ -1086,7 +1086,6 @@ class local_mod_lesson_external extends external_api
             array(
                 'data' => new external_single_structure(
                     array(
-                        'id' => new external_value(PARAM_INT, 'id'),
                         'lessonid' => new external_value(PARAM_INT, 'lesson id'),
                         'userid' => new external_value(PARAM_INT, 'user id'),
                         'pageid' => new external_value(PARAM_INT, 'page id'),
