@@ -1,7 +1,7 @@
 <?php
 
 require_once('../../../config.php');
-require_once('locallib.php');
+require_once('../locallib.php');
 
 $cmid = optional_param('id', 0, PARAM_INT);
 
@@ -15,6 +15,6 @@ $context = context_module::instance($cmid);
 
 require_capability('mod/assign:view', $context);
 
-$remoteassign = new remote_assign_mod($context, $cm, $course);
+$assign = new assign($context, $cm, $course);
 
-echo $remoteassign->view(optional_param('action', '', PARAM_TEXT));
+echo $assign->view(optional_param('action', '', PARAM_TEXT));

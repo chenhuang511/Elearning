@@ -240,11 +240,15 @@ class local_mod_assign_external extends external_api {
                 'gradingsummary' => new external_single_structure(
                     array(
                         'participantcount' => new external_value(PARAM_INT, 'Number of users who can submit.'),
-                        'submissiondraftscount' => new external_value(PARAM_INT, 'Number of submissions in draft status.'),
+                        'submissiondraftsenabled' => new external_value(PARAM_INT, 'Number of submissions in draft status.'),
                         'submissiondraftscount' => new external_value(PARAM_INT, 'Number of submissions in draft status.'),
                         'submissionsenabled' => new external_value(PARAM_BOOL, 'Whether submissions are enabled or not.'),
                         'submissionssubmittedcount' => new external_value(PARAM_INT, 'Number of submissions in submitted status.'),
                         'submissionsneedgradingcount' => new external_value(PARAM_INT, 'Number of submissions that need grading.'),
+                        'duedate' => new external_value(PARAM_INT, 'Number of submissions that need grading.'),
+                        'cutoffdate' => new external_value(PARAM_INT, 'Number of submissions that need grading.'),
+                        'coursemoduleid' => new external_value(PARAM_INT, 'Number of submissions that need grading.'),
+                        'teamsubmission' => new external_value(PARAM_INT, 'Number of submissions that need grading.'),
                         'warnofungroupedusers' => new external_value(PARAM_BOOL, 'Whether we need to warn people that there
                                                                         are users without groups.'),
                     ), 'Grading information.', VALUE_OPTIONAL
