@@ -74,3 +74,16 @@ function get_list_user_id_from_submissions($submissions = array()) {
     }
     return $usersid;
 }
+
+//hanv: 16/06/2016
+function get_remote_get_submission_status($assignid, $userid = null)
+{
+    return moodle_webservice_client(array_merge(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN_M,
+            'function_name' => 'mod_assign_get_submission_status',
+            'params' => array('assignid' => $assignid,'userid' => $userid),
+        )
+    ));
+}

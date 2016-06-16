@@ -1235,7 +1235,7 @@ class assign {
         }
         if ($this->get_course_module()) {
             $params = array('id' => $this->get_course_module()->instance);
-            if ($DB->get_record('assign', $params, '*')) {
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
                 $this->instance = $DB->get_record('assign', $params, '*', MUST_EXIST);
             } else {
                 $this->instance = get_remote_assign_by_id($params['id']);
@@ -4755,6 +4755,23 @@ class assign {
         $submitted = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
 
         $activitygroup = groups_get_activity_group($this->get_course_module());
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $user = get_remote_mapping_user();
+            $gradingsumary = get_remote_get_submission_status($instance->id,$user[0]->id)->gradingsummary;
+            $summary = new assign_grading_summary($gradingsumary->participantcount,
+                $instance->submissiondrafts,
+                $gradingsumary->submissiondraftscount,
+                $gradingsumary->submissionsenabled,
+                $gradingsumary->submissionssubmittedcount,
+                $instance->cutoffdate,
+                $instance->duedate,
+                $this->get_course_module()->id,
+                $gradingsumary->submissionsneedgradingcount,
+                $instance->teamsubmission,
+                $gradingsumary->warnofungroupedusers);
+
+            return $summary;
+        }
 
         if ($instance->teamsubmission) {
             $defaultteammembers = $this->get_submission_group_members(0, true);
@@ -4836,7 +4853,9 @@ class assign {
             $o .= $this->view_student_summary($USER, true);
         }
 
-        $o .= $this->view_footer();
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $o .= $this->view_footer();
+        }
 
         \mod_assign\event\submission_status_viewed::create_from_assign($this)->trigger();
 
