@@ -1569,9 +1569,10 @@ class assign {
             if ($this->is_blind_marking()) {
                 $order = 'u.id';
             }
-            $users = get_enrolled_users($this->context, 'mod/assign:submit', $currentgroup, 'u.*', $order, null, null,
-                    $this->show_only_active_users());
-
+            // TODO: [TP] tim hieu them o day
+//            $users = get_enrolled_users($this->context, 'mod/assign:submit', $currentgroup, 'u.*', $order, null, null,
+//                    $this->show_only_active_users());
+            $users = get_remote_enrolled_users($this->course->id);
             $cm = $this->get_course_module();
             $info = new \core_availability\info_module($cm);
             $users = $info->filter_user_list($users);

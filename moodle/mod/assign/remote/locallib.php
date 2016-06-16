@@ -87,3 +87,14 @@ function get_remote_get_submission_status($assignid, $userid = null)
         )
     ));
 }
+
+function get_remote_enrolled_users($courseid, $options = array()) {
+    return moodle_webservice_client(array_merge($options,
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN_M,
+            'function_name' => 'core_enrol_get_enrolled_users',
+            'params' => array('courseid' => $courseid),
+        )
+    ));
+}
