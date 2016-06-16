@@ -1084,16 +1084,13 @@ class local_mod_lesson_external extends external_api
     {
         return new external_function_parameters (
             array(
-                'data' => new external_single_structure(
-                    array(
-                        'lessonid' => new external_value(PARAM_INT, 'lesson id'),
-                        'userid' => new external_value(PARAM_INT, 'user id'),
-                        'pageid' => new external_value(PARAM_INT, 'page id'),
-                        'retry' => new external_value(PARAM_INT, 'retry'),
-                        'flag' => new external_value(PARAM_INT, 'flag'),
-                        'timeseen' => new external_value(PARAM_INT, 'time seen'),
-                        'nextpageid' => new external_value(PARAM_INT, 'next page id')
-                    )
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'data name'),
+                            'value' => new external_value(PARAM_RAW, 'data value'),
+                        )
+                    ), 'the data to be saved'
                 )
             )
         );
@@ -1111,10 +1108,17 @@ class local_mod_lesson_external extends external_api
 
         $params = self::validate_parameters(self::save_lesson_branch_parameters(), $params);
 
+        $branch = new stdClass();
+
+        foreach ($params['data'] as $key => $value) {
+            $branch->$key = $value;
+        }
+
         $transaction = $DB->start_delegated_transaction();
+
         $result = array();
 
-        $DB->insert_record("lesson_branch", $params['data']);
+        $DB->insert_record("lesson_branch", $branch);
         $transaction->allow_commit();
 
         $result['status'] = true;
