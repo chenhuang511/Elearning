@@ -82,8 +82,7 @@ function lesson_display_teacher_warning($lesson)
 
     // get all of the lesson answers
     $params = array("lessonid" => $lesson->id);
-    $lessonanswers = get_remote_lesson_answers($lesson->id);
-    //if (!$lessonanswers = $DB->get_records_select("lesson_answers", "lessonid = :lessonid", $params)) {
+    $lessonanswers = get_remote_lesson_answers_by_lessonid($lesson->id);
     if (!$lessonanswers) {
         // no answers, then not using cluster or unseen
         return false;
@@ -1410,7 +1409,7 @@ class lesson extends lesson_base
         global $DB;
         if ($this->firstpageid == null) {
             if (!$this->loadedallpages) {
-                $firstpageid = get_remote_field_lesson_page($this->properties->id, 0);
+                $firstpageid = get_remote_field_lesson_pages_by_lessonid_and_prevpageid($this->properties->id, 0);
                 if (!$firstpageid) {
                     print_error('cannotfindfirstpage', 'lesson');
                 }
@@ -3321,7 +3320,8 @@ class lesson_page_answer extends lesson_base
     public static function load($id)
     {
         global $DB;
-        $answer = $DB->get_record("lesson_answers", array("id" => $id));
+        //$answer = $DB->get_record("lesson_answers", array("id" => $id));
+        $answer = get_remote_lesson_answers_by_id($id);
         return new lesson_page_answer($answer);
     }
 
@@ -3456,7 +3456,7 @@ class lesson_page_type_manager
     public function load_page($pageid, lesson $lesson)
     {
         global $DB;
-        $page = get_remote_lessonpage_by_pageid_and_lessonid($pageid, $lesson->id);
+        $page = get_remote_lesson_pages_by_pageid_and_lessonid($pageid, $lesson->id);
         if (!$page) {
             print_error('cannotfindpages', 'lesson');
         }

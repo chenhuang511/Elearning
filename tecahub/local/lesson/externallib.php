@@ -30,7 +30,7 @@ class local_mod_lesson_external extends external_api
      * @return external_function_parameters
      * @since Moodle 3.0
      */
-    public static function get_mod_lesson_by_id_parameters()
+    public static function get_lesson_by_id_parameters()
     {
         return new external_function_parameters(
             array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
@@ -55,14 +55,14 @@ class local_mod_lesson_external extends external_api
     }
 
     /**
-     * Return information about a lesson.
+     * Get lesson by id
      *
-     * @param int $lessonid the lesson id
+     * @param int $id. The lesson id
      * @return array of warnings and the lesson
      * @since Moodle 3.0
      * @throws moodle_exception
      */
-    public static function get_mod_lesson_by_id($lessonid, $options = array())
+    public static function get_lesson_by_id($lessonid, $options = array())
     {
         global $DB;
 
@@ -83,7 +83,7 @@ class local_mod_lesson_external extends external_api
      * @return external_description
      * @since Moodle 3.0
      */
-    public static function get_mod_lesson_by_id_returns()
+    public static function get_lesson_by_id_returns()
     {
         return new external_single_structure(
             array(
@@ -138,82 +138,7 @@ class local_mod_lesson_external extends external_api
      * @return external_function_parameters
      * @since Moodle 3.0
      */
-    public static function get_context_by_instanceid_and_contextlevel_parameters()
-    {
-        return new external_function_parameters(
-            array('instanceid' => new external_value(PARAM_INT, 'the instance id'),
-                'contextlevel' => new external_value(PARAM_INT, 'the context level'),
-                'options' => new external_multiple_structure (
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_ALPHANUM,
-                                'The expected keys (value format) are:
-                                                excludemodules (bool) Do not return modules, return only the sections structure
-                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
-                                                sectionid (int) Return only this section
-                                                sectionnumber (int) Return only this section with number (order)
-                                                cmid (int) Return only this module information (among the whole sections structure)
-                                                modname (string) Return only modules with this name "label, forum, etc..."
-                                                modid (int) Return only the module with this id (to be used with modname'),
-                            'value' => new external_value(PARAM_RAW, 'the value of the option,
-                                                                    this param is personaly validated in the external function.')
-                        )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
-            )
-        );
-    }
-
-    /**
-     * Return information about a context.
-     *
-     * @param int $instanceid the instance id
-     * @param int $contextlevel . the context level
-     * @return array of warnings and the context
-     * @since Moodle 3.0
-     * @throws moodle_exception
-     */
-    public static function get_context_by_instanceid_and_contextlevel($instanceid, $contextlevel, $options = array())
-    {
-        global $DB;
-
-        // validate params
-        $params = self::validate_parameters(self::get_context_by_instanceid_and_contextlevel_parameters(),
-            array(
-                'instanceid' => $instanceid,
-                'contextlevel' => $contextlevel,
-                'options' => $options
-            )
-        );
-
-        return $DB->get_record('context', array('contextlevel' => $params['contextlevel'], 'instanceid' => $params['instanceid']), '*', MUST_EXIST);
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 3.0
-     */
-    public static function get_context_by_instanceid_and_contextlevel_returns()
-    {
-        return new external_single_structure(
-            array(
-                'id' => new external_value(PARAM_INT, 'context id'),
-                'contextlevel' => new external_value(PARAM_INT, 'context level', VALUE_DEFAULT),
-                'instanceid' => new external_value(PARAM_INT, 'instance id', VALUE_DEFAULT),
-                'path' => new external_value(PARAM_RAW, 'path'),
-                'depth' => new external_value(PARAM_INT, 'depth', VALUE_DEFAULT)
-            )
-        );
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.0
-     */
-    public static function get_lesson_page_parameters()
+    public static function get_lesson_pages_by_lessonid_and_prevpageid_parameters()
     {
         return new external_function_parameters(
             array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
@@ -238,12 +163,21 @@ class local_mod_lesson_external extends external_api
         );
     }
 
-    public static function get_lesson_page($lessonid, $prevpageid, $options = array())
+    /**
+     * Get lesson pages by lessonid and prevpageid
+     *
+     * @param int $lessonid the lesson id
+     * @param int $prevpageid. The previous page id
+     * @return array of warnings and the lesson
+     * @since Moodle 3.0
+     * @throws moodle_exception
+     */
+    public static function get_lesson_pages_by_lessonid_and_prevpageid($lessonid, $prevpageid, $options = array())
     {
         global $DB;
 
         // validate params
-        $params = self::validate_parameters(self::get_lesson_page_parameters(),
+        $params = self::validate_parameters(self::get_lesson_pages_by_lessonid_and_prevpageid_parameters(),
             array(
                 'lessonid' => $lessonid,
                 'prevpageid' => $prevpageid,
@@ -260,7 +194,7 @@ class local_mod_lesson_external extends external_api
      * @return external_description
      * @since Moodle 3.0
      */
-    public static function get_lesson_page_returns()
+    public static function get_lesson_pages_by_lessonid_and_prevpageid_returns()
     {
         return new external_single_structure(
             array(
@@ -281,7 +215,13 @@ class local_mod_lesson_external extends external_api
         );
     }
 
-    public static function get_field_lessonpage_by_lessonid_and_prevpageid_parameters()
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function get_field_lesson_pages_by_lessonid_and_prevpageid_parameters()
     {
         return new external_function_parameters(
             array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
@@ -306,12 +246,21 @@ class local_mod_lesson_external extends external_api
         );
     }
 
-    public static function get_field_lessonpage_by_lessonid_and_prevpageid($lessonid, $prevpageid, $options = array())
+    /**
+     * Get field of lesson pages by lessonid and prevpageid
+     *
+     * @param $lessonid. The id of lesson
+     * @param $prevpageid. The previous page id
+     * @param array $options
+     * @return mixed
+     * @throws invalid_parameter_exception
+     */
+    public static function get_field_lesson_pages_by_lessonid_and_prevpageid($lessonid, $prevpageid, $options = array())
     {
         global $DB;
 
         // validate params
-        $params = self::validate_parameters(self::get_lesson_page_parameters(),
+        $params = self::validate_parameters(self::get_field_lesson_pages_by_lessonid_and_prevpageid_parameters(),
             array(
                 'lessonid' => $lessonid,
                 'prevpageid' => $prevpageid,
@@ -322,12 +271,24 @@ class local_mod_lesson_external extends external_api
         return $DB->get_field('lesson_pages', 'id', array('lessonid' => $params['lessonid'], 'prevpageid' => $params['prevpageid']));
     }
 
-    public static function get_field_lessonpage_by_lessonid_and_prevpageid_returns()
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
+    public static function get_field_lesson_pages_by_lessonid_and_prevpageid_returns()
     {
         return new external_value(PARAM_INT, 'id');
     }
 
-    public static function get_field_lessonpage_by_id_parameters()
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function get_field_lesson_pages_by_id_parameters()
     {
         return new external_function_parameters(
             array('id' => new external_value(PARAM_INT, 'the id'),
@@ -352,12 +313,21 @@ class local_mod_lesson_external extends external_api
         );
     }
 
-    public static function get_field_lessonpage_by_id($id, $field, $options = array())
+    /**
+     * Get field of lesson page by id
+     *
+     * @param $id. The id
+     * @param $field. The field in lesson page
+     * @param array $options
+     * @return mixed
+     * @throws invalid_parameter_exception
+     */
+    public static function get_field_lesson_pages_by_id($id, $field, $options = array())
     {
         global $DB;
 
         // validate params
-        $params = self::validate_parameters(self::get_field_lessonpage_by_id_parameters(),
+        $params = self::validate_parameters(self::get_field_lesson_pages_by_id_parameters(),
             array(
                 'id' => $id,
                 'field' => $field,
@@ -368,7 +338,13 @@ class local_mod_lesson_external extends external_api
         return $DB->get_field('lesson_pages', $params['field'], array("id" => $params['id']));
     }
 
-    public static function get_field_lessonpage_by_id_returns()
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
+    public static function get_field_lesson_pages_by_id_returns()
     {
         return new external_value(PARAM_RAW, 'field');
     }
@@ -379,7 +355,7 @@ class local_mod_lesson_external extends external_api
      * @return external_function_parameters
      * @since Moodle 3.0
      */
-    public static function get_mod_lessonpage_by_pageid_and_lessonid_parameters()
+    public static function get_lesson_pages_by_pageid_and_lessonid_parameters()
     {
         return new external_function_parameters(
             array('pageid' => new external_value(PARAM_INT, 'the lesson page id'),
@@ -405,7 +381,7 @@ class local_mod_lesson_external extends external_api
     }
 
     /**
-     * get lesson page
+     * Get lesson page by pageid and lessonid
      *
      * @param $pageid
      * @param $lessonid
@@ -413,12 +389,12 @@ class local_mod_lesson_external extends external_api
      * @return mixed
      * @throws invalid_parameter_exception
      */
-    public static function get_mod_lessonpage_by_pageid_and_lessonid($pageid, $lessonid, $options = array())
+    public static function get_lesson_pages_by_pageid_and_lessonid($pageid, $lessonid, $options = array())
     {
         global $DB;
 
         // validate params
-        $params = self::validate_parameters(self::get_mod_lessonpage_by_pageid_and_lessonid_parameters(),
+        $params = self::validate_parameters(self::get_lesson_pages_by_pageid_and_lessonid_parameters(),
             array(
                 'lessonid' => $lessonid,
                 'pageid' => $pageid,
@@ -435,7 +411,7 @@ class local_mod_lesson_external extends external_api
      * @return external_description
      * @since Moodle 3.0
      */
-    public static function get_mod_lessonpage_by_pageid_and_lessonid_returns()
+    public static function get_lesson_pages_by_pageid_and_lessonid_returns()
     {
         return new external_single_structure(
             array(
@@ -488,7 +464,7 @@ class local_mod_lesson_external extends external_api
     }
 
     /**
-     * get leson timer
+     * get leson timer by userid and lessonid
      *
      * @param $userid
      * @param $lessonid
@@ -564,7 +540,7 @@ class local_mod_lesson_external extends external_api
     }
 
     /**
-     * get lesson grades
+     * get lesson grades by userid and lessonid
      *
      * @param $userid
      * @param $lessonid
@@ -691,6 +667,12 @@ class local_mod_lesson_external extends external_api
         );
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
     public static function get_lesson_attempts_by_lessonid_and_userid_parameters()
     {
         return new external_function_parameters(
@@ -720,6 +702,19 @@ class local_mod_lesson_external extends external_api
         );
     }
 
+    /**
+     * Get lesson attempts by lessonid and userid
+     *
+     * @param $lessonid
+     * @param $userid
+     * @param $correct
+     * @param $pageid
+     * @param $retry
+     * @param $orderby
+     * @param array $options
+     * @return array
+     * @throws invalid_parameter_exception
+     */
     public static function get_lesson_attempts_by_lessonid_and_userid($lessonid, $userid, $correct, $pageid, $retry, $orderby, $options = array())
     {
         global $DB;
@@ -764,6 +759,12 @@ class local_mod_lesson_external extends external_api
         return $DB->get_records('lesson_attempts', $parameters, $timeseen);
     }
 
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
     public static function get_lesson_attempts_by_lessonid_and_userid_returns()
     {
         return new external_multiple_structure(
@@ -910,6 +911,15 @@ class local_mod_lesson_external extends external_api
         );
     }
 
+    /**
+     * Get lesson answers by pageid and lessonid
+     *
+     * @param $pageid
+     * @param $lessonid
+     * @param array $options
+     * @return array
+     * @throws invalid_parameter_exception
+     */
     public static function get_lesson_answers_by_pageid_and_lessonid($pageid, $lessonid, $options = array())
     {
         global $DB;
@@ -926,6 +936,12 @@ class local_mod_lesson_external extends external_api
         return $DB->get_records('lesson_answers', array('pageid' => $params['pageid'], 'lessonid' => $params['lessonid']), 'id');
     }
 
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
     public static function get_lesson_answers_by_pageid_and_lessonid_returns()
     {
         return new external_multiple_structure(
@@ -949,6 +965,12 @@ class local_mod_lesson_external extends external_api
         );
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
     public static function get_lesson_answers_by_id_parameters()
     {
         return new external_function_parameters(
@@ -973,6 +995,14 @@ class local_mod_lesson_external extends external_api
         );
     }
 
+    /**
+     * Get lesson answers by id
+     *
+     * @param $id
+     * @param array $options
+     * @return mixed
+     * @throws invalid_parameter_exception
+     */
     public static function get_lesson_answers_by_id($id, $options = array())
     {
         global $DB;
@@ -988,6 +1018,12 @@ class local_mod_lesson_external extends external_api
         return $DB->get_record("lesson_answers", array("id" => $params['id']));
     }
 
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
     public static function get_lesson_answers_by_id_returns()
     {
         return new external_single_structure(
@@ -1009,7 +1045,13 @@ class local_mod_lesson_external extends external_api
         );
     }
 
-    public static function get_lesson_answers_parameters()
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function get_lesson_answers_by_lessonid_parameters()
     {
         return new external_function_parameters(
             array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
@@ -1033,12 +1075,20 @@ class local_mod_lesson_external extends external_api
         );
     }
 
-    public static function get_lesson_answers($lessonid, $options = array())
+    /**
+     * Get lesson answers by lessonid
+     *
+     * @param $lessonid
+     * @param array $options
+     * @return array
+     * @throws invalid_parameter_exception
+     */
+    public static function get_lesson_answers_by_lessonid($lessonid, $options = array())
     {
         global $DB;
 
         // validate params
-        $params = self::validate_parameters(self::get_lesson_answers_parameters(),
+        $params = self::validate_parameters(self::get_lesson_answers_by_lessonid_parameters(),
             array(
                 'lessonid' => $lessonid,
                 'options' => $options
@@ -1047,7 +1097,13 @@ class local_mod_lesson_external extends external_api
         return $DB->get_records_select("lesson_answers", "lessonid = :lessonid", array('lessonid' => $params['lessonid']));
     }
 
-    public static function get_lesson_answers_returns()
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
+    public static function get_lesson_answers_by_lessonid_returns()
     {
         return new external_multiple_structure(
             new external_single_structure(
@@ -1070,7 +1126,13 @@ class local_mod_lesson_external extends external_api
         );
     }
 
-    public static function get_lesson_grades_by_parameters()
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function get_lesson_grades_by_lessonid_and_userid_parameters()
     {
         return new external_function_parameters(
             array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
@@ -1095,12 +1157,21 @@ class local_mod_lesson_external extends external_api
         );
     }
 
-    public static function get_lesson_grades_by($lessonid, $userid, $options = array())
+    /**
+     * Get leson grades by lessonid and userid
+     *
+     * @param $lessonid
+     * @param $userid
+     * @param array $options
+     * @return array
+     * @throws invalid_parameter_exception
+     */
+    public static function get_lesson_grades_by_lessonid_and_userid($lessonid, $userid, $options = array())
     {
         global $DB;
 
         // validate params
-        $params = self::validate_parameters(self::get_lesson_grades_by_parameters(),
+        $params = self::validate_parameters(self::get_lesson_grades_by_lessonid_and_userid_parameters(),
             array(
                 'lessonid' => $lessonid,
                 'userid' => $userid,
@@ -1110,7 +1181,13 @@ class local_mod_lesson_external extends external_api
         return $DB->get_records("lesson_grades", array("lessonid" => $params['lessonid'], "userid" => $params['userid']), "grade DESC");
     }
 
-    public static function get_lesson_grades_by_returns()
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
+    public static function get_lesson_grades_by_lessonid_and_userid_returns()
     {
         return new external_multiple_structure(
             new external_single_structure(
@@ -1126,6 +1203,12 @@ class local_mod_lesson_external extends external_api
         );
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
     public static function save_lesson_branch_parameters()
     {
         return new external_function_parameters (
@@ -1142,6 +1225,13 @@ class local_mod_lesson_external extends external_api
         );
     }
 
+    /**
+     * create new a lesson branch
+     *
+     * @param $data
+     * @return array
+     * @throws invalid_parameter_exception
+     */
     public static function save_lesson_branch($data)
     {
         global $DB;
@@ -1173,6 +1263,12 @@ class local_mod_lesson_external extends external_api
         return $result;
     }
 
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
     public static function save_lesson_branch_returns()
     {
         return new external_single_structure(
