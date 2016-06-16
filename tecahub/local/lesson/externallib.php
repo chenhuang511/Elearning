@@ -1079,4 +1079,61 @@ class local_mod_lesson_external extends external_api
             ), 'lesson grades'
         );
     }
+
+    public static function save_lesson_branch_parameters()
+    {
+        return new external_function_parameters (
+            array(
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'data name'),
+                            'value' => new external_value(PARAM_RAW, 'data value'),
+                        )
+                    ), 'the data to be saved'
+                )
+            )
+        );
+    }
+
+    public static function save_lesson_branch($data)
+    {
+        global $DB;
+
+        $warnings = array();
+
+        $params = array(
+            'data' => $data
+        );
+
+        $params = self::validate_parameters(self::save_lesson_branch_parameters(), $params);
+
+        $branch = new stdClass();
+
+        foreach ($params['data'] as $arr) {
+            $branch->$arr['name'] = $arr['value'];
+        }
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $result = array();
+
+        $DB->insert_record("lesson_branch", $branch);
+        $transaction->allow_commit();
+
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function save_lesson_branch_returns()
+    {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
 }
