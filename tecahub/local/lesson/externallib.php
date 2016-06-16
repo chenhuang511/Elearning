@@ -327,6 +327,52 @@ class local_mod_lesson_external extends external_api
         return new external_value(PARAM_INT, 'id');
     }
 
+    public static function get_field_lessonpage_by_id_parameters()
+    {
+        return new external_function_parameters(
+            array('id' => new external_value(PARAM_INT, 'the id'),
+                'field' => new external_value(PARAM_TEXT, 'the field which selected'),
+                'options' => new external_multiple_structure (
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHANUM,
+                                'The expected keys (value format) are:
+                                                excludemodules (bool) Do not return modules, return only the sections structure
+                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
+                                                sectionid (int) Return only this section
+                                                sectionnumber (int) Return only this section with number (order)
+                                                cmid (int) Return only this module information (among the whole sections structure)
+                                                modname (string) Return only modules with this name "label, forum, etc..."
+                                                modid (int) Return only the module with this id (to be used with modname'),
+                            'value' => new external_value(PARAM_RAW, 'the value of the option,
+                                                                    this param is personaly validated in the external function.')
+                        )
+                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+            )
+        );
+    }
+
+    public static function get_field_lessonpage_by_id($id, $field, $options = array())
+    {
+        global $DB;
+
+        // validate params
+        $params = self::validate_parameters(self::get_field_lessonpage_by_id_parameters(),
+            array(
+                'id' => $id,
+                'field' => $field,
+                'options' => $options
+            )
+        );
+
+        return $DB->get_field('lesson_pages', $params['field'], array("id" => $params['id']));
+    }
+
+    public static function get_field_lessonpage_by_id_returns()
+    {
+        return new external_value(PARAM_RAW, 'field');
+    }
+
     /**
      * Returns description of method parameters
      *
@@ -1110,8 +1156,8 @@ class local_mod_lesson_external extends external_api
 
         $branch = new stdClass();
 
-        foreach ($params['data'] as $arr) {
-            $branch->$arr['name'] = $arr['value'];
+        foreach ($params['data'] as $key => $value) {
+            $branch->$key = $value;
         }
 
         $transaction = $DB->start_delegated_transaction();

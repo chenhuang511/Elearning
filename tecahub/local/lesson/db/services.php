@@ -145,5 +145,13 @@ $functions = array(
         'description' => 'insert new lesson branch',
         'type' => 'read',
         'ajax' => true
+    ),
+    'local_mod_get_field_lesson_pages_by_id' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_field_lessonpage_by_id',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'get field of lesson pages by id',
+        'type' => 'read',
+        'ajax' => true
     )
 );
