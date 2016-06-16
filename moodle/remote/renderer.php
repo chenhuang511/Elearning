@@ -276,6 +276,7 @@ class core_remote_renderer extends plugin_renderer_base
             'courseinfotab' => 'Thông tin',
             'forumtab' => 'Diễn đàn',
             'wikitab' => 'Wiki',
+            'chattab' => 'Chat',
             'processtab' => 'Tiến độ học'
         );
         $courseinfo = $this->render_course_info($courseid);
@@ -283,7 +284,8 @@ class core_remote_renderer extends plugin_renderer_base
         $courseprogress = $this->render_course_progress($course['content']);
         $courseforumtab = $this->render_course_forum();
         $coursewikitab = $this->render_course_wiki();
-        $tabcontens = array($coursewaretab, $courseinfo, $courseforumtab, $coursewikitab, $courseprogress);
+        $chattab = $this->render_course_chat();
+        $tabcontens = array($coursewaretab, $courseinfo, $courseforumtab, $coursewikitab, $chattab, $courseprogress);
 
         // div course-detail-tabs block contain all content of course
         $content = html_writer::start_tag('div', array('class' => 'course-detail-tabs container'));
@@ -404,6 +406,13 @@ class core_remote_renderer extends plugin_renderer_base
     {
         ob_start();
         include_once('include/render-course-wiki.php');
+        return ob_get_clean();
+    }
+
+    private function render_course_chat()
+    {
+        ob_start();
+        include_once('include/render-course-chat.php');
         return ob_get_clean();
     }
 }
