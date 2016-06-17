@@ -38,6 +38,10 @@
     // Sectionid should get priority over section number
     if ($sectionid) {
         $section = $DB->get_field('course_sections', 'section', array('id' => $sectionid, 'course' => $course->id), MUST_EXIST);
+        if (!$section) {
+            $section = get_remote_course_sections($course->id);
+            $section =  $section[$sectionid];
+        }
     }
     if ($section) {
         $urlparams['section'] = $section;
@@ -260,7 +264,7 @@
     echo html_writer::start_tag('div', array('class'=>'course-content'));
 
     // make sure that section 0 exists (this function will create one if it is missing)
-    course_create_sections_if_missing($course, 0);
+    //course_create_sections_if_missing($course, 0);
 
     // get information about course modules and existing module types
     // format.php in course formats may rely on presence of these variables
@@ -277,7 +281,7 @@
     $displaysection = $section;
 
     // Include the actual course format.
-    require($CFG->dirroot .'/course/format/'. $course->format .'/format.php');
+    //require($CFG->dirroot .'/course/format/'. $course->format .'/format.php');
     // Content wrapper end.
 
     echo html_writer::end_tag('div');

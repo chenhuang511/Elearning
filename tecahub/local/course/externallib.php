@@ -330,7 +330,7 @@ class local_mod_course_external extends external_api
      *
      * @return external_function_parameters
      */
-    public static function get_thumbnail_by_id_parameters()
+    public static function get_course_thumbnail_by_id_parameters()
     {
         return new external_function_parameters(
             array(
@@ -345,12 +345,12 @@ class local_mod_course_external extends external_api
      * @param array $courseid array of course ids
      * @return array An array of arrays thumbnail thumbnail
      */
-    public static function get_thumbnail_by_id($courseids)
+    public static function get_course_thumbnail_by_id($courseids)
     {
         global $CFG, $COURSE, $DB;
         require_once($CFG->dirroot . "/course/lib.php");
         //validate parameter
-        $params = self::validate_parameters(self::get_thumbnail_by_id_parameters(), array('courseids' => $courseids));
+        $params = self::validate_parameters(self::get_course_thumbnail_by_id_parameters(), array('courseids' => $courseids));
 
         // Clean the values.
         $cleanedvalues = array();
@@ -388,7 +388,7 @@ class local_mod_course_external extends external_api
      * @deprecated Moodle 2.5 MDL-38030 - Please do not call this function any more.
      * @see core_user_external::get_users_by_field_returns()
      */
-    public static function get_thumbnail_by_id_returns()
+    public static function get_course_thumbnail_by_id_returns()
     {
         return new external_multiple_structure(
             new external_single_structure(
