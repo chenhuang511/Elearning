@@ -232,7 +232,7 @@ class mnetservice_enrol {
                 $category                        = new stdClass();
                 $category->remoteid              = (int)$remote['cat_id'];
                 $category->hostid                = $mnethostid;
-                $category->name                  = substr($responsecat['name'], 255);
+                $category->name                  = substr($responsecat['name'], 0, 255);
                 $category->idnumber              = (int)$responsecat['idnumber'];
                 $category->description           = $responsecat['description'];
                 $category->descriptionformat     = (int)$responsecat['descriptionformat'];
@@ -242,9 +242,9 @@ class mnetservice_enrol {
                 $category->visible               = (int)$responsecat['visible'];
                 $category->visibleold            = (int)$responsecat['visibleold'];
                 $category->timemodified          = (int)$responsecat['timemodified'];
-                $category->depth                 = substr($responsecat['depth'], 100);
-                $category->path                  = substr($responsecat['name'], 255);
-                $category->theme                 = substr($responsecat['name'], 50);
+                $category->depth                 = substr($responsecat['depth'], 0, 100);
+                $category->path                  = substr($responsecat['path'], 0, 255);
+                $category->theme                 = substr($responsecat['theme'], 0, 50);
 
                 $cachedcats = $DB->get_records('course_categories', array('hostid' => $mnethostid), 'remoteid', 'remoteid, id');
                 if (empty($cachedcats[$category->remoteid])) {
