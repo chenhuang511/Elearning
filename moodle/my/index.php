@@ -4,11 +4,15 @@ require_once('../config.php');
 require_once($CFG->dirroot . '/course/remote/locallib.php');
 require_once($CFG->dirroot . '/remote/renderer.php');
 
-$courseid = required_param('id', PARAM_INT);
+$courseid = optional_param('id', 0, PARAM_INT);
 $sectionid = optional_param('sectionid', 0, PARAM_INT);
 $section = optional_param('section', 0, PARAM_INT);
 $coursemodule = null;
 $html = '';
+
+if ($courseid == 0) {
+    redirect($CFG->wwwroot);
+}
 
 $course = (empty($courseid)) ? null : get_local_course_record($courseid, true);
 
