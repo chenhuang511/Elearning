@@ -1599,12 +1599,19 @@ class lesson extends lesson_base
         $event->trigger();
 
         $USER->startlesson[$this->properties->id] = true;
-        $startlesson = new stdClass;
-        $startlesson->lessonid = $this->properties->id;
-        $startlesson->userid = $USER->id;
-        $startlesson->starttime = time();
-        $startlesson->lessontime = time();
-        $DB->insert_record('lesson_timer', $startlesson);
+
+        $data = array();
+
+        $data['data[0][name]'] = 'lessonid';
+        $data['data[0][value]'] = $this->properties->id;
+        $data['data[1][name]'] = 'userid';
+        $data['data[1][value]'] = $USER->id;
+        $data['data[2][name]'] = 'starttime';
+        $data['data[2][value]'] = time();
+        $data['data[3][name]'] = 'lessontime';
+        $data['data[3][value]'] = time();
+
+        $result = save_remote_lesson_timer($data);
         if ($this->properties->timelimit) {
             $this->add_message(get_string('timelimitwarning', 'lesson', format_time($this->properties->timelimit)), 'center');
         }
@@ -2589,28 +2596,41 @@ abstract class lesson_page extends lesson_base
 
                 // record student's attempt
                 $attempt = new stdClass;
-                $attempt->lessonid = $this->lesson->id;
-                $attempt->pageid = $this->properties->id;
-                $attempt->userid = $USER->id;
-                $attempt->answerid = $result->answerid;
-                $attempt->retry = $nretakes;
-                $attempt->correct = $result->correctanswer;
+
+                $data = array();
+
+                $data['data[0][name]'] = 'lessonid';
+                $data['data[0][value]'] = $this->lesson->id;
+                $data['data[1][name]'] = 'pageid';
+                $data['data[1][value]'] = $this->properties->id;
+                $data['data[2][name]'] = 'userid';
+                $data['data[2][value]'] = $USER->id;
+                $data['data[3][name]'] = 'answerid';
+                $data['data[3][value]'] = $result->answerid;
+                $data['data[4][name]'] = 'retry';
+                $data['data[4][value]'] = $nretakes;
+                $data['data[5][name]'] = 'correct';
+                $data['data[5][value]'] = $result->correctanswer;
+
                 if ($result->userresponse !== null) {
-                    $attempt->useranswer = $result->userresponse;
+                    $data['data[6][name]'] = 'useranswer';
+                    $data['data[6][value]'] = $result->userresponse;
                 }
 
-                $attempt->timeseen = time();
+                $data['data[7][name]'] = 'timeseen';
+                $data['data[7][value]'] = time();
+
                 // if allow modattempts, then update the old attempt record, otherwise, insert new answer record
                 $userisreviewing = false;
                 if (isset($USER->modattempts[$this->lesson->id])) {
-                    $attempt->retry = $nretakes - 1; // they are going through on review, $nretakes will be too high
+                    $data['data[4][value]'] = $nretakes - 1; // they are going through on review, $nretakes will be too high
                     $userisreviewing = true;
                 }
 
                 // Only insert a record if we are not reviewing the lesson.
                 if (!$userisreviewing) {
                     if ($this->lesson->retake || (!$this->lesson->retake && $nretakes == 0)) {
-                        $attempt->id = $DB->insert_record("lesson_attempts", $attempt);
+                        $attempt->id = save_remote_lesson_attempts($data);
                         // Trigger an event: question answered.
                         $eventparams = array(
                             'context' => context_module::instance($PAGE->cm->id),
@@ -2881,22 +2901,30 @@ abstract class lesson_page extends lesson_base
                 $answer = array_shift($answers);
             } else {
                 $answer = new stdClass;
-                $answer->lessonid = $properties->lessonid;
-                $answer->pageid = $properties->id;
-                $answer->timecreated = time();
+                $data = array();
+                $data['data[0][name]'] = 'lessonid';
+                $data['data[0][value]'] = $properties->lessonid;
+                $data['data[1][name]'] = 'pageid';
+                $data['data[1][value]'] = $properties->id;
+                $data['data[2][name]'] = 'timecreated';
+                $data['data[2][value]'] = time();
             }
 
-            $answer->timemodified = time();
+            $data['data[3][name]'] = 'timemodified';
+            $data['data[3][value]'] = time();
+
             if (isset($properties->jumpto[0])) {
-                $answer->jumpto = $properties->jumpto[0];
+                $data['data[4][name]'] = 'jumpto';
+                $data['data[4][value]'] = $properties->jumpto[0];
             }
             if (isset($properties->score[0])) {
-                $answer->score = $properties->score[0];
+                $data['data[5][name]'] = 'score';
+                $data['data[5][value]'] = $properties->score[0];
             }
             if (!empty($answer->id)) {
                 $DB->update_record("lesson_answers", $answer->properties());
             } else {
-                $DB->insert_record("lesson_answers", $answer);
+                $result = save_remote_lesson_answers($data);
             }
         } else {
             for ($i = 0; $i < $this->lesson->maxanswers; $i++) {

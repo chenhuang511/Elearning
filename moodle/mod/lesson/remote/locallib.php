@@ -486,6 +486,12 @@ function get_remote_events_by_modulename_and_instance($modulename, $instance, $u
     );
 }
 
+/**
+ * create new a lesson pages
+ *
+ * @param $newpage
+ * @return false|mixed
+ */
 function save_remote_lesson_pages($newpage)
 {
     return moodle_webservice_client(
@@ -494,6 +500,48 @@ function save_remote_lesson_pages($newpage)
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_save_lesson_pages',
             'params' => array('data' => $newpage)
+        )
+    );
+}
+
+/**
+ * create new a lesson attempts
+ *
+ * @param $attempt
+ * @return false|mixed
+ */
+function save_remote_lesson_attempts($attempt)
+{
+    return moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_save_lesson_attempts',
+            'params' => array('data' => $attempt)
+        )
+    );
+}
+
+function save_remote_lesson_answers($answer)
+{
+    return moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_save_lesson_answers',
+            'params' => array('data' => $answer)
+        )
+    );
+}
+
+function save_remote_lesson_timer($timer)
+{
+    return moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_save_lesson_timer',
+            'params' => array('data' => $timer)
         )
     );
 }

@@ -2007,4 +2007,202 @@ class local_mod_lesson_external extends external_api
     {
         return new external_value(PARAM_INT, 'newpageid');
     }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function save_lesson_attempts_parameters() {
+        return new external_function_parameters (
+            array(
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'data name'),
+                            'value' => new external_value(PARAM_RAW, 'data value'),
+                        )
+                    ), 'the data to be saved'
+                )
+            )
+        );
+    }
+
+    /**
+     * create a new lesson attempts
+     *
+     * @param $data
+     * @return bool|int
+     * @throws invalid_parameter_exception
+     */
+    public static function save_lesson_attempts($data) {
+        global $DB;
+
+        $params = array(
+            'data' => $data
+        );
+
+        $params = self::validate_parameters(self::save_lesson_attempts_parameters(), $params);
+
+        $attempt = new stdClass();
+
+        foreach ($params['data'] as $key => $value) {
+            $attempt->$key = $value;
+        }
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $newattemptid = $DB->insert_record("lesson_attempts", $attempt);
+
+        $transaction->allow_commit();
+
+        return $newattemptid;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
+    public static function save_lesson_attempts_returns() {
+        return new external_value(PARAM_INT, 'attemptid');
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function save_lesson_answers_parameters() {
+        return new external_function_parameters (
+            array(
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'data name'),
+                            'value' => new external_value(PARAM_RAW, 'data value'),
+                        )
+                    ), 'the data to be saved'
+                )
+            )
+        );
+    }
+
+    /**
+     * create a new lesson attempts
+     *
+     * @param $data
+     * @return bool|int
+     * @throws invalid_parameter_exception
+     */
+    public static function save_lesson_answers($data) {
+        global $DB;
+
+        $warnings = array();
+
+        $params = array(
+            'data' => $data
+        );
+
+        $params = self::validate_parameters(self::save_lesson_answers_parameters(), $params);
+
+        $answer = new stdClass();
+
+        foreach ($params['data'] as $key => $value) {
+            $answer->$key = $value;
+        }
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $result = array();
+
+        $DB->insert_record("lesson_answers", $answer);
+        $transaction->allow_commit();
+
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
+    public static function save_lesson_answers_returns() {
+        return self::save_lesson_branch_returns();
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function save_lesson_timer_parameters() {
+        return new external_function_parameters (
+            array(
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'data name'),
+                            'value' => new external_value(PARAM_RAW, 'data value'),
+                        )
+                    ), 'the data to be saved'
+                )
+            )
+        );
+    }
+
+    /**
+     * create a new lesson attempts
+     *
+     * @param $data
+     * @return bool|int
+     * @throws invalid_parameter_exception
+     */
+    public static function save_lesson_timer($data) {
+        global $DB;
+
+        $warnings = array();
+
+        $params = array(
+            'data' => $data
+        );
+
+        $params = self::validate_parameters(self::save_lesson_timer_parameters(), $params);
+
+        $timer = new stdClass();
+
+        foreach ($params['data'] as $key => $value) {
+            $timer->$key = $value;
+        }
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $result = array();
+
+        $DB->insert_record("lesson_timer", $timer);
+        $transaction->allow_commit();
+
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
+    public static function save_lesson_timer_returns() {
+        return self::save_lesson_branch_returns();
+    }
 }

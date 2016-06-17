@@ -106,6 +106,14 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_save_lesson_timer' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'save_lesson_timer',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Create new a lesson timer',
+        'type' => 'read',
+        'ajax' => true
+    ),
     'local_mod_get_lesson_branch_by_lessonid_and_userid_and_retry' => array(
         'classname' => 'local_mod_lesson_external',
         'methodname' => 'get_lesson_branch_by_lessonid_and_userid_and_retry',
@@ -154,6 +162,14 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_save_lesson_attempts' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'save_lesson_attempts',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Create new a lesson attempts',
+        'type' => 'read',
+        'ajax' => true
+    ),
     'local_mod_get_lesson_answer_by_pageid_and_lessonid' => array(
         'classname' => 'local_mod_lesson_external',
         'methodname' => 'get_lesson_answers_by_pageid_and_lessonid',
@@ -175,6 +191,14 @@ $functions = array(
         'methodname' => 'get_lesson_answers_by_lessonid',
         'classpath' => 'local/lesson/externallib.php',
         'description' => 'Get list lesson answers by lessonid',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_save_lesson_answers' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'save_lesson_answers',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Create new a lesson answers',
         'type' => 'read',
         'ajax' => true
     ),
