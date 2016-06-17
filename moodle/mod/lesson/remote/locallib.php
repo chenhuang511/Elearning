@@ -474,14 +474,14 @@ function delete_remote_lesson_object($tablename, $columnname, $value)
  * @param $instance
  * @return false|mixed
  */
-function get_remote_events_by_modulename_and_instance($modulename, $instance)
+function get_remote_events_by_modulename_and_instance($modulename, $instance, $userid = 0, $groupid = 0)
 {
     return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_events_by_modulename_and_instance',
-            'params' => array('modulename' => $modulename, 'instance' => $instance)
+            'params' => array('modulename' => $modulename, 'instance' => $instance, 'userid' => $userid, 'groupid' => $groupid)
         )
     );
 }

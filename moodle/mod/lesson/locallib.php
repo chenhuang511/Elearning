@@ -187,10 +187,8 @@ function lesson_unseen_branch_jump($lesson, $userid)
         $retakes = 0;
     }
 
-    $params = array("lessonid" => $lesson->id, "userid" => $userid, "retry" => $retakes);
-    if (!$seenbranches = $DB->get_records_select("lesson_branch", "lessonid = :lessonid AND userid = :userid AND retry = :retry", $params,
-        "timeseen DESC")
-    ) {
+    $seenbranches = get_remote_lesson_branch_by_lessonid_and_userid_and_retry($lesson->id, $userid, $retakes);
+    if (!$seenbranches) {
         print_error('cannotfindrecords', 'lesson');
     }
 
@@ -318,6 +316,7 @@ function lesson_grade($lesson, $ntries, $userid = 0)
         // get only the pages and their answers that the user answered
         list($usql, $parameters) = $DB->get_in_or_equal(array_keys($attemptset));
         array_unshift($parameters, $lesson->id);
+
         $pages = $DB->get_records_select("lesson_pages", "lessonid = ? AND id $usql", $parameters);
         $answers = $DB->get_records_select("lesson_answers", "lessonid = ? AND pageid $usql", $parameters);
 
@@ -1168,17 +1167,21 @@ class lesson extends lesson_base
         $conds = array('modulename' => 'lesson',
             'instance' => $this->properties->id);
         if (isset($override->userid)) {
-            $conds['userid'] = $override->userid;
+            $userid = $override->userid;
+            $groupid = 0;
         } else {
-            $conds['groupid'] = $override->groupid;
+            $userid = 0;
+            $groupid = $override->groupid;
         }
-        $events = $DB->get_records('event', $conds);
+        $events = get_remote_events_by_modulename_and_instance('lesson', $this->properties->id, $userid, $groupid);
         foreach ($events as $event) {
             $eventold = calendar_event::load($event);
             $eventold->delete();
         }
 
-        $DB->delete_records('lesson_overrides', array('id' => $overrideid));
+        delete_remote_lesson_object('lesson_overrides', 'id', $overrideid);
+
+        //$DB->delete_records('lesson_overrides', array('id' => $overrideid));
 
         // Set the common parameters for one of the events we will be triggering.
         $params = array(

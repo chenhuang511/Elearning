@@ -1860,7 +1860,9 @@ class local_mod_lesson_external extends external_api
         return new external_function_parameters(
             array(
                 'modulename' => new external_value(PARAM_TEXT, ' the module name'),
-                'instance' => new external_value(PARAM_INT, ' the instance')
+                'instance' => new external_value(PARAM_INT, ' the instance'),
+                'userid' => new external_value(PARAM_INT, ' the userid'),
+                'groupid' => new external_value(PARAM_INT, ' the groupid')
             )
         );
     }
@@ -1873,19 +1875,38 @@ class local_mod_lesson_external extends external_api
      * @return array
      * @throws invalid_parameter_exception
      */
-    public static function get_events_by_modulename_and_instace($modulename, $instance)
+    public static function get_events_by_modulename_and_instace($modulename, $instance, $userid, $groupid)
     {
         global $DB;
 
-        // validate params
-        $params = self::validate_parameters(self::get_events_by_modulename_and_instace_parameters(),
-            array(
-                'modulename' => $modulename,
-                'instance' => $instance
-            )
+        $arr = array(
+            'modulename' => $modulename,
+            'instance' => $instance
         );
 
-        return $DB->get_records('event', array("modulename" => $params['modulename'], "instance" => $params['instance']));
+        if($userid !== 0) {
+            $arr = array_merge($arr, array('userid' => $userid));
+        }
+
+        if($groupid !== 0) {
+            $arr = array_merge($arr, array('groupid' => $groupid));
+        }
+
+        // validate params
+        $params = self::validate_parameters(self::get_events_by_modulename_and_instace_parameters(),
+            $arr
+        );
+
+        $parameters = array("modulename" => $params['modulename'], "instance" => $params['instance']);
+
+        if(isset($params['userid'])) {
+            $parameters = array_merge($parameters, array('userid' => $params['userid']));
+        }
+        if(isset($params['groupid'])) {
+            $parameters = array_merge($parameters, array('groupid' => $params['groupid']));
+        }
+
+        return $DB->get_records('event', $parameters);
     }
 
     /**
