@@ -1884,11 +1884,11 @@ class local_mod_lesson_external extends external_api
             'instance' => $instance
         );
 
-        if($userid !== 0) {
+        if ($userid !== 0) {
             $arr = array_merge($arr, array('userid' => $userid));
         }
 
-        if($groupid !== 0) {
+        if ($groupid !== 0) {
             $arr = array_merge($arr, array('groupid' => $groupid));
         }
 
@@ -1899,10 +1899,10 @@ class local_mod_lesson_external extends external_api
 
         $parameters = array("modulename" => $params['modulename'], "instance" => $params['instance']);
 
-        if(isset($params['userid'])) {
+        if (isset($params['userid'])) {
             $parameters = array_merge($parameters, array('userid' => $params['userid']));
         }
-        if(isset($params['groupid'])) {
+        if (isset($params['groupid'])) {
             $parameters = array_merge($parameters, array('groupid' => $params['groupid']));
         }
 
@@ -1941,5 +1941,70 @@ class local_mod_lesson_external extends external_api
                 )
             )
         );
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function save_lesson_pages_parameters()
+    {
+        return new external_function_parameters (
+            array(
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'data name'),
+                            'value' => new external_value(PARAM_RAW, 'data value'),
+                        )
+                    ), 'the data to be saved'
+                )
+            )
+        );
+    }
+
+    /**
+     * create new a lesson pages
+     *
+     * @param $data
+     * @return array
+     * @throws invalid_parameter_exception
+     */
+    public static function save_lesson_pages($data)
+    {
+        global $DB;
+
+        $params = array(
+            'data' => $data
+        );
+
+        $params = self::validate_parameters(self::save_lesson_pages_parameters(), $params);
+
+        $newpage = new stdClass();
+
+        foreach ($params['data'] as $key => $value) {
+            $newpage->$key = $value;
+        }
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $newpageid = $DB->insert_record("lesson_pages", $newpage);
+
+        $transaction->allow_commit();
+
+        return $newpageid;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
+    public static function save_lesson_pages_returns()
+    {
+        return new external_value(PARAM_INT, 'newpageid');
     }
 }

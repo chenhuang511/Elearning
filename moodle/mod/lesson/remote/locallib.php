@@ -485,3 +485,15 @@ function get_remote_events_by_modulename_and_instance($modulename, $instance, $u
         )
     );
 }
+
+function save_remote_lesson_pages($newpage)
+{
+    return moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_save_lesson_pages',
+            'params' => array('data' => $newpage)
+        )
+    );
+}

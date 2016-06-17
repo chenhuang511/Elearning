@@ -90,6 +90,14 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_save_lesson_pages' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'save_lesson_pages',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'create new a lesson pages',
+        'type' => 'read',
+        'ajax' => true
+    ),
     'local_mod_get_lesson_timer_by_userid_and_lessonid' => array(
         'classname' => 'local_mod_lesson_external',
         'methodname' => 'get_lesson_timer_by_userid_and_lessonid',

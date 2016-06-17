@@ -2296,34 +2296,47 @@ abstract class lesson_page extends lesson_base
     {
         global $DB;
         $newpage = new stdClass;
-        $newpage->title = $properties->title;
-        $newpage->contents = $properties->contents_editor['text'];
-        $newpage->contentsformat = $properties->contents_editor['format'];
-        $newpage->lessonid = $lesson->id;
-        $newpage->timecreated = time();
-        $newpage->qtype = $properties->qtype;
-        $newpage->qoption = (isset($properties->qoption)) ? 1 : 0;
-        $newpage->layout = (isset($properties->layout)) ? 1 : 0;
-        $newpage->display = (isset($properties->display)) ? 1 : 0;
-        $newpage->prevpageid = 0; // this is a first page
-        $newpage->nextpageid = 0; // this is the only page
+        $data = array();
+
+        $data['data[0][name]'] = 'title';
+        $data['data[0][value]'] = $properties->title;
+        $data['data[1][name]'] = 'contents';
+        $data['data[1][value]'] = $properties->contents_editor['text'];
+        $data['data[2][name]'] = 'contentsformat';
+        $data['data[2][value]'] = $properties->contents_editor['format'];
+        $data['data[3][name]'] = 'lessonid';
+        $data['data[3][value]'] = $lesson->id;
+        $data['data[4][name]'] = 'timecreated';
+        $data['data[4][value]'] = time();
+        $data['data[5][name]'] = 'qtype';
+        $data['data[5][value]'] = $properties->qtype;
+        $data['data[6][name]'] = 'qoption';
+        $data['data[6][value]'] = (isset($properties->qoption)) ? 1 : 0;
+        $data['data[7][name]'] = 'layout';
+        $data['data[7][value]'] = (isset($properties->layout)) ? 1 : 0;
+        $data['data[8][name]'] = 'display';
+        $data['data[8][value]'] = (isset($properties->display)) ? 1 : 0;
+        $data['data[9][name]'] = 'prevpageid';
+        $data['data[9][value]'] = 0; // this is a first page
+        $data['data[10][name]'] = 'nextpageid';
+        $data['data[10][value]'] = 0; // this is the only page
 
         if ($properties->pageid) {
             $prevpage = get_remote_lesson_pages_by_id($properties->pageid);
             if (!$prevpage) {
                 print_error('cannotfindpages', 'lesson');
             }
-            $newpage->prevpageid = $prevpage->id;
-            $newpage->nextpageid = $prevpage->nextpageid;
+            $data['data[9][value]'] = $prevpage->id;
+            $data['data[10][value]'] = $prevpage->nextpageid;
         } else {
             $nextpage = get_remote_field_lesson_pages_by_lessonid_and_prevpageid($lesson->id, 0);
             if ($nextpage) {
                 // This is the first page, there are existing pages put this at the start
-                $newpage->nextpageid = $nextpage->id;
+                $data['data[10][value]'] = $nextpage->id;
             }
         }
 
-        $newpage->id = $DB->insert_record("lesson_pages", $newpage);
+        $newpage->id = save_remote_lesson_pages($data);
 
         $editor = new stdClass;
         $editor->id = $newpage->id;
