@@ -996,5 +996,6 @@
 .path-mod-assign #page,
 .path-mod-assign #page-content {
     position: inherit;
+	height: 1000px;
 }
 /** End of base fixes **/
