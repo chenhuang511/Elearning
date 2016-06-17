@@ -81,7 +81,7 @@ class core_remote_renderer extends plugin_renderer_base
 
                 if ($thumbnail) {
                     $imgthumb = html_writer::empty_tag('img', array('class' => 'course-img', 'src' => $thumbOjb[0]->thumbnail_image));
-                    $thumblink = html_writer::link(new moodle_url('/course/remote/view.php', array('id' => $course->id)),
+                    $thumblink = html_writer::link(new moodle_url($CFG->loginredir, array('id' => $course->id)),
                         $imgthumb, array('class' => $course->visible ? '' : 'course-thumbnail'));
 
                     $content .= html_writer::tag('div', $thumblink, array('class' => 'course-image col-sm-3'));
@@ -91,7 +91,7 @@ class core_remote_renderer extends plugin_renderer_base
 
             // course name
             $coursename = $course->fullname;
-            $coursenamelink = html_writer::link(new moodle_url('/course/remote/view.php', array('id' => $course->id)),
+            $coursenamelink = html_writer::link(new moodle_url($CFG->loginredir, array('id' => $course->id)),
                 $coursename, array('class' => $course->visible ? '' : 'dimmed'));
             $content .= html_writer::tag($nametag, $coursenamelink, array('class' => 'coursename col-sm-12'));
 
@@ -106,7 +106,7 @@ class core_remote_renderer extends plugin_renderer_base
             // display button
             $content .= html_writer::start_tag('div', array('class' => 'btn-register col-sm-3')); //start tag button
             $buttonname = 'Học ngay';
-            $buttonlink = html_writer::link(new moodle_url('/course/remote/view.php', array('id' => $course->id)),
+            $buttonlink = html_writer::link(new moodle_url($CFG->loginredir, array('id' => $course->id)),
                 $buttonname, array('class' => $course->visible ? '' : 'button'));
             $content .= html_writer::tag($buttonname, $buttonlink, array('class' => 'btn-reg-now'));
             $content .= html_writer::end_tag('div'); // end button
@@ -135,7 +135,7 @@ class core_remote_renderer extends plugin_renderer_base
 
                 if ($thumbnail) {
                     $imgthumb = html_writer::empty_tag('img', array('class' => 'course-img', 'src' => $thumbnail));
-                    $thumblink = html_writer::link(new moodle_url('/course/remote/view.php', array('id' => $course->id)),
+                    $thumblink = html_writer::link(new moodle_url($CFG->loginredir, array('id' => $course->id)),
                         $imgthumb, array('class' => $course->visible ? '' : 'course-thumbnail'));
 
                     $content .= html_writer::tag('div', $thumblink, array('class' => 'course-image col-sm-4'));
@@ -145,7 +145,7 @@ class core_remote_renderer extends plugin_renderer_base
             $content .= html_writer::start_tag('div', array('class' => 'course_content col-sm-8')); // start tag course_content
             // course name
             $coursename = $course->fullname;
-            $coursenamelink = html_writer::link(new moodle_url('/course/remote/view.php', array('id' => $course->id)),
+            $coursenamelink = html_writer::link(new moodle_url($CFG->loginredir, array('id' => $course->id)),
                 $coursename, array('class' => $course->visible ? '' : 'dimmed'));
             $content .= html_writer::tag($nametag, $coursenamelink, array('class' => 'coursename'));
             $content .= html_writer::end_tag('div'); //end tag course_content
@@ -170,7 +170,7 @@ class core_remote_renderer extends plugin_renderer_base
 
                 if ($thumbnail) {
                     $imgthumb = html_writer::empty_tag('img', array('class' => 'course-img', 'src' => $thumbnail));
-                    $thumblink = html_writer::link(new moodle_url('/course/remote/view.php', array('id' => $course->id)),
+                    $thumblink = html_writer::link(new moodle_url($CFG->loginredir, array('id' => $course->id)),
                         $imgthumb, array('class' => $course->visible ? '' : 'course-thumbnail'));
 
                     $content .= html_writer::tag('div', $thumblink, array('class' => 'course-image col-sm-4'));
@@ -180,7 +180,7 @@ class core_remote_renderer extends plugin_renderer_base
             $content .= html_writer::start_tag('div', array('class' => 'course-content col-sm-8')); // start tag course_content
             // course name
             $coursename = $course->fullname;
-            $coursenamelink = html_writer::link(new moodle_url('/course/remote/view.php', array('id' => $course->id)),
+            $coursenamelink = html_writer::link(new moodle_url($CFG->loginredir, array('id' => $course->id)),
                 $coursename, array('class' => $course->visible ? '' : 'dimmed'));
             $content .= html_writer::tag($nametag, $coursenamelink, array('class' => 'coursename'));
             $content .= html_writer::end_tag('div'); //end tag course_content
@@ -231,14 +231,14 @@ class core_remote_renderer extends plugin_renderer_base
                 $thumbnail = $thumbOjb[0]->thumbnail_image;
                 if ($thumbnail) {
                     $imgthumb = html_writer::empty_tag('img', array('class' => 'course_img', 'src' => $thumbOjb[0]->thumbnail_image));
-                    $thumblink = html_writer::link(new moodle_url('/course/remote/view.php', array('id' => $course->id)),
+                    $thumblink = html_writer::link(new moodle_url($CFG->loginredir, array('id' => $course->id)),
                         $imgthumb, array('class' => $course->visible ? '' : 'course-thumbnail'));
                     $content .= html_writer::tag('div', $thumblink, array('class' => 'course-image'));
                 }
             }
             // course name
             $coursename = $course->fullname;
-            $coursenamelink = html_writer::link(new moodle_url('/course/remote/view.php', array('id' => $course->id)),
+            $coursenamelink = html_writer::link(new moodle_url($CFG->loginredir, array('id' => $course->id)),
                 $coursename, array('class' => $course->visible ? '' : 'dimmed'));
             $content .= html_writer::tag($nametag, $coursenamelink, array('class' => 'coursename'));
             // display course summary
