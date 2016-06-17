@@ -32,6 +32,16 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/fdefine.php');
 
+function is_remote_course($courseorid) {
+    global $DB;
+
+    if (is_object($courseorid)) {
+        return ($courseorid->hostid != 0);
+    } else {
+        return $DB->get_field('course', 'hostid', array('id' => $courseorid), MUST_EXIST);
+    }
+}
+
 function convert_remote_course_record(&$course) {
     $course->id       = $course->remoteid;
 }

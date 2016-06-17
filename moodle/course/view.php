@@ -259,9 +259,10 @@
     // Course wrapper start.
     echo html_writer::start_tag('div', array('class'=>'course-content'));
 
-    // make sure that section 0 exists (this function will create one if it is missing)
-    course_create_sections_if_missing($course, 0);
-
+    if (!is_remote_course($course)) {
+        // make sure that section 0 exists (this function will create one if it is missing)
+        course_create_sections_if_missing($course, 0);
+    }
     // get information about course modules and existing module types
     // format.php in course formats may rely on presence of these variables
     $modinfo = get_fast_modinfo($course);
@@ -276,9 +277,11 @@
     // inclusion we pass parameters around this way..
     $displaysection = $section;
 
-    // Include the actual course format.
-    require($CFG->dirroot .'/course/format/'. $course->format .'/format.php');
-    // Content wrapper end.
+    if (!is_remote_course($course)) {
+        // Include the actual course format.
+        require($CFG->dirroot .'/course/format/'. $course->format .'/format.php');
+        // Content wrapper end.
+    }
 
     echo html_writer::end_tag('div');
 
