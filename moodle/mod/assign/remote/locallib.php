@@ -94,3 +94,15 @@ function get_remote_enrolled_users($courseid, $options = array()) {
         )
     ));
 }
+
+function get_remote_enrolled_users_by_ip($courseid, $ip, $options = array()) {
+    $resp = moodle_webservice_client(array_merge($options,
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_enrol_get_enrolled_users_by_hostip',
+            'params' => array('courseid' => $courseid, 'ip' => $ip),
+        )
+    ));
+    return $resp;
+}
