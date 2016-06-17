@@ -33,9 +33,6 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/fdefine.php');
 
 function convert_remote_course_record(&$course) {
-    global $DB;
-    $cat = $DB->get_record("course_categories", array("remoteid" => $course->category), "id, remoteid", MUST_EXIST);
-    $course->category = $cat->id;
     $course->id       = $course->remoteid;
 }
 
