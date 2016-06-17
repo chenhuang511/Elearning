@@ -88,7 +88,7 @@ class local_mod_enrol_external extends external_api
         require_once($CFG->dirroot . "/user/lib.php");
 
         $params = self::validate_parameters(
-            self::get_enrolled_users_parameters(),
+            self::get_enrolled_users_by_hostip_parameters(),
             array(
                 'courseid'=>$courseid,
                 'ip' => $ip,
