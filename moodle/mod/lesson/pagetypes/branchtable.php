@@ -96,11 +96,9 @@ class lesson_page_type_branchtable extends lesson_page
             }
             while (true) {
                 if ($apageid) {
-                    //$title = $DB->get_field("lesson_pages", "title", array("id" => $apageid));
-                    $title = get_remote_get_field_lesson_pages_by_id($apageid);
+                    $title = get_remote_field_lesson_pages_by_id($apageid);
                     $jump[$apageid] = $title;
-                    //$apageid = $DB->get_field("lesson_pages", "nextpageid", array("id" => $apageid));
-                    $apageid = intval(get_remote_get_field_lesson_pages_by_id($apageid, 'nextpageid'));
+                    $apageid = intval(get_remote_field_lesson_pages_by_id($apageid, 'nextpageid'));
                 } else {
                     // last page reached
                     break;

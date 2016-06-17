@@ -187,10 +187,8 @@ function lesson_unseen_branch_jump($lesson, $userid)
         $retakes = 0;
     }
 
-    $params = array("lessonid" => $lesson->id, "userid" => $userid, "retry" => $retakes);
-    if (!$seenbranches = $DB->get_records_select("lesson_branch", "lessonid = :lessonid AND userid = :userid AND retry = :retry", $params,
-        "timeseen DESC")
-    ) {
+    $seenbranches = get_remote_lesson_branch_by_lessonid_and_userid_and_retry($lesson->id, $userid, $retakes);
+    if (!$seenbranches) {
         print_error('cannotfindrecords', 'lesson');
     }
 
@@ -244,7 +242,7 @@ function lesson_random_question_jump($lesson, $pageid)
     global $DB;
 
     // get the lesson pages
-    $lessonpages = get_remote_get_lesson_pages_by_lessonid($lesson->id);
+    $lessonpages = get_remote_lesson_pages_by_lessonid($lesson->id);
     if (!$lessonpages) {
         print_error('cannotfindpages', 'lesson');
     }
@@ -302,7 +300,7 @@ function lesson_grade($lesson, $ntries, $userid = 0)
     $total = 0;
     $earned = 0;
 
-    $useranswers = get_remote_get_lesson_attempts_by_lessonid_and_userid_and_retry($lesson->id, $userid, $ntries);
+    $useranswers = get_remote_lesson_attempts_by_lessonid_and_userid_and_retry($lesson->id, $userid, $ntries);
     if ($useranswers) {
         // group each try with its page
         $attemptset = array();
@@ -318,6 +316,7 @@ function lesson_grade($lesson, $ntries, $userid = 0)
         // get only the pages and their answers that the user answered
         list($usql, $parameters) = $DB->get_in_or_equal(array_keys($attemptset));
         array_unshift($parameters, $lesson->id);
+
         $pages = $DB->get_records_select("lesson_pages", "lessonid = ? AND id $usql", $parameters);
         $answers = $DB->get_records_select("lesson_answers", "lessonid = ? AND pageid $usql", $parameters);
 
@@ -407,8 +406,9 @@ function lesson_displayleftif($lesson)
 
     if (!empty($lesson->displayleftif)) {
         // get the current user's max grade for this lesson
-        $params = array("userid" => $USER->id, "lessonid" => $lesson->id);
-        if ($maxgrade = $DB->get_record_sql('SELECT userid, MAX(grade) AS maxgrade FROM {lesson_grades} WHERE userid = :userid AND lessonid = :lessonid GROUP BY userid', $params)) {
+        //$params = array("userid" => $USER->id, "lessonid" => $lesson->id);
+        $maxgrade = get_remote_maxgrade_lesson_grades_by_userid_and_lessonid($USER->id, $lesson->id);
+        if ($maxgrade) {
             if ($maxgrade->maxgrade < $lesson->displayleftif) {
                 return 0;  // turn off the displayleft
             }
@@ -1060,8 +1060,8 @@ class lesson extends lesson_base
     public static function load($lessonid)
     {
         global $DB;
-
-        if (!$lesson = $DB->get_record('lesson', array('id' => $lessonid))) {
+        $lesson = get_remote_lesson_by_id($lessonid);
+        if (!$lesson) {
             print_error('invalidcoursemodule');
         }
         return new lesson($lesson);
@@ -1081,14 +1081,58 @@ class lesson extends lesson_base
 
         $this->delete_all_overrides();
 
-        $DB->delete_records("lesson", array("id" => $this->properties->id));
-        $DB->delete_records("lesson_pages", array("lessonid" => $this->properties->id));
-        $DB->delete_records("lesson_answers", array("lessonid" => $this->properties->id));
-        $DB->delete_records("lesson_attempts", array("lessonid" => $this->properties->id));
-        $DB->delete_records("lesson_grades", array("lessonid" => $this->properties->id));
-        $DB->delete_records("lesson_timer", array("lessonid" => $this->properties->id));
-        $DB->delete_records("lesson_branch", array("lessonid" => $this->properties->id));
-        if ($events = $DB->get_records('event', array("modulename" => 'lesson', "instance" => $this->properties->id))) {
+//        $DB->delete_records("lesson", array("id" => $this->properties->id));
+//        $DB->delete_records("lesson_pages", array("lessonid" => $this->properties->id));
+//        $DB->delete_records("lesson_answers", array("lessonid" => $this->properties->id));
+//        $DB->delete_records("lesson_attempts", array("lessonid" => $this->properties->id));
+//        $DB->delete_records("lesson_grades", array("lessonid" => $this->properties->id));
+//        $DB->delete_records("lesson_timer", array("lessonid" => $this->properties->id));
+//        $DB->delete_records("lesson_branch", array("lessonid" => $this->properties->id));
+
+        $params = array(
+            array(
+                'tablename' => 'lesson',
+                'columnname' => 'id',
+                'value' => $this->properties->id
+            ),
+            array(
+                'tablename' => 'lesson_pages',
+                'columnname' => 'lessonid',
+                'value' => $this->properties->id
+            ),
+            array(
+                'tablename' => 'lesson_answers',
+                'columnname' => 'lessonid',
+                'value' => $this->properties->id
+            ),
+            array(
+                'tablename' => 'lesson_attempts',
+                'columnname' => 'lessonid',
+                'value' => $this->properties->id
+            ),
+            array(
+                'tablename' => 'lesson_grades',
+                'columnname' => 'lessonid',
+                'value' => $this->properties->id
+            ),
+            array(
+                'tablename' => 'lesson_timer',
+                'columnname' => 'id',
+                'value' => $this->properties->id
+            ),
+            array(
+                'tablename' => 'lesson_branch',
+                'columnname' => 'lessonid',
+                'value' => $this->properties->id
+            )
+        );
+
+        foreach ($params as $data) {
+            delete_remote_lesson_object($data['tablename'], $data['columnname'], $data['value']);
+        }
+
+        $events = get_remote_events_by_modulename_and_instance('lesson', $this->properties->id);
+        if ($events) {
             foreach ($events as $event) {
                 $event = calendar_event::load($event);
                 $event->delete();
@@ -1117,23 +1161,27 @@ class lesson extends lesson_base
 
         $cm = get_coursemodule_from_instance('lesson', $this->properties->id, $this->properties->course);
 
-        $override = $DB->get_record('lesson_overrides', array('id' => $overrideid), '*', MUST_EXIST);
+        $override = get_remote_lesson_overrides_by_id($overrideid);
 
         // Delete the events.
         $conds = array('modulename' => 'lesson',
             'instance' => $this->properties->id);
         if (isset($override->userid)) {
-            $conds['userid'] = $override->userid;
+            $userid = $override->userid;
+            $groupid = 0;
         } else {
-            $conds['groupid'] = $override->groupid;
+            $userid = 0;
+            $groupid = $override->groupid;
         }
-        $events = $DB->get_records('event', $conds);
+        $events = get_remote_events_by_modulename_and_instance('lesson', $this->properties->id, $userid, $groupid);
         foreach ($events as $event) {
             $eventold = calendar_event::load($event);
             $eventold->delete();
         }
 
-        $DB->delete_records('lesson_overrides', array('id' => $overrideid));
+        delete_remote_lesson_object('lesson_overrides', 'id', $overrideid);
+
+        //$DB->delete_records('lesson_overrides', array('id' => $overrideid));
 
         // Set the common parameters for one of the events we will be triggering.
         $params = array(
@@ -1166,7 +1214,7 @@ class lesson extends lesson_base
     {
         global $DB;
 
-        $overrides = $DB->get_records('lesson_overrides', array('lessonid' => $this->properties->id), 'id');
+        $overrides = get_remote_lesson_overrides_by_lessonid($this->properties->id);
         foreach ($overrides as $override) {
             $this->delete_override($override->id);
         }
@@ -1190,7 +1238,7 @@ class lesson extends lesson_base
         global $DB;
 
         // Check for user override.
-        $override = $DB->get_record('lesson_overrides', array('lessonid' => $this->properties->id, 'userid' => $userid));
+        $override = get_remote_lesson_overrides_by_lessonid_and_userid($this->properties->id, $userid);
 
         if (!$override) {
             $override = new stdClass();
@@ -1339,18 +1387,21 @@ class lesson extends lesson_base
      */
     public function get_attempts($retries, $correct = false, $pageid = null, $userid = null)
     {
-        global $USER, $DB;
-        $params = array("lessonid" => $this->properties->id, "userid" => $userid, "retry" => $retries);
-        if ($correct) {
-            $params['correct'] = 1;
-        }
-        if ($pageid !== null) {
-            $params['pageid'] = $pageid;
-        }
-        if ($userid === null) {
-            $params['userid'] = $USER->id;
-        }
-        return $DB->get_records('lesson_attempts', $params, 'timeseen ASC');
+//        global $USER, $DB;
+//        $params = array("lessonid" => $this->properties->id, "userid" => $userid, "retry" => $retries);
+//        if ($correct) {
+//            $params['correct'] = 1;
+//        }
+//        if ($pageid !== null) {
+//            $params['pageid'] = $pageid;
+//        }
+//        if ($userid === null) {
+//            $params['userid'] = $USER->id;
+//        }
+
+        $attempts = get_remote_lesson_attempts_by_lessonid_and_userid($this->properties->id, $userid, $retries, $correct ? 1 : 0, $pageid !== null ? $pageid : -1);
+
+        return $attempts;
     }
 
     /**
@@ -1577,9 +1628,9 @@ class lesson extends lesson_base
         // clock code
         // get time information for this user
         $params = array("lessonid" => $this->properties->id, "userid" => $USER->id);
-        if (!$timer = $DB->get_records('lesson_timer', $params, 'starttime DESC', '*', 0, 1)) {
+        if (!$timer = get_remote_lesson_timer_by_userid_and_lessonid($USER->id, $this->properties->id, 0, 1)) {
             $this->start_timer();
-            $timer = $DB->get_records('lesson_timer', $params, 'starttime DESC', '*', 0, 1);
+            $timer = get_remote_lesson_timer_by_userid_and_lessonid($USER->id, $this->properties->id, 0, 1);
         }
         $timer = current($timer); // This will get the latest start time record.
 
@@ -1668,9 +1719,9 @@ class lesson extends lesson_base
     public function link_for_activitylink()
     {
         global $DB;
-        $module = $DB->get_record('course_modules', array('id' => $this->properties->activitylink));
+        $module = get_remote_course_module($this->properties->activitylink);
         if ($module) {
-            $modname = $DB->get_field('modules', 'name', array('id' => $module->module));
+            $modname = get_remote_name_modules_by_id($module->module);
             if ($modname) {
                 $instancename = $DB->get_field($modname, 'name', array('id' => $module->instance));
                 if ($instancename) {
@@ -2245,34 +2296,47 @@ abstract class lesson_page extends lesson_base
     {
         global $DB;
         $newpage = new stdClass;
-        $newpage->title = $properties->title;
-        $newpage->contents = $properties->contents_editor['text'];
-        $newpage->contentsformat = $properties->contents_editor['format'];
-        $newpage->lessonid = $lesson->id;
-        $newpage->timecreated = time();
-        $newpage->qtype = $properties->qtype;
-        $newpage->qoption = (isset($properties->qoption)) ? 1 : 0;
-        $newpage->layout = (isset($properties->layout)) ? 1 : 0;
-        $newpage->display = (isset($properties->display)) ? 1 : 0;
-        $newpage->prevpageid = 0; // this is a first page
-        $newpage->nextpageid = 0; // this is the only page
+        $data = array();
+
+        $data['data[0][name]'] = 'title';
+        $data['data[0][value]'] = $properties->title;
+        $data['data[1][name]'] = 'contents';
+        $data['data[1][value]'] = $properties->contents_editor['text'];
+        $data['data[2][name]'] = 'contentsformat';
+        $data['data[2][value]'] = $properties->contents_editor['format'];
+        $data['data[3][name]'] = 'lessonid';
+        $data['data[3][value]'] = $lesson->id;
+        $data['data[4][name]'] = 'timecreated';
+        $data['data[4][value]'] = time();
+        $data['data[5][name]'] = 'qtype';
+        $data['data[5][value]'] = $properties->qtype;
+        $data['data[6][name]'] = 'qoption';
+        $data['data[6][value]'] = (isset($properties->qoption)) ? 1 : 0;
+        $data['data[7][name]'] = 'layout';
+        $data['data[7][value]'] = (isset($properties->layout)) ? 1 : 0;
+        $data['data[8][name]'] = 'display';
+        $data['data[8][value]'] = (isset($properties->display)) ? 1 : 0;
+        $data['data[9][name]'] = 'prevpageid';
+        $data['data[9][value]'] = 0; // this is a first page
+        $data['data[10][name]'] = 'nextpageid';
+        $data['data[10][value]'] = 0; // this is the only page
 
         if ($properties->pageid) {
-            $prevpage = $DB->get_record("lesson_pages", array("id" => $properties->pageid), 'id, nextpageid');
+            $prevpage = get_remote_lesson_pages_by_id($properties->pageid);
             if (!$prevpage) {
                 print_error('cannotfindpages', 'lesson');
             }
-            $newpage->prevpageid = $prevpage->id;
-            $newpage->nextpageid = $prevpage->nextpageid;
+            $data['data[9][value]'] = $prevpage->id;
+            $data['data[10][value]'] = $prevpage->nextpageid;
         } else {
-            $nextpage = $DB->get_record('lesson_pages', array('lessonid' => $lesson->id, 'prevpageid' => 0), 'id');
+            $nextpage = get_remote_field_lesson_pages_by_lessonid_and_prevpageid($lesson->id, 0);
             if ($nextpage) {
                 // This is the first page, there are existing pages put this at the start
-                $newpage->nextpageid = $nextpage->id;
+                $data['data[10][value]'] = $nextpage->id;
             }
         }
 
-        $newpage->id = $DB->insert_record("lesson_pages", $newpage);
+        $newpage->id = save_remote_lesson_pages($data);
 
         $editor = new stdClass;
         $editor->id = $newpage->id;
@@ -2326,7 +2390,7 @@ abstract class lesson_page extends lesson_base
         if (is_object($id) && !empty($id->qtype)) {
             $page = $id;
         } else {
-            $page = $DB->get_record("lesson_pages", array("id" => $id));
+            $page = get_remote_lesson_pages_by_id($id);
             if (!$page) {
                 print_error('cannotfindpages', 'lesson');
             }
@@ -2355,7 +2419,8 @@ abstract class lesson_page extends lesson_base
 
         // Delete files associated with attempts.
         $fs = get_file_storage();
-        if ($attempts = $DB->get_records('lesson_attempts', array("pageid" => $this->properties->id))) {
+        $attempts = get_remote_lesson_attempts_by_pageid($this->properties->id);
+        if ($attempts) {
             foreach ($attempts as $attempt) {
                 $fs->delete_area_files($context->id, 'mod_lesson', 'essay_responses', $attempt->id);
             }
@@ -3319,7 +3384,6 @@ class lesson_page_answer extends lesson_base
     public static function load($id)
     {
         global $DB;
-        //$answer = $DB->get_record("lesson_answers", array("id" => $id));
         $answer = get_remote_lesson_answers_by_id($id);
         return new lesson_page_answer($answer);
     }
@@ -3508,7 +3572,8 @@ class lesson_page_type_manager
     public function load_all_pages(lesson $lesson)
     {
         global $DB;
-        if (!($pages = $DB->get_records('lesson_pages', array('lessonid' => $lesson->id)))) {
+        $pages = get_remote_lesson_pages_by_lessonid($lesson->id);
+        if (!$pages) {
             return array(); // Records returned empty.
         }
         foreach ($pages as $key => $page) {

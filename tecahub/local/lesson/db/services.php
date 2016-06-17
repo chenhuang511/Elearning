@@ -66,6 +66,14 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_get_lesson_pages_by_id' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_lesson_pages_by_id',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get lesson pages by id',
+        'type' => 'read',
+        'ajax' => true
+    ),
     'local_mod_get_field_lesson_pages_by_id' => array(
         'classname' => 'local_mod_lesson_external',
         'methodname' => 'get_field_lesson_pages_by_id',
@@ -79,6 +87,14 @@ $functions = array(
         'methodname' => 'get_field_lesson_pages_by_lessonid_and_prevpageid',
         'classpath' => 'local/lesson/externallib.php',
         'description' => 'Get id of lesson page by lessonid and prevpageid',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_save_lesson_pages' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'save_lesson_pages',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'create new a lesson pages',
         'type' => 'read',
         'ajax' => true
     ),
@@ -130,6 +146,14 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_get_lesson_attempts_by_pageid' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_lesson_attempts_by_pageid',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get list of lesson attempts by pageid',
+        'type' => 'read',
+        'ajax' => true
+    ),
     'local_mod_get_lesson_answer_by_pageid_and_lessonid' => array(
         'classname' => 'local_mod_lesson_external',
         'methodname' => 'get_lesson_answers_by_pageid_and_lessonid',
@@ -159,6 +183,54 @@ $functions = array(
         'methodname' => 'get_lesson_grades_by_lessonid_and_userid',
         'classpath' => 'local/lesson/externallib.php',
         'description' => 'Get lesson grades by lessonid and userid. Return list',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_maxgrade_lesson_grades_by_userid_and_lessonid' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_maxgrade_lesson_grades_by_userid_and_lessonid',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get maxgrade of lesson grades by userid and lessonid',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_lesson_overrides_by_id' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_lesson_overrides_by_id',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get lesson overrides by id',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_lesson_overrides_by_lessonid' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_lesson_overrides_by_lessonid',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get list of lesson overrides by lessonid',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_lesson_overrides_by_lessonid_and_userid' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_lesson_overrides_by_lessonid_and_userid',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get lesson overrides by lessonid and userid',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_delete_lesson_object' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'delete_lesson_object',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Delete lesson objects',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_events_by_modulename_and_instance' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_events_by_modulename_and_instace',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get list of events by module name and instance',
         'type' => 'read',
         'ajax' => true
     ),

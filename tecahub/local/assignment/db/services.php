@@ -58,5 +58,13 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_assign_get_onlinetext_submission' => array(
+		'classname'	  => 'local_mod_assign_external',
+		'methodname'  => 'get_onlinetext_submission',
+		'classpath'	  => 'local/assignment/externallib.php',
+		'description' => "Get online text submission",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 );
 

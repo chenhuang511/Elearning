@@ -680,4 +680,33 @@ class local_mod_assign_external extends external_api {
     public static function get_submissions_by_host_ip_returns() {
         return mod_assign_external::get_submissions_returns();
     }
+
+    // MINHND
+    public static function get_onlinetext_submission_parameters(){
+        return new external_function_parameters(
+            array('submissionid' => new external_value(PARAM_INT, 'the submission id'))
+        );
+    }
+
+    public static function get_onlinetext_submission($submissionid){
+        global $DB;
+
+        // validate params
+        $params = self::validate_parameters(self::get_onlinetext_submission_parameters(),
+            array(
+                'submissionid' => $submissionid
+            )
+        );
+        return $DB->get_record('assignsubmission_onlinetext', array('submission'=>$params['submissionid']));
+    }
+
+    public static function get_onlinetext_submission_returns(){
+        return new external_single_structure(
+            array(
+                'assignment' => new external_value(PARAM_INT, 'assignment id'),
+                'submission' => new external_value(PARAM_INT, 'submission id'),
+                'onlinetext' => new external_value(PARAM_RAW, 'online text'),
+                'onlineformat' => new external_value(PARAM_INT, 'online text format'),
+            ));
+    }
 }
