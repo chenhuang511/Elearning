@@ -246,19 +246,20 @@ class mnetservice_enrol {
                 $category->path                  = substr($responsecat['name'], 255);
                 $category->theme                 = substr($responsecat['name'], 50);
 
-                if (empty($cachedcourses[$course->remoteid])) {
-                    $course->id = $DB->insert_record('course', $course);
-                } else {
-                    $course->id = $cachedcourses[$course->remoteid]->id;
-                    $DB->update_record('course', $course);
-                }
-
                 $cachedcats = $DB->get_records('course_categories', array('hostid' => $mnethostid), 'remoteid', 'remoteid, id');
                 if (empty($cachedcats[$category->remoteid])) {
                     $category->id = $DB->insert_record("course_categories", $category);
                 } else {
                     $category->id = $cachedcats[$category->remoteid]->id;
                     $DB->update_record("course_categories", $category);
+                }
+
+                $course->category = $category->id;
+                if (empty($cachedcourses[$course->remoteid])) {
+                    $course->id = $DB->insert_record('course', $course);
+                } else {
+                    $course->id = $cachedcourses[$course->remoteid]->id;
+                    $DB->update_record('course', $course);
                 }
 
                 $list[$course->remoteid] = $course;
