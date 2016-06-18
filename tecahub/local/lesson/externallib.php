@@ -1633,7 +1633,7 @@ class local_mod_lesson_external extends external_api
         return new external_single_structure(
             array(
                 'id' => new external_value(PARAM_INT, 'the id'),
-                'lessonid' => new external_value(PARAM_INT, 'the lessonid', VALUE_DEFAULT),
+                'lessonid' => new external_value(PARAM_INT, 'the lessonid'),
                 'groupid' => new external_value(PARAM_INT, 'the groupid'),
                 'userid' => new external_value(PARAM_INT, 'the userid'),
                 'available' => new external_value(PARAM_INT, 'available'),
@@ -1711,7 +1711,21 @@ class local_mod_lesson_external extends external_api
      */
     public static function get_lesson_overrides_by_lessonid_and_userid_returns()
     {
-        return self::get_lesson_overrides_by_id_returns();
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'the id'),
+                'lessonid' => new external_value(PARAM_INT, 'the lessonid'),
+                'groupid' => new external_value(PARAM_INT, 'the groupid'),
+                'userid' => new external_value(PARAM_INT, 'the userid'),
+                'available' => new external_value(PARAM_INT, 'available'),
+                'deadline' => new external_value(PARAM_INT, 'deadline'),
+                'timelimit' => new external_value(PARAM_INT, 'time limit'),
+                'review' => new external_value(PARAM_INT, 'review'),
+                'maxattempts' => new external_value(PARAM_INT, 'max attempts'),
+                'retake' => new external_value(PARAM_INT, 'retake'),
+                'password' => new external_value(PARAM_TEXT, 'password')
+            )
+        );
     }
 
     /**
