@@ -1700,7 +1700,7 @@ class local_mod_lesson_external extends external_api
             )
         );
 
-        return $DB->get_record('lesson_overrides', array('lessonid' => $params['lessonid'], 'userid' => $params['userid']));
+        return $DB->get_record('lesson_overrides', array('lessonid' => $params['lessonid'], 'userid' => $params['userid']), '*', MUST_EXIST);
     }
 
     /**
@@ -2014,7 +2014,8 @@ class local_mod_lesson_external extends external_api
      * @return external_function_parameters
      * @since Moodle 3.0
      */
-    public static function save_lesson_attempts_parameters() {
+    public static function save_lesson_attempts_parameters()
+    {
         return new external_function_parameters (
             array(
                 'data' => new external_multiple_structure(
@@ -2036,7 +2037,8 @@ class local_mod_lesson_external extends external_api
      * @return bool|int
      * @throws invalid_parameter_exception
      */
-    public static function save_lesson_attempts($data) {
+    public static function save_lesson_attempts($data)
+    {
         global $DB;
 
         $params = array(
@@ -2066,7 +2068,8 @@ class local_mod_lesson_external extends external_api
      * @return external_description
      * @since Moodle 3.0
      */
-    public static function save_lesson_attempts_returns() {
+    public static function save_lesson_attempts_returns()
+    {
         return new external_value(PARAM_INT, 'attemptid');
     }
 
@@ -2076,7 +2079,8 @@ class local_mod_lesson_external extends external_api
      * @return external_function_parameters
      * @since Moodle 3.0
      */
-    public static function save_lesson_answers_parameters() {
+    public static function save_lesson_answers_parameters()
+    {
         return new external_function_parameters (
             array(
                 'data' => new external_multiple_structure(
@@ -2098,7 +2102,8 @@ class local_mod_lesson_external extends external_api
      * @return bool|int
      * @throws invalid_parameter_exception
      */
-    public static function save_lesson_answers($data) {
+    public static function save_lesson_answers($data)
+    {
         global $DB;
 
         $warnings = array();
@@ -2134,7 +2139,8 @@ class local_mod_lesson_external extends external_api
      * @return external_description
      * @since Moodle 3.0
      */
-    public static function save_lesson_answers_returns() {
+    public static function save_lesson_answers_returns()
+    {
         return self::save_lesson_branch_returns();
     }
 
@@ -2144,7 +2150,8 @@ class local_mod_lesson_external extends external_api
      * @return external_function_parameters
      * @since Moodle 3.0
      */
-    public static function save_lesson_timer_parameters() {
+    public static function save_lesson_timer_parameters()
+    {
         return new external_function_parameters (
             array(
                 'data' => new external_multiple_structure(
@@ -2166,7 +2173,8 @@ class local_mod_lesson_external extends external_api
      * @return bool|int
      * @throws invalid_parameter_exception
      */
-    public static function save_lesson_timer($data) {
+    public static function save_lesson_timer($data)
+    {
         global $DB;
 
         $warnings = array();
@@ -2202,7 +2210,8 @@ class local_mod_lesson_external extends external_api
      * @return external_description
      * @since Moodle 3.0
      */
-    public static function save_lesson_timer_returns() {
+    public static function save_lesson_timer_returns()
+    {
         return self::save_lesson_branch_returns();
     }
 }
