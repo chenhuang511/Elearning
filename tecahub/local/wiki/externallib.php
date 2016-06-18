@@ -126,7 +126,7 @@ class local_mod_wiki_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_mod_wiki_first_page($subwikid) {
+    public static function get_mod_wiki_first_page($subwikid, $module = null) {
         global $CFG, $DB;
 
         //validate parameter
