@@ -1685,7 +1685,7 @@ class local_mod_lesson_external extends external_api
 
 
         if (!($override = $DB->get_record('lesson_overrides', array('lessonid' => $params['lessonid'], 'userid' => $params['userid'])))) {
-            return new stdClass();
+            return array();
         }
 
         return $override;
