@@ -1687,7 +1687,7 @@ class local_mod_lesson_external extends external_api
         try {
             return $DB->get_record('lesson_overrides', array('lessonid' => $params['lessonid'], 'userid' => $params['userid']), '*', MUST_EXIST);
         } catch (Exception $e) {
-            return null;
+            return array();
         }
     }
 
