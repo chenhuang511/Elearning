@@ -131,7 +131,7 @@ class local_mod_wiki_external extends external_api {
 
         //validate parameter
         $params = self::validate_parameters(self::get_mod_wiki_first_page_parameters(),
-            array('subwikiid' => $id, 'module' = $module));
+            array('subwikiid' => $id, 'module' => $module));
 
         $sql = "SELECT p.*
             FROM {wiki} w, {wiki_subwikis} s, {wiki_pages} p
