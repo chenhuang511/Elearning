@@ -93,8 +93,7 @@ if ($id) {
     }
 
     // Getting subwiki. If it does not exists, redirecting to create page
-    if (!$subwiki = wiki_get_subwiki_by_group($wiki->id, $currentgroup, $userid)) {
-        $subwiki = get_remote_subwiki_by_group($wiki->id, $currentgroup, $userid);
+    if (!$subwiki = get_remote_subwiki_by_group($wiki->id, $currentgroup, $userid)) {
         if (!$wiki) {
             $params = array('wid' => $wiki->id, 'group' => $currentgroup, 'uid' => $userid, 'title' => $wiki->firstpagetitle);
             $url = new moodle_url('/mod/wiki/remote/create.php', $params);
@@ -103,7 +102,7 @@ if ($id) {
     }
 
     // Getting first page. If it does not exists, redirecting to create page
-    if (!$page = wiki_get_first_page($subwiki->id, $wiki)) {
+    if (!$page = get_remote_wiki_first_page($subwiki->id)) {
         $params = array('swid'=>$subwiki->id, 'title'=>$wiki->firstpagetitle);
         $url = new moodle_url('/mod/wiki/remote/create.php', $params);
         redirect($url);

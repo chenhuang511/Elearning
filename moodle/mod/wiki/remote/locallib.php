@@ -26,18 +26,13 @@ function get_remote_subwiki_by_group($wikiid, $groupid, $userid = 0)
             'params' => array('wikiid' => $wikiid)
         )
     );
-    $subwikis = $subwikis->subwikis;
-    $result = array();
-    foreach($subwikis as $val) {
-        $key = $val->id;
-        $result[$key] = $val;
-    }
-    return $result;
+
+    return $subwikis->subwikis[0];
 }
 
 function get_remote_wiki_first_page($subwikiid, $module = null)
 {
-    $subwikis = moodle_webservice_client(
+    return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
