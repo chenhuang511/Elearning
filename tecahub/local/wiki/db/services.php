@@ -42,4 +42,13 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_wiki_get_first_page' => array(
+		'classname'	  => 'local_mod_wiki_external',
+		'methodname'  => 'get_mod_wiki_first_page',
+		'classpath'	  => 'local/wiki/externallib.php',
+		'description' => "Get first page by subwiki id or by subwiki identify",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 );
+
