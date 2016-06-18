@@ -1683,7 +1683,13 @@ class local_mod_lesson_external extends external_api
             )
         );
 
-        return $DB->get_record('lesson_overrides', array('lessonid' => $params['lessonid'], 'userid' => $params['userid']));
+        $result = $DB->get_record('lesson_overrides', array('lessonid' => $params['lessonid'], 'userid' => $params['userid']));
+
+        if(!$result) {
+            return null;
+        }
+
+        return $result;
     }
 
     /**
