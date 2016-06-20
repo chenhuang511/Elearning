@@ -32,6 +32,20 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/fdefine.php');
 
+
+function update_course_category_path($catid) {
+    global $DB;
+    $result = '';
+    $cat = $DB->get_record('course_categories', array('id' => $catid), 'id, path, parent', MUST_EXIST);
+
+    if (!$cat->parent) {
+        return $result . "/$catid";
+    }
+
+    $result = update_course_category_path($cat->id);
+    return $result;
+}
+
 function is_remote_course($courseorid) {
     global $DB;
 
