@@ -50,9 +50,9 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
-    'local_mod_get_lesson_pages_by_pageid_and_lessonid' => array(
+    'local_mod_get_lesson_pages_by_id_and_lessonid' => array(
         'classname' => 'local_mod_lesson_external',
-        'methodname' => 'get_lesson_pages_by_pageid_and_lessonid',
+        'methodname' => 'get_lesson_pages_by_id_and_lessonid',
         'classpath' => 'local/lesson/externallib.php',
         'description' => 'Get lesson page by page id and lesson id',
         'type' => 'read',
