@@ -66,5 +66,21 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_assign_get_plugin_config' => array(
+		'classname'	  => 'local_mod_assign_external',
+		'methodname'  => 'get_assign_plugin_config',
+		'classpath'	  => 'local/assignment/externallib.php',
+		'description' => "Get assign plugin config",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_assign_get_comment_status' => array(
+		'classname'	  => 'local_mod_assign_external',
+		'methodname'  => 'get_comment_status',
+		'classpath'	  => 'local/assignment/externallib.php',
+		'description' => "Get total comment status",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 );
 

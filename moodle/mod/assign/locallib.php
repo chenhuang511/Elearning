@@ -4430,6 +4430,8 @@ class assign {
         if(MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
             $user = get_remote_mapping_user();
             $remotesubmission = get_remote_get_submission_status($instance->id, $user['0']->id)->lastattempt;
+            $submissionplugins = $this->get_submission_plugins();
+            
             $submissionstatus = new assign_submission_status($instance->allowsubmissionsfromdate,
                 $instance->alwaysshowdescription,
                 $remotesubmission->submission,
@@ -4442,7 +4444,7 @@ class assign {
                 $remotesubmission->graded,
                 $instance->duedate,
                 $instance->cutoffdate,
-                '',
+                $submissionplugins,
                 $this->get_return_action(),
                 $this->get_return_params(),
                 $this->get_course_module()->id,

@@ -73,15 +73,15 @@ function get_list_user_id_from_submissions($submissions = array()) {
 
 //hanv: 16/06/2016
 function get_remote_get_submission_status($assignid, $userid = null)
-{
-    return moodle_webservice_client(array_merge(
+{   
+    return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN_M,
             'function_name' => 'mod_assign_get_submission_status',
             'params' => array('assignid' => $assignid,'userid' => $userid),
-        )
-    ));
+        ), false
+    );
 }
 
 function get_remote_enrolled_users($courseid, $options = array()) {
@@ -106,3 +106,37 @@ function get_remote_enrolled_users_by_ip($courseid, $ip, $options = array()) {
     ));
     return $resp;
 }
+
+function get_remote_onlinetext_submission($submissionid, $options = array()) {
+    return moodle_webservice_client(array_merge($options,
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_get_onlinetext_submission',
+            'params' => array('submissionid' => $submissionid),
+        )
+    ), false);
+}
+
+function get_remote_assign_plugin_config($dbparams){
+    return moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_get_plugin_config',
+            'params' => $dbparams
+        ), false
+    );
+}
+
+function get_remote_assign_comment_status($params){
+    return moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_get_comment_status',
+            'params' => $params
+        ), false
+    );
+}
+

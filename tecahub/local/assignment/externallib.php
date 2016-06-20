@@ -682,6 +682,7 @@ class local_mod_assign_external extends external_api {
     }
 
     // MINHND
+    // Get Onlinetext submission 
     public static function get_onlinetext_submission_parameters(){
         return new external_function_parameters(
             array('submissionid' => new external_value(PARAM_INT, 'the submission id'))
@@ -709,4 +710,120 @@ class local_mod_assign_external extends external_api {
                 'onlineformat' => new external_value(PARAM_INT, 'online text format'),
             ));
     }
+    
+    //MINHND 18/6/2016
+    public static function get_assign_plugin_config_parameters(){
+        return new external_function_parameters(
+            array(
+                'assignment' => new external_value(PARAM_INT, 'assignment id'),
+                'subtype' => new external_value(PARAM_RAW, 'sub type'),
+                'plugin' => new external_value(PARAM_RAW, 'plugin'),
+                'name' => new external_value(PARAM_RAW, 'name')
+            )
+        );
+    }
+    
+    public static function get_assign_plugin_config($assignment, $subtype, $plugin, $name){
+        global $DB;
+        
+        //Validate param
+        $params = self::validate_parameters(self::get_assign_plugin_config_parameters(),
+            array(
+                'assignment' => $assignment,
+                'subtype' => $subtype,
+                'plugin' => $plugin,
+                'name' => $name
+            )
+        );
+        
+        $result = $DB->get_record('assign_plugin_config', $params, '*', IGNORE_MISSING);
+        if ($result->value)
+            return $result->value;
+        return 0;
+    }
+    
+    public static function get_assign_plugin_config_returns(){
+        return new external_value(PARAM_INT, 'value assign plugin');
+    }
+
+    // MINHND
+    public static function get_comment_status_parameters(){
+        return new external_function_parameters(
+            array(
+                'itemid' => new external_value(PARAM_INT, 'item ID'),
+                'commentarea' => new external_value(PARAM_RAW, 'comment area'),
+                'component' => new external_value(PARAM_RAW, 'component'),
+                'instanceid' => new external_value(PARAM_RAW, 'instance ID'),
+                'courseid' => new external_value(PARAM_RAW, 'course ID')
+            )
+        );
+    }
+
+    public static function get_comment_status($itemid, $commentarea, $component, $instanceid, $cousreid){
+        global $CFG;
+
+        require_once($CFG->dirroot . '/comment/lib.php');
+        
+        $warnings = array();
+
+        // Now, build the result.
+        $result = array();
+
+        //Validate param
+        $params = self::validate_parameters(self::get_comment_status_parameters(),
+            array(
+                'itemid' => $itemid,
+                'commentarea' => $commentarea,
+                'component' => $component,
+                'instanceid' => $instanceid,
+                'courseid' => $cousreid
+            )
+        );
+
+        $context = context_module::instance($params['instanceid']);
+
+        $options = new stdClass();
+        
+        $options->area    = $params['commentarea'];
+        $options->courseid    = $params['courseid'];
+        $options->context = $context;
+        $options->itemid  = $params['itemid'];
+        $options->component = $params['component'];
+        $options->showcount = true;
+        $options->displaycancel = true;
+
+        $comment = new comment($options);
+
+        $result['countcomment'] = $comment->count();
+
+        $result['getcomment'] = $comment->get_comments(0);
+
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_comment_status_returns(){
+        return new external_single_structure(
+            array(
+                'countcomment' => new external_value(PARAM_INT, 'count total comment', VALUE_OPTIONAL),
+                'getcomment' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'comment ID'),
+                            'content' => new external_value(PARAM_RAW, 'content comment'),
+                            'format' => new external_value(PARAM_INT, 'format content'),
+                            'timecreated' => new external_value(PARAM_INT, 'time created'),
+                            'strftimeformat' => new external_value(PARAM_RAW, 'time format'),
+                            'fullname' => new external_value(PARAM_RAW, 'full name.'),
+                            'time' => new external_value(PARAM_RAW, 'date time'),
+                            'delete' => new external_value(PARAM_INT, 'can detele'),
+                        )
+                    ), 'List comments by the user.', VALUE_OPTIONAL
+                ),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
 }
