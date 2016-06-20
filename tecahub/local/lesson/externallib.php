@@ -649,22 +649,7 @@ class local_mod_lesson_external extends external_api
             array('lessonid' => new external_value(PARAM_INT, 'lesson id'),
                 'userid' => new external_value(PARAM_INT, 'user id'),
                 'retry' => new external_value(PARAM_INT, 'retry'),
-                'options' => new external_multiple_structure (
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_ALPHANUM,
-                                'The expected keys (value format) are:
-                                                excludemodules (bool) Do not return modules, return only the sections structure
-                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
-                                                sectionid (int) Return only this section
-                                                sectionnumber (int) Return only this section with number (order)
-                                                cmid (int) Return only this module information (among the whole sections structure)
-                                                modname (string) Return only modules with this name "label, forum, etc..."
-                                                modid (int) Return only the module with this id (to be used with modname'),
-                            'value' => new external_value(PARAM_RAW, 'the value of the option,
-                                                                    this param is personaly validated in the external function.')
-                        )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+                'sort' => new external_value(PARAM_TEXT, 'sort by')
             )
         );
     }
@@ -679,7 +664,7 @@ class local_mod_lesson_external extends external_api
      * @return mixed
      * @throws invalid_parameter_exception
      */
-    public static function get_lesson_branch_by_lessonid_and_userid_and_retry($lessonid, $userid, $retry, $options = array())
+    public static function get_lesson_branch_by_lessonid_and_userid_and_retry($lessonid, $userid, $retry, $sort)
     {
         global $DB;
 
@@ -689,11 +674,17 @@ class local_mod_lesson_external extends external_api
                 'lessonid' => $lessonid,
                 'userid' => $userid,
                 'retry' => $retry,
-                'options' => $options
+                'sort' => $sort
             )
         );
 
-        return $DB->get_records('lesson_branch', array('lessonid' => $params['lessonid'], 'userid' => $params['userid'], 'retry' => $params['retry']), 'timeseen DESC');
+        $sortby = 'timeseen ASC';
+
+        if($params['sort'] === 'desc') {
+            $sortby = "timeseen DESC";
+        }
+
+        return $DB->get_records('lesson_branch', array('lessonid' => $params['lessonid'], 'userid' => $params['userid'], 'retry' => $params['retry']), $sortby);
     }
 
     /**
@@ -1684,11 +1675,7 @@ class local_mod_lesson_external extends external_api
         );
 
 
-        if (!($override = $DB->get_record('lesson_overrides', array('lessonid' => $params['lessonid'], 'userid' => $params['userid'])))) {
-            return array();
-        }
-
-        return $override;
+         return $DB->get_record('lesson_overrides', array('lessonid' => $params['lessonid'], 'userid' => $params['userid']));
     }
 
     /**

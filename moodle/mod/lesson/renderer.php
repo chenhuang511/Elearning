@@ -541,7 +541,8 @@ class mod_lesson_renderer extends plugin_renderer_base
             }
 
             // current attempt number
-            if (!$ntries = $DB->count_records("lesson_grades", array("lessonid" => $lesson->id, "userid" => $USER->id))) {
+            $ntries = get_remote_count_by_lessonid_and_userid('lesson_grades', $lesson->id, $USER->id);
+            if (!$ntries) {
                 $ntries = 0;  // may not be necessary
             }
 
@@ -554,7 +555,8 @@ class mod_lesson_renderer extends plugin_renderer_base
 
             $viewedbranches = array();
             // collect all of the branch tables viewed
-            if ($branches = $DB->get_records("lesson_branch", array("lessonid" => $lesson->id, "userid" => $USER->id, "retry" => $ntries), 'timeseen ASC', 'id, pageid')) {
+            $branches = get_remote_pageid_lesson_branch_by_lessonid_and_userid_and_retry($lesson->id, $USER->id, $ntries);
+            if ($branches) {
                 foreach ($branches as $branch) {
                     $viewedbranches[$branch->pageid] = $branch;
                 }

@@ -1240,6 +1240,10 @@ class lesson extends lesson_base
         // Check for user override.
         $override = get_remote_lesson_overrides_by_lessonid_and_userid($this->properties->id, $userid);
 
+        if(isset($override->exception) || isset($override->errorcode)) {
+            $override = new stdClass();
+        }
+
         if (!$override) {
             $override = new stdClass();
             $override->available = null;

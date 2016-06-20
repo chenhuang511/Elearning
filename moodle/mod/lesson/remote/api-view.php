@@ -254,7 +254,7 @@ if (empty($pageid)) {
 
             if ($lesson->timelimit) {
                 if ($lesson->retake) {
-                    $continuelink = new single_button(new moodle_url('/mod/lesson/view.php',
+                    $continuelink = new single_button(new moodle_url('/mod/lesson/remote/api-view.php',
                         array('id' => $cm->id, 'pageid' => $lesson->firstpageid, 'startlastseen' => 'no')),
                         get_string('continue', 'lesson'), 'get');
 

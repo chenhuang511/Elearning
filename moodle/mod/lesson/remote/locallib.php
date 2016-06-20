@@ -118,16 +118,42 @@ function get_remote_lesson_timer_by_userid_and_lessonid($userid, $lessonid, $lim
  *
  * @return stdClass $lesson_branch
  */
-function get_remote_lesson_branch_by_lessonid_and_userid_and_retry($lessonid, $userid, $retry, $options = array())
+function get_remote_lesson_branch_by_lessonid_and_userid_and_retry($lessonid, $userid, $retry, $sort = 'desc')
 {
-    return moodle_webservice_client(array_merge($options,
+    return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_lesson_branch_by_lessonid_and_userid_and_retry',
-            'params' => array('lessonid' => $lessonid, 'userid' => $userid, 'retry' => $retry)
+            'params' => array('lessonid' => $lessonid, 'userid' => $userid, 'retry' => $retry, 'sort' => $sort)
         )
-    ));
+    );
+}
+
+function get_remote_pageid_lesson_branch_by_lessonid_and_userid_and_retry($lessonid, $userid, $retry, $sort = 'asc')
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_lesson_branch_by_lessonid_and_userid_and_retry',
+            'params' => array('lessonid' => $lessonid, 'userid' => $userid, 'retry' => $retry, 'sort' => $sort)
+        )
+    );
+
+    $branches = array();
+
+    if($result) {
+        foreach ($result as $arr) {
+            $branch = new stdClass();
+            $branch->id = $arr->id;
+            $branch->pageid = $arr->pageid;
+
+            $branches = array_merge($branches, $branch);
+        }
+    }
+
+    return $branches;
 }
 
 /**
@@ -398,16 +424,16 @@ function get_remote_lesson_overrides_by_lessonid($lessonid, $options = array())
  * @param array $options
  * @return false|mixed
  */
-function get_remote_lesson_overrides_by_lessonid_and_userid($lessonid, $userid, $options = array())
+function get_remote_lesson_overrides_by_lessonid_and_userid($lessonid, $userid)
 {
-    return moodle_webservice_client(array_merge($options,
+    return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_lesson_overrides_by_lessonid_and_userid',
-            'params' => array('lessonid' => $lessonid)
+            'params' => array('lessonid' => $lessonid, 'userid' => $userid)
         )
-    ));
+    );
 }
 
 /**
