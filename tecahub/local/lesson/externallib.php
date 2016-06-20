@@ -1691,6 +1691,8 @@ class local_mod_lesson_external extends external_api
             $override->maxattempts = null;
             $override->retake = null;
             $override->password = null;
+
+            $result['data'] = $override;
         }
 
         $result['warnings'] = $warnings;
