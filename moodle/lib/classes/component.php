@@ -1066,7 +1066,6 @@ $cache = '.var_export($cache, true).';
             }
             return self::get_subsystem_directory($plugin);
         }
-
         return self::get_plugin_directory($type, $plugin);
     }
 

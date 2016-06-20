@@ -1569,10 +1569,10 @@ class assign {
             if ($this->is_blind_marking()) {
                 $order = 'u.id';
             }
-            // TODO: [TP] tim hieu them o day
-//            $users = get_enrolled_users($this->context, 'mod/assign:submit', $currentgroup, 'u.*', $order, null, null,
-//                    $this->show_only_active_users());
-            $users = get_remote_enrolled_users($this->course->id);
+
+            $users = get_enrolled_users($this->context, 'mod/assign:submit', $currentgroup, 'u.*', $order, null, null,
+                    $this->show_only_active_users());
+//            $users = get_remote_enrolled_users($this->course->id);
             $cm = $this->get_course_module();
             $info = new \core_availability\info_module($cm);
             $users = $info->filter_user_list($users);
@@ -3836,14 +3836,15 @@ class assign {
             $userid = $this->get_user_id_for_uniqueid($blindid);
         }
 
-        $currentgroup = groups_get_activity_group($this->get_course_module(), true);
+        // @TODO : $currentgroup = groups_get_activity_group($this->get_course_module(), true);
+        $currentgroup = false;
         $framegrader = new grading_app($userid, $currentgroup, $this);
 
         $o .= $this->get_renderer()->render($framegrader);
 
         $o .= $this->view_footer();
 
-        \mod_assign\event\grading_table_viewed::create_from_assign($this)->trigger();
+//        \mod_assign\event\grading_table_viewed::create_from_assign($this)->trigger();
 
         return $o;
     }
@@ -4062,7 +4063,6 @@ class assign {
                 return false;
             }
         }
-
         if (has_any_capability(array('mod/assign:viewgrades', 'mod/assign:grade'), $this->context)) {
             return true;
         }
@@ -4379,8 +4379,7 @@ class assign {
      * @param bool $showlinks return plain text or links to the profile
      * @return assign_submission_status renderable object
      */
-    public function get_assign_submission_status_renderable($user, $showlinks)
-    {
+    public function get_assign_submission_status_renderable($user, $showlinks) {
         global $PAGE;
 
         $instance = $this->get_instance();
@@ -4401,8 +4400,8 @@ class assign {
         }
 
         $showedit = $showlinks &&
-            ($this->is_any_submission_plugin_enabled()) &&
-            $this->can_edit_submission($user->id);
+                    ($this->is_any_submission_plugin_enabled()) &&
+                    $this->can_edit_submission($user->id);
 
         $gradelocked = ($flags && $flags->locked) || $this->grading_disabled($user->id, false);
 

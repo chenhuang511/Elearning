@@ -1466,11 +1466,10 @@ function get_context_info_array($contextid)
     } else if ($context->contextlevel == CONTEXT_MODULE) {
         if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
             $cm = get_coursemodule_from_id('', $context->instanceid, 0, false, MUST_EXIST);
-            $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
         } else {
             $cm = get_remote_course_module_by_cmid('', $context->instanceid);
-            $course = $DB->get_record('course', array('id' => $cm->instance), '*', MUST_EXIST);
         }
+        $course = get_local_course_record($cm->course);
 
     } else if ($context->contextlevel == CONTEXT_BLOCK) {
         $parent = $context->get_parent_context();
@@ -1480,11 +1479,10 @@ function get_context_info_array($contextid)
         } else if ($parent->contextlevel == CONTEXT_MODULE) {
             if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
                 $cm = get_coursemodule_from_id('', $parent->instanceid, 0, false, MUST_EXIST);
-                $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
             } else {
                 $cm = get_remote_course_module_by_cmid('', $parent->instanceid);
-                $course = $DB->get_record('course', array('id' => $cm->instance), '*', MUST_EXIST);
             }
+            $course = get_local_course_record($cm->course);
         }
     }
 
