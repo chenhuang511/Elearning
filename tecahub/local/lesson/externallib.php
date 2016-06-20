@@ -680,7 +680,7 @@ class local_mod_lesson_external extends external_api
 
         $sortby = 'timeseen ASC';
 
-        if($params['sort'] === 'desc') {
+        if ($params['sort'] === 'desc') {
             $sortby = "timeseen DESC";
         }
 
@@ -1662,7 +1662,7 @@ class local_mod_lesson_external extends external_api
      * @return mixed
      * @throws invalid_parameter_exception
      */
-    public static function get_lesson_overrides_by_lessonid_and_userid($lessonid, $userid, $options = array())
+    public static function get_lesson_overrides_by_lessonid_and_userid($lessonid, $userid)
     {
         global $DB;
 
@@ -1674,8 +1674,28 @@ class local_mod_lesson_external extends external_api
             )
         );
 
+        $warnings = array();
 
-         return $DB->get_record('lesson_overrides', array('lessonid' => $params['lessonid'], 'userid' => $params['userid']));
+        $override = $DB->get_record('lesson_overrides', array('lessonid' => $params['lessonid'], 'userid' => $params['userid']));
+
+        $result = array();
+
+        if ($override) {
+            $result['data'] = $override;
+        } else {
+            $override = new stdClass();
+            $override->available = null;
+            $override->deadline = null;
+            $override->timelimit = null;
+            $override->review = null;
+            $override->maxattempts = null;
+            $override->retake = null;
+            $override->password = null;
+        }
+
+        $result['warnings'] = $warnings;
+
+        return $result;
     }
 
     /**
@@ -1688,17 +1708,22 @@ class local_mod_lesson_external extends external_api
     {
         return new external_single_structure(
             array(
-                'id' => new external_value(PARAM_INT, 'the id'),
-                'lessonid' => new external_value(PARAM_INT, 'the lessonid'),
-                'groupid' => new external_value(PARAM_INT, 'the groupid'),
-                'userid' => new external_value(PARAM_INT, 'the userid'),
-                'available' => new external_value(PARAM_INT, 'available'),
-                'deadline' => new external_value(PARAM_INT, 'deadline'),
-                'timelimit' => new external_value(PARAM_INT, 'time limit'),
-                'review' => new external_value(PARAM_INT, 'review'),
-                'maxattempts' => new external_value(PARAM_INT, 'max attempts'),
-                'retake' => new external_value(PARAM_INT, 'retake'),
-                'password' => new external_value(PARAM_RAW, 'password')
+                "data" => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'the id'),
+                        'lessonid' => new external_value(PARAM_INT, 'the lessonid'),
+                        'groupid' => new external_value(PARAM_INT, 'the groupid'),
+                        'userid' => new external_value(PARAM_INT, 'the userid'),
+                        'available' => new external_value(PARAM_INT, 'available'),
+                        'deadline' => new external_value(PARAM_INT, 'deadline'),
+                        'timelimit' => new external_value(PARAM_INT, 'time limit'),
+                        'review' => new external_value(PARAM_INT, 'review'),
+                        'maxattempts' => new external_value(PARAM_INT, 'max attempts'),
+                        'retake' => new external_value(PARAM_INT, 'retake'),
+                        'password' => new external_value(PARAM_RAW, 'password')
+                    )
+                ),
+                "warnings" => new external_warnings()
             )
         );
     }
