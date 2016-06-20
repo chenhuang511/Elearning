@@ -465,7 +465,7 @@ class local_mod_lesson_external extends external_api
      */
     public static function get_lesson_pages_by_id_returns()
     {
-        return self::get_lesson_pages_by_pageid_and_lessonid_returns();
+        return self::get_lesson_pages_by_id_and_lessonid_returns();
     }
 
     /**
