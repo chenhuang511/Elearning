@@ -107,7 +107,6 @@ if (!$canmanage) {
             exit();
         }
     } else if ($lesson->dependency) { // check for dependencies
-        //if ($dependentlesson = $DB->get_record('lesson', array('id' => $lesson->dependency))) {
         if ($dependentlesson = get_remote_lesson_by_id($lesson->dependency)) {
             // lesson exists, so we can proceed
             $conditions = unserialize($lesson->conditions);
@@ -117,7 +116,6 @@ if (!$canmanage) {
             // check for the timespent condition
             if ($conditions->timespent) {
                 $timespent = false;
-                // if ($attempttimes = $DB->get_records('lesson_timer', array("userid" => $USER->id, "lessonid" => $dependentlesson->id))) {
                 if ($attempttimes = get_remote_lesson_timer_by_userid_and_lessonid($USER->id, $dependentlesson->id)) {
                     // go through all the times and test to see if any of them satisfy the condition
                     foreach ($attempttimes as $attempttime) {

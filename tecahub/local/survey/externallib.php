@@ -62,67 +62,23 @@ class local_mod_survey_external extends external_api
     public static function get_survey_by_id($id)
     {
         global $DB;
-        global $USER;
+
+        $warnings = array();
+
         //validate parameter
         $params = self::validate_parameters(self::get_survey_by_id_parameters(),
             array('id' => $id));
-        $warnings = array();
-        // Entry to return.
-        $surveydetails = array();
-        if (!empty($params['id'])) {
-            $query = "SELECT cm.id AS coursemodule, s.*, cw.section, cm.visible AS visible,
-                            cm.groupmode, cm.groupingid 
-                        FROM {survey} AS s
-                        INNER JOIN {course_modules} AS cm
-                        ON s.course = cm.course
-                        INNER JOIN {course_sections} AS cw
-                        ON cm.section = cw.id
-                        WHERE s.id = :id";
-            $result = $DB->get_records_sql($query, $params);
-            $survey = null;
-            if (count($result) > 0) {
-                $survey = $result[0];
-            }
-            if (!$survey) {
-                $context = context_module::instance($survey->coursemodule);
 
-                // First, we return information that any user can see in the web interface.
-                $surveydetails['id'] = $survey->id;
-                $surveydetails['coursemodule']      = $survey->coursemodule;
-                $surveydetails['course']            = $survey->course;
-                $surveydetails['name']              = external_format_string($survey->name, $context->id);
-
-                if (has_capability('mod/survey:participate', $context)) {
-                    $trimmedintro = trim($survey->intro);
-                    if (empty($trimmedintro)) {
-                        $tempo = $DB->get_field("survey", "intro", array("id" => $survey->template));
-                        $survey->intro = get_string($tempo, "survey");
-                    }
-
-                    // Format intro.
-                    list($surveydetails['intro'], $surveydetails['introformat']) =
-                        external_format_text($survey->intro, $survey->introformat, $context->id, 'mod_survey', 'intro', null);
-
-                    $surveydetails['template']  = $survey->template;
-                    $surveydetails['days']      = $survey->days;
-                    $surveydetails['questions'] = $survey->questions;
-                    $surveydetails['surveydone'] = survey_already_done($survey->id, $USER->id) ? 1 : 0;
-
-                }
-
-                if (has_capability('moodle/course:manageactivities', $context)) {
-                    $surveydetails['timecreated']   = $survey->timecreated;
-                    $surveydetails['timemodified']  = $survey->timemodified;
-                    $surveydetails['section']       = $survey->section;
-                    $surveydetails['visible']       = $survey->visible;
-                    $surveydetails['groupmode']     = $survey->groupmode;
-                    $surveydetails['groupingid']    = $survey->groupingid;
-                }
-            }
-        }
         $result = array();
-        $result['survey'] = $surveydetails;
+        $survey = $DB->get_record("survey", array("id" => $params['id']));
+
+        if(!$survey) {
+            $survey = new stdClass();
+        }
+
+        $result['survey'] = $survey;
         $result['warnings'] = $warnings;
+
         return $result;
     }
 

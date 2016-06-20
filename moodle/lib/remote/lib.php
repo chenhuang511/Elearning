@@ -14,6 +14,9 @@ function moodle_webservice_client($options, $usecache = true, $assoc = false)
             $webservicecache = cache::make_from_params(cache_store::MODE_APPLICATION, 'core', 'webservice');
             $cachekey = 'wes-' . $options['domain'] . $options['token'] . $options['function_name'];
         }
+        if (strpos($CFG->libdir . '/zend/', get_include_path()) === false) {
+            set_include_path(get_include_path().PATH_SEPARATOR.$CFG->libdir . '/zend/');
+        }
 
         $serverUrl = $options['domain'] . '/webservice/rest/server.php' . '?wstoken=' .
             $options['token'] . '&wsfunction=' .

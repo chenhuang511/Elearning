@@ -310,11 +310,12 @@ class comment {
     private function check_permissions() {
         $this->postcap = has_capability('moodle/comment:post', $this->context);
         $this->viewcap = has_capability('moodle/comment:view', $this->context);
-        if (!empty($this->plugintype)) {
-            $permissions = plugin_callback($this->plugintype, $this->pluginname, 'comment', 'permissions', array($this->comment_param), array('post'=>false, 'view'=>false));
-            $this->postcap = $this->postcap && $permissions['post'];
-            $this->viewcap = $this->viewcap && $permissions['view'];
-        }
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST)
+            if (!empty($this->plugintype)) {
+                $permissions = plugin_callback($this->plugintype, $this->pluginname, 'comment', 'permissions', array($this->comment_param), array('post'=>false, 'view'=>false));
+                $this->postcap = $this->postcap && $permissions['post'];
+                $this->viewcap = $this->viewcap && $permissions['view'];
+            }
     }
 
     /**
@@ -630,10 +631,26 @@ class comment {
             if ($component) {
                 $params['component'] = $component;
             }
-
-            $this->totalcommentcount = $DB->count_records_select('comments', $where, $params);
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+                $this->totalcommentcount = $DB->count_records_select('comments', $where, $params);
+            }
+            else{
+                $rparams = $this->get_remote_params();
+                $rparams['component'] = $component;
+                $this->totalcommentcount = get_remote_assign_comment_status($rparams)->countcomment;
+            }
         }
         return $this->totalcommentcount;
+    }
+
+    // Returns array parrams for call API
+    public function get_remote_params(){
+        return array(
+            'itemid' => $this->itemid,
+            'commentarea' => $this->commentarea,
+            'instanceid' => $this->context->instanceid,
+            'courseid' => $this->courseid,
+        );
     }
 
     /**
@@ -842,7 +859,25 @@ class comment {
         )) {
             $page = 0;
         }
-        $comments = $this->get_comments($page);
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $comments = $this->get_comments($page);
+        }
+        else{
+            global $USER, $OUTPUT;
+
+            $rparams = $this->get_remote_params();
+            $rparams['component'] = $this->component;
+
+            $comments = get_remote_assign_comment_status($rparams)->getcomment;
+
+            $url = new moodle_url('/user/view.php', array('id'=>$USER->id));
+
+            foreach ($comments as $cmt){
+                $cmt->profileurl = $url->out(false); // URL should not be escaped just yet.
+                $cmt->avatar = $OUTPUT->user_picture($USER, array('size'=>18));
+                $cmt->userid = $USER->id;
+            }
+        }
 
         $html = '';
         if ($nonjs) {
@@ -945,7 +980,8 @@ class comment {
      * @return bool
      */
     public function can_view() {
-        $this->validate();
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST)
+            $this->validate();
         return !empty($this->viewcap);
     }
 
@@ -954,7 +990,8 @@ class comment {
      * @return bool
      */
     public function can_post() {
-        $this->validate();
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST)
+            $this->validate();
         return isloggedin() && !empty($this->postcap);
     }
 

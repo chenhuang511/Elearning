@@ -343,7 +343,7 @@ class mod_assign_renderer extends plugin_renderer_base {
         $url = new moodle_url('/mod/assign/view.php', $urlparams);
         $o .= '<a href="' . $url . '" class="btn">' . get_string('viewgrading', 'mod_assign') . '</a> ';
         $urlparams = array('id' => $summary->coursemoduleid, 'action' => 'grader');
-        $url = new moodle_url('/mod/assign/view.php', $urlparams);
+        $url = new moodle_url('/mod/assign/remote/api-view.php', $urlparams);
         $o .= '<a href="' . $url . '" class="btn btn-primary">' . get_string('grade') . '</a>';
         $o .= $this->output->container_end();
 
@@ -581,7 +581,6 @@ class mod_assign_renderer extends plugin_renderer_base {
         }
 
         if ($submission) {
-
             if (!$status->teamsubmission || $status->submissiongroup != false || !$status->preventsubmissionnotingroup) {
                 foreach ($status->submissionplugins as $plugin) {
                     $pluginshowsummary = !$plugin->is_empty($submission) || !$plugin->allow_submissions();
@@ -890,7 +889,6 @@ class mod_assign_renderer extends plugin_renderer_base {
                         $plugin->has_user_summary() &&
                         $pluginshowsummary
                     ) {
-
                         $row = new html_table_row();
                         $cell1 = new html_table_cell($plugin->get_name());
                         $displaymode = assign_submission_plugin_submission::SUMMARY;
@@ -1144,9 +1142,9 @@ class mod_assign_renderer extends plugin_renderer_base {
 
         if ($submissionplugin->view == assign_submission_plugin_submission::SUMMARY) {
             $showviewlink = false;
+
             $summary = $submissionplugin->plugin->view_summary($submissionplugin->submission,
                                                                $showviewlink);
-
             $classsuffix = $submissionplugin->plugin->get_subtype() .
                            '_' .
                            $submissionplugin->plugin->get_type() .
@@ -1167,7 +1165,7 @@ class mod_assign_renderer extends plugin_renderer_base {
                 $jsparams = array($submissionplugin->plugin->get_subtype(),
                                   $submissionplugin->plugin->get_type(),
                                   $submissionplugin->submission->id);
-
+                
                 $this->page->requires->js_init_call('M.mod_assign.init_plugin_summary', $jsparams);
 
                 $action = 'viewplugin' . $submissionplugin->plugin->get_subtype();
@@ -1203,7 +1201,6 @@ class mod_assign_renderer extends plugin_renderer_base {
             $o .= $submissionplugin->plugin->view($submissionplugin->submission);
             $o .= $this->output->box_end();
         }
-
         return $o;
     }
 

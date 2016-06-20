@@ -1569,10 +1569,10 @@ class assign {
             if ($this->is_blind_marking()) {
                 $order = 'u.id';
             }
-            // TODO: [TP] tim hieu them o day
-//            $users = get_enrolled_users($this->context, 'mod/assign:submit', $currentgroup, 'u.*', $order, null, null,
-//                    $this->show_only_active_users());
-            $users = get_remote_enrolled_users($this->course->id);
+
+            $users = get_enrolled_users($this->context, 'mod/assign:submit', $currentgroup, 'u.*', $order, null, null,
+                    $this->show_only_active_users());
+//            $users = get_remote_enrolled_users($this->course->id);
             $cm = $this->get_course_module();
             $info = new \core_availability\info_module($cm);
             $users = $info->filter_user_list($users);
@@ -3836,14 +3836,15 @@ class assign {
             $userid = $this->get_user_id_for_uniqueid($blindid);
         }
 
-        $currentgroup = groups_get_activity_group($this->get_course_module(), true);
+        // @TODO : $currentgroup = groups_get_activity_group($this->get_course_module(), true);
+        $currentgroup = false;
         $framegrader = new grading_app($userid, $currentgroup, $this);
 
         $o .= $this->get_renderer()->render($framegrader);
 
         $o .= $this->view_footer();
 
-        \mod_assign\event\grading_table_viewed::create_from_assign($this)->trigger();
+//        \mod_assign\event\grading_table_viewed::create_from_assign($this)->trigger();
 
         return $o;
     }
@@ -4062,7 +4063,6 @@ class assign {
                 return false;
             }
         }
-
         if (has_any_capability(array('mod/assign:viewgrades', 'mod/assign:grade'), $this->context)) {
             return true;
         }
@@ -4379,8 +4379,7 @@ class assign {
      * @param bool $showlinks return plain text or links to the profile
      * @return assign_submission_status renderable object
      */
-    public function get_assign_submission_status_renderable($user, $showlinks)
-    {
+    public function get_assign_submission_status_renderable($user, $showlinks) {
         global $PAGE;
 
         $instance = $this->get_instance();
@@ -4401,8 +4400,8 @@ class assign {
         }
 
         $showedit = $showlinks &&
-            ($this->is_any_submission_plugin_enabled()) &&
-            $this->can_edit_submission($user->id);
+                    ($this->is_any_submission_plugin_enabled()) &&
+                    $this->can_edit_submission($user->id);
 
         $gradelocked = ($flags && $flags->locked) || $this->grading_disabled($user->id, false);
 
@@ -4430,6 +4429,8 @@ class assign {
         if(MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
             $user = get_remote_mapping_user();
             $remotesubmission = get_remote_get_submission_status($instance->id, $user['0']->id)->lastattempt;
+            $submissionplugins = $this->get_submission_plugins();
+            
             $submissionstatus = new assign_submission_status($instance->allowsubmissionsfromdate,
                 $instance->alwaysshowdescription,
                 $remotesubmission->submission,
@@ -4442,7 +4443,7 @@ class assign {
                 $remotesubmission->graded,
                 $instance->duedate,
                 $instance->cutoffdate,
-                '',
+                $submissionplugins,
                 $this->get_return_action(),
                 $this->get_return_params(),
                 $this->get_course_module()->id,

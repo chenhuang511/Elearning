@@ -54,7 +54,12 @@ class assign_submission_onlinetext extends assign_submission_plugin {
      */
     private function get_onlinetext_submission($submissionid) {
         global $DB;
-
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $resp = get_remote_onlinetext_submission($submissionid);
+            if ($resp->exception)
+                return 0;
+            return $resp;
+        }
         return $DB->get_record('assignsubmission_onlinetext', array('submission'=>$submissionid));
     }
 
@@ -344,7 +349,6 @@ class assign_submission_onlinetext extends assign_submission_plugin {
         $onlinetextsubmission = $this->get_onlinetext_submission($submission->id);
         // Always show the view link.
         $showviewlink = true;
-
         if ($onlinetextsubmission) {
             $text = $this->assignment->render_editor_content(ASSIGNSUBMISSION_ONLINETEXT_FILEAREA,
                                                              $onlinetextsubmission->submission,

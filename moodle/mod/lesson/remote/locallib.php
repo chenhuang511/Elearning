@@ -75,16 +75,16 @@ function get_remote_field_lesson_pages_by_lessonid_and_prevpageid($lessonid, $pr
  *
  * @return stdClass $lesson_page
  */
-function get_remote_lesson_pages_by_pageid_and_lessonid($pageid, $lessonid, $options = array())
+function get_remote_lesson_pages_by_pageid_and_lessonid($id, $lessonid)
 {
-    return moodle_webservice_client(array_merge($options,
+    return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_get_lesson_pages_by_pageid_and_lessonid',
-            'params' => array('pageid' => $pageid, 'lessonid' => $lessonid)
+            'function_name' => 'local_mod_get_lesson_pages_by_id_and_lessonid',
+            'params' => array('id' => $id, 'lessonid' => $lessonid)
         )
-    ));
+    );
 }
 
 /**
@@ -143,7 +143,7 @@ function get_remote_pageid_lesson_branch_by_lessonid_and_userid_and_retry($lesso
 
     $branches = array();
 
-    if($result) {
+    if ($result) {
         foreach ($result as $arr) {
             $branch = new stdClass();
             $branch->id = $arr->id;

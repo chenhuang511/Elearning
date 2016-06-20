@@ -355,27 +355,11 @@ class local_mod_lesson_external extends external_api
      * @return external_function_parameters
      * @since Moodle 3.0
      */
-    public static function get_lesson_pages_by_pageid_and_lessonid_parameters()
+    public static function get_lesson_pages_by_id_and_lessonid_parameters()
     {
         return new external_function_parameters(
-            array('pageid' => new external_value(PARAM_INT, 'the lesson page id'),
-                'lessonid' => new external_value(PARAM_INT, 'the lesson id'),
-                'options' => new external_multiple_structure (
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_ALPHANUM,
-                                'The expected keys (value format) are:
-                                                excludemodules (bool) Do not return modules, return only the sections structure
-                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
-                                                sectionid (int) Return only this section
-                                                sectionnumber (int) Return only this section with number (order)
-                                                cmid (int) Return only this module information (among the whole sections structure)
-                                                modname (string) Return only modules with this name "label, forum, etc..."
-                                                modid (int) Return only the module with this id (to be used with modname'),
-                            'value' => new external_value(PARAM_RAW, 'the value of the option,
-                                                                    this param is personaly validated in the external function.')
-                        )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+            array('id' => new external_value(PARAM_INT, 'the id'),
+                'lessonid' => new external_value(PARAM_INT, 'the lesson id')
             )
         );
     }
@@ -389,20 +373,19 @@ class local_mod_lesson_external extends external_api
      * @return mixed
      * @throws invalid_parameter_exception
      */
-    public static function get_lesson_pages_by_pageid_and_lessonid($pageid, $lessonid, $options = array())
+    public static function get_lesson_pages_by_id_and_lessonid($id, $lessonid)
     {
         global $DB;
 
         // validate params
-        $params = self::validate_parameters(self::get_lesson_pages_by_pageid_and_lessonid_parameters(),
+        $params = self::validate_parameters(self::get_lesson_pages_by_id_and_lessonid_parameters(),
             array(
                 'lessonid' => $lessonid,
-                'pageid' => $pageid,
-                'options' => $options
+                'id' => $id
             )
         );
 
-        return $DB->get_record('lesson_pages', array('id' => $params['pageid'], 'lessonid' => $params['lessonid']), '*', MUST_EXIST);
+        return $DB->get_record('lesson_pages', array('id' => $params['id'], 'lessonid' => $params['lessonid']), '*', MUST_EXIST);
     }
 
     /**
@@ -411,7 +394,7 @@ class local_mod_lesson_external extends external_api
      * @return external_description
      * @since Moodle 3.0
      */
-    public static function get_lesson_pages_by_pageid_and_lessonid_returns()
+    public static function get_lesson_pages_by_id_and_lessonid_returns()
     {
         return new external_single_structure(
             array(
@@ -482,7 +465,7 @@ class local_mod_lesson_external extends external_api
      */
     public static function get_lesson_pages_by_id_returns()
     {
-        return self::get_lesson_pages_by_pageid_and_lessonid_returns();
+        return self::get_lesson_pages_by_id_and_lessonid_returns();
     }
 
     /**

@@ -153,6 +153,7 @@ class renderer_base {
         // e.g. aria attributes that only work with id attributes and must be
         // unique in a page.
         $mustache->addHelper('uniqid', new \core\output\mustache_uniqid_helper());
+
         if (isset($templatecache[$templatename])) {
             $template = $templatecache[$templatename];
         } else {
