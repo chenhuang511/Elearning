@@ -181,7 +181,7 @@ class mnetservice_enrol {
 
              // get the currently cached courses key'd on remote id - only need remoteid and id fields
             $cachedcourses = $DB->get_records('course', array('hostid' => $mnethostid), 'remoteid', 'remoteid, id');
-
+            $loadedcats = array();
             foreach ($response as &$remote) {
                 $course                 = new stdclass(); // record in our local cache
                 $course->hostid         = $mnethostid;
@@ -223,11 +223,15 @@ class mnetservice_enrol {
                 // not cached: cost
                 // not cached: currency
 
+                if ($loadedcats[$course->category]) {
+                    continue;
+                }
                 $request = new mnet_xmlrpc_client();
                 $request->set_method('enrol/mnet/enrol.php/category_enrolments');
                 $request->add_param((int)$remote['cat_id'], 'int');
                 $request->send($peer);
                 $responsecat = $request->response;
+                $loadedcats[$course->category] = true;
 
                 $category                        = new stdClass();
                 $category->remoteid              = (int)$remote['cat_id'];
