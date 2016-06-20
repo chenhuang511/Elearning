@@ -232,7 +232,7 @@ class mnetservice_enrol {
                 $category                        = new stdClass();
                 $category->remoteid              = (int)$remote['cat_id'];
                 $category->hostid                = $mnethostid;
-                $category->name                  = substr($responsecat['name'], 0, 255);
+                $category->name                  = substr($remote['cat_name'], 0, 255);
                 $category->idnumber              = (int)$responsecat['idnumber'];
                 $category->description           = $responsecat['description'];
                 $category->descriptionformat     = (int)$responsecat['descriptionformat'];
