@@ -343,7 +343,7 @@ class mod_assign_renderer extends plugin_renderer_base {
         $url = new moodle_url('/mod/assign/view.php', $urlparams);
         $o .= '<a href="' . $url . '" class="btn">' . get_string('viewgrading', 'mod_assign') . '</a> ';
         $urlparams = array('id' => $summary->coursemoduleid, 'action' => 'grader');
-        $url = new moodle_url('/mod/assign/view.php', $urlparams);
+        $url = new moodle_url('/mod/assign/remote/api-view.php', $urlparams);
         $o .= '<a href="' . $url . '" class="btn btn-primary">' . get_string('grade') . '</a>';
         $o .= $this->output->container_end();
 
