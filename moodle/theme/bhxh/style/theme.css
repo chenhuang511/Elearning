@@ -839,6 +839,11 @@ section#discussion-container.discussion.container div.discussion-body div#discus
     font-weight: normal;
 }
 
+#enrol-course-list .container-available-course .coursebox .sum-btn .btn-register .btn-reg-now a.button{
+    color: #3d70af;
+    text-align: center;
+}
+
 #enrol-course-list .container-available-course .coursebox .course-content {
     display: block;
     float: left;
@@ -915,7 +920,6 @@ section#discussion-container.discussion.container div.discussion-body div#discus
 }
 
 #enrol-course-list .right-block .container-block .coursebox .course-image .course-thumbnail > img {
-    height: 60px;
     display: block;
     max-width: 90px;
     width: 100%;
