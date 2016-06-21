@@ -223,8 +223,8 @@ class mnetservice_enrol {
                 // not cached: cost
                 // not cached: currency
 
-                if ($loadedcats[$course->category]) {
-                    continue;
+                if (!$loadedcats[$course->category]) {
+                    //continue;
                 }
                 $request = new mnet_xmlrpc_client();
                 $request->set_method('enrol/mnet/enrol.php/category_enrolments');
