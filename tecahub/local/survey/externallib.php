@@ -132,17 +132,17 @@ class local_mod_survey_external extends external_api
         ));
 
         $result = array();
-		
+
         $answers = $DB->record_exists("survey_answers", array("survey" => $params['surveyid'], "userid" => $params['userid']));
 
-        if(!$answers) {
-            $answers = new stdClass();
+        if (!$answers) {
+            $answers = array();
         }
 
         $result['answers'] = $answers;
-		$result['warnings'] = $warnings;
-		
-		return $result;
+        $result['warnings'] = $warnings;
+
+        return $result;
     }
 
     public static function get_survey_answers_by_surveyid_and_userid_returns()
