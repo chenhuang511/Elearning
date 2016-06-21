@@ -69,14 +69,15 @@ function getHTMLContent(module, encode) {
             loading.show();
             target.empty();
         },
-        success: function (data) {
-            target.html(data);
-            loading.hide();
-            target.show();
-        },
         error: function (err) {
+            loading.hide();
             target.html(err);
         }
+    }).done(function (data) {
+        target.html(data).promise().done(function () {
+            loading.hide();
+            target.show();
+        });
     });
 
     return false;
