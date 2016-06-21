@@ -26,6 +26,7 @@ require_once(dirname(__FILE__) . '/../../../config.php');
 require_once("/../lib.php");
 require_once($CFG->dirroot . '/lib/remote/lib.php');
 require_once($CFG->dirroot . '/course/remote/locallib.php');
+require_once($CFG->dirroot . '/mod/survey/remote/locallib.php');
 
 $id = required_param('id', PARAM_INT);    // Course Module ID.
 
@@ -33,13 +34,9 @@ if (! $cm = get_remote_course_module_by_cmid('survey', $id)) {
     print_error('invalidcoursemodule');
 }
 
-unset($cm->sectionnum);
-
 if (! $course = get_local_course_record($cm->course)) {
     print_error('coursemisconf');
 }
-
-
 
 $PAGE->set_url('/mod/survey/remote/api-view.php', array('id' => $id));
 
@@ -48,7 +45,7 @@ $context = context_module::instance($cm->id);
 
 require_capability('mod/survey:participate', $context);
 
-if (! $survey = $DB->get_record("survey", array("id" => $cm->instance))) {
+if (! $survey = get_remote_survey_by_id($cm->instance)->survey) {
     print_error('invalidsurveyid', 'survey');
 }
 
