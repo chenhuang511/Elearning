@@ -1498,6 +1498,7 @@ function mod_assign_output_fragment_gradingpanel($args) {
         return null;
     }
     require_once($CFG->dirroot . '/mod/assign/locallib.php');
+    
     $assign = new assign($context, null, null);
 
     $userid = clean_param($args['userid'], PARAM_INT);

@@ -559,7 +559,15 @@ class course_modinfo {
      */
     protected static function build_course_section_cache($course) {
         global $DB;
-        $sections = get_remote_course_sections($course->id);
+        if (MOODLE_RUN_MODE == MOODLE_MODE_HUB) {
+            $sections = get_remote_course_sections($course->remoteid);
+        } else {
+            // Get section data
+            $sections = $DB->get_records('course_sections', array('course' => $course->id), 'section',
+                'section, id, course, name, summary, summaryformat, sequence, visible, ' .
+                'availability');
+        }
+
         $compressedsections = array();
         $formatoptionsdef = course_get_format($course)->section_format_options();
         // Remove unnecessary data and add availability
@@ -610,7 +618,7 @@ class course_modinfo {
         // This may take time on large courses and it is possible that another user modifies the same course during this process.
         // Field cacherev stored in both DB and cache will ensure that cached data matches the current course state.
         $coursemodinfo = new stdClass();
-        $coursemodinfo->modinfo = get_array_of_activities($course->id);
+        $coursemodinfo->modinfo = get_array_of_activities($course);
         $coursemodinfo->sectioncache = self::build_course_section_cache($course);
         foreach (self::$cachedfields as $key) {
             $coursemodinfo->$key = $course->$key;

@@ -2625,8 +2625,7 @@ class mod_assign_external extends external_api {
         } catch (Exception $e) {
             $assign = get_remote_assign_by_id($params['assignid']);
         }
-        
-            list($course, $cm) = get_course_and_cm_from_instance($assign, 'assign');
+        list($course, $cm) = get_course_and_cm_from_instance($assign, 'assign');
 
         $context = context_module::instance($cm->id);
         self::validate_context($context);
@@ -2791,13 +2790,19 @@ class mod_assign_external extends external_api {
         ));
 
         // Request and permission validation.
-        $assign = $DB->get_record('assign', array('id' => $params['assignid']), 'id', MUST_EXIST);
+        try {
+            // Request and permission validation.
+            $assign = $DB->get_record('assign', array('id' => $params['assignid']), 'id', MUST_EXIST);
+        } catch (Exception $e) {
+            $assign = get_remote_assign_by_id($params['assignid']);
+        }
         list($course, $cm) = get_course_and_cm_from_instance($assign, 'assign');
 
         $context = context_module::instance($cm->id);
         self::validate_context($context);
 
-        $assign = new assign($context, null, null);
+//        $assign = new assign($context, null, null);
+        $assign = new assign($context, $cm, $course);
         $assign->require_view_grades();
 
         $participant = $assign->get_participant($params['userid']);
