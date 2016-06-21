@@ -72,7 +72,7 @@ class local_mod_survey_external extends external_api
         $result = array();
         $survey = $DB->get_record("survey", array("id" => $params['id']));
 
-        if(!$survey) {
+        if (!$survey) {
             $survey = new stdClass();
         }
 
@@ -93,25 +93,76 @@ class local_mod_survey_external extends external_api
             array(
                 'survey' => new external_single_structure(
                     array(
-                        'id' => new external_value(PARAM_INT, 'Survey id'),
-                        'coursemodule' => new external_value(PARAM_INT, 'Course module id'),
-                        'course' => new external_value(PARAM_INT, 'Course id'),
-                        'name' => new external_value(PARAM_RAW, 'Survey name'),
-                        'intro' => new external_value(PARAM_RAW, 'The Survey intro', VALUE_OPTIONAL),
-                        'introformat' => new external_format_value('intro', VALUE_OPTIONAL),
-                        'template' => new external_value(PARAM_INT, 'Survey type', VALUE_OPTIONAL),
-                        'days' => new external_value(PARAM_INT, 'Days', VALUE_OPTIONAL),
-                        'questions' => new external_value(PARAM_RAW, 'Question ids', VALUE_OPTIONAL),
-                        'surveydone' => new external_value(PARAM_INT, 'Did I finish the survey?', VALUE_OPTIONAL),
-                        'timecreated' => new external_value(PARAM_INT, 'Time of creation', VALUE_OPTIONAL),
-                        'timemodified' => new external_value(PARAM_INT, 'Time of last modification', VALUE_OPTIONAL),
-                        'section' => new external_value(PARAM_INT, 'Course section id', VALUE_OPTIONAL),
-                        'visible' => new external_value(PARAM_INT, 'Visible', VALUE_OPTIONAL),
-                        'groupmode' => new external_value(PARAM_INT, 'Group mode', VALUE_OPTIONAL),
-                        'groupingid' => new external_value(PARAM_INT, 'Group id', VALUE_OPTIONAL),
+                        'id' => new external_value(PARAM_INT, 'the id'),
+                        'course' => new external_value(PARAM_INT, 'the course id'),
+                        'template' => new external_value(PARAM_INT, 'template'),
+                        'days' => new external_value(PARAM_INT, 'days'),
+                        'timecreated' => new external_value(PARAM_INT, 'time created'),
+                        'timemodified' => new external_value(PARAM_INT, 'time modified'),
+                        'name' => new external_value(PARAM_RAW, 'name'),
+                        'intro' => new external_value(PARAM_RAW, 'intro'),
+                        'introformat' => new external_value(PARAM_INT, 'intro format'),
+                        'questions' => new external_value(PARAM_RAW, 'questions'),
                     )
                 ),
                 'warnings' => new external_warnings(),
+            )
+        );
+    }
+
+    public static function get_survey_answers_by_surveyid_and_userid_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'surveyid' => new external_value(PARAM_INT, 'the survey id'),
+                'userid' => new external_value(PARAM_INT, 'the user id')
+            )
+        );
+    }
+
+    public static function get_survey_answers_by_surveyid_and_userid($surveyid, $userid)
+    {
+        global $DB;
+
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_survey_answers_by_surveyid_and_userid_parameters(), array(
+            'surveyid' => $surveyid,
+            'userid' => $userid
+        ));
+
+        $result = array();
+
+        $answers = $DB->record_exists("survey_answers", array("survey" => $params['surveyid'], "userid" => $params['userid']));
+
+        if (!$answers) {
+            $answers = array();
+        }
+
+        $result['answers'] = $answers;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_survey_answers_by_surveyid_and_userid_returns()
+    {
+        return new external_single_structure(
+            array(
+                'answers' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'the id'),
+                            'userid' => new external_value(PARAM_INT, 'the user id'),
+                            'survey' => new external_value(PARAM_INT, 'the survey id'),
+                            'question' => new external_value(PARAM_INT, 'question'),
+                            'time' => new external_value(PARAM_INT, 'the time'),
+                            'answer1' => new external_value(PARAM_RAW, 'the answer 1'),
+                            'answer2' => new external_value(PARAM_RAW, 'the answer 2')
+                        )
+                    ), 'survey answers'
+                ),
+                'warnings' => new external_warnings()
             )
         );
     }

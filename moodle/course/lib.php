@@ -989,7 +989,7 @@ function course_integrity_check($courseid, $rawmods = null, $sections = null, $f
  * For a given course, returns an array of course activity objects
  * Each item in the array contains he following properties:
  */
-function get_array_of_activities($courseid) {
+function get_array_of_activities($course) {
 //  cm - course module id
 //  mod - name of the module (eg forum)
 //  section - the number of the section (eg week or topic)
@@ -999,10 +999,10 @@ function get_array_of_activities($courseid) {
 //  extra - contains extra string to include in any link
     global $CFG, $DB;
 
-    try {
-        $course = $DB->get_record('course', array('id'=>$courseid), "*", MUST_EXIST);
-    } catch (Exception $e) {
-        $course = get_local_course_record($courseid);
+    if (MOODLE_RUN_MODE == MOODLE_MODE_HUB) {
+        $course = get_local_course_record($course->remoteid);
+    } else {
+        $course = $DB->get_record('course', array('id'=>$course->id), "*", MUST_EXIST);
     }
 
     if (empty($course)) {
@@ -1011,15 +1011,15 @@ function get_array_of_activities($courseid) {
 
     $mod = array();
 
-    $rawmods = get_course_mods($courseid);
+    $rawmods = get_course_mods($course->remoteid);
     if (empty($rawmods)) {
         return $mod; // always return array
     }
 
-    $sections = get_remote_course_sections($course->id);
+    $sections = get_remote_course_sections($course->remoteid);
     if ($sections) {
         // First check and correct obvious mismatches between course_sections.sequence and course_modules.section.
-        if ($errormessages = course_integrity_check($courseid, $rawmods, $sections)) {
+        if ($errormessages = course_integrity_check($course->id, $rawmods, $sections)) {
             debugging(join('<br>', $errormessages));
             $rawmods = get_course_mods($courseid);
             $sections = get_remote_course_sections($courseid);

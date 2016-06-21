@@ -231,7 +231,7 @@ class mod_assign_renderer extends plugin_renderer_base {
         if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
             $o .= $this->output->header();
         }
-        
+
         $heading = format_string($header->assign->name, false, array('context' => $header->context));
         $o .= $this->output->heading($heading);
         if ($header->preface) {
@@ -1165,7 +1165,7 @@ class mod_assign_renderer extends plugin_renderer_base {
                 $jsparams = array($submissionplugin->plugin->get_subtype(),
                                   $submissionplugin->plugin->get_type(),
                                   $submissionplugin->submission->id);
-                
+
                 $this->page->requires->js_init_call('M.mod_assign.init_plugin_summary', $jsparams);
 
                 $action = 'viewplugin' . $submissionplugin->plugin->get_subtype();

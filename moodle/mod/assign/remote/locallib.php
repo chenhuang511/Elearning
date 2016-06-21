@@ -129,7 +129,8 @@ function get_remote_assign_plugin_config($dbparams){
     );
 }
 
-function get_remote_assign_comment_status($params){
+function get_remote_assign_comment_status($params)
+{
     return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
@@ -140,3 +141,24 @@ function get_remote_assign_comment_status($params){
     );
 }
 
+function get_remote_assign_count_file_submission($params){
+    return moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_get_count_file_submission',
+            'params' => $params
+        ), false
+    );
+}
+
+function get_remote_assign_get_content_html_file($params){
+    return moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_get_content_html_file',
+            'params' => $params
+        ), false
+    );
+}

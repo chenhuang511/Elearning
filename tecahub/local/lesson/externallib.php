@@ -1355,17 +1355,17 @@ class local_mod_lesson_external extends external_api
 
         $branch = new stdClass();
 
-        foreach ($params['data'] as $key => $value) {
-            $branch->$key = $value;
+        foreach ($params['data'] as $element) {
+            $branch->$element['name'] = $element['value'];
         }
 
         $transaction = $DB->start_delegated_transaction();
 
-        $result = array();
-
         $DB->insert_record("lesson_branch", $branch);
+
         $transaction->allow_commit();
 
+        $result = array();
         $result['status'] = true;
         $result['warnings'] = $warnings;
 

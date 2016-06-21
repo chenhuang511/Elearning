@@ -229,7 +229,7 @@ class lesson_page_type_branchtable extends lesson_page
         $data['data[4][value]'] = $branchflag;
         $data['data[5][name]'] = 'timeseen';
         $data['data[5][value]'] = time();
-        $data['data[6][name]'] = 'timeseen';
+        $data['data[6][name]'] = 'nextpageid';
         $data['data[6][value]'] = $newpageid;
 
         $result = save_remote_lesson_branch($data);
