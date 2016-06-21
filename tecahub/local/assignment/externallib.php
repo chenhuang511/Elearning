@@ -746,7 +746,7 @@ class local_mod_assign_external extends external_api {
         return new external_value(PARAM_INT, 'value assign plugin');
     }
 
-    // MINHND
+    // MINHND: Get comment status
     public static function get_comment_status_parameters(){
         return new external_function_parameters(
             array(
@@ -826,4 +826,132 @@ class local_mod_assign_external extends external_api {
         );
     }
 
+    // MINHND: Get comment status
+    public static function get_count_file_submission_parameters(){
+        return new external_function_parameters(
+            array(
+                'instanceid' => new external_value(PARAM_INT, 'instance ID'),
+                'submissionid' => new external_value(PARAM_INT, 'submission ID'),
+                'area' => new external_value(PARAM_RAW, 'Area'),
+            )
+        );
+    }
+    
+    public static function get_count_file_submission($instanceid, $submissionid, $area){
+
+        $warnings = array();
+
+        // Now, build the result.
+        $result = array();
+
+        //Validate param
+        $params = self::validate_parameters(self::get_count_file_submission_parameters(),
+            array(
+                'instanceid' => $instanceid,
+                'submissionid' => $submissionid,
+                'area' => $area
+            )
+        );
+        
+        $fs = get_file_storage();
+        $context = context_module::instance($params['instanceid']);
+        
+        $files = $fs->get_area_files($context->id,
+            'assignsubmission_file',
+            $params['area'],
+            $params['submissionid'],
+            'id',
+            false);
+
+        $result['countfile'] = count($files);
+
+        $result['warnings'] = $warnings;
+        
+        return $result;
+    }
+
+    public static function get_count_file_submission_returns(){
+        return new external_single_structure(
+            array(
+                'countfile' => new external_value(PARAM_INT, 'count file', VALUE_OPTIONAL),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    // Get content File submission
+    public static function get_content_html_file_parameters(){
+        return new external_function_parameters(
+            array(
+                'assignid' => new external_value(PARAM_INT, 'asssign ID'),
+                'userid' => new external_value(PARAM_INT, 'user ID', VALUE_DEFAULT, 0),
+            )
+        );
+    }
+
+    public static function get_content_html_file($assignid, $userid){
+        global $USER, $DB;
+        
+        $warnings = array();
+        
+        // Now, build the result.
+        $result = array();
+
+        //Validate param
+        $params = self::validate_parameters(self::get_content_html_file_parameters(),
+            array(
+                'assignid' => $assignid,
+                'userid' => $userid,
+            )
+        );
+
+        // Request and permission validation.
+        $assign = $DB->get_record('assign', array('id' => $params['assignid']), 'id', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($assign, 'assign');
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+        
+        $assign = new assign($context, $cm, $course);
+
+        // Default value for userid.
+        if (empty($params['userid'])) {
+            $params['userid'] = $USER->id;
+        }
+        $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
+        core_user::require_active_user($user);
+
+        // Retrieve the rest of the renderable objects.
+        if (has_capability('mod/assign:submit', $assign->get_context(), $user)) {
+            $lastattempt = $assign->get_assign_submission_status_renderable($user, true);
+        }
+        if ($lastattempt) {
+
+            $submissionplugins = $assign->get_submission_plugins();
+            $showviewlink = false;
+
+            $summary = $submissionplugins[1]->view_summary($lastattempt->submission, $showviewlink);
+
+            $result['viewsummary'] = $summary;
+            if($showviewlink){
+                $result['view'] = $submissionplugins[1]->plugin->view_summary($lastattempt->submission);
+            }
+            $result['view'] = null;
+        }
+        
+        $result['warnings'] = $warnings;
+
+
+        return $result;
+    }
+    
+    public static function get_content_html_file_returns(){
+        return new external_single_structure(
+            array(
+                'viewsummary' => new external_value(PARAM_RAW, 'HTML View summary submission'),
+                'view' => new external_value(PARAM_RAW, 'HTML View submission'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

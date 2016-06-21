@@ -4429,8 +4429,9 @@ class assign {
         if(MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
             $user = get_remote_mapping_user();
             $remotesubmission = get_remote_get_submission_status($instance->id, $user['0']->id)->lastattempt;
+            unset($remotesubmission->submission->plugins);
             $submissionplugins = $this->get_submission_plugins();
-            
+
             $submissionstatus = new assign_submission_status($instance->allowsubmissionsfromdate,
                 $instance->alwaysshowdescription,
                 $remotesubmission->submission,
@@ -4798,23 +4799,23 @@ class assign {
         $submitted = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
 
         $activitygroup = groups_get_activity_group($this->get_course_module());
-        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            $user = get_remote_mapping_user();
-            $gradingsumary = get_remote_get_submission_status($instance->id,$user[0]->id)->gradingsummary;
-            $summary = new assign_grading_summary($gradingsumary->participantcount,
-                $instance->submissiondrafts,
-                $gradingsumary->submissiondraftscount,
-                $gradingsumary->submissionsenabled,
-                $gradingsumary->submissionssubmittedcount,
-                $instance->cutoffdate,
-                $instance->duedate,
-                $this->get_course_module()->id,
-                $gradingsumary->submissionsneedgradingcount,
-                $instance->teamsubmission,
-                $gradingsumary->warnofungroupedusers);
-
-            return $summary;
-        }
+//        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+//            $user = get_remote_mapping_user();
+//            $gradingsumary = get_remote_get_submission_status($instance->id,$user[0]->id)->gradingsummary;
+//            $summary = new assign_grading_summary($gradingsumary->participantcount,
+//                $instance->submissiondrafts,
+//                $gradingsumary->submissiondraftscount,
+//                $gradingsumary->submissionsenabled,
+//                $gradingsumary->submissionssubmittedcount,
+//                $instance->cutoffdate,
+//                $instance->duedate,
+//                $this->get_course_module()->id,
+//                $gradingsumary->submissionsneedgradingcount,
+//                $instance->teamsubmission,
+//                $gradingsumary->warnofungroupedusers);
+//
+//            return $summary;
+//        }
 
         if ($instance->teamsubmission) {
             $defaultteammembers = $this->get_submission_group_members(0, true);
