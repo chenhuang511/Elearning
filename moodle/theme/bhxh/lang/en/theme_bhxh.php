@@ -32,7 +32,7 @@ $string['choosereadme'] = '<div class="clearfix"><div class="theme_screenshot">
 <p>
 <h3>Moodle BHXH theme</h3>
 <p>
-This theme is based on the Bootstrapbase Moodle theme.
+This theme is based on the Bootstrap Moodle theme.
 </p>
 <p>
 <a href="http://getbootstrap.com">http://getbootstrap.com</a>

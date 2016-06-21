@@ -69,7 +69,7 @@ if (is_siteadmin()) {
     $description = get_string('toggleslideshowdesc', 'theme_bhxh');
     $yes = get_string('yes');
     $no = get_string('no');
-    $default = 1;
+    $default = 0;
     $choices = array(1 => $yes , 0 => $no);
     $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
     $setting->set_updatedcallback('theme_reset_all_caches');

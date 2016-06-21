@@ -36,5 +36,5 @@ $plugin->release = 'Moodle 3.0.1 (Build: 20151221)';
 $plugin->requires  = 2013111800;
 $plugin->component = 'theme_bhxh';
 $plugin->dependencies = array(
-    'theme_bootstrapbase'  => 2013110500,
+    'theme_bootstrap'  => 2013110500,
 );
