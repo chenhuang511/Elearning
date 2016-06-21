@@ -41,4 +41,12 @@ $functions = array(
         'type'          => 'read',
         'ajax'          => true
     ),
+    'local_mod_get_survey_answers_by_surveyid_and_userid' => array(
+        'classname'     => 'local_mod_survey_external',
+        'methodname'    => 'get_survey_answers_by_surveyid_and_userid',
+        'classpath'     => 'local/survey/externallib.php',
+        'description'   => 'Get survey answers by surveyid and userid',
+        'type'          => 'read',
+        'ajax'          => true
+    ),
 );

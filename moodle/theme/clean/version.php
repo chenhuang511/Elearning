@@ -15,15 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
+ * Moodle's Clean theme, an example of how to make a Bootstrap theme
  *
- * @package    auth_webservice
- * @copyright  2011 Petr Skoda (http://skodak.org)
+ * DO NOT MODIFY THIS THEME!
+ * COPY IT FIRST, THEN RENAME THE COPY AND MODIFY IT INSTEAD.
+ *
+ * For full information about creating Moodle themes, see:
+ * http://docs.moodle.org/dev/Themes_2.0
+ *
+ * @package    theme_clean
+ * @copyright  2013 Moodle, moodle.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2016052332;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2016051900;        // Requires this Moodle version
-$plugin->component = 'local_survey';    // Full name of the plugin (used for diagnostics)
+$plugin->version   = 2016052300;
+$plugin->requires  = 2016051900;
+$plugin->component = 'theme_clean';
+$plugin->dependencies = array(
+    'theme_bootstrapbase'  => 2016051900,
+);

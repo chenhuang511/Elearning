@@ -15,15 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
+ * Theme version info
  *
- * @package    auth_webservice
- * @copyright  2011 Petr Skoda (http://skodak.org)
+ * @package    theme_bootstrapbase
+ * @copyright  2013 Bas Brands, www.basbrands.nl
+ * @author     Bas Brands
+ * @author     David Scotson
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2016052332;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2016051900;        // Requires this Moodle version
-$plugin->component = 'local_survey';    // Full name of the plugin (used for diagnostics)
+$plugin->version   = 2016052300;
+$plugin->requires  = 2016051900;
+$plugin->component = 'theme_bootstrapbase';
