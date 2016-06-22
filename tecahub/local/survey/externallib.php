@@ -186,7 +186,9 @@ class local_mod_survey_external extends external_api
 
         $result = array();
 
-        $questions = $DB->get_records_list("survey_questions", "id", $params['questionids']);
+        $qids = explode(',', $params['questionids']);
+
+        $questions = $DB->get_records_list("survey_questions", "id", $qids);
 
         if (!$questions) {
             $questions = array();
