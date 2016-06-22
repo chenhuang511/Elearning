@@ -35,11 +35,11 @@
 
 
         var changeContent = function (element, cnt) {
-            setInterval(function () {
+            setTimeout(function () {
                 $(loading).hide();
-            }, 3000);
+            }, 2000);
             // remove now content
-            element.html();
+            element.empty();
             // add new content
             element.html(cnt);
         };
@@ -85,11 +85,13 @@
 
         if (labels) {
             $.each(labels, function (index, element) {
-                $(labels[index]).on('click', function () {
+                $(labels[index]).on('click', function (e) {
+                    e.preventDefault();
                     content.hide();
-                    $(loading).show();
+//                    $(loading).show();
                     var description = $(this).attr('data-description');
-                    changeContent(content, description);
+//                    changeContent(content, description);
+                    content.html(description);
                     content.show();
                 });
             });
