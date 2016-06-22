@@ -7208,7 +7208,8 @@ class context_course extends context
         if ($context = context::cache_get(CONTEXT_COURSE, $courseid)) {
             return $context;
         }
-        if ($context = context::cache_get(CONTEXT_COURSE, get_course_id_by_remote_id($courseid))) {
+        $remoteid = get_course_id_by_remote_id($courseid);
+        if ($remoteid != false && $context = context::cache_get(CONTEXT_COURSE, $remoteid)) {
             return $context;
         }
 
