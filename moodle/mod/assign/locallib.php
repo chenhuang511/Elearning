@@ -4456,7 +4456,7 @@ class assign {
                 $remotesubmission->extensionduedate,
                 $this->get_context(),
                 $remotesubmission->blindmarking,
-                $gradingcontrollerpreview,
+                $remotesubmission->gradingcontrollerpreview,
                 $instance->attemptreopenmethod,
                 $instance->maxattempts,
                 $remotesubmission->gradingstatus,

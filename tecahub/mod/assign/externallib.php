@@ -2543,6 +2543,7 @@ class mod_assign_external extends external_api {
                         'cansubmit' => new external_value(PARAM_BOOL, 'Whether the user can submit.'),
                         'extensionduedate' => new external_value(PARAM_INT, 'Extension due date.'),
                         'blindmarking' => new external_value(PARAM_BOOL, 'Whether blind marking is enabled.'),
+                        'gradingcontrollerpreview' => new external_value(PARAM_RAW, 'Whether grading controller preview.'),
                         'gradingstatus' => new external_value(PARAM_ALPHANUMEXT, 'Grading status.'),
                         'usergroups' => new external_multiple_structure(
                             new external_value(PARAM_INT, 'Group id.'), 'User groups in the course.'
