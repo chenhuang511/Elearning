@@ -300,4 +300,19 @@ class local_mod_survey_external extends external_api
             )
         );
     }
+
+    public static function survey_save_answers_parameters() {
+        
+    }
+
+    public static function survey_save_answers($survey, $answersrawdata, $course, $context) {}
+
+    public static function survey_save_answers_returns(){
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
 }

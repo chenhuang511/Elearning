@@ -253,14 +253,14 @@ if (empty($pageid)) {
             if ($lesson->timelimit) {
                 if ($lesson->retake) {
                     $continuelink = new single_button(new moodle_url('/mod/lesson/remote/api-view.php',
-                        array('id' => $cm->id, 'pageid' => $lesson->firstpageid, 'startlastseen' => 'no')),
+                        array('id' => $cm->id, 'class' => 'remote-link-action', 'pageid' => $lesson->firstpageid, 'startlastseen' => 'no')),
                         get_string('continue', 'lesson'), 'get');
 
                     echo html_writer::div($lessonoutput->message(get_string('leftduringtimed', 'lesson'), $continuelink),
                         'center leftduring');
 
                 } else {
-                    $courselink = new single_button(new moodle_url('/course/view.php',
+                    $courselink = new single_button(new moodle_url('/course/remote/view.php',
                         array('id' => $PAGE->course->id)), get_string('returntocourse', 'lesson'), 'get');
 
                     echo html_writer::div($lessonoutput->message(get_string('leftduringtimednoretake', 'lesson'), $courselink),
@@ -474,7 +474,7 @@ if ($pageid != LESSON_EOL) {
     if (!$canmanage) {
         if ($gradelesson) {
             // Store this now before any modifications to pages viewed.
-            //$progressbar = $lessonoutput->progress_bar($lesson);
+            $progressbar = $lessonoutput->progress_bar($lesson);
             // Update the clock / get time information for this user.
             $lesson->stop_timer();
 

@@ -213,8 +213,8 @@ if (!$result->correctanswer && !$result->noanswer && !$result->isessayquestion &
 $url = new moodle_url('/mod/lesson/remote/api-view.php', array('id' => $cm->id, 'pageid' => $result->newpageid));
 if ($lesson->review && !$result->correctanswer && !$result->noanswer && !$result->isessayquestion && !$result->maxattemptsreached) {
     // Review button continue
-    echo $OUTPUT->single_button($url, get_string('reviewquestioncontinue', 'lesson'));
+    echo $OUTPUT->single_button($url, get_string('reviewquestioncontinue', 'lesson'), true);
 } else {
     // Normal continue button
-    echo $OUTPUT->single_button($url, get_string('continue', 'lesson'));
+    echo $OUTPUT->single_button($url, get_string('continue', 'lesson'), true);
 }

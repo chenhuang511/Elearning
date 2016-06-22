@@ -144,7 +144,9 @@ if ($surveyalreadydone) {
     exit;
 }
 
-echo "<form method=\"post\" action=\"save.php\" id=\"surveyform\">";
+$actionlink = $CFG->wwwroot . '\mod\survey\remote\api-save.php';
+
+echo "<form method=\"post\" action=\"$actionlink\" id=\"surveyform\">";
 echo '<div>';
 echo "<input type=\"hidden\" name=\"id\" value=\"$id\" />";
 echo "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />";
@@ -196,7 +198,7 @@ $PAGE->requires->string_for_js('questionsnotanswered', 'survey');
 $PAGE->requires->js_init_call('M.mod_survey.init', $checkarray, true, $module);
 
 echo '<br />';
-echo '<input type="submit" value="'.get_string("clicktocontinue", "survey").'" />';
+echo '<input type="submit" class="remote-form-action" value="'.get_string("clicktocontinue", "survey").'" />';
 echo '</div>';
 echo "</form>";
 

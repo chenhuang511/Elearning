@@ -115,7 +115,7 @@ class mod_lesson_renderer extends plugin_renderer_base
         global $CFG;
         $output = $this->output->box_start('password-form');
         $output .= $this->output->box_start('generalbox boxaligncenter');
-        $output .= '<form id="password" method="post" action="' . $CFG->wwwroot . '/mod/lesson/view.php" autocomplete="off">';
+        $output .= '<form id="password" method="post" action="' . $CFG->wwwroot . '/mod/lesson/remote/api-view.php" autocomplete="off">';
         $output .= '<fieldset class="invisiblefieldset center">';
         $output .= '<input type="hidden" name="id" value="' . $this->page->cm->id . '" />';
         $output .= '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
@@ -124,7 +124,7 @@ class mod_lesson_renderer extends plugin_renderer_base
         }
         $output .= get_string('passwordprotectedlesson', 'lesson', format_string($lesson->name)) . '<br /><br />';
         $output .= get_string('enterpassword', 'lesson') . " <input type=\"password\" name=\"userpassword\" /><br /><br />";
-        $output .= "<div class='lessonbutton standardbutton submitbutton'><input type='submit' value='" . get_string('continue', 'lesson') . "' /></div>";
+        $output .= "<div class='lessonbutton standardbutton submitbutton'><input type='submit' class='remote-form-action' value='" . get_string('continue', 'lesson') . "' /></div>";
         $output .= " <div class='lessonbutton standardbutton submitbutton'><input type='submit' name='backtocourse' value='" . get_string('cancel', 'lesson') . "' /></div>";
         $output .= '</fieldset></form>';
         $output .= $this->output->box_end();
