@@ -184,7 +184,7 @@ function survey_user_complete($course, $user, $mod, $survey)
             $table = new html_table();
             $table->align = array("left", "left");
             $questionids = explode(',', $survey->questions);
-            $questions = get_remote_list_survey_questions_by_ids($questionids);
+            $questions = get_remote_list_survey_questions_by_ids($survey->questions);
             $questionorder = explode(",", $survey->questions);
 
             foreach ($questionorder as $key => $val) {
@@ -302,26 +302,27 @@ function survey_get_responses($surveyid, $groupid, $groupingid)
 {
     global $DB;
 
-    $params = array('surveyid' => $surveyid, 'groupid' => $groupid, 'groupingid' => $groupingid);
-
-    if ($groupid) {
-        $groupsjoin = "JOIN {groups_members} gm ON u.id = gm.userid AND gm.groupid = :groupid ";
-
-    } else if ($groupingid) {
-        $groupsjoin = "JOIN {groups_members} gm ON u.id = gm.userid
-                       JOIN {groupings_groups} gg ON gm.groupid = gg.groupid AND gg.groupingid = :groupingid ";
-    } else {
-        $groupsjoin = "";
-    }
+//    $params = array('surveyid' => $surveyid, 'groupid' => $groupid, 'groupingid' => $groupingid);
+//
+//    if ($groupid) {
+//        $groupsjoin = "JOIN {groups_members} gm ON u.id = gm.userid AND gm.groupid = :groupid ";
+//
+//    } else if ($groupingid) {
+//        $groupsjoin = "JOIN {groups_members} gm ON u.id = gm.userid
+//                       JOIN {groupings_groups} gg ON gm.groupid = gg.groupid AND gg.groupingid = :groupingid ";
+//    } else {
+//        $groupsjoin = "";
+//    }
 
     $userfields = user_picture::fields('u');
-    $result = $DB->get_records_sql("SELECT $userfields, MAX(a.time) as time
-                                   FROM {survey_answers} a
-                                   JOIN {user} u ON a.userid = u.id
-                            $groupsjoin
-                                  WHERE a.survey = :surveyid
-                               GROUP BY $userfields
-                               ORDER BY time ASC", $params);
+    $result = get_remote_survey_responses_by_surveyid($surveyid, $groupid, $groupingid);
+//        $DB->get_records_sql("SELECT $userfields, MAX(a.time) as time
+//                                   FROM {survey_answers} a
+//                                   JOIN {user} u ON a.userid = u.id
+//                            $groupsjoin
+//                                  WHERE a.survey = :surveyid
+//                               GROUP BY $userfields
+//                               ORDER BY time ASC", $params);
     return $result;
 }
 
@@ -976,7 +977,7 @@ function survey_get_questions($survey)
     global $DB;
 
     $questionids = explode(',', $survey->questions);
-    if (!$questions = get_remote_list_survey_questions_by_ids($questionids)) {
+    if (!$questions = get_remote_list_survey_questions_by_ids($survey->questions)) {
         throw new moodle_exception('cannotfindquestion', 'survey');
     }
 
@@ -995,7 +996,7 @@ function survey_get_subquestions($question)
     global $DB;
 
     $questionids = explode(',', $question->multi);
-    $questions = get_remote_list_survey_questions_by_ids($questionids);
+    $questions = get_remote_list_survey_questions_by_ids($question->multi);
 
     return survey_order_questions($questions, $questionids);
 }

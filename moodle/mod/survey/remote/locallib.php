@@ -31,7 +31,7 @@ function get_remote_survey_answers_by_surveyid_and_userid($surveyid, $userid)
 
 function get_remote_list_survey_questions_by_ids($questionids)
 {
-    return moodle_webservice_client(
+    $questions = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
@@ -39,6 +39,16 @@ function get_remote_list_survey_questions_by_ids($questionids)
             'params' => array('questionids' => $questionids),
         )
     );
+
+    $finalquestion = array();
+
+    if ($questions) {
+        foreach ($questions->questions as $question) {
+            $finalquestion[$question->id] = $question;
+        }
+    }
+
+    return $finalquestion;
 }
 
 function get_remote_survey_responses_by_surveyid($surveyid, $groupid, $groupingid)

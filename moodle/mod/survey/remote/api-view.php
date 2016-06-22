@@ -200,6 +200,4 @@ echo '<input type="submit" value="'.get_string("clicktocontinue", "survey").'" /
 echo '</div>';
 echo "</form>";
 
-echo $OUTPUT->footer();
-
 
