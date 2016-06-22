@@ -337,7 +337,7 @@ class assign_submission_file extends assign_submission_plugin {
                     'assignid' => $submission->assignment,
                     'userid' => $submission->userid
                 );
-                return get_remote_assign_get_content_html_file($rparams)->viewsummary;
+                return get_remote_assign_get_content_html_submission($rparams)->viewsummary;
             }
             return $this->assignment->render_area_files('assignsubmission_file',
                                                         ASSIGNSUBMISSION_FILE_FILEAREA,
@@ -360,7 +360,7 @@ class assign_submission_file extends assign_submission_plugin {
                 'assignid' => $submission->assignment,
                 'userid' => $submission->userid
             );
-            return get_remote_assign_get_content_html_file($rparams)->view;
+            return get_remote_assign_get_content_html_submission($rparams)->view;
         }
 
         return $this->assignment->render_area_files('assignsubmission_file',

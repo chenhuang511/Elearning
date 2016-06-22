@@ -90,11 +90,11 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
-	'local_mod_assign_get_content_html_file' => array(
+	'local_mod_assign_get_content_html_submission' => array(
 		'classname'	  => 'local_mod_assign_external',
-		'methodname'  => 'get_content_html_file',
+		'methodname'  => 'get_content_html_submission',
 		'classpath'	  => 'local/assignment/externallib.php',
-		'description' => "Get html file submission",
+		'description' => "Get html all submission",
 		'type'		  => 'read',
 		'ajax'		  => true
 	),

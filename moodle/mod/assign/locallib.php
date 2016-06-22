@@ -4630,9 +4630,20 @@ class assign {
             }
 
             // If there is a visible grade, show the feedback.
-            $feedbackstatus = $this->get_assign_feedback_status_renderable($user);
-            if ($feedbackstatus) {
-                $o .= $this->get_renderer()->render($feedbackstatus);
+            if (MOODLE_MODE_HUB === MOODLE_MODE_HOST){
+                $feedbackstatus = $this->get_assign_feedback_status_renderable($user);
+                if ($feedbackstatus) {
+                    $o .= $this->get_renderer()->render($feedbackstatus);
+                }
+            } else{
+                $ruser = get_remote_mapping_user();
+                $rparams = array(
+                    'assignid' => $this->get_instance()->id,
+                    'userid' => $ruser[0]->id
+                );
+                $feedbackstatus = get_remote_assign_get_content_html_submission($rparams);
+                if($feedbackstatus)
+                    $o .= $feedbackstatus->feedback;
             }
 
             // If there is more than one submission, show the history.
