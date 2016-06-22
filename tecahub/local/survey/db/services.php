@@ -49,4 +49,20 @@ $functions = array(
         'type'          => 'read',
         'ajax'          => true
     ),
+    'local_mod_get_list_survey_questions_by_ids' => array(
+        'classname'     => 'local_mod_survey_external',
+        'methodname'    => 'get_list_survey_questions_by_ids',
+        'classpath'     => 'local/survey/externallib.php',
+        'description'   => 'Getlist survey questions by ids',
+        'type'          => 'read',
+        'ajax'          => true
+    ),
+    'local_mod_get_survey_response_by_surveyid' => array(
+        'classname'     => 'local_mod_survey_external',
+        'methodname'    => 'get_survey_responses_by_surveyid',
+        'classpath'     => 'local/survey/externallib.php',
+        'description'   => 'Get survey response by survey id',
+        'type'          => 'read',
+        'ajax'          => true
+    ),
 );

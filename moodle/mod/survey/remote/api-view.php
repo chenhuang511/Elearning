@@ -55,7 +55,7 @@ if (empty($trimmedintro)) {
     $survey->intro = get_string($tempo, "survey");
 }
 
-if (! $template = $DB->get_record("survey", array("id" => $survey->template))) {
+if (! $template = get_remote_survey_by_id($survey->template)->survey) {
     print_error('invalidtmptid', 'survey');
 }
 
@@ -73,7 +73,7 @@ if ($surveyalreadydone) {
 $strsurvey = get_string("modulename", "survey");
 $PAGE->set_title($survey->name);
 $PAGE->set_heading($course->fullname);
-echo $OUTPUT->header();
+
 echo $OUTPUT->heading($survey->name);
 
 // Check to see if groups are being used in this survey.

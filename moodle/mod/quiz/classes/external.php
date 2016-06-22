@@ -1118,6 +1118,7 @@ class mod_quiz_external extends external_api {
             'data' => $data,
             'preflightdata' => $preflightdata,
         );
+        
         $params = self::validate_parameters(self::save_attempt_parameters(), $params);
 
         // Add a page, required by validate_attempt.

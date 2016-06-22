@@ -166,4 +166,136 @@ class local_mod_survey_external extends external_api
             )
         );
     }
+
+    public static function get_list_survey_questions_by_ids_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'questionids' => new external_value(PARAM_RAW, ' the question ids')
+            )
+        );
+    }
+
+    public static function get_list_survey_questions_by_ids($questionids)
+    {
+        global $DB;
+
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_list_survey_questions_by_ids_parameters(), array('questionids' => $questionids));
+
+        $result = array();
+
+        $questions = $DB->get_records_list("survey_questions", "id", $params['questionids']);
+
+        if (!$questions) {
+            $questions = array();
+        }
+
+        $result['questions'] = $questions;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_list_survey_questions_by_ids_returns()
+    {
+        return new external_single_structure(
+            array(
+                'questions' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, ''),
+                            'text' => new external_value(PARAM_RAW, 'text'),
+                            'shorttext' => new external_value(PARAM_RAW, 'short text'),
+                            'multi' => new external_value(PARAM_RAW, 'multi'),
+                            'intro' => new external_value(PARAM_RAW, 'intro'),
+                            'type' => new external_value(PARAM_INT, 'type'),
+                            'options' => new external_value(PARAM_RAW, 'options'),
+                        )
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_survey_responses_by_surveyid_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'surveyid' => new external_value(PARAM_INT, 'survey id'),
+                'groupid' => new external_value(PARAM_INT, 'groupid'),
+                'groupingid' => new external_value(PARAM_INT, 'groupingid'),
+            )
+        );
+    }
+
+    public static function get_survey_responses_by_surveyid($surveyid, $groupid, $groupingid)
+    {
+        global $DB;
+
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_survey_responses_by_surveyid_parameters(), array(
+            'surveyid' => $surveyid, 'groupid' => $groupid, 'groupingid' => $groupingid
+        ));
+
+        if ($params['groupid']) {
+            $groupsjoin = "JOIN {groups_members} gm ON u.id = gm.userid AND gm.groupid = :groupid ";
+
+        } else if ($params['$groupingid']) {
+            $groupsjoin = "JOIN {groups_members} gm ON u.id = gm.userid
+                       JOIN {groupings_groups} gg ON gm.groupid = gg.groupid AND gg.groupingid = :groupingid ";
+        } else {
+            $groupsjoin = "";
+        }
+
+        $parameters = array('surveyid' => $params['surveyid'], 'groupid' => $params['groupid'], 'groupingid' => $params['groupingid']);
+
+        $result = array();
+
+        $userfields = user_picture::fields('u');
+
+        $response = $DB->get_records_sql("SELECT $userfields, MAX(a.time) as time
+                                   FROM {survey_answers} a
+                                   JOIN {user} u ON a.userid = u.id
+                            $groupsjoin
+                                  WHERE a.survey = :surveyid
+                               GROUP BY $userfields
+                               ORDER BY time ASC", $parameters);
+
+        if(!$response) {
+            $response = new stdClass();
+        }
+
+        $result['response'] = $response;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_survey_responses_by_surveyid_returns()
+    {
+        return new external_single_structure(
+            array(
+                'response' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'the id'),
+                        'picture' => new external_value(PARAM_INT, 'the picture'),
+                        'firstname' => new external_value(PARAM_RAW, 'first name'),
+                        'lastname' => new external_value(PARAM_RAW, 'last name'),
+                        'firstnamephonetic' => new external_value(PARAM_RAW, 'first name phonetic'),
+                        'lastnamephonetic' => new external_value(PARAM_RAW, 'last name phonetic'),
+                        'middlename' => new external_value(PARAM_RAW, 'middle name'),
+                        'alternatename' => new external_value(PARAM_RAW, 'alternate name'),
+                        'imagealt' => new external_value(PARAM_RAW, 'image alt'),
+                        'email' => new external_value(PARAM_RAW, 'email'),
+                        'time' => new external_value(PARAM_INT, 'time'),
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }
