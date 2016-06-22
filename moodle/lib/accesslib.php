@@ -7216,7 +7216,7 @@ class context_course extends context
         if (!$record = $DB->get_record('context', array('contextlevel' => CONTEXT_COURSE, 'instanceid' => $courseid))) {
             try {
                 $course = $DB->get_record('course', array('id' => $courseid), 'id,category', $strictness);
-            } catch (Exception $e) {
+            } catch (dml_exception $e) {
                 $course = $DB->get_record('course', array('remoteid' => $courseid), 'id,category', $strictness);
             }
             if ($course) {
@@ -7499,10 +7499,7 @@ class context_module extends context
                     $cm = $DB->get_record('course_modules', array('id' => $cmid), 'id,course', $strictness);
                     break;
                 case MOODLE_MODE_HUB:
-                    $coursemodule = get_remote_course_module($cmid);
-                    $cm = new stdClass();
-                    $cm->id = $coursemodule->id;
-                    $cm->course = $coursemodule->course;
+                    $cm = get_remote_course_module($cmid);
                     break;
                 default:
                     break;
