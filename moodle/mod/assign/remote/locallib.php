@@ -152,12 +152,12 @@ function get_remote_assign_count_file_submission($params){
     );
 }
 
-function get_remote_assign_get_content_html_file($params){
+function get_remote_assign_get_content_html_submission($params){
     return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_assign_get_content_html_file',
+            'function_name' => 'local_mod_assign_get_content_html_submission',
             'params' => $params
         ), false
     );

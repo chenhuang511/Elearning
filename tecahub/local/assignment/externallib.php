@@ -880,7 +880,7 @@ class local_mod_assign_external extends external_api {
     }
 
     // Get content File submission
-    public static function get_content_html_file_parameters(){
+    public static function get_content_html_submission_parameters(){
         return new external_function_parameters(
             array(
                 'assignid' => new external_value(PARAM_INT, 'asssign ID'),
@@ -889,7 +889,7 @@ class local_mod_assign_external extends external_api {
         );
     }
 
-    public static function get_content_html_file($assignid, $userid){
+    public static function get_content_html_submission($assignid, $userid){
         global $USER, $DB;
         
         $warnings = array();
@@ -898,7 +898,7 @@ class local_mod_assign_external extends external_api {
         $result = array();
 
         //Validate param
-        $params = self::validate_parameters(self::get_content_html_file_parameters(),
+        $params = self::validate_parameters(self::get_content_html_submission_parameters(),
             array(
                 'assignid' => $assignid,
                 'userid' => $userid,
@@ -921,10 +921,15 @@ class local_mod_assign_external extends external_api {
         $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
         core_user::require_active_user($user);
 
+        $lastattempt = $feedback = null;
+
         // Retrieve the rest of the renderable objects.
         if (has_capability('mod/assign:submit', $assign->get_context(), $user)) {
             $lastattempt = $assign->get_assign_submission_status_renderable($user, true);
         }
+
+        $feedback = $assign->get_assign_feedback_status_renderable($user);
+
         if ($lastattempt) {
 
             $submissionplugins = $assign->get_submission_plugins();
@@ -938,6 +943,12 @@ class local_mod_assign_external extends external_api {
             }
             $result['view'] = null;
         }
+
+        if($feedback){
+            $result['feedback'] = $assign->get_renderer()->render($feedback);
+        }
+        else
+            $result['feedback'] = null;
         
         $result['warnings'] = $warnings;
 
@@ -945,11 +956,12 @@ class local_mod_assign_external extends external_api {
         return $result;
     }
     
-    public static function get_content_html_file_returns(){
+    public static function get_content_html_submission_returns(){
         return new external_single_structure(
             array(
                 'viewsummary' => new external_value(PARAM_RAW, 'HTML View summary submission'),
                 'view' => new external_value(PARAM_RAW, 'HTML View submission'),
+                'feedback' => new external_value(PARAM_RAW, 'HTML feedback submission'),
                 'warnings' => new external_warnings()
             )
         );
