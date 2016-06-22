@@ -16,6 +16,12 @@ if ($courseid == 0) {
 
 $course = (empty($courseid)) ? null : get_local_course_record($courseid, true);
 
+if (is_remote_course($course)) {
+    define(MOODLE_RUN_MODE, MOODLE_MODE_HUB);
+} else {
+    define(MOODLE_RUN_MODE, MOODLE_MODE_HOST);
+}
+
 $coursename = $course->fullname;
 $coursesummary = $course->summary;
 

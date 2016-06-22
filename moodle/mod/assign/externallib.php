@@ -2793,7 +2793,7 @@ class mod_assign_external extends external_api {
         try {
             // Request and permission validation.
             $assign = $DB->get_record('assign', array('id' => $params['assignid']), 'id', MUST_EXIST);
-        } catch (Exception $e) {
+        } catch (dml_exception $e) {
             $assign = get_remote_assign_by_id($params['assignid']);
         }
         list($course, $cm) = get_course_and_cm_from_instance($assign, 'assign');
