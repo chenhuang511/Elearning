@@ -336,14 +336,14 @@ class local_mod_survey_external extends external_api
             'formdata' => $formdata
         ));
 
-        $frmdata = $params['formdata'];
+        $frmdata = json_decode(json_encode($params['formdata']), true);
 
         $answersrawdata = array();
         $answersrawdata['id'] = $frmdata['id'];
         $answersrawdata['sesskey'] = $frmdata['sesskey'];
 
-        foreach ($frmdata->data as $element) {
-            $answersrawdata[$element->name] = $element->value;
+        foreach ($frmdata['data'] as $element) {
+            $answersrawdata[$element['name']] = $element['value'];
         }
 
         $answers = array();
