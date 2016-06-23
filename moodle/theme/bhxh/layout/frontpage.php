@@ -80,17 +80,15 @@ echo $OUTPUT->doctype() ?>
             <?php echo $OUTPUT->course_header(); ?>
         </div>
     </header>
-    <div id="page-content" class="row-fluid">
-
-        <div id="<?php echo $regionbsid ?>" class="span9">
-					<?php
-						echo $OUTPUT->course_content_header();
-						echo $OUTPUT->main_content();
-						echo $OUTPUT->course_content_footer();
-          ?>
+    <div id="page-content" class="row">
+        <?php echo $OUTPUT->blocks('side-pre', 'col-md-3'); ?>
+        <div id="<?php echo $regionbsid ?>" class="col-md-9">
+            <?php
+            echo $OUTPUT->course_content_header();
+            echo $OUTPUT->main_content();
+            echo $OUTPUT->course_content_footer();
+            ?>
         </div>
-				<?php echo $OUTPUT->blocks('side-pre', 'span3'); ?>
-
     </div>
 
 </div>
