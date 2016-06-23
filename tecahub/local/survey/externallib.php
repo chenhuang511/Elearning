@@ -342,8 +342,8 @@ class local_mod_survey_external extends external_api
         $answersrawdata['id'] = $frmdata['id'];
         $answersrawdata['sesskey'] = $frmdata['sesskey'];
 
-        foreach ($frmdata['data'] as $element) {
-            $answersrawdata[$element['name']] = $element['value'];
+        foreach ($frmdata->data as $element) {
+            $answersrawdata[$element->name] = $element->value;
         }
 
         $answers = array();
