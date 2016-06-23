@@ -615,14 +615,13 @@ class quiz_attempt {
     public function __construct($attempt, $quiz, $cm, $course, $loadquestions = true, $isremote = false) {
         global $DB;
 
+        $this->isremote = $isremote;
         $this->attempt = $attempt;
         $this->quizobj = new quiz($quiz, $cm, $course);
 
         if (!$loadquestions) {
             return;
         }
-
-        $this->isremote = $isremote;
 
         $this->quba = question_engine::load_questions_usage_by_activity($this->attempt->uniqueid);
         $this->slots = $DB->get_records('quiz_slots',
