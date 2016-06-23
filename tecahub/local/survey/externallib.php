@@ -345,6 +345,10 @@ class local_mod_survey_external extends external_api
         foreach ($frmdata['data'] as $element) {
             $answersrawdata->$element['name'] = $element['value'];
         }
+        
+        echo '<pre>';
+        var_dump($answersrawdata);
+        echo '</pre>';
 
         $answers = array();
 
