@@ -391,6 +391,8 @@ class local_mod_survey_external extends external_api
         
         $result = array();
 
+        $result['status'] = false;
+
         if (!empty($answerstoinsert)) {
 
             $transaction = $DB->start_delegated_transaction();
