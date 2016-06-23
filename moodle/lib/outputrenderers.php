@@ -674,7 +674,7 @@ class core_renderer extends renderer_base {
         // This is an unfortunate hack. DO NO EVER add anything more here.
         // DO NOT add classes.
         // DO NOT add an id.
-        return '<div role="main">'.$this->unique_main_content_token.'</div>';
+        return '<div class="noti-content" role="main">'.$this->unique_main_content_token.'</div>';
     }
 
     /**
