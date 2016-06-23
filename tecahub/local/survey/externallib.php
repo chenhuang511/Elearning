@@ -336,7 +336,7 @@ class local_mod_survey_external extends external_api
             'formdata' => $formdata
         ));
 
-        $frmdata = json_decode(json_encode($params['formdata']), true);
+        $frmdata = $params['formdata'];
 
         $answersrawdata = array();
         $answersrawdata['id'] = $frmdata['id'];
