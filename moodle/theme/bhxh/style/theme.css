@@ -1918,23 +1918,6 @@ div.backup-section + form,
     border-top: 0;
 }
 
-/*  add width,position, bottom in .block atribute
-    add page-content atribute
-    add class="noti-content in file outputrenderers.php"
-    after add element for atribute noti-content and page-content and block
-    fix id="page" class="clearfix" -> class="container-fluil"
-*/
-.noti-content{
-    position:relative;
-    left: 25%;
-    width: 75%;
-    padding-top: 3%;
-    padding-left: 2%;
-    padding-right: 2%;
-}
-#page-content{
-    width: 100%;
-}
 .block {
     background: #f9f9f9;
     padding-top: 0;
@@ -1945,9 +1928,7 @@ div.backup-section + form,
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none;
-    width: 25%;
-    position:relative;
-    bottom:500px;
+    
 }
 
 .block .header {
