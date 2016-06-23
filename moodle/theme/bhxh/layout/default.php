@@ -68,7 +68,7 @@ echo $OUTPUT->doctype() ?>
 </div>
 <!--Slider-->
 
-<div id="page" class="clearfix">
+<div id="page" class="container-fluid">
     <header id="page-header" class="clearfix">
         <?php echo $html->heading; ?>
         <div id="page-navbar" class="clearfix">
