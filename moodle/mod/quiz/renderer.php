@@ -502,6 +502,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
 
         // Print all the questions.
         foreach ($slots as $slot) {
+            $slot = $slot->slot;
             $viewhtml = $attemptremote->questions[($slot-1)]->html;
             if(!$viewhtml){
                 $viewhtml = $attemptremote->questions[0]->html;

@@ -65,4 +65,12 @@ $functions = array(
         'type'          => 'read',
         'ajax'          => true
     ),
+    'local_mod_save_survey_answers' => array(
+        'classname'     => 'local_mod_survey_external',
+        'methodname'    => 'survey_save_answers',
+        'classpath'     => 'local/survey/externallib.php',
+        'description'   => 'save survey answers',
+        'type'          => 'read',
+        'ajax'          => true
+    ),
 );
