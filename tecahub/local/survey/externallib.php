@@ -135,11 +135,7 @@ class local_mod_survey_external extends external_api
 
         $answers = $DB->record_exists("survey_answers", array("survey" => $params['surveyid'], "userid" => $params['userid']));
 
-        if (!$answers) {
-            $answers = array();
-        }
-
-        $result['answers'] = $answers;
+        $result['status'] = $answers;
         $result['warnings'] = $warnings;
 
         return $result;
@@ -149,19 +145,7 @@ class local_mod_survey_external extends external_api
     {
         return new external_single_structure(
             array(
-                'answers' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'id' => new external_value(PARAM_INT, 'the id'),
-                            'userid' => new external_value(PARAM_INT, 'the user id'),
-                            'survey' => new external_value(PARAM_INT, 'the survey id'),
-                            'question' => new external_value(PARAM_INT, 'question'),
-                            'time' => new external_value(PARAM_INT, 'the time'),
-                            'answer1' => new external_value(PARAM_RAW, 'the answer 1'),
-                            'answer2' => new external_value(PARAM_RAW, 'the answer 2')
-                        )
-                    ), 'survey answers'
-                ),
+                'status' => new external_value(PARAM_BOOL, 'return true: is exists'),
                 'warnings' => new external_warnings()
             )
         );
@@ -305,7 +289,7 @@ class local_mod_survey_external extends external_api
         return new external_function_parameters(
             array(
                 'surveyid' => new external_value(PARAM_INT, 'the survey id'),
-                'userid' => new external_value(PARAM_INT, 'the user id'),
+                'userid' => new external_value(PARAM_RAW, 'the user id'),
                 'formdata' => new external_single_structure(
                     array(
                         'id' => new external_value(PARAM_INT, 'id'),
