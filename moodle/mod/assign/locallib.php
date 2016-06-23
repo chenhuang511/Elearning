@@ -3904,8 +3904,6 @@ class assign {
         // Only load this if it is.
         $o .= $this->view_grading_table();
 
-        $o .= $this->view_footer();
-
         \mod_assign\event\grading_table_viewed::create_from_assign($this)->trigger();
 
         return $o;
