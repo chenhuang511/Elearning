@@ -106,7 +106,7 @@ function get_remote_enrolled_users_by_ip($courseid, $ip, $options = array()) {
     ));
     return $resp;
 }
-
+// Minhnd
 function get_remote_onlinetext_submission($submissionid, $options = array()) {
     return moodle_webservice_client(array_merge($options,
         array(
@@ -158,6 +158,28 @@ function get_remote_assign_get_content_html_submission($params){
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_assign_get_content_html_submission',
+            'params' => $params
+        ), false
+    );
+}
+
+function get_remote_count_submissions_with_status_by_host_id($params){
+    return moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_count_submissions_with_status_by_host_id',
+            'params' => $params
+        ), false
+    );
+}
+
+function get_remote_count_submissions_need_grading_by_host_id($params){
+    return moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_count_submissions_need_grading_by_host_id',
             'params' => $params
         ), false
     );

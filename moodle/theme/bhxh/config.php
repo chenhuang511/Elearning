@@ -37,13 +37,19 @@ $THEME->rendererfactory = 'theme_overridden_renderer_factory';
 $THEME->csspostprocess = 'theme_bhxh_process_css';
 
 $THEME->layouts = array(
-		// The site home page.
-		'frontpage' => array(
-				'file' => 'frontpage.php',
-				'regions' => array('side-pre'),
-				'defaultregion' => 'side-pre',
-				'options' => array('nonavbar' => true),
-		)
+	// The site home page.
+	'frontpage' => array(
+			'file' => 'frontpage.php',
+			'regions' => array('side-pre'),
+			'defaultregion' => 'side-pre',
+			'options' => array('nonavbar' => true),
+	),
+	'admin' => array(
+		'file' => 'frontpage.php',
+		'regions' => array('side-pre'),
+		'defaultregion' => 'side-pre',
+		'options' => array('fluid' => true),
+	),
 );
 
 $THEME->blockrtlmanipulations = array(

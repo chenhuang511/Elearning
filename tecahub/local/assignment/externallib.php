@@ -974,4 +974,153 @@ class local_mod_assign_external extends external_api {
             )
         );
     }
+
+    // MINHD: Count submissions with status by host id
+    public static function count_submissions_with_status_by_host_id_parameters(){
+        return new external_function_parameters(
+            array(
+                'assignid' => new external_value(PARAM_INT, 'asssign ID'),
+                'hostip' => new external_value(PARAM_RAW, 'host ip', VALUE_REQUIRED),
+                'status' => new external_value(PARAM_RAW, 'status'),
+            )
+        );
+    }
+
+    public static function count_submissions_with_status_by_host_id($assignid, $hostip, $status){
+        global $DB;
+        
+        //Validate param
+        $params = self::validate_parameters(self::count_submissions_with_status_by_host_id_parameters(),
+            array(
+                'assignid' => $assignid,
+                'hostip' => $hostip,
+                'status' => $status,
+            )
+        );
+
+        // Request and permission validation.
+        $assign = $DB->get_record('assign', array('id' => $params['assignid']), 'id', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($assign, 'assign');
+
+        $mnethostid =  $DB->get_record('mnet_host', array('ip_address' => $params['hostip']), 'id', MUST_EXIST);
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        $assign = new assign($context, $cm, $course);
+
+        $currentgroup = groups_get_activity_group($assign->get_course_module(), true);
+        list($esql, $dbparams) = get_enrolled_sql($assign->get_context(), 'mod/assign:submit', $currentgroup, true);
+
+        $dbparams['assignid'] = $assign->get_instance()->id;
+        $dbparams['assignid2'] = $assign->get_instance()->id;
+        $dbparams['mnethostid'] = $mnethostid->id;
+        $dbparams['submissionstatus'] = $params['status'];
+
+        if ($assign->get_instance()->teamsubmission) {
+
+            $groupsstr = '';
+            if ($currentgroup != 0) {
+                // If there is an active group we should only display the current group users groups.
+                $participants = $assign->list_participants($currentgroup, true);
+                $groups = groups_get_all_groups($assign->get_course()->id,
+                    array_keys($participants),
+                    $assign->get_instance()->teamsubmissiongroupingid,
+                    'DISTINCT g.id, g.name');
+                list($groupssql, $groupsparams) = $DB->get_in_or_equal(array_keys($groups), SQL_PARAMS_NAMED);
+                $groupsstr = 's.groupid ' . $groupssql . ' AND';
+                $params = $params + $groupsparams;
+            }
+            $sql = 'SELECT COUNT(s.groupid)
+                        FROM {assign_submission} s
+                        WHERE
+                            s.latest = 1 AND
+                            s.assignment = :assignid AND
+                            s.timemodified IS NOT NULL AND
+                            s.userid = :groupuserid AND '
+                . $groupsstr . '
+                            s.status = :submissionstatus';
+            $params['groupuserid'] = 0;
+        } else {
+            $sql = 'SELECT COUNT(s.userid)
+                        FROM {assign_submission} s
+                        JOIN(' . $esql . 'AND eu1_u.mnethostid = :mnethostid ) e ON e.id = s.userid
+                        WHERE
+                            s.latest = 1 AND
+                            s.assignment = :assignid AND
+                            s.timemodified IS NOT NULL AND
+                            s.status = :submissionstatus';
+        }
+        return $DB->count_records_sql($sql, $dbparams);
+    }
+
+    public static function count_submissions_with_status_by_host_id_returns(){
+        return new external_value(PARAM_INT, 'count submission with status by host id');
+    }
+    // MINHD: Count submissions need grading by host id
+    public static function count_submissions_need_grading_by_host_id_parameters(){
+        return new external_function_parameters(
+            array(
+                'assignid' => new external_value(PARAM_INT, 'asssign ID'),
+                'hostip' => new external_value(PARAM_RAW, 'host ip', VALUE_REQUIRED),
+            )
+        );
+    }
+
+    public static function count_submissions_need_grading_by_host_id($assignid, $hostip){
+        global $DB;
+
+        //Validate param
+        $params = self::validate_parameters(self::count_submissions_need_grading_by_host_id_parameters(),
+            array(
+                'assignid' => $assignid,
+                'hostip' => $hostip,
+            )
+        );
+
+        // Request and permission validation.
+        $assign = $DB->get_record('assign', array('id' => $params['assignid']), 'id', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($assign, 'assign');
+
+        $mnethostid =  $DB->get_record('mnet_host', array('ip_address' => $params['hostip']), 'id', MUST_EXIST);
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        $assign = new assign($context, $cm, $course);
+
+
+        if ($assign->get_instance()->teamsubmission) {
+            // This does not make sense for group assignment because the submission is shared.
+            return 0;
+        }
+        
+        $currentgroup = groups_get_activity_group($assign->get_course_module(), true);
+        list($esql, $dbparams) = get_enrolled_sql($assign->get_context(), 'mod/assign:submit', $currentgroup, true);
+
+        $dbparams['assignid'] = $assign->get_instance()->id;
+        $dbparams['mnethostid'] = $mnethostid->id;
+        $dbparams['submitted'] = 'submitted';
+
+        $sql = 'SELECT COUNT(s.userid)
+                   FROM {assign_submission} s
+                   LEFT JOIN {assign_grades} g ON
+                        s.assignment = g.assignment AND
+                        s.userid = g.userid AND
+                        g.attemptnumber = s.attemptnumber
+                   JOIN(' . $esql . ' AND eu1_u.mnethostid = :mnethostid) e ON e.id = s.userid
+                   WHERE
+                        s.latest = 1 AND
+                        s.assignment = :assignid AND
+                        s.timemodified IS NOT NULL AND
+                        s.status = :submitted AND
+                        (s.timemodified >= g.timemodified OR g.timemodified IS NULL OR g.grade IS NULL)';
+
+        return $DB->count_records_sql($sql, $dbparams);
+    }
+
+    public static function count_submissions_need_grading_by_host_id_returns(){
+        return new external_value(PARAM_INT, 'count submission need grading by host id');
+    }
+
 }
