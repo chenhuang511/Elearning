@@ -45,7 +45,7 @@ $context = context_module::instance($cm->id);
 
 require_capability('mod/survey:participate', $context);
 
-if (! $survey = get_remote_survey_by_id($cm->instance)->survey) {
+if (! $survey = get_remote_survey_by_id($cm->instance)) {
     print_error('invalidsurveyid', 'survey');
 }
 
@@ -55,7 +55,7 @@ if (empty($trimmedintro)) {
     $survey->intro = get_string($tempo, "survey");
 }
 
-if (! $template = get_remote_survey_by_id($survey->template)->survey) {
+if (! $template = get_remote_survey_by_id($survey->template)) {
     print_error('invalidtmptid', 'survey');
 }
 
@@ -140,7 +140,6 @@ if ($surveyalreadydone) {
         }
     }
 
-    echo $OUTPUT->footer();
     exit;
 }
 
@@ -178,7 +177,6 @@ foreach ($questions as $question) {
 if (!is_enrolled($context)) {
     echo '</div>';
     echo "</form>";
-    echo $OUTPUT->footer();
     exit;
 }
 

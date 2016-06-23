@@ -73,7 +73,7 @@ function survey_add_instance($survey)
 {
     global $DB;
 
-    if (!$template = get_remote_survey_by_id($survey->template)->survey) {
+    if (!$template = get_remote_survey_by_id($survey->template)) {
         return 0;
     }
 
@@ -98,7 +98,7 @@ function survey_update_instance($survey)
 {
     global $DB;
 
-    if (!$template = get_remote_survey_by_id($survey->template)->survey) {
+    if (!$template = get_remote_survey_by_id($survey->template)) {
         return 0;
     }
 
@@ -122,7 +122,7 @@ function survey_delete_instance($id)
 {
     global $DB;
 
-    if (!$survey = get_remote_survey_by_id($id)->survey) {
+    if (!$survey = get_remote_survey_by_id($id)) {
         return false;
     }
 
@@ -155,7 +155,7 @@ function survey_user_outline($course, $user, $mod, $survey)
 {
     global $DB;
 
-    if ($answers = get_remote_survey_answers_by_surveyid_and_userid($survey->id, $user->id)->answers) {
+    if ($answers = get_remote_survey_answers_by_surveyid_and_userid($survey->id, $user->id)) {
         $lastanswer = array_pop($answers);
 
         $result = new stdClass();
@@ -302,27 +302,7 @@ function survey_get_responses($surveyid, $groupid, $groupingid)
 {
     global $DB;
 
-//    $params = array('surveyid' => $surveyid, 'groupid' => $groupid, 'groupingid' => $groupingid);
-//
-//    if ($groupid) {
-//        $groupsjoin = "JOIN {groups_members} gm ON u.id = gm.userid AND gm.groupid = :groupid ";
-//
-//    } else if ($groupingid) {
-//        $groupsjoin = "JOIN {groups_members} gm ON u.id = gm.userid
-//                       JOIN {groupings_groups} gg ON gm.groupid = gg.groupid AND gg.groupingid = :groupingid ";
-//    } else {
-//        $groupsjoin = "";
-//    }
-
-    $userfields = user_picture::fields('u');
     $result = get_remote_survey_responses_by_surveyid($surveyid, $groupid, $groupingid);
-//        $DB->get_records_sql("SELECT $userfields, MAX(a.time) as time
-//                                   FROM {survey_answers} a
-//                                   JOIN {user} u ON a.userid = u.id
-//                            $groupsjoin
-//                                  WHERE a.survey = :surveyid
-//                               GROUP BY $userfields
-//                               ORDER BY time ASC", $params);
     return $result;
 }
 
@@ -437,7 +417,7 @@ function survey_already_done($survey, $user)
 
     global $DB;
 
-    return get_remote_survey_answers_by_surveyid_and_userid($survey, $user)->answers;
+    return get_remote_survey_answers_by_surveyid_and_userid($survey, $user);
 }
 
 /**
@@ -487,7 +467,7 @@ function survey_get_template_name($templateid)
     global $DB;
 
     if ($templateid) {
-        if ($ss = $DB->get_record("surveys", array("id" => $templateid))) {
+        if ($ss = get_remote_survey_by_id($templateid)) {
             return $ss->name;
         }
     } else {
@@ -1016,50 +996,30 @@ function survey_save_answers($survey, $answersrawdata, $course, $context)
 
     $answers = array();
 
+    $frmdata = array();
+
+    $frmdata['formdata[id]'] = $answersrawdata->id;
+    $frmdata['formdata[sesskey]'] = $answersrawdata->sesskey;
+
+    $index = 0;
+
     // Sort through the data and arrange it.
     // This is necessary because some of the questions may have two answers, eg Question 1 -> 1 and P1.
     foreach ($answersrawdata as $key => $val) {
         if ($key != "userid" && $key != "id") {
             if (substr($key, 0, 1) == "q") {
-                $key = clean_param(substr($key, 1), PARAM_ALPHANUM);   // Keep everything but the 'q', number or P number.
+                $frmdata["formdata[data][$index][name]"] = $key;
+                $frmdata["formdata[data][$index][value]"] = $val;
+                $index++;
             }
             if (substr($key, 0, 1) == "P") {
                 $realkey = (int)substr($key, 1);
                 $answers[$realkey][1] = $val;
-            } else {
-                $answers[$key][0] = $val;
             }
         }
     }
 
-    // Now store the data.
-    $timenow = time();
-    $answerstoinsert = array();
-    foreach ($answers as $key => $val) {
-        if ($key != 'sesskey') {
-            $newdata = new stdClass();
-            $newdata->time = $timenow;
-            $newdata->userid = $USER->id;
-            $newdata->survey = $survey->id;
-            $newdata->question = $key;
-            if (!empty($val[0])) {
-                $newdata->answer1 = $val[0];
-            } else {
-                $newdata->answer1 = "";
-            }
-            if (!empty($val[1])) {
-                $newdata->answer2 = $val[1];
-            } else {
-                $newdata->answer2 = "";
-            }
-
-            $answerstoinsert[] = $newdata;
-        }
-    }
-
-    if (!empty($answerstoinsert)) {
-        $DB->insert_records("survey_answers", $answerstoinsert);
-    }
+    $result = save_remote_survey_answers($survey->id, $USER->id, $frmdata);
 
     $params = array(
         'context' => $context,
@@ -1087,7 +1047,7 @@ function survey_get_coursemodule_info($coursemodule)
 
     require_once($CFG->dirroot . '/mod/survey/remote/locallib.php');
 
-    $survey = get_remote_survey_by_id($coursemodule->instance)->survey;
+    $survey = get_remote_survey_by_id($coursemodule->instance);
 
     $result = new cached_cm_info();
     $result->name = $survey->name;
