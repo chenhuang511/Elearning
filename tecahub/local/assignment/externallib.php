@@ -921,7 +921,7 @@ class local_mod_assign_external extends external_api {
         $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
         core_user::require_active_user($user);
 
-        $lastattempt = $feedback = null;
+        $lastattempt = $feedback = $previousattempts = null;
 
         // Retrieve the rest of the renderable objects.
         if (has_capability('mod/assign:submit', $assign->get_context(), $user)) {
@@ -930,6 +930,8 @@ class local_mod_assign_external extends external_api {
 
         $feedback = $assign->get_assign_feedback_status_renderable($user);
 
+        $previousattempts = $assign->get_assign_attempt_history_renderable($user);
+        
         if ($lastattempt) {
 
             $submissionplugins = $assign->get_submission_plugins();
@@ -949,9 +951,14 @@ class local_mod_assign_external extends external_api {
         }
         else
             $result['feedback'] = null;
+
+        if($previousattempts and count($previousattempts->submissions) > 1){
+            $result['history'] = $assign->get_renderer()->render($previousattempts);
+        }
+        else
+            $result['history'] = null;
         
         $result['warnings'] = $warnings;
-
 
         return $result;
     }
@@ -962,6 +969,7 @@ class local_mod_assign_external extends external_api {
                 'viewsummary' => new external_value(PARAM_RAW, 'HTML View summary submission'),
                 'view' => new external_value(PARAM_RAW, 'HTML View submission'),
                 'feedback' => new external_value(PARAM_RAW, 'HTML feedback submission'),
+                'history' => new external_value(PARAM_RAW, 'HTML previous submission'),
                 'warnings' => new external_warnings()
             )
         );

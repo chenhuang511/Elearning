@@ -4611,6 +4611,20 @@ class assign {
     }
 
     /**
+     * Return remote params to call API
+     *
+     * @return array params
+     */
+    public function get_remote_params(){
+        $ruser = get_remote_mapping_user();
+
+        return $rparams = array(
+            'assignid' => $this->get_instance()->id,
+            'userid' => $ruser[0]->id
+        );
+    }
+
+    /**
      * Print 2 tables of information with no action links -
      * the submission summary and the grading summary.
      *
@@ -4623,33 +4637,35 @@ class assign {
         $o = '';
 
         if ($this->can_view_submission($user->id)) {
-
             if (has_capability('mod/assign:submit', $this->get_context(), $user)) {
                 $submissionstatus = $this->get_assign_submission_status_renderable($user, $showlinks);
                 $o .= $this->get_renderer()->render($submissionstatus);
             }
 
-            // If there is a visible grade, show the feedback.
             if (MOODLE_MODE_HUB === MOODLE_MODE_HOST){
+                // If there is a visible grade, show the feedback.
                 $feedbackstatus = $this->get_assign_feedback_status_renderable($user);
                 if ($feedbackstatus) {
                     $o .= $this->get_renderer()->render($feedbackstatus);
                 }
             } else{
-                $ruser = get_remote_mapping_user();
-                $rparams = array(
-                    'assignid' => $this->get_instance()->id,
-                    'userid' => $ruser[0]->id
-                );
-                $feedbackstatus = get_remote_assign_get_content_html_submission($rparams);
+                //check on hub
+                $feedbackstatus = get_remote_assign_get_content_html_submission($this->get_remote_params());
                 if($feedbackstatus)
                     $o .= $feedbackstatus->feedback;
             }
 
-            // If there is more than one submission, show the history.
-            $history = $this->get_assign_attempt_history_renderable($user);
-            if (count($history->submissions) > 1) {
-                $o .= $this->get_renderer()->render($history);
+            if (MOODLE_MODE_HUB === MOODLE_MODE_HOST) {
+                // If there is more than one submission, show the history.
+                $history = $this->get_assign_attempt_history_renderable($user);
+                if (count($history->submissions) > 1) {
+                    $o .= $this->get_renderer()->render($history);
+                }
+            } else{
+                //check on hub
+                $history = get_remote_assign_get_content_html_submission($this->get_remote_params());
+                if($history)
+                    $o .= $history->history;
             }
         }
         return $o;

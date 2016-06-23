@@ -302,10 +302,112 @@ class local_mod_survey_external extends external_api
     }
 
     public static function survey_save_answers_parameters() {
-        
+        return new external_function_parameters(
+            array(
+                'surveyid' => new external_value(PARAM_INT, 'the survey id'),
+                'userid' => new external_value(PARAM_INT, 'the user id'),
+                'formdata' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'id'),
+                        'sesskey' => new external_value(PARAM_TEXT, 'sesskey'),
+                        'data' => new external_multiple_structure(
+                            new external_single_structure(
+                                array(
+                                    'name' => new external_value(PARAM_RAW, 'data name'),
+                                    'value' => new external_value(PARAM_RAW, 'data value'),
+                                )
+                            ), 'the data form'
+                        )
+                    )
+                )
+            )
+        );
     }
 
-    public static function survey_save_answers($survey, $answersrawdata, $course, $context) {}
+    public static function survey_save_answers($surveyid, $userid, $formdata) {
+
+        global $DB;
+
+        $warnings = array();
+
+        $params = self::validate_parameters(self::survey_save_answers_parameters(),array(
+            'surveyid' => $surveyid,
+            'userid' => $userid,
+            'formdata' => $formdata
+        ));
+
+        $frmdata = $params['formdata'];
+
+        $answersrawdata = array();
+        $answersrawdata['id'] = $frmdata['id'];
+        $answersrawdata['sesskey'] = $frmdata['sesskey'];
+
+        foreach ($frmdata->data as $element) {
+            $answersrawdata[$element->name] = $element->value;
+        }
+
+        $answers = array();
+
+        // Sort through the data and arrange it.
+        // This is necessary because some of the questions may have two answers, eg Question 1 -> 1 and P1.
+        foreach ($answersrawdata as $key => $val) {
+            if ($key != "userid" && $key != "id") {
+                if (substr($key, 0, 1) == "q") {
+                    $key = clean_param(substr($key, 1), PARAM_ALPHANUM);   // Keep everything but the 'q', number or P number.
+                }
+                if (substr($key, 0, 1) == "P") {
+                    $realkey = (int)substr($key, 1);
+                    $answers[$realkey][1] = $val;
+                } else {
+                    $answers[$key][0] = $val;
+                }
+            }
+        }
+
+        // Now store the data.
+        $timenow = time();
+        $answerstoinsert = array();
+        foreach ($answers as $key => $val) {
+            if ($key != 'sesskey') {
+                $newdata = new stdClass();
+                $newdata->time = $timenow;
+                $newdata->userid = $userid;
+                $newdata->survey = $surveyid;
+                $newdata->question = $key;
+                if (!empty($val[0])) {
+                    $newdata->answer1 = $val[0];
+                } else {
+                    $newdata->answer1 = "";
+                }
+                if (!empty($val[1])) {
+                    $newdata->answer2 = $val[1];
+                } else {
+                    $newdata->answer2 = "";
+                }
+
+                $answerstoinsert[] = $newdata;
+            }
+        }
+        
+        $result = array();
+
+        $result['status'] = false;
+
+        if (!empty($answerstoinsert)) {
+
+            $transaction = $DB->start_delegated_transaction();
+            
+            $DB->insert_records("survey_answers", $answerstoinsert);
+            
+            $transaction->allow_commit();
+
+            $result['status'] = true;
+        }
+
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
 
     public static function survey_save_answers_returns(){
         return new external_single_structure(
