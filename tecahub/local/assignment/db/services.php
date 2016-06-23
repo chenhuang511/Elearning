@@ -98,5 +98,21 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_assign_count_submissions_with_status_by_host_id' => array(
+		'classname'	  => 'local_mod_assign_external',
+		'methodname'  => 'count_submissions_with_status_by_host_id',
+		'classpath'	  => 'local/assignment/externallib.php',
+		'description' => "Count submission with status by host id",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_assign_count_submissions_need_grading_by_host_id' => array(
+		'classname'	  => 'local_mod_assign_external',
+		'methodname'  => 'count_submissions_need_grading_by_host_id',
+		'classpath'	  => 'local/assignment/externallib.php',
+		'description' => "Count submission need grading by host id",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 );
 
