@@ -77,6 +77,7 @@ require_once($CFG->dirroot . '/mod/assign/gradingtable.php');
 require_once($CFG->libdir . '/eventslib.php');
 require_once($CFG->libdir . '/portfolio/caller.php');
 require_once($CFG->dirroot . '/mod/assign/remote/locallib.php');
+require_once($CFG->dirroot . '/mnet/lib.php');
 
 use \mod_assign\output\grading_app;
 
@@ -1685,6 +1686,19 @@ class assign {
      * @return int number of matching submissions
      */
     public function count_submissions_need_grading() {
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $hostip = $this->gethostip();
+
+            //Load remote params
+            $rparams = $this->get_remote_params();
+            unset($rparams['userid']);
+            $rparams['hostip'] = $hostip;
+
+            $result = get_remote_count_submissions_need_grading_by_host_id($rparams);
+
+            return $result;
+        }
+
         global $DB;
 
         if ($this->get_instance()->teamsubmission) {
@@ -1794,12 +1808,39 @@ class assign {
     }
 
     /**
+     * Load hostip.
+     *
+     * @return hostip
+     */
+    public function gethostip(){
+        global $CFG;
+        $my_hostname = mnet_get_hostname_from_uri($CFG->wwwroot);
+        $my_ip       = gethostbyname($my_hostname);
+        
+        return $my_ip;
+    }
+    
+    /**
      * Load a count of submissions with a specified status.
      *
      * @param string $status The submission status - should match one of the constants
      * @return int number of matching submissions
      */
     public function count_submissions_with_status($status) {
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $hostip = $this->gethostip();
+
+            //Load remote params
+            $rparams = $this->get_remote_params();
+            unset($rparams['userid']);
+            $rparams['hostip'] = $hostip;
+            $rparams['status'] = $status;
+
+            $result = get_remote_count_submissions_with_status_by_host_id($rparams);
+
+            return $result;
+        }
+
         global $DB;
 
         $currentgroup = groups_get_activity_group($this->get_course_module(), true);
@@ -1842,7 +1883,6 @@ class assign {
                             s.assignment = :assignid AND
                             s.timemodified IS NOT NULL AND
                             s.status = :submissionstatus';
-
         }
 
         return $DB->count_records_sql($sql, $params);
@@ -4426,6 +4466,8 @@ class assign {
 
         $gradingstatus = $this->get_grading_status($user->id);
         $usergroups = $this->get_all_groups($user->id);
+
+        // Check remote course
         if(MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
             $user = get_remote_mapping_user();
             $remotesubmission = get_remote_get_submission_status($instance->id, $user['0']->id)->lastattempt;
@@ -4826,23 +4868,6 @@ class assign {
         $submitted = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
 
         $activitygroup = groups_get_activity_group($this->get_course_module());
-//        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-//            $user = get_remote_mapping_user();
-//            $gradingsumary = get_remote_get_submission_status($instance->id,$user[0]->id)->gradingsummary;
-//            $summary = new assign_grading_summary($gradingsumary->participantcount,
-//                $instance->submissiondrafts,
-//                $gradingsumary->submissiondraftscount,
-//                $gradingsumary->submissionsenabled,
-//                $gradingsumary->submissionssubmittedcount,
-//                $instance->cutoffdate,
-//                $instance->duedate,
-//                $this->get_course_module()->id,
-//                $gradingsumary->submissionsneedgradingcount,
-//                $instance->teamsubmission,
-//                $gradingsumary->warnofungroupedusers);
-//
-//            return $summary;
-//        }
 
         if ($instance->teamsubmission) {
             $defaultteammembers = $this->get_submission_group_members(0, true);
