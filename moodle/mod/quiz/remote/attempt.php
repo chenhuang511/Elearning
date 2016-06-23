@@ -35,12 +35,13 @@ $attemptid = required_param('attempt', PARAM_INT);
 $page = optional_param('page', 0, PARAM_INT);
 
 $attemptremote = get_remote_get_attempt_data($attemptid, $page);
+//var_dump($attemptremote);die;
 
 $attempt = get_remote_attempt_by_attemptid($attemptid);
 $quiz = get_remote_quiz_by_id($attempt->quiz);
 $course = get_local_course_record($quiz->course);
 $cm = get_remote_course_module_by_instance("quiz", $quiz->id)->cm;
-$attemptobj = new quiz_attempt($attempt, $quiz, $cm, $course, true, true);
+$attemptobj = new quiz_attempt($attempt, $quiz, $cm, $course, false, true);
 
 $page = $attemptobj->force_page_number_into_range($page);
 $PAGE->set_url($attemptobj->attempt_url(null, $page)); // @TODO: set lai
@@ -81,6 +82,9 @@ $attemptobj->fire_attempt_viewed_event();
 
 // Get the list of questions needed by this page.
 $slots = $attemptobj->get_slots($page);
+if(!$slots){
+    $slots = get_remote_get_slots_by_quizid($attemptremote->attempt->quiz);
+}
 
 // Check.
 if (empty($slots)) {
