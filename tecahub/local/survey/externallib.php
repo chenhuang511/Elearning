@@ -339,11 +339,11 @@ class local_mod_survey_external extends external_api
         $frmdata = $params['formdata'];
 
         $answersrawdata = array();
-        $answersrawdata->id = $frmdata['id'];
-        $answersrawdata->sesskey = $frmdata['sesskey'];
+        $answersrawdata['id'] = $frmdata['id'];
+        $answersrawdata['sesskey'] = $frmdata['sesskey'];
 
         foreach ($frmdata['data'] as $element) {
-            $answersrawdata->$element['name'] = $element['value'];
+            $answersrawdata[$element['name']] = $element['value'];
         }
         
         echo '<pre>';
