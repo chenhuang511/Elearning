@@ -1238,7 +1238,7 @@ class lesson extends lesson_base
         global $DB;
 
         // Check for user override.
-        $override = get_remote_lesson_overrides_by_lessonid_and_userid($this->properties->id, $userid)->data;
+        $override = get_remote_lesson_overrides_by_lessonid_and_userid($this->properties->id, $userid);
 
         if (!$override) {
             $override = new stdClass();

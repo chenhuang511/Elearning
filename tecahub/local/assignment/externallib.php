@@ -1123,4 +1123,66 @@ class local_mod_assign_external extends external_api {
         return new external_value(PARAM_INT, 'count submission need grading by host id');
     }
 
+    //MinhND: get DB assign_submission 
+    public static function get_submission_by_assignid_userid_groupid_parameters(){
+        return new external_function_parameters(
+            array(
+                'assignment' => new external_value(PARAM_INT, 'asssign ID'),
+                'userid' => new external_value(PARAM_INT, 'user ID'),
+                'groupid' => new external_value(PARAM_INT, 'group ID'),
+                'attemptnumber' => new external_value(PARAM_INT, 'attempnumber')
+            )
+        );
+    }
+
+    public static function get_submission_by_assignid_userid_groupid($assignment, $userid, $groupid, $attempnumber){
+        global $DB;
+
+        $warnings = array();
+
+        $result = array();
+        
+
+        //Validate param
+        $params = self::validate_parameters(self::get_submission_by_assignid_userid_groupid_parameters(),
+            array(
+                'assignment' => $assignment,
+                'userid' => $userid,
+                'groupid' => $groupid,
+                'attemptnumber' => $attempnumber
+            )
+        );
+        if (!$params["attemptnumber"]){
+            unset($params["attemptnumber"]);
+        }
+
+        $result['submissions'] = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', '*', 0, 1);
+        
+        $result['warnings'] = $warnings;       
+        
+        return $result;
+    }
+    
+    public static function get_submission_by_assignid_userid_groupid_returns(){
+        return new external_single_structure(
+            array(
+                'submissions' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'submissions ID'),
+                            'assignment' => new external_value(PARAM_INT, 'assignment ID'),
+                            'userid' => new external_value(PARAM_INT, 'user ID'),
+                            'timecreated' => new external_value(PARAM_INT, 'time created'),
+                            'timemodified' => new external_value(PARAM_INT, 'time modified'),
+                            'status' => new external_value(PARAM_RAW, 'status'),
+                            'groupid' => new external_value(PARAM_INT, 'group ID'),
+                            'attemptnumber' => new external_value(PARAM_INT, 'attempnumber'),
+                            'latest' => new external_value(PARAM_INT, 'lastest')
+                        )
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

@@ -33,23 +33,8 @@ class local_mod_lesson_external extends external_api
     public static function get_lesson_by_id_parameters()
     {
         return new external_function_parameters(
-            array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
-                'options' => new external_multiple_structure (
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_ALPHANUM,
-                                'The expected keys (value format) are:
-                                                excludemodules (bool) Do not return modules, return only the sections structure
-                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
-                                                sectionid (int) Return only this section
-                                                sectionnumber (int) Return only this section with number (order)
-                                                cmid (int) Return only this module information (among the whole sections structure)
-                                                modname (string) Return only modules with this name "label, forum, etc..."
-                                                modid (int) Return only the module with this id (to be used with modname'),
-                            'value' => new external_value(PARAM_RAW, 'the value of the option,
-                                                                    this param is personaly validated in the external function.')
-                        )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+            array(
+                'lessonid' => new external_value(PARAM_INT, 'the lesson id')
             )
         );
     }
@@ -62,19 +47,31 @@ class local_mod_lesson_external extends external_api
      * @since Moodle 3.0
      * @throws moodle_exception
      */
-    public static function get_lesson_by_id($lessonid, $options = array())
+    public static function get_lesson_by_id($lessonid)
     {
         global $DB;
+
+        $warnings = array();
 
         // validate params
         $params = self::validate_parameters(self::get_lesson_by_id_parameters(),
             array(
                 'lessonid' => $lessonid,
-                'options' => $options
             )
         );
 
-        return $DB->get_record('lesson', array('id' => $params['lessonid']), '*', MUST_EXIST);
+        $result = array();
+
+        $lesson = $DB->get_record('lesson', array('id' => $params['lessonid']), '*', MUST_EXIST);
+
+        if (!$lesson) {
+            $lesson = new stdClass();
+        }
+
+        $result['lesson'] = $lesson;
+        $result['warnigs'] = $warnings;
+
+        return $result;
     }
 
     /**
@@ -87,47 +84,52 @@ class local_mod_lesson_external extends external_api
     {
         return new external_single_structure(
             array(
-                'id' => new external_value(PARAM_INT, 'lesson id'),
-                'course' => new external_value(PARAM_INT, 'course id', VALUE_DEFAULT),
-                'name' => new external_value(PARAM_RAW, 'lesson name'),
-                'intro' => new external_value(PARAM_RAW, 'lesson intro'),
-                'introformat' => new external_value(PARAM_INT, 'intro format', VALUE_DEFAULT),
-                'practice' => new external_value(PARAM_INT, 'practice', VALUE_DEFAULT),
-                'modattempts' => new external_value(PARAM_INT, 'mod attempts', VALUE_DEFAULT),
-                'usepassword' => new external_value(PARAM_INT, 'use password', VALUE_DEFAULT),
-                'password' => new external_value(PARAM_TEXT, 'password'),
-                'dependency' => new external_value(PARAM_INT, 'dependency', VALUE_DEFAULT),
-                'conditions' => new external_value(PARAM_RAW, 'condition'),
-                'grade' => new external_value(PARAM_INT, 'grade', VALUE_DEFAULT),
-                'custom' => new external_value(PARAM_INT, 'custom', VALUE_DEFAULT),
-                'ongoing' => new external_value(PARAM_INT, 'on going', VALUE_DEFAULT),
-                'usemaxgrade' => new external_value(PARAM_INT, 'use max grade', VALUE_DEFAULT),
-                'maxanswers' => new external_value(PARAM_INT, 'max answer'),
-                'maxattempts' => new external_value(PARAM_INT, 'max attempts'),
-                'review' => new external_value(PARAM_INT, 'review', VALUE_DEFAULT),
-                'nextpagedefault' => new external_value(PARAM_INT, 'next page default', VALUE_DEFAULT),
-                'feedback' => new external_value(PARAM_INT, 'feedback', VALUE_REQUIRED),
-                'minquestions' => new external_value(PARAM_INT, 'min question', VALUE_DEFAULT),
-                'maxpages' => new external_value(PARAM_INT, 'max page', VALUE_DEFAULT),
-                'timelimit' => new external_value(PARAM_INT, 'time limit', VALUE_DEFAULT),
-                'retake' => new external_value(PARAM_INT, 'retake', VALUE_DEFAULT),
-                'activitylink' => new external_value(PARAM_INT, 'activity link', VALUE_REQUIRED),
-                'mediafile' => new external_value(PARAM_TEXT, 'media file', VALUE_DEFAULT),
-                'mediaheight' => new external_value(PARAM_INT, 'media height'),
-                'mediawidth' => new external_value(PARAM_INT, 'media width'),
-                'mediaclose' => new external_value(PARAM_INT, 'media close'),
-                'slideshow' => new external_value(PARAM_INT, 'slideshow'),
-                'width' => new external_value(PARAM_INT, 'slideshow width'),
-                'height' => new external_value(PARAM_INT, 'slideshow height'),
-                'bgcolor' => new external_value(PARAM_TEXT, 'background color'),
-                'displayleft' => new external_value(PARAM_INT, 'display left'),
-                'displayleftif' => new external_value(PARAM_INT, 'display left if', VALUE_DEFAULT),
-                'progressbar' => new external_value(PARAM_INT, 'progress bar', VALUE_DEFAULT),
-                'available' => new external_value(PARAM_INT, 'available', VALUE_DEFAULT),
-                'deadline' => new external_value(PARAM_INT, 'deadline', VALUE_DEFAULT),
-                'timemodified' => new external_value(PARAM_INT, 'time modified', VALUE_DEFAULT),
-                'completionendreached' => new external_value(PARAM_INT, 'completion end reached', VALUE_DEFAULT),
-                'completiontimespent' => new external_value(PARAM_INT, 'completion time spent', VALUE_DEFAULT)
+                'lesson' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'lesson id'),
+                        'course' => new external_value(PARAM_INT, 'course id', VALUE_DEFAULT),
+                        'name' => new external_value(PARAM_RAW, 'lesson name'),
+                        'intro' => new external_value(PARAM_RAW, 'lesson intro'),
+                        'introformat' => new external_value(PARAM_INT, 'intro format', VALUE_DEFAULT),
+                        'practice' => new external_value(PARAM_INT, 'practice', VALUE_DEFAULT),
+                        'modattempts' => new external_value(PARAM_INT, 'mod attempts', VALUE_DEFAULT),
+                        'usepassword' => new external_value(PARAM_INT, 'use password', VALUE_DEFAULT),
+                        'password' => new external_value(PARAM_TEXT, 'password'),
+                        'dependency' => new external_value(PARAM_INT, 'dependency', VALUE_DEFAULT),
+                        'conditions' => new external_value(PARAM_RAW, 'condition'),
+                        'grade' => new external_value(PARAM_INT, 'grade', VALUE_DEFAULT),
+                        'custom' => new external_value(PARAM_INT, 'custom', VALUE_DEFAULT),
+                        'ongoing' => new external_value(PARAM_INT, 'on going', VALUE_DEFAULT),
+                        'usemaxgrade' => new external_value(PARAM_INT, 'use max grade', VALUE_DEFAULT),
+                        'maxanswers' => new external_value(PARAM_INT, 'max answer'),
+                        'maxattempts' => new external_value(PARAM_INT, 'max attempts'),
+                        'review' => new external_value(PARAM_INT, 'review', VALUE_DEFAULT),
+                        'nextpagedefault' => new external_value(PARAM_INT, 'next page default', VALUE_DEFAULT),
+                        'feedback' => new external_value(PARAM_INT, 'feedback', VALUE_REQUIRED),
+                        'minquestions' => new external_value(PARAM_INT, 'min question', VALUE_DEFAULT),
+                        'maxpages' => new external_value(PARAM_INT, 'max page', VALUE_DEFAULT),
+                        'timelimit' => new external_value(PARAM_INT, 'time limit', VALUE_DEFAULT),
+                        'retake' => new external_value(PARAM_INT, 'retake', VALUE_DEFAULT),
+                        'activitylink' => new external_value(PARAM_INT, 'activity link', VALUE_REQUIRED),
+                        'mediafile' => new external_value(PARAM_TEXT, 'media file', VALUE_DEFAULT),
+                        'mediaheight' => new external_value(PARAM_INT, 'media height'),
+                        'mediawidth' => new external_value(PARAM_INT, 'media width'),
+                        'mediaclose' => new external_value(PARAM_INT, 'media close'),
+                        'slideshow' => new external_value(PARAM_INT, 'slideshow'),
+                        'width' => new external_value(PARAM_INT, 'slideshow width'),
+                        'height' => new external_value(PARAM_INT, 'slideshow height'),
+                        'bgcolor' => new external_value(PARAM_TEXT, 'background color'),
+                        'displayleft' => new external_value(PARAM_INT, 'display left'),
+                        'displayleftif' => new external_value(PARAM_INT, 'display left if', VALUE_DEFAULT),
+                        'progressbar' => new external_value(PARAM_INT, 'progress bar', VALUE_DEFAULT),
+                        'available' => new external_value(PARAM_INT, 'available', VALUE_DEFAULT),
+                        'deadline' => new external_value(PARAM_INT, 'deadline', VALUE_DEFAULT),
+                        'timemodified' => new external_value(PARAM_INT, 'time modified', VALUE_DEFAULT),
+                        'completionendreached' => new external_value(PARAM_INT, 'completion end reached', VALUE_DEFAULT),
+                        'completiontimespent' => new external_value(PARAM_INT, 'completion time spent', VALUE_DEFAULT)
+                    )
+                ),
+                'warnings' => new external_warnings()
             )
         );
     }
@@ -143,22 +145,6 @@ class local_mod_lesson_external extends external_api
         return new external_function_parameters(
             array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
                 'prevpageid' => new external_value(PARAM_INT, 'the previous page id'),
-                'options' => new external_multiple_structure (
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_ALPHANUM,
-                                'The expected keys (value format) are:
-                                                excludemodules (bool) Do not return modules, return only the sections structure
-                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
-                                                sectionid (int) Return only this section
-                                                sectionnumber (int) Return only this section with number (order)
-                                                cmid (int) Return only this module information (among the whole sections structure)
-                                                modname (string) Return only modules with this name "label, forum, etc..."
-                                                modid (int) Return only the module with this id (to be used with modname'),
-                            'value' => new external_value(PARAM_RAW, 'the value of the option,
-                                                                    this param is personaly validated in the external function.')
-                        )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
             )
         );
     }
@@ -172,20 +158,32 @@ class local_mod_lesson_external extends external_api
      * @since Moodle 3.0
      * @throws moodle_exception
      */
-    public static function get_lesson_pages_by_lessonid_and_prevpageid($lessonid, $prevpageid, $options = array())
+    public static function get_lesson_pages_by_lessonid_and_prevpageid($lessonid, $prevpageid)
     {
         global $DB;
+
+        $warnings = array();
 
         // validate params
         $params = self::validate_parameters(self::get_lesson_pages_by_lessonid_and_prevpageid_parameters(),
             array(
                 'lessonid' => $lessonid,
-                'prevpageid' => $prevpageid,
-                'options' => $options
+                'prevpageid' => $prevpageid
             )
         );
 
-        return $DB->get_record('lesson_pages', array('lessonid' => $params['lessonid'], 'prevpageid' => $params['prevpageid']), '*', MUST_EXIST);
+        $result = array();
+
+        $page = $DB->get_record('lesson_pages', array('lessonid' => $params['lessonid'], 'prevpageid' => $params['prevpageid']), '*', MUST_EXIST);
+
+        if (!$page) {
+            $page = new stdClass();
+        }
+
+        $result['page'] = $page;
+        $result['warnings'] = $warnings;
+
+        return $result;
     }
 
     /**
@@ -198,19 +196,24 @@ class local_mod_lesson_external extends external_api
     {
         return new external_single_structure(
             array(
-                'id' => new external_value(PARAM_INT, 'the lesson page id'),
-                'lessonid' => new external_value(PARAM_INT, 'lesson id', VALUE_DEFAULT),
-                'prevpageid' => new external_value(PARAM_INT, 'previous page id', VALUE_DEFAULT),
-                'nextpageid' => new external_value(PARAM_INT, 'next page id', VALUE_DEFAULT),
-                'qtype' => new external_value(PARAM_INT, 'qtype', VALUE_DEFAULT),
-                'qoption' => new external_value(PARAM_INT, 'qoption', VALUE_DEFAULT),
-                'layout' => new external_value(PARAM_INT, 'layout', VALUE_REQUIRED),
-                'display' => new external_value(PARAM_INT, 'display', VALUE_REQUIRED),
-                'timecreated' => new external_value(PARAM_INT, 'time created', VALUE_DEFAULT),
-                'timemodified' => new external_value(PARAM_INT, 'time modified', VALUE_DEFAULT),
-                'title' => new external_value(PARAM_RAW, 'title'),
-                'contents' => new external_value(PARAM_RAW, 'contents'),
-                'contentsformat' => new external_value(PARAM_INT, 'contents format', VALUE_DEFAULT)
+                'page' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'the lesson page id'),
+                        'lessonid' => new external_value(PARAM_INT, 'lesson id', VALUE_DEFAULT),
+                        'prevpageid' => new external_value(PARAM_INT, 'previous page id', VALUE_DEFAULT),
+                        'nextpageid' => new external_value(PARAM_INT, 'next page id', VALUE_DEFAULT),
+                        'qtype' => new external_value(PARAM_INT, 'qtype', VALUE_DEFAULT),
+                        'qoption' => new external_value(PARAM_INT, 'qoption', VALUE_DEFAULT),
+                        'layout' => new external_value(PARAM_INT, 'layout', VALUE_REQUIRED),
+                        'display' => new external_value(PARAM_INT, 'display', VALUE_REQUIRED),
+                        'timecreated' => new external_value(PARAM_INT, 'time created', VALUE_DEFAULT),
+                        'timemodified' => new external_value(PARAM_INT, 'time modified', VALUE_DEFAULT),
+                        'title' => new external_value(PARAM_RAW, 'title'),
+                        'contents' => new external_value(PARAM_RAW, 'contents'),
+                        'contentsformat' => new external_value(PARAM_INT, 'contents format', VALUE_DEFAULT)
+                    )
+                ),
+                'warnings' => new external_warnings()
             )
         );
     }
@@ -255,20 +258,32 @@ class local_mod_lesson_external extends external_api
      * @return mixed
      * @throws invalid_parameter_exception
      */
-    public static function get_field_lesson_pages_by_lessonid_and_prevpageid($lessonid, $prevpageid, $options = array())
+    public static function get_field_lesson_pages_by_lessonid_and_prevpageid($lessonid, $prevpageid)
     {
         global $DB;
+
+        $warnings = array();
 
         // validate params
         $params = self::validate_parameters(self::get_field_lesson_pages_by_lessonid_and_prevpageid_parameters(),
             array(
                 'lessonid' => $lessonid,
-                'prevpageid' => $prevpageid,
-                'options' => $options
+                'prevpageid' => $prevpageid
             )
         );
 
-        return $DB->get_field('lesson_pages', 'id', array('lessonid' => $params['lessonid'], 'prevpageid' => $params['prevpageid']));
+        $result = array();
+
+        $id = $DB->get_field('lesson_pages', 'id', array('lessonid' => $params['lessonid'], 'prevpageid' => $params['prevpageid']));
+
+        if (!$id) {
+            $id = 0;
+        }
+
+        $result['id'] = $id;
+        $result['warnings'] = $warnings;
+
+        return $result;
     }
 
     /**
@@ -279,7 +294,12 @@ class local_mod_lesson_external extends external_api
      */
     public static function get_field_lesson_pages_by_lessonid_and_prevpageid_returns()
     {
-        return new external_value(PARAM_INT, 'id');
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'id'),
+                'warnings' => new external_warnings()
+            )
+        );
     }
 
     /**
@@ -292,23 +312,7 @@ class local_mod_lesson_external extends external_api
     {
         return new external_function_parameters(
             array('id' => new external_value(PARAM_INT, 'the id'),
-                'field' => new external_value(PARAM_TEXT, 'the field which selected'),
-                'options' => new external_multiple_structure (
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_ALPHANUM,
-                                'The expected keys (value format) are:
-                                                excludemodules (bool) Do not return modules, return only the sections structure
-                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
-                                                sectionid (int) Return only this section
-                                                sectionnumber (int) Return only this section with number (order)
-                                                cmid (int) Return only this module information (among the whole sections structure)
-                                                modname (string) Return only modules with this name "label, forum, etc..."
-                                                modid (int) Return only the module with this id (to be used with modname'),
-                            'value' => new external_value(PARAM_RAW, 'the value of the option,
-                                                                    this param is personaly validated in the external function.')
-                        )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+                'field' => new external_value(PARAM_TEXT, 'the field which selected')
             )
         );
     }
@@ -322,20 +326,32 @@ class local_mod_lesson_external extends external_api
      * @return mixed
      * @throws invalid_parameter_exception
      */
-    public static function get_field_lesson_pages_by_id($id, $field, $options = array())
+    public static function get_field_lesson_pages_by_id($id, $field)
     {
         global $DB;
+
+        $warnings = array();
 
         // validate params
         $params = self::validate_parameters(self::get_field_lesson_pages_by_id_parameters(),
             array(
                 'id' => $id,
-                'field' => $field,
-                'options' => $options
+                'field' => $field
             )
         );
 
-        return $DB->get_field('lesson_pages', $params['field'], array("id" => $params['id']));
+        $result = array();
+
+        $field = $DB->get_field('lesson_pages', $params['field'], array("id" => $params['id']));
+
+        if (!$field) {
+            $result['field'] = 0;
+        }
+
+        $result['field'] = $field;
+        $result['warnings'] = $warnings;
+
+        return $result;
     }
 
     /**
@@ -346,7 +362,12 @@ class local_mod_lesson_external extends external_api
      */
     public static function get_field_lesson_pages_by_id_returns()
     {
-        return new external_value(PARAM_RAW, 'field');
+        return new external_single_structure(
+            array(
+                'field' => new external_value(PARAM_RAW, 'field'),
+                'warnings' => new external_warnings()
+            )
+        );
     }
 
     /**
@@ -377,6 +398,8 @@ class local_mod_lesson_external extends external_api
     {
         global $DB;
 
+        $warnings = array();
+
         // validate params
         $params = self::validate_parameters(self::get_lesson_pages_by_id_and_lessonid_parameters(),
             array(
@@ -385,7 +408,18 @@ class local_mod_lesson_external extends external_api
             )
         );
 
-        return $DB->get_record('lesson_pages', array('id' => $params['id'], 'lessonid' => $params['lessonid']), '*', MUST_EXIST);
+        $result = array();
+
+        $page = $DB->get_record('lesson_pages', array('id' => $params['id'], 'lessonid' => $params['lessonid']), '*', MUST_EXIST);
+
+        if (!$page) {
+            $page = new stdClass();
+        }
+
+        $result['page'] = $page;
+        $result['warnings'] = $warnings;
+
+        return $result;
     }
 
     /**
@@ -396,23 +430,7 @@ class local_mod_lesson_external extends external_api
      */
     public static function get_lesson_pages_by_id_and_lessonid_returns()
     {
-        return new external_single_structure(
-            array(
-                'id' => new external_value(PARAM_INT, 'the lesson page id'),
-                'lessonid' => new external_value(PARAM_INT, 'lesson id', VALUE_DEFAULT),
-                'prevpageid' => new external_value(PARAM_INT, 'previous page id', VALUE_DEFAULT),
-                'nextpageid' => new external_value(PARAM_INT, 'next page id', VALUE_DEFAULT),
-                'qtype' => new external_value(PARAM_INT, 'qtype', VALUE_DEFAULT),
-                'qoption' => new external_value(PARAM_INT, 'qoption', VALUE_DEFAULT),
-                'layout' => new external_value(PARAM_INT, 'layout', VALUE_REQUIRED),
-                'display' => new external_value(PARAM_INT, 'display', VALUE_REQUIRED),
-                'timecreated' => new external_value(PARAM_INT, 'time created', VALUE_DEFAULT),
-                'timemodified' => new external_value(PARAM_INT, 'time modified', VALUE_DEFAULT),
-                'title' => new external_value(PARAM_RAW, 'title'),
-                'contents' => new external_value(PARAM_RAW, 'contents'),
-                'contentsformat' => new external_value(PARAM_INT, 'contents format', VALUE_DEFAULT)
-            )
-        );
+        return self::get_lesson_pages_by_lessonid_and_prevpageid_returns();
     }
 
     /**
@@ -498,6 +516,8 @@ class local_mod_lesson_external extends external_api
     {
         global $DB;
 
+        $warnings = array();
+
         $arr = array(
             'userid' => $userid,
             'lessonid' => $lessonid,
@@ -516,11 +536,22 @@ class local_mod_lesson_external extends external_api
             $arr
         );
 
+        $result = array();
+
         if (isset($params['limitfrom']) || isset($params['limitnum'])) {
-            return $DB->get_records('lesson_timer', array('userid' => $params['userid'], 'lessonid' => $params['lessonid']), 'starttime DESC', '*', $params['limitfrom'], $params['limitnum']);
+            $timer = $DB->get_records('lesson_timer', array('userid' => $params['userid'], 'lessonid' => $params['lessonid']), 'starttime DESC', '*', $params['limitfrom'], $params['limitnum']);
         }
 
-        return $DB->get_record('lesson_timer', array('userid' => $params['userid'], 'lessonid' => $params['lessonid']), '*', MUST_EXIST);
+        $timer = $DB->get_record('lesson_timer', array('userid' => $params['userid'], 'lessonid' => $params['lessonid']), '*', MUST_EXIST);
+
+        if (!$timer) {
+            $timer = new stdClass();
+        }
+
+        $result['timer'] = $timer;
+        $result['warnings'] = $warnings;
+
+        return $result;
     }
 
     /**
@@ -533,12 +564,17 @@ class local_mod_lesson_external extends external_api
     {
         return new external_single_structure(
             array(
-                'id' => new external_value(PARAM_INT, 'the lesson timer id'),
-                'lessonid' => new external_value(PARAM_INT, 'the lesson id', VALUE_DEFAULT),
-                'userid' => new external_value(PARAM_INT, 'the user id', VALUE_DEFAULT),
-                'starttime' => new external_value(PARAM_INT, 'start time', VALUE_DEFAULT),
-                'lessontime' => new external_value(PARAM_INT, 'lesson time', VALUE_DEFAULT),
-                'completed' => new external_value(PARAM_INT, 'completed', VALUE_DEFAULT)
+                'timer' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'the lesson timer id'),
+                        'lessonid' => new external_value(PARAM_INT, 'the lesson id', VALUE_DEFAULT),
+                        'userid' => new external_value(PARAM_INT, 'the user id', VALUE_DEFAULT),
+                        'starttime' => new external_value(PARAM_INT, 'start time', VALUE_DEFAULT),
+                        'lessontime' => new external_value(PARAM_INT, 'lesson time', VALUE_DEFAULT),
+                        'completed' => new external_value(PARAM_INT, 'completed', VALUE_DEFAULT)
+                    )
+                ),
+                'warnings' => new external_warnings()
             )
         );
     }
@@ -651,6 +687,8 @@ class local_mod_lesson_external extends external_api
     {
         global $DB;
 
+        $warnings = array();
+
         // validate params
         $params = self::validate_parameters(self::get_lesson_branch_by_lessonid_and_userid_and_retry_parameters(),
             array(
@@ -667,7 +705,18 @@ class local_mod_lesson_external extends external_api
             $sortby = "timeseen DESC";
         }
 
-        return $DB->get_records('lesson_branch', array('lessonid' => $params['lessonid'], 'userid' => $params['userid'], 'retry' => $params['retry']), $sortby);
+        $result = array();
+
+        $branches = $DB->get_records('lesson_branch', array('lessonid' => $params['lessonid'], 'userid' => $params['userid'], 'retry' => $params['retry']), $sortby);
+
+        if (!$branches) {
+            $branches = array();
+        }
+
+        $result['branches'] = $branches;
+        $result['warnings'] = $warnings;
+
+        return $result;
     }
 
     /**
@@ -678,18 +727,23 @@ class local_mod_lesson_external extends external_api
      */
     public static function get_lesson_branch_by_lessonid_and_userid_and_retry_returns()
     {
-        return new external_multiple_structure(
-            new external_single_structure(
-                array(
-                    'id' => new external_value(PARAM_INT, 'id'),
-                    'lessonid' => new external_value(PARAM_INT, 'lesson id', VALUE_DEFAULT),
-                    'userid' => new external_value(PARAM_INT, 'user id', VALUE_DEFAULT),
-                    'pageid' => new external_value(PARAM_INT, 'page id', VALUE_DEFAULT),
-                    'retry' => new external_value(PARAM_INT, 'retry', VALUE_DEFAULT),
-                    'flag' => new external_value(PARAM_INT, 'flag', VALUE_DEFAULT),
-                    'timeseen' => new external_value(PARAM_INT, 'time seen', VALUE_DEFAULT),
-                    'nextpageid' => new external_value(PARAM_INT, 'next page id', VALUE_DEFAULT)
-                ), 'lesson branch'
+        return new external_single_structure(
+            array(
+                'branches' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'id'),
+                            'lessonid' => new external_value(PARAM_INT, 'lesson id', VALUE_DEFAULT),
+                            'userid' => new external_value(PARAM_INT, 'user id', VALUE_DEFAULT),
+                            'pageid' => new external_value(PARAM_INT, 'page id', VALUE_DEFAULT),
+                            'retry' => new external_value(PARAM_INT, 'retry', VALUE_DEFAULT),
+                            'flag' => new external_value(PARAM_INT, 'flag', VALUE_DEFAULT),
+                            'timeseen' => new external_value(PARAM_INT, 'time seen', VALUE_DEFAULT),
+                            'nextpageid' => new external_value(PARAM_INT, 'next page id', VALUE_DEFAULT)
+                        ), 'lesson branch'
+                    )
+                ),
+                'warnings' => new external_warnings()
             )
         );
     }
@@ -708,23 +762,7 @@ class local_mod_lesson_external extends external_api
                 'correct' => new external_value(PARAM_INT, 'correct', VALUE_DEFAULT, 0),
                 'pageid' => new external_value(PARAM_INT, 'page id', VALUE_DEFAULT, -1),
                 'retry' => new external_value(PARAM_INT, 'retry'),
-                'orderby' => new external_value(PARAM_TEXT, 'timeseen order by', VALUE_DEFAULT, 'asc'),
-                'options' => new external_multiple_structure (
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_ALPHANUM,
-                                'The expected keys (value format) are:
-                                                excludemodules (bool) Do not return modules, return only the sections structure
-                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
-                                                sectionid (int) Return only this section
-                                                sectionnumber (int) Return only this section with number (order)
-                                                cmid (int) Return only this module information (among the whole sections structure)
-                                                modname (string) Return only modules with this name "label, forum, etc..."
-                                                modid (int) Return only the module with this id (to be used with modname'),
-                            'value' => new external_value(PARAM_RAW, 'the value of the option,
-                                                                    this param is personaly validated in the external function.')
-                        )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+                'orderby' => new external_value(PARAM_TEXT, 'timeseen order by', VALUE_DEFAULT, 'asc')
             )
         );
     }
@@ -742,15 +780,16 @@ class local_mod_lesson_external extends external_api
      * @return array
      * @throws invalid_parameter_exception
      */
-    public static function get_lesson_attempts_by_lessonid_and_userid($lessonid, $userid, $correct, $pageid, $retry, $orderby, $options = array())
+    public static function get_lesson_attempts_by_lessonid_and_userid($lessonid, $userid, $correct, $pageid, $retry, $orderby)
     {
         global $DB;
+
+        $warnings = array();
 
         $arr = array(
             'lessonid' => $lessonid,
             'userid' => $userid,
-            'retry' => $retry,
-            'options' => $options
+            'retry' => $retry
         );
 
         if (!empty($correct) && $correct != 0) { // 0: false, 1: true
@@ -783,7 +822,18 @@ class local_mod_lesson_external extends external_api
             $timeseen = 'timeseen DESC';
         }
 
-        return $DB->get_records('lesson_attempts', $parameters, $timeseen);
+        $result = array();
+
+        $attempts = $DB->get_records('lesson_attempts', $parameters, $timeseen);
+
+        if (!$attempts) {
+            $attempts = array();
+        }
+
+        $result['attempts'] = $attempts;
+        $result['warnings'] = $warnings;
+
+        return $result;
     }
 
     /**
@@ -794,20 +844,25 @@ class local_mod_lesson_external extends external_api
      */
     public static function get_lesson_attempts_by_lessonid_and_userid_returns()
     {
-        return new external_multiple_structure(
-            new external_single_structure(
-                array(
-                    'id' => new external_value(PARAM_INT, ''),
-                    'lessonid' => new external_value(PARAM_INT, 'lesson id', VALUE_DEFAULT),
-                    'pageid' => new external_value(PARAM_INT, 'page id', VALUE_DEFAULT),
-                    'userid' => new external_value(PARAM_INT, 'user id', VALUE_DEFAULT),
-                    'answerid' => new external_value(PARAM_INT, 'answer id', VALUE_DEFAULT),
-                    'retry' => new external_value(PARAM_INT, 'retry', VALUE_DEFAULT),
-                    'correct' => new external_value(PARAM_INT, 'correct', VALUE_DEFAULT),
-                    'useranswer' => new external_value(PARAM_RAW, 'user answer'),
-                    'timeseen' => new external_value(PARAM_INT, 'time seen', VALUE_DEFAULT)
-                )
-            ), 'lesson attempts'
+        return new external_single_structure(
+            array(
+                'attempts' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, ''),
+                            'lessonid' => new external_value(PARAM_INT, 'lesson id', VALUE_DEFAULT),
+                            'pageid' => new external_value(PARAM_INT, 'page id', VALUE_DEFAULT),
+                            'userid' => new external_value(PARAM_INT, 'user id', VALUE_DEFAULT),
+                            'answerid' => new external_value(PARAM_INT, 'answer id', VALUE_DEFAULT),
+                            'retry' => new external_value(PARAM_INT, 'retry', VALUE_DEFAULT),
+                            'correct' => new external_value(PARAM_INT, 'correct', VALUE_DEFAULT),
+                            'useranswer' => new external_value(PARAM_RAW, 'user answer'),
+                            'timeseen' => new external_value(PARAM_INT, 'time seen', VALUE_DEFAULT)
+                        )
+                    ), 'lesson attempts'
+                ),
+                'warnings' => new external_warnings()
+            )
         );
     }
 
@@ -820,7 +875,7 @@ class local_mod_lesson_external extends external_api
     public static function get_lesson_attempts_by_pageid_parameters()
     {
         return new external_function_parameters(
-            array('pageid' => new external_value(PARAM_INT, 'page id'),
+            array('pageid' => new external_value(PARAM_INT, 'page id')
             )
         );
     }
@@ -836,6 +891,8 @@ class local_mod_lesson_external extends external_api
     {
         global $DB;
 
+        $warnings = array();
+
         // validate params
         $params = self::validate_parameters(self::get_lesson_attempts_by_pageid_parameters(),
             array(
@@ -843,7 +900,18 @@ class local_mod_lesson_external extends external_api
             )
         );
 
-        return $DB->get_records('lesson_attempts', array('pageid' => $params['pageid']));
+        $result = array();
+
+        $attempts = $DB->get_records('lesson_attempts', array('pageid' => $params['pageid']));
+
+        if (!$attempts) {
+            $attempts = array();
+        }
+
+        $result['attempts'] = $attempts;
+        $result['warnings'] = $warnings;
+
+        return $result;
     }
 
     /**
@@ -870,23 +938,7 @@ class local_mod_lesson_external extends external_api
                 'lessonid' => new external_value(PARAM_INT, 'the lesson id'),
                 'userid' => new external_value(PARAM_INT, 'the user id', VALUE_DEFAULT, 0),
                 'retry' => new external_value(PARAM_INT, 'the retry', VALUE_DEFAULT, -1),
-                'orderby' => new external_value(PARAM_TEXT, 'order by', VALUE_DEFAULT, ''),
-                'options' => new external_multiple_structure (
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_ALPHANUM,
-                                'The expected keys (value format) are:
-                                                excludemodules (bool) Do not return modules, return only the sections structure
-                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
-                                                sectionid (int) Return only this section
-                                                sectionnumber (int) Return only this section with number (order)
-                                                cmid (int) Return only this module information (among the whole sections structure)
-                                                modname (string) Return only modules with this name "label, forum, etc..."
-                                                modid (int) Return only the module with this id (to be used with modname'),
-                            'value' => new external_value(PARAM_RAW, 'the value of the option,
-                                                                    this param is personaly validated in the external function.')
-                        )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+                'orderby' => new external_value(PARAM_TEXT, 'order by', VALUE_DEFAULT, '')
             )
         );
     }
@@ -900,9 +952,11 @@ class local_mod_lesson_external extends external_api
      * @return int
      * @throws invalid_parameter_exception
      */
-    public static function get_count_by_lessonid_and_userid($tablename, $lessonid, $userid, $retry, $orderby, $options = array())
+    public static function get_count_by_lessonid_and_userid($tablename, $lessonid, $userid, $retry, $orderby)
     {
         global $DB;
+
+        $warnings = array();
 
         $arr = array(
             'tablename' => $tablename,
@@ -918,8 +972,6 @@ class local_mod_lesson_external extends external_api
         if (!is_null($orderby) || !empty($orderby)) {
             $arr = array_merge($arr, array('orderby' => $orderby));
         }
-
-        $arr = array_merge($arr, array('options' => $options));
 
         // validate params
         $params = self::validate_parameters(self::get_count_by_lessonid_and_userid_parameters(),
@@ -939,7 +991,18 @@ class local_mod_lesson_external extends external_api
             $show = $arr['orderby'];
         }
 
-        return $DB->count_records($params['tablename'], $parameters, $show);
+        $result = array();
+
+        $retries = $DB->count_records($params['tablename'], $parameters, $show);
+
+        if (!$retries) {
+            $result['retries'] = 0;
+        }
+
+        $result['retries'] = $retries;
+        $result['warnings'] = $warnings;
+
+        return $result;
     }
 
     /**
@@ -950,7 +1013,12 @@ class local_mod_lesson_external extends external_api
      */
     public static function get_count_by_lessonid_and_userid_returns()
     {
-        return new external_value(PARAM_INT, 'retries');
+        return new external_single_structure(
+            array(
+                'retries' => new external_value(PARAM_INT, 'retries'),
+                'warnings' => new external_warnings()
+            )
+        );
     }
 
     /**
@@ -963,23 +1031,7 @@ class local_mod_lesson_external extends external_api
     {
         return new external_function_parameters(
             array('pageid' => new external_value(PARAM_INT, 'the page id'),
-                'lessonid' => new external_value(PARAM_INT, 'the lesson id'),
-                'options' => new external_multiple_structure (
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_ALPHANUM,
-                                'The expected keys (value format) are:
-                                                excludemodules (bool) Do not return modules, return only the sections structure
-                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
-                                                sectionid (int) Return only this section
-                                                sectionnumber (int) Return only this section with number (order)
-                                                cmid (int) Return only this module information (among the whole sections structure)
-                                                modname (string) Return only modules with this name "label, forum, etc..."
-                                                modid (int) Return only the module with this id (to be used with modname'),
-                            'value' => new external_value(PARAM_RAW, 'the value of the option,
-                                                                    this param is personaly validated in the external function.')
-                        )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+                'lessonid' => new external_value(PARAM_INT, 'the lesson id')
             )
         );
     }
@@ -993,20 +1045,32 @@ class local_mod_lesson_external extends external_api
      * @return array
      * @throws invalid_parameter_exception
      */
-    public static function get_lesson_answers_by_pageid_and_lessonid($pageid, $lessonid, $options = array())
+    public static function get_lesson_answers_by_pageid_and_lessonid($pageid, $lessonid)
     {
         global $DB;
+
+        $warnings = array();
 
         // validate params
         $params = self::validate_parameters(self::get_lesson_answers_by_pageid_and_lessonid_parameters(),
             array(
                 'pageid' => $pageid,
-                'lessonid' => $lessonid,
-                'options' => $options
+                'lessonid' => $lessonid
             )
         );
 
-        return $DB->get_records('lesson_answers', array('pageid' => $params['pageid'], 'lessonid' => $params['lessonid']), 'id');
+        $result = array();
+
+        $answers = $DB->get_records('lesson_answers', array('pageid' => $params['pageid'], 'lessonid' => $params['lessonid']), 'id');
+
+        if (!$answers) {
+            $answers = array();
+        }
+
+        $result['answers'] = $answers;
+        $result['warnings'] = $warnings;
+
+        return $result;
     }
 
     /**
@@ -1017,25 +1081,29 @@ class local_mod_lesson_external extends external_api
      */
     public static function get_lesson_answers_by_pageid_and_lessonid_returns()
     {
-        return new external_multiple_structure(
-            new external_single_structure(
-                array(
-                    'id' => new external_value(PARAM_INT, 'id'),
-                    'lessonid' => new external_value(PARAM_INT, 'lesson id'),
-                    'pageid' => new external_value(PARAM_INT, 'page id'),
-                    'jumpto' => new external_value(PARAM_INT, 'jumpto'),
-                    'grade' => new external_value(PARAM_INT, 'grade'),
-                    'score' => new external_value(PARAM_INT, 'score'),
-                    'flags' => new external_value(PARAM_INT, 'flags'),
-                    'timecreated' => new external_value(PARAM_INT, 'time created'),
-                    'timemodified' => new external_value(PARAM_INT, 'time modified'),
-                    'answer' => new external_value(PARAM_RAW, 'answer'),
-                    'answerformat' => new external_value(PARAM_INT, 'answer format'),
-                    'response' => new external_value(PARAM_RAW, 'response'),
-                    'responseformat' => new external_value(PARAM_INT, 'response format')
-                )
-            ), 'lesson answers'
-        );
+        return new external_single_structure(
+            array(
+                'answers' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'id'),
+                            'lessonid' => new external_value(PARAM_INT, 'lesson id'),
+                            'pageid' => new external_value(PARAM_INT, 'page id'),
+                            'jumpto' => new external_value(PARAM_INT, 'jumpto'),
+                            'grade' => new external_value(PARAM_INT, 'grade'),
+                            'score' => new external_value(PARAM_INT, 'score'),
+                            'flags' => new external_value(PARAM_INT, 'flags'),
+                            'timecreated' => new external_value(PARAM_INT, 'time created'),
+                            'timemodified' => new external_value(PARAM_INT, 'time modified'),
+                            'answer' => new external_value(PARAM_RAW, 'answer'),
+                            'answerformat' => new external_value(PARAM_INT, 'answer format'),
+                            'response' => new external_value(PARAM_RAW, 'response'),
+                            'responseformat' => new external_value(PARAM_INT, 'response format')
+                        )
+                    ), 'lesson answers'
+                ),
+                'warnings' => new external_warnings()
+            ));
     }
 
     /**
@@ -1047,23 +1115,8 @@ class local_mod_lesson_external extends external_api
     public static function get_lesson_answers_by_id_parameters()
     {
         return new external_function_parameters(
-            array('id' => new external_value(PARAM_INT, 'the id'),
-                'options' => new external_multiple_structure (
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_ALPHANUM,
-                                'The expected keys (value format) are:
-                                                excludemodules (bool) Do not return modules, return only the sections structure
-                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
-                                                sectionid (int) Return only this section
-                                                sectionnumber (int) Return only this section with number (order)
-                                                cmid (int) Return only this module information (among the whole sections structure)
-                                                modname (string) Return only modules with this name "label, forum, etc..."
-                                                modid (int) Return only the module with this id (to be used with modname'),
-                            'value' => new external_value(PARAM_RAW, 'the value of the option,
-                                                                    this param is personaly validated in the external function.')
-                        )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+            array(
+                'id' => new external_value(PARAM_INT, 'the id')
             )
         );
     }
@@ -1076,19 +1129,31 @@ class local_mod_lesson_external extends external_api
      * @return mixed
      * @throws invalid_parameter_exception
      */
-    public static function get_lesson_answers_by_id($id, $options = array())
+    public static function get_lesson_answers_by_id($id)
     {
         global $DB;
+
+        $warnings = array();
 
         // validate params
         $params = self::validate_parameters(self::get_lesson_answers_by_id_parameters(),
             array(
-                'id' => $id,
-                'options' => $options
+                'id' => $id
             )
         );
 
-        return $DB->get_record("lesson_answers", array("id" => $params['id']));
+        $result = array();
+
+        $answer = $DB->get_record("lesson_answers", array("id" => $params['id']));
+
+        if (!$answer) {
+            $answer = new stdClass();
+        }
+
+        $result['answer'] = $answer;
+        $result['warnings'] = $warnings;
+
+        return $result;
     }
 
     /**
@@ -1101,19 +1166,24 @@ class local_mod_lesson_external extends external_api
     {
         return new external_single_structure(
             array(
-                'id' => new external_value(PARAM_INT, 'id'),
-                'lessonid' => new external_value(PARAM_INT, 'lesson id'),
-                'pageid' => new external_value(PARAM_INT, 'page id'),
-                'jumpto' => new external_value(PARAM_INT, 'jumpto'),
-                'grade' => new external_value(PARAM_INT, 'grade'),
-                'score' => new external_value(PARAM_INT, 'score'),
-                'flags' => new external_value(PARAM_INT, 'flags'),
-                'timecreated' => new external_value(PARAM_INT, 'time created'),
-                'timemodified' => new external_value(PARAM_INT, 'time modified'),
-                'answer' => new external_value(PARAM_RAW, 'answer'),
-                'answerformat' => new external_value(PARAM_INT, 'answer format'),
-                'response' => new external_value(PARAM_RAW, 'response'),
-                'responseformat' => new external_value(PARAM_INT, 'response format')
+                'answer' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'id'),
+                        'lessonid' => new external_value(PARAM_INT, 'lesson id'),
+                        'pageid' => new external_value(PARAM_INT, 'page id'),
+                        'jumpto' => new external_value(PARAM_INT, 'jumpto'),
+                        'grade' => new external_value(PARAM_INT, 'grade'),
+                        'score' => new external_value(PARAM_INT, 'score'),
+                        'flags' => new external_value(PARAM_INT, 'flags'),
+                        'timecreated' => new external_value(PARAM_INT, 'time created'),
+                        'timemodified' => new external_value(PARAM_INT, 'time modified'),
+                        'answer' => new external_value(PARAM_RAW, 'answer'),
+                        'answerformat' => new external_value(PARAM_INT, 'answer format'),
+                        'response' => new external_value(PARAM_RAW, 'response'),
+                        'responseformat' => new external_value(PARAM_INT, 'response format')
+                    )
+                ),
+                'warnings' => new external_warnings()
             )
         );
     }
@@ -1127,23 +1197,7 @@ class local_mod_lesson_external extends external_api
     public static function get_lesson_answers_by_lessonid_parameters()
     {
         return new external_function_parameters(
-            array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
-                'options' => new external_multiple_structure (
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_ALPHANUM,
-                                'The expected keys (value format) are:
-                                                excludemodules (bool) Do not return modules, return only the sections structure
-                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
-                                                sectionid (int) Return only this section
-                                                sectionnumber (int) Return only this section with number (order)
-                                                cmid (int) Return only this module information (among the whole sections structure)
-                                                modname (string) Return only modules with this name "label, forum, etc..."
-                                                modid (int) Return only the module with this id (to be used with modname'),
-                            'value' => new external_value(PARAM_RAW, 'the value of the option,
-                                                                    this param is personaly validated in the external function.')
-                        )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+            array('lessonid' => new external_value(PARAM_INT, 'the lesson id')
             )
         );
     }
@@ -1156,18 +1210,31 @@ class local_mod_lesson_external extends external_api
      * @return array
      * @throws invalid_parameter_exception
      */
-    public static function get_lesson_answers_by_lessonid($lessonid, $options = array())
+    public static function get_lesson_answers_by_lessonid($lessonid)
     {
         global $DB;
+
+        $warnings = array();
 
         // validate params
         $params = self::validate_parameters(self::get_lesson_answers_by_lessonid_parameters(),
             array(
-                'lessonid' => $lessonid,
-                'options' => $options
+                'lessonid' => $lessonid
             )
         );
-        return $DB->get_records_select("lesson_answers", "lessonid = :lessonid", array('lessonid' => $params['lessonid']));
+
+        $result = array();
+
+        $answers = $DB->get_records_select("lesson_answers", "lessonid = :lessonid", array('lessonid' => $params['lessonid']));
+
+        if (!$answers) {
+            $answers = array();
+        }
+
+        $result['answers'] = $answers;
+        $result['warnings'] = $warnings;
+
+        return $result;
     }
 
     /**
@@ -1192,42 +1259,38 @@ class local_mod_lesson_external extends external_api
         return new external_function_parameters(
             array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
                 'userid' => new external_value(PARAM_INT, 'the user id'),
-                'retry' => new external_value(PARAM_INT, 'the retry'),
-                'options' => new external_multiple_structure (
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_ALPHANUM,
-                                'The expected keys (value format) are:
-                                                excludemodules (bool) Do not return modules, return only the sections structure
-                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
-                                                sectionid (int) Return only this section
-                                                sectionnumber (int) Return only this section with number (order)
-                                                cmid (int) Return only this module information (among the whole sections structure)
-                                                modname (string) Return only modules with this name "label, forum, etc..."
-                                                modid (int) Return only the module with this id (to be used with modname'),
-                            'value' => new external_value(PARAM_RAW, 'the value of the option,
-                                                                    this param is personaly validated in the external function.')
-                        )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+                'retry' => new external_value(PARAM_INT, 'the retry')
             )
         );
     }
 
-    public static function get_lesson_attempts_by_lessonid_and_userid_and_retry($lessonid, $userid, $retry, $options = array())
+    public static function get_lesson_attempts_by_lessonid_and_userid_and_retry($lessonid, $userid, $retry)
     {
         global $DB;
+
+        $warnings = array();
 
         // validate params
         $params = self::validate_parameters(self::get_lesson_attempts_by_lessonid_and_userid_and_retry_parameters(),
             array(
                 'lessonid' => $lessonid,
                 'userid' => $userid,
-                'retry' => $retry,
-                'options' => $options
+                'retry' => $retry
             )
         );
-        return $DB->get_records_select("lesson_attempts", "lessonid = :lessonid AND userid = :userid AND retry = :retry",
+
+        $result = array();
+        $attempts = $DB->get_records_select("lesson_attempts", "lessonid = :lessonid AND userid = :userid AND retry = :retry",
             array('lessonid' => $params['lessonid'], 'userid' => $params['userid'], 'retry' => $params['retry']), "timeseen");
+
+        if (!$attempts) {
+            $attempts = array();
+        }
+
+        $result['attempts'] = $attempts;
+        $result['warnings'] = $warnings;
+
+        return $result;
     }
 
     public static function get_lesson_attempts_by_lessonid_and_userid_and_retry_returns()
@@ -1246,22 +1309,6 @@ class local_mod_lesson_external extends external_api
         return new external_function_parameters(
             array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
                 'userid' => new external_value(PARAM_INT, 'the user id'),
-                'options' => new external_multiple_structure (
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_ALPHANUM,
-                                'The expected keys (value format) are:
-                                                excludemodules (bool) Do not return modules, return only the sections structure
-                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
-                                                sectionid (int) Return only this section
-                                                sectionnumber (int) Return only this section with number (order)
-                                                cmid (int) Return only this module information (among the whole sections structure)
-                                                modname (string) Return only modules with this name "label, forum, etc..."
-                                                modid (int) Return only the module with this id (to be used with modname'),
-                            'value' => new external_value(PARAM_RAW, 'the value of the option,
-                                                                    this param is personaly validated in the external function.')
-                        )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
             )
         );
     }
@@ -1275,19 +1322,31 @@ class local_mod_lesson_external extends external_api
      * @return array
      * @throws invalid_parameter_exception
      */
-    public static function get_lesson_grades_by_lessonid_and_userid($lessonid, $userid, $options = array())
+    public static function get_lesson_grades_by_lessonid_and_userid($lessonid, $userid)
     {
         global $DB;
+
+        $warnings = array();
 
         // validate params
         $params = self::validate_parameters(self::get_lesson_grades_by_lessonid_and_userid_parameters(),
             array(
                 'lessonid' => $lessonid,
-                'userid' => $userid,
-                'options' => $options
+                'userid' => $userid
             )
         );
-        return $DB->get_records("lesson_grades", array("lessonid" => $params['lessonid'], "userid" => $params['userid']), "grade DESC");
+
+        $result = array();
+        $grades = $DB->get_records("lesson_grades", array("lessonid" => $params['lessonid'], "userid" => $params['userid']), "grade DESC");
+
+        if (!$grades) {
+            $grades = array();
+        }
+
+        $result['grades'] = $grades;
+        $result['warnings'] = $warnings;
+
+        return $result;
     }
 
     /**
@@ -1298,17 +1357,22 @@ class local_mod_lesson_external extends external_api
      */
     public static function get_lesson_grades_by_lessonid_and_userid_returns()
     {
-        return new external_multiple_structure(
-            new external_single_structure(
-                array(
-                    'id' => new external_value(PARAM_INT, 'lesson grade id'),
-                    'lessonid' => new external_value(PARAM_INT, 'lesson id', VALUE_DEFAULT),
-                    'userid' => new external_value(PARAM_INT, 'user id', VALUE_DEFAULT),
-                    'grade' => new external_value(PARAM_INT, 'grade', VALUE_DEFAULT),
-                    'late' => new external_value(PARAM_INT, 'late', VALUE_DEFAULT),
-                    'completed' => new external_value(PARAM_INT, 'completed', VALUE_DEFAULT)
-                )
-            ), 'lesson grades'
+        return new external_single_structure(
+            array(
+                'grades' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'lesson grade id'),
+                            'lessonid' => new external_value(PARAM_INT, 'lesson id', VALUE_DEFAULT),
+                            'userid' => new external_value(PARAM_INT, 'user id', VALUE_DEFAULT),
+                            'grade' => new external_value(PARAM_INT, 'grade', VALUE_DEFAULT),
+                            'late' => new external_value(PARAM_INT, 'late', VALUE_DEFAULT),
+                            'completed' => new external_value(PARAM_INT, 'completed', VALUE_DEFAULT)
+                        )
+                    ), 'lesson grades'
+                ),
+                'warnings' => new external_warnings()
+            )
         );
     }
 
@@ -1397,23 +1461,8 @@ class local_mod_lesson_external extends external_api
     public static function get_lesson_pages_by_lessonid_parameters()
     {
         return new external_function_parameters(
-            array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
-                'options' => new external_multiple_structure (
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_ALPHANUM,
-                                'The expected keys (value format) are:
-                                                excludemodules (bool) Do not return modules, return only the sections structure
-                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
-                                                sectionid (int) Return only this section
-                                                sectionnumber (int) Return only this section with number (order)
-                                                cmid (int) Return only this module information (among the whole sections structure)
-                                                modname (string) Return only modules with this name "label, forum, etc..."
-                                                modid (int) Return only the module with this id (to be used with modname'),
-                            'value' => new external_value(PARAM_RAW, 'the value of the option,
-                                                                    this param is personaly validated in the external function.')
-                        )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+            array(
+                'lessonid' => new external_value(PARAM_INT, 'the lesson id')
             )
         );
     }
@@ -1426,19 +1475,31 @@ class local_mod_lesson_external extends external_api
      * @return array
      * @throws invalid_parameter_exception
      */
-    public static function get_lesson_pages_by_lessonid($lessonid, $options = array())
+    public static function get_lesson_pages_by_lessonid($lessonid)
     {
         global $DB;
+
+        $warnings = array();
 
         // validate params
         $params = self::validate_parameters(self::get_lesson_pages_by_lessonid_parameters(),
             array(
-                'lessonid' => $lessonid,
-                'options' => $options
+                'lessonid' => $lessonid
             )
         );
 
-        return $DB->get_records_select("lesson_pages", "lessonid = :lessonid", array('lessonid' => $params['lessonid']));
+        $result = array();
+
+        $pages = $DB->get_records_select("lesson_pages", "lessonid = :lessonid", array('lessonid' => $params['lessonid']));
+
+        if (!$pages) {
+            $pages = array();
+        }
+
+        $result['pages'] = $pages;
+        $result['warning'] = $warnings;
+
+        return $result;
     }
 
     /**
@@ -1449,24 +1510,29 @@ class local_mod_lesson_external extends external_api
      */
     public static function get_lesson_pages_by_lessonid_returns()
     {
-        return new external_multiple_structure(
-            new external_single_structure(
-                array(
-                    'id' => new external_value(PARAM_INT, 'the lesson page id'),
-                    'lessonid' => new external_value(PARAM_INT, 'lesson id', VALUE_DEFAULT),
-                    'prevpageid' => new external_value(PARAM_INT, 'previous page id', VALUE_DEFAULT),
-                    'nextpageid' => new external_value(PARAM_INT, 'next page id', VALUE_DEFAULT),
-                    'qtype' => new external_value(PARAM_INT, 'qtype', VALUE_DEFAULT),
-                    'qoption' => new external_value(PARAM_INT, 'qoption', VALUE_DEFAULT),
-                    'layout' => new external_value(PARAM_INT, 'layout', VALUE_REQUIRED),
-                    'display' => new external_value(PARAM_INT, 'display', VALUE_REQUIRED),
-                    'timecreated' => new external_value(PARAM_INT, 'time created', VALUE_DEFAULT),
-                    'timemodified' => new external_value(PARAM_INT, 'time modified', VALUE_DEFAULT),
-                    'title' => new external_value(PARAM_RAW, 'title'),
-                    'contents' => new external_value(PARAM_RAW, 'contents'),
-                    'contentsformat' => new external_value(PARAM_INT, 'contents format', VALUE_DEFAULT)
-                )
-            ), 'lesson pages'
+        return new external_single_structure(
+            array(
+                'pages' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'the lesson page id'),
+                            'lessonid' => new external_value(PARAM_INT, 'lesson id', VALUE_DEFAULT),
+                            'prevpageid' => new external_value(PARAM_INT, 'previous page id', VALUE_DEFAULT),
+                            'nextpageid' => new external_value(PARAM_INT, 'next page id', VALUE_DEFAULT),
+                            'qtype' => new external_value(PARAM_INT, 'qtype', VALUE_DEFAULT),
+                            'qoption' => new external_value(PARAM_INT, 'qoption', VALUE_DEFAULT),
+                            'layout' => new external_value(PARAM_INT, 'layout', VALUE_REQUIRED),
+                            'display' => new external_value(PARAM_INT, 'display', VALUE_REQUIRED),
+                            'timecreated' => new external_value(PARAM_INT, 'time created', VALUE_DEFAULT),
+                            'timemodified' => new external_value(PARAM_INT, 'time modified', VALUE_DEFAULT),
+                            'title' => new external_value(PARAM_RAW, 'title'),
+                            'contents' => new external_value(PARAM_RAW, 'contents'),
+                            'contentsformat' => new external_value(PARAM_INT, 'contents format', VALUE_DEFAULT)
+                        )
+                    ), 'lesson pages'
+                ),
+                'warnings' => new external_warnings()
+            )
         );
     }
 
@@ -1480,23 +1546,7 @@ class local_mod_lesson_external extends external_api
     {
         return new external_function_parameters(
             array('userid' => new external_value(PARAM_INT, 'the user id'),
-                'lessonid' => new external_value(PARAM_INT, 'the lesson id'),
-                'options' => new external_multiple_structure (
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_ALPHANUM,
-                                'The expected keys (value format) are:
-                                                excludemodules (bool) Do not return modules, return only the sections structure
-                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
-                                                sectionid (int) Return only this section
-                                                sectionnumber (int) Return only this section with number (order)
-                                                cmid (int) Return only this module information (among the whole sections structure)
-                                                modname (string) Return only modules with this name "label, forum, etc..."
-                                                modid (int) Return only the module with this id (to be used with modname'),
-                            'value' => new external_value(PARAM_RAW, 'the value of the option,
-                                                                    this param is personaly validated in the external function.')
-                        )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+                'lessonid' => new external_value(PARAM_INT, 'the lesson id')
             )
         );
     }
@@ -1510,21 +1560,33 @@ class local_mod_lesson_external extends external_api
      * @return mixed
      * @throws invalid_parameter_exception
      */
-    public static function get_maxgrade_lesson_grades_by_userid_and_lessonid($userid, $lessonid, $options = array())
+    public static function get_maxgrade_lesson_grades_by_userid_and_lessonid($userid, $lessonid)
     {
         global $DB;
+
+        $warnings = array();
 
         // validate params
         $params = self::validate_parameters(self::get_max_lesson_grades_by_userid_and_lessonid_parameters(),
             array(
                 'userid' => $userid,
-                'lessonid' => $lessonid,
-                'options' => $options
+                'lessonid' => $lessonid
             )
         );
 
-        return $DB->get_record_sql('SELECT userid, MAX(grade) AS maxgrade FROM {lesson_grades} WHERE userid = :userid AND lessonid = :lessonid GROUP BY userid',
+        $result = array();
+
+        $grade = $DB->get_record_sql('SELECT userid, MAX(grade) AS maxgrade FROM {lesson_grades} WHERE userid = :userid AND lessonid = :lessonid GROUP BY userid',
             array('userid' => $params['userid'], 'lessonid' => $params['lessonid']));
+
+        if (!$grade) {
+            $grade = new stdClass();
+        }
+
+        $result['grade'] = $grade;
+        $result['warnings'] = $warnings;
+
+        return $result;
     }
 
     /**
@@ -1537,8 +1599,13 @@ class local_mod_lesson_external extends external_api
     {
         return new external_single_structure(
             array(
-                'userid' => new external_value(PARAM_INT, 'the user id'),
-                'maxgrade' => new external_value(PARAM_INT, 'the max grade')
+                'grade' => new external_single_structure(
+                    array(
+                        'userid' => new external_value(PARAM_INT, 'the user id'),
+                        'maxgrade' => new external_value(PARAM_INT, 'the max grade')
+                    )
+                ),
+                'warnings' => new external_warnings()
             )
         );
     }
@@ -1552,23 +1619,8 @@ class local_mod_lesson_external extends external_api
     public static function get_lesson_overrides_by_id_parameters()
     {
         return new external_function_parameters(
-            array('id' => new external_value(PARAM_INT, 'the id'),
-                'options' => new external_multiple_structure (
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_ALPHANUM,
-                                'The expected keys (value format) are:
-                                                excludemodules (bool) Do not return modules, return only the sections structure
-                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
-                                                sectionid (int) Return only this section
-                                                sectionnumber (int) Return only this section with number (order)
-                                                cmid (int) Return only this module information (among the whole sections structure)
-                                                modname (string) Return only modules with this name "label, forum, etc..."
-                                                modid (int) Return only the module with this id (to be used with modname'),
-                            'value' => new external_value(PARAM_RAW, 'the value of the option,
-                                                                    this param is personaly validated in the external function.')
-                        )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+            array(
+                'id' => new external_value(PARAM_INT, 'the id')
             )
         );
     }
@@ -1581,19 +1633,31 @@ class local_mod_lesson_external extends external_api
      * @return mixed
      * @throws invalid_parameter_exception
      */
-    public static function get_lesson_overrides_by_id($id, $options = array())
+    public static function get_lesson_overrides_by_id($id)
     {
         global $DB;
+
+        $warnings = arrray();
 
         // validate params
         $params = self::validate_parameters(self::get_lesson_overrides_by_id_parameters(),
             array(
-                'id' => $id,
-                'options' => $options
+                'id' => $id
             )
         );
 
-        return $DB->get_record('lesson_overrides', array('id' => $params['id']), '*', MUST_EXIST);
+        $result = array();
+
+        $override = $DB->get_record('lesson_overrides', array('id' => $params['id']), '*', MUST_EXIST);
+
+        if (!$override) {
+            $override = new stdClass();
+        }
+
+        $result['override'] = $override;
+        $result['warnings'] = $warnings;
+
+        return $result;
     }
 
     /**
@@ -1606,17 +1670,22 @@ class local_mod_lesson_external extends external_api
     {
         return new external_single_structure(
             array(
-                'id' => new external_value(PARAM_INT, 'the id'),
-                'lessonid' => new external_value(PARAM_INT, 'the lessonid'),
-                'groupid' => new external_value(PARAM_INT, 'the groupid'),
-                'userid' => new external_value(PARAM_INT, 'the userid'),
-                'available' => new external_value(PARAM_INT, 'available'),
-                'deadline' => new external_value(PARAM_INT, 'deadline'),
-                'timelimit' => new external_value(PARAM_INT, 'time limit'),
-                'review' => new external_value(PARAM_INT, 'review'),
-                'maxattempts' => new external_value(PARAM_INT, 'max attempts'),
-                'retake' => new external_value(PARAM_INT, 'retake'),
-                'password' => new external_value(PARAM_TEXT, 'password')
+                'override' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'the id'),
+                        'lessonid' => new external_value(PARAM_INT, 'the lessonid'),
+                        'groupid' => new external_value(PARAM_INT, 'the groupid'),
+                        'userid' => new external_value(PARAM_INT, 'the userid'),
+                        'available' => new external_value(PARAM_INT, 'available'),
+                        'deadline' => new external_value(PARAM_INT, 'deadline'),
+                        'timelimit' => new external_value(PARAM_INT, 'time limit'),
+                        'review' => new external_value(PARAM_INT, 'review'),
+                        'maxattempts' => new external_value(PARAM_INT, 'max attempts'),
+                        'retake' => new external_value(PARAM_INT, 'retake'),
+                        'password' => new external_value(PARAM_TEXT, 'password')
+                    )
+                ),
+                'warnings' => new external_warnings()
             )
         );
     }
@@ -1663,21 +1732,11 @@ class local_mod_lesson_external extends external_api
 
         $result = array();
 
-        if ($override) {
-            $result['data'] = $override;
-        } else {
+        if (!$override) {
             $override = new stdClass();
-            $override->available = null;
-            $override->deadline = null;
-            $override->timelimit = null;
-            $override->review = null;
-            $override->maxattempts = null;
-            $override->retake = null;
-            $override->password = null;
-
-            $result['data'] = $override;
         }
 
+        $result['override'] = $override;
         $result['warnings'] = $warnings;
 
         return $result;
@@ -1693,7 +1752,7 @@ class local_mod_lesson_external extends external_api
     {
         return new external_single_structure(
             array(
-                "data" => new external_single_structure(
+                "override" => new external_single_structure(
                     array(
                         'id' => new external_value(PARAM_INT, 'the id'),
                         'lessonid' => new external_value(PARAM_INT, 'the lessonid'),
@@ -1722,23 +1781,7 @@ class local_mod_lesson_external extends external_api
     public static function get_lesson_overrides_by_lessonid_parameters()
     {
         return new external_function_parameters(
-            array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
-                'options' => new external_multiple_structure (
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_ALPHANUM,
-                                'The expected keys (value format) are:
-                                                excludemodules (bool) Do not return modules, return only the sections structure
-                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
-                                                sectionid (int) Return only this section
-                                                sectionnumber (int) Return only this section with number (order)
-                                                cmid (int) Return only this module information (among the whole sections structure)
-                                                modname (string) Return only modules with this name "label, forum, etc..."
-                                                modid (int) Return only the module with this id (to be used with modname'),
-                            'value' => new external_value(PARAM_RAW, 'the value of the option,
-                                                                    this param is personaly validated in the external function.')
-                        )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+            array('lessonid' => new external_value(PARAM_INT, 'the lesson id')
             )
         );
     }
@@ -1751,19 +1794,31 @@ class local_mod_lesson_external extends external_api
      * @return array
      * @throws invalid_parameter_exception
      */
-    public static function get_lesson_overrides_by_lessonid($lessonid, $options = array())
+    public static function get_lesson_overrides_by_lessonid($lessonid)
     {
         global $DB;
+
+        $warnings = array();
 
         // validate params
         $params = self::validate_parameters(self::get_lesson_overrides_by_lessonid_parameters(),
             array(
                 'lessonid' => $lessonid,
-                'options' => $options
             )
         );
 
-        return $DB->get_records('lesson_overrides', array('lessonid' => $params['lessonid']), 'id');
+        $result = array();
+
+        $overrides = $DB->get_records('lesson_overrides', array('lessonid' => $params['lessonid']), 'id');
+
+        if (!$overrides) {
+            $overrides = array();
+        }
+
+        $result['overrides'] = $overrides;
+        $result['warnings'] = $warnings;
+
+        return $result;
     }
 
     /**
@@ -1774,22 +1829,27 @@ class local_mod_lesson_external extends external_api
      */
     public static function get_lesson_overrides_by_lessonid_returns()
     {
-        return new external_multiple_structure(
-            new external_single_structure(
-                array(
-                    'id' => new external_value(PARAM_INT, 'the id'),
-                    'lessonid' => new external_value(PARAM_INT, 'the lessonid', VALUE_DEFAULT),
-                    'groupid' => new external_value(PARAM_INT, 'the groupid'),
-                    'userid' => new external_value(PARAM_INT, 'the userid'),
-                    'available' => new external_value(PARAM_INT, 'available'),
-                    'deadline' => new external_value(PARAM_INT, 'deadline'),
-                    'timelimit' => new external_value(PARAM_INT, 'time limit'),
-                    'review' => new external_value(PARAM_INT, 'review'),
-                    'maxattempts' => new external_value(PARAM_INT, 'max attempts'),
-                    'retake' => new external_value(PARAM_INT, 'retake'),
-                    'password' => new external_value(PARAM_TEXT, 'password')
-                )
-            ), 'lesson overrides'
+        return new external_single_structure(
+            array(
+                'overrides' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'the id'),
+                            'lessonid' => new external_value(PARAM_INT, 'the lessonid', VALUE_DEFAULT),
+                            'groupid' => new external_value(PARAM_INT, 'the groupid'),
+                            'userid' => new external_value(PARAM_INT, 'the userid'),
+                            'available' => new external_value(PARAM_INT, 'available'),
+                            'deadline' => new external_value(PARAM_INT, 'deadline'),
+                            'timelimit' => new external_value(PARAM_INT, 'time limit'),
+                            'review' => new external_value(PARAM_INT, 'review'),
+                            'maxattempts' => new external_value(PARAM_INT, 'max attempts'),
+                            'retake' => new external_value(PARAM_INT, 'retake'),
+                            'password' => new external_value(PARAM_TEXT, 'password')
+                        )
+                    ), 'lesson overrides'
+                ),
+                'warnings' => new external_warnings()
+            )
         );
     }
 
@@ -1878,6 +1938,8 @@ class local_mod_lesson_external extends external_api
     {
         global $DB;
 
+        $warnings = array();
+
         $arr = array(
             'modulename' => $modulename,
             'instance' => $instance
@@ -1905,7 +1967,18 @@ class local_mod_lesson_external extends external_api
             $parameters = array_merge($parameters, array('groupid' => $params['groupid']));
         }
 
-        return $DB->get_records('event', $parameters);
+        $result = array();
+
+        $events = $DB->get_records('event', $parameters);
+
+        if (!$events) {
+            $events = array();
+        }
+
+        $result['events'] = $events;
+        $result['warnings'] = $warnings;
+
+        return $result;
     }
 
     /**
@@ -1916,28 +1989,33 @@ class local_mod_lesson_external extends external_api
      */
     public static function get_events_by_modulename_and_instace_returns()
     {
-        return new external_multiple_structure(
-            new external_single_structure(
-                array(
-                    'id' => new external_value(PARAM_INT, 'the id'),
-                    'name' => new external_value(PARAM_RAW, 'the name'),
-                    'description' => new external_value(PARAM_RAW, 'the description'),
-                    'format' => new external_value(PARAM_INT, 'format'),
-                    'courseid' => new external_value(PARAM_INT, 'the courseid'),
-                    'groupid' => new external_value(PARAM_INT, 'the groupid'),
-                    'userid' => new external_value(PARAM_INT, 'the user id'),
-                    'repeatid' => new external_value(PARAM_INT, 'the repeat id'),
-                    'modulename' => new external_value(PARAM_TEXT, 'the module name'),
-                    'instance' => new external_value(PARAM_INT, 'the instance'),
-                    'eventtype' => new external_value(PARAM_TEXT, 'the event type'),
-                    'timestart' => new external_value(PARAM_INT, 'time start'),
-                    'timeduration' => new external_value(PARAM_INT, 'time duration'),
-                    'visible' => new external_value(PARAM_INT, 'visible'),
-                    'uuid' => new external_value(PARAM_TEXT, 'the uuid'),
-                    'sequence' => new external_value(PARAM_INT, 'the sequence'),
-                    'timemodified' => new external_value(PARAM_INT, 'time modified'),
-                    'subscriptionid' => new external_value(PARAM_INT, 'subscriptionid')
-                )
+        return new external_single_structure(
+            array(
+                'events' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'the id'),
+                            'name' => new external_value(PARAM_RAW, 'the name'),
+                            'description' => new external_value(PARAM_RAW, 'the description'),
+                            'format' => new external_value(PARAM_INT, 'format'),
+                            'courseid' => new external_value(PARAM_INT, 'the courseid'),
+                            'groupid' => new external_value(PARAM_INT, 'the groupid'),
+                            'userid' => new external_value(PARAM_INT, 'the user id'),
+                            'repeatid' => new external_value(PARAM_INT, 'the repeat id'),
+                            'modulename' => new external_value(PARAM_TEXT, 'the module name'),
+                            'instance' => new external_value(PARAM_INT, 'the instance'),
+                            'eventtype' => new external_value(PARAM_TEXT, 'the event type'),
+                            'timestart' => new external_value(PARAM_INT, 'time start'),
+                            'timeduration' => new external_value(PARAM_INT, 'time duration'),
+                            'visible' => new external_value(PARAM_INT, 'visible'),
+                            'uuid' => new external_value(PARAM_TEXT, 'the uuid'),
+                            'sequence' => new external_value(PARAM_INT, 'the sequence'),
+                            'timemodified' => new external_value(PARAM_INT, 'time modified'),
+                            'subscriptionid' => new external_value(PARAM_INT, 'subscriptionid')
+                        )
+                    )
+                ),
+                'warnings' => new external_warnings()
             )
         );
     }
@@ -1975,6 +2053,8 @@ class local_mod_lesson_external extends external_api
     {
         global $DB;
 
+        $warnings = array();
+
         $params = array(
             'data' => $data
         );
@@ -1987,13 +2067,18 @@ class local_mod_lesson_external extends external_api
             $newpage->$key = $value;
         }
 
+        $result = array();
+
         $transaction = $DB->start_delegated_transaction();
 
         $newpageid = $DB->insert_record("lesson_pages", $newpage);
 
         $transaction->allow_commit();
 
-        return $newpageid;
+        $result['newpageid'] = $newpageid;
+        $result['warnings'] = $warnings;
+
+        return $result;
     }
 
     /**
@@ -2004,7 +2089,12 @@ class local_mod_lesson_external extends external_api
      */
     public static function save_lesson_pages_returns()
     {
-        return new external_value(PARAM_INT, 'newpageid');
+        return new external_single_structure(
+            array(
+                'newpageid' => new external_value(PARAM_INT, 'newpageid'),
+                'warnings' => new external_warnings()
+            )
+        );
     }
 
     /**

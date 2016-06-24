@@ -3071,7 +3071,16 @@ class assign {
 
         // Only return the row with the highest attemptnumber.
         $submission = null;
-        $submissions = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', '*', 0, 1);
+
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $submissions = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', '*', 0, 1);
+        }
+        else{
+            $ruserid = get_remote_mapping_user();
+            $params['userid'] = $ruserid[0]->id;
+            $submissions = get_submission_by_assignid_userid_groupid($params);
+        }
+
         if ($submissions) {
             $submission = reset($submissions);
         }
@@ -4042,8 +4051,9 @@ class assign {
         }
 
         $o .= $this->get_renderer()->render(new assign_form('editsubmissionform', $mform));
-
-        $o .= $this->view_footer();
+        if(MOODLE_MODE_HUB === MOODLE_MODE_HOST){
+            $o .= $this->view_footer();
+        }
 
         \mod_assign\event\submission_form_viewed::create_from_user($this, $user)->trigger();
 

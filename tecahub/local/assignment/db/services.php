@@ -114,5 +114,13 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_assign_get_submission_by_assignid_userid_groupid' => array(
+		'classname'	  => 'local_mod_assign_external',
+		'methodname'  => 'get_submission_by_assignid_userid_groupid',
+		'classpath'	  => 'local/assignment/externallib.php',
+		'description' => "Get submissions by assignid & userid & groupid",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 );
 
