@@ -364,7 +364,7 @@ class local_mod_lesson_external extends external_api
     {
         return new external_single_structure(
             array(
-                'field' => external_value(PARAM_RAW, 'field'),
+                'field' => new external_value(PARAM_RAW, 'field'),
                 'warnings' => new external_warnings()
             )
         );
