@@ -869,6 +869,12 @@ section#discussion-container.discussion.container div.discussion-body div#discus
     display: block;
 }
 
+#enrol-course-list .container-available-course .coursebox .course-img {
+    max-width: 180px;
+    width: 100%;
+    display: block;
+}
+
 #enrol-course-list .container-available-course hr {
     display: inline-block;
     width: 100%;
@@ -911,14 +917,14 @@ section#discussion-container.discussion.container div.discussion-body div#discus
     float: left;
 }
 
-#enrol-course-list .right-block .container-block .coursebox .course-image {
+#enrol-course-list .right-block .container-block .coursebox .course-img {
     float: left;
     display: block;
     margin: 0px;
     padding: 0px;
 }
 
-#enrol-course-list .right-block .container-block .coursebox .course-image .course-thumbnail > img {
+#enrol-course-list .right-block .container-block .coursebox .course-img {
     display: block;
     max-width: 90px;
     width: 100%;
