@@ -659,4 +659,64 @@ class local_mod_course_external extends external_api
     {
         return new external_value(PARAM_RAW, 'name');
     }
+
+    public static function get_user_groups_by_courseid_and_userid_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, ' the course id'),
+                'userid' => new external_value(PARAM_INT, 'the user id')
+            )
+        );
+    }
+
+    public static function get_user_groups_by_courseid_and_userid($courseid, $userid)
+    {
+        global $DB;
+
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_user_groups_by_courseid_and_userid_parameters, array(
+            'courseid' => $courseid,
+            'userid' => $userid
+        ));
+
+        $parameters = array($params['userid'], $params['courseid']);
+
+        $sql = "SELECT g.id, gg.groupingid
+              FROM {groups} g
+                   JOIN {groups_members} gm   ON gm.groupid = g.id
+              LEFT JOIN {groupings_groups} gg ON gg.groupid = g.id
+             WHERE gm.userid = ? AND g.courseid = ?";
+
+        $result = array();
+
+        $groups = $DB->get_recordset_sql($sql, $params);
+
+        if(!$groups) {
+            $groups = array();
+        }
+
+        $result['groups'] = $groups;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_user_groups_by_courseid_and_userid_returns()
+    {
+        return new external_single_structure(
+            array(
+                'groups' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'id'),
+                            'groupingid' => new external_value(PARAM_INT, 'groupingid')
+                        )
+                    ), 'the group'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }
