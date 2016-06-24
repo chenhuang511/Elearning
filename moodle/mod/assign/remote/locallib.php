@@ -184,3 +184,25 @@ function get_remote_count_submissions_need_grading_by_host_id($params){
         ), false
     );
 }
+
+function get_submission_by_assignid_userid_groupid($params){
+    
+    if(!isset($params['attemptnumber']))
+        $params['attemptnumber'] = 0;
+    
+    $results = array();
+    
+    $submissions =  moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_get_submission_by_assignid_userid_groupid',
+            'params' => $params
+        ), false
+    );
+
+    foreach ($submissions->submissions as $submission){
+        $results[$submission->id] = $submission;
+    }
+    return $results;
+}

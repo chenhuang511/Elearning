@@ -3071,7 +3071,16 @@ class assign {
 
         // Only return the row with the highest attemptnumber.
         $submission = null;
-        $submissions = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', '*', 0, 1);
+
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $submissions = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', '*', 0, 1);
+        }
+        else{
+            $ruserid = get_remote_mapping_user();
+            $params['userid'] = $ruserid[0]->id;
+            $submissions = get_submission_by_assignid_userid_groupid($params);
+        }
+
         if ($submissions) {
             $submission = reset($submissions);
         }
@@ -3682,18 +3691,18 @@ class assign {
             $links[$gradebookurl] = get_string('viewgradebook', 'assign');
         }
         if ($this->is_any_submission_plugin_enabled() && $this->count_submissions()) {
-            $downloadurl = '/mod/assign/view.php?id=' . $cmid . '&action=downloadall';
+            $downloadurl = '/mod/assign/remote/api-view.php?id=' . $cmid . '&action=downloadall';
             $links[$downloadurl] = get_string('downloadall', 'assign');
         }
         if ($this->is_blind_marking() &&
                 has_capability('mod/assign:revealidentities', $this->get_context())) {
-            $revealidentitiesurl = '/mod/assign/view.php?id=' . $cmid . '&action=revealidentities';
+            $revealidentitiesurl = '/mod/assign/remote/api-view.php?id=' . $cmid . '&action=revealidentities';
             $links[$revealidentitiesurl] = get_string('revealidentities', 'assign');
         }
         foreach ($this->get_feedback_plugins() as $plugin) {
             if ($plugin->is_enabled() && $plugin->is_visible()) {
                 foreach ($plugin->get_grading_actions() as $action => $description) {
-                    $url = '/mod/assign/view.php' .
+                    $url = '/mod/assign/remote/api-view.php' .
                            '?id=' .  $cmid .
                            '&plugin=' . $plugin->get_type() .
                            '&pluginsubtype=assignfeedback' .
@@ -3797,7 +3806,7 @@ class assign {
         $o .= $this->get_renderer()->render($header);
 
         $currenturl = $CFG->wwwroot .
-                      '/mod/assign/view.php?id=' .
+                      '/mod/assign/remote/api-view.php?id=' .
                       $this->get_course_module()->id .
                       '&action=grading';
 
@@ -3894,7 +3903,7 @@ class assign {
      * @return string
      */
     protected function view_grading_page() {
-        global $CFG;
+        global $CFG, $PAGE;
 
         $o = '';
         // Need submit permission to submit an assignment.
@@ -3905,7 +3914,7 @@ class assign {
         $o .= $this->view_grading_table();
 
         \mod_assign\event\grading_table_viewed::create_from_assign($this)->trigger();
-
+//        $PAGE->requires->js_init_call('M.mod_assign.init_grading_table');
         return $o;
     }
 
@@ -4042,8 +4051,9 @@ class assign {
         }
 
         $o .= $this->get_renderer()->render(new assign_form('editsubmissionform', $mform));
-
-        $o .= $this->view_footer();
+        if(MOODLE_MODE_HUB === MOODLE_MODE_HOST){
+            $o .= $this->view_footer();
+        }
 
         \mod_assign\event\submission_form_viewed::create_from_user($this, $user)->trigger();
 
