@@ -187,6 +187,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
                               mod_quiz_display_options $displayoptions, $reviewobj = null) {
         $output = '';
         foreach ($slots as $slot) {
+            $slot = $slot->slot;
             $viewhtml = $reviewobj->questions[($slot-1)]->html;
             $output .= $viewhtml;
 
