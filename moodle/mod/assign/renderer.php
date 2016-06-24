@@ -340,7 +340,7 @@ class mod_assign_renderer extends plugin_renderer_base {
         $o .= '<center>';
         $o .= $this->output->container_start('submissionlinks');
         $urlparams = array('id' => $summary->coursemoduleid, 'action' => 'grading');
-        $url = new moodle_url('/mod/assign/view.php', $urlparams);
+        $url = new moodle_url('/mod/assign/remote/api-view.php', $urlparams);
         $o .= '<a href="' . $url . '" class="btn">' . get_string('viewgrading', 'mod_assign') . '</a> ';
         $urlparams = array('id' => $summary->coursemoduleid, 'action' => 'grader');
         $url = new moodle_url('/mod/assign/remote/api-view.php', $urlparams);
@@ -915,7 +915,7 @@ class mod_assign_renderer extends plugin_renderer_base {
                 if (!$submission || $submission->status == ASSIGN_SUBMISSION_STATUS_NEW) {
                     $o .= $this->output->box_start('generalbox submissionaction');
                     $urlparams = array('id' => $status->coursemoduleid, 'action' => 'editsubmission');
-                    $o .= $this->output->single_button(new moodle_url('/mod/assign/view.php', $urlparams),
+                    $o .= $this->output->single_button(new moodle_url('/mod/assign/remote/api-view.php', $urlparams),
                                                        get_string('addsubmission', 'assign'), 'get');
                     $o .= $this->output->box_start('boxaligncenter submithelp');
                     $o .= get_string('editsubmission_help', 'assign');
@@ -926,7 +926,7 @@ class mod_assign_renderer extends plugin_renderer_base {
                     $urlparams = array('id' => $status->coursemoduleid,
                                        'action' => 'editprevioussubmission',
                                        'sesskey'=>sesskey());
-                    $o .= $this->output->single_button(new moodle_url('/mod/assign/view.php', $urlparams),
+                    $o .= $this->output->single_button(new moodle_url('/mod/assign/remote/api-view.php', $urlparams),
                                                        get_string('addnewattemptfromprevious', 'assign'), 'get');
                     $o .= $this->output->box_start('boxaligncenter submithelp');
                     $o .= get_string('addnewattemptfromprevious_help', 'assign');
@@ -934,7 +934,7 @@ class mod_assign_renderer extends plugin_renderer_base {
                     $o .= $this->output->box_end();
                     $o .= $this->output->box_start('generalbox submissionaction');
                     $urlparams = array('id' => $status->coursemoduleid, 'action' => 'editsubmission');
-                    $o .= $this->output->single_button(new moodle_url('/mod/assign/view.php', $urlparams),
+                    $o .= $this->output->single_button(new moodle_url('/mod/assign/remote/api-view.php', $urlparams),
                                                        get_string('addnewattempt', 'assign'), 'get');
                     $o .= $this->output->box_start('boxaligncenter submithelp');
                     $o .= get_string('addnewattempt_help', 'assign');
@@ -943,7 +943,7 @@ class mod_assign_renderer extends plugin_renderer_base {
                 } else {
                     $o .= $this->output->box_start('generalbox submissionaction');
                     $urlparams = array('id' => $status->coursemoduleid, 'action' => 'editsubmission');
-                    $o .= $this->output->single_button(new moodle_url('/mod/assign/view.php', $urlparams),
+                    $o .= $this->output->single_button(new moodle_url('/mod/assign/remote/api-view.php', $urlparams),
                                                        get_string('editsubmission', 'assign'), 'get');
                     $o .= $this->output->box_start('boxaligncenter submithelp');
                     $o .= get_string('editsubmission_help', 'assign');
@@ -955,7 +955,7 @@ class mod_assign_renderer extends plugin_renderer_base {
             if ($status->cansubmit) {
                 $urlparams = array('id' => $status->coursemoduleid, 'action'=>'submit');
                 $o .= $this->output->box_start('generalbox submissionaction');
-                $o .= $this->output->single_button(new moodle_url('/mod/assign/view.php', $urlparams),
+                $o .= $this->output->single_button(new moodle_url('/mod/assign/remote/api-view.php', $urlparams),
                                                    get_string('submitassignment', 'assign'), 'get');
                 $o .= $this->output->box_start('boxaligncenter submithelp');
                 $o .= get_string('submitassignment_help', 'assign');
