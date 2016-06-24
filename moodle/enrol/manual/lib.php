@@ -58,7 +58,7 @@ class enrol_manual_plugin extends enrol_plugin {
      */
     public function get_manual_enrol_link($instance) {
         $name = $this->get_name();
-        if ($instance->enrol !== $name) {
+        if ($instance->enrol !== $name && $instance->enrol !== 'mnet') {
             throw new coding_exception('invalid enrol instance!');
         }
 
@@ -200,7 +200,7 @@ class enrol_manual_plugin extends enrol_plugin {
         $instance = null;
         $instances = array();
         foreach ($manager->get_enrolment_instances() as $tempinstance) {
-            if ($tempinstance->enrol == 'manual') {
+            if ($tempinstance->enrol == 'manual' || $tempinstance->enrol == 'mnet') {
                 if ($instance === null) {
                     $instance = $tempinstance;
                 }

@@ -1289,8 +1289,10 @@ abstract class enrol_plugin {
         $name = $this->get_name();
         $courseid = $instance->courseid;
 
-        if ($instance->enrol !== $name) {
-            throw new coding_exception('invalid enrol instance!');
+        if (MOODLE_RUN_MODE == MOODLE_MODE_HOST) {
+            if ($instance->enrol !== $name) {
+                throw new coding_exception('invalid enrol instance!');
+            }
         }
         $context = context_course::instance($instance->courseid, MUST_EXIST);
         if (!isset($recovergrades)) {
