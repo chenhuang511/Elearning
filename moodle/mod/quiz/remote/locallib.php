@@ -202,8 +202,8 @@ function get_remote_load_questions_usage_by_activity($unique) {
             'params' => array('unique' => $unique)
         ), false
     );
-    $a =  new json_moodle_recordset($record);
-    return $a;
+
+    return new json_moodle_recordset($record);
 }
 
 function get_remote_get_slots_by_quizid($quizid) {

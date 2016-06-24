@@ -53,7 +53,7 @@ require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/survey:participate', $context);
 
-if (!$survey = get_remote_survey_by_id($cm->instance)->survey) {
+if (!$survey = get_remote_survey_by_id($cm->instance)) {
     print_error('invalidsurveyid', 'survey');
 }
 

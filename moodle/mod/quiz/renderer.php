@@ -187,6 +187,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
                               mod_quiz_display_options $displayoptions, $reviewobj = null) {
         $output = '';
         foreach ($slots as $slot) {
+            $slot = $slot->slot;
             $viewhtml = $reviewobj->questions[($slot-1)]->html;
             $output .= $viewhtml;
 
@@ -248,7 +249,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
 
         } else {
             return html_writer::link($url, get_string('finishreview', 'quiz'),
-                array('class' => 'mod_quiz-next-nav remote-link-action',
+                array('class' => 'remote-link-action',
                     'data-module' => json_encode(array('url' => $url, 'params' => array(), 'method' => 'get'))));
         }
     }

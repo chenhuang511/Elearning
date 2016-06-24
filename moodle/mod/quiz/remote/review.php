@@ -26,15 +26,18 @@ $attempt = get_remote_attempt_by_attemptid($attemptid);
 $quiz = get_remote_quiz_by_id($attempt->quiz);
 $course = get_local_course_record($quiz->course);
 $cm = get_remote_course_module_by_instance("quiz", $quiz->id)->cm;
-$attemptobj = new quiz_attempt($attempt, $quiz, $cm, $course, true, true);
+$attemptobj = new quiz_attempt($attempt, $quiz, $cm, $course, false, true);
 $page = $attemptobj->force_page_number_into_range($page);
 
 $reviewobj = get_remote_get_attempt_review($attemptid);
-//echo $reviewobj->questions[1]->html;die;
 
 // Now we can validate the params better, re-genrate the page URL.
 if ($showall === null) {
-    $showall = $page == 0 && $attemptobj->get_default_show_all('review');
+    if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+        $showall = isset($reviewobj->questions);
+    }else{
+        $showall = $page == 0 && $attemptobj->get_default_show_all('review');
+    }
 }
 $PAGE->set_url($attemptobj->review_url(null, $page, $showall));
 
@@ -67,7 +70,10 @@ if ($attemptobj->is_own_attempt()) {
 // Load the questions and states needed by this page.
 if ($showall) {
     $questionids = $attemptobj->get_slots();
-} else {
+    if(!$questionids){
+        $questionids = get_remote_get_slots_by_quizid($quiz->id);
+    }
+} else {//TODO: chua chay vao day, chua test
     $questionids = $attemptobj->get_slots($page);
 }
 
@@ -162,7 +168,6 @@ if (!empty($overtime)) {
 // Show marks (if the user is allowed to see marks at the moment).
 $grade = quiz_rescale_grade($attempt->sumgrades, $quiz, false);
 if ($options->marks >= question_display_options::MARK_AND_MAX && quiz_has_grades($quiz)) {
-
     if ($attempt->state != quiz_attempt::FINISHED) {
         // Cannot display grade.
 
@@ -203,7 +208,9 @@ if ($options->marks >= question_display_options::MARK_AND_MAX && quiz_has_grades
 }
 
 // Any additional summary data from the behaviour.
-$summarydata = array_merge($summarydata, $attemptobj->get_additional_summary_data($options));
+if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+    $summarydata = array_merge($summarydata, $attemptobj->get_additional_summary_data($options));
+}
 
 // Feedback if there is any, and the user is allowed to see it now.
 $feedback = $attemptobj->get_overall_feedback($grade);
@@ -218,9 +225,15 @@ if ($options->overallfeedback && $feedback) {
 
 if ($showall) {
     $slots = $attemptobj->get_slots();
+    if(!$slots){
+        $slots = get_remote_get_slots_by_quizid($quiz->id);
+    }
     $lastpage = true;
 } else {
     $slots = $attemptobj->get_slots($page);
+    if(!$slots){
+        $slots = get_remote_get_slots_by_quizid($quiz->id);
+    }
     $lastpage = $attemptobj->is_last_page($page);
 }
 
@@ -230,7 +243,6 @@ $output = $PAGE->get_renderer('mod_quiz');
 $navbc = $attemptobj->get_navigation_panel($output, 'quiz_review_nav_panel', $page, $showall);
 $regions = $PAGE->blocks->get_regions();
 $PAGE->blocks->add_fake_block($navbc, reset($regions));
-
 echo $output->review_page($attemptobj, $slots, $page, $showall, $lastpage, $options, $summarydata,$reviewobj);
 
 // Trigger an event for this review.

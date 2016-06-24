@@ -201,7 +201,7 @@ class mnetservice_enrol {
                 $course->maxbytes       = (int)$remote['maxbytes'];
                 $course->legacyfiles    = (int)$remote['legacyfiles'];
                 $course->showreports    = (int)$remote['showreports'];
-                $course->visible        = (int)$remote['visible'];
+                $course->visible        = 1; //(int)$remote['visible'];
                 $course->visibleold     = (int)$remote['visibleold'];
                 $course->groupmode      = (int)$remote['groupmode'];
                 $course->groupmodeforce = (int)$remote['groupmodeforce'];

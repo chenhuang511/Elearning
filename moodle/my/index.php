@@ -30,7 +30,7 @@ $context = context_course::instance($course->id, MUST_EXIST);
 
 require_login($course);
 
-require_capability('moodle/course:view', $context);
+//require_capability('moodle/course:view', $context);
 
 // Switchrole - sanity check in cost-order...
 $reset_user_allowed_editing = false;
