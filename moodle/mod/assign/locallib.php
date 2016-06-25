@@ -209,7 +209,7 @@ class assign {
         $params['action'] = $action;
         $cm = $this->get_course_module();
         if ($cm) {
-            $currenturl = new moodle_url('/mod/assign/view.php', array('id' => $cm->id));
+            $currenturl = new moodle_url('/mod/assign/remote/api-view.php', array('id' => $cm->id));
         } else {
             $currenturl = new moodle_url('/mod/assign/index.php', array('id' => $this->get_course()->id));
         }
@@ -549,7 +549,7 @@ class assign {
         }
         // Now show the right view page.
         if ($action == 'redirect') {
-            $nextpageurl = new moodle_url('/mod/assign/view.php', $nextpageparams);
+            $nextpageurl = new moodle_url('/mod/assign/remote/api-view.php', $nextpageparams);
             redirect($nextpageurl);
             return;
         } else if ($action == 'savegradingresult') {
@@ -3157,12 +3157,19 @@ class assign {
         }
 
         $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid);
-
-        $flags = $DB->get_record('assign_user_flags', $params);
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $flags = $DB->get_record('assign_user_flags', $params);
+        }
+        else{
+            $ruser = get_remote_mapping_user();
+            $params['userid'] = $ruser[0]->id;
+            $flags = get_user_flags_by_assignid_userid($params);
+        }
 
         if ($flags) {
             return $flags;
         }
+
         if ($create) {
             $flags = new stdClass();
             $flags->assignment = $this->get_instance()->id;

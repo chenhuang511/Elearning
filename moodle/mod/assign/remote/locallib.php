@@ -206,3 +206,22 @@ function get_submission_by_assignid_userid_groupid($params){
     }
     return $results;
 }
+
+function get_user_flags_by_assignid_userid($params){
+    $results = array();
+
+    $flags =  moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_get_user_flags_by_assignid_userid',
+            'params' => $params
+        ), false
+    );
+
+    if($flags->exception)
+        return 0;
+
+    return $flags->userflags;
+}
+

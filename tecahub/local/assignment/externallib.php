@@ -1142,7 +1142,6 @@ class local_mod_assign_external extends external_api {
 
         $result = array();
         
-
         //Validate param
         $params = self::validate_parameters(self::get_submission_by_assignid_userid_groupid_parameters(),
             array(
@@ -1185,4 +1184,57 @@ class local_mod_assign_external extends external_api {
             )
         );
     }
+
+    //MinhND: get DB assign_submission 
+    public static function get_user_flags_by_assignid_userid_parameters(){
+        return new external_function_parameters(
+            array(
+                'assignment' => new external_value(PARAM_INT, 'asssign ID'),
+                'userid' => new external_value(PARAM_INT, 'user ID'),
+            )
+        );
+    }
+    
+    public static function get_user_flags_by_assignid_userid($assignment, $userid){
+        global $DB;
+
+        $warnings = array();
+
+        // Build array result
+        $result = array();
+
+        //Validate param
+        $params = self::validate_parameters(self::get_user_flags_by_assignid_userid_parameters(),
+            array(
+                'assignment' => $assignment,
+                'userid' => $userid,
+            )
+        );
+
+        $result['userflags'] = $DB->get_record('assign_user_flags', $params);
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+    
+    public static function get_user_flags_by_assignid_userid_returns(){
+        return new external_single_structure(
+            array(
+                'userflags' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'assign user flags ID'),
+                        'userid' => new external_value(PARAM_INT, 'user ID'),
+                        'assignment' => new external_value(PARAM_INT, 'assignment ID'),
+                        'locked' => new external_value(PARAM_INT, 'locked'),
+                        'mailed' => new external_value(PARAM_INT, 'mailed'),
+                        'extensionduedate' => new external_value(PARAM_INT, 'extension due date'),
+                        'workflowstate' => new external_value(PARAM_RAW, 'work flow state'),
+                        'allocatedmarker' => new external_value(PARAM_INT, 'allocated maker'),
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
 }
