@@ -510,7 +510,7 @@ class local_mod_lesson_external extends external_api
      * @return mixed
      * @throws invalid_parameter_exception
      */
-    public static function get_lesson_timer_by_userid_and_lessonid($userid, $lessonid, $limitfrom, $limitnum)
+    public static function get_lesson_timer_by_userid_and_lessonid($userid, $lessonid)
     {
         global $DB;
 
@@ -550,15 +550,17 @@ class local_mod_lesson_external extends external_api
     {
         return new external_single_structure(
             array(
-                'timer' => new external_single_structure(
-                    array(
-                        'id' => new external_value(PARAM_INT, 'the lesson timer id'),
-                        'lessonid' => new external_value(PARAM_INT, 'the lesson id', VALUE_DEFAULT),
-                        'userid' => new external_value(PARAM_INT, 'the user id', VALUE_DEFAULT),
-                        'starttime' => new external_value(PARAM_INT, 'start time', VALUE_DEFAULT),
-                        'lessontime' => new external_value(PARAM_INT, 'lesson time', VALUE_DEFAULT),
-                        'completed' => new external_value(PARAM_INT, 'completed', VALUE_DEFAULT)
-                    )
+                'timer' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'the lesson timer id'),
+                            'lessonid' => new external_value(PARAM_INT, 'the lesson id', VALUE_DEFAULT),
+                            'userid' => new external_value(PARAM_INT, 'the user id', VALUE_DEFAULT),
+                            'starttime' => new external_value(PARAM_INT, 'start time', VALUE_DEFAULT),
+                            'lessontime' => new external_value(PARAM_INT, 'lesson time', VALUE_DEFAULT),
+                            'completed' => new external_value(PARAM_INT, 'completed', VALUE_DEFAULT)
+                        )
+                    ), 'the lesson timer'
                 ),
                 'warnings' => new external_warnings()
             )
@@ -2290,7 +2292,8 @@ class local_mod_lesson_external extends external_api
         return self::save_lesson_branch_returns();
     }
 
-    public static function update_lesson_timer_parameters() {
+    public static function update_lesson_timer_parameters()
+    {
         return new external_function_parameters (
             array(
                 'data' => new external_multiple_structure(
@@ -2305,7 +2308,8 @@ class local_mod_lesson_external extends external_api
         );
     }
 
-    public static function update_lesson_timer($data) {
+    public static function update_lesson_timer($data)
+    {
         global $DB;
 
         $warnings = array();
@@ -2335,7 +2339,8 @@ class local_mod_lesson_external extends external_api
         return $result;
     }
 
-    public static function update_lesson_timer_returns() {
+    public static function update_lesson_timer_returns()
+    {
         return self::save_lesson_timer_returns();
     }
 }
