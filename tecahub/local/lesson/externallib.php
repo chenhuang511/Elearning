@@ -2335,6 +2335,7 @@ class local_mod_lesson_external extends external_api
         if(!$timer) {
             $result['status'] = false;
             $warnings['message'] = 'have no data record';
+            return $result;
         }
 
         foreach ($params['data'] as $element) {
