@@ -838,8 +838,8 @@ section#discussion-container.discussion.container div.discussion-body div#discus
     font-weight: normal;
 }
 
-#enrol-course-list .container-available-course .coursebox .sum-btn .btn-register .btn-reg-now a.button{
-    color: #3d70af;
+#enrol-course-list .container-available-course .coursebox .sum-btn .btn-register .btn-reg-now a{
+    color: #129ed9;
     text-align: center;
 }
 
@@ -849,11 +849,12 @@ section#discussion-container.discussion.container div.discussion-body div#discus
     padding: 0px;
 }
 
-#enrol-course-list .container-available-course .coursebox .coursename > .dimmed {
-    color: #126f9a;
+#enrol-course-list .container-available-course .coursebox .coursename > a {
+    color: #0076b4;
     font-weight: 600;
     font-size: 26px;
 }
+
 
 #enrol-course-list .container-available-course .coursebox .course-image {
     float: left;

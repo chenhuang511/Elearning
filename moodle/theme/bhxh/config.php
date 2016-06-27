@@ -71,6 +71,16 @@ $THEME->layouts = array(
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-pre',
     ),
+    'report' => array(
+        'file' => 'frontpage.php',
+        'regions' => array('side-pre'),
+        'defaultregion' => 'side-pre',
+    ),
+    'secure' => array(
+        'file' => 'frontpage.php',
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-pre'
+    ),
 );
 
 $THEME->blockrtlmanipulations = array(

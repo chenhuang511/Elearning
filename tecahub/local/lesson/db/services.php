@@ -114,6 +114,14 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_update_lesson_timer' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'update_lesson_timer',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Create new a lesson timer',
+        'type' => 'read',
+        'ajax' => true
+    ),
     'local_mod_get_lesson_branch_by_lessonid_and_userid_and_retry' => array(
         'classname' => 'local_mod_lesson_external',
         'methodname' => 'get_lesson_branch_by_lessonid_and_userid_and_retry',
