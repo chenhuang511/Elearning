@@ -396,9 +396,9 @@ class lesson_display_answer_form_shortanswer extends moodleform {
         $mform->setType('answer', PARAM_TEXT);
 
         if ($hasattempt) {
-            $this->add_action_buttons(null, get_string("nextpage", "lesson"));
+            $this->add_action_buttons(null, get_string("nextpage", "lesson"), true);
         } else {
-            $this->add_action_buttons(null, get_string("submit", "lesson"));
+            $this->add_action_buttons(null, get_string("submit", "lesson"), true);
         }
     }
 

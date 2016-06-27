@@ -340,11 +340,11 @@ class lesson_display_answer_form_essay extends moodleform {
             $mform->setType('answer', PARAM_RAW);
             $mform->addElement('html', $OUTPUT->container(get_string('youranswer', 'lesson'), 'youranswer'));
             $mform->addElement('html', $OUTPUT->container($useranswer, 'reviewessay'));
-            $this->add_action_buttons(null, get_string("nextpage", "lesson"));
+            $this->add_action_buttons(null, get_string("nextpage", "lesson"), true);
         } else {
             $mform->addElement('editor', 'answer', get_string('youranswer', 'lesson'), null, null);
             $mform->setType('answer', PARAM_RAW);
-            $this->add_action_buttons(null, get_string("submit", "lesson"));
+            $this->add_action_buttons(null, get_string("submit", "lesson"), true);
         }
     }
 }

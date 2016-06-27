@@ -153,3 +153,17 @@ function get_remote_name_modules_by_id($id)
     );
 }
 
+function get_remote_user_groups_by_courseid_and_userid($courseid, $userid)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_get_user_groups_by_courseid_and_userid',
+            'params' => array('courseid' => $courseid, 'userid' => $userid),
+        )
+    );
+    
+    return $result->groups;
+}
+
