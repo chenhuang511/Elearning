@@ -77,8 +77,12 @@ if ($autosaveperiod) {
         'M.mod_quiz.autosave.init', array($autosaveperiod));
 }
 
-// Log this page view.
-$attemptobj->fire_attempt_viewed_event();
+// Log this page view. Trigger the attempt viewed event.
+if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+    $attemptobj->fire_attempt_viewed_event();
+}else{
+    get_remote_view_attempt($attemptid, $page);
+}
 
 // Get the list of questions needed by this page.
 $slots = $attemptobj->get_slots($page);

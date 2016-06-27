@@ -100,5 +100,10 @@ $PAGE->set_heading($attemptobj->get_course()->fullname);
 // Display the page.
 echo $output->summary_page($attemptobj, $displayoptions, $summaryremote);
 
-// Log this page view.
-$attemptobj->fire_attempt_summary_viewed_event();
+// Trigger the attempt summary viewed event.
+if (MOODLE_MODE_HOST === MOODLE_MODE_HOST){
+    $attemptobj->fire_attempt_summary_viewed_event();
+}else{
+    get_remote_quiz_view_attempt_summary($attemptid);
+}
+
