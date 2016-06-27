@@ -287,4 +287,25 @@ function get_remote_submission_by_id($sid){
     return $resp->assignsubmisison;
 }
 
+function save_remote_submission($assignmentid, $userid, $onlinetext_editor){
+
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_save_remote_submission',
+            'params' => array(
+                'assignmentid'  =>  $assignmentid,
+                'userid'        =>  $userid,
+                'plugindata[onlinetext_editor][text]' => $onlinetext_editor[text],
+                'plugindata[onlinetext_editor][format]' => (int)$onlinetext_editor[format],
+                'plugindata[onlinetext_editor][itemid]' => $onlinetext_editor[itemid]
+        )
+    ));
+
+    if (empty($resp))
+        return true;
+    return false;
+
+}
 

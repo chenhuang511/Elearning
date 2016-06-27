@@ -162,5 +162,13 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_assign_save_remote_submission' => array(
+		'classname'	  => 'local_mod_assign_external',
+		'methodname'  => 'save_remote_submission',
+		'classpath'	  => 'local/assignment/externallib.php',
+		'description' => "Update the current students submission",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 );
 
