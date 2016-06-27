@@ -2303,4 +2303,53 @@ class local_mod_lesson_external extends external_api
     {
         return self::save_lesson_branch_returns();
     }
+
+    public static function update_lesson_timer_parameters() {
+        return new external_function_parameters (
+            array(
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'data name'),
+                            'value' => new external_value(PARAM_RAW, 'data value'),
+                        )
+                    ), 'the data to be saved'
+                )
+            )
+        );
+    }
+
+    public static function update_lesson_timer($data) {
+        global $DB;
+
+        $warnings = array();
+
+        $params = array(
+            'data' => $data
+        );
+
+        $params = self::validate_parameters(self::update_lesson_timer_parameters(), $params);
+
+        $timer = new stdClass();
+
+        foreach ($params['data'] as $element) {
+            $timer->$element['name'] = $element['value'];
+        }
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $result = array();
+
+        $DB->update_record('lesson_timer', $timer);
+        $transaction->allow_commit();
+
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function update_lesson_timer_returns() {
+        return self::save_lesson_timer_returns();
+    }
 }
