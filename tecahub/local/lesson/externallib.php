@@ -496,7 +496,9 @@ class local_mod_lesson_external extends external_api
     {
         return new external_function_parameters(
             array('userid' => new external_value(PARAM_INT, 'user id'),
-                'lessonid' => new external_value(PARAM_INT, 'lesson id')
+                'lessonid' => new external_value(PARAM_INT, 'lesson id'),
+                'limitfrom' => new external_value(PARAM_INT, 'limit from'),
+                'limitnum' => new external_value(PARAM_INT, 'limit num')
             )
         );
     }
@@ -510,7 +512,7 @@ class local_mod_lesson_external extends external_api
      * @return mixed
      * @throws invalid_parameter_exception
      */
-    public static function get_lesson_timer_by_userid_and_lessonid($userid, $lessonid)
+    public static function get_lesson_timer_by_userid_and_lessonid($userid, $lessonid, $limitfrom, $limitnum)
     {
         global $DB;
 
@@ -518,8 +520,11 @@ class local_mod_lesson_external extends external_api
 
         $arr = array(
             'userid' => $userid,
-            'lessonid' => $lessonid
+            'lessonid' => $lessonid,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum
         );
+
 
         // validate params
         $params = self::validate_parameters(self::get_lesson_timer_by_userid_and_lessonid_parameters(),
@@ -527,14 +532,13 @@ class local_mod_lesson_external extends external_api
         );
 
         $result = array();
+        $timers = $DB->get_records('lesson_timer', array('userid' => $params['userid'], 'lessonid' => $params['lessonid']), 'starttime DESC', '*', $params['limitfrom'], $params['limitnum']);
 
-        $timer = $DB->get_record('lesson_timer', array('userid' => $params['userid'], 'lessonid' => $params['lessonid']), '*', MUST_EXIST);
-
-        if (!$timer) {
-            $timer = new stdClass();
+        if (!$timers) {
+            $timers = new stdClass();
         }
 
-        $result['timer'] = $timer;
+        $result['timers'] = $timers;
         $result['warnings'] = $warnings;
 
         return $result;
@@ -550,7 +554,7 @@ class local_mod_lesson_external extends external_api
     {
         return new external_single_structure(
             array(
-                'timer' => new external_multiple_structure(
+                'timers' => new external_multiple_structure(
                     new external_single_structure(
                         array(
                             'id' => new external_value(PARAM_INT, 'the lesson timer id'),
