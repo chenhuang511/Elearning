@@ -3063,6 +3063,10 @@ class assign {
         if (!$userid) {
             $userid = $USER->id;
         }
+
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB)
+            $ruserid = get_remote_mapping_user();
+
         // If the userid is not null then use userid.
         $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid, 'groupid'=>0);
         if ($attemptnumber >= 0) {
@@ -3076,9 +3080,9 @@ class assign {
             $submissions = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', '*', 0, 1);
         }
         else{
-            $ruserid = get_remote_mapping_user();
             $params['userid'] = $ruserid[0]->id;
             $submissions = get_submission_by_assignid_userid_groupid($params);
+            var_dump($submissions);die;
         }
 
         if ($submissions) {
@@ -3108,7 +3112,13 @@ class assign {
                 $submission->latest = 1;
             } else {
                 // We need to work this out.
-                $result = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', 'attemptnumber', 0, 1);
+                if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                    $result = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', 'attemptnumber', 0, 1);
+                }
+                else{
+                    $params['userid'] = $ruserid[0]->id;
+                    $result = get_attemptnumber_by_assignid_userid_groupid($params);
+                }
                 $latestsubmission = null;
                 if ($result) {
                     $latestsubmission = reset($result);
@@ -3119,10 +3129,21 @@ class assign {
             }
             if ($submission->latest) {
                 // This is the case when we need to set latest to 0 for all the other attempts.
-                $DB->set_field('assign_submission', 'latest', 0, $params);
+                if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                    $DB->set_field('assign_submission', 'latest', 0, $params);
+                }
+                else{
+                    set_submission_lastest($params);die;
+                }
             }
-            $sid = $DB->insert_record('assign_submission', $submission);
-            return $DB->get_record('assign_submission', array('id' => $sid));
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $sid = $DB->insert_record('assign_submission', $submission);
+                return $DB->get_record('assign_submission', array('id' => $sid));
+            }
+            else{
+                $sid = create_remote_submission($submission);
+                return get_remote_submission_by_id($sid);
+            }
         }
         return false;
     }

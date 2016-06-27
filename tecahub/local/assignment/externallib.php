@@ -1185,6 +1185,58 @@ class local_mod_assign_external extends external_api {
         );
     }
 
+    //MinhND: get attemptnumber in DB assign_submission
+    public static function get_attemptnumber_by_assignid_userid_groupid_parameters(){
+        return new external_function_parameters(
+            array(
+                'assignment' => new external_value(PARAM_INT, 'asssign ID'),
+                'userid' => new external_value(PARAM_INT, 'user ID'),
+                'groupid' => new external_value(PARAM_INT, 'group ID'),
+            )
+        );
+    }
+
+    public static function get_attemptnumber_by_assignid_userid_groupid($assignment, $userid, $groupid){
+        global $DB;
+
+        $warnings = array();
+
+        $result = array();
+
+        //Validate param
+        $params = self::validate_parameters(self::get_attemptnumber_by_assignid_userid_groupid_parameters(),
+            array(
+                'assignment' => $assignment,
+                'userid' => $userid,
+                'groupid' => $groupid,
+            )
+        );
+        if (!$params["attemptnumber"]){
+            unset($params["attemptnumber"]);
+        }
+
+        $result['result'] = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', 'attemptnumber', 0, 1);
+
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_attemptnumber_by_assignid_userid_groupid_returns(){
+        return new external_single_structure(
+            array(
+                'result' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'attemptnumber' => new external_value(PARAM_INT, 'attempnumber'),
+                        )
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
     //MinhND: get DB assign_submission 
     public static function get_user_flags_by_assignid_userid_parameters(){
         return new external_function_parameters(
@@ -1230,6 +1282,156 @@ class local_mod_assign_external extends external_api {
                         'extensionduedate' => new external_value(PARAM_INT, 'extension due date'),
                         'workflowstate' => new external_value(PARAM_RAW, 'work flow state'),
                         'allocatedmarker' => new external_value(PARAM_INT, 'allocated maker'),
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    //MinhND: Set assign submission lastest
+    public static function set_submission_lastest_parameters(){
+        return new external_function_parameters(
+            array(
+                'assignment' => new external_value(PARAM_INT, 'asssign ID'),
+                'userid' => new external_value(PARAM_INT, 'user ID'),
+                'groupid' => new external_value(PARAM_INT, 'group ID'),
+            )
+        );
+    }
+
+    public static function set_submission_lastest($assignment, $userid, $groupid){
+        global $DB;
+
+        $warnings = array();
+
+        $result = array();
+
+        //Validate param
+        $params = self::validate_parameters(self::set_submission_lastest_parameters(),
+            array(
+                'assignment' => $assignment,
+                'userid' => $userid,
+                'groupid' => $groupid,
+            )
+        );
+
+        $result['result'] = $DB->set_field('assign_submission', 'latest', 0, $params);
+
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function set_submission_lastest_returns(){
+        return new external_single_structure(
+            array(
+                'result' => new external_value(PARAM_BOOL, 'Boolean'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    //MinhND: create new assign submission
+    public static function create_submission_parameters(){
+        return new external_function_parameters(
+            array(
+                'assignment' => new external_value(PARAM_INT, 'asssign ID'),
+                'userid' => new external_value(PARAM_INT, 'user ID'),
+                'timecreated' => new external_value(PARAM_INT, 'time created'),
+                'timemodified' => new external_value(PARAM_INT, 'time modified'),
+                'status' => new external_value(PARAM_RAW, 'status'),
+                'attemptnumber' => new external_value(PARAM_INT, 'attempnumber'),
+                'latest' => new external_value(PARAM_INT, 'latest'),
+            )
+        );
+    }
+
+    public static function create_submission($assignment, $userid, $timecreated, $timemodified, $status, $attemptnumber, $latest){
+        global $DB;
+
+        $warnings = array();
+
+        $result = array();
+
+        //Validate param
+        $params = self::validate_parameters(self::create_submission_parameters(),array(
+            'assignment' => $assignment,
+            'userid' => $userid,
+            'timecreated' => $timecreated,
+            'timemodified' => $timemodified,
+            'status' => $status,
+            'attemptnumber' => $attemptnumber,
+            'latest' => $latest,
+        ));
+
+        $submission = new stdClass();
+        $submission->assignment   = $params['assignment'];
+        $submission->userid       = $params['userid'];
+        $submission->timecreated = $params['timecreated'];
+        $submission->timemodified = $params['timemodified'];
+        $submission->status = $params['status'];
+        $submission->attemptnumber = $params['attemptnumber'];
+        $submission->latest = $params['latest'];
+
+        $result['sid'] = $DB->insert_record('assign_submission', $submission);
+
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function create_submission_returns(){
+        return new external_single_structure(
+            array(
+                'sid' => new external_value(PARAM_INT, 'submission ID'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    //MinhND: get submission by ID
+    public static function get_submission_by_id_parameters(){
+        return new external_function_parameters(
+            array(
+                'id' => new external_value(PARAM_INT, 'submission ID'),
+            )
+        );
+    }
+
+    public static function get_submission_by_id($id){
+        global $DB;
+
+        $warnings = array();
+
+        $result = array();
+
+        //Validate param
+        $params = self::validate_parameters(self::get_submission_by_id_parameters(),array(
+            "id" => $id
+        ));
+
+        $result['assignsubmisison'] = $DB->get_record('assign_submission', array('id' => $params['id']));
+
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_submission_by_id_returns(){
+        return new external_single_structure(
+            array(
+                'assignsubmisison' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'submission ID'),
+                        'assignment' => new external_value(PARAM_INT, 'assignment'),
+                        'userid' => new external_value(PARAM_INT, 'user ID'),
+                        'timecreated' => new external_value(PARAM_INT, 'time created'),
+                        'timemodified' => new external_value(PARAM_INT, 'time modified'),
+                        'status' => new external_value(PARAM_RAW, 'status'),
+                        'groupid' => new external_value(PARAM_INT, 'groupid'),
+                        'attemptnumber' => new external_value(PARAM_INT, 'attempnumber'),
+                        'latest' => new external_value(PARAM_INT, 'latest'),
                     )
                 ),
                 'warnings' => new external_warnings()
