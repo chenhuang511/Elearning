@@ -2300,6 +2300,7 @@ class local_mod_lesson_external extends external_api
     {
         return new external_function_parameters (
             array(
+                'id' => new external_value(PARAM_INT, 'the id'),
                 'data' => new external_multiple_structure(
                     new external_single_structure(
                         array(
@@ -2312,27 +2313,35 @@ class local_mod_lesson_external extends external_api
         );
     }
 
-    public static function update_lesson_timer($data)
+    public static function update_lesson_timer($id, $data)
     {
         global $DB;
 
         $warnings = array();
 
         $params = array(
+            'id' => $id,
             'data' => $data
         );
 
         $params = self::validate_parameters(self::update_lesson_timer_parameters(), $params);
 
-        $timer = new stdClass();
+        $timer = $DB->get_record('lesson_timer', array('id' => $params['id']), '*', MUST_EXIST);
+        
+        var_dump($timer);
+
+        $result = array();
+
+        if(!$timer) {
+            $result['status'] = false;
+            $warnings['message'] = 'have no data record';
+        }
 
         foreach ($params['data'] as $element) {
             $timer->$element['name'] = $element['value'];
         }
 
         $transaction = $DB->start_delegated_transaction();
-
-        $result = array();
 
         $DB->update_record('lesson_timer', $timer);
         $transaction->allow_commit();
