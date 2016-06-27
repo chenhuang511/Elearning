@@ -1035,14 +1035,18 @@ class core_renderer extends renderer_base {
     /**
      * Outputs the page's footer
      *
+     * @param boolean $api api true or false
      * @return string HTML fragment
      */
-    public function footer() {
+    public function footer($api = false) {
         global $CFG, $DB, $PAGE;
 
         $output = $this->container_end_all(true);
-
-        $footer = $this->opencontainers->pop('header/footer');
+        if ($api) {
+            $footer = '%%ENDHTML-'.sesskey().'%%' . '</body></html>';
+        } else {
+            $footer = $this->opencontainers->pop('header/footer');
+        }
 
         if (debugging() and $DB and $DB->is_transaction_started()) {
             // TODO: MDL-20625 print warning - transaction will be rolled back
