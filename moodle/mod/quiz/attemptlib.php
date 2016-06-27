@@ -1150,8 +1150,11 @@ class quiz_attempt {
      * @param mixed $page string 'all' or integer page number.
      * @return array the requested list of slot numbers.
      */
-    public function get_active_slots($page = 'all') {
+    public function get_active_slots($page = 'all', $slots = null) {
         $activeslots = array();
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $activeslots = $slots;
+        }
         foreach ($this->get_slots($page) as $slot) {
             if (!$this->is_blocked_by_previous_question($slot)) {
                 $activeslots[] = $slot;
