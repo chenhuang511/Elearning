@@ -67,8 +67,9 @@ function is_remote_course($courseorid) {
     }
 }
 
-function convert_remote_course_record(&$course) {
-    $course->id       = $course->remoteid;
+function convert_remote_course_record(&$course, $userid = false) {
+    if (!$userid)
+        $course->id       = $course->remoteid;
 }
 
 function get_local_course_record($courseid, $useid = false) {
@@ -79,7 +80,7 @@ function get_local_course_record($courseid, $useid = false) {
     }
     $idfield = ((int)$courseid === 1 || $useid) ? "id" : "remoteid";
     $course = $DB->get_record("course", array($idfield => $courseid), "*", MUST_EXIST);
-    convert_remote_course_record($course);
+    convert_remote_course_record($course, $useid);
     return $course;
 }
 

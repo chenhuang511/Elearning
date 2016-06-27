@@ -1627,13 +1627,11 @@ class lesson extends lesson_base
     public function update_timer($restart = false, $continue = false, $endreached = false)
     {
         global $USER, $DB;
-
-        //$cm = get_coursemodule_from_instance('lesson', $this->properties->id, $this->properties->course);
+        
         $cm = get_remote_course_module_by_instance('lesson', $this->properties->id)->cm;
 
         // clock code
         // get time information for this user
-        $params = array("lessonid" => $this->properties->id, "userid" => $USER->id);
         if (!$timer = get_remote_lesson_timer_by_userid_and_lessonid($USER->id, $this->properties->id, 0, 1)) {
             $this->start_timer();
             $timer = get_remote_lesson_timer_by_userid_and_lessonid($USER->id, $this->properties->id, 0, 1);
@@ -1668,12 +1666,16 @@ class lesson extends lesson_base
             }
         }
 
-        $timer->lessontime = time();
-        $timer->completed = $endreached;
-        $DB->update_record('lesson_timer', $timer);
+        $data = array();
+
+        $data['data[0][name]'] = 'lessontime';
+        $data['data[0][value]'] = time();
+        $data['data[1][name]'] = 'completed';
+        $data['data[1][value]'] = $endreached;
+
+        $result = update_remote_lesson_timer($timer->id, $data);
 
         // Update completion state.
-        //$cm = get_coursemodule_from_instance('lesson', $this->properties()->id, $this->properties()->course, false, MUST_EXIST);
         $cm = get_remote_course_module_by_instance('lesson', $this->properties()->id)->cm;
         $course = get_course($cm->course);
         $completion = new completion_info($course);

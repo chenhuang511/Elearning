@@ -114,7 +114,7 @@ function get_remote_lesson_timer_by_userid_and_lessonid($userid, $lessonid, $lim
         )
     );
 
-    return $result->timer;
+    return $result->timers;
 }
 
 /**
@@ -606,7 +606,19 @@ function save_remote_lesson_timer($timer)
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_save_lesson_timer',
-            'params' => array('data' => $timer)
+            'params' => array_merge($timer)
+        )
+    );
+}
+
+function update_remote_lesson_timer($id, $timer)
+{
+    return moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_update_lesson_timer',
+            'params' => array_merge(array('id' => $id), $timer)
         )
     );
 }
