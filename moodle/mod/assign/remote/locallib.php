@@ -207,9 +207,21 @@ function get_submission_by_assignid_userid_groupid($params){
     return $results;
 }
 
-function get_user_flags_by_assignid_userid($params){
-    $results = array();
+function get_attemptnumber_by_assignid_userid_groupid($params){
+    
+    $attemptnumbers =  moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_get_attemptnumber_by_assignid_userid_groupid',
+            'params' => $params
+        ), false
+    );
 
+    return $attemptnumbers->result;
+}
+
+function get_user_flags_by_assignid_userid($params){
     $flags =  moodle_webservice_client(
         array(
             'domain' => HUB_URL,
@@ -224,4 +236,55 @@ function get_user_flags_by_assignid_userid($params){
 
     return $flags->userflags;
 }
+
+function set_submission_lastest($params){
+
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_set_submission_lastest',
+            'params' => $params
+        ), false
+    );
+
+    return $resp->result;
+}
+
+function create_remote_submission($submission){
+
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_create_submission',
+            'params' => array(
+                'assignment' => $submission->assignment,
+                'userid' => $submission->userid,
+                'timecreated' => $submission->timecreated,
+                'timemodified' => $submission->timemodified,
+                'status' => $submission->status,
+                'attemptnumber' => $submission->attemptnumber,
+                'latest' => $submission->latest,
+            )
+        ), false
+    );
+
+    return $resp->sid;
+}
+
+function get_remote_submission_by_id($sid){
+
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_get_submission_by_id',
+            'params' => array('id'=>$sid)
+        ), false
+    );
+
+    return $resp->assignsubmisison;
+}
+
 
