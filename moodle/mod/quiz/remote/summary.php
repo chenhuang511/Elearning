@@ -37,6 +37,8 @@ $course = get_local_course_record($quiz->course);
 $cm = get_remote_course_module_by_instance("quiz", $quiz->id)->cm;
 $attemptobj = new quiz_attempt($attempt, $quiz, $cm, $course, false, true);
 
+$summaryremote = get_remote_get_attempt_summary($attemptid);
+//var_dump($summaryremote);die;
 // Check login.
 require_login($attemptobj->get_course(), false, $attemptobj->get_cm());
 
@@ -96,7 +98,7 @@ $PAGE->set_title($attemptobj->get_quiz_name());
 $PAGE->set_heading($attemptobj->get_course()->fullname);
 
 // Display the page.
-echo $output->summary_page($attemptobj, $displayoptions);
+echo $output->summary_page($attemptobj, $displayoptions, $summaryremote);
 
 // Log this page view.
 $attemptobj->fire_attempt_summary_viewed_event();

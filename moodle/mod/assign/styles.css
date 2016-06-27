@@ -407,7 +407,7 @@
 }
 
 .path-mod-assign [data-region="grading-navigation-panel"] {
-    position: absolute;
+    position: static;
     top: 0;
     left: 0;
     width: 100%;
@@ -472,8 +472,8 @@
 }
 
 .path-mod-assign [data-region="grade-panel"].fullwidth {
-    position: absolute;
-    top: 7em;
+    position: static;
+    /*top: 7em;*/
     left: 0;
     right: 0;
     width: 99%;

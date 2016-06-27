@@ -35,6 +35,7 @@
 require_once($CFG->dirroot . '/mod/wiki/lib.php');
 require_once($CFG->dirroot . '/mod/wiki/parser/parser.php');
 require_once($CFG->libdir . '/filelib.php');
+require_once($CFG->dirroot . '/mod/wiki/remote/locallib.php');
 
 define('WIKI_REFRESH_CACHE_TIME', 30); // @TODO: To be deleted.
 define('FORMAT_CREOLE', '37');
@@ -764,8 +765,11 @@ function wiki_parser_get_token($markup, $name) {
 function wiki_user_can_view($subwiki, $wiki = null) {
     global $USER;
 
+//    if (empty($wiki) || $wiki->id != $subwiki->wikiid) {
+//        $wiki = wiki_get_wiki($subwiki->wikiid);
+//    }
     if (empty($wiki) || $wiki->id != $subwiki->wikiid) {
-        $wiki = wiki_get_wiki($subwiki->wikiid);
+        $wiki = get_remote_wiki_by_id($subwiki->wikiid);
     }
     $modinfo = get_fast_modinfo($wiki->course);
     if (!isset($modinfo->instances['wiki'][$subwiki->wikiid])) {
