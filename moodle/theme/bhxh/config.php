@@ -66,6 +66,11 @@ $THEME->layouts = array(
         'defaultregion' => 'side-pre',
         'options' => array('langmenu' => true),
     ),
+    'coursecategory' => array(
+        'file' => 'frontpage.php',
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-pre',
+    ),
 );
 
 $THEME->blockrtlmanipulations = array(
