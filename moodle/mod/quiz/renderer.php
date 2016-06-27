@@ -186,11 +186,17 @@ class mod_quiz_renderer extends plugin_renderer_base {
     public function questions(quiz_attempt $attemptobj, $reviewing, $slots, $page, $showall,
                               mod_quiz_display_options $displayoptions, $reviewobj = null) {
         $output = '';
-        foreach ($slots as $slot) {
-            $slot = $slot->slot;
-            $viewhtml = $reviewobj->questions[($slot-1)]->html;
-            $output .= $viewhtml;
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            foreach ($slots as $slot) {
+                $viewhtml = $reviewobj->questions[($slot-1)]->html;
+                $output .= $viewhtml;
 
+            }
+        }else{
+            foreach ($slots as $slot) {
+                $output .= $attemptobj->render_question($slot, $reviewing, $this,
+                    $attemptobj->review_url($slot, $page, $showall));
+            }
         }
         return $output;
     }
@@ -502,13 +508,19 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $output .= html_writer::start_tag('div');
 
         // Print all the questions.
-        foreach ($slots as $slot) {
-            $slot = $slot->slot;
-            $viewhtml = $attemptremote->questions[($slot-1)]->html;
-            if(!$viewhtml){
-                $viewhtml = $attemptremote->questions[0]->html;
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            foreach ($slots as $slot) {
+                $viewhtml = $attemptremote->questions[($slot-1)]->html;
+                if(!$viewhtml){
+                    $viewhtml = $attemptremote->questions[0]->html;
+                }
+                $output .= $viewhtml;
             }
-            $output .= $viewhtml;
+        }else{
+            foreach ($slots as $slot) {
+                $output .= $attemptobj->render_question($slot, false, $this,
+                    $attemptobj->attempt_url($slot, $page), $this);
+            }
         }
 
         $output .= $this->attempt_navigation_buttons($page, $attemptobj->is_last_page($page));
@@ -531,7 +543,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
         // if you navigate before the form has finished loading, it does not wipe all
         // the student's answers.
         $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'slots',
-            'value' => implode(',', $attemptobj->get_active_slots($page))));
+            'value' => implode(',', $attemptobj->get_active_slots($page, $slots))));
 
         // Finish the form.
         $output .= html_writer::end_tag('div');
@@ -647,14 +659,14 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @param quiz_attempt $attemptobj
      * @param mod_quiz_display_options $displayoptions
      */
-    public function summary_page($attemptobj, $displayoptions) {
+    public function summary_page($attemptobj, $displayoptions, $summaryremote = null) {
         $output = '';
         if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
             $output .= $this->header();
         }
         $output .= $this->heading(format_string($attemptobj->get_quiz_name()));
         $output .= $this->heading(get_string('summaryofattempt', 'quiz'), 3);
-        $output .= $this->summary_table($attemptobj, $displayoptions);
+        $output .= $this->summary_table($attemptobj, $displayoptions, $summaryremote);
         $output .= $this->summary_page_controls($attemptobj);
         if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
             $output .= $this->footer();
@@ -668,7 +680,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @param quiz_attempt $attemptobj
      * @param mod_quiz_display_options $displayoptions
      */
-    public function summary_table($attemptobj, $displayoptions) {
+    public function summary_table($attemptobj, $displayoptions, $summaryremote = null) {
         // Prepare the summary table header.
         $table = new html_table();
         $table->attributes['class'] = 'generaltable quizsummaryofattempt boxaligncenter';
@@ -686,42 +698,71 @@ class mod_quiz_renderer extends plugin_renderer_base {
 
         // Get the summary info for each question.
         $slots = $attemptobj->get_slots();
+        if(!$slots){
+            $r_slots = get_remote_get_slots_by_quizid($attemptobj->get_quizid());
+            $slots = array();
+            foreach ($r_slots as $key => $value) {
+                $slots[$key] = (string)$r_slots[$key]->slot;
+            }
+        }
         foreach ($slots as $slot) {
             // Add a section headings if we need one here.
-            $heading = $attemptobj->get_heading_before_slot($slot);
-            if ($heading) {
-                $cell = new html_table_cell(format_string($heading));
-                $cell->header = true;
-                $cell->colspan = $tablewidth;
-                $table->data[] = array($cell);
-                $table->rowclasses[] = 'quizsummaryheading';
-            }
-
-            // Don't display information items.
-            if (!$attemptobj->is_real_question($slot)) {
-                continue;
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $heading = $attemptobj->get_heading_before_slot($slot);
+                if ($heading) {
+                    $cell = new html_table_cell(format_string($heading));
+                    $cell->header = true;
+                    $cell->colspan = $tablewidth;
+                    $table->data[] = array($cell);
+                    $table->rowclasses[] = 'quizsummaryheading';
+                }
+                // Don't display information items.
+                if (!$attemptobj->is_real_question($slot)) {
+                    continue;
+                }
+            }else{
+                if ($summaryremote->questions[($slot-1)]->type == 'description') {
+                    continue;
+                }
             }
 
             // Real question, show it.
             $flag = '';
-            if ($attemptobj->is_question_flagged($slot)) {
-                $flag = html_writer::empty_tag('img', array('src' => $this->pix_url('i/flagged'),
-                    'alt' => get_string('flagged', 'question'), 'class' => 'questionflag icon-post'));
-            }
-            if ($attemptobj->can_navigate_to($slot)) {
-                $row = array(html_writer::link($attemptobj->attempt_url($slot),
-                    $attemptobj->get_question_number($slot) . $flag),
-                    $attemptobj->get_question_status($slot, $displayoptions->correctness));
-            } else {
-                $row = array($attemptobj->get_question_number($slot) . $flag,
-                    $attemptobj->get_question_status($slot, $displayoptions->correctness));
-            }
-            if ($markscolumn) {
-                $row[] = $attemptobj->get_question_mark($slot);
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                if ($attemptobj->is_question_flagged($slot)) {
+                    $flag = html_writer::empty_tag('img', array('src' => $this->pix_url('i/flagged'),
+                        'alt' => get_string('flagged', 'question'), 'class' => 'questionflag icon-post'));
+                }
+                if ($attemptobj->can_navigate_to($slot)) {
+                    $row = array(html_writer::link($attemptobj->attempt_url($slot),
+                        $attemptobj->get_question_number($slot) . $flag),
+                        $attemptobj->get_question_status($slot, $displayoptions->correctness));
+                } else {
+                    $row = array($attemptobj->get_question_number($slot) . $flag,
+                        $attemptobj->get_question_status($slot, $displayoptions->correctness));
+                }
+                if ($markscolumn) {
+                    $row[] = $attemptobj->get_question_mark($slot);
+                }
+                $table->data[] = $row;
+                $table->rowclasses[] = 'quizsummary' . $slot . ' ' .  $attemptobj->get_question_state_class(
+                        $slot, $displayoptions->correctness);
+            }else{
+                if($summaryremote->questions[($slot-1)]->flagged){
+                    $flag = html_writer::empty_tag('img', array('src' => $this->pix_url('i/flagged'),
+                        'alt' => get_string('flagged', 'question'), 'class' => 'questionflag icon-post'));
+                }
+                if ($attemptobj->can_navigate_to($slot)) {
+                    $row = array(html_writer::link($attemptobj->attempt_url($slot),
+                        $summaryremote->questions[($slot-1)]->number),
+                        $summaryremote->questions[($slot-1)]->status);
+                } else {
+                    $row = array($summaryremote->questions[($slot-1)]->number,
+                        $summaryremote->questions[($slot-1)]->status);
+                }
             }
             $table->data[] = $row;
-            $table->rowclasses[] = 'quizsummary' . $slot . ' ' . $attemptobj->get_question_state_class(
-                    $slot, $displayoptions->correctness);
+            $table->rowclasses[] = 'quizsummary' . $slot . ' ' . $summaryremote->questions[($slot-1)]->state ;
         }
 
         // Print the summary table.

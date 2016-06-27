@@ -30,6 +30,7 @@ $attemptobj = new quiz_attempt($attempt, $quiz, $cm, $course, false, true);
 $page = $attemptobj->force_page_number_into_range($page);
 
 $reviewobj = get_remote_get_attempt_review($attemptid);
+//var_dump($reviewobj);die;
 
 // Now we can validate the params better, re-genrate the page URL.
 if ($showall === null) {
@@ -226,7 +227,11 @@ if ($options->overallfeedback && $feedback) {
 if ($showall) {
     $slots = $attemptobj->get_slots();
     if(!$slots){
-        $slots = get_remote_get_slots_by_quizid($quiz->id);
+        $r_slots = get_remote_get_slots_by_quizid($quiz->id);
+        $slots = array();
+        foreach ($r_slots as $key => $value) {
+            $slots[$key] = (string)$r_slots[$key]->slot;
+        }
     }
     $lastpage = true;
 } else {

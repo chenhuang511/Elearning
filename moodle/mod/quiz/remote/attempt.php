@@ -83,7 +83,11 @@ $attemptobj->fire_attempt_viewed_event();
 // Get the list of questions needed by this page.
 $slots = $attemptobj->get_slots($page);
 if(!$slots){
-    $slots = get_remote_get_slots_by_quizid($attemptremote->attempt->quiz);
+    $r_slots = get_remote_get_slots_by_quizid($attemptremote->attempt->quiz);
+    $slots = array();
+    foreach ($r_slots as $key => $value) {
+        $slots[$key] = (string)$r_slots[$key]->slot;
+    }
 }
 
 // Check.

@@ -81,7 +81,6 @@ function lesson_display_teacher_warning($lesson)
     global $DB;
 
     // get all of the lesson answers
-    $params = array("lessonid" => $lesson->id);
     $lessonanswers = get_remote_lesson_answers_by_lessonid($lesson->id);
     if (!$lessonanswers) {
         // no answers, then not using cluster or unseen
