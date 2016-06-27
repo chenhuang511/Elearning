@@ -2632,8 +2632,8 @@ class mod_assign_external extends external_api {
 
         require_capability('mod/assign:view', $context);
 
-//        $assign = new assign($context, null, null);
-        $assign = new assign($context, $cm, $course);
+        $assign = new assign($context, null, null);
+//        $assign = new assign($context, $cm, $course);
         $assign->require_view_grades();
 
         $participants = $assign->list_participants_with_filter_status_and_group($params['groupid']);
@@ -2801,8 +2801,8 @@ class mod_assign_external extends external_api {
         $context = context_module::instance($cm->id);
         self::validate_context($context);
 
-//        $assign = new assign($context, null, null);
-        $assign = new assign($context, $cm, $course);
+        $assign = new assign($context, null, null);
+//        $assign = new assign($context, $cm, $course);
         $assign->require_view_grades();
 
         $participant = $assign->get_participant($params['userid']);

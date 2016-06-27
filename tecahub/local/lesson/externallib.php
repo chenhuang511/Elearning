@@ -2276,8 +2276,8 @@ class local_mod_lesson_external extends external_api
 
         $timer = new stdClass();
 
-        foreach ($params['data'] as $key => $value) {
-            $timer->$key = $value;
+        foreach ($params['data'] as $element) {
+            $timer->$element['name'] = $element['value'];
         }
 
         $transaction = $DB->start_delegated_transaction();

@@ -50,6 +50,27 @@ $THEME->layouts = array(
 		'defaultregion' => 'side-pre',
 		'options' => array('fluid' => true),
 	),
+	'standard' => array(
+        'file' => 'frontpage.php',
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-pre',
+    ),
+    'incourse' => array(
+        'file' => 'frontpage.php',
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-pre',
+    ),
+    'course' => array(
+        'file' => 'frontpage.php',
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-pre',
+        'options' => array('langmenu' => true),
+    ),
+    'coursecategory' => array(
+        'file' => 'frontpage.php',
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-pre',
+    ),
 );
 
 $THEME->blockrtlmanipulations = array(

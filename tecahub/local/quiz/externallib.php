@@ -726,7 +726,7 @@ ORDER BY
 
         $params = array(
             'quizid' => $quizid,
-	    'remoteuserid' => $remoteuserid,
+	        'remoteuserid' => $remoteuserid,
             'preflightdata' => $preflightdata,
             'forcenew' => $forcenew,
         );

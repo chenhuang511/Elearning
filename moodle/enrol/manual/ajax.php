@@ -166,7 +166,12 @@ switch ($action) {
         if (!isset($plugins[$instance->enrol])) {
             throw new enrol_ajax_exception('enrolnotpermitted');
         }
-        $plugin = $plugins[$instance->enrol];
+
+        if(MOODLE_RUN_MODE == MOODLE_MODE_HUB) {
+            $plugin = $plugins['manual'];
+        } else {
+            $plugin = $plugins[$instance->enrol];
+        }
         if ($plugin->allow_enrol($instance) && has_capability('enrol/'.$plugin->get_name().':enrol', $context)) {
             if ($user) {
                 $plugin->enrol_user($instance, $user->id, $roleid, $timestart, $timeend, null, $recovergrades);

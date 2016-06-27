@@ -122,5 +122,45 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_assign_get_attemptnumber_by_assignid_userid_groupid' => array(
+		'classname'	  => 'local_mod_assign_external',
+		'methodname'  => 'get_attemptnumber_by_assignid_userid_groupid',
+		'classpath'	  => 'local/assignment/externallib.php',
+		'description' => "Get attemptnumber by assignid & userid & groupid",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_assign_get_user_flags_by_assignid_userid' => array(
+		'classname'	  => 'local_mod_assign_external',
+		'methodname'  => 'get_user_flags_by_assignid_userid',
+		'classpath'	  => 'local/assignment/externallib.php',
+		'description' => "Get user flags by assignid and userid",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_assign_set_submission_lastest' => array(
+		'classname'	  => 'local_mod_assign_external',
+		'methodname'  => 'set_submission_lastest',
+		'classpath'	  => 'local/assignment/externallib.php',
+		'description' => "Set latest to 0 for all the other attempts",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_assign_create_submission' => array(
+		'classname'	  => 'local_mod_assign_external',
+		'methodname'  => 'create_submission',
+		'classpath'	  => 'local/assignment/externallib.php',
+		'description' => "Create new submission",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_assign_get_submission_by_id' => array(
+		'classname'	  => 'local_mod_assign_external',
+		'methodname'  => 'get_submission_by_id',
+		'classpath'	  => 'local/assignment/externallib.php',
+		'description' => "get assign submission by id",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 );
 

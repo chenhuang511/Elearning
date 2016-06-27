@@ -274,3 +274,39 @@ function get_mod_quiz_process_attempt($attemptid, $data, $finishattempt, $timeup
         ), false
     );
 }
+
+function get_remote_get_attempt_summary($attemptid, $preflightdata = null) {
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN_M,
+            'function_name' => 'mod_quiz_get_attempt_summary',
+            'params' => array('attemptid' => $attemptid, 'preflightdata' => array())
+        ), false
+    );
+    return $resp;
+}
+
+function get_remote_quiz_view_attempt_summary($attemptid, $preflightdata = null) {
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN_M,
+            'function_name' => 'mod_quiz_view_attempt_summary',
+            'params' => array('attemptid' => $attemptid, 'preflightdata' => array())
+        ), false
+    );
+    return $resp;
+}
+
+function get_remote_view_attempt($attemptid, $page = null, $preflightdata = null) {
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN_M,
+            'function_name' => 'mod_quiz_view_attempt',
+            'params' => array('attemptid' => $attemptid, 'page' => $page, 'preflightdata' => array())
+        ), false
+    );
+    return $resp;
+}

@@ -1809,6 +1809,9 @@ class cm_info implements IteratorAggregate {
         // Check parent section.
         if ($this->available) {
             $parentsection = $this->modinfo->get_section_info($this->sectionnum);
+            if (!$parentsection) {
+                $parentsection = $this->modinfo->get_section_info($this->section);
+            }
             if (!$parentsection->available) {
                 // Do not store info from section here, as that is already
                 // presented from the section (if appropriate) - just change

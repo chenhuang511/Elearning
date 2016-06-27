@@ -209,7 +209,7 @@ class assign {
         $params['action'] = $action;
         $cm = $this->get_course_module();
         if ($cm) {
-            $currenturl = new moodle_url('/mod/assign/view.php', array('id' => $cm->id));
+            $currenturl = new moodle_url('/mod/assign/remote/api-view.php', array('id' => $cm->id));
         } else {
             $currenturl = new moodle_url('/mod/assign/index.php', array('id' => $this->get_course()->id));
         }
@@ -549,7 +549,7 @@ class assign {
         }
         // Now show the right view page.
         if ($action == 'redirect') {
-            $nextpageurl = new moodle_url('/mod/assign/view.php', $nextpageparams);
+            $nextpageurl = new moodle_url('/mod/assign/remote/api-view.php', $nextpageparams);
             redirect($nextpageurl);
             return;
         } else if ($action == 'savegradingresult') {
@@ -3063,6 +3063,10 @@ class assign {
         if (!$userid) {
             $userid = $USER->id;
         }
+
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB)
+            $ruserid = get_remote_mapping_user();
+
         // If the userid is not null then use userid.
         $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid, 'groupid'=>0);
         if ($attemptnumber >= 0) {
@@ -3076,9 +3080,9 @@ class assign {
             $submissions = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', '*', 0, 1);
         }
         else{
-            $ruserid = get_remote_mapping_user();
             $params['userid'] = $ruserid[0]->id;
             $submissions = get_submission_by_assignid_userid_groupid($params);
+            var_dump($submissions);die;
         }
 
         if ($submissions) {
@@ -3108,7 +3112,13 @@ class assign {
                 $submission->latest = 1;
             } else {
                 // We need to work this out.
-                $result = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', 'attemptnumber', 0, 1);
+                if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                    $result = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', 'attemptnumber', 0, 1);
+                }
+                else{
+                    $params['userid'] = $ruserid[0]->id;
+                    $result = get_attemptnumber_by_assignid_userid_groupid($params);
+                }
                 $latestsubmission = null;
                 if ($result) {
                     $latestsubmission = reset($result);
@@ -3119,10 +3129,21 @@ class assign {
             }
             if ($submission->latest) {
                 // This is the case when we need to set latest to 0 for all the other attempts.
-                $DB->set_field('assign_submission', 'latest', 0, $params);
+                if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                    $DB->set_field('assign_submission', 'latest', 0, $params);
+                }
+                else{
+                    set_submission_lastest($params);die;
+                }
             }
-            $sid = $DB->insert_record('assign_submission', $submission);
-            return $DB->get_record('assign_submission', array('id' => $sid));
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $sid = $DB->insert_record('assign_submission', $submission);
+                return $DB->get_record('assign_submission', array('id' => $sid));
+            }
+            else{
+                $sid = create_remote_submission($submission);
+                return get_remote_submission_by_id($sid);
+            }
         }
         return false;
     }
@@ -3157,12 +3178,19 @@ class assign {
         }
 
         $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid);
-
-        $flags = $DB->get_record('assign_user_flags', $params);
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $flags = $DB->get_record('assign_user_flags', $params);
+        }
+        else{
+            $ruser = get_remote_mapping_user();
+            $params['userid'] = $ruser[0]->id;
+            $flags = get_user_flags_by_assignid_userid($params);
+        }
 
         if ($flags) {
             return $flags;
         }
+
         if ($create) {
             $flags = new stdClass();
             $flags->assignment = $this->get_instance()->id;
@@ -3691,18 +3719,18 @@ class assign {
             $links[$gradebookurl] = get_string('viewgradebook', 'assign');
         }
         if ($this->is_any_submission_plugin_enabled() && $this->count_submissions()) {
-            $downloadurl = '/mod/assign/view.php?id=' . $cmid . '&action=downloadall';
+            $downloadurl = '/mod/assign/remote/api-view.php?id=' . $cmid . '&action=downloadall';
             $links[$downloadurl] = get_string('downloadall', 'assign');
         }
         if ($this->is_blind_marking() &&
                 has_capability('mod/assign:revealidentities', $this->get_context())) {
-            $revealidentitiesurl = '/mod/assign/view.php?id=' . $cmid . '&action=revealidentities';
+            $revealidentitiesurl = '/mod/assign/remote/api-view.php?id=' . $cmid . '&action=revealidentities';
             $links[$revealidentitiesurl] = get_string('revealidentities', 'assign');
         }
         foreach ($this->get_feedback_plugins() as $plugin) {
             if ($plugin->is_enabled() && $plugin->is_visible()) {
                 foreach ($plugin->get_grading_actions() as $action => $description) {
-                    $url = '/mod/assign/view.php' .
+                    $url = '/mod/assign/remote/api-view.php' .
                            '?id=' .  $cmid .
                            '&plugin=' . $plugin->get_type() .
                            '&pluginsubtype=assignfeedback' .
@@ -3806,7 +3834,7 @@ class assign {
         $o .= $this->get_renderer()->render($header);
 
         $currenturl = $CFG->wwwroot .
-                      '/mod/assign/view.php?id=' .
+                      '/mod/assign/remote/api-view.php?id=' .
                       $this->get_course_module()->id .
                       '&action=grading';
 
@@ -3903,7 +3931,7 @@ class assign {
      * @return string
      */
     protected function view_grading_page() {
-        global $CFG;
+        global $CFG, $PAGE;
 
         $o = '';
         // Need submit permission to submit an assignment.
@@ -3914,7 +3942,7 @@ class assign {
         $o .= $this->view_grading_table();
 
         \mod_assign\event\grading_table_viewed::create_from_assign($this)->trigger();
-
+//        $PAGE->requires->js_init_call('M.mod_assign.init_grading_table');
         return $o;
     }
 

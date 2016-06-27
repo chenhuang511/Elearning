@@ -604,8 +604,10 @@ if ($pageid != LESSON_EOL) {
     if ($lesson->activitylink) {
         $lessoncontent .= $lesson->link_for_activitylink();
     }
+    
+    $localcourse = $DB->get_record('course', array('remoteid' => $course->id), '*', MUST_EXIST);
 
-    $url = new moodle_url('/course/view.php', array('id' => $course->id));
+    $url = new moodle_url($CFG->wwwroot . '/my/?', array('id' => $localcourse->id));
     $lessoncontent .= html_writer::link($url, get_string('returnto', 'lesson', format_string($course->fullname, true)), array('class' => 'centerpadded lessonbutton standardbutton'));
 
     if (has_capability('gradereport/user:view', context_course::instance($course->id))

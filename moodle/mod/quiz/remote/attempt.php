@@ -77,13 +77,21 @@ if ($autosaveperiod) {
         'M.mod_quiz.autosave.init', array($autosaveperiod));
 }
 
-// Log this page view.
-$attemptobj->fire_attempt_viewed_event();
+// Log this page view. Trigger the attempt viewed event.
+if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+    $attemptobj->fire_attempt_viewed_event();
+}else{
+    get_remote_view_attempt($attemptid, $page);
+}
 
 // Get the list of questions needed by this page.
 $slots = $attemptobj->get_slots($page);
 if(!$slots){
-    $slots = get_remote_get_slots_by_quizid($attemptremote->attempt->quiz);
+    $r_slots = get_remote_get_slots_by_quizid($attemptremote->attempt->quiz);
+    $slots = array();
+    foreach ($r_slots as $key => $value) {
+        $slots[$key] = (string)$r_slots[$key]->slot;
+    }
 }
 
 // Check.
