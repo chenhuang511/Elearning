@@ -495,10 +495,8 @@ class local_mod_lesson_external extends external_api
     public static function get_lesson_timer_by_userid_and_lessonid_parameters()
     {
         return new external_function_parameters(
-            array('useid' => new external_value(PARAM_INT, 'user id'),
-                'lessonid' => new external_value(PARAM_INT, 'lesson id'),
-                'limitfrom' => new external_value(PARAM_INT, 'limit from'),
-                'limitnum' => new external_value(PARAM_INT, 'limit num')
+            array('userid' => new external_value(PARAM_INT, 'user id'),
+                'lessonid' => new external_value(PARAM_INT, 'lesson id')
             )
         );
     }
@@ -520,16 +518,8 @@ class local_mod_lesson_external extends external_api
 
         $arr = array(
             'userid' => $userid,
-            'lessonid' => $lessonid,
+            'lessonid' => $lessonid
         );
-
-        if (($limitfrom === 0 && $limitnum !== 0) || ($limitfrom !== 0 && $limitnum === 0)) {
-            $arr = array_merge($arr, array(
-                'limitfrom' => $limitfrom,
-                'limitnum' => $limitnum
-            ));
-        }
-
 
         // validate params
         $params = self::validate_parameters(self::get_lesson_timer_by_userid_and_lessonid_parameters(),
@@ -537,10 +527,6 @@ class local_mod_lesson_external extends external_api
         );
 
         $result = array();
-
-        if (isset($params['limitfrom']) || isset($params['limitnum'])) {
-            $timer = $DB->get_records('lesson_timer', array('userid' => $params['userid'], 'lessonid' => $params['lessonid']), 'starttime DESC', '*', $params['limitfrom'], $params['limitnum']);
-        }
 
         $timer = $DB->get_record('lesson_timer', array('userid' => $params['userid'], 'lessonid' => $params['lessonid']), '*', MUST_EXIST);
 
