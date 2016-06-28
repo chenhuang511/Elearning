@@ -2498,7 +2498,7 @@ class local_mod_lesson_external extends external_api
             $params['id']
         );
 
-        $pages = $DB->get_records_select("lesson_pages", "lessonid = ? AND id ?", $parameters);
+        $pages = $DB->get_records_select("lesson_pages", "lessonid = ? AND id = ?", $parameters);
 
         if(!$pages) {
             $pages = array();
