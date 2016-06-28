@@ -1047,6 +1047,7 @@ class core_renderer extends renderer_base {
         } else {
             $footer = $this->opencontainers->pop('header/footer');
         }
+        $footer = $this->opencontainers->pop('header/footer');
 
         if (debugging() and $DB and $DB->is_transaction_started()) {
             // TODO: MDL-20625 print warning - transaction will be rolled back
@@ -4382,7 +4383,7 @@ class core_renderer_cli extends core_renderer {
      * There is no footer for a cli request, however we must override the
      * footer method to prevent the default footer.
      */
-    public function footer() {}
+    public function footer($api = false) {}
 
     /**
      * Render a notification (that is, a status message about something that has
@@ -4501,7 +4502,7 @@ class core_renderer_ajax extends core_renderer {
      * There is no footer for an AJAX request, however we must override the
      * footer method to prevent the default footer.
      */
-    public function footer() {}
+    public function footer($api = false) {}
 
     /**
      * No need for headers in an AJAX request... this should never happen.
