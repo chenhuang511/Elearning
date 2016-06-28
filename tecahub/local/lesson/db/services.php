@@ -106,6 +106,22 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_get_duration_lesson_timer_by_lessonid_and_userid' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_duration_lesson_timer_by_lessonid_and_userid',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get duration lesson timer by userid and lessonid',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_count_lesson_attempts' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_count_lesson_attempts',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get count lesson attempts by lessonid and userid and pageid and retry',
+        'type' => 'read',
+        'ajax' => true
+    ),
     'local_mod_save_lesson_timer' => array(
         'classname' => 'local_mod_lesson_external',
         'methodname' => 'save_lesson_timer',

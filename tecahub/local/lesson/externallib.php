@@ -2327,12 +2327,12 @@ class local_mod_lesson_external extends external_api
         $params = self::validate_parameters(self::update_lesson_timer_parameters(), $params);
 
         $timer = $DB->get_record('lesson_timer', array('id' => $params['id']), '*', MUST_EXIST);
-        
+
         var_dump($timer);
 
         $result = array();
 
-        if(!$timer) {
+        if (!$timer) {
             $result['status'] = false;
             $warnings['message'] = 'have no data record';
             return $result;
@@ -2356,5 +2356,117 @@ class local_mod_lesson_external extends external_api
     public static function update_lesson_timer_returns()
     {
         return self::save_lesson_timer_returns();
+    }
+
+    public static function get_duration_lesson_timer_by_lessonid_and_userid_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'lessonid' => new external_value(PARAM_INT, 'the lesson id'),
+                'userid' => new external_value(PARAM_INT, 'the user id')
+            )
+        );
+    }
+
+    public static function get_duration_lesson_timer_by_lessonid_and_userid($lessonid, $userid)
+    {
+        global $DB;
+
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_duration_lesson_timer_by_lessonid_and_userid_parameters(), array(
+            'lessonid' => $lessonid,
+            'userid' => $userid
+        ));
+
+        $result = array();
+
+        $duration = $DB->get_field_sql(
+            "SELECT SUM(lessontime - starttime)
+                                   FROM {lesson_timer}
+                                  WHERE lessonid = :lessonid
+                                    AND userid = :userid",
+            array('userid' => $params['userid'], 'lessonid' => $params['lessonid']));
+
+        if (!$duration) {
+            $duration = 0;
+        }
+
+        $result['duration'] = $duration;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_duration_lesson_timer_by_lessonid_and_userid_returns()
+    {
+        return new external_single_structure(
+            array(
+                'duration' => new external_value(PARAM_INT, 'the duration'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_count_lesson_attempts_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'lessonid' => new external_value(PARAM_INT, 'the lesson id'),
+                'userid' => new external_value(PARAM_INT, 'the user id'),
+                'pageid' => new external_value(PARAM_INT, 'the page id'),
+                'retry' => new external_value(PARAM_INT, 'retry'),
+                'correct' => new external_value(PARAM_INT, 'correct')
+            )
+        );
+    }
+
+    public static function get_count_lesson_attempts($lessonid, $userid, $pageid, $retry, $correct)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_count_lesson_attempts_parameters(), array(
+            'lessonid' => $lessonid,
+            'userid' => $userid,
+            'pageid' => $pageid,
+            'retry' => $retry,
+            'correct' => $correct
+        ));
+
+        $parameters = array(
+            'userid' => $params['userid'],
+            'retry' => $params['retry']
+        );
+
+        if($params['lessonid'] > 0) {
+            $parameters = array_merge($parameters, array('lessonid' => $params['lessonid']));
+        }
+        if($params['pageid'] > 0) {
+            $parameters = array_merge($parameters, array('pageid' => $params['pageid']));
+        }
+        if($params['correct'] > 0) {
+            $parameters = array_merge($parameters, array('correct' => $params['correct']));
+        }
+
+
+        $result = array();
+
+        $nattempts = $DB->count_records('lesson_attempts', $parameters);
+
+        $result['nattempts'] = $nattempts;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_count_lesson_attempts_returns()
+    {
+        return new external_single_structure(
+            array(
+                'nattempts' => new external_value(PARAM_INT, 'count'),
+                'warnings' => new external_warnings()
+            )
+        );
     }
 }
