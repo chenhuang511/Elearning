@@ -1439,4 +1439,88 @@ class local_mod_assign_external extends external_api {
         );
     }
 
+    /**
+     * Describes the parameters for save_submission
+     * @return external_external_function_parameters
+     * @since  Moodle 2.6
+     */
+    public static function save_remote_submission_parameters() {
+        global $CFG;
+        $instance = new assign(null, null, null);
+        $pluginsubmissionparams = array();
+
+        foreach ($instance->get_submission_plugins() as $plugin) {
+            if ($plugin->is_visible()) {
+                $pluginparams = $plugin->get_external_parameters();
+                if (!empty($pluginparams)) {
+                    $pluginsubmissionparams = array_merge($pluginsubmissionparams, $pluginparams);
+                }
+            }
+        }
+
+        return new external_function_parameters(
+            array(
+                'assignmentid' => new external_value(PARAM_INT, 'The assignment id to operate on'),
+                'userid' => new external_value(PARAM_INT, 'The userid'),
+                'plugindata' => new external_single_structure(
+                    $pluginsubmissionparams
+                )
+            )
+        );
+    }
+
+    /**
+     * Save a student submission for a single assignment
+     *
+     * @param int $assignmentid The id of the assignment
+     * @param array $plugindata - The submitted data for plugins
+     * @return array of warnings to indicate any errors
+     * @since Moodle 2.6
+     */
+    public static function save_remote_submission($assignmentid,$userid, $plugindata) {
+        global $CFG, $USER;
+
+        $params = self::validate_parameters(self::save_remote_submission_parameters(),
+            array('assignmentid' => $assignmentid,
+                'userid' => $userid,
+                'plugindata' => $plugindata));
+
+        $USER->id = $params['userid'];       
+        
+        $cm = get_coursemodule_from_instance('assign', $params['assignmentid'], 0, false, MUST_EXIST);
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        $assignment = new assign($context, $cm, null);
+
+        $notices = array();
+
+        if (!$assignment->submissions_open($USER->id)) {
+            $notices[] = get_string('duedatereached', 'assign');
+        } else {
+            $submissiondata = (object)$params['plugindata'];
+            $assignment->save_submission($submissiondata, $notices);
+        }
+
+        $warnings = array();
+        foreach ($notices as $notice) {
+            $warnings[] = self::generate_warning($params['assignmentid'],
+                'couldnotsavesubmission',
+                $notice);
+        }
+
+        return $warnings;
+    }
+
+    /**
+     * Describes the return value for save_submission
+     *
+     * @return external_single_structure
+     * @since Moodle 2.6
+     */
+    public static function save_remote_submission_returns() {
+        return new external_warnings();
+    }
+
+
 }

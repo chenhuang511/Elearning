@@ -3082,7 +3082,6 @@ class assign {
         else{
             $params['userid'] = $ruserid[0]->id;
             $submissions = get_submission_by_assignid_userid_groupid($params);
-            var_dump($submissions);die;
         }
 
         if ($submissions) {
@@ -6648,7 +6647,11 @@ class assign {
             return true;
         }
         if ($data = $mform->get_data()) {
-            return $this->save_submission($data, $notices);
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HOST)
+                return $this->save_submission($data, $notices);
+            else
+                $userid = get_remote_mapping_user();
+                return save_remote_submission($this->get_instance()->id, $userid[0]->id, $data->onlinetext_editor);
         }
         return false;
     }

@@ -59,7 +59,9 @@ function getHTMLContent(module, encode) {
     url += (encode)?arrayToUrlParmas(module.params):module.params;
     var target = $('#module-content');
     var loading = $('#loading');
-
+    if (window.sectionTimeout) {
+        clearTimeout(window.sectionTimeout);
+    }
     $.ajax({
         url: url,
         method: module.method,
