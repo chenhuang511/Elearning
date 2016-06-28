@@ -315,9 +315,9 @@ function lesson_grade($lesson, $ntries, $userid = 0)
         // get only the pages and their answers that the user answered
         list($usql, $parameters) = $DB->get_in_or_equal(array_keys($attemptset));
         array_unshift($parameters, $lesson->id);
-
-        $pages = $DB->get_records_select("lesson_pages", "lessonid = ? AND id $usql", $parameters);
-        $answers = $DB->get_records_select("lesson_answers", "lessonid = ? AND pageid $usql", $parameters);
+        
+        $pages = get_remote_list_lesson_pages_by_id_and_lessonid($parameters[1], $parameters[0]);
+        $answers = get_remote_lesson_answers_by_pageid_and_lessonid($parameters[1], $parameters[0]);
 
         // Number of pages answered
         $nquestions = count($pages);
@@ -1386,18 +1386,6 @@ class lesson extends lesson_base
      */
     public function get_attempts($retries, $correct = false, $pageid = null, $userid = null)
     {
-//        global $USER, $DB;
-//        $params = array("lessonid" => $this->properties->id, "userid" => $userid, "retry" => $retries);
-//        if ($correct) {
-//            $params['correct'] = 1;
-//        }
-//        if ($pageid !== null) {
-//            $params['pageid'] = $pageid;
-//        }
-//        if ($userid === null) {
-//            $params['userid'] = $USER->id;
-//        }
-
         $attempts = get_remote_lesson_attempts_by_lessonid_and_userid($this->properties->id, $userid, $retries, $correct ? 1 : 0, $pageid !== null ? $pageid : -1);
 
         return $attempts;
@@ -1505,19 +1493,19 @@ class lesson extends lesson_base
         $allpages = $this->load_all_pages();
         if ($this->properties->nextpagedefault) {
             // in Flash Card mode...first get number of retakes
-            $nretakes = $DB->count_records("lesson_grades", array("lessonid" => $this->properties->id, "userid" => $USER->id));
+            $nretakes = get_remote_count_by_lessonid_and_userid('lesson_grades', $this->properties->id, $USER->id);
             shuffle($allpages);
             $found = false;
             if ($this->properties->nextpagedefault == LESSON_UNSEENPAGE) {
                 foreach ($allpages as $nextpage) {
-                    if (!$DB->count_records("lesson_attempts", array("pageid" => $nextpage->id, "userid" => $USER->id, "retry" => $nretakes))) {
+                    if (!get_remote_count_lesson_attempts(0, $USER->id, $nextpage->id, $nretakes, 0)) { // params: userid, pageid, retry
                         $found = true;
                         break;
                     }
                 }
             } elseif ($this->properties->nextpagedefault == LESSON_UNANSWEREDPAGE) {
                 foreach ($allpages as $nextpage) {
-                    if (!$DB->count_records("lesson_attempts", array('pageid' => $nextpage->id, 'userid' => $USER->id, 'correct' => 1, 'retry' => $nretakes))) {
+                    if (!get_remote_count_lesson_attempts(0, $USER->id, $nextpage->id, $nretakes, 1)) { // params: userid, pageid, retry, correct
                         $found = true;
                         break;
                     }
@@ -1526,7 +1514,8 @@ class lesson extends lesson_base
             if ($found) {
                 if ($this->properties->maxpages) {
                     // check number of pages viewed (in the lesson)
-                    if ($DB->count_records("lesson_attempts", array("lessonid" => $this->properties->id, "userid" => $USER->id, "retry" => $nretakes)) >= $this->properties->maxpages) {
+                    if (get_remote_count_lesson_attempts($this->properties->id, $USER->id, 0, $nretakes, 0) >= $this->properties->maxpages) {
+                        // params: lessonid, userid, retry
                         return LESSON_EOL;
                     }
                 }
@@ -1627,7 +1616,7 @@ class lesson extends lesson_base
     public function update_timer($restart = false, $continue = false, $endreached = false)
     {
         global $USER, $DB;
-        
+
         $cm = get_remote_course_module_by_instance('lesson', $this->properties->id)->cm;
 
         // clock code
@@ -2580,12 +2569,10 @@ abstract class lesson_page extends lesson_base
             $result->feedback = get_string('noanswer', 'lesson');
         } else {
             if (!has_capability('mod/lesson:manage', $context)) {
-                $nretakes = $DB->count_records("lesson_grades", array("lessonid" => $this->lesson->id, "userid" => $USER->id));
-                $nretakes = get_remote_count_by_lessonid_and_userid('lesson_grades', $this->lesson->properties->id, $USER->id);
+                $nretakes = get_remote_count_by_lessonid_and_userid('lesson_grades', $this->lesson->id, $USER->id);
 
                 // Get the number of attempts that have been made on this question for this student and retake,
-                $nattempts = $DB->count_records('lesson_attempts', array('lessonid' => $this->lesson->id,
-                    'userid' => $USER->id, 'pageid' => $this->properties->id, 'retry' => $nretakes));
+                $nattempts = get_remote_count_lesson_attempts($this->lesson->id, $USER->id, $this->properties->id, $nretakes, 0);
 
                 // Check if they have reached (or exceeded) the maximum number of attempts allowed.
                 if ($nattempts >= $this->lesson->maxattempts) {
@@ -3548,7 +3535,7 @@ class lesson_page_type_manager
     public function load_page($pageid, lesson $lesson)
     {
         global $DB;
-        $page = get_remote_lesson_pages_by_pageid_and_lessonid($pageid, $lesson->id);
+        $page = get_remote_lesson_pages_by_id_and_lessonid($pageid, $lesson->id);
         if (!$page) {
             print_error('cannotfindpages', 'lesson');
         }

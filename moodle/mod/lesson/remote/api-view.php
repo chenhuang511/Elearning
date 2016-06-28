@@ -201,8 +201,7 @@ if (empty($pageid)) {
     if (!empty($allattempts)) {
         $attempt = end($allattempts);
         $attemptpage = $lesson->load_page($attempt->pageid);
-        //$jumpto = $DB->get_field('lesson_answers', 'jumpto', array('id' => $attempt->answerid));
-        $jumpto = get_remote_lesson_answer_by_id($attempt->answerid)->jumpto;
+        $jumpto = get_remote_lesson_answers_by_id($attempt->answerid)->jumpto;
         // convert the jumpto to a proper page id
         if ($jumpto == 0) {
             // Check if a question has been incorrectly answered AND no more attempts at it are left.
@@ -275,7 +274,9 @@ if (empty($pageid)) {
 
     if ($attemptflag) {
         if (!$lesson->retake) {
-            $courselink = new single_button(new moodle_url('/course/remote/view.php', array('id' => $PAGE->course->id)), get_string('returntocourse', 'lesson'), 'get');
+            $localcourse = $DB->get_record('course', array('remoteid' => $course->id), '*', MUST_EXIST);
+            $url = new moodle_url($CFG->wwwroot . '/my/?', array('id' => $localcourse->id));
+            $courselink = new single_button($url, get_string('returntocourse', 'lesson'), 'get');
             echo $lessonoutput->message(get_string("noretake", "lesson"), $courselink);
             exit();
         }
@@ -485,15 +486,8 @@ if ($pageid != LESSON_EOL) {
             }
 
             if ($lesson->completiontimespent > 0) {
-                $duration = $DB->get_field_sql(
-                    "SELECT SUM(lessontime - starttime)
-                                   FROM {lesson_timer}
-                                  WHERE lessonid = :lessonid
-                                    AND userid = :userid",
-                    array('userid' => $USER->id, 'lessonid' => $lesson->id));
-                if (!$duration) {
-                    $duration = 0;
-                }
+
+                $duration = get_remote_duration_lesson_timer_by_lessonid_and_userid($lesson->id, $USER->id);
 
                 // If student has not spend enough time in the lesson, display a message.
                 if ($duration < $lesson->completiontimespent) {
@@ -604,7 +598,7 @@ if ($pageid != LESSON_EOL) {
     if ($lesson->activitylink) {
         $lessoncontent .= $lesson->link_for_activitylink();
     }
-    
+
     $localcourse = $DB->get_record('course', array('remoteid' => $course->id), '*', MUST_EXIST);
 
     $url = new moodle_url($CFG->wwwroot . '/my/?', array('id' => $localcourse->id));

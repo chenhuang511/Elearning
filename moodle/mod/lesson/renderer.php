@@ -490,7 +490,7 @@ class mod_lesson_renderer extends plugin_renderer_base
         if (has_capability('mod/lesson:manage', $context)) {
             return $this->output->box(get_string('teacherongoingwarning', 'lesson'), "ongoing center");
         } else {
-            $ntries = $DB->count_records("lesson_grades", array("lessonid" => $lesson->id, "userid" => $USER->id));
+            $ntries = get_remote_count_by_lessonid_and_userid('lesson_grades',$lesson->id, $USER->id);
             if (isset($USER->modattempts[$lesson->id])) {
                 $ntries--;
             }
