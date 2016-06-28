@@ -58,6 +58,14 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_get_list_lesson_pages_by_id_and_lessonid' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_list_lesson_pages_by_id_and_lessonid',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get list lesson pages by id and lesson id',
+        'type' => 'read',
+        'ajax' => true
+    ),
     'local_mod_get_lesson_pages_by_lessonid' => array(
         'classname' => 'local_mod_lesson_external',
         'methodname' => 'get_lesson_pages_by_lessonid',

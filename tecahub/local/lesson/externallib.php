@@ -2439,13 +2439,13 @@ class local_mod_lesson_external extends external_api
             'retry' => $params['retry']
         );
 
-        if($params['lessonid'] > 0) {
+        if ($params['lessonid'] > 0) {
             $parameters = array_merge($parameters, array('lessonid' => $params['lessonid']));
         }
-        if($params['pageid'] > 0) {
+        if ($params['pageid'] > 0) {
             $parameters = array_merge($parameters, array('pageid' => $params['pageid']));
         }
-        if($params['correct'] > 0) {
+        if ($params['correct'] > 0) {
             $parameters = array_merge($parameters, array('correct' => $params['correct']));
         }
 
@@ -2468,5 +2468,50 @@ class local_mod_lesson_external extends external_api
                 'warnings' => new external_warnings()
             )
         );
+    }
+
+    public static function get_list_lesson_pages_by_id_and_lessonid_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'id' => new external_value(PARAM_INT, 'the id'),
+                'lessonid' => new external_value(PARAM_INT, 'the lesson id')
+            )
+        );
+    }
+
+    public static function get_list_lesson_pages_by_id_and_lessonid($id, $lessonid)
+    {
+        global $DB;
+
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_list_lesson_pages_by_id_and_lessonid_parameters(), array(
+            'id' => $id,
+            'lessonid' => $lessonid
+        ));
+
+        $result = array();
+
+        $parameters = array(
+            $params['lessonid'],
+            $params['id']
+        );
+
+        $pages = $DB->get_records_select("lesson_pages", "lessonid = ? AND id ?", $parameters);
+
+        if(!$pages) {
+            $pages = array();
+        }
+
+        $result['pages'] = $pages;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_list_lesson_pages_by_id_and_lessonid_returns()
+    {
+       return self::get_lesson_pages_by_lessonid_returns();
     }
 }
