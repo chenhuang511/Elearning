@@ -167,3 +167,16 @@ function get_remote_user_groups_by_courseid_and_userid($courseid, $userid)
     return $result->groups;
 }
 
+function get_remote_course_section_nav_by_section($sectionid)
+{
+    return moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_get_remote_course_section_nav',
+            'params' => array('sectionid' => $sectionid),
+        )
+    );
+}
+
+
