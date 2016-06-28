@@ -720,11 +720,11 @@ class local_mod_course_external extends external_api
         );
     }
 	
-	public static function get_remote_course_section_nav_parameters()
+    public static function get_remote_course_section_nav_parameters()
     {
         return new external_function_parameters(
             array(
-                'sectionid' => new external_value(PARAM_INT, ' the section id')
+                'sectionid' => new external_value(PARAM_INT, 'the section id'),
             )
         );
     }
@@ -733,9 +733,7 @@ class local_mod_course_external extends external_api
     {
         global $DB;
 
-        $warnings = array();
-
-        $params = self::validate_parameters(self::get_remote_course_section_nav_parameters, array(
+        $params = self::validate_parameters(self::get_remote_course_section_nav_parameters(), array(
             'sectionid' => $sectionid
         ));
 
@@ -804,7 +802,7 @@ class local_mod_course_external extends external_api
 								'name of the force theme', VALUE_OPTIONAL),
 						'calendartype' => new external_value(PARAM_TEXT,
 								'name of the force theme', VALUE_OPTIONAL),
-						'cachrev' => new external_value(PARAM_ALPHANUMEXT, 'course format option name')),
+						'cacherev' => new external_value(PARAM_ALPHANUMEXT, 'course format option name'),
 						'sectionnumber' => new external_value(PARAM_INT, 'section number')
 					)
 			);
