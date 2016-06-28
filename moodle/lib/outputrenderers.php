@@ -1047,7 +1047,6 @@ class core_renderer extends renderer_base {
         } else {
             $footer = $this->opencontainers->pop('header/footer');
         }
-        $footer = $this->opencontainers->pop('header/footer');
 
         if (debugging() and $DB and $DB->is_transaction_started()) {
             // TODO: MDL-20625 print warning - transaction will be rolled back
