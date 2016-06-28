@@ -1074,7 +1074,7 @@ class core_renderer extends renderer_base {
                 \core\notification::fetch_as_array($this)
             ));
         }
-        $footer = str_replace($this->unique_end_html_token, $this->page->requires->get_end_code(), $footer);
+        $footer = str_replace($this->unique_end_html_token, $this->page->requires->get_end_code(!$jsonly), $footer);
 
         $this->page->set_state(moodle_page::STATE_DONE);
 
