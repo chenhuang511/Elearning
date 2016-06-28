@@ -364,7 +364,7 @@ abstract class assign_plugin {
                 if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
                     $result = get_remote_assign_plugin_config($dbparams);
                     if ($result)
-                        return true;
+                        return $result;
                     return false;
                 }
                 $result = $DB->get_record('assign_plugin_config', $dbparams, '*', IGNORE_MISSING);
