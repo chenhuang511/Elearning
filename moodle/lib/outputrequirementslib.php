@@ -1576,9 +1576,10 @@ class page_requirements_manager {
      * Normally, this method is called automatically by the code that prints the
      * page footer. You should not normally need to call it in your own code.
      *
+     * @param boolean $needrequire use requirejs or not
      * @return string the HTML code to to at the end of the page.
      */
-    public function get_end_code() {
+    public function get_end_code($needrequire = true) {
         global $CFG;
         $output = '';
 
@@ -1589,9 +1590,10 @@ class page_requirements_manager {
             $logconfig->level = 'trace';
         }
         $this->js_call_amd('core/log', 'setConfig', array($logconfig));
-
         // Call amd init functions.
-        $output .= $this->get_amd_footercode();
+        if ($needrequire) {
+            $output .= $this->get_amd_footercode();
+        }
 
         // Add other requested modules.
         $output .= $this->get_extra_modules_code();
