@@ -719,4 +719,94 @@ class local_mod_course_external extends external_api
             )
         );
     }
+	
+	public static function get_remote_course_section_nav_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'sectionid' => new external_value(PARAM_INT, ' the section id')
+            )
+        );
+    }
+
+    public static function get_remote_course_section_nav($sectionid)
+    {
+        global $DB;
+
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_remote_course_section_nav_parameters, array(
+            'sectionid' => $sectionid
+        ));
+
+        $sql = 'SELECT c.*, cs.section AS sectionnumber
+                        FROM {course} c
+                        LEFT JOIN {course_sections} cs ON cs.course = c.id
+                        WHERE cs.id = ?';
+        return $DB->get_record_sql($sql, array($sectionid), MUST_EXIST);
+    }
+
+    public static function get_remote_course_section_nav_returns()
+    {
+        return new external_single_structure(
+					array(
+						'id' => new external_value(PARAM_INT, 'course id'),
+						'shortname' => new external_value(PARAM_TEXT, 'course short name'),
+						'category' => new external_value(PARAM_INT, 'category id'),
+						'fullname' => new external_value(PARAM_TEXT, 'full name'),
+						'shortname' => new external_value(PARAM_TEXT, 'short name'),
+						'idnumber' => new external_value(PARAM_RAW, 'id number', VALUE_OPTIONAL),
+						'summary' => new external_value(PARAM_RAW, 'summary'),
+						'summaryformat' => new external_format_value('summary'),
+						'format' => new external_value(PARAM_PLUGIN,
+								'course format: weeks, topics, social, site,..'),
+						'showgrades' => new external_value(PARAM_INT,
+								'1 if grades are shown, otherwise 0', VALUE_OPTIONAL),
+						'newsitems' => new external_value(PARAM_INT,
+								'number of recent items appearing on the course page', VALUE_OPTIONAL),
+						'startdate' => new external_value(PARAM_INT,
+								'timestamp when the course start'),
+						'marker' => new external_value(PARAM_INT,
+								'(deprecated, use courseformatoptions) number of weeks/topics',
+								VALUE_OPTIONAL),
+						'legacyfiles' => new external_value(PARAM_INT,
+								'(deprecated, use courseformatoptions) number of weeks/topics',
+								VALUE_OPTIONAL),		
+						'maxbytes' => new external_value(PARAM_INT,
+								'largest size of file that can be uploaded into the course',
+								VALUE_OPTIONAL),
+						'showreports' => new external_value(PARAM_INT,
+								'are activity report shown (yes = 1, no =0)', VALUE_OPTIONAL),
+						'visible' => new external_value(PARAM_INT,
+								'1: available to student, 0:not available', VALUE_OPTIONAL),
+						'visibleold' => new external_value(PARAM_INT,
+								'(deprecated, use courseformatoptions) How the hidden sections in the course are displayed to students',
+								VALUE_OPTIONAL),
+						'groupmode' => new external_value(PARAM_INT, 'no group, separate, visible',
+								VALUE_OPTIONAL),
+						'groupmodeforce' => new external_value(PARAM_INT, '1: yes, 0: no',
+								VALUE_OPTIONAL),
+						'defaultgroupingid' => new external_value(PARAM_INT, 'default grouping id',
+								VALUE_OPTIONAL),
+						'timecreated' => new external_value(PARAM_INT,
+								'timestamp when the course have been created', VALUE_OPTIONAL),
+						'timemodified' => new external_value(PARAM_INT,
+								'timestamp when the course have been modified', VALUE_OPTIONAL),
+						'enablecompletion' => new external_value(PARAM_INT,
+								'Enabled, control via completion and activity settings. Disbaled,
+									not shown in activity settings.',
+								VALUE_OPTIONAL),
+						'completionnotify' => new external_value(PARAM_INT,
+								'1: yes 0: no', VALUE_OPTIONAL),
+						'lang' => new external_value(PARAM_SAFEDIR,
+								'forced course language', VALUE_OPTIONAL),
+						'theme' => new external_value(PARAM_TEXT,
+								'name of the force theme', VALUE_OPTIONAL),
+						'calendartype' => new external_value(PARAM_TEXT,
+								'name of the force theme', VALUE_OPTIONAL),
+						'cachrev' => new external_value(PARAM_ALPHANUMEXT, 'course format option name')),
+						'sectionnumber' => new external_value(PARAM_INT, 'section number')
+					)
+			);
+    }	
 }

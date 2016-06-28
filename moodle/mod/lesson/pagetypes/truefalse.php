@@ -452,7 +452,7 @@ class lesson_display_answer_form_truefalse extends moodleform
         $radiogroup->setAttributes(array('class' => 'answeroptiongroup'));
 
         if ($hasattempt) {
-            $this->add_action_buttons(null, get_string("nextpage", "lesson"));
+            $this->add_action_buttons(null, get_string("nextpage", "lesson"), true);
         } else {
             $this->add_action_buttons(null, get_string("submit", "lesson"), true);
         }
