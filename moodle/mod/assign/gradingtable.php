@@ -843,7 +843,7 @@ class assign_grading_table extends table_sql implements renderable {
                 $urlparams['userid'] = $row->userid;
             }
 
-            $url = new moodle_url('/mod/assign/view.php', $urlparams);
+            $url = new moodle_url('/mod/assign/remote/api-view.php', $urlparams);
             $link = '<a href="' . $url . '" class="btn btn-primary">' . get_string('grade') . '</a>';
             $grade .= $link . $separator;
         }
@@ -1019,7 +1019,7 @@ class assign_grading_table extends table_sql implements renderable {
         } else {
             $urlparams['userid'] = $row->userid;
         }
-        $url = new moodle_url('/mod/assign/view.php', $urlparams);
+        $url = new moodle_url('/mod/assign/remote/api-view.php', $urlparams);
         $noimage = null;
 
         if (!$row->grade) {
@@ -1062,7 +1062,7 @@ class assign_grading_table extends table_sql implements renderable {
                                        'action'=>'lock',
                                        'sesskey'=>sesskey(),
                                        'page'=>$this->currpage);
-                    $url = new moodle_url('/mod/assign/view.php', $urlparams);
+                    $url = new moodle_url('/mod/assign/remote/api-view.php', $urlparams);
 
                     $description = get_string('preventsubmissionsshort', 'assign');
                     $actions['lock'] = new action_menu_link_secondary(
@@ -1076,7 +1076,7 @@ class assign_grading_table extends table_sql implements renderable {
                                        'action'=>'unlock',
                                        'sesskey'=>sesskey(),
                                        'page'=>$this->currpage);
-                    $url = new moodle_url('/mod/assign/view.php', $urlparams);
+                    $url = new moodle_url('/mod/assign/remote/api-view.php', $urlparams);
                     $description = get_string('allowsubmissionsshort', 'assign');
                     $actions['unlock'] = new action_menu_link_secondary(
                         $url,
@@ -1094,7 +1094,7 @@ class assign_grading_table extends table_sql implements renderable {
                                    'action'=>'editsubmission',
                                    'sesskey'=>sesskey(),
                                    'page'=>$this->currpage);
-                $url = new moodle_url('/mod/assign/view.php', $urlparams);
+                $url = new moodle_url('/mod/assign/remote/api-view.php', $urlparams);
                 $description = get_string('editsubmission', 'assign');
                 $actions['editsubmission'] = new action_menu_link_secondary(
                     $url,
@@ -1111,7 +1111,7 @@ class assign_grading_table extends table_sql implements renderable {
                                 'action' => 'grantextension',
                                 'sesskey' => sesskey(),
                                 'page' => $this->currpage);
-             $url = new moodle_url('/mod/assign/view.php', $urlparams);
+             $url = new moodle_url('/mod/assign/remote/api-view.php', $urlparams);
              $description = get_string('grantextension', 'assign');
              $actions['grantextension'] = new action_menu_link_secondary(
                  $url,
@@ -1126,7 +1126,7 @@ class assign_grading_table extends table_sql implements renderable {
                                'action'=>'reverttodraft',
                                'sesskey'=>sesskey(),
                                'page'=>$this->currpage);
-            $url = new moodle_url('/mod/assign/view.php', $urlparams);
+            $url = new moodle_url('/mod/assign/remote/api-view.php', $urlparams);
             $description = get_string('reverttodraftshort', 'assign');
             $actions['reverttodraft'] = new action_menu_link_secondary(
                 $url,
@@ -1144,7 +1144,7 @@ class assign_grading_table extends table_sql implements renderable {
                                'action'=>'submitotherforgrading',
                                'sesskey'=>sesskey(),
                                'page'=>$this->currpage);
-            $url = new moodle_url('/mod/assign/view.php', $urlparams);
+            $url = new moodle_url('/mod/assign/remote/api-view.php', $urlparams);
             $description = get_string('submitforgrading', 'assign');
             $actions['submitforgrading'] = new action_menu_link_secondary(
                 $url,
@@ -1165,7 +1165,7 @@ class assign_grading_table extends table_sql implements renderable {
                                'action'=>'addattempt',
                                'sesskey'=>sesskey(),
                                'page'=>$this->currpage);
-            $url = new moodle_url('/mod/assign/view.php', $urlparams);
+            $url = new moodle_url('/mod/assign/remote/api-view.php', $urlparams);
             $description = get_string('addattempt', 'assign');
             $actions['addattempt'] = new action_menu_link_secondary(
                 $url,
@@ -1221,7 +1221,7 @@ class assign_grading_table extends table_sql implements renderable {
                                                      'action'=>'viewplugin' . $plugin->get_subtype(),
                                                      'returnaction'=>$returnaction,
                                                      'returnparams'=>http_build_query($returnparams));
-            $url = new moodle_url('/mod/assign/view.php', $urlparams);
+            $url = new moodle_url('/mod/assign/remote/api-view.php', $urlparams);
             $link = $this->output->action_link($url, $icon);
             $separator = $this->output->spacer(array(), true);
         }

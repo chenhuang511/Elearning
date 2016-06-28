@@ -2055,8 +2055,8 @@ class local_mod_lesson_external extends external_api
 
         $newpage = new stdClass();
 
-        foreach ($params['data'] as $key => $value) {
-            $newpage->$key = $value;
+        foreach ($params['data'] as $element) {
+            $newpage->$element['name'] = $element['value'];
         }
 
         $result = array();
@@ -2130,8 +2130,8 @@ class local_mod_lesson_external extends external_api
 
         $attempt = new stdClass();
 
-        foreach ($params['data'] as $key => $value) {
-            $attempt->$key = $value;
+        foreach ($params['data'] as $element) {
+            $attempt->$element['name'] = $element['value'];
         }
 
         $transaction = $DB->start_delegated_transaction();
