@@ -67,15 +67,18 @@ class fragment_requirements_manager extends page_requirements_manager {
     /**
      * Generate any HTML that needs to go at the end of the page.
      *
+     * @param boolean $needrequire use requirejs or not
      * @return string the HTML code to to at the end of the page.
      */
-    public function get_end_code() {
+    public function get_end_code($needrequire = true) {
         global $CFG;
 
         $output = '';
 
         // Call amd init functions.
-        $output .= $this->get_amd_footercode();
+        if ($needrequire) {
+            $output .= $this->get_amd_footercode();
+        }
 
         // Add other requested modules.
         $output .= $this->get_extra_modules_code();
