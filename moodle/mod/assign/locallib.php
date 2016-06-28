@@ -190,7 +190,6 @@ class assign {
 
         // Extra entropy is required for uniqid() to work on cygwin.
         $this->useridlistid = clean_param(uniqid('', true), PARAM_ALPHANUM);
-
         if (!isset($SESSION->mod_assign_useridlist)) {
             $SESSION->mod_assign_useridlist = [];
         }
@@ -3933,7 +3932,11 @@ class assign {
         global $CFG, $PAGE;
 
         $o = '';
+        $PAGE->set_state(moodle_page::STATE_PRINTING_HEADER);
+        $o .= $this->get_renderer()->standard_head_html();
         // Need submit permission to submit an assignment.
+        $o .= $this->get_renderer()->standard_top_of_body_html();
+        $PAGE->set_state(moodle_page::STATE_IN_BODY);
         $this->require_view_grades();
         require_once($CFG->dirroot . '/mod/assign/gradeform.php');
 
@@ -3941,7 +3944,7 @@ class assign {
         $o .= $this->view_grading_table();
 
         \mod_assign\event\grading_table_viewed::create_from_assign($this)->trigger();
-//        $PAGE->requires->js_init_call('M.mod_assign.init_grading_table');
+        $o .= $this->get_renderer()->footer(true);
         return $o;
     }
 
@@ -4971,7 +4974,7 @@ class assign {
 
         if ($this->can_view_grades()) {
             // Group selector will only be displayed if necessary.
-            $currenturl = new moodle_url('/mod/assign/view.php', array('id' => $this->get_course_module()->id));
+            $currenturl = new moodle_url('/mod/assign/remote/api-view.php', array('id' => $this->get_course_module()->id));
             $o .= groups_print_activity_menu($this->get_course_module(), $currenturl->out(), true);
 
             $summary = $this->get_assign_grading_summary_renderable();

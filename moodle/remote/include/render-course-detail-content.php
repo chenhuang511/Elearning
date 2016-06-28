@@ -35,7 +35,7 @@
 
 
         var changeContent = function (element, cnt) {
-            setTimeout(function () {
+            window.sectionTimeout = setTimeout(function () {
                 $(loading).hide();
             }, 2000);
             // remove now content

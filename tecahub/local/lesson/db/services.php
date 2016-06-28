@@ -58,6 +58,14 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_get_list_lesson_pages_by_id_and_lessonid' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_list_lesson_pages_by_id_and_lessonid',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get list lesson pages by id and lesson id',
+        'type' => 'read',
+        'ajax' => true
+    ),
     'local_mod_get_lesson_pages_by_lessonid' => array(
         'classname' => 'local_mod_lesson_external',
         'methodname' => 'get_lesson_pages_by_lessonid',
@@ -103,6 +111,22 @@ $functions = array(
         'methodname' => 'get_lesson_timer_by_userid_and_lessonid',
         'classpath' => 'local/lesson/externallib.php',
         'description' => 'Get lesson timer by userid and lessonid',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_duration_lesson_timer_by_lessonid_and_userid' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_duration_lesson_timer_by_lessonid_and_userid',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get duration lesson timer by userid and lessonid',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_count_lesson_attempts' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_count_lesson_attempts',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get count lesson attempts by lessonid and userid and pageid and retry',
         'type' => 'read',
         'ajax' => true
     ),
@@ -178,7 +202,7 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
-    'local_mod_get_lesson_answer_by_pageid_and_lessonid' => array(
+    'local_mod_get_lesson_answers_by_pageid_and_lessonid' => array(
         'classname' => 'local_mod_lesson_external',
         'methodname' => 'get_lesson_answers_by_pageid_and_lessonid',
         'classpath' => 'local/lesson/externallib.php',
