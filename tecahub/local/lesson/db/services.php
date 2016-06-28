@@ -194,7 +194,7 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
-    'local_mod_get_lesson_answer_by_pageid_and_lessonid' => array(
+    'local_mod_get_lesson_answers_by_pageid_and_lessonid' => array(
         'classname' => 'local_mod_lesson_external',
         'methodname' => 'get_lesson_answers_by_pageid_and_lessonid',
         'classpath' => 'local/lesson/externallib.php',
