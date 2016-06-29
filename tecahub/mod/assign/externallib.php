@@ -2384,9 +2384,7 @@ class mod_assign_external extends external_api {
         }
         $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
         core_user::require_active_user($user);
-
-        $USER = $user;
-
+        
         if (!$assign->can_view_submission($user->id)) {
             throw new required_capability_exception($context, 'mod/assign:viewgrades', 'nopermission', '');
         }
@@ -2403,6 +2401,7 @@ class mod_assign_external extends external_api {
             $lastattempt = $assign->get_assign_submission_status_renderable($user, true);
         }
 
+        $feedback = $assign->get_assign_feedback_status_renderable($user);
 
         $previousattempts = $assign->get_assign_attempt_history_renderable($user);
 
@@ -2517,7 +2516,6 @@ class mod_assign_external extends external_api {
                 'gradingsummary' => new external_single_structure(
                     array(
                         'participantcount' => new external_value(PARAM_INT, 'Number of users who can submit.'),
-                        'submissiondraftscount' => new external_value(PARAM_INT, 'Number of submissions in draft status.'),
                         'submissiondraftscount' => new external_value(PARAM_INT, 'Number of submissions in draft status.'),
                         'submissionsenabled' => new external_value(PARAM_BOOL, 'Whether submissions are enabled or not.'),
                         'submissionssubmittedcount' => new external_value(PARAM_INT, 'Number of submissions in submitted status.'),

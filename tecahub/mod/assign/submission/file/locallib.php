@@ -530,7 +530,10 @@ class assign_submission_file extends assign_submission_plugin {
                 PARAM_INT,
                 'The id of a draft area containing files for this submission.',
                 VALUE_OPTIONAL
-            )
+            ),
+            'id' => new external_value(PARAM_INT, 'course module id', VALUE_OPTIONAL ),
+            'userid' => new external_value(PARAM_INT, 'user id', VALUE_OPTIONAL),
+            'files' => new external_value(PARAM_INT, 'file', VALUE_OPTIONAL)
         );
     }
 }

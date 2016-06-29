@@ -1815,10 +1815,10 @@ class assign {
         global $CFG;
         $my_hostname = mnet_get_hostname_from_uri($CFG->wwwroot);
         $my_ip       = gethostbyname($my_hostname);
-        
+
         return $my_ip;
     }
-    
+
     /**
      * Load a count of submissions with a specified status.
      *
@@ -4027,9 +4027,17 @@ class assign {
      * @return string The page output.
      */
     protected function view_edit_submission_page($mform, $notices) {
-        global $CFG, $USER, $DB;
+        global $CFG, $USER, $DB, $PAGE;
 
         $o = '';
+
+        // Header with JS
+        $PAGE->set_state(moodle_page::STATE_PRINTING_HEADER);
+        $o .= $this->get_renderer()->standard_head_html();
+        // Need submit permission to submit an assignment.
+        $o .= $this->get_renderer()->standard_top_of_body_html();
+        $PAGE->set_state(moodle_page::STATE_IN_BODY);
+
         require_once($CFG->dirroot . '/mod/assign/submission_form.php');
         // Need submit permission to submit an assignment.
         $userid = optional_param('userid', $USER->id, PARAM_INT);
@@ -4082,9 +4090,8 @@ class assign {
         }
 
         $o .= $this->get_renderer()->render(new assign_form('editsubmissionform', $mform));
-        if(MOODLE_MODE_HUB === MOODLE_MODE_HOST){
-            $o .= $this->view_footer();
-        }
+
+        $o .= $this->get_renderer()->footer(true);
 
         \mod_assign\event\submission_form_viewed::create_from_user($this, $user)->trigger();
 
@@ -4508,8 +4515,8 @@ class assign {
 
         // Check remote course
         if(MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            $user = get_remote_mapping_user();
-            $remotesubmission = get_remote_get_submission_status($instance->id, $user['0']->id)->lastattempt;
+            $ruser = get_remote_mapping_user();
+            $remotesubmission = get_remote_get_submission_status($instance->id, $ruser['0']->id)->lastattempt;
             unset($remotesubmission->submission->plugins);
             $submissionplugins = $this->get_submission_plugins();
 
@@ -4601,6 +4608,31 @@ class assign {
                                     'assign',
                                     $instance->id,
                                     $user->id);
+
+        // Check on hub
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $grader = null;
+            $ruser = get_remote_mapping_user();
+            $feedback = get_remote_get_submission_status($instance->id, $ruser['0']->id)->feedback;
+            if (!$feedback){
+                return;
+            }
+            $grader = $DB->get_record('user', array('email' => $feedback->grade->grader));
+            if(!$grader)
+                $grader = $DB->get_record('user', array('id' => (int)$CFG->siteadmins));
+
+            unset($feedback->plugins);
+
+            $feedbackstatus = new assign_feedback_status($feedback->gradefordisplay,
+                $feedback->gradeddate,
+                $grader,
+                $this->get_feedback_plugins(),
+                $feedback->grade,
+                $this->get_course_module()->id,
+                $this->get_return_action(),
+                $this->get_return_params());
+            return $feedbackstatus;
+        }
 
         $gradingitem = null;
         $gradebookgrade = null;
@@ -4723,30 +4755,16 @@ class assign {
                 $o .= $this->get_renderer()->render($submissionstatus);
             }
 
-            if (MOODLE_MODE_HUB === MOODLE_MODE_HOST){
-                // If there is a visible grade, show the feedback.
-                $feedbackstatus = $this->get_assign_feedback_status_renderable($user);
-                if ($feedbackstatus) {
-                    $o .= $this->get_renderer()->render($feedbackstatus);
-                }
-            } else{
-                //check on hub
-                $feedbackstatus = get_remote_assign_get_content_html_submission($this->get_remote_params());
-                if($feedbackstatus)
-                    $o .= $feedbackstatus->feedback;
+            // If there is a visible grade, show the feedback.
+            $feedbackstatus = $this->get_assign_feedback_status_renderable($user);
+            if ($feedbackstatus) {
+                $o .= $this->get_renderer()->render($feedbackstatus);
             }
 
-            if (MOODLE_MODE_HUB === MOODLE_MODE_HOST) {
-                // If there is more than one submission, show the history.
-                $history = $this->get_assign_attempt_history_renderable($user);
-                if (count($history->submissions) > 1) {
-                    $o .= $this->get_renderer()->render($history);
-                }
-            } else{
-                //check on hub
-                $history = get_remote_assign_get_content_html_submission($this->get_remote_params());
-                if($history)
-                    $o .= $history->history;
+            // If there is more than one submission, show the history.
+            $history = $this->get_assign_attempt_history_renderable($user);
+            if (count($history->submissions) > 1) {
+                $o .= $this->get_renderer()->render($history);
             }
         }
         return $o;
@@ -4955,6 +4973,14 @@ class assign {
 
         $o = '';
 
+        // Header with JS
+        $PAGE->set_state(moodle_page::STATE_PRINTING_HEADER);
+        $o .= $this->get_renderer()->standard_head_html();
+        // Need submit permission to submit an assignment.
+        $o .= $this->get_renderer()->standard_top_of_body_html();
+        $PAGE->set_state(moodle_page::STATE_IN_BODY);
+
+
         $postfix = '';
         if ($this->has_visible_attachments()) {
             $postfix = $this->render_area_files('mod_assign', ASSIGN_INTROATTACHMENT_FILEAREA, 0);
@@ -4988,9 +5014,7 @@ class assign {
             $o .= $this->view_student_summary($USER, true);
         }
 
-        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-            $o .= $this->view_footer();
-        }
+        $o .= $this->get_renderer()->footer(true);
 
         \mod_assign\event\submission_status_viewed::create_from_assign($this)->trigger();
 
@@ -5685,6 +5709,7 @@ class assign {
             // No need to do anything.
             return;
         }
+
         if ($submission->userid) {
             $user = $DB->get_record('user', array('id'=>$submission->userid), '*', MUST_EXIST);
         } else {
@@ -6599,25 +6624,29 @@ class assign {
             }
         }
 
-        // Logging.
-        if (isset($data->submissionstatement) && ($userid == $USER->id)) {
-            \mod_assign\event\statement_accepted::create_from_submission($this, $submission)->trigger();
+        // @TODO: Logging for host??
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+            // Logging.
+            if (isset($data->submissionstatement) && ($userid == $USER->id)) {
+                \mod_assign\event\statement_accepted::create_from_submission($this, $submission)->trigger();
+            }
+
+            $complete = COMPLETION_INCOMPLETE;
+            if ($submission->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
+                $complete = COMPLETION_COMPLETE;
+            }
+            $completion = new completion_info($this->get_course());
+            if ($completion->is_enabled($this->get_course_module()) && $instance->completionsubmit) {
+                $completion->update_state($this->get_course_module(), $complete, $userid);
+            }
+
+            if (!$instance->submissiondrafts) {
+                $this->notify_student_submission_receipt($submission);
+                $this->notify_graders($submission);
+                \mod_assign\event\assessable_submitted::create_from_submission($this, $submission, true)->trigger();
+            }
         }
 
-        $complete = COMPLETION_INCOMPLETE;
-        if ($submission->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
-            $complete = COMPLETION_COMPLETE;
-        }
-        $completion = new completion_info($this->get_course());
-        if ($completion->is_enabled($this->get_course_module()) && $instance->completionsubmit) {
-            $completion->update_state($this->get_course_module(), $complete, $userid);
-        }
-
-        if (!$instance->submissiondrafts) {
-            $this->notify_student_submission_receipt($submission);
-            $this->notify_graders($submission);
-            \mod_assign\event\assessable_submitted::create_from_submission($this, $submission, true)->trigger();
-        }
         return true;
     }
 
@@ -6653,9 +6682,13 @@ class assign {
         if ($data = $mform->get_data()) {
             if(MOODLE_RUN_MODE === MOODLE_MODE_HOST)
                 return $this->save_submission($data, $notices);
-            else
+            else{
+                if ($data->files_filemanager)
+                    $this->save_submission($data, $notices);
                 $userid = get_remote_mapping_user();
-                return save_remote_submission($this->get_instance()->id, $userid[0]->id, $data->onlinetext_editor);
+                $data->userid = $userid[0]->id;
+                return save_remote_submission($this->get_instance()->id, $userid[0]->id, $data);
+            }
         }
         return false;
     }
