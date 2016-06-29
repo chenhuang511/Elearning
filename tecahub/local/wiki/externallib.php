@@ -37,7 +37,8 @@ require_once("$CFG->libdir/externallib.php");
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.2
  */
-class local_mod_wiki_external extends external_api {
+class local_mod_wiki_external extends external_api
+{
     /**
      * Hanv 24/05/2016
      * Return all the information about a quiz by quizid or by cm->instance from course_module
@@ -47,7 +48,8 @@ class local_mod_wiki_external extends external_api {
      * @since Moodle 2.2
      *
      */
-    public static function get_mod_wiki_by_id_parameters() {
+    public static function get_mod_wiki_by_id_parameters()
+    {
         return new external_function_parameters(
             array('id' => new external_value(PARAM_INT, 'wiki id'))
         );
@@ -62,15 +64,25 @@ class local_mod_wiki_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_mod_wiki_by_id($id) {
+    public static function get_mod_wiki_by_id($id)
+    {
         global $CFG, $DB;
+
+        $warnings = array();
 
         //validate parameter
         $params = self::validate_parameters(self::get_mod_wiki_by_id_parameters(),
             array('id' => $id));
+        $result = array();
 
-        $wiki =  $DB->get_record('wiki', array('id' => $params['id']), '*', MUST_EXIST);
-        return $wiki;
+        $wiki = $DB->get_record('wiki', array('id' => $params['id']), '*', MUST_EXIST);
+        if(!$wiki) {
+            $wiki = new stdClass();
+        }
+
+        $result['wiki'] = $wiki;
+        $result['warnings'] = $warnings;
+        return $result;
     }
 
     /**
@@ -80,26 +92,32 @@ class local_mod_wiki_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_mod_wiki_by_id_returns() {
-        return  new external_single_structure(
+    public static function get_mod_wiki_by_id_returns()
+    {
+        return new external_single_structure(
             array(
-                'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
-                'course' => new external_value(PARAM_INT, 'Foreign key reference to the course this page is part of.', VALUE_OPTIONAL),
-                'name' => new external_value(PARAM_TEXT, 'Page name.'),
-                'intro' => new external_value(PARAM_RAW, 'Page introduction text.'),
-                'introformat' => new external_format_value(PARAM_INT,'intro', VALUE_OPTIONAL),
-				'timecreated' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
-                'firstpagetitle' => new external_value(PARAM_TEXT, 'Foreign key reference to the course this quiz is part of.', VALUE_OPTIONAL),
-                'wikimode' => new external_value(PARAM_TEXT, 'Page name.', VALUE_OPTIONAL),
-                'defaultformat' => new external_value(PARAM_TEXT, 'Page introduction text.'),
-                'editbegin' => new external_format_value(PARAM_INT, 'Display or Not', VALUE_OPTIONAL),
-				'editend' => new external_value(PARAM_INT, 'Page name.'),
-                'timemodified' => new external_format_value(PARAM_INT, 'intro', VALUE_OPTIONAL)						
+                'wiki' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
+                        'course' => new external_value(PARAM_INT, 'Foreign key reference to the course this page is part of.', VALUE_OPTIONAL),
+                        'name' => new external_value(PARAM_TEXT, 'Page name.'),
+                        'intro' => new external_value(PARAM_RAW, 'Page introduction text.'),
+                        'introformat' => new external_format_value(PARAM_INT, 'intro', VALUE_OPTIONAL),
+                        'timecreated' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
+                        'firstpagetitle' => new external_value(PARAM_TEXT, 'Foreign key reference to the course this quiz is part of.', VALUE_OPTIONAL),
+                        'wikimode' => new external_value(PARAM_TEXT, 'Page name.', VALUE_OPTIONAL),
+                        'defaultformat' => new external_value(PARAM_TEXT, 'Page introduction text.'),
+                        'editbegin' => new external_format_value(PARAM_INT, 'Display or Not', VALUE_OPTIONAL),
+                        'editend' => new external_value(PARAM_INT, 'Page name.'),
+                        'timemodified' => new external_format_value(PARAM_INT, 'intro', VALUE_OPTIONAL)
+                    )
+                ),
+                'warnings' => new external_warnings()
             )
         );
     }
-	
-	/**
+
+    /**
      * Hanv 24/05/2016
      * Return all the information about a quiz by quizid or by cm->instance from course_module
      *
@@ -108,12 +126,13 @@ class local_mod_wiki_external extends external_api {
      * @since Moodle 2.2
      *
      */
-    public static function get_mod_wiki_first_page_parameters() {
+    public static function get_mod_wiki_first_page_parameters()
+    {
         return new external_function_parameters(
             array(
-				'subwikiid' => new external_value(PARAM_INT, 'wiki id'),
-				'module'    => new external_value(PARAM_TEXT, 'wiki id', VALUE_OPTIONAL),
-			)
+                'subwikiid' => new external_value(PARAM_INT, 'wiki id'),
+                'module' => new external_value(PARAM_TEXT, 'wiki id', VALUE_OPTIONAL),
+            )
         );
     }
 
@@ -126,7 +145,8 @@ class local_mod_wiki_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_mod_wiki_first_page($subwikid, $module = null) {
+    public static function get_mod_wiki_first_page($subwikid, $module = null)
+    {
         global $CFG, $DB;
 
         //validate parameter
@@ -139,7 +159,7 @@ class local_mod_wiki_external extends external_api {
             s.wikiid = w.id AND
             w.firstpagetitle = p.title AND
             p.subwikiid = s.id";
-		return $DB->get_record_sql($sql, array($subwikid));
+        return $DB->get_record_sql($sql, array($subwikid));
     }
 
     /**
@@ -149,18 +169,19 @@ class local_mod_wiki_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_mod_wiki_first_page_returns() {
-        return  new external_single_structure(
+    public static function get_mod_wiki_first_page_returns()
+    {
+        return new external_single_structure(
             array(
                 'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
                 'subwikiid' => new external_value(PARAM_INT, 'Foreign key reference to the course this page is part of.'),
                 'title' => new external_value(PARAM_TEXT, 'Page name.'),
                 'userid' => new external_value(PARAM_INT, 'Page introduction text.'),
-				'timecreated' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
+                'timecreated' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
                 'timemodified' => new external_format_value(PARAM_INT, 'intro'),
-				'timerendered' => new external_format_value(PARAM_INT, 'intro'),
-				'pageviews' => new external_format_value(PARAM_INT, 'intro'),
-				'readonly' => new external_format_value(PARAM_INT, 'intro'),
+                'timerendered' => new external_format_value(PARAM_INT, 'intro'),
+                'pageviews' => new external_format_value(PARAM_INT, 'intro'),
+                'readonly' => new external_format_value(PARAM_INT, 'intro'),
             )
         );
     }
