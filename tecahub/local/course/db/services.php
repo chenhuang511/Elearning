@@ -98,14 +98,6 @@ $functions = array(
 		'type'		    => 'read',
 		'ajax'		    => true
 	),
-	'local_get_user_groups_by_courseid_and_userid' => array(
-		'classname'     => 'local_mod_course_external',
-		'methodname'    => 'get_user_groups_by_courseid_and_userid',
-		'classpath'     => 'local/course/externallib.php',
-		'description'   => 'Get user groups by courseid and userid',
-		'type'		    => 'read',
-		'ajax'		    => true
-	),
 	'local_get_remote_course_section_nav' => array(
 		'classname'     => 'local_mod_course_external',
 		'methodname'    => 'get_remote_course_section_nav',
@@ -113,5 +105,5 @@ $functions = array(
 		'description'   => 'Get remote course section for navigation',
 		'type'		    => 'read',
 		'ajax'		    => true
-	),	
+	),
 );
