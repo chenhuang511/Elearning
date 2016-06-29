@@ -2328,8 +2328,6 @@ class local_mod_lesson_external extends external_api
 
         $timer = $DB->get_record('lesson_timer', array('id' => $params['id']), '*', MUST_EXIST);
 
-        var_dump($timer);
-
         $result = array();
 
         if (!$timer) {
@@ -2513,5 +2511,52 @@ class local_mod_lesson_external extends external_api
     public static function get_list_lesson_pages_by_id_and_lessonid_returns()
     {
        return self::get_lesson_pages_by_lessonid_returns();
+    }
+
+    public static function set_field_lesson_pages_parameters() {
+        return new external_function_parameters(
+            array(
+                'id' => new external_value(PARAM_INT, 'the id'),
+                'newfield' => new external_value(PARAM_RAW, 'the new field'),
+                'newvalue' => new external_value(PARAM_RAW, 'the new value')
+            )
+        );
+    }
+
+    public static function set_field_lesson_pages($id, $newfield, $newvalue) {
+
+        global $DB;
+
+        $warnings = array();
+
+        $params = array(
+            'id' => $id,
+            'newfield' => $newfield,
+            'newvalue' => $newvalue
+        );
+
+        $params = self::validate_parameters(self::set_field_lesson_pages(), $params);
+
+        $result = array();
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $DB->set_field("lesson_pages", $params['newfield'], $params['newvalue'], array("id" => $params['id']));
+
+        $transaction->allow_commit();
+
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function set_field_lesson_pages_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status'),
+                'warnings' => new external_warnings()
+            )
+        );
     }
 }
