@@ -1,7 +1,7 @@
 <?php
 
 function get_remote_wiki_by_id($id) {
-    return moodle_webservice_client(
+    $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
@@ -9,6 +9,8 @@ function get_remote_wiki_by_id($id) {
             'params' => array('id' => $id)
         )
     );
+
+    return $result->wiki;
 }
 
 /**

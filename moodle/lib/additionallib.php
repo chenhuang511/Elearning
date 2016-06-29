@@ -35,12 +35,11 @@ require_once($CFG->dirroot . '/fdefine.php');
 function get_course_id_by_remote_id($remotecourseid) {
     global $DB;
 
-    $retval = false;
-    try {
+    $retval = $remotecourseid;
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB && $remotecourseid != SITEID) {
         $retval = $DB->get_field('course', 'id', array('remoteid' => $remotecourseid));
-    } catch (dml_exception $e) {
-        $retval = false;
     }
+
     return $retval;
 }
 

@@ -1015,11 +1015,12 @@ class moodle_page {
             throw new coding_exception('Invalid $cm. It has to be instance of cm_info or record from the course_modules table.');
         }
 
-        if (!$this->_course || $this->_course->id != $cm->course) {
+
+        if (!$this->_course || $this->_course->id != get_course_id_by_remote_id($cm->course)) {
             if (!$course) {
                 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
             }
-            if ($course->id != $cm->course) {
+            if ($course->id != get_course_id_by_remote_id($cm->course)) {
                 throw new coding_exception('The course you passed to $PAGE->set_cm does not correspond to the $cm.');
             }
             $this->set_course($course);
@@ -1062,7 +1063,7 @@ class moodle_page {
         if (is_null($this->_cm)) {
             throw new coding_exception('You cannot call $PAGE->set_activity_record until after $PAGE->cm has been set.');
         }
-        if ($module->id != $this->_cm->instance || $module->course != $this->_course->id) {
+        if ($module->id != $this->_cm->instance || get_course_id_by_remote_id($module->course) != $this->_course->id) {
             throw new coding_exception('The activity record does not seem to correspond to the cm that has been set.');
         }
         $this->_module = $module;

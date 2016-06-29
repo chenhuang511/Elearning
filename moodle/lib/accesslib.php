@@ -7506,6 +7506,9 @@ class context_module extends context
             }
 
             if ($cm) {
+                if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+                    $cm->course = get_course_id_by_remote_id($cm->course);
+                }
                 $parentcontext = context_course::instance($cm->course);
                 $record = context::insert_context_record(CONTEXT_MODULE, $cm->id, $parentcontext->path);
             }
