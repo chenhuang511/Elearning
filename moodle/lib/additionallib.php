@@ -35,12 +35,8 @@ require_once($CFG->dirroot . '/fdefine.php');
 function get_course_id_by_remote_id($remotecourseid) {
     global $DB;
 
-    $retval = false;
-    try {
-        $retval = $DB->get_field('course', 'id', array('remoteid' => $remotecourseid));
-    } catch (dml_exception $e) {
-        $retval = false;
-    }
+    $retval = $DB->get_field('course', 'id', array('remoteid' => $remotecourseid));
+
     return $retval;
 }
 
