@@ -153,17 +153,14 @@ function get_remote_name_modules_by_id($id)
     );
 }
 
-function get_remote_user_groups_by_courseid_and_userid($courseid, $userid)
+function get_remote_course_section_nav_by_section($sectionid)
 {
-    $result = moodle_webservice_client(
+    return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
-            'function_name' => 'local_get_user_groups_by_courseid_and_userid',
-            'params' => array('courseid' => $courseid, 'userid' => $userid),
+            'function_name' => 'local_get_remote_course_section_nav',
+            'params' => array('sectionid' => $sectionid),
         )
     );
-    
-    return $result->groups;
 }
-

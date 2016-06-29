@@ -3131,7 +3131,7 @@ class assign {
                     $DB->set_field('assign_submission', 'latest', 0, $params);
                 }
                 else{
-                    set_submission_lastest($params);die;
+                    set_submission_lastest($params);
                 }
             }
             if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
@@ -3139,6 +3139,7 @@ class assign {
                 return $DB->get_record('assign_submission', array('id' => $sid));
             }
             else{
+                $submission->userid = $ruserid[0]->id;
                 $sid = create_remote_submission($submission);
                 return get_remote_submission_by_id($sid);
             }

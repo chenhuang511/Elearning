@@ -202,17 +202,6 @@ function get_remote_course_by_id($courseid, $options = array())
     return reset($courses);
 }
 
-function get_remote_course_sections_by_id($sectionid, $options = array())
-{
-    return moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
-        'token' => HOST_TOKEN,
-        'function_name' => 'local_get_course_sections_by_id',
-        'params' => array(
-            'sectionid' => $sectionid,
-        ),
-    )));
-}
-
 function create_remote_book_chapters($data, $options = array())
 {
     return moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
