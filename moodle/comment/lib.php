@@ -46,6 +46,8 @@ class comment {
     private $context;
     /** @var int The course id for comments */
     private $courseid;
+    /** @var int The remote course id for comments */
+    private $remoteid;
     /** @var stdClass course module object, only be used to help find pluginname automatically */
     private $cm;
     /**
@@ -150,6 +152,7 @@ class comment {
         // course will be used to generate user profile link
         if (!empty($options->course)) {
             $this->courseid = $options->course->id;
+            $this->remoteid = $options->course->remoteid;
         } else if (!empty($options->courseid)) {
             $this->courseid = $options->courseid;
         } else {
@@ -447,6 +450,7 @@ class comment {
             if (!$this->notoggle) {
                 // If toggling is enabled (notoggle=false) then print the controls to toggle
                 // comments open and closed
+
                 $countstring = '';
                 if ($this->displaytotalcount) {
                     $countstring = '('.$this->count().')';
@@ -649,7 +653,7 @@ class comment {
             'itemid' => $this->itemid,
             'commentarea' => $this->commentarea,
             'instanceid' => $this->context->instanceid,
-            'courseid' => $this->courseid,
+            'courseid' => $this->remoteid,
         );
     }
 

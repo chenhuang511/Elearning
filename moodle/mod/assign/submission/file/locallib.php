@@ -174,16 +174,6 @@ class assign_submission_file extends assign_submission_plugin {
      * @return int
      */
     private function count_files($submissionid, $area) {
-        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB)
-        {
-            $rparams = array(
-                'instanceid' => $this->assignment->get_context()->instanceid,
-                'area'  => $area,
-                'submissionid' => $submissionid
-            );
-            $countfiles = get_remote_assign_count_file_submission($rparams)->countfile;
-            return $countfiles;
-        }
         $fs = get_file_storage();
         $files = $fs->get_area_files($this->assignment->get_context()->id,
                                      'assignsubmission_file',
@@ -331,14 +321,6 @@ class assign_submission_file extends assign_submission_plugin {
         // Show we show a link to view all files for this plugin?
         $showviewlink = $count > ASSIGNSUBMISSION_FILE_MAXSUMMARYFILES;
         if ($count <= ASSIGNSUBMISSION_FILE_MAXSUMMARYFILES) {
-            if (MOODLE_RUN_MODE === MOODLE_MODE_HUB)
-            {
-                $rparams = array (
-                    'assignid' => $submission->assignment,
-                    'userid' => $submission->userid
-                );
-                return get_remote_assign_get_content_html_submission($rparams)->viewsummary;
-            }
             return $this->assignment->render_area_files('assignsubmission_file',
                                                         ASSIGNSUBMISSION_FILE_FILEAREA,
                                                         $submission->id);
@@ -354,15 +336,6 @@ class assign_submission_file extends assign_submission_plugin {
      * @return string
      */
     public function view(stdClass $submission) {
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB)
-        {
-            $rparams = array (
-                'assignid' => $submission->assignment,
-                'userid' => $submission->userid
-            );
-            return get_remote_assign_get_content_html_submission($rparams)->view;
-        }
-
         return $this->assignment->render_area_files('assignsubmission_file',
                                                     ASSIGNSUBMISSION_FILE_FILEAREA,
                                                     $submission->id);

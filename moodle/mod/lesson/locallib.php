@@ -315,7 +315,7 @@ function lesson_grade($lesson, $ntries, $userid = 0)
         // get only the pages and their answers that the user answered
         list($usql, $parameters) = $DB->get_in_or_equal(array_keys($attemptset));
         array_unshift($parameters, $lesson->id);
-        
+
         $pages = get_remote_list_lesson_pages_by_id_and_lessonid($parameters[1], $parameters[0]);
         $answers = get_remote_lesson_answers_by_pageid_and_lessonid($parameters[1], $parameters[0]);
 
@@ -3557,23 +3557,27 @@ class lesson_page_type_manager
             if ($page2->prevpageid != 0) {
                 debugging("***prevpageid of page " . $page2->id . " set to 0***");
                 $page2->prevpageid = 0;
+                //$result = set_remote_field_lesson_pages($page2->id, 'prevpageid', 0);
                 $DB->set_field("lesson_pages", "prevpageid", 0, array("id" => $page2->id));
             }
         } else if (empty($page2)) {
             if ($page1->nextpageid != 0) {
                 debugging("***nextpageid of page " . $page1->id . " set to 0***");
                 $page1->nextpageid = 0;
+                //$result = set_remote_field_lesson_pages($page1->id, 'nextpageid', 0);
                 $DB->set_field("lesson_pages", "nextpageid", 0, array("id" => $page1->id));
             }
         } else {
             if ($page1->nextpageid != $page2->id) {
                 debugging("***nextpageid of page " . $page1->id . " set to " . $page2->id . "***");
                 $page1->nextpageid = $page2->id;
+                //$result = set_remote_field_lesson_pages($page1->id, 'nextpageid', $page2->id);
                 $DB->set_field("lesson_pages", "nextpageid", $page2->id, array("id" => $page1->id));
             }
             if ($page2->prevpageid != $page1->id) {
                 debugging("***prevpageid of page " . $page2->id . " set to " . $page1->id . "***");
                 $page2->prevpageid = $page1->id;
+                //$result = set_remote_field_lesson_pages($page2->id, 'prevpageid', $page1->id);
                 $DB->set_field("lesson_pages", "prevpageid", $page1->id, array("id" => $page2->id));
             }
         }

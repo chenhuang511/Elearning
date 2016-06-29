@@ -77,8 +77,8 @@ function get_remote_get_submission_status($assignid, $userid = null)
     return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
-            'token' => HOST_TOKEN_M,
-            'function_name' => 'mod_assign_get_submission_status',
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_get_remote_submission_status',
             'params' => array('assignid' => $assignid,'userid' => $userid),
         ), false
     );
@@ -118,6 +118,20 @@ function get_remote_onlinetext_submission($submissionid, $options = array()) {
     ), false);
 }
 
+// Minhnd
+function get_remote_assignfeedback_comments($gradeid) {
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_get_assignfeedback_comments',
+            'params' => array('gradeid' => $gradeid),
+        ), false
+    );
+    
+    return $resp->feedbackcomments;
+}
+
 function get_remote_assign_plugin_config($dbparams){
     return moodle_webservice_client(
         array(
@@ -147,17 +161,6 @@ function get_remote_assign_count_file_submission($params){
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_assign_get_count_file_submission',
-            'params' => $params
-        ), false
-    );
-}
-
-function get_remote_assign_get_content_html_submission($params){
-    return moodle_webservice_client(
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_assign_get_content_html_submission',
             'params' => $params
         ), false
     );
@@ -287,21 +290,41 @@ function get_remote_submission_by_id($sid){
     return $resp->assignsubmisison;
 }
 
-function save_remote_submission($assignmentid, $userid, $onlinetext_editor){
+function save_remote_submission($assignmentid, $userid, $data){
 
-    $resp = moodle_webservice_client(
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_assign_save_remote_submission',
-            'params' => array(
-                'assignmentid'  =>  $assignmentid,
-                'userid'        =>  $userid,
-                'plugindata[onlinetext_editor][text]' => $onlinetext_editor[text],
-                'plugindata[onlinetext_editor][format]' => (int)$onlinetext_editor[format],
-                'plugindata[onlinetext_editor][itemid]' => $onlinetext_editor[itemid]
-        )
-    ));
+    if ($data->onlinetext_editor){
+        $onlinetext_editor = $data->onlinetext_editor;
+        $resp = moodle_webservice_client(
+            array(
+                'domain' => HUB_URL,
+                'token' => HOST_TOKEN,
+                'function_name' => 'local_mod_assign_save_remote_submission',
+                'params' => array(
+                    'assignmentid'  =>  $assignmentid,
+                    'userid'        =>  $userid,
+                    'plugindata[onlinetext_editor][text]' => $onlinetext_editor[text],
+                    'plugindata[onlinetext_editor][format]' => (int)$onlinetext_editor[format],
+                    'plugindata[onlinetext_editor][itemid]' => $onlinetext_editor[itemid]
+                )
+            ));
+    }
+    if ($data->files_filemanager){
+        var_dump($assignmentid);die;
+        $resp = moodle_webservice_client(
+            array(
+                'domain' => HUB_URL,
+                'token' => HOST_TOKEN,
+                'function_name' => 'local_mod_assign_save_remote_submission',
+                'params' => array(
+                    'assignmentid'  =>  $assignmentid,
+                    'userid'        =>  $userid,
+                    'plugindata[files_filemanager]' => $data->files_filemanager,
+                    'plugindata[id]' => $data->id,
+                    'plugindata[userid]' => $data->userid,
+                    'plugindata[files]' => $data->files
+                )
+            ));
+    }
 
     if (empty($resp))
         return true;

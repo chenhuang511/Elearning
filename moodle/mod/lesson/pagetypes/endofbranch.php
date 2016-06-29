@@ -93,7 +93,7 @@ class lesson_page_type_endofbranch extends lesson_page {
             $jumpto = $this->properties->prevpageid;
 
         }
-        redirect(new moodle_url('/mod/lesson/view.php', array('id'=>$PAGE->cm->id,'pageid'=>$jumpto)));
+        redirect(new moodle_url('/mod/lesson/remote/api-view.php', array('id'=>$PAGE->cm->id,'pageid'=>$jumpto)));
     }
     public function get_grayout() {
         return 1;
