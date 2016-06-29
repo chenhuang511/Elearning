@@ -61,6 +61,7 @@ $PAGE->set_url($url);
 
 $context = context_module::instance($cm->id);
 $canmanage = has_capability('mod/lesson:manage', $context);
+//$canmanage = true;
 
 $lessonoutput = $PAGE->get_renderer('mod_lesson');
 

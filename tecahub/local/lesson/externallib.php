@@ -2554,8 +2554,8 @@ class local_mod_lesson_external extends external_api
     public static function set_field_lesson_pages_returns() {
         return new external_single_structure(
             array(
-                'status' => new external_value(PARAM_BOOL, 'status'),
-                'warnings' => new external_warnings()
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings(),
             )
         );
     }

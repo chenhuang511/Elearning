@@ -670,3 +670,15 @@ function get_remote_list_lesson_pages_by_id_and_lessonid($id, $lessonid)
 
     return $pages;
 }
+
+function set_remote_field_lesson_pages($id, $newfield, $newvalue)
+{
+    return moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_set_field_lesson_pages',
+            'params' => array('id' => $id, 'newfield' => $newfield, 'newvalue' => $newvalue)
+        )
+    );
+}
