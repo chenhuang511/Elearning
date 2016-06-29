@@ -79,9 +79,8 @@ echo $OUTPUT->doctype() ?>
             <?php echo $OUTPUT->course_header(); ?>
         </div>
     </header>
-    <div id="page-content" class="row">
-		<?php echo $OUTPUT->blocks('side-pre', 'col-md-3'); ?>
-        <div id="<?php echo $regionbsid ?>" class="col-md-9">
+    <div id="page-content" class="clearfix">
+        <div id="<?php echo $regionbsid ?>" class="some-class-here">
             <?php
                 echo $OUTPUT->course_content_header();
                 echo $OUTPUT->main_content();
@@ -93,6 +92,6 @@ echo $OUTPUT->doctype() ?>
 
 </div>
 
-<?php  require_once(dirname(__FILE__) . '/includes/footer.php');  ?>   
+<?php  require_once(dirname(__FILE__) . '/includes/footer.php');  ?>
 </body>
 </html>
