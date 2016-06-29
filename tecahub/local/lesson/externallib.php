@@ -2328,8 +2328,6 @@ class local_mod_lesson_external extends external_api
 
         $timer = $DB->get_record('lesson_timer', array('id' => $params['id']), '*', MUST_EXIST);
 
-        var_dump($timer);
-
         $result = array();
 
         if (!$timer) {
@@ -2526,20 +2524,25 @@ class local_mod_lesson_external extends external_api
     }
 
     public static function set_field_lesson_pages($id, $newfield, $newvalue) {
+
         global $DB;
 
         $warnings = array();
 
-        $params = self::validate_parameters(self::set_field_lesson_pages(), array(
+        $params = array(
             'id' => $id,
             'newfield' => $newfield,
             'newvalue' => $newvalue
-        ));
+        );
+
+        $params = self::validate_parameters(self::set_field_lesson_pages(), $params);
 
         $result = array();
 
         $transaction = $DB->start_delegated_transaction();
+
         $DB->set_field("lesson_pages", $params['newfield'], $params['newvalue'], array("id" => $params['id']));
+
         $transaction->allow_commit();
 
         $result['status'] = true;
