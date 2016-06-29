@@ -55,7 +55,11 @@ function getHTMLContentJson(module) {
 }
 
 function getHTMLContent(module, encode) {
-    var url = module.url + '?';
+    var getLink = (arguments.length === 3) ? arguments[2] : true;
+    var url = module.url;
+    if (getLink) {
+       url = module.url + '?';
+    }
     url += (encode)?arrayToUrlParmas(module.params):module.params;
     var target = $('#module-content');
     var loading = $('#loading');
@@ -110,6 +114,17 @@ function linkClickEventHandler(e) {
     getHTMLContentJson(module);
 }
 
+function linkDataEventHandler(e) {
+    e.preventDefault();
+    var link = $(this);
+    var module = {
+        url: link.attr('href'),
+        method: 'get',
+        params: []
+    };
+    getHTMLContent(module, true, false);
+}
+
 function loadRemoteContent() {
     var courseRemote = $('.get-remote-content');
     if (courseRemote && courseRemote.length > 0) {
@@ -131,9 +146,15 @@ function loadRemoteContent() {
     var hubSubmitDelegate = [
         '.hub-submit-btn'
     ];
+
+    var hrefDelegate = [
+        'a[href*="remote"]'
+    ];
+
     datacontent.on('click', linkDelegate.join(','), linkClickEventHandler);
     datacontent.on('click submit', submitDelegate.join(','), formEventHandler);
     datacontent.on('click submit', hubSubmitDelegate.join(','), hubFormEventHandler);
+    datacontent.on('click', hrefDelegate.join(','), linkDataEventHandler);
 }
 
 (function ($) {
