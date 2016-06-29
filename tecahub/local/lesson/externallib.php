@@ -2539,12 +2539,13 @@ class local_mod_lesson_external extends external_api
         $result = array();
 
         $transaction = $DB->start_delegated_transaction();
-        $result['status'] = false;
         $DB->set_field("lesson_pages", $params['newfield'], $params['newvalue'], array("id" => $params['id']));
         $transaction->allow_commit();
 
         $result['status'] = true;
         $result['warnings'] = $warnings;
+
+        return $result;
     }
 
     public static function set_field_lesson_pages_returns() {
