@@ -2501,8 +2501,10 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
             $course = $DB->get_record('course', array('id' => $courseorid), '*', MUST_EXIST);
         }
         if ($cm) {
-            if ($cm->course != $course->id) {
-                throw new coding_exception('course and cm parameters in require_login() call do not match!!');
+            if (MOODLE_RUN_MODE == MOODLE_MODE_HOST) {
+                if ($cm->course != $course->id) {
+                    throw new coding_exception('course and cm parameters in require_login() call do not match!!');
+                }
             }
             // Make sure we have a $cm from get_fast_modinfo as this contains activity access details.
             if (!($cm instanceof cm_info)) {
@@ -2823,7 +2825,7 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
     }
 
     // Check visibility of activity to current user; includes visible flag, conditional availability, etc.
-    if ($cm && !$cm->uservisible) {
+    if ($cm && !$cm->uservisible && MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
         if ($preventredirect) {
             throw new require_login_exception('Activity is hidden');
         }

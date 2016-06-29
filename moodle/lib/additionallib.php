@@ -80,7 +80,7 @@ function get_local_course_record($courseid, $useid = false) {
     }
     $idfield = ((int)$courseid === 1 || $useid) ? "id" : "remoteid";
     $course = $DB->get_record("course", array($idfield => $courseid), "*", MUST_EXIST);
-    convert_remote_course_record($course, $useid);
+    //convert_remote_course_record($course, $useid);
     return $course;
 }
 
