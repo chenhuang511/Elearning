@@ -38,6 +38,9 @@ function get_course_id_by_remote_id($remotecourseid) {
     $retval = $remotecourseid;
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB && $remotecourseid != SITEID) {
         $retval = $DB->get_field('course', 'id', array('remoteid' => $remotecourseid));
+        if (!$retval) {
+            $retval = $remotecourseid;
+        }
     }
 
     return $retval;

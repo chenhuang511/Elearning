@@ -143,7 +143,7 @@ if ($id) {
     // Checking course instance
     $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
-    require_login($course, true, $cm);
+    //require_login($course, true, $cm);
     /*
      * Case 2:
      *
@@ -301,7 +301,7 @@ if ($pageid) {
     );
     wiki_page_view($wiki, $page, $course, $cm, $context, $uid, $other, $subwiki);
 }
-
+    
 $wikipage->print_header();
 $wikipage->print_content();
 
