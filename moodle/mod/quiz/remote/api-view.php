@@ -17,6 +17,7 @@ require_once($CFG->dirroot . '/course/format/lib.php');
 
 $id = optional_param('id', 0, PARAM_INT); // Course Module ID, or ...
 $q = optional_param('q',  0, PARAM_INT);  // Quiz ID.
+$nonajax = optional_param('nonajax', false, PARAM_BOOL);
 
 if ($id) {
     if (!$cm = get_remote_course_module_by_cmid("quiz", $id)) {
@@ -214,6 +215,10 @@ if (!$viewobj->quizhasquestions) {
     }
 }
 
+if ($nonajax) {
+    echo $OUTPUT->header();
+}
+
 // @TODO: $viewobj->showbacktocourse
 $viewobj->showbacktocourse = false;
 
@@ -226,4 +231,8 @@ if (isguestuser()) {
     echo $output->view_page_notenrolled($course, $quiz, $cm, $context, $viewobj->infomessages);
 } else {
     echo $output->view_page($course, $quiz, $cm, $context, $viewobj);
+}
+
+if ($nonajax) {
+    echo $OUTPUT->footer();
 }
