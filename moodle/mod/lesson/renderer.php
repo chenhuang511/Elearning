@@ -176,11 +176,11 @@ class mod_lesson_renderer extends plugin_renderer_base
         global $CFG;
         $output = $this->output->box(get_string('youhaveseen', 'lesson'), 'generalbox boxaligncenter text-center');
         $output .= $this->output->box_start('center bhxh-buttons text-center');
-        $yeslink = html_writer::link('#', get_string('yes'), array('class' => 'remote-lesson-button btn btn-primary', 'data-module' => json_encode(array('url' => $CFG->wwwroot . '/mod/lesson/remote/api-view.php', 'params' => array('id' => $this->page->cm->id, 'pageid' => $lastpageseenid, 'startlastseen' => 'yes'), 'method' => 'get'))));
+        $yeslink = html_writer::link('#', get_string('yes'), array('class' => 'remote-link-action btn btn-primary', 'data-module' => json_encode(array('url' => $CFG->wwwroot . '/mod/lesson/remote/api-view.php', 'params' => array('id' => $this->page->cm->id, 'pageid' => $lastpageseenid, 'startlastseen' => 'yes'), 'method' => 'get'))));
         $output .= html_writer::tag('span', $yeslink, array('class' => 'lessonbutton standardbutton'));
         $output .= '&nbsp;';
 
-        $nolink = html_writer::link('#', get_string('no'), array('class' => 'remote-lesson-button btn btn-danger', 'data-module' => json_encode(array('url' => $CFG->wwwroot . '/mod/lesson/remote/api-view.php', 'params' => array('id' => $this->page->cm->id, 'pageid' => $lesson->firstpageid, 'startlastseen' => 'no'), 'method' => 'get'))));
+        $nolink = html_writer::link('#', get_string('no'), array('class' => 'remote-link-action btn btn-danger', 'data-module' => json_encode(array('url' => $CFG->wwwroot . '/mod/lesson/remote/api-view.php', 'params' => array('id' => $this->page->cm->id, 'pageid' => $lesson->firstpageid, 'startlastseen' => 'no'), 'method' => 'get'))));
         $output .= html_writer::tag('span', $nolink, array('class' => 'lessonbutton standardbutton'));
 
         $output .= $this->output->box_end();

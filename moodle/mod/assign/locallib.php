@@ -3877,12 +3877,13 @@ class assign {
         $users = array_keys($this->list_participants($currentgroup, true));
         if (count($users) != 0 && $this->can_grade()) {
             // If no enrolled user in a course then don't display the batch operations feature.
-            $assignform = new assign_form('gradingbatchoperationsform', $gradingbatchoperationsform);
+            $assignform = new assign_form('gradingbatchoperationsform', $gradingbatchoperationsform, 'M.mod_assign.init_grading_table');
             $o .= $this->get_renderer()->render($assignform);
         }
+        $withjsgradingoptions = (MOODLE_RUN_MODE === MOODLE_MODE_HUB) ? '' : 'M.mod_assign.init_grading_options';
         $assignform = new assign_form('gradingoptionsform',
                                       $gradingoptionsform,
-                                      'M.mod_assign.init_grading_options');
+                                      $withjsgradingoptions);
         $o .= $this->get_renderer()->render($assignform);
         return $o;
     }

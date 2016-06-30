@@ -143,7 +143,7 @@ $functions = array(
 		'methodname'  => 'create_submission',
 		'classpath'	  => 'local/assignment/externallib.php',
 		'description' => "Create new submission",
-		'type'		  => 'read',
+		'type'		  => 'write',
 		'ajax'		  => true
 	),
 	'local_mod_assign_get_submission_by_id' => array(
@@ -159,7 +159,7 @@ $functions = array(
 		'methodname'  => 'save_remote_submission',
 		'classpath'	  => 'local/assignment/externallib.php',
 		'description' => "Update the current students submission",
-		'type'		  => 'read',
+		'type'		  => 'write',
 		'ajax'		  => true
 	),
 	'local_mod_assign_get_remote_submission_status' => array(

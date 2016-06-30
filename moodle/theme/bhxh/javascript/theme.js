@@ -136,12 +136,13 @@ function loadRemoteContent() {
     var datacontent = $('#module-content');
     var linkDelegate = [
         '.remote-link-action',
-        '.remote-lesson-button',
     ];
     var submitDelegate = [
         '.remote-form-action',
         '.remote-submit-btn',
         '.mod_quiz-next-nav',
+        '#id_submit',
+        '#id_submitbutton'
     ];
     var hubSubmitDelegate = [
         '.hub-submit-btn'
@@ -151,10 +152,20 @@ function loadRemoteContent() {
         'a[href*="remote"]'
     ];
 
+    var inputChange = [
+        '#id_perpage',
+        '#id_filter',
+        '#id_markerfilter',
+        '#id_workflowfilter',
+        '#id_quickgrading',
+        '#id_showonlyactiveenrol'
+    ];
+
     datacontent.on('click', linkDelegate.join(','), linkClickEventHandler);
     datacontent.on('click submit', submitDelegate.join(','), formEventHandler);
     datacontent.on('click submit', hubSubmitDelegate.join(','), hubFormEventHandler);
     datacontent.on('click', hrefDelegate.join(','), linkDataEventHandler);
+    datacontent.on('change', inputChange.join(','), formEventHandler);
 }
 
 (function ($) {

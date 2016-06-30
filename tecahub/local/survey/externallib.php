@@ -401,4 +401,61 @@ class local_mod_survey_external extends external_api
             )
         );
     }
+
+    public static function get_survey_answers_by_surveyid_and_questionid_and_userid_parameters() {
+        return new external_function_parameters(
+            array(
+                'surveyid' => new external_value(PARAM_INT, 'the survey id'),
+                'questionid' => new external_value(PARAM_INT, 'the question id'),
+                'userid' => new external_value(PARAM_INT, 'the user id')
+            )
+        );
+    }
+    public static function get_survey_answers_by_surveyid_and_questionid_and_userid($surveyid, $questionid, $userid) {
+        global $DB;
+
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_survey_answers_by_surveyid_and_questionid_and_userid_parameters(), array(
+            'surveyid' => $surveyid,
+            'questionid' => $questionid,
+            'userid' => $userid
+        ));
+
+        $result = array();
+
+        $answer = $DB->get_record_sql("SELECT sa.*
+                                  FROM {survey_answers} sa
+                                 WHERE sa.survey = ?
+                                       AND sa.question = ?
+                                       AND sa.userid = ?", array($params['surveyid'], $params['questionid'], $params['userid']));
+
+        if(!$answer) {
+            $answer = new stdClass();
+        }
+
+        $result['answer'] = $answer;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_survey_answers_by_surveyid_and_questionid_and_userid_returns() {
+        return new external_single_structure(
+            array(
+                'answer' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'id'),
+                        'userid' => new external_value(PARAM_INT, 'user id'),
+                        'survey' => new external_value(PARAM_INT, 'survey id'),
+                        'question' => new external_value(PARAM_INT, 'question id'),
+                        'time' => new external_value(PARAM_INT, 'time'),
+                        'answer1' => new external_value(PARAM_RAW, 'answer1'),
+                        'answer2' => new external_value(PARAM_RAW, 'answer2')
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

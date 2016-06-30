@@ -228,23 +228,7 @@ class local_mod_lesson_external extends external_api
     {
         return new external_function_parameters(
             array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
-                'prevpageid' => new external_value(PARAM_INT, 'the previous page id'),
-                'options' => new external_multiple_structure (
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_ALPHANUM,
-                                'The expected keys (value format) are:
-                                                excludemodules (bool) Do not return modules, return only the sections structure
-                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
-                                                sectionid (int) Return only this section
-                                                sectionnumber (int) Return only this section with number (order)
-                                                cmid (int) Return only this module information (among the whole sections structure)
-                                                modname (string) Return only modules with this name "label, forum, etc..."
-                                                modid (int) Return only the module with this id (to be used with modname'),
-                            'value' => new external_value(PARAM_RAW, 'the value of the option,
-                                                                    this param is personaly validated in the external function.')
-                        )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+                'prevpageid' => new external_value(PARAM_INT, 'the previous page id')
             )
         );
     }
@@ -2513,49 +2497,41 @@ class local_mod_lesson_external extends external_api
        return self::get_lesson_pages_by_lessonid_returns();
     }
 
-    public static function set_field_lesson_pages_parameters() {
+    public static function get_count_lesson_pages_by_lessonid_parameters(){
         return new external_function_parameters(
             array(
-                'id' => new external_value(PARAM_INT, 'the id'),
-                'newfield' => new external_value(PARAM_RAW, 'the new field'),
-                'newvalue' => new external_value(PARAM_RAW, 'the new value')
+                'lessonid' => new external_value(PARAM_INT, 'the lesson id')
             )
         );
     }
 
-    public static function set_field_lesson_pages($id, $newfield, $newvalue) {
-
+    public static function get_count_lesson_pages_by_lessonid($lessonid) {
         global $DB;
-
         $warnings = array();
 
-        $params = array(
-            'id' => $id,
-            'newfield' => $newfield,
-            'newvalue' => $newvalue
-        );
-
-        $params = self::validate_parameters(self::set_field_lesson_pages(), $params);
+        $params = self::validate_parameters(self::get_count_lesson_pages_by_lessonid_parameters(), array(
+            'lessonid' => $lessonid
+        ));
 
         $result = array();
 
-        $transaction = $DB->start_delegated_transaction();
+        $pagecount = $DB->count_records('lesson_pages', array('lessonid' => $params['lessonid']));
 
-        $DB->set_field("lesson_pages", $params['newfield'], $params['newvalue'], array("id" => $params['id']));
+        if(!$pagecount) {
+            $pagecount = 0;
+        }
 
-        $transaction->allow_commit();
-
-        $result['status'] = true;
+        $result['pagecount'] = $pagecount;
         $result['warnings'] = $warnings;
 
         return $result;
     }
 
-    public static function set_field_lesson_pages_returns() {
+    public static function get_count_lesson_pages_by_lessonid_returns() {
         return new external_single_structure(
             array(
-                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
-                'warnings' => new external_warnings(),
+                'pagecount' => new external_value(PARAM_INT, 'count row'),
+                'warnings' => new external_warnings()
             )
         );
     }
