@@ -1043,7 +1043,8 @@ class core_renderer extends renderer_base {
 
         $output = $this->container_end_all(true);
         if ($jsonly) {
-            $footer = '%%ENDHTML-'.sesskey().'%%' . '</body></html>';
+            $footer = '%%ENDHTML-'.sesskey().'%%';
+            $this->opencontainers->pop('header/footer');
         } else {
             $footer = $this->opencontainers->pop('header/footer');
         }
@@ -1074,7 +1075,7 @@ class core_renderer extends renderer_base {
                 \core\notification::fetch_as_array($this)
             ));
         }
-        $footer = str_replace($this->unique_end_html_token, $this->page->requires->get_end_code(!$jsonly), $footer);
+        $footer = str_replace($this->unique_end_html_token, $this->page->requires->get_end_code(true), $footer);
 
         $this->page->set_state(moodle_page::STATE_DONE);
 
