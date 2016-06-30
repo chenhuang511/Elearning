@@ -120,7 +120,7 @@ function get_remote_course_mods($courseid)
     return $retval;
 }
 
-function get_remote_course_sections($courseid)
+function get_remote_course_sections($courseid, $usesq = false)
 {
     global $DB;
 
@@ -143,9 +143,14 @@ function get_remote_course_sections($courseid)
         default:
             break;
     }
-    $retval = array();
-    foreach($sections as $val) {
-        $retval[$val->id] = $val;
+
+    if (!$usesq) {
+        $retval = array();
+        foreach ($sections as $val) {
+            $retval[$val->id] = $val;
+        }
+    } else {
+        $retval = $sections;
     }
     return $retval;
 }

@@ -2898,6 +2898,8 @@ class global_navigation_for_ajax extends global_navigation {
                     $course = $DB->get_record_sql($sql, array($this->instanceid), MUST_EXIST);
                 } else {
                     $course = get_remote_course_section_nav_by_section($this->instanceid);
+                    $course = (object) array_merge((array)$course, array('remoteid' =>  $course->id));
+                    $course->id = get_course_id_by_remote_id($course->remoteid);
                 }
                 require_course_login($course, true, null, false, true);
                 $this->page->set_context(context_course::instance($course->id));
