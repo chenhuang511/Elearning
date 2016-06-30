@@ -106,11 +106,11 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
-    'local_mod_set_field_lesson_pages' => array(
+    'local_mod_get_count_lesson_pages_by_lessonid' => array(
         'classname' => 'local_mod_lesson_external',
-        'methodname' => 'set_field_lesson_pages',
+        'methodname' => 'get_count_lesson_pages_by_lessonid',
         'classpath' => 'local/lesson/externallib.php',
-        'description' => 'update field of lesson pages',
+        'description' => 'get page count lesson pages by lessonid',
         'type' => 'read',
         'ajax' => true
     ),
