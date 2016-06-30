@@ -2452,6 +2452,39 @@ class local_mod_lesson_external extends external_api
         );
     }
 
+    public static function get_count_lesson_attempts_by_lessonid_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'lessonid' => new external_value(PARAM_INT, 'the lesson id')
+            )
+        );
+    }
+
+    public static function get_count_lesson_attempts_by_lessonid($lessonid)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_count_lesson_attempts_by_lessonid_parameters(), array(
+            'lessonid' => $lessonid
+        ));
+
+        $result = array();
+
+        $nattempts = $DB->count_records('lesson_attempts', array('lessonid'=>$params['lessonid']));
+
+        $result['nattempts'] = $nattempts;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_count_lesson_attempts_by_lessonid_returns()
+    {
+        return self::get_count_lesson_attempts_returns();
+    }
+
     public static function get_list_lesson_pages_by_id_and_lessonid_parameters()
     {
         return new external_function_parameters(

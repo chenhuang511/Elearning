@@ -138,6 +138,14 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_get_count_lesson_attempts_by_lessonid' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_count_lesson_attempts_by_lessonid',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get count lesson attempts by lessonid',
+        'type' => 'read',
+        'ajax' => true
+    ),
     'local_mod_save_lesson_timer' => array(
         'classname' => 'local_mod_lesson_external',
         'methodname' => 'save_lesson_timer',
