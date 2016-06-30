@@ -80,3 +80,17 @@ function save_remote_survey_answers($surveyid, $userid, $formdata)
         )
     );
 }
+
+function get_remote_survey_answers_by_surveyid_and_questionid_and_userid($surveyid, $questionid, $userid)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_survey_answers_by_surveyid_and_questionid_and_userid',
+            'params' => array('surveyid' => $surveyid, 'questionid' => $questionid, 'userid' => $userid),
+        )
+    );
+
+    return $result->answer;
+}

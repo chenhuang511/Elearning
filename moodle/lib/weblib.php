@@ -719,6 +719,19 @@ class moodle_url {
     }
 
     /**
+     * Sets the scheme for the URI (the bit before ://)
+     *
+     * @param string $scheme
+     */
+    public function set_path($path) {
+        $this->path = $path;
+    }
+
+    public function add_param(array $param) {
+        $this->params = array_merge($this->params, $param);
+    }
+
+    /**
      * Sets the url slashargument value.
      *
      * @param string $path usually file path

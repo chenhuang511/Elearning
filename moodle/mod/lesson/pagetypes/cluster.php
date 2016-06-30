@@ -25,10 +25,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
- /** Start of Cluster page */
-define("LESSON_PAGE_CLUSTER",   "30");
+/** Start of Cluster page */
+define("LESSON_PAGE_CLUSTER", "30");
 
-class lesson_page_type_cluster extends lesson_page {
+class lesson_page_type_cluster extends lesson_page
+{
 
     protected $type = lesson_page::TYPE_STRUCTURE;
     protected $typeidstring = 'cluster';
@@ -36,26 +37,36 @@ class lesson_page_type_cluster extends lesson_page {
     protected $string = null;
     protected $jumpto = null;
 
-    public function display($renderer, $attempt) {
+    public function display($renderer, $attempt)
+    {
         return '';
     }
 
-    public function get_typeid() {
+    public function get_typeid()
+    {
         return $this->typeid;
     }
-    public function get_typestring() {
-        if ($this->string===null) {
+
+    public function get_typestring()
+    {
+        if ($this->string === null) {
             $this->string = get_string($this->typeidstring, 'lesson');
         }
         return $this->string;
     }
-    public function get_idstring() {
+
+    public function get_idstring()
+    {
         return $this->typeidstring;
     }
-    public function get_grayout() {
+
+    public function get_grayout()
+    {
         return 1;
     }
-    public function callback_on_view($canmanage) {
+
+    public function callback_on_view($canmanage)
+    {
         global $USER;
         if (!$canmanage) {
             // Get the next page in the lesson cluster jump
@@ -65,16 +76,22 @@ class lesson_page_type_cluster extends lesson_page {
             return $this->properties->nextpageid;
         }
     }
-    public function override_next_page() {
+
+    public function override_next_page()
+    {
         global $USER;
         return $this->lesson->cluster_jump($this->properties->id);
     }
-    public function add_page_link($previd) {
+
+    public function add_page_link($previd)
+    {
         global $PAGE, $CFG;
-        $addurl = new moodle_url('/mod/lesson/editpage.php', array('id'=>$PAGE->cm->id, 'pageid'=>$previd, 'sesskey'=>sesskey(), 'qtype'=>LESSON_PAGE_CLUSTER));
-        return array('addurl'=>$addurl, 'type'=>LESSON_PAGE_CLUSTER, 'name'=>get_string('addcluster', 'lesson'));
+        $addurl = new moodle_url('/mod/lesson/remote/api-editpage.php', array('id' => $PAGE->cm->id, 'pageid' => $previd, 'sesskey' => sesskey(), 'qtype' => LESSON_PAGE_CLUSTER));
+        return array('addurl' => $addurl, 'type' => LESSON_PAGE_CLUSTER, 'name' => get_string('addcluster', 'lesson'));
     }
-    public function valid_page_and_view(&$validpages, &$pageviews) {
+
+    public function valid_page_and_view(&$validpages, &$pageviews)
+    {
         $validpages[$this->properties->id] = 1;  // add the cluster page as a valid page
         foreach ($this->lesson->get_sub_pages_of($this->properties->id, array(LESSON_PAGE_ENDOFCLUSTER)) as $subpage) {
             if (in_array($subpage->id, $pageviews)) {
@@ -89,13 +106,15 @@ class lesson_page_type_cluster extends lesson_page {
     }
 }
 
-class lesson_add_page_form_cluster extends lesson_add_page_form_base {
+class lesson_add_page_form_cluster extends lesson_add_page_form_base
+{
 
     public $qtype = LESSON_PAGE_CLUSTER;
     public $qtypestring = 'cluster';
     protected $standard = false;
 
-    public function custom_definition() {
+    public function custom_definition()
+    {
         global $PAGE;
 
         $mform = $this->_form;
@@ -108,10 +127,10 @@ class lesson_add_page_form_cluster extends lesson_add_page_form_base {
         $mform->addElement('hidden', 'qtype');
         $mform->setType('qtype', PARAM_TEXT);
 
-        $mform->addElement('text', 'title', get_string("pagetitle", "lesson"), array('size'=>70));
+        $mform->addElement('text', 'title', get_string("pagetitle", "lesson"), array('size' => 70));
         $mform->setType('title', PARAM_TEXT);
 
-        $this->editoroptions = array('noclean'=>true, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$PAGE->course->maxbytes);
+        $this->editoroptions = array('noclean' => true, 'maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes' => $PAGE->course->maxbytes);
         $mform->addElement('editor', 'contents_editor', get_string("pagecontents", "lesson"), null, $this->editoroptions);
         $mform->setType('contents_editor', PARAM_RAW);
 
@@ -119,7 +138,8 @@ class lesson_add_page_form_cluster extends lesson_add_page_form_base {
     }
 
 
-    public function construction_override($pageid, lesson $lesson) {
+    public function construction_override($pageid, lesson $lesson)
+    {
         global $PAGE, $CFG, $DB;
         require_sesskey();
 
@@ -127,7 +147,7 @@ class lesson_add_page_form_cluster extends lesson_add_page_form_base {
 
         if ($pageid == 0) {
             if ($lesson->has_pages()) {
-                if (!$page = $DB->get_record("lesson_pages", array("prevpageid" => 0, "lessonid" => $lesson->id))) {
+                if (!$page = get_remote_lesson_pages_by_lessonid_and_prevpageid($lesson->id, 0)) {
                     print_error('cannotfindpagerecord', 'lesson');
                 }
             } else {
@@ -136,7 +156,7 @@ class lesson_add_page_form_cluster extends lesson_add_page_form_base {
                 $page->id = 0;
             }
         } else {
-            if (!$page = $DB->get_record("lesson_pages", array("id" => $pageid))) {
+            if (!$page = get_remote_lesson_pages_by_id($pageid)) {
                 print_error('cannotfindpagerecord', 'lesson');
             }
         }
@@ -173,6 +193,6 @@ class lesson_add_page_form_cluster extends lesson_add_page_form_base {
         $newanswer->jumpto = LESSON_CLUSTERJUMP;
         $newanswerid = $DB->insert_record("lesson_answers", $newanswer);
         $lesson->add_message(get_string('addedcluster', 'lesson'), 'notifysuccess');
-        redirect($CFG->wwwroot.'/mod/lesson/edit.php?id='.$PAGE->cm->id);
+        redirect($CFG->wwwroot . '/mod/lesson/remote/api-edit.php?id=' . $PAGE->cm->id);
     }
 }
