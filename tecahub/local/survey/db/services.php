@@ -49,6 +49,14 @@ $functions = array(
         'type'          => 'read',
         'ajax'          => true
     ),
+    'local_mod_get_survey_answers_by_surveyid_and_questionid_and_userid' => array(
+        'classname'     => 'local_mod_survey_external',
+        'methodname'    => 'get_survey_answers_by_surveyid_and_questionid_and_userid',
+        'classpath'     => 'local/survey/externallib.php',
+        'description'   => 'Get survey answers by surveyid and questionid and userid',
+        'type'          => 'read',
+        'ajax'          => true
+    ),
     'local_mod_get_list_survey_questions_by_ids' => array(
         'classname'     => 'local_mod_survey_external',
         'methodname'    => 'get_list_survey_questions_by_ids',
