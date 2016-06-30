@@ -2180,29 +2180,30 @@ function quiz_view($quiz, $course, $cm, $context) {
  * @throws moodle_quiz_exception
  * @since Moodle 3.1
  */
-function quiz_validate_new_attempt(quiz $quizobj, quiz_access_manager $accessmanager, $forcenew, $page, $redirect) {
+function quiz_validate_new_attempt(quiz $quizobj, quiz_access_manager $accessmanager, $forcenew, $page, $redirect, $userid = null) {
     global $DB, $USER;
     $timenow = time();
 
-    if ($quizobj->is_preview_user() && $forcenew) {
+    if ($quizobj->is_preview_user($userid) && $forcenew) {
         $accessmanager->current_attempt_finished();
     }
 
     // Check capabilities.
-    if (!$quizobj->is_preview_user()) {
-        $quizobj->require_capability('mod/quiz:attempt');
+    if (!$quizobj->is_preview_user($userid)) {
+        $quizobj->require_capability('mod/quiz:attempt', $userid);
     }
 
     // Check to see if a new preview was requested.
-    if ($quizobj->is_preview_user() && $forcenew) {
+    if ($quizobj->is_preview_user($userid) && $forcenew) {
         // To force the creation of a new preview, we mark the current attempt (if any)
         // as finished. It will then automatically be deleted below.
+        $userid = ($userid)?$userid:$USER->id;
         $DB->set_field('quiz_attempts', 'state', quiz_attempt::FINISHED,
-                array('quiz' => $quizobj->get_quizid(), 'userid' => $USER->id));
+                array('quiz' => $quizobj->get_quizid(), 'userid' => $userid));
     }
 
     // Look for an existing attempt.
-    $attempts = quiz_get_user_attempts($quizobj->get_quizid(), $USER->id, 'all', true);
+    $attempts = quiz_get_user_attempts($quizobj->get_quizid(), $userid, 'all', true);
     $lastattempt = end($attempts);
 
     $attemptnumber = null;
@@ -2262,7 +2263,7 @@ function quiz_validate_new_attempt(quiz $quizobj, quiz_access_manager $accessman
  * @return object the new attempt
  * @since  Moodle 3.1
  */
-function quiz_prepare_and_start_new_attempt(quiz $quizobj, $attemptnumber, $lastattempt, $userid = null) {
+function quiz_prepare_and_start_new_attempt(quiz $quizobj, $attemptnumber, $lastattempt, $userid = null, $r_preview = null) {
     global $DB, $USER;
 
     // Delete any previous preview attempts belonging to this user.
@@ -2274,7 +2275,8 @@ function quiz_prepare_and_start_new_attempt(quiz $quizobj, $attemptnumber, $last
 
     // Create the new attempt and initialize the question sessions
     $timenow = time(); // Update time now, in case the server is running really slowly.
-    $attempt = quiz_create_attempt($quizobj, $attemptnumber, $lastattempt, $timenow, $quizobj->is_preview_user(), $userid);
+    $preview = ($r_preview!==null)?$r_preview:$quizobj->is_preview_user();
+    $attempt = quiz_create_attempt($quizobj, $attemptnumber, $lastattempt, $timenow, $r_preview, $userid);
 
     if (!($quizobj->get_quiz()->attemptonlast && $lastattempt)) {
         $attempt = quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $timenow);

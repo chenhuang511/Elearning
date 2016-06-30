@@ -694,6 +694,7 @@ ORDER BY
             array(
                 'quizid' => new external_value(PARAM_INT, 'quiz instance id'),
 				'remoteuserid' => new external_value(PARAM_INT, 'remote user id'),
+                'preview' => new external_value(PARAM_BOOL, 'has_capability(\'mod/quiz:preview\') in host.', VALUE_DEFAULT, false),
                 'preflightdata' => new external_multiple_structure(
                     new external_single_structure(
                         array(
@@ -703,7 +704,6 @@ ORDER BY
                     ), 'Preflight required data (like passwords)', VALUE_DEFAULT, array()
                 ),
                 'forcenew' => new external_value(PARAM_BOOL, 'Whether to force a new attempt or not.', VALUE_DEFAULT, false),
-
             )
         );
     }
@@ -718,7 +718,7 @@ ORDER BY
      * @since Moodle 3.1
      * @throws moodle_quiz_exception
      */
-    public static function start_remote_attempt($quizid, $remoteuserid, $preflightdata = array(), $forcenew = false) {
+    public static function start_remote_attempt($quizid, $remoteuserid, $preview, $preflightdata = array(), $forcenew = false) {
         global $DB, $USER;
 
         $warnings = array();
@@ -727,6 +727,7 @@ ORDER BY
         $params = array(
             'quizid' => $quizid,
 	        'remoteuserid' => $remoteuserid,
+            'preview' => $preview,
             'preflightdata' => $preflightdata,
             'forcenew' => $forcenew,
         );
@@ -746,7 +747,7 @@ ORDER BY
 
         // Validate permissions for creating a new attempt and start a new preview attempt if required.
         list($currentattemptid, $attemptnumber, $lastattempt, $messages, $page) =
-            quiz_validate_new_attempt($quizobj, $accessmanager, $forcenew, -1, false);
+            quiz_validate_new_attempt($quizobj, $accessmanager, $forcenew, -1, false, $remoteuserid);
 
         // Check access.
         if (!$quizobj->is_preview_user() && $messages) {
@@ -785,7 +786,7 @@ ORDER BY
                     throw new moodle_quiz_exception($quizobj, 'attemptstillinprogress');
                 }
             }
-            $attempt = quiz_prepare_and_start_new_attempt($quizobj, $attemptnumber, $lastattempt, $remoteuserid);
+            $attempt = quiz_prepare_and_start_new_attempt($quizobj, $attemptnumber, $lastattempt, $remoteuserid, $preview);
         }
 
         $result = array();
@@ -805,6 +806,66 @@ ORDER BY
             array(
                 'attempt' => mod_quiz_external::attempt_structure(),
                 'warnings' => new external_warnings(),
+            )
+        );
+    }
+
+    /**
+     * Hanv 30/06/2016
+     * Show quiz number of attempts summary to those who can view report.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     *
+     */
+    public static function count_attempt_summary_parameters() {
+        return new external_function_parameters (
+            array(
+                'quizid' => new external_value(PARAM_INT, 'quiz instance id'),
+                'ipaddress' => new external_value(PARAM_RAW, 'host ipaddress'),
+            )
+        );
+    }
+
+    /**
+     * Show quiz number of attempts summary to those who can view report.
+     *
+     * @param int $quizid quizid
+     * @param string $ipaddress ipaddress
+     * @return array
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function count_attempt_summary($quizid, $ipaddress) {
+        global $CFG, $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::count_attempt_summary_parameters(),
+            array('quizid' => $quizid,'ipaddress' => $ipaddress));
+        // Get mnethostID from host ipaddress
+        $mnethostid = $DB->get_record('mnet_host', array('ip_address' => $params['ipaddress']), '*');
+
+        //get numattempt of quiz with users in host ipaddress
+        $sql = " SELECT COUNT(*) num
+                    FROM {quiz_attempts} qa
+                    JOIN {user} u ON qa.userid = u.id
+                 WHERE qa.quiz=:quizid AND qa.preview=0 AND u.mnethostid=:mnetid";
+        $numattempts = $DB->get_record_sql($sql, array('quizid' => $params['quizid'], 'mnetid' => $mnethostid->id));
+        return $numattempts;
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.9 Options available
+     * @since Moodle 2.2
+     */
+    public static function count_attempt_summary_returns() {
+        return new external_single_structure(
+            array(
+                'num' => new external_value(PARAM_INT, 'num attempts', VALUE_OPTIONAL),
             )
         );
     }

@@ -171,13 +171,13 @@ function quiz_remote_validate_new_attempt(quiz $quizobj, quiz_access_manager $ac
 }
 
 // Sử dụng API có sẵn mod_quiz_start_attempt để thay thế cho hàm xử lý quiz_prepare_and_start_new_attempt trong startattempt.php
-function get_remote_quiz_start_attempt($quizid, $remoteuserid) {
+function get_remote_quiz_start_attempt($quizid, $remoteuserid, $preview) {
     return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_quiz_start_remote_attempt',
-            'params' => array('quizid' => $quizid, 'remoteuserid' => $remoteuserid, 'preflightdata' => array(), 'forcenew' => true)
+            'params' => array('quizid' => $quizid, 'remoteuserid' => $remoteuserid, 'preview' => $preview, 'preflightdata' => array(), 'forcenew' => true)
         ), false
     );
 }
@@ -306,6 +306,21 @@ function get_remote_view_attempt($attemptid, $page = null, $preflightdata = null
             'token' => HOST_TOKEN_M,
             'function_name' => 'mod_quiz_view_attempt',
             'params' => array('attemptid' => $attemptid, 'page' => $page, 'preflightdata' => array())
+        ), false
+    );
+    return $resp;
+}
+
+function get_remote_count_attempts($quizid) {
+    global $CFG;
+    $hostname = mnet_get_hostname_from_uri($CFG->wwwroot);
+    $hostip = gethostbyname($hostname);
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_quiz_count_attempt_summary',
+            'params' => array('quizid' => $quizid, 'ipaddress' => $hostip)
         ), false
     );
     return $resp;

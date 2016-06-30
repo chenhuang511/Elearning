@@ -30,7 +30,6 @@ $attemptobj = new quiz_attempt($attempt, $quiz, $cm, $course, false, true);
 $page = $attemptobj->force_page_number_into_range($page);
 
 $reviewobj = get_remote_get_attempt_review($attemptid);
-//var_dump($reviewobj);die;
 
 // Now we can validate the params better, re-genrate the page URL.
 if ($showall === null) {
@@ -55,7 +54,6 @@ $options = $attemptobj->get_display_options(true);
 // Check permissions - warning there is similar code in reviewquestion.php and
 // quiz_attempt::check_file_access. If you change on, change them all.
 if ($attemptobj->is_own_attempt()) {
-
     if (!$attemptobj->is_finished()) {
         redirect($attemptobj->attempt_url(null, $page));
 

@@ -37,6 +37,8 @@ if (!$course = get_local_course_record($cm->course)) {
 //$quizobj = quiz::create($cm->instance, $USER->id);
 $quiz = get_remote_quiz_by_id($cm->instance);
 $quizobj = new quiz($quiz, $cm, $course);
+$preview = $quizobj->is_preview_user();
+//var_dump($preview);die;
 
 // This script should only ever be posted to, so set page URL to the view page.
 $PAGE->set_url($quizobj->view_remote_url());
@@ -102,7 +104,7 @@ if ($currentattemptid) {
 }
 
 $user = get_remote_mapping_user();
-$attemptremote = get_remote_quiz_start_attempt($quiz->id, $user[0]->id);
+$attemptremote = get_remote_quiz_start_attempt($quiz->id, $user[0]->id, $preview);
 if($attemptremote->errorcode == 'attemptstillinprogress'){
     print_error('attemptstillinprogress', 'quiz', $quizobj->view_url());
 }

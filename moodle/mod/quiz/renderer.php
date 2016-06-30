@@ -1004,13 +1004,13 @@ class mod_quiz_renderer extends plugin_renderer_base {
         }
 
         // Show number of attempts summary to those who can view reports.
-//        if (has_capability('mod/quiz:viewreports', $context)) {
-//            if ($strattemptnum = $this->quiz_attempt_summary_link_to_reports($quiz, $cm,
-//                $context)) {
-//                $output .= html_writer::tag('div', $strattemptnum,
-//                    array('class' => 'quizattemptcounts'));
-//            }
-//        }
+        if (has_capability('mod/quiz:viewreports', $context)) {
+            if ($strattemptnum = $this->quiz_attempt_summary_link_to_reports($quiz, $cm,
+                $context)) {
+                $output .= html_writer::tag('div', $strattemptnum,
+                    array('class' => 'quizattemptcounts'));
+            }
+        }
         return $output;
     }
 
