@@ -309,7 +309,6 @@ function save_remote_submission($assignmentid, $userid, $data){
             ));
     }
     if ($data->files_filemanager){
-        var_dump($assignmentid);die;
         $resp = moodle_webservice_client(
             array(
                 'domain' => HUB_URL,
