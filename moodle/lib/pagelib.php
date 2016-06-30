@@ -1014,8 +1014,7 @@ class moodle_page {
         if (!isset($cm->id) || !isset($cm->course)) {
             throw new coding_exception('Invalid $cm. It has to be instance of cm_info or record from the course_modules table.');
         }
-
-
+        
         if (!$this->_course || $this->_course->id != get_course_id_by_remote_id($cm->course)) {
             if (!$course) {
                 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);

@@ -136,7 +136,6 @@ function loadRemoteContent() {
     var datacontent = $('#module-content');
     var linkDelegate = [
         '.remote-link-action',
-        '.remote-lesson-button',
     ];
     var submitDelegate = [
         '.remote-form-action',
