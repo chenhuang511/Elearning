@@ -2517,7 +2517,7 @@ class local_mod_lesson_external extends external_api
 
         $pagecount = $DB->count_records('lesson_pages', array('lessonid' => $params['lessonid']));
 
-        if($pagecount) {
+        if(!$pagecount) {
             $pagecount = 0;
         }
 
