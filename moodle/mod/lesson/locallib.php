@@ -1705,7 +1705,7 @@ class lesson extends lesson_base
     public function has_pages()
     {
         global $DB;
-        $pagecount = $DB->count_records('lesson_pages', array('lessonid' => $this->properties->id));
+        $pagecount = get_remote_count_lesson_pages_by_lessonid($this->properties->id);
         return ($pagecount > 0);
     }
 
@@ -2029,7 +2029,7 @@ class lesson extends lesson_base
         $pages = $this->load_all_pages();
 
         if (!array_key_exists($pageid, $pages) || ($after != 0 && !array_key_exists($after, $pages))) {
-            print_error('cannotfindpages', 'lesson', "$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id");
+            print_error('cannotfindpages', 'lesson', "$CFG->wwwroot/mod/lesson/remote/api-edit.php?id=$cm->id");
         }
 
         $pagetomove = clone($pages[$pageid]);
@@ -2755,7 +2755,7 @@ abstract class lesson_page extends lesson_base
             } elseif ($jumpto == LESSON_CLUSTERJUMP) {
                 $jumptitle = get_string('clusterjump', 'lesson');
             } else {
-                if (!$jumptitle = $DB->get_field('lesson_pages', 'title', array('id' => $jumpto))) {
+                if (!$jumptitle = get_remote_field_lesson_pages_by_id($jumpto)) {
                     $jumptitle = '<strong>' . get_string('notdefined', 'lesson') . '</strong>';
                 }
             }

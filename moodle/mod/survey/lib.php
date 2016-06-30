@@ -379,11 +379,9 @@ function survey_get_user_answer($surveyid, $questionid, $userid)
 {
     global $DB;
 
-    return $DB->get_record_sql("SELECT sa.*
-                                  FROM {survey_answers} sa
-                                 WHERE sa.survey = ?
-                                       AND sa.question = ?
-                                       AND sa.userid = ?", array($surveyid, $questionid, $userid));
+    $answer = get_remote_survey_answers_by_surveyid_and_questionid_and_userid($surveyid, $questionid, $userid);
+
+    return $answer;
 }
 
 // MODULE FUNCTIONS ////////////////////////////////////////////////////////
