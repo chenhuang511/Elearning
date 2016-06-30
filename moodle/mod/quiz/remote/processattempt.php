@@ -58,6 +58,9 @@ if ($next) {
     $page = $thispage - 1;
 } else {
     $page = $thispage;
+    if ($thispage == -1) {
+        $page = 0;
+    }
 }
 if ($page == -1) {
     $nexturl = $attemptobj->summary_url();
