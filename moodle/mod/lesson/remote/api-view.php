@@ -275,8 +275,7 @@ if (empty($pageid)) {
 
     if ($attemptflag) {
         if (!$lesson->retake) {
-            $localcourse = $DB->get_record('course', array('remoteid' => $course->id), '*', MUST_EXIST);
-            $url = new moodle_url($CFG->wwwroot . '/my/?', array('id' => $localcourse->id));
+            $url = new moodle_url($CFG->wwwroot . '/my/?', array('id' => $course->id));
             $courselink = new single_button($url, get_string('returntocourse', 'lesson'), 'get');
             echo $lessonoutput->message(get_string("noretake", "lesson"), $courselink);
             exit();
@@ -600,9 +599,7 @@ if ($pageid != LESSON_EOL) {
         $lessoncontent .= $lesson->link_for_activitylink();
     }
 
-    $localcourse = $DB->get_record('course', array('remoteid' => $course->id), '*', MUST_EXIST);
-
-    $url = new moodle_url($CFG->wwwroot . '/my/?', array('id' => $localcourse->id));
+    $url = new moodle_url($CFG->wwwroot . '/my/?', array('id' => $course->id));
     $lessoncontent .= html_writer::link($url, get_string('returnto', 'lesson', format_string($course->fullname, true)), array('class' => 'centerpadded lessonbutton standardbutton'));
 
     if (has_capability('gradereport/user:view', context_course::instance($course->id))
