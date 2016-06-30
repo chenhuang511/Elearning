@@ -102,7 +102,7 @@ class lesson_page_type_endofbranch extends lesson_page {
     public function add_page_link($previd) {
         global $PAGE, $CFG;
         if ($previd != 0) {
-            $addurl = new moodle_url('/mod/lesson/editpage.php', array('id'=>$PAGE->cm->id, 'pageid'=>$previd, 'sesskey'=>sesskey(), 'qtype'=>LESSON_PAGE_ENDOFBRANCH));
+            $addurl = new moodle_url('/mod/lesson/remote/api-editpage.php', array('id'=>$PAGE->cm->id, 'pageid'=>$previd, 'sesskey'=>sesskey(), 'qtype'=>LESSON_PAGE_ENDOFBRANCH));
             return array('addurl'=>$addurl, 'type'=>LESSON_PAGE_ENDOFBRANCH, 'name'=>get_string('addanendofbranch', 'lesson'));
         }
         return false;
@@ -150,7 +150,7 @@ class lesson_add_page_form_endofbranch extends lesson_add_page_form_base {
         $timenow = time();
 
         // the new page is not the first page (end of branch always comes after an existing page)
-        if (!$page = $DB->get_record("lesson_pages", array("id" => $pageid))) {
+        if (!$page = get_remote_lesson_pages_by_id($pageid)) {
             print_error('cannotfindpagerecord', 'lesson');
         }
         // chain back up to find the (nearest branch table)
@@ -158,7 +158,7 @@ class lesson_add_page_form_endofbranch extends lesson_add_page_form_base {
         $btpageid = $btpage->id;
         while (($btpage->qtype != LESSON_PAGE_BRANCHTABLE) && ($btpage->prevpageid > 0)) {
             $btpageid = $btpage->prevpageid;
-            if (!$btpage = $DB->get_record("lesson_pages", array("id" => $btpageid))) {
+            if (!$btpage = get_remote_lesson_pages_by_id($btpageid)) {
                 print_error('cannotfindpagerecord', 'lesson');
             }
         }
@@ -191,6 +191,6 @@ class lesson_add_page_form_endofbranch extends lesson_add_page_form_base {
             $lesson->add_message(get_string('nobranchtablefound', 'lesson'));
         }
 
-        redirect($CFG->wwwroot."/mod/lesson/edit.php?id=".$PAGE->cm->id);
+        redirect($CFG->wwwroot."/mod/lesson/remote/api-edit.php?id=".$PAGE->cm->id);
     }
 }

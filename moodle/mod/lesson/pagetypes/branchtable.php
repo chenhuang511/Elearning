@@ -302,7 +302,7 @@ class lesson_page_type_branchtable extends lesson_page
     public function add_page_link($previd)
     {
         global $PAGE, $CFG;
-        $addurl = new moodle_url('/mod/lesson/editpage.php', array('id' => $PAGE->cm->id, 'pageid' => $previd, 'qtype' => LESSON_PAGE_BRANCHTABLE));
+        $addurl = new moodle_url('/mod/lesson/remote/api-editpage.php', array('id' => $PAGE->cm->id, 'pageid' => $previd, 'qtype' => LESSON_PAGE_BRANCHTABLE));
         return array('addurl' => $addurl, 'type' => LESSON_PAGE_BRANCHTABLE, 'name' => get_string('addabranchtable', 'lesson'));
     }
 

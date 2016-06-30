@@ -180,7 +180,7 @@ if (empty($pageid)) {
             $lesson->add_message(get_string('lessonnotready2', 'lesson')); // a nice message to the student
         } else {
             if (!get_remote_count_by_lessonid_and_userid('lesson_pages', $lesson->id)) {
-                redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id"); // no pages - redirect to add pages
+                redirect("$CFG->wwwroot/mod/lesson/remote/api-edit.php?id=$cm->id"); // no pages - redirect to add pages
             } else {
                 $lesson->add_message(get_string('lessonpagelinkingbroken', 'lesson'));  // ok, bad mojo
             }
