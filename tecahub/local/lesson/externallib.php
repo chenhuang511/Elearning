@@ -2497,49 +2497,41 @@ class local_mod_lesson_external extends external_api
        return self::get_lesson_pages_by_lessonid_returns();
     }
 
-    public static function set_field_lesson_pages_parameters() {
+    public static function get_count_lesson_pages_by_lessonid_parameters(){
         return new external_function_parameters(
             array(
-                'id' => new external_value(PARAM_INT, 'the id'),
-                'newfield' => new external_value(PARAM_RAW, 'the new field'),
-                'newvalue' => new external_value(PARAM_RAW, 'the new value')
+                'lessonid' => new external_value(PARAM_INT, 'the lesson id')
             )
         );
     }
 
-    public static function set_field_lesson_pages($id, $newfield, $newvalue) {
-
+    public static function get_count_lesson_pages_by_lessonid($lessonid) {
         global $DB;
-
         $warnings = array();
 
-        $params = array(
-            'id' => $id,
-            'newfield' => $newfield,
-            'newvalue' => $newvalue
-        );
-
-        $params = self::validate_parameters(self::set_field_lesson_pages(), $params);
+        $params = self::validate_parameters(self::get_count_lesson_pages_by_lessonid_parameters(), array(
+            'lessonid' => $lessonid
+        ));
 
         $result = array();
 
-        $transaction = $DB->start_delegated_transaction();
+        $pagecount = $DB->count_records('lesson_pages', array('lessonid' => $params['lessonid']));
 
-        $DB->set_field("lesson_pages", $params['newfield'], $params['newvalue'], array("id" => $params['id']));
+        if(!$pagecount) {
+            $pagecount = 0;
+        }
 
-        $transaction->allow_commit();
-
-        $result['status'] = true;
+        $result['pagecount'] = $pagecount;
         $result['warnings'] = $warnings;
 
         return $result;
     }
 
-    public static function set_field_lesson_pages_returns() {
+    public static function get_count_lesson_pages_by_lessonid_returns() {
         return new external_single_structure(
             array(
-                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
-                'warnings' => new external_warnings(),
+                'pagecount' => new external_value(PARAM_INT, 'count row'),
+                'warnings' => new external_warnings()
             )
         );
     }

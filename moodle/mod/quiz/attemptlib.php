@@ -902,6 +902,10 @@ class quiz_attempt {
      */
     public function is_own_attempt() {
         global $USER;
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $r_user = get_remote_mapping_user();
+            return $this->attempt->userid == $r_user[0]->id;
+        }
         return $this->attempt->userid == $USER->id;
     }
 

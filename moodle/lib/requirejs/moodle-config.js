@@ -1,4 +1,4 @@
-var require = {
+var require = (typeof require === 'function') ? require : {
     baseUrl : '[BASEURL]',
     // We only support AMD modules with an explicit define() statement.
     enforceDefine: true,

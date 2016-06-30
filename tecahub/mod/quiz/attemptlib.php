@@ -225,9 +225,9 @@ class quiz {
      * @return bool wether the current user is someone who previews the quiz,
      * rather than attempting it.
      */
-    public function is_preview_user() {
+    public function is_preview_user($userid = null) {
         if (is_null($this->ispreviewuser)) {
-            $this->ispreviewuser = has_capability('mod/quiz:preview', $this->context);
+            $this->ispreviewuser = has_capability('mod/quiz:preview', $this->context, $userid);
         }
         return $this->ispreviewuser;
     }

@@ -90,4 +90,12 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_quiz_count_attempt_summary' => array(
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'count_attempt_summary',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Show quiz number of attempts summary to those who can view report.",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 );
