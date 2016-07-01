@@ -1,0 +1,188 @@
+*{margin:0;padding: 0;}
+
+.thumb img.img-responsive {
+    margin: 0 auto;
+}
+
+.brand2 {
+    padding-top: 18px;
+}
+
+.logo a {
+    color: white;
+    font-family: 'open sans';
+    font-size: 16px;
+    text-decoration: none;
+}
+
+.logo {
+    margin-top: 60px;
+}
+
+.logo img.img-responsive {
+    width: 85px;
+    float: left;
+    margin-right: 10px;
+}
+
+.description {color: #656565;margin-left: 10px;margin-right: 7px;font-size: 15px;padding-bottom: 50px;}
+
+.coursename a {
+    color: #0072c6;
+}
+
+.coursename {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-family: 'open sans';
+    font-size: 16px;
+    margin-left: 10px;
+}
+
+.availablecourse {
+    border: 1px #BEBEBE solid;
+    border-bottom: 2px #126F9A solid;
+    margin-bottom: 20px;
+}
+
+.direction {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-family: 'open sans';
+    font-size: 16px;
+    color: #0072c6;
+    font-weight: 600;
+}
+
+.banner img.img-responsive {
+    width: 100%;
+}
+
+.container-fluid {
+    margin: 0;
+    padding: 0;
+}
+
+.container-fluid.footer {
+    margin-top: 30px;
+    background-color: #187cb2;
+    height: 200px;
+}
+
+.contact span {
+    font-weight: 400;
+    color: rgba(0,114,198,0.8);
+}
+
+i.fa.fa-envelope {
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+i.fa.fa-phone {
+    margin-left: 10px;
+    margin-right: 5px;
+}
+
+.contact {
+    color: #0072c6;
+    font-family: 'open sans';
+    margin-top: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.login {
+    margin-top: 14px;
+}
+
+.login a {
+    color: white;
+    font-family: 'open sans';
+    font-size: 15px;
+    text-decoration: none;
+}
+
+.register a {
+    color: white;
+    text-decoration: none;
+    font-family: 'open sans';
+    font-size: 15px;
+}
+
+.register {
+    float: left;
+    margin-right: 10px;
+    padding-right: 10px;
+    border-right: 1px rgba(255,255,255,0.3) solid;
+    margin-top: 14px;
+}
+
+.brand a {
+    color: white;
+    text-decoration: none;
+    font-family: 'open sans';
+    font-weight: 600;
+    font-size: 1em;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+}
+
+.container-fluid.header {
+    background: #0072c6;
+}
+
+.brand {
+    float: left;
+    margin-top: 14px;
+    margin-right: 10px;
+    padding-right: 10px;
+    padding-bottom: 14px;
+}
+
+input[type=text] {
+    width: 27%;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    font-size: 13px;
+    background-color: white;
+    padding: 2px 10px 2px 10px;
+    -webkit-transition: width 0.4s ease-in-out;
+    transition: width 0.4s ease-in-out;
+    margin-top:13px;
+    font-family:'open sans';
+}
+
+@media only screen and (max-width: 992px) {
+    .login {
+		padding-top:14px;
+		margin-top:0px;
+	}
+	.brand a {
+		font-size:13px;
+		
+	}
+	input[type=text] {
+		width: 32%;
+	}
+}
+
+@media only screen and (max-width: 768px) {
+    .login {
+		padding-top:14px;
+		margin-top:0px;
+		margin-bottom:10px;
+	}
+	.brand a {
+		font-size:20px;
+				
+	}
+	input[type=text] {
+		width: 100%;
+	}
+	.brand {
+		padding-bottom:0px;
+	}
+}
+
