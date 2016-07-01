@@ -3045,6 +3045,20 @@ class assign {
     }
 
     /**
+     * Load email user for send to hub.
+     * @param userid
+     * 
+     * @return email for userid
+     */
+    public function get_email_from_userid($userid){
+        global $DB;
+        
+        $user = $DB->get_record('user', array('id' => $userid));
+        
+        return $user->email;
+    }
+    
+    /**
      * Load the submission object for a particular user, optionally creating it if required.
      *
      * For team assignments there are 2 submissions - the student submission and the team submission
@@ -3058,13 +3072,9 @@ class assign {
      */
     public function get_user_submission($userid, $create, $attemptnumber=-1) {
         global $DB, $USER;
-
         if (!$userid) {
             $userid = $USER->id;
         }
-
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB)
-            $ruserid = get_remote_mapping_user();
 
         // If the userid is not null then use userid.
         $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid, 'groupid'=>0);
@@ -3078,8 +3088,10 @@ class assign {
         if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
             $submissions = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', '*', 0, 1);
         }
-        else{
-            $params['userid'] = $ruserid[0]->id;
+        else if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            unset($params['userid']);
+            $params['useremail'] = $this->get_email_from_userid($userid);
+            
             $submissions = get_submission_by_assignid_userid_groupid($params);
         }
 
@@ -3113,8 +3125,9 @@ class assign {
                 if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
                     $result = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', 'attemptnumber', 0, 1);
                 }
-                else{
-                    $params['userid'] = $ruserid[0]->id;
+                else if(MOODLE_RUN_MODE ===MOODLE_MODE_HUB){
+                    unset($params['userid']);
+                    $params['useremail'] = $this->get_email_from_userid($userid);
                     $result = get_attemptnumber_by_assignid_userid_groupid($params);
                 }
                 $latestsubmission = null;
@@ -3130,7 +3143,7 @@ class assign {
                 if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
                     $DB->set_field('assign_submission', 'latest', 0, $params);
                 }
-                else{
+                else if(MOODLE_RUN_MODE ===MOODLE_MODE_HUB){
                     set_submission_lastest($params);
                 }
             }
@@ -3138,8 +3151,8 @@ class assign {
                 $sid = $DB->insert_record('assign_submission', $submission);
                 return $DB->get_record('assign_submission', array('id' => $sid));
             }
-            else{
-                $submission->userid = $ruserid[0]->id;
+            else if(MOODLE_RUN_MODE ===MOODLE_MODE_HUB){
+                $submission->useremail = $this->get_email_from_userid($userid);
                 $sid = create_remote_submission($submission);
                 return get_remote_submission_by_id($sid);
             }
@@ -3180,9 +3193,10 @@ class assign {
         if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
             $flags = $DB->get_record('assign_user_flags', $params);
         }
-        else{
-            $ruser = get_remote_mapping_user();
-            $params['userid'] = $ruser[0]->id;
+        else if(MOODLE_RUN_MODE ===MOODLE_MODE_HUB){
+            unset($params['userid']);
+            $params['useremail'] = $this->get_email_from_userid($userid);
+            
             $flags = get_user_flags_by_assignid_userid($params);
         }
 
@@ -3219,14 +3233,14 @@ class assign {
      * @return stdClass The grade record
      */
     public function get_user_grade($userid, $create, $attemptnumber=-1) {
-        global $DB, $USER;
+        global $DB, $USER, $CFG;
 
         // If the userid is not null then use userid.
         if (!$userid) {
             $userid = $USER->id;
         }
         $submission = null;
-
+        
         $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid);
         if ($attemptnumber < 0 || $create) {
             // Make sure this grade matches the latest submission attempt.
@@ -3243,8 +3257,26 @@ class assign {
         if ($attemptnumber >= 0) {
             $params['attemptnumber'] = $attemptnumber;
         }
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $grades = $DB->get_records('assign_grades', $params, 'attemptnumber DESC', '*', 0, 1);
+        }
+        else if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            unset($params['userid']);
+            $params['useremail'] = $this->get_email_from_userid($userid);
+            
+            $grades = get_assign_grades_by_assignid_userid($params);
+            $adminid = reset(explode(',', $CFG->siteadmins));
 
-        $grades = $DB->get_records('assign_grades', $params, 'attemptnumber DESC', '*', 0, 1);
+            if ($grades){
+                foreach ($grades as $grade) {
+                    if (isset($grade->grader)) {
+                        $grader = $DB->get_record('user', array('email' => $grade->grader));
+                        // Check if not found on host then return admin host
+                        !$grader ? $grade->grader = (int)$adminid : $grade->grader = $grader->id;
+                    }
+                }
+            }
+        }
 
         if ($grades) {
             return reset($grades);
@@ -3267,8 +3299,20 @@ class assign {
             if ($attemptnumber >= 0) {
                 $grade->attemptnumber = $attemptnumber;
             }
-
-            $gid = $DB->insert_record('assign_grades', $grade);
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $gid = $DB->insert_record('assign_grades', $grade);
+            }
+            else if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+                $grade->useremail = $this->get_email_from_userid($userid);
+                $grade->grader = get_remote_mapping_user()[0]->id;
+                $gid = create_remote_grade($grade);
+                
+                // After create grade on hub return id for student and teacher
+                unset($grade->useremail);
+                $grade->userid = $userid;
+                $grade->grader = $USER->id;
+            }
+            
             $grade->id = $gid;
             return $grade;
         }
@@ -4447,14 +4491,20 @@ class assign {
                                                                         $data));
         }
         $o = '';
-        $o .= $this->get_renderer()->header();
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $o .= $this->get_renderer()->header();
+        }
+
         $submitforgradingpage = new assign_submit_for_grading_page($notifications,
                                                                    $this->get_course_module()->id,
                                                                    $mform);
         $o .= $this->get_renderer()->render($submitforgradingpage);
-        $o .= $this->view_footer();
 
-        \mod_assign\event\submission_confirmation_form_viewed::create_from_assign($this)->trigger();
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $o .= $this->view_footer();
+            
+            \mod_assign\event\submission_confirmation_form_viewed::create_from_assign($this)->trigger();
+        }
 
         return $o;
     }
@@ -4520,7 +4570,7 @@ class assign {
             $remotesubmission = get_remote_get_submission_status($instance->id, $ruser['0']->id)->lastattempt;
             unset($remotesubmission->submission->plugins);
             $submissionplugins = $this->get_submission_plugins();
-
+            
             $submissionstatus = new assign_submission_status($instance->allowsubmissionsfromdate,
                 $instance->alwaysshowdescription,
                 $remotesubmission->submission,
@@ -4618,9 +4668,11 @@ class assign {
             if (!$feedback){
                 return;
             }
+            $adminid = reset(explode(',', $CFG->siteadmins));
+
             $grader = $DB->get_record('user', array('email' => $feedback->grade->grader));
             if(!$grader)
-                $grader = $DB->get_record('user', array('id' => (int)$CFG->siteadmins));
+                $grader = $DB->get_record('user', array('id' => (int)$adminid));
 
             unset($feedback->plugins);
 

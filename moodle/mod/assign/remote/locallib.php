@@ -210,6 +210,28 @@ function get_submission_by_assignid_userid_groupid($params){
     return $results;
 }
 
+function get_assign_grades_by_assignid_userid($params){
+    
+    if(!isset($params['attemptnumber']))
+        $params['attemptnumber'] = 0;
+
+    $results = array();
+
+    $grades =  moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_get_grades_by_assignid_userid',
+            'params' => $params
+        ), false
+    );
+
+    foreach ($grades->grades as $grade){
+        $results[$grade->id] = $grade;
+    }
+    return $results;
+}
+
 function get_attemptnumber_by_assignid_userid_groupid($params){
     
     $attemptnumbers =  moodle_webservice_client(
@@ -263,7 +285,7 @@ function create_remote_submission($submission){
             'function_name' => 'local_mod_assign_create_submission',
             'params' => array(
                 'assignment' => $submission->assignment,
-                'userid' => $submission->userid,
+                'useremail' => $submission->useremail,
                 'timecreated' => $submission->timecreated,
                 'timemodified' => $submission->timemodified,
                 'status' => $submission->status,
@@ -274,6 +296,30 @@ function create_remote_submission($submission){
     );
 
     return $resp->sid;
+}
+
+function create_remote_grade($grade){
+    if(!isset($grade->attemptnumber))
+        $grade->attemptnumber = 0;
+
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_create_grade',
+            'params' => array(
+                'assignment' => $grade->assignment,
+                'useremail' => $grade->useremail,
+                'timecreated' => $grade->timecreated,
+                'timemodified' => $grade->timemodified,
+                'grader' => $grade->grader,
+                'grade' => $grade->grade,
+                'attemptnumber' => $grade->attemptnumber,
+            )
+        ), false
+    );
+
+    return $resp->gid;
 }
 
 function get_remote_submission_by_id($sid){
