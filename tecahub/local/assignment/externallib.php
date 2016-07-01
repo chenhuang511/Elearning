@@ -1077,14 +1077,14 @@ class local_mod_assign_external extends external_api {
         return new external_function_parameters(
             array(
                 'assignment' => new external_value(PARAM_INT, 'asssign ID'),
-                'userid' => new external_value(PARAM_INT, 'user ID'),
+                'useremail' => new external_value(PARAM_RAW, 'user email'),
                 'groupid' => new external_value(PARAM_INT, 'group ID'),
                 'attemptnumber' => new external_value(PARAM_INT, 'attempnumber')
             )
         );
     }
 
-    public static function get_submission_by_assignid_userid_groupid($assignment, $userid, $groupid, $attempnumber){
+    public static function get_submission_by_assignid_userid_groupid($assignment, $useremail, $groupid, $attempnumber){
         global $DB;
 
         $warnings = array();
@@ -1095,7 +1095,7 @@ class local_mod_assign_external extends external_api {
         $params = self::validate_parameters(self::get_submission_by_assignid_userid_groupid_parameters(),
             array(
                 'assignment' => $assignment,
-                'userid' => $userid,
+                'useremail' => $useremail,
                 'groupid' => $groupid,
                 'attemptnumber' => $attempnumber
             )
@@ -1103,9 +1103,11 @@ class local_mod_assign_external extends external_api {
         if (!$params["attemptnumber"]){
             unset($params["attemptnumber"]);
         }
+        
+        $params['userid'] = self::get_userid_from_email($params['useremail']);
+        unset($params["useremail"]);
 
         $result['submissions'] = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', '*', 0, 1);
-        
         $result['warnings'] = $warnings;       
         
         return $result;
@@ -1134,18 +1136,33 @@ class local_mod_assign_external extends external_api {
         );
     }
 
+    /**
+     * Load userid from email.
+     * @param $useremail email user
+     *
+     * @return userid
+     */
+    private static function get_userid_from_email($useremail){
+        global $DB;
+
+        $user = $DB->get_record('user', array('email' => $useremail));
+
+        return $user->id;
+    }
+
+
     //MinhND: get attemptnumber in DB assign_submission
     public static function get_attemptnumber_by_assignid_userid_groupid_parameters(){
         return new external_function_parameters(
             array(
                 'assignment' => new external_value(PARAM_INT, 'asssign ID'),
-                'userid' => new external_value(PARAM_INT, 'user ID'),
+                'useremail' => new external_value(PARAM_RAW, 'user email'),
                 'groupid' => new external_value(PARAM_INT, 'group ID'),
             )
         );
     }
 
-    public static function get_attemptnumber_by_assignid_userid_groupid($assignment, $userid, $groupid){
+    public static function get_attemptnumber_by_assignid_userid_groupid($assignment, $useremail, $groupid){
         global $DB;
 
         $warnings = array();
@@ -1156,13 +1173,16 @@ class local_mod_assign_external extends external_api {
         $params = self::validate_parameters(self::get_attemptnumber_by_assignid_userid_groupid_parameters(),
             array(
                 'assignment' => $assignment,
-                'userid' => $userid,
+                'useremail' => $useremail,
                 'groupid' => $groupid,
             )
         );
         if (!$params["attemptnumber"]){
             unset($params["attemptnumber"]);
         }
+
+        $params['userid'] = self::get_userid_from_email($params['useremail']);
+        unset($params["useremail"]);
 
         $result['result'] = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', 'attemptnumber', 0, 1);
 
@@ -1191,12 +1211,12 @@ class local_mod_assign_external extends external_api {
         return new external_function_parameters(
             array(
                 'assignment' => new external_value(PARAM_INT, 'asssign ID'),
-                'userid' => new external_value(PARAM_INT, 'user ID'),
+                'useremail' => new external_value(PARAM_RAW, 'user ID'),
             )
         );
     }
     
-    public static function get_user_flags_by_assignid_userid($assignment, $userid){
+    public static function get_user_flags_by_assignid_userid($assignment, $useremail){
         global $DB;
 
         $warnings = array();
@@ -1208,9 +1228,12 @@ class local_mod_assign_external extends external_api {
         $params = self::validate_parameters(self::get_user_flags_by_assignid_userid_parameters(),
             array(
                 'assignment' => $assignment,
-                'userid' => $userid,
+                'useremail' => $useremail,
             )
         );
+
+        $params['userid'] = self::get_userid_from_email($params['useremail']);
+        unset($params["useremail"]);
 
         $result['userflags'] = $DB->get_record('assign_user_flags', $params);
         $result['warnings'] = $warnings;
@@ -1243,13 +1266,13 @@ class local_mod_assign_external extends external_api {
         return new external_function_parameters(
             array(
                 'assignment' => new external_value(PARAM_INT, 'asssign ID'),
-                'userid' => new external_value(PARAM_INT, 'user ID'),
+                'useremail' => new external_value(PARAM_RAW, 'user email'),
                 'groupid' => new external_value(PARAM_INT, 'group ID'),
             )
         );
     }
 
-    public static function set_submission_lastest($assignment, $userid, $groupid){
+    public static function set_submission_lastest($assignment, $useremail, $groupid){
         global $DB;
 
         $warnings = array();
@@ -1260,10 +1283,13 @@ class local_mod_assign_external extends external_api {
         $params = self::validate_parameters(self::set_submission_lastest_parameters(),
             array(
                 'assignment' => $assignment,
-                'userid' => $userid,
+                'useremail' => $useremail,
                 'groupid' => $groupid,
             )
         );
+
+        $params['userid'] = self::get_userid_from_email($params['useremail']);
+        unset($params["useremail"]);
 
         $result['result'] = $DB->set_field('assign_submission', 'latest', 0, $params);
 
@@ -1286,7 +1312,7 @@ class local_mod_assign_external extends external_api {
         return new external_function_parameters(
             array(
                 'assignment' => new external_value(PARAM_INT, 'asssign ID'),
-                'userid' => new external_value(PARAM_INT, 'user ID'),
+                'useremail' => new external_value(PARAM_RAW, 'user email'),
                 'timecreated' => new external_value(PARAM_INT, 'time created'),
                 'timemodified' => new external_value(PARAM_INT, 'time modified'),
                 'status' => new external_value(PARAM_RAW, 'status'),
@@ -1296,7 +1322,7 @@ class local_mod_assign_external extends external_api {
         );
     }
 
-    public static function create_submission($assignment, $userid, $timecreated, $timemodified, $status, $attemptnumber, $latest){
+    public static function create_submission($assignment, $useremail, $timecreated, $timemodified, $status, $attemptnumber, $latest){
         global $DB;
 
         $warnings = array();
@@ -1306,13 +1332,14 @@ class local_mod_assign_external extends external_api {
         //Validate param
         $params = self::validate_parameters(self::create_submission_parameters(),array(
             'assignment' => $assignment,
-            'userid' => $userid,
+            'useremail' => $useremail,
             'timecreated' => $timecreated,
             'timemodified' => $timemodified,
             'status' => $status,
             'attemptnumber' => $attemptnumber,
             'latest' => $latest,
         ));
+        $params['userid'] = self::get_userid_from_email($params['useremail']);
 
         $submission = new stdClass();
         $submission->assignment   = $params['assignment'];
@@ -1804,5 +1831,175 @@ class local_mod_assign_external extends external_api {
         );
     }
 
+    /**
+     * Describes the parameters for get grades by assignid & userid
+     * @return external_external_function_parameters
+     */
+    public static function get_grades_by_assignid_userid_parameters(){
+        return new external_function_parameters(
+            array(
+                'assignment' => new external_value(PARAM_INT, 'The assignment id to operate on'),
+                'useremail' => new external_value(PARAM_RAW, 'The user email'),
+                'attemptnumber' => new external_value(PARAM_INT, 'The attemptnumber')
+            )
+        );
+    }
+
+    /**
+     * Returns information about a list array assign grades.
+     *
+     * @param int $assignmentid assignment id
+     * @param int $userid user id
+     * @param int $attemptnumber attemp number
+     * @return array of warnings and grades information
+     * @throws required_capability_exception
+     */
+    public static function get_grades_by_assignid_userid($assignmentid, $useremail, $attemptnumber){
+        global $DB;
+
+        $warnings = array();
+
+        $result = array();
+
+        //Validate param
+        $params = self::validate_parameters(self::get_grades_by_assignid_userid_parameters(),
+            array(
+                'assignment' => $assignmentid,
+                'useremail' => $useremail,
+                'attemptnumber' => $attemptnumber,
+            )
+        );
+        if (!$params["attemptnumber"]){
+            unset($params["attemptnumber"]);
+        }
+
+        $params['userid'] = self::get_userid_from_email($params['useremail']);
+        unset($params["useremail"]);
+
+        $result['grades'] = $DB->get_records('assign_grades', $params, 'attemptnumber DESC', '*', 0, 1);
+        
+        if ($result['grades']){
+            foreach ($result['grades'] as $grade) {
+                if (isset($grade->grader)) {
+                    $grader = $DB->get_record('user', array('id' => $grade->grader));
+                    $grade->grader = $grader->email;
+                }
+            }
+        }
+
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    /**
+     * Describes the get_grades_by_assignid_userid return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function get_grades_by_assignid_userid_returns(){
+        return new external_single_structure(
+            array(
+                'grades' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'assign user flags ID'),
+                            'assignment' => new external_value(PARAM_INT, 'assignment ID'),
+                            'userid' => new external_value(PARAM_INT, 'user ID'),
+                            'timecreated' => new external_value(PARAM_INT, 'time created'),
+                            'timemodified' => new external_value(PARAM_INT, 'time modified'),
+                            'grader' => new external_value(PARAM_RAW, 'email grader'),
+                            'grade' => new external_value(PARAM_RAW, 'grade number'),
+                            'attemptnumber' => new external_value(PARAM_INT, 'attemptnumber'),
+                        )
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    /**
+     * Describes the parameters for create grade
+     * @return external_external_function_parameters
+     */
+    public static function create_grade_parameters(){
+        return new external_function_parameters(
+            array(
+                'assignment' => new external_value(PARAM_INT, 'asssign ID'),
+                'useremail' => new external_value(PARAM_RAW, ' user email'),
+                'timecreated' => new external_value(PARAM_INT, 'time created'),
+                'timemodified' => new external_value(PARAM_INT, 'time modified'),
+                'grader' => new external_value(PARAM_INT, 'grader id'),
+                'grade' => new external_value(PARAM_INT, 'grade score'),
+                'attemptnumber' => new external_value(PARAM_INT, 'attempnumber'),
+            )
+        );
+    }
+
+    /**
+     * Returns assign grade id.
+     *
+     * @param int $assignmentid assignment id
+     * @param int $studentuser email user
+     * @param int $timecreated time created
+     * @param int $timemodified time modified
+     * @param int $grader grader id
+     * @param int $grade number score
+     * @param int $attemptnumber attemp number
+     * @return idnumber of assign grade just created
+     */
+    public static function create_grade($assignment, $useremail, $timecreated, $timemodified, $grader, $grade, $attemptnumber){
+        global $DB;
+
+        $warnings = array();
+
+        $result = array();
+
+        //Validate param
+        $params = self::validate_parameters(self::create_grade_parameters(),array(
+            'assignment' => $assignment,
+            'useremail' => $useremail,
+            'timecreated' => $timecreated,
+            'timemodified' => $timemodified,
+            'grader' => $grader,
+            'grade' => $grade,
+            'attemptnumber' => $attemptnumber,
+        ));
+        $userid = $DB->get_record('user', array('email' => $params['studentuser']))->id;
+
+        $params['userid'] = self::get_userid_from_email($params['useremail']);
+
+        $grade = new stdClass();
+        $grade->assignment   = $params['assignment'];
+        $grade->userid       = $params['userid'];
+        $grade->timecreated = $params['timecreated'];
+        $grade->timemodified = $params['timemodified'];
+        $grade->grader = $params['grader'];
+        $grade->grade = $params['grade'];
+        $grade->attemptnumber = $params['attemptnumber'];
+
+        $result['gid'] = $DB->insert_record('assign_grades', $grade);
+
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    /**
+     * Describes the get_grades_by_assignid_userid return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function create_grade_returns(){
+        return new external_single_structure(
+            array(
+                'gid' => new external_value(PARAM_INT, 'assign grade ID'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 
 }

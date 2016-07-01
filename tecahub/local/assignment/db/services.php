@@ -178,5 +178,21 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_assign_get_grades_by_assignid_userid' => array(
+		'classname'	  => 'local_mod_assign_external',
+		'methodname'  => 'get_grades_by_assignid_userid',
+		'classpath'	  => 'local/assignment/externallib.php',
+		'description' => "Get assign grade",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_assign_create_grade' => array(
+		'classname'	  => 'local_mod_assign_external',
+		'methodname'  => 'create_grade',
+		'classpath'	  => 'local/assignment/externallib.php',
+		'description' => "Create assign grade",
+		'type'		  => 'write',
+		'ajax'		  => true
+	),
 );
 
