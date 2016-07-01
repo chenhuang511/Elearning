@@ -100,14 +100,9 @@ class info_module extends info {
         }
 
         // Apply section filtering first.
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
-            $section = $this->cm->get_modinfo()->get_section_info(
-                $this->cm->sectionnum, MUST_EXIST);
-        } else {
-            // use section instead sectionnum
-            $section = $this->cm->get_modinfo()->get_section_info(
-                $this->cm->section, MUST_EXIST);
-        }
+        $section = $this->cm->get_modinfo()->get_section_info(
+            $this->cm->sectionnum, MUST_EXIST);
+
         $sectioninfo = new info_section($section);
         $filtered = $sectioninfo->filter_user_list($users);
 
