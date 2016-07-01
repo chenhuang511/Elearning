@@ -126,7 +126,7 @@ function lesson_update_events($lesson, $override = null) {
     if (empty($override)) {
         // We are updating the primary settings for the lesson, so we
         // need to add all the overrides.
-        $overrides = $DB->get_records('lesson_overrides', array('lessonid' => $lesson->id));
+        $overrides = get_remote_lesson_overrides_by_lessonid($lesson->id);
         // As well as the original lesson (empty override).
         $overrides[] = new stdClass();
     } else {
@@ -240,11 +240,11 @@ function lesson_refresh_events($courseid = 0) {
     global $DB;
 
     if ($courseid == 0) {
-        if (!$lessons = $DB->get_records('lessons')) {
+        if (!$lessons = get_remote_list_lesson_by_courseid(0)) {
             return true;
         }
     } else {
-        if (!$lessons = $DB->get_records('lesson', array('course' => $courseid))) {
+        if (!$lessons = get_remote_list_lesson_by_courseid($courseid)) {
             return true;
         }
     }
@@ -269,7 +269,7 @@ function lesson_delete_instance($id) {
     global $DB, $CFG;
     require_once($CFG->dirroot . '/mod/lesson/locallib.php');
 
-    $lesson = $DB->get_record("lesson", array("id"=>$id), '*', MUST_EXIST);
+    $lesson = get_remote_lesson_by_id($id);
     $lesson = new lesson($lesson);
     return $lesson->delete();
 }
@@ -1110,8 +1110,7 @@ function lesson_get_completion_state($course, $cm, $userid, $type) {
     global $CFG, $DB;
 
     // Get lesson details.
-    $lesson = $DB->get_record('lesson', array('id' => $cm->instance), '*',
-            MUST_EXIST);
+    $lesson = get_remote_lesson_by_id($cm->instance);
 
     $result = $type; // Default return value.
     // If completion option is enabled, evaluate it and return true/false.
@@ -1125,12 +1124,7 @@ function lesson_get_completion_state($course, $cm, $userid, $type) {
         }
     }
     if ($lesson->completiontimespent != 0) {
-        $duration = $DB->get_field_sql(
-                        "SELECT SUM(lessontime - starttime)
-                               FROM {lesson_timer}
-                              WHERE lessonid = :lessonid
-                                AND userid = :userid",
-                        array('userid' => $userid, 'lessonid' => $lesson->id));
+        $duration = get_remote_duration_lesson_timer_by_lessonid_and_userid($lesson->id,$userid);
         if (!$duration) {
             $duration = 0;
         }
@@ -1265,7 +1259,7 @@ function lesson_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
         return false;
     }
 
-    if (!$lesson = $DB->get_record('lesson', array('id'=>$cm->instance))) {
+    if (!$lesson = get_remote_lesson_by_id($cm->instance)) {
         return false;
     }
 
@@ -1273,21 +1267,21 @@ function lesson_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
 
     if ($filearea === 'page_contents') {
         $pageid = (int)array_shift($args);
-        if (!$page = $DB->get_record('lesson_pages', array('id'=>$pageid))) {
+        if (!$page = get_remote_lesson_pages_by_id($pageid)) {
             return false;
         }
         $fullpath = "/$context->id/mod_lesson/$filearea/$pageid/".implode('/', $args);
 
     } else if ($filearea === 'page_answers' || $filearea === 'page_responses') {
         $itemid = (int)array_shift($args);
-        if (!$pageanswers = $DB->get_record('lesson_answers', array('id' => $itemid))) {
+        if (!$pageanswers = get_remote_lesson_answers_by_id($itemid)) {
             return false;
         }
         $fullpath = "/$context->id/mod_lesson/$filearea/$itemid/".implode('/', $args);
 
     } else if ($filearea === 'essay_responses') {
         $itemid = (int)array_shift($args);
-        if (!$attempt = $DB->get_record('lesson_attempts', array('id' => $itemid))) {
+        if (!$attempt = get_remote_lesson_attempts_by_id($itemid)) {
             return false;
         }
         $fullpath = "/$context->id/mod_lesson/$filearea/$itemid/".implode('/', $args);

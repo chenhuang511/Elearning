@@ -27,10 +27,10 @@ require_once(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->dirroot . '/lib/remote/lib.php');
 require_once($CFG->dirroot . '/course/remote/locallib.php');
 require_once($CFG->dirroot . '/mod/lesson/remote/locallib.php');
-require_once($CFG->dirroot.'/mod/lesson/locallib.php');
-require_once($CFG->dirroot.'/mod/lesson/pagetypes/branchtable.php'); // Needed for constant.
+require_once($CFG->dirroot . '/mod/lesson/locallib.php');
+require_once($CFG->dirroot . '/mod/lesson/pagetypes/branchtable.php'); // Needed for constant.
 
-$id     = required_param('id', PARAM_INT);    // Course Module ID
+$id = required_param('id', PARAM_INT);    // Course Module ID
 $pageid = optional_param('pageid', null, PARAM_INT);    // Lesson Page ID
 $action = optional_param('action', 'reportoverview', PARAM_ALPHA);  // action to take
 $nothingtodisplay = false;
@@ -46,7 +46,7 @@ $currentgroup = groups_get_activity_group($cm, true);
 $context = context_module::instance($cm->id);
 require_capability('mod/lesson:viewreports', $context);
 
-$url = new moodle_url('/mod/lesson/remote/api-report.php', array('id'=>$id));
+$url = new moodle_url('/mod/lesson/remote/api-report.php', array('id' => $id));
 $url->param('action', $action);
 if ($pageid !== null) {
     $url->param('pageid', $pageid);
@@ -77,7 +77,7 @@ if ($action === 'delete') {
                     $try -= $modifier;
 
                     /// Clean up the timer table by removing using the order - this is silly, it should be linked to specific attempt (skodak)
-                    $params = array ("userid" => $userid, "lessonid" => $lesson->id);
+                    $params = array("userid" => $userid, "lessonid" => $lesson->id);
                     $timers = $DB->get_records_sql("SELECT id FROM {lesson_timer}
                                                      WHERE userid = :userid AND lessonid = :lessonid
                                                   ORDER BY starttime", $params, $try, 1);
@@ -112,20 +112,20 @@ if ($action === 'delete') {
             }
         }
     }
-    redirect(new moodle_url($PAGE->url, array('action'=>'reportoverview')));
+    redirect(new moodle_url($PAGE->url, array('action' => 'reportoverview')));
 
 } else if ($action === 'reportoverview') {
     /**************************************************************************
-    this action is for default view and overview view
+     * this action is for default view and overview view
      **************************************************************************/
 
     // Count the number of branch and question pages in this lesson.
-    $branchcount = $DB->count_records('lesson_pages', array('lessonid' => $lesson->id, 'qtype' => LESSON_PAGE_BRANCHTABLE));
-    $questioncount = ($DB->count_records('lesson_pages', array('lessonid' => $lesson->id)) - $branchcount);
+    $branchcount = get_remote_count_lesson_pages_by_lessonid($lesson->id, LESSON_PAGE_BRANCHTABLE);
+    $questioncount = (intval(get_remote_count_lesson_pages_by_lessonid($lesson->id, 0)) - $branchcount);
 
     // Only load students if there attempts for this lesson.
-    $attempts = $DB->record_exists('lesson_attempts', array('lessonid' => $lesson->id));
-    $branches = $DB->record_exists('lesson_branch', array('lessonid' => $lesson->id));
+    $attempts = check_remote_record_exists('lesson_attempts', 'lessonid', $lesson->id);
+    $branches = check_remote_record_exists('lesson_branch', 'lessonid', $lesson->id);
     if ($attempts or $branches) {
         list($esql, $params) = get_enrolled_sql($context, '', $currentgroup, true);
         list($sort, $sortparams) = users_order_by_sql('u');
@@ -162,11 +162,11 @@ if ($action === 'delete') {
         exit();
     }
 
-    if (! $grades = $DB->get_records('lesson_grades', array('lessonid' => $lesson->id), 'completed')) {
+    if (!$grades = $DB->get_records('lesson_grades', array('lessonid' => $lesson->id), 'completed')) {
         $grades = array();
     }
 
-    if (! $times = $DB->get_records('lesson_timer', array('lessonid' => $lesson->id), 'starttime')) {
+    if (!$times = $DB->get_records('lesson_timer', array('lessonid' => $lesson->id), 'starttime')) {
         $times = array();
     }
 
@@ -175,7 +175,7 @@ if ($action === 'delete') {
 
     $course_context = context_course::instance($course->id);
     if (has_capability('gradereport/grader:view', $course_context) && has_capability('moodle/grade:viewall', $course_context)) {
-        $seeallgradeslink = new moodle_url('/grade/report/grader/index.php', array('id'=>$course->id));
+        $seeallgradeslink = new moodle_url('/grade/report/grader/index.php', array('id' => $course->id));
         $seeallgradeslink = html_writer::link($seeallgradeslink, get_string('seeallcoursegrades', 'grades'));
         echo $OUTPUT->box($seeallgradeslink, 'allcoursegrades');
     }
@@ -195,7 +195,7 @@ if ($action === 'delete') {
             $eol = false;
 
             // search for the grade record for this try. if not there, the nulls defined above will be used.
-            foreach($grades as $grade) {
+            foreach ($grades as $grade) {
                 // check to see if the grade matches the correct user
                 if ($grade->userid == $attempt->userid) {
                     // see if n is = to the retry
@@ -209,7 +209,7 @@ if ($action === 'delete') {
             }
             $n = 0;
             // search for the time record for this try. if not there, the nulls defined above will be used.
-            foreach($times as $time) {
+            foreach ($times as $time) {
                 // check to see if the grade matches the correct user
                 if ($time->userid == $attempt->userid) {
                     // see if n is = to the retry
@@ -226,7 +226,7 @@ if ($action === 'delete') {
 
             // build up the array.
             // this array represents each student and all of their tries at the lesson
-            $studentdata[$attempt->userid][$attempt->retry] = array( "timestart" => $timestart,
+            $studentdata[$attempt->userid][$attempt->retry] = array("timestart" => $timestart,
                 "timeend" => $timeend,
                 "grade" => $usergrade,
                 "end" => $eol,
@@ -264,7 +264,7 @@ if ($action === 'delete') {
 
             // Build up the array.
             // This array represents each student and all of their tries at the lesson.
-            $studentdata[$branch->userid][$branch->retry] = array( "timestart" => $timestart,
+            $studentdata[$branch->userid][$branch->retry] = array("timestart" => $timestart,
                 "timeend" => $timeend,
                 "grade" => $usergrade,
                 "end" => $eol,
@@ -284,12 +284,12 @@ if ($action === 'delete') {
     }
     // set all the stats variables
     $numofattempts = 0;
-    $avescore      = 0;
-    $avetime       = 0;
-    $highscore     = null;
-    $lowscore      = null;
-    $hightime      = null;
-    $lowtime       = null;
+    $avescore = 0;
+    $avetime = 0;
+    $highscore = null;
+    $lowscore = null;
+    $hightime = null;
+    $lowtime = null;
 
     $table = new html_table();
 
@@ -320,36 +320,36 @@ if ($action === 'delete') {
             foreach ($tries as $try) {
                 // start to build up the checkbox and link
                 if (has_capability('mod/lesson:edit', $context)) {
-                    $temp = '<input type="checkbox" id="attempts" name="attempts['.$try['userid'].']['.$try['try'].']" /> ';
+                    $temp = '<input type="checkbox" id="attempts" name="attempts[' . $try['userid'] . '][' . $try['try'] . ']" /> ';
                 } else {
                     $temp = '';
                 }
 
-                $temp .= "<a href=\"report.php?id=$cm->id&amp;action=reportdetail&amp;userid=".$try['userid']
-                    .'&amp;try='.$try['try'].'" class="lesson-attempt-link">';
+                $temp .= "<a href=\"report.php?id=$cm->id&amp;action=reportdetail&amp;userid=" . $try['userid']
+                    . '&amp;try=' . $try['try'] . '" class="lesson-attempt-link">';
                 if ($try["grade"] !== null) { // if null then not done yet
                     // this is what the link does when the user has completed the try
                     $timetotake = $try["timeend"] - $try["timestart"];
 
-                    $temp .= $try["grade"]."%";
+                    $temp .= $try["grade"] . "%";
                     $bestgradefound = true;
                     if ($try["grade"] > $bestgrade) {
                         $bestgrade = $try["grade"];
                     }
-                    $temp .= "&nbsp;".userdate($try["timestart"]);
-                    $temp .= ",&nbsp;(".format_time($timetotake).")</a>";
+                    $temp .= "&nbsp;" . userdate($try["timestart"]);
+                    $temp .= ",&nbsp;(" . format_time($timetotake) . ")</a>";
                 } else {
                     if ($try["end"]) {
                         // User finished the lesson but has no grade. (Happens when there are only content pages).
-                        $temp .= "&nbsp;".userdate($try["timestart"]);
+                        $temp .= "&nbsp;" . userdate($try["timestart"]);
                         $timetotake = $try["timeend"] - $try["timestart"];
-                        $temp .= ",&nbsp;(".format_time($timetotake).")</a>";
+                        $temp .= ",&nbsp;(" . format_time($timetotake) . ")</a>";
                     } else {
                         // This is what the link does/looks like when the user has not completed the attempt.
                         $temp .= get_string("notcompleted", "lesson");
                         if ($try['timestart'] !== 0) {
                             // Teacher previews do not track time spent.
-                            $temp .= "&nbsp;".userdate($try["timestart"]);
+                            $temp .= "&nbsp;" . userdate($try["timestart"]);
                         }
                         $temp .= "</a>";
                         $timetotake = null;
@@ -387,7 +387,7 @@ if ($action === 'delete') {
 
             if ($lessonscored) {
                 // Add the grade if the lesson is graded.
-                $bestgrade = $bestgrade."%";
+                $bestgrade = $bestgrade . "%";
                 $table->data[] = array($studentname, $attempts, $bestgrade);
             } else {
                 // This lesson does not have a grade.
@@ -398,16 +398,16 @@ if ($action === 'delete') {
     $students->close();
     // Print it all out!
     if (has_capability('mod/lesson:edit', $context)) {
-        echo  "<form id=\"theform\" method=\"post\" action=\"report.php\">\n
-               <input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />\n
+        echo "<form id=\"theform\" method=\"post\" action=\"report.php\">\n
+               <input type=\"hidden\" name=\"sesskey\" value=\"" . sesskey() . "\" />\n
                <input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
     }
     echo html_writer::table($table);
     if (has_capability('mod/lesson:edit', $context)) {
-        $checklinks  = '<a href="javascript: checkall();">'.get_string('selectall').'</a> / ';
-        $checklinks .= '<a href="javascript: checknone();">'.get_string('deselectall').'</a>';
+        $checklinks = '<a href="javascript: checkall();">' . get_string('selectall') . '</a> / ';
+        $checklinks .= '<a href="javascript: checknone();">' . get_string('deselectall') . '</a>';
         $checklinks .= html_writer::label('action', 'menuaction', false, array('class' => 'accesshide'));
-        $checklinks .= html_writer::select(array('delete' => get_string('deleteselected')), 'action', 0, array(''=>'choosedots'), array('id'=>'actionid', 'class' => 'autosubmit'));
+        $checklinks .= html_writer::select(array('delete' => get_string('deleteselected')), 'action', 0, array('' => 'choosedots'), array('id' => 'actionid', 'class' => 'autosubmit'));
         $PAGE->requires->yui_module('moodle-core-formautosubmit',
             'M.core.init_formautosubmit',
             array(array('selectid' => 'actionid', 'nothing' => false))
@@ -420,7 +420,7 @@ if ($action === 'delete') {
     if ($avetime == null) {
         $avetime = get_string("notcompleted", "lesson");
     } else {
-        $avetime = format_float($avetime/$numofattempts, 0);
+        $avetime = format_float($avetime / $numofattempts, 0);
         $avetime = format_time($avetime);
     }
     if ($hightime == null) {
@@ -477,24 +477,23 @@ if ($action === 'delete') {
     echo html_writer::table($stattable);
 } else if ($action === 'reportdetail') {
     /**************************************************************************
-    this action is for a student detailed view and for the general detailed view
-
-    General flow of this section of the code
-    1.  Generate a object which holds values for the statistics for each question/answer
-    2.  Cycle through all the pages to create a object.  Foreach page, see if the student actually answered
-    the page.  Then process the page appropriatly.  Display all info about the question,
-    Highlight correct answers, show how the user answered the question, and display statistics
-    about each page
-    3.  Print out info about the try (if needed)
-    4.  Print out the object which contains all the try info
-
+     * this action is for a student detailed view and for the general detailed view
+     *
+     * General flow of this section of the code
+     * 1.  Generate a object which holds values for the statistics for each question/answer
+     * 2.  Cycle through all the pages to create a object.  Foreach page, see if the student actually answered
+     * the page.  Then process the page appropriatly.  Display all info about the question,
+     * Highlight correct answers, show how the user answered the question, and display statistics
+     * about each page
+     * 3.  Print out info about the try (if needed)
+     * 4.  Print out the object which contains all the try info
      **************************************************************************/
     echo $lessonoutput->header($lesson, $cm, $action, false, null, get_string('detailedstats', 'lesson'));
     groups_print_activity_menu($cm, $url);
 
     $course_context = context_course::instance($course->id);
     if (has_capability('gradereport/grader:view', $course_context) && has_capability('moodle/grade:viewall', $course_context)) {
-        $seeallgradeslink = new moodle_url('/grade/report/grader/index.php', array('id'=>$course->id));
+        $seeallgradeslink = new moodle_url('/grade/report/grader/index.php', array('id' => $course->id));
         $seeallgradeslink = html_writer::link($seeallgradeslink, get_string('seeallcoursegrades', 'grades'));
         echo $OUTPUT->box($seeallgradeslink, 'allcoursegrades');
     }
@@ -504,7 +503,7 @@ if ($action === 'delete') {
     $formattextdefoptions->overflowdiv = true;
 
     $userid = optional_param('userid', null, PARAM_INT); // if empty, then will display the general detailed view
-    $try    = optional_param('try', null, PARAM_INT);
+    $try = optional_param('try', null, PARAM_INT);
 
     if (!empty($userid)) {
         // Apply overrides.
@@ -523,8 +522,7 @@ if ($action === 'delete') {
     $pagestats = array();
     while ($pageid != 0) { // EOL
         $page = $lessonpages[$pageid];
-        $params = array ("lessonid" => $lesson->id, "pageid" => $page->id);
-        if ($allanswers = $DB->get_records_select("lesson_attempts", "lessonid = :lessonid AND pageid = :pageid", $params, "timeseen")) {
+        if ($allanswers = get_remote_list_lesson_attempts_by_lessonid_and_pageid($lesson->id, $page->id)) {
             // get them ready for processing
             $orderedanswers = array();
             foreach ($allanswers as $singleanswer) {
@@ -533,7 +531,7 @@ if ($action === 'delete') {
             }
             // this is foreach user and for each try for that user, keep one attempt record
             foreach ($orderedanswers as $orderedanswer) {
-                foreach($orderedanswer as $tries) {
+                foreach ($orderedanswer as $tries) {
                     $page->stats($pagestats, $tries);
                 }
             }
@@ -558,7 +556,7 @@ if ($action === 'delete') {
     while ($pageid != 0) { // EOL
         $page = $lessonpages[$pageid];
         $answerpage = new stdClass;
-        $data ='';
+        $data = '';
 
         $answerdata = new stdClass;
         // Set some defaults for the answer data.
@@ -574,7 +572,7 @@ if ($action === 'delete') {
         $options->context = $context;
         $answerpage->contents = format_text($page->contents, $page->contentsformat, $options);
 
-        $answerpage->qtype = $qtypes[$page->qtype].$page->option_description_string();
+        $answerpage->qtype = $qtypes[$page->qtype] . $page->option_description_string();
         $answerpage->grayout = $page->grayout;
         $answerpage->context = $context;
 
@@ -582,7 +580,7 @@ if ($action === 'delete') {
             // there is no userid, so set these vars and display stats.
             $answerpage->grayout = 0;
             $useranswer = null;
-        } elseif ($useranswers = $DB->get_records("lesson_attempts",array("lessonid"=>$lesson->id, "userid"=>$userid, "retry"=>$try,"pageid"=>$page->id), "timeseen")) {
+        } elseif ($useranswers = get_remote_list_lesson_attempts_by_lessonid_and_userid_and_retry_and_pageid($lesson->id, $userid, $try, $page->id)) {
             // get the user's answer for this page
             // need to find the right one
             $i = 0;
@@ -616,13 +614,13 @@ if ($action === 'delete') {
         //$headingobject->firstname = $students[$userid]->firstname;
         //$headingobject->attempt = $try + 1;
         //print_heading(get_string("studentattemptlesson", "lesson", $headingobject));
-        echo $OUTPUT->heading(get_string('attempt', 'lesson', $try+1), 3);
+        echo $OUTPUT->heading(get_string('attempt', 'lesson', $try + 1), 3);
 
         $table->head = array();
         $table->align = array('right', 'left');
         $table->attributes['class'] = 'compacttable generaltable';
 
-        $params = array("lessonid"=>$lesson->id, "userid"=>$userid);
+        $params = array("lessonid" => $lesson->id, "userid" => $userid);
         if (!$grades = $DB->get_records_select("lesson_grades", "lessonid = :lessonid and userid = :userid", $params, "completed", "*", $try, 1)) {
             $grade = -1;
             $completed = -1;
@@ -647,11 +645,11 @@ if ($action === 'delete') {
 
             $gradeinfo = lesson_grade($lesson, $try, $user->id);
 
-            $table->data[] = array(get_string('name').':', $OUTPUT->user_picture($user, array('courseid'=>$course->id)).fullname($user, true));
-            $table->data[] = array(get_string("timetaken", "lesson").":", format_time($timetotake));
-            $table->data[] = array(get_string("completed", "lesson").":", userdate($completed));
-            $table->data[] = array(get_string('rawgrade', 'lesson').':', $gradeinfo->earned.'/'.$gradeinfo->total);
-            $table->data[] = array(get_string("grade", "lesson").":", $grade."%");
+            $table->data[] = array(get_string('name') . ':', $OUTPUT->user_picture($user, array('courseid' => $course->id)) . fullname($user, true));
+            $table->data[] = array(get_string("timetaken", "lesson") . ":", format_time($timetotake));
+            $table->data[] = array(get_string("completed", "lesson") . ":", userdate($completed));
+            $table->data[] = array(get_string('rawgrade', 'lesson') . ':', $gradeinfo->earned . '/' . $gradeinfo->total);
+            $table->data[] = array(get_string("grade", "lesson") . ":", $grade . "%");
         }
         echo html_writer::table($table);
 
@@ -678,22 +676,22 @@ if ($action === 'delete') {
             $fontend2 = "";
         }
 
-        $table->head = array($fontstart2.$page->qtype.": ".format_string($page->title).$fontend2, $fontstart2.get_string("classstats", "lesson").$fontend2);
-        $table->data[] = array($fontstart.get_string("question", "lesson").": <br />".$fontend.$fontstart2.$page->contents.$fontend2, " ");
-        $table->data[] = array($fontstart.get_string("answer", "lesson").":".$fontend, ' ');
+        $table->head = array($fontstart2 . $page->qtype . ": " . format_string($page->title) . $fontend2, $fontstart2 . get_string("classstats", "lesson") . $fontend2);
+        $table->data[] = array($fontstart . get_string("question", "lesson") . ": <br />" . $fontend . $fontstart2 . $page->contents . $fontend2, " ");
+        $table->data[] = array($fontstart . get_string("answer", "lesson") . ":" . $fontend, ' ');
         // apply the font to each answer
         if (!empty($page->answerdata)) {
-            foreach ($page->answerdata->answers as $answer){
+            foreach ($page->answerdata->answers as $answer) {
                 $modified = array();
                 foreach ($answer as $single) {
                     // need to apply a font to each one
-                    $modified[] = $fontstart2.$single.$fontend2;
+                    $modified[] = $fontstart2 . $single . $fontend2;
                 }
                 $table->data[] = $modified;
             }
             if (isset($page->answerdata->response)) {
-                $table->data[] = array($fontstart.get_string("response", "lesson").": <br />".$fontend
-                    .$fontstart2.$page->answerdata->response.$fontend2, " ");
+                $table->data[] = array($fontstart . get_string("response", "lesson") . ": <br />" . $fontend
+                    . $fontstart2 . $page->answerdata->response . $fontend2, " ");
             }
             $table->data[] = array($page->answerdata->score, " ");
         } else {

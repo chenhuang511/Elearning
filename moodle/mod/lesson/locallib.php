@@ -299,7 +299,7 @@ function lesson_grade($lesson, $ntries, $userid = 0)
     $total = 0;
     $earned = 0;
 
-    $useranswers = get_remote_lesson_attempts_by_lessonid_and_userid_and_retry($lesson->id, $userid, $ntries);
+    $useranswers = get_remote_list_lesson_attempts_by_lessonid_and_userid_and_retry($lesson->id, $userid, $ntries);
     if ($useranswers) {
         // group each try with its page
         $attemptset = array();
@@ -1468,7 +1468,7 @@ class lesson extends lesson_base
         global $DB;
         if ($this->lastpageid == null) {
             if (!$this->loadedallpages) {
-                $lastpageid = $DB->get_field('lesson_pages', 'id', array('lessonid' => $this->properties->id, 'nextpageid' => 0));
+                $lastpageid = get_remote_field_lesson_pages_by_lessonid_and_nextpageid($this->properties->id, 0);
                 if (!$lastpageid) {
                     print_error('cannotfindlastpage', 'lesson');
                 }
@@ -1705,7 +1705,7 @@ class lesson extends lesson_base
     public function has_pages()
     {
         global $DB;
-        $pagecount = get_remote_count_lesson_pages_by_lessonid($this->properties->id);
+        $pagecount = get_remote_count_lesson_pages_by_lessonid($this->properties->id, 0);
         return ($pagecount > 0);
     }
 
@@ -1855,7 +1855,7 @@ class lesson extends lesson_base
             $userid = $USER->id;
         }
         // get the number of retakes
-        if (!$retakes = $DB->count_records("lesson_grades", array("lessonid" => $this->properties->id, "userid" => $userid))) {
+        if (!$retakes = get_remote_count_by_lessonid_and_userid('lesson_grades', $this->properties->id, $userid)) {
             $retakes = 0;
         }
         // get all the lesson_attempts aka what the user has seen
@@ -1927,7 +1927,7 @@ class lesson extends lesson_base
                     }
                     $clusterendid = $lessonpages[$clusterendid]->nextpageid;
                 }
-                $exitjump = $DB->get_field("lesson_answers", "jumpto", array("pageid" => $clusterendid, "lessonid" => $this->properties->id));
+                $exitjump = get_remote_field_lesson_answers_by_pageid_and_lessonid($clusterendid, $this->properties->id, 'jumpto');
                 if ($exitjump == LESSON_NEXTPAGE) {
                     $exitjump = $lessonpages[$clusterendid]->nextpageid;
                 }
@@ -1942,7 +1942,7 @@ class lesson extends lesson_base
                             if ($page->id === $clusterendid) {
                                 $found = true;
                             } else if ($page->qtype == LESSON_PAGE_ENDOFCLUSTER) {
-                                $exitjump = $DB->get_field("lesson_answers", "jumpto", array("pageid" => $page->id, "lessonid" => $this->properties->id));
+                                $exitjump = get_remote_field_lesson_answers_by_pageid_and_lessonid($page->id, $this->properties->id, 'jumpto');
                                 if ($exitjump == LESSON_NEXTPAGE) {
                                     $exitjump = $lessonpages[$page->id]->nextpageid;
                                 }
@@ -2677,8 +2677,8 @@ abstract class lesson_page extends lesson_base
 
             if ($result->response) {
                 if ($this->lesson->properties->review && !$result->correctanswer && !$result->isessayquestion) {
-                    $nretakes = $DB->count_records("lesson_grades", array("lessonid" => $this->lesson->id, "userid" => $USER->id));
-                    $qattempts = $DB->count_records("lesson_attempts", array("userid" => $USER->id, "retry" => $nretakes, "pageid" => $this->properties->id));
+                    $nretakes = get_remote_count_by_lessonid_and_userid('lesson_grades', $this->lesson->id, $USER->id, -1, ''); // params: lessonid, userid
+                    $qattempts = get_remote_count_lesson_attempts(0, $USER->id, $this->properties->id, $nretakes, 0); // params: userid, pageid, retry
                     if ($qattempts == 1) {
                         $result->feedback = $OUTPUT->box(get_string("firstwrong", "lesson"), 'feedback');
                     } else {
@@ -2910,7 +2910,7 @@ abstract class lesson_page extends lesson_base
                 $data['data[5][value]'] = $properties->score[0];
             }
             if (!empty($answer->id)) {
-                $DB->update_record("lesson_answers", $answer->properties());
+                $result = update_remote_lesson_answers($answer->id, $data);
             } else {
                 $result = save_remote_lesson_answers($data);
             }
@@ -2997,7 +2997,7 @@ abstract class lesson_page extends lesson_base
             return (!array_key_exists($this->properties->id, $seenpages));
         } else {
             $nretakes = $param;
-            if (!$DB->count_records("lesson_attempts", array("pageid" => $this->properties->id, "userid" => $USER->id, "retry" => $nretakes))) {
+            if (!get_remote_count_lesson_attempts(0, $USER->id, $this->properties->id, $nretakes, 0)) { // params: userid, pageid, retry
                 return true;
             }
         }
@@ -3012,7 +3012,7 @@ abstract class lesson_page extends lesson_base
     public function is_unanswered($nretakes)
     {
         global $DB, $USER;
-        if (!$DB->count_records("lesson_attempts", array('pageid' => $this->properties->id, 'userid' => $USER->id, 'correct' => 1, 'retry' => $nretakes))) {
+        if (!get_remote_count_lesson_attempts(0, $USER->id, $this->properties->id, $nretakes, 1)) {
             return true;
         }
         return false;
@@ -3192,12 +3192,12 @@ abstract class lesson_page extends lesson_base
             $jump[LESSON_CLUSTERJUMP] = get_string("clusterjump", "lesson");
         }
         if (!optional_param('firstpage', 0, PARAM_INT)) {
-            $apageid = $DB->get_field("lesson_pages", "id", array("lessonid" => $lesson->id, "prevpageid" => 0));
+            $apageid = get_remote_field_lesson_pages_by_lessonid_and_prevpageid($lesson->id, 0);
             while (true) {
                 if ($apageid) {
-                    $title = $DB->get_field("lesson_pages", "title", array("id" => $apageid));
+                    $title = get_remote_field_lesson_pages_by_id($apageid, 'title');
                     $jump[$apageid] = strip_tags(format_string($title, true));
-                    $apageid = $DB->get_field("lesson_pages", "nextpageid", array("id" => $apageid));
+                    $apageid = get_remote_field_lesson_pages_by_id($apageid, 'nextpageid');
                 } else {
                     // last page reached
                     break;

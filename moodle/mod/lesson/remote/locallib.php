@@ -71,6 +71,32 @@ function get_remote_field_lesson_pages_by_lessonid_and_prevpageid($lessonid, $pr
     return $result->id;
 }
 
+function get_remote_field_lesson_pages_by_lessonid_and_nextpageid($lessonid, $nextpageid)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_field_lesson_pages_by_lessonid_and_nextpageid',
+            'params' => array('lessonid' => $lessonid, 'nextpageid' => $nextpageid)
+        )
+    );
+    return $result->id;
+}
+
+function get_remote_field_lesson_answers_by_pageid_and_lessonid($pageid, $lessonid, $field = 'jumpto')
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_field_lesson_answers_by_pageid_and_lessonid',
+            'params' => array('pageid' => $pageid, 'lessonid' => $lessonid, 'field' => $field)
+        )
+    );
+    return $result->field;
+}
+
 /**
  * get lesson page by pageid and lessonid
  *
@@ -232,12 +258,18 @@ function get_remote_lesson_answers_by_pageid_and_lessonid($pageid, $lessonid)
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_get_lesson_answers_by_pageid_and_lessonid',
+            'function_name' => 'local_mod_get_list_lesson_answers_by_pageid_and_lessonid',
             'params' => array('pageid' => $pageid, 'lessonid' => $lessonid)
         )
     );
 
-    return $result->answers;
+    $answers = array();
+
+    foreach ($result->answers as $answer) {
+        $answers[$answer->id] = $answer;
+    }
+
+    return $answers;
 }
 
 /**
@@ -360,7 +392,14 @@ function get_remote_lesson_pages_by_lessonid($lessonid)
             'params' => array('lessonid' => $lessonid)
         )
     );
-    return $result->pages;
+
+    $pages = array();
+
+    foreach ($result->pages as $page) {
+        $pages[$page->id] = $page;
+    }
+
+    return $pages;
 }
 
 /**
@@ -372,7 +411,7 @@ function get_remote_lesson_pages_by_lessonid($lessonid)
  * @param array $options
  * @return false|mixed
  */
-function get_remote_lesson_attempts_by_lessonid_and_userid_and_retry($lessonid, $userid, $retry)
+function get_remote_list_lesson_attempts_by_lessonid_and_userid_and_retry($lessonid, $userid, $retry)
 {
     $result = moodle_webservice_client(
         array(
@@ -383,7 +422,53 @@ function get_remote_lesson_attempts_by_lessonid_and_userid_and_retry($lessonid, 
         )
     );
 
-    return $result->attempts;
+    $attempts = array();
+
+    foreach ($result->attempts as $attempt) {
+        $attempts[$attempt->id] = $attempt;
+    }
+
+    return $attempts;
+}
+
+function get_remote_list_lesson_attempts_by_lessonid_and_userid_and_retry_and_pageid($lessonid, $userid, $retry, $pageid)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_lesson_attempts_by_lessonid_and_userid_and_retry_and_pageid',
+            'params' => array('lessonid' => $lessonid, 'userid' => $userid, 'retry' => $retry, 'pageid' => $pageid)
+        )
+    );
+
+    $attempts = array();
+
+    foreach ($result->attempts as $attempt) {
+        $attempts[$attempt->id] = $attempt;
+    }
+
+    return $attempts;
+}
+
+function get_remote_list_lesson_attempts_by_lessonid_and_pageid($lessonid, $pageid)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_lesson_attempts_by_lessonid_and_pageid',
+            'params' => array('lessonid' => $lessonid, 'pageid' => $pageid)
+        )
+    );
+
+    $attempts = array();
+
+    foreach ($result->attempts as $attempt) {
+        $attempts[$attempt->id] = $attempt;
+    }
+
+    return $attempts;
 }
 
 /**
@@ -577,7 +662,7 @@ function save_remote_lesson_pages($newpage)
  */
 function save_remote_lesson_attempts($attempt)
 {
-    return moodle_webservice_client(
+    $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
@@ -585,11 +670,13 @@ function save_remote_lesson_attempts($attempt)
             'params' => array_merge($attempt)
         )
     );
+
+    return $result->status;
 }
 
 function save_remote_lesson_answers($answer)
 {
-    return moodle_webservice_client(
+    $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
@@ -597,11 +684,27 @@ function save_remote_lesson_answers($answer)
             'params' => array_merge($answer)
         )
     );
+
+    return $result->status;
+}
+
+function update_remote_lesson_answers($id, $answer)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_update_lesson_answers',
+            'params' => array_merge(array('id' => $id), $answer)
+        )
+    );
+
+    return $result->status;
 }
 
 function save_remote_lesson_timer($timer)
 {
-    return moodle_webservice_client(
+    $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
@@ -609,6 +712,8 @@ function save_remote_lesson_timer($timer)
             'params' => array_merge($timer)
         )
     );
+
+    return $result->status;
 }
 
 function update_remote_lesson_timer($id, $timer)
@@ -685,16 +790,58 @@ function get_remote_list_lesson_pages_by_id_and_lessonid($id, $lessonid)
     return $pages;
 }
 
-function get_remote_count_lesson_pages_by_lessonid($lessonid)
+function get_remote_count_lesson_pages_by_lessonid($lessonid, $qtype = 0)
 {
     $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_count_lesson_pages_by_lessonid',
-            'params' => array('lessonid' => $lessonid)
+            'params' => array('lessonid' => $lessonid, 'qtype' => $qtype)
         )
     );
 
     return $result->pagecount;
+}
+
+function get_remote_lesson_attempts_by_id($id)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_lesson_attempts_by_id',
+            'params' => array('id' => $id)
+        )
+    );
+
+    return $result->attempt;
+}
+
+function get_remote_list_lesson_by_courseid($courseid = 0)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_list_lesson_by_courseid',
+            'params' => array('courseid' => $courseid)
+        )
+    );
+
+    return $result->lessons;
+}
+
+function check_remote_record_exists($tablename, $name, $value)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_check_record_exists',
+            'params' => array('tablename' => $tablename, 'name' => $name, 'value' => $value)
+        )
+    );
+
+    return $result->status;
 }
