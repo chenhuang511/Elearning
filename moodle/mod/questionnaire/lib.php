@@ -1160,7 +1160,7 @@ function questionnaire_get_completion_state($course, $cm, $userid, $type) {
  * @param object $coursemodule
  * @return object|null
  */
-function bigbluebuttonbn_get_coursemodule_info($coursemodule) {
+function questionnaire_get_coursemodule_info($coursemodule) {
     global $CFG, $DB;
 
     $questionnaire = new StdClass();
