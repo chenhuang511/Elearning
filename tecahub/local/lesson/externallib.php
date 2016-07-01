@@ -2677,7 +2677,7 @@ class local_mod_lesson_external extends external_api
         );
     }
 
-    public static function get_lesson_attempts_by_id_parameters($id)
+    public static function get_lesson_attempts_by_id_parameters()
     {
         return new external_function_parameters(
             array(
