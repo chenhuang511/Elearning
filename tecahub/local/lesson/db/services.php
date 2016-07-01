@@ -242,9 +242,9 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
-    'local_mod_get_lesson_answers_by_pageid_and_lessonid' => array(
+    'local_mod_get_list_lesson_answers_by_pageid_and_lessonid' => array(
         'classname' => 'local_mod_lesson_external',
-        'methodname' => 'get_field_lesson_answers_by_pageid_and_lessonid',
+        'methodname' => 'get_lesson_answers_by_pageid_and_lessonid',
         'classpath' => 'local/lesson/externallib.php',
         'description' => 'Get field lesson answers by pageid and lessonid',
         'type' => 'read',
@@ -252,7 +252,7 @@ $functions = array(
     ),
     'local_mod_get_field_lesson_answers_by_pageid_and_lessonid' => array(
         'classname' => 'local_mod_lesson_external',
-        'methodname' => 'get_lesson_answers_by_pageid_and_lessonid',
+        'methodname' => 'get_field_lesson_answers_by_pageid_and_lessonid',
         'classpath' => 'local/lesson/externallib.php',
         'description' => 'Get lesson answer by pageid and lessonid',
         'type' => 'read',
