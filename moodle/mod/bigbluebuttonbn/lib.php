@@ -350,8 +350,15 @@ function bigbluebuttonbn_get_post_actions() {
 function bigbluebuttonbn_get_coursemodule_info($coursemodule) {
     global $CFG, $DB;
 
-    if ( !$bigbluebuttonbn = $DB->get_record('bigbluebuttonbn', array('id'=>$coursemodule->instance), 'id, name, intro, introformat, newwindow')) {
-        return NULL;
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+        if (!$bigbluebuttonbn = $DB->get_record('bigbluebuttonbn', array('id' => $coursemodule->instance), 'id, name, intro, introformat, newwindow')) {
+            return NULL;
+        }
+    } else {
+        require_once($CFG->dirroot . '/mod/bigbluebuttonbn/remote/locallib.php');
+        if (!$bigbluebuttonbn = get_remote_bigbluebuttonbn_by_id($coursemodule->instance)) {
+            return NULL;
+        }
     }
 
     $info = new cached_cm_info();
