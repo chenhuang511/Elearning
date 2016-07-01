@@ -222,7 +222,23 @@ $functions = array(
         'classname' => 'local_mod_lesson_external',
         'methodname' => 'get_lesson_attempts_by_lessonid_and_userid_and_retry',
         'classpath' => 'local/lesson/externallib.php',
-        'description' => 'Get lesson attempts by lessonid, userid and retry',
+        'description' => 'Get list lesson attempts by lessonid, userid and retry',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_lesson_attempts_by_lessonid_and_userid_and_retry_and_pageid' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_lesson_attempts_by_lessonid_and_userid_and_retry_and_pageid',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get list lesson attempts by lessonid, userid and retry and pageid',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_lesson_attempts_by_lessonid_and_pageid' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_lesson_attempts_by_lessonid_and_pageid',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get list lesson attempts by lessonid and pageid',
         'type' => 'read',
         'ajax' => true
     ),
@@ -343,6 +359,14 @@ $functions = array(
         'methodname' => 'get_events_by_modulename_and_instace',
         'classpath' => 'local/lesson/externallib.php',
         'description' => 'Get list of events by module name and instance',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_check_record_exists' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'check_record_exists',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'check record exists',
         'type' => 'read',
         'ajax' => true
     ),

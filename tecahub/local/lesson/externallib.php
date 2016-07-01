@@ -1316,6 +1316,94 @@ class local_mod_lesson_external extends external_api
         return self::get_lesson_attempts_by_lessonid_and_userid_returns();
     }
 
+    public static function get_lesson_attempts_by_lessonid_and_userid_and_retry_and_pageid_parameters()
+    {
+        return new external_function_parameters(
+            array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
+                'userid' => new external_value(PARAM_INT, 'the user id'),
+                'retry' => new external_value(PARAM_INT, 'the retry'),
+                'pageid' => new external_value(PARAM_INT, 'the page id')
+            )
+        );
+    }
+
+    public static function get_lesson_attempts_by_lessonid_and_userid_and_retry_and_pageid($lessonid, $userid, $retry, $pageid)
+    {
+        global $DB;
+
+        $warnings = array();
+
+        // validate params
+        $params = self::validate_parameters(self::get_lesson_attempts_by_lessonid_and_userid_and_retry_and_pageid_parameters(),
+            array(
+                'lessonid' => $lessonid,
+                'userid' => $userid,
+                'retry' => $retry,
+                'pageid' => $pageid
+            )
+        );
+
+        $result = array();
+        $attempts = $DB->get_records("lesson_attempts", array('lessonid' => $params['lessonid'], 'userid' => $params['userid'], 'retry' => $params['retry'], "pageid" => $params['pageid']), "timeseen");
+
+        if (!$attempts) {
+            $attempts = array();
+        }
+
+        $result['attempts'] = $attempts;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_lesson_attempts_by_lessonid_and_userid_and_retry_and_pageid_returns()
+    {
+        return self::get_lesson_attempts_by_lessonid_and_userid_returns();
+    }
+
+    public static function get_lesson_attempts_by_lessonid_and_pageid_parameters()
+    {
+        return new external_function_parameters(
+            array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
+                'pageid' => new external_value(PARAM_INT, 'the page id')
+            )
+        );
+    }
+
+    public static function get_lesson_attempts_by_lessonid_and_pageid($lessonid, $pageid)
+    {
+        global $DB;
+
+        $warnings = array();
+
+        // validate params
+        $params = self::validate_parameters(self::get_lesson_attempts_by_lessonid_and_pageid_parameters(),
+            array(
+                'lessonid' => $lessonid,
+                'pageid' => $pageid
+            )
+        );
+
+        $parameters = array("lessonid" => $params['lessonid'], "pageid" => $params['pageid']);
+
+        $result = array();
+        $attempts = $DB->get_records_select("lesson_attempts", "lessonid = :lessonid AND pageid = :pageid", $parameters, "timeseen");
+
+        if (!$attempts) {
+            $attempts = array();
+        }
+
+        $result['attempts'] = $attempts;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_lesson_attempts_by_lessonid_and_pageid_returns()
+    {
+        return self::get_lesson_attempts_by_lessonid_and_userid_returns();
+    }
+
     /**
      * Returns description of method parameters
      *
@@ -2285,7 +2373,7 @@ class local_mod_lesson_external extends external_api
 
         $answer = $DB->get_record('lesson_answers', array('id' => $params['id']), '*', MUST_EXIST);
 
-        if(!$answer) {
+        if (!$answer) {
             $result['status'] = false;
             $warnings['message'] = "Cannot find data record";
             $result['warnings'] = $warnings;
@@ -2639,23 +2727,33 @@ class local_mod_lesson_external extends external_api
     {
         return new external_function_parameters(
             array(
-                'lessonid' => new external_value(PARAM_INT, 'the lesson id')
+                'lessonid' => new external_value(PARAM_INT, 'the lesson id'),
+                'qtype' => new external_value(PARAM_INT, 'the qtype')
             )
         );
     }
 
-    public static function get_count_lesson_pages_by_lessonid($lessonid)
+    public static function get_count_lesson_pages_by_lessonid($lessonid, $qtype)
     {
         global $DB;
         $warnings = array();
 
         $params = self::validate_parameters(self::get_count_lesson_pages_by_lessonid_parameters(), array(
-            'lessonid' => $lessonid
+            'lessonid' => $lessonid,
+            'qtype' => $qtype
         ));
 
         $result = array();
 
-        $pagecount = $DB->count_records('lesson_pages', array('lessonid' => $params['lessonid']));
+        $parameters = array(
+            'lessonid' => $params['lessonid']
+        );
+
+        if ($params['qtype'] != 0) {
+            $parameters = array_merge($parameters, array('qtype' => $params['qtype']));
+        }
+
+        $pagecount = $DB->count_records('lesson_pages', $parameters);
 
         if (!$pagecount) {
             $pagecount = 0;
@@ -2866,5 +2964,41 @@ class local_mod_lesson_external extends external_api
     public static function get_field_lesson_answers_by_pageid_and_lessonid_returns()
     {
         return self::get_field_lesson_pages_by_id_returns();
+    }
+
+    public static function check_record_exists_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'tablename' => new external_value(PARAM_RAW, ' the table name'),
+                'name' => new external_value(PARAM_RAW, 'the name'),
+                'value' => new external_value(PARAM_RAW, 'the value')
+            )
+        );
+    }
+
+    public static function check_record_exists($tablename, $name, $value)
+    {
+        global $DB;
+
+        $warnings = array();
+
+        $params = self::validate_parameters(self::check_record_exists_parameters(), array(
+            'tablename' => $tablename,
+            'name' => $name,
+            'value' => $value
+        ));
+
+        $result = array();
+
+        $result['status'] = $DB->record_exists($params['tablename'], array($params['name'] => $params['value']));
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function check_record_exists_returns()
+    {
+        return self::save_lesson_branch_returns();
     }
 }
