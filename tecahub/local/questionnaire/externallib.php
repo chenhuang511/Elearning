@@ -27,9 +27,6 @@
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . '/externallib.php');
-require_once($CFG->dirroot . '/mod/quiz/locallib.php');
-require_once($CFG->dirroot . '/question/engine/lib.php');
-require_once($CFG->dirroot . '/mod/quiz/classes/external.php');
 
 /**
  * Course external functions
@@ -51,7 +48,7 @@ class local_questionnaire_external extends external_api {
      * @since Moodle 2.2
      *
      */
-    public static function questionaire_load_for_cache_parameters() {
+    public static function questionnaire_get_question_by_id_parameters() {
         return new external_function_parameters(
             array('id' => new external_value(PARAM_INT, 'id')
             )
@@ -67,11 +64,11 @@ class local_questionnaire_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function questionnaire_load_for_cache($id) {
+    public static function questionnaire_get_question_by_id($id) {
         global $CFG, $DB;
 
         //validate parameter
-        $params = self::validate_parameters(self::questionnaire_load_for_cache_parameters(),
+        $params = self::validate_parameters(self::questionnaire_get_question_by_id_parameters(),
             array('id' => $id));
 		require_once($CFG->dirroot . '/question/engine/bank.php');
         return load_for_cache($id);
@@ -84,7 +81,7 @@ class local_questionnaire_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function questionnaire_load_for_cache_returns() {
+    public static function questionnaire_get_question_by_id_returns() {
         return new external_multiple_structure(
             new external_single_structure(
                 array(

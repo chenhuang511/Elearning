@@ -27,9 +27,6 @@
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . '/externallib.php');
-require_once($CFG->dirroot . '/mod/quiz/locallib.php');
-require_once($CFG->dirroot . '/question/engine/lib.php');
-require_once($CFG->dirroot . '/mod/quiz/classes/external.php');
 
 /**
  * Course external functions
@@ -81,7 +78,7 @@ class local_mod_bigbluebuttonbn_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_mod_quiz_by_id_returns() {
+    public static function get_mod_bigbluebuttonbn_by_id_returns() {
         return  new external_single_structure(
             array(
                 'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
@@ -91,7 +88,7 @@ class local_mod_bigbluebuttonbn_external extends external_api {
 				'introformat' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
 				'meetingid' => new external_value(PARAM_TEXT, 'Standard Moodle primary key.'),
 				'moderatorpass' => new external_value(PARAM_TEXT, 'Standard Moodle primary key.'),
-				'viewerpass' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
+				'viewerpass' => new external_value(PARAM_TEXT, 'Standard Moodle primary key.'),
 				'newwindow' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
 				'wait' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
 				'record' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),

@@ -34,11 +34,11 @@
  */
 
 $functions = array(
-	'local_questionnaire_load_for_cache' => array(
+	'local_questionnaire_get_question_by_id' => array(
 		'classname'	  => 'local_questionnaire_external',
-		'methodname'  => 'question_load_for_cache',
-		'classpath'	  => 'local/question/externallib.php',
-		'description' => "Load question for cache",
+		'methodname'  => 'questionnaire_get_question_by_id',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get question by id",
 		'type'		  => 'read',
 		'ajax'		  => true
 	),	
