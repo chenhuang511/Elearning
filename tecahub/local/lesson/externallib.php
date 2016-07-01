@@ -286,6 +286,48 @@ class local_mod_lesson_external extends external_api
         );
     }
 
+    public static function get_field_lesson_pages_by_lessonid_and_nextpageid_parameters()
+    {
+        return new external_function_parameters(
+            array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
+                'nextpageid' => new external_value(PARAM_INT, 'the next page id')
+            )
+        );
+    }
+
+    public static function get_field_lesson_pages_by_lessonid_and_nextpageid($lessonid, $nextpageid)
+    {
+        global $DB;
+
+        $warnings = array();
+
+        // validate params
+        $params = self::validate_parameters(self::get_field_lesson_pages_by_lessonid_and_nextpageid_parameters(),
+            array(
+                'lessonid' => $lessonid,
+                'nextpageid' => $nextpageid
+            )
+        );
+
+        $result = array();
+
+        $id = $DB->get_field('lesson_pages', 'id', array('lessonid' => $params['lessonid'], 'nextpageid' => $params['nextpageid']));
+
+        if (!$id) {
+            $id = 0;
+        }
+
+        $result['id'] = $id;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_field_lesson_pages_by_lessonid_and_nextpageid_returns()
+    {
+        return self::get_field_lesson_pages_by_lessonid_and_prevpageid_returns();
+    }
+
     /**
      * Returns description of method parameters
      *
@@ -2209,6 +2251,69 @@ class local_mod_lesson_external extends external_api
         return self::save_lesson_branch_returns();
     }
 
+    public static function update_lesson_answers_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'id' => new external_value(PARAM_INT, 'the answer id'),
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'data name'),
+                            'value' => new external_value(PARAM_RAW, 'data value'),
+                        )
+                    ), 'the data to be saved'
+                )
+            )
+        );
+    }
+
+    public static function update_lesson_answers($id, $data)
+    {
+        global $DB;
+
+        $warnings = array();
+
+        $params = array(
+            'id' => $id,
+            'data' => $data
+        );
+
+        $params = self::validate_parameters(self::update_lesson_answers_parameters(), $params);
+
+        $result = array();
+
+        $answer = $DB->get_record('lesson_answers', array('id' => $params['id']), '*', MUST_EXIST);
+
+        if(!$answer) {
+            $result['status'] = false;
+            $warnings['message'] = "Cannot find data record";
+            $result['warnings'] = $warnings;
+
+            return $result;
+        }
+
+        foreach ($params['data'] as $key => $value) {
+            $answer->$key = $value;
+        }
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $DB->update_record("lesson_answers", $answer);
+
+        $transaction->allow_commit();
+
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function update_lesson_answers_returns()
+    {
+        return self::save_lesson_answers_returns();
+    }
+
     /**
      * Returns description of method parameters
      *
@@ -2472,7 +2577,7 @@ class local_mod_lesson_external extends external_api
 
         $result = array();
 
-        $nattempts = $DB->count_records('lesson_attempts', array('lessonid'=>$params['lessonid']));
+        $nattempts = $DB->count_records('lesson_attempts', array('lessonid' => $params['lessonid']));
 
         $result['nattempts'] = $nattempts;
         $result['warnings'] = $warnings;
@@ -2515,7 +2620,7 @@ class local_mod_lesson_external extends external_api
 
         $pages = $DB->get_records_select("lesson_pages", "lessonid = ? AND id = ?", $parameters);
 
-        if(!$pages) {
+        if (!$pages) {
             $pages = array();
         }
 
@@ -2527,10 +2632,11 @@ class local_mod_lesson_external extends external_api
 
     public static function get_list_lesson_pages_by_id_and_lessonid_returns()
     {
-       return self::get_lesson_pages_by_lessonid_returns();
+        return self::get_lesson_pages_by_lessonid_returns();
     }
 
-    public static function get_count_lesson_pages_by_lessonid_parameters(){
+    public static function get_count_lesson_pages_by_lessonid_parameters()
+    {
         return new external_function_parameters(
             array(
                 'lessonid' => new external_value(PARAM_INT, 'the lesson id')
@@ -2538,7 +2644,8 @@ class local_mod_lesson_external extends external_api
         );
     }
 
-    public static function get_count_lesson_pages_by_lessonid($lessonid) {
+    public static function get_count_lesson_pages_by_lessonid($lessonid)
+    {
         global $DB;
         $warnings = array();
 
@@ -2550,7 +2657,7 @@ class local_mod_lesson_external extends external_api
 
         $pagecount = $DB->count_records('lesson_pages', array('lessonid' => $params['lessonid']));
 
-        if(!$pagecount) {
+        if (!$pagecount) {
             $pagecount = 0;
         }
 
@@ -2560,12 +2667,204 @@ class local_mod_lesson_external extends external_api
         return $result;
     }
 
-    public static function get_count_lesson_pages_by_lessonid_returns() {
+    public static function get_count_lesson_pages_by_lessonid_returns()
+    {
         return new external_single_structure(
             array(
                 'pagecount' => new external_value(PARAM_INT, 'count row'),
                 'warnings' => new external_warnings()
             )
         );
+    }
+
+    public static function get_lesson_attempts_by_id_parameters($id)
+    {
+        return new external_function_parameters(
+            array(
+                'id' => new external_value(PARAM_INT, 'id')
+            )
+        );
+    }
+
+    public static function get_lesson_attempts_by_id($id)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_lesson_attempts_by_id_parameters(), array(
+            'id' => $id
+        ));
+
+        $result = array();
+
+        $attempt = $DB->get_record('lesson_attempts', array('id' => $params['id']));
+
+        if (!$attempt) {
+            $attempt = new stdClass();
+        }
+
+        $result['attempt'] = $attempt;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_lesson_attempts_by_id_returns()
+    {
+        return new external_single_structure(
+            array(
+                'attempt' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, ''),
+                        'lessonid' => new external_value(PARAM_INT, 'lesson id', VALUE_DEFAULT),
+                        'pageid' => new external_value(PARAM_INT, 'page id', VALUE_DEFAULT),
+                        'userid' => new external_value(PARAM_INT, 'user id', VALUE_DEFAULT),
+                        'answerid' => new external_value(PARAM_INT, 'answer id', VALUE_DEFAULT),
+                        'retry' => new external_value(PARAM_INT, 'retry', VALUE_DEFAULT),
+                        'correct' => new external_value(PARAM_INT, 'correct', VALUE_DEFAULT),
+                        'useranswer' => new external_value(PARAM_RAW, 'user answer'),
+                        'timeseen' => new external_value(PARAM_INT, 'time seen', VALUE_DEFAULT)
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_list_lesson_by_courseid_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'the course id')
+            )
+        );
+    }
+
+    public static function get_list_lesson_by_courseid($courseid)
+    {
+        global $DB;
+        $warnings = arrray();
+
+        $params = self::validate_parameters(self::get_list_lesson_by_courseid_parameters(), array(
+            'courseid' => $courseid
+        ));
+
+        $result = array();
+
+        if ($params['courseid'] == 0) {
+            $lessons = $DB->get_records('lessons');
+        } else {
+            $lessons = $DB->get_records('lesson', array('course' => $params['courseid']));
+        }
+
+        if (!$lessons) {
+            $lessons = array();
+        }
+
+        $result['lessons'] = $lessons;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_list_lesson_by_courseid_returns()
+    {
+        return new external_single_structure(
+            array(
+                'lessons' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'lesson id'),
+                            'course' => new external_value(PARAM_INT, 'course id', VALUE_DEFAULT),
+                            'name' => new external_value(PARAM_RAW, 'lesson name'),
+                            'intro' => new external_value(PARAM_RAW, 'lesson intro'),
+                            'introformat' => new external_value(PARAM_INT, 'intro format', VALUE_DEFAULT),
+                            'practice' => new external_value(PARAM_INT, 'practice', VALUE_DEFAULT),
+                            'modattempts' => new external_value(PARAM_INT, 'mod attempts', VALUE_DEFAULT),
+                            'usepassword' => new external_value(PARAM_INT, 'use password', VALUE_DEFAULT),
+                            'password' => new external_value(PARAM_TEXT, 'password'),
+                            'dependency' => new external_value(PARAM_INT, 'dependency', VALUE_DEFAULT),
+                            'conditions' => new external_value(PARAM_RAW, 'condition'),
+                            'grade' => new external_value(PARAM_INT, 'grade', VALUE_DEFAULT),
+                            'custom' => new external_value(PARAM_INT, 'custom', VALUE_DEFAULT),
+                            'ongoing' => new external_value(PARAM_INT, 'on going', VALUE_DEFAULT),
+                            'usemaxgrade' => new external_value(PARAM_INT, 'use max grade', VALUE_DEFAULT),
+                            'maxanswers' => new external_value(PARAM_INT, 'max answer'),
+                            'maxattempts' => new external_value(PARAM_INT, 'max attempts'),
+                            'review' => new external_value(PARAM_INT, 'review', VALUE_DEFAULT),
+                            'nextpagedefault' => new external_value(PARAM_INT, 'next page default', VALUE_DEFAULT),
+                            'feedback' => new external_value(PARAM_INT, 'feedback', VALUE_REQUIRED),
+                            'minquestions' => new external_value(PARAM_INT, 'min question', VALUE_DEFAULT),
+                            'maxpages' => new external_value(PARAM_INT, 'max page', VALUE_DEFAULT),
+                            'timelimit' => new external_value(PARAM_INT, 'time limit', VALUE_DEFAULT),
+                            'retake' => new external_value(PARAM_INT, 'retake', VALUE_DEFAULT),
+                            'activitylink' => new external_value(PARAM_INT, 'activity link', VALUE_REQUIRED),
+                            'mediafile' => new external_value(PARAM_TEXT, 'media file', VALUE_DEFAULT),
+                            'mediaheight' => new external_value(PARAM_INT, 'media height'),
+                            'mediawidth' => new external_value(PARAM_INT, 'media width'),
+                            'mediaclose' => new external_value(PARAM_INT, 'media close'),
+                            'slideshow' => new external_value(PARAM_INT, 'slideshow'),
+                            'width' => new external_value(PARAM_INT, 'slideshow width'),
+                            'height' => new external_value(PARAM_INT, 'slideshow height'),
+                            'bgcolor' => new external_value(PARAM_TEXT, 'background color'),
+                            'displayleft' => new external_value(PARAM_INT, 'display left'),
+                            'displayleftif' => new external_value(PARAM_INT, 'display left if', VALUE_DEFAULT),
+                            'progressbar' => new external_value(PARAM_INT, 'progress bar', VALUE_DEFAULT),
+                            'available' => new external_value(PARAM_INT, 'available', VALUE_DEFAULT),
+                            'deadline' => new external_value(PARAM_INT, 'deadline', VALUE_DEFAULT),
+                            'timemodified' => new external_value(PARAM_INT, 'time modified', VALUE_DEFAULT),
+                            'completionendreached' => new external_value(PARAM_INT, 'completion end reached', VALUE_DEFAULT),
+                            'completiontimespent' => new external_value(PARAM_INT, 'completion time spent', VALUE_DEFAULT)
+                        )
+                    ), 'lesson data'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_field_lesson_answers_by_pageid_and_lessonid_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'pageid' => new external_value(PARAM_INT, 'the page id'),
+                'lessonid' => new external_value(PARAM_INT, 'the lesson id'),
+                'field' => new external_value(PARAM_RAW, 'field')
+            )
+        );
+    }
+
+    public static function get_field_lesson_answers_by_pageid_and_lessonid($pageid, $lessonid, $field)
+    {
+        global $DB;
+
+        $warnings = array();
+
+        // validate params
+        $params = self::validate_parameters(self::get_field_lesson_answers_by_pageid_and_lessonid_parameters(),
+            array(
+                'pageid' => $pageid,
+                'lessonid' => $lessonid,
+                'field' => $field
+            )
+        );
+
+        $result = array();
+
+        $field = $DB->get_field('lesson_answers', $params['field'], array("pageid" => $params['pageid'], "lessonid" => $params['lessonid']));
+
+        if (!$field) {
+            $result['field'] = 0;
+        }
+
+        $result['field'] = $field;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_field_lesson_answers_by_pageid_and_lessonid_returns()
+    {
+        return self::get_field_lesson_pages_by_id_returns();
     }
 }
