@@ -1029,6 +1029,7 @@ class quiz_attempt {
      */
     public function get_display_options_with_edit_link($reviewing, $slot, $thispageurl) {
         $options = clone($this->get_display_options($reviewing));
+        var_dump($options);die;
 
         if (!$thispageurl) {
             return $options;
