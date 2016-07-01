@@ -142,7 +142,8 @@ function loadRemoteContent() {
         '.remote-submit-btn',
         '.mod_quiz-next-nav',
         '#id_submit',
-        '#id_submitbutton'
+        '#id_submitbutton',
+        '#id_savequickgrades'
     ];
     var hubSubmitDelegate = [
         '.hub-submit-btn'
