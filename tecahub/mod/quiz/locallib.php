@@ -1399,15 +1399,15 @@ function quiz_get_review_options($quiz, $attempt, $context) {
 
     // Show a link to the comment box only for closed attempts.
     if (!empty($attempt->id) && $attempt->state == quiz_attempt::FINISHED && !$attempt->preview &&
-            !is_null($context) && has_capability('mod/quiz:grade', $context)) {
+            !is_null($context) && has_capability('mod/quiz:grade', $context, $attempt->userid)) {
         $options->manualcomment = question_display_options::VISIBLE;
         $options->manualcommentlink = new moodle_url('/mod/quiz/comment.php',
                 array('attempt' => $attempt->id));
     }
 
     if (!is_null($context) && !$attempt->preview &&
-            has_capability('mod/quiz:viewreports', $context) &&
-            has_capability('moodle/grade:viewhidden', $context)) {
+            has_capability('mod/quiz:viewreports', $context, $attempt->userid) &&
+            has_capability('moodle/grade:viewhidden', $context, $attempt->userid)) {
         // People who can see reports and hidden grades should be shown everything,
         // except during preview when teachers want to see what students see.
         $options->attempt = question_display_options::VISIBLE;

@@ -30,6 +30,7 @@ $attemptobj = new quiz_attempt($attempt, $quiz, $cm, $course, false, true);
 $page = $attemptobj->force_page_number_into_range($page);
 
 $reviewobj = get_remote_get_attempt_review($attemptid);
+//echo $reviewobj->questions[1]->html;die;
 
 // Now we can validate the params better, re-genrate the page URL.
 if ($showall === null) {

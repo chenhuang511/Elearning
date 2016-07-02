@@ -994,11 +994,11 @@ class quiz_attempt {
      *
      * @return question_display_options the render options for this user on this attempt.
      */
-    public function get_display_options($reviewing) {
+    public function get_display_options($reviewing, $userid = null) {
         if ($reviewing) {
             if (is_null($this->reviewoptions)) {
                 $this->reviewoptions = quiz_get_review_options($this->get_quiz(),
-                        $this->attempt, $this->quizobj->get_context());
+                        $this->attempt, $this->quizobj->get_context(), $userid);
                 if ($this->is_own_preview()) {
                     // It should  always be possible for a teacher to review their
                     // own preview irrespective of the review options settings.
@@ -1029,7 +1029,6 @@ class quiz_attempt {
      */
     public function get_display_options_with_edit_link($reviewing, $slot, $thispageurl) {
         $options = clone($this->get_display_options($reviewing));
-        var_dump($options);die;
 
         if (!$thispageurl) {
             return $options;
