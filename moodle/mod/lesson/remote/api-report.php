@@ -78,18 +78,15 @@ if ($action === 'delete') {
 
                     /// Clean up the timer table by removing using the order - this is silly, it should be linked to specific attempt (skodak)
                     $params = array("userid" => $userid, "lessonid" => $lesson->id);
-                    $timers = $DB->get_records_sql("SELECT id FROM {lesson_timer}
-                                                     WHERE userid = :userid AND lessonid = :lessonid
-                                                  ORDER BY starttime", $params, $try, 1);
+                    $timers = get_remote_list_lesson_timer_by_userid_and_lessonid($userid, $lesson->id, $try, 1);
+
                     if ($timers) {
                         $timer = reset($timers);
                         $DB->delete_records('lesson_timer', array('id' => $timer->id));
                     }
 
                     // Remove the grade from the grades tables - this is silly, it should be linked to specific attempt (skodak).
-                    $grades = $DB->get_records_sql("SELECT id FROM {lesson_grades}
-                                                     WHERE userid = :userid AND lessonid = :lessonid
-                                                  ORDER BY completed", $params, $try, 1);
+                    $grades = get_remote_list_lesson_grades_by_lessonid_and_userid($lesson->id, $userid, $try, 1, "completed");
 
                     if ($grades) {
                         $grade = reset($grades);
@@ -162,11 +159,11 @@ if ($action === 'delete') {
         exit();
     }
 
-    if (!$grades = $DB->get_records('lesson_grades', array('lessonid' => $lesson->id), 'completed')) {
+    if (!$grades = get_remote_list_lesson_grades_by_lessonid($lesson->id)) {
         $grades = array();
     }
 
-    if (!$times = $DB->get_records('lesson_timer', array('lessonid' => $lesson->id), 'starttime')) {
+    if (!$times = get_remote_list_lesson_timer_by_lessonid($lesson->id)) {
         $times = array();
     }
 

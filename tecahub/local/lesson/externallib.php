@@ -1415,6 +1415,9 @@ class local_mod_lesson_external extends external_api
         return new external_function_parameters(
             array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
                 'userid' => new external_value(PARAM_INT, 'the user id'),
+                'limitfrom' => new external_value(PARAM_INT, 'limit from'),
+                'limitnum' => new external_value(PARAM_INT, 'limit num'),
+                'sort' => new external_value(PARAM_RAW, 'sort')
             )
         );
     }
@@ -1428,7 +1431,7 @@ class local_mod_lesson_external extends external_api
      * @return array
      * @throws invalid_parameter_exception
      */
-    public static function get_lesson_grades_by_lessonid_and_userid($lessonid, $userid)
+    public static function get_lesson_grades_by_lessonid_and_userid($lessonid, $userid, $limitfrom, $limitnum, $sort)
     {
         global $DB;
 
@@ -1438,12 +1441,15 @@ class local_mod_lesson_external extends external_api
         $params = self::validate_parameters(self::get_lesson_grades_by_lessonid_and_userid_parameters(),
             array(
                 'lessonid' => $lessonid,
-                'userid' => $userid
+                'userid' => $userid,
+                'limitfrom' => $limitfrom,
+                'limitnum' => $limitnum,
+                'sort' => $sort
             )
         );
 
         $result = array();
-        $grades = $DB->get_records("lesson_grades", array("lessonid" => $params['lessonid'], "userid" => $params['userid']), "grade DESC");
+        $grades = $DB->get_records("lesson_grades", array("lessonid" => $params['lessonid'], "userid" => $params['userid']), $params['sort']);
 
         if (!$grades) {
             $grades = array();
@@ -1480,6 +1486,45 @@ class local_mod_lesson_external extends external_api
                 'warnings' => new external_warnings()
             )
         );
+    }
+
+    public static function get_lesson_grades_by_lessonid_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'lessonid' => new external_value(PARAM_INT, 'the lesson id'),
+                'sort' => new external_value(PARAM_RAW, 'sort')
+            )
+        );
+    }
+
+    public static function get_lesson_grades_by_lessonid($lessonid, $sort)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_lesson_grades_by_lessonid_parameters(), array(
+            'lessonid' => $lessonid,
+            'sort' => $sort
+        ));
+
+        $result = array();
+
+        $grades = $DB->get_records('lesson_grades', array('lessonid' => $params['lessonid']), $params['sort']);
+
+        if(!$grades) {
+            $grades = array();
+        }
+
+        $result['grades'] = $grades;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_lesson_grades_by_lessonid_returns()
+    {
+        return self::get_lesson_grades_by_lessonid_and_userid_returns();
     }
 
     /**
@@ -3000,5 +3045,45 @@ class local_mod_lesson_external extends external_api
     public static function check_record_exists_returns()
     {
         return self::save_lesson_branch_returns();
+    }
+
+    public static function get_lesson_timer_by_lessonid_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'lessonid' => new external_value(PARAM_INT, 'the lesson id'),
+                'sort' => new external_value(PARAM_RAW, 'sort')
+            )
+        );
+    }
+
+    public static function get_lesson_timer_by_lessonid($lessonid, $sort)
+    {
+        global $DB;
+
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_lesson_timers_by_lessonid_parameters(), array(
+            'lessonid' => $lessonid,
+            'sort' => $sort
+        ));
+
+        $result = array();
+
+        $timers = $DB->get_records('lesson_timer', array('lessonid' => $params['lessonid']), $params['sort']);
+
+        if (!$timers) {
+            $timers = array();
+        }
+
+        $result['timers'] = $timers;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_lesson_timer_by_lessonid_returns()
+    {
+        return self::get_lesson_timer_by_userid_and_lessonid_returns();
     }
 }

@@ -181,7 +181,7 @@ class lesson_page_type_branchtable extends lesson_page
         } else {
             $branchflag = 0;
         }
-        $grades = get_remote_lesson_grades_by_lessonid_and_userid($this->lesson->id, $USER->id);
+        $grades = get_remote_list_lesson_grades_by_lessonid_and_userid($this->lesson->id, $USER->id);
 
         if ($grades) {
             $retries = count($grades);

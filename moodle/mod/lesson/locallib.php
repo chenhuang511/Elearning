@@ -241,7 +241,7 @@ function lesson_random_question_jump($lesson, $pageid)
     global $DB;
 
     // get the lesson pages
-    $lessonpages = get_remote_lesson_pages_by_lessonid($lesson->id);
+    $lessonpages = get_remote_list_lesson_pages_by_lessonid($lesson->id);
     if (!$lessonpages) {
         print_error('cannotfindpages', 'lesson');
     }
@@ -1621,9 +1621,9 @@ class lesson extends lesson_base
 
         // clock code
         // get time information for this user
-        if (!$timer = get_remote_lesson_timer_by_userid_and_lessonid($USER->id, $this->properties->id, 0, 1)) {
+        if (!$timer = get_remote_list_lesson_timer_by_userid_and_lessonid($USER->id, $this->properties->id, 0, 1)) {
             $this->start_timer();
-            $timer = get_remote_lesson_timer_by_userid_and_lessonid($USER->id, $this->properties->id, 0, 1);
+            $timer = get_remote_list_lesson_timer_by_userid_and_lessonid($USER->id, $this->properties->id, 0, 1);
         }
         $timer = current($timer); // This will get the latest start time record.
 
@@ -3592,7 +3592,7 @@ class lesson_page_type_manager
     public function load_all_pages(lesson $lesson)
     {
         global $DB;
-        $pages = get_remote_lesson_pages_by_lessonid($lesson->id);
+        $pages = get_remote_list_lesson_pages_by_lessonid($lesson->id);
         if (!$pages) {
             return array(); // Records returned empty.
         }

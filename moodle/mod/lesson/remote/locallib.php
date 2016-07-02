@@ -129,7 +129,7 @@ function get_remote_lesson_pages_by_id_and_lessonid($id, $lessonid)
  *
  * @return stdClass $lesson_timer
  */
-function get_remote_lesson_timer_by_userid_and_lessonid($userid, $lessonid, $limitfrom = 0, $limitnum = 0)
+function get_remote_list_lesson_timer_by_userid_and_lessonid($userid, $lessonid, $limitfrom = 0, $limitnum = 0)
 {
     $result = moodle_webservice_client(
         array(
@@ -140,7 +140,33 @@ function get_remote_lesson_timer_by_userid_and_lessonid($userid, $lessonid, $lim
         )
     );
 
-    return $result->timers;
+    $timers = array();
+
+    foreach ($result->timers as $timer) {
+        $timers[$timer->id] = $timer;
+    }
+
+    return $timers;
+}
+
+function get_remote_list_lesson_timer_by_lessonid($lessonid, $sort = 'starttime')
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_lesson_timer_by_lessonid',
+            'params' => array('lessonid' => $lessonid, 'sort' => $sort)
+        )
+    );
+
+    $timers = array();
+
+    foreach ($result->timers as $timer) {
+        $timers[$timer->id] = $timer;
+    }
+
+    return $timers;
 }
 
 /**
@@ -322,18 +348,44 @@ function get_remote_lesson_answers_by_lessonid($lessonid)
  * @param array $options
  * @return false|mixed
  */
-function get_remote_lesson_grades_by_lessonid_and_userid($lessonid, $userid)
+function get_remote_list_lesson_grades_by_lessonid_and_userid($lessonid, $userid, $limitfrom = 0, $limitnum = 0, $sort = "grade DESC")
 {
     $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_lesson_grades_by_lessonid_and_userid',
-            'params' => array('lessonid' => $lessonid, 'userid' => $userid)
+            'params' => array('lessonid' => $lessonid, 'userid' => $userid, 'limitfrom' => $limitfrom, 'limitnum' => $limitnum, 'sort' => $sort)
         )
     );
 
-    return $result->grades;
+    $grades = array();
+
+    foreach ($result->grades as $grade) {
+        $grades[$grade->id] = $grade;
+    }
+
+    return $grades;
+}
+
+function get_remote_list_lesson_grades_by_lessonid($lessonid, $sort = "completed")
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_lesson_grades_by_lessonid_and_userid',
+            'params' => array('lessonid' => $lessonid, 'sort' => $sort)
+        )
+    );
+
+    $grades = array();
+
+    foreach ($result->grades as $grade) {
+        $grades[$grade->id] = $grade;
+    }
+
+    return $grades;
 }
 
 /**
@@ -382,7 +434,7 @@ function get_remote_field_lesson_pages_by_id($id, $field = 'title')
  * @param array $options
  * @return false|mixed
  */
-function get_remote_lesson_pages_by_lessonid($lessonid)
+function get_remote_list_lesson_pages_by_lessonid($lessonid)
 {
     $result = moodle_webservice_client(
         array(

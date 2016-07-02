@@ -117,7 +117,7 @@ if (!$canmanage) {
             // check for the timespent condition
             if ($conditions->timespent) {
                 $timespent = false;
-                if ($attempttimes = get_remote_lesson_timer_by_userid_and_lessonid($USER->id, $dependentlesson->id)) {
+                if ($attempttimes = get_remote_list_lesson_timer_by_userid_and_lessonid($USER->id, $dependentlesson->id)) {
                     // go through all the times and test to see if any of them satisfy the condition
                     foreach ($attempttimes as $attempttime) {
                         $duration = $attempttime->lessontime - $attempttime->starttime;
@@ -134,7 +134,7 @@ if (!$canmanage) {
             // check for the gradebetterthan condition
             if ($conditions->gradebetterthan) {
                 $gradebetterthan = false;
-                if ($studentgrades = get_remote_lesson_grades_by_lessonid_and_userid($dependentlesson->id, $USER->id)) {
+                if ($studentgrades = get_remote_list_lesson_grades_by_lessonid_and_userid($dependentlesson->id, $USER->id)) {
                     // go through all the grades and test to see if any of them satisfy the condition
                     foreach ($studentgrades as $studentgrade) {
                         if ($studentgrade->grade >= $conditions->gradebetterthan) {

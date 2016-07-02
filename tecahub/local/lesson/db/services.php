@@ -138,6 +138,14 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_get_lesson_timer_by_lessonid' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_lesson_timer_by_userid_and_lessonid',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get list lesson timer by lessonid',
+        'type' => 'read',
+        'ajax' => true
+    ),
     'local_mod_get_duration_lesson_timer_by_lessonid_and_userid' => array(
         'classname' => 'local_mod_lesson_external',
         'methodname' => 'get_duration_lesson_timer_by_lessonid_and_userid',
@@ -311,6 +319,14 @@ $functions = array(
         'methodname' => 'get_lesson_grades_by_lessonid_and_userid',
         'classpath' => 'local/lesson/externallib.php',
         'description' => 'Get lesson grades by lessonid and userid. Return list',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_lesson_grades_by_lessonid' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_lesson_grades_by_lessonid',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get list lesson grades by lessonid',
         'type' => 'read',
         'ajax' => true
     ),
