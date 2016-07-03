@@ -82,7 +82,11 @@ if ($action === 'delete') {
 
                     if ($timers) {
                         $timer = reset($timers);
-                        $DB->delete_records('lesson_timer', array('id' => $timer->id));
+
+                        $data = array();
+                        $data['data[0][name]'] = 'id';
+                        $data['data[0][value]'] = $timer->id;
+                        $result = delete_remote_moodle_table('lesson_timer', $data);
                     }
 
                     // Remove the grade from the grades tables - this is silly, it should be linked to specific attempt (skodak).
@@ -90,15 +94,26 @@ if ($action === 'delete') {
 
                     if ($grades) {
                         $grade = reset($grades);
-                        $DB->delete_records('lesson_grades', array('id' => $grade->id));
+
+                        $data = array();
+                        $data['data[0][name]'] = 'id';
+                        $data['data[0][value]'] = $grade->id;
+                        $result = delete_remote_moodle_table('lesson_grades', $data);
                     }
 
                     /// Remove attempts and update the retry number
-                    $DB->delete_records('lesson_attempts', array('userid' => $userid, 'lessonid' => $lesson->id, 'retry' => $try));
+                    $data = array();
+                    $data['data[0][name]'] = 'userid';
+                    $data['data[0][value]'] = $userid;
+                    $data['data[1][name]'] = 'lessonid';
+                    $data['data[1][value]'] = $lesson->id;
+                    $data['data[2][name]'] = 'retry';
+                    $data['data[2][value]'] = $try;
+                    $result = delete_remote_moodle_table('lesson_attempts', $data);
                     $DB->execute("UPDATE {lesson_attempts} SET retry = retry - 1 WHERE userid = ? AND lessonid = ? AND retry > ?", array($userid, $lesson->id, $try));
 
                     /// Remove seen branches and update the retry number
-                    $DB->delete_records('lesson_branch', array('userid' => $userid, 'lessonid' => $lesson->id, 'retry' => $try));
+                    $result = delete_remote_moodle_table('lesson_branch', $data);
                     $DB->execute("UPDATE {lesson_branch} SET retry = retry - 1 WHERE userid = ? AND lessonid = ? AND retry > ?", array($userid, $lesson->id, $try));
 
                     /// update central gradebook
@@ -618,7 +633,7 @@ if ($action === 'delete') {
         $table->attributes['class'] = 'compacttable generaltable';
 
         $params = array("lessonid" => $lesson->id, "userid" => $userid);
-        if (!$grades = $DB->get_records_select("lesson_grades", "lessonid = :lessonid and userid = :userid", $params, "completed", "*", $try, 1)) {
+        if (!$grades = get_remote_list_lesson_grades_by_lessonid_and_userid($lesson->id, $userid, $try, 1, "completed")) {
             $grade = -1;
             $completed = -1;
         } else {
@@ -626,7 +641,7 @@ if ($action === 'delete') {
             $completed = $grade->completed;
             $grade = round($grade->grade, 2);
         }
-        if (!$times = $DB->get_records_select("lesson_timer", "lessonid = :lessonid and userid = :userid", $params, "starttime", "*", $try, 1)) {
+        if (!$times = get_remote_list_lesson_timer_by_userid_and_lessonid($userid, $lesson->id, $try, 1, "starttime")) {
             $timetotake = -1;
         } else {
             $timetotake = current($times);

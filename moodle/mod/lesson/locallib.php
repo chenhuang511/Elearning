@@ -1080,57 +1080,22 @@ class lesson extends lesson_base
 
         $this->delete_all_overrides();
 
-//        $DB->delete_records("lesson", array("id" => $this->properties->id));
-//        $DB->delete_records("lesson_pages", array("lessonid" => $this->properties->id));
-//        $DB->delete_records("lesson_answers", array("lessonid" => $this->properties->id));
-//        $DB->delete_records("lesson_attempts", array("lessonid" => $this->properties->id));
-//        $DB->delete_records("lesson_grades", array("lessonid" => $this->properties->id));
-//        $DB->delete_records("lesson_timer", array("lessonid" => $this->properties->id));
-//        $DB->delete_records("lesson_branch", array("lessonid" => $this->properties->id));
+        $data = array();
+        $data['data[0][name]'] = 'id';
+        $data['data[0][value]'] = $this->properties->id;
+        $result = delete_remote_moodle_table('lesson', $data);
 
-        $params = array(
-            array(
-                'tablename' => 'lesson',
-                'columnname' => 'id',
-                'value' => $this->properties->id
-            ),
-            array(
-                'tablename' => 'lesson_pages',
-                'columnname' => 'lessonid',
-                'value' => $this->properties->id
-            ),
-            array(
-                'tablename' => 'lesson_answers',
-                'columnname' => 'lessonid',
-                'value' => $this->properties->id
-            ),
-            array(
-                'tablename' => 'lesson_attempts',
-                'columnname' => 'lessonid',
-                'value' => $this->properties->id
-            ),
-            array(
-                'tablename' => 'lesson_grades',
-                'columnname' => 'lessonid',
-                'value' => $this->properties->id
-            ),
-            array(
-                'tablename' => 'lesson_timer',
-                'columnname' => 'id',
-                'value' => $this->properties->id
-            ),
-            array(
-                'tablename' => 'lesson_branch',
-                'columnname' => 'lessonid',
-                'value' => $this->properties->id
-            )
-        );
+        $data = array();
+        $data['data[0][name]'] = 'lessonid';
+        $data['data[0][value]'] = $this->properties->id;
+        $result = delete_remote_moodle_table('lesson_pages', $data);
+        $result = delete_remote_moodle_table('lesson_answers', $data);
+        $result = delete_remote_moodle_table('lesson_attempts', $data);
+        $result = delete_remote_moodle_table('lesson_grades', $data);
+        $result = delete_remote_moodle_table('lesson_timer', $data);
+        $result = delete_remote_moodle_table('lesson_branch', $data);
 
-        foreach ($params as $data) {
-            delete_remote_lesson_object($data['tablename'], $data['columnname'], $data['value']);
-        }
-
-        $events = get_remote_events_by_modulename_and_instance('lesson', $this->properties->id);
+        $events = get_remote_list_events_by_modulename_and_instance('lesson', $this->properties->id);
         if ($events) {
             foreach ($events as $event) {
                 $event = calendar_event::load($event);
@@ -1178,9 +1143,10 @@ class lesson extends lesson_base
             $eventold->delete();
         }
 
-        delete_remote_lesson_object('lesson_overrides', 'id', $overrideid);
-
-        //$DB->delete_records('lesson_overrides', array('id' => $overrideid));
+        $data = array();
+        $data['data[0][name]'] = 'id';
+        $data['data[0][value]'] = $overrideid;
+        $result = delete_remote_moodle_table('lesson_overrides', $data);
 
         // Set the common parameters for one of the events we will be triggering.
         $params = array(
@@ -2424,13 +2390,18 @@ abstract class lesson_page extends lesson_base
         }
 
         // Then delete all the associated records...
-        $DB->delete_records("lesson_attempts", array("pageid" => $this->properties->id));
+        $data = array();
+        $data['data[0][name]'] = 'pageid';
+        $data['data[0][value]'] = $this->properties->id;
 
-        $DB->delete_records("lesson_branch", array("pageid" => $this->properties->id));
+        $result = delete_remote_moodle_table('lesson_attempts', $data);
+        $result = delete_remote_moodle_table('lesson_branch', $data);
         // ...now delete the answers...
-        $DB->delete_records("lesson_answers", array("pageid" => $this->properties->id));
+        $result = delete_remote_moodle_table('lesson_answers', $data);
+
         // ..and the page itself
-        $DB->delete_records("lesson_pages", array("id" => $this->properties->id));
+        $data['data[0][name]'] = 'id';
+        $result = delete_remote_moodle_table('lesson_pages', $data);
 
         // Trigger an event: page deleted.
         $eventparams = array(
@@ -2882,8 +2853,11 @@ abstract class lesson_page extends lesson_base
             // These page types have only one answer to save the jump and score.
             if (count($answers) > 1) {
                 $answer = array_shift($answers);
+                $data = array();
+                $data['data[0][name]'] = 'id';
                 foreach ($answers as $a) {
-                    $DB->delete_record('lesson_answers', array('id' => $a->id));
+                    $data['data[0][value]'] = $a->id;
+                    $result = delete_remote_moodle_table('lesson_answers', $data);
                 }
             } else if (count($answers) == 1) {
                 $answer = array_shift($answers);
@@ -2963,7 +2937,10 @@ abstract class lesson_page extends lesson_base
                     }
 
                 } else if (isset($this->answers[$i]->id)) {
-                    $DB->delete_records('lesson_answers', array('id' => $this->answers[$i]->id));
+                    $data = array();
+                    $data['data[0][name]'] = 'id';
+                    $data['data[0][value]'] = $this->answers[$i]->id;
+                    $result = delete_remote_moodle_table('lesson_answers', $data);
                     unset($this->answers[$i]);
                 }
             }
@@ -3038,6 +3015,8 @@ abstract class lesson_page extends lesson_base
 
         $answers = array();
 
+        $data = array();
+
         for ($i = 0; $i < $this->lesson->maxanswers; $i++) {
             $answer = clone($newanswer);
 
@@ -3064,7 +3043,34 @@ abstract class lesson_page extends lesson_base
                 if ($this->lesson->custom && isset($properties->score[$i])) {
                     $answer->score = $properties->score[$i];
                 }
-                $answer->id = $DB->insert_record("lesson_answers", $answer);
+
+                $data['data[0][name]'] = 'lessonid';
+                $data['data[0][value]'] = $answer->lessonid;
+                $data['data[1][name]'] = 'pageid';
+                $data['data[1][value]'] = $answer->pageid;
+                $data['data[2][name]'] = 'jumpto';
+                $data['data[2][value]'] = $answer->jumpto;
+                $data['data[3][name]'] = 'grade';
+                $data['data[3][value]'] = $answer->grade;
+                $data['data[4][name]'] = 'score';
+                $data['data[4][value]'] = $answer->score;
+                $data['data[5][name]'] = 'flags';
+                $data['data[5][value]'] = $answer->flags;
+                $data['data[6][name]'] = 'timecreated';
+                $data['data[6][value]'] = $answer->timecreated;
+                $data['data[7][name]'] = 'timemodified';
+                $data['data[7][value]'] = $answer->timemodified;
+                $data['data[8][name]'] = 'answer';
+                $data['data[8][value]'] = $answer->answer;
+                $data['data[9][name]'] = 'answerformat';
+                $data['data[9][value]'] = $answer->answerformat;
+                $data['data[10][name]'] = 'response';
+                $data['data[10][value]'] = $answer->response;
+                $data['data[11][name]'] = 'responseformat';
+                $data['data[11][value]'] = $answer->responseformat;
+
+                $answer->id = save_remote_lesson_answers($data);
+                
                 if (isset($properties->response_editor[$i])) {
                     $this->save_answers_files($context, $PAGE->course->maxbytes, $answer,
                         $properties->answer_editor[$i], $properties->response_editor[$i]);

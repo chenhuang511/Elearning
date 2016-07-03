@@ -485,6 +485,7 @@ class local_mod_lesson_external extends external_api
     public static function get_lesson_pages_by_id($id, $mustexist)
     {
         global $DB;
+        $warnings = array();
 
         // validate params
         $params = self::validate_parameters(self::get_lesson_pages_by_id_parameters(),
@@ -494,11 +495,22 @@ class local_mod_lesson_external extends external_api
             )
         );
 
+        $result = array();
+
         if ($params['mustexist']) {
-            return $DB->get_record('lesson_pages', array('id' => $params['id']), '*', MUST_EXIST);
+            $page = $DB->get_record('lesson_pages', array('id' => $params['id']), '*', MUST_EXIST);
+        } else {
+            $page = $DB->get_record('lesson_pages', array('id' => $params['id']));
         }
 
-        return $DB->get_record('lesson_pages', array('id' => $params['id']));
+        if(!$page) {
+            $page = new stdClass();
+        }
+
+        $result['page'] = $page;
+        $result['warnings'] = $warnings;
+
+        return $result;
     }
 
     /**
@@ -509,7 +521,7 @@ class local_mod_lesson_external extends external_api
      */
     public static function get_lesson_pages_by_id_returns()
     {
-        return self::get_lesson_pages_by_id_and_lessonid_returns();
+        return self::get_lesson_pages_by_lessonid_and_prevpageid_returns();
     }
 
     /**
@@ -524,7 +536,8 @@ class local_mod_lesson_external extends external_api
             array('userid' => new external_value(PARAM_INT, 'user id'),
                 'lessonid' => new external_value(PARAM_INT, 'lesson id'),
                 'limitfrom' => new external_value(PARAM_INT, 'limit from'),
-                'limitnum' => new external_value(PARAM_INT, 'limit num')
+                'limitnum' => new external_value(PARAM_INT, 'limit num'),
+                'sort' => new external_value(PARAM_RAW, 'sort')
             )
         );
     }
@@ -538,7 +551,7 @@ class local_mod_lesson_external extends external_api
      * @return mixed
      * @throws invalid_parameter_exception
      */
-    public static function get_lesson_timer_by_userid_and_lessonid($userid, $lessonid, $limitfrom, $limitnum)
+    public static function get_lesson_timer_by_userid_and_lessonid($userid, $lessonid, $limitfrom, $limitnum, $sort)
     {
         global $DB;
 
@@ -548,7 +561,8 @@ class local_mod_lesson_external extends external_api
             'userid' => $userid,
             'lessonid' => $lessonid,
             'limitfrom' => $limitfrom,
-            'limitnum' => $limitnum
+            'limitnum' => $limitnum,
+            'sort' => $sort
         );
 
 
@@ -558,7 +572,7 @@ class local_mod_lesson_external extends external_api
         );
 
         $result = array();
-        $timers = $DB->get_records('lesson_timer', array('userid' => $params['userid'], 'lessonid' => $params['lessonid']), 'starttime DESC', '*', $params['limitfrom'], $params['limitnum']);
+        $timers = $DB->get_records('lesson_timer', array('userid' => $params['userid'], 'lessonid' => $params['lessonid']), $params['sort'], '*', $params['limitfrom'], $params['limitnum']);
 
         if (!$timers) {
             $timers = new stdClass();
@@ -2010,13 +2024,19 @@ class local_mod_lesson_external extends external_api
      * @return external_function_parameters
      * @since Moodle 3.0
      */
-    public static function delete_lesson_object_parameters()
+    public static function delete_mdl_table_parameters()
     {
         return new external_function_parameters(
             array(
                 'tablename' => new external_value(PARAM_TEXT, ' the table name'),
-                'columnname' => new external_value(PARAM_TEXT, ' the column name'),
-                'value' => new external_value(PARAM_RAW, ' the value'),
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'data name'),
+                            'value' => new external_value(PARAM_RAW, 'data value'),
+                        )
+                    ), 'the data to be deleted'
+                )
             )
         );
     }
@@ -2029,23 +2049,37 @@ class local_mod_lesson_external extends external_api
      * @param $value
      * @throws invalid_parameter_exception
      */
-    public static function delete_lesson_object($tablename, $columnname, $value)
+    public static function delete_mdl_table($tablename, $data)
     {
         global $DB;
 
+        $warnings = array();
+
         $params = array(
             'tablename' => $tablename,
-            'columnname' => $columnname,
-            'value' => $value
+            'data' => $data
         );
 
-        $params = self::validate_parameters(self::delete_lesson_object_parameters(), $params);
+        $params = self::validate_parameters(self::delete_mdl_table_parameters(), $params);
+
+        $parameters = array();
+
+        foreach($params['data'] as $element) {
+            $parameters = array_merge($parameters, [$element['name'] => $element['value']]);
+        }
+
+        $result = array();
 
         $transaction = $DB->start_delegated_transaction();
 
-        $DB->delete_records($params['tablename'], array($params['columnname'] => $params['value']));
+        $DB->delete_records($params['tablename'], $parameters);
 
         $transaction->allow_commit();
+
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+
+        return $result;
     }
 
     /**
@@ -2054,9 +2088,9 @@ class local_mod_lesson_external extends external_api
      * @return external_description
      * @since Moodle 3.0
      */
-    public static function delete_lesson_object_returns()
+    public static function delete_mdl_table_returns()
     {
-        return null;
+        return self::save_lesson_branch_returns();
     }
 
     /**
@@ -2360,14 +2394,15 @@ class local_mod_lesson_external extends external_api
             $answer->$key = $value;
         }
 
-        $transaction = $DB->start_delegated_transaction();
-
         $result = array();
 
-        $DB->insert_record("lesson_answers", $answer);
+        $transaction = $DB->start_delegated_transaction();
+
+        $newanswerid = $DB->insert_record("lesson_answers", $answer);
+
         $transaction->allow_commit();
 
-        $result['status'] = true;
+        $result['newanswerid'] = $newanswerid;
         $result['warnings'] = $warnings;
 
         return $result;
@@ -2381,7 +2416,12 @@ class local_mod_lesson_external extends external_api
      */
     public static function save_lesson_answers_returns()
     {
-        return self::save_lesson_branch_returns();
+        return new external_single_structure(
+            array(
+                'newanswerid' => new external_value(PARAM_INT, ' the new id'),
+                'warnings' => new external_warnings()
+            )
+        );
     }
 
     public static function update_lesson_answers_parameters()

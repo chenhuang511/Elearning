@@ -30,9 +30,11 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2009 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class lesson_import_form extends moodleform {
+class lesson_import_form extends moodleform
+{
 
-    public function definition() {
+    public function definition()
+    {
 
         $mform = $this->_form;
 
@@ -51,7 +53,7 @@ class lesson_import_form extends moodleform {
         $mform->addElement('filepicker', 'questionfile', get_string('upload'));
         $mform->addRule('questionfile', null, 'required', null, 'client');
 
-        $this->add_action_buttons(null, get_string("import"));
+        $this->add_action_buttons(null, get_string("import"), true);
     }
 
     /**
@@ -60,7 +62,8 @@ class lesson_import_form extends moodleform {
      * @param array $errors the errors so far.
      * @return array the updated errors.
      */
-    protected function validate_uploaded_file($data, $errors) {
+    protected function validate_uploaded_file($data, $errors)
+    {
         global $CFG;
 
         if (empty($data['questionfile'])) {
@@ -74,7 +77,7 @@ class lesson_import_form extends moodleform {
             return $errors;
         }
 
-        $formatfile = $CFG->dirroot.'/question/format/'.$data['format'].'/format.php';
+        $formatfile = $CFG->dirroot . '/question/format/' . $data['format'] . '/format.php';
         if (!is_readable($formatfile)) {
             throw new moodle_exception('formatnotfound', 'lesson', '', $data['format']);
         }
@@ -87,7 +90,8 @@ class lesson_import_form extends moodleform {
         return $errors;
     }
 
-    public function validation($data, $files) {
+    public function validation($data, $files)
+    {
         $errors = parent::validation($data, $files);
         $errors = $this->validate_uploaded_file($data, $errors);
         return $errors;

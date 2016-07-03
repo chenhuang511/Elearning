@@ -362,11 +362,11 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
-    'local_mod_delete_lesson_object' => array(
+    'local_mod_delete_mdl_table' => array(
         'classname' => 'local_mod_lesson_external',
-        'methodname' => 'delete_lesson_object',
+        'methodname' => 'delete_mdl_table',
         'classpath' => 'local/lesson/externallib.php',
-        'description' => 'Delete lesson objects',
+        'description' => 'Delete moodle table',
         'type' => 'read',
         'ajax' => true
     ),

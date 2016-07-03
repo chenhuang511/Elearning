@@ -129,14 +129,14 @@ function get_remote_lesson_pages_by_id_and_lessonid($id, $lessonid)
  *
  * @return stdClass $lesson_timer
  */
-function get_remote_list_lesson_timer_by_userid_and_lessonid($userid, $lessonid, $limitfrom = 0, $limitnum = 0)
+function get_remote_list_lesson_timer_by_userid_and_lessonid($userid, $lessonid, $limitfrom = 0, $limitnum = 0, $sort = 'starttime')
 {
     $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_lesson_timer_by_userid_and_lessonid',
-            'params' => array('userid' => $userid, 'lessonid' => $lessonid, 'limitfrom' => $limitfrom, 'limitnum' => $limitnum)
+            'params' => array('userid' => $userid, 'lessonid' => $lessonid, 'limitfrom' => $limitfrom, 'limitnum' => $limitnum, 'sort' => $sort)
         )
     );
 
@@ -617,7 +617,7 @@ function get_remote_lesson_overrides_by_lessonid_and_userid($lessonid, $userid)
  */
 function get_remote_lesson_pages_by_id($id, $mustexist = false)
 {
-    return moodle_webservice_client(
+    $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
@@ -625,6 +625,8 @@ function get_remote_lesson_pages_by_id($id, $mustexist = false)
             'params' => array('id' => $id, 'mustexist' => $mustexist)
         )
     );
+
+    return $result->page;
 }
 
 /**
@@ -654,16 +656,18 @@ function get_remote_lesson_attempts_by_pageid($pageid)
  * @param $value
  * @return false|mixed
  */
-function delete_remote_lesson_object($tablename, $columnname, $value)
+function delete_remote_moodle_table($tablename, $data)
 {
-    return moodle_webservice_client(
+    $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_delete_lesson_object',
-            'params' => array('tablename' => $tablename, 'columnname' => $columnname, 'value' => $value)
+            'function_name' => 'local_mod_delete_mdl_table',
+            'params' => array_merge(array('tablename' => $tablename), $data)
         )
     );
+
+    return $result->status;
 }
 
 /**
@@ -673,7 +677,7 @@ function delete_remote_lesson_object($tablename, $columnname, $value)
  * @param $instance
  * @return false|mixed
  */
-function get_remote_events_by_modulename_and_instance($modulename, $instance, $userid = 0, $groupid = 0)
+function get_remote_list_events_by_modulename_and_instance($modulename, $instance, $userid = 0, $groupid = 0)
 {
     $result = moodle_webservice_client(
         array(
@@ -683,7 +687,13 @@ function get_remote_events_by_modulename_and_instance($modulename, $instance, $u
             'params' => array('modulename' => $modulename, 'instance' => $instance, 'userid' => $userid, 'groupid' => $groupid)
         )
     );
-    return $result->events;
+
+    $events = array();
+    foreach ($result->events as $event) {
+        $events[$event->id] = $event;
+    }
+
+    return $events;
 }
 
 /**
@@ -737,7 +747,7 @@ function save_remote_lesson_answers($answer)
         )
     );
 
-    return $result->status;
+    return $result->newanswerid;
 }
 
 function update_remote_lesson_answers($id, $answer)
