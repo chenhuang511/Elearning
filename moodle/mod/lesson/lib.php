@@ -1173,25 +1173,25 @@ function lesson_extend_settings_navigation($settings, $lessonnode) {
     }
 
     if (has_capability('mod/lesson:edit', $PAGE->cm->context)) {
-        $url = new moodle_url('/mod/lesson/remote/api-view.php', array('id' => $PAGE->cm->id));
+        $url = new moodle_url('/mod/lesson/remote/view.php', array('id' => $PAGE->cm->id));
         $lessonnode->add(get_string('preview', 'lesson'), $url);
         $editnode = $lessonnode->add(get_string('edit', 'lesson'));
-        $url = new moodle_url('/mod/lesson/remote/api-edit.php', array('id' => $PAGE->cm->id, 'mode' => 'collapsed'));
+        $url = new moodle_url('/mod/lesson/remote/edit.php', array('id' => $PAGE->cm->id, 'mode' => 'collapsed'));
         $editnode->add(get_string('collapsed', 'lesson'), $url);
-        $url = new moodle_url('/mod/lesson/remote/api-edit.php', array('id' => $PAGE->cm->id, 'mode' => 'full'));
+        $url = new moodle_url('/mod/lesson/remote/edit.php', array('id' => $PAGE->cm->id, 'mode' => 'full'));
         $editnode->add(get_string('full', 'lesson'), $url);
     }
 
     if (has_capability('mod/lesson:viewreports', $PAGE->cm->context)) {
         $reportsnode = $lessonnode->add(get_string('reports', 'lesson'));
-        $url = new moodle_url('/mod/lesson/remote/api-report.php', array('id'=>$PAGE->cm->id, 'action'=>'reportoverview'));
+        $url = new moodle_url('/mod/lesson/remote/report.php', array('id'=>$PAGE->cm->id, 'action'=>'reportoverview'));
         $reportsnode->add(get_string('overview', 'lesson'), $url);
-        $url = new moodle_url('/mod/lesson/remote/api-report.php', array('id'=>$PAGE->cm->id, 'action'=>'reportdetail'));
+        $url = new moodle_url('/mod/lesson/remote/report.php', array('id'=>$PAGE->cm->id, 'action'=>'reportdetail'));
         $reportsnode->add(get_string('detailedstats', 'lesson'), $url);
     }
 
     if (has_capability('mod/lesson:grade', $PAGE->cm->context)) {
-        $url = new moodle_url('/mod/lesson/remote/api-essay.php', array('id'=>$PAGE->cm->id));
+        $url = new moodle_url('/mod/lesson/remote/essay.php', array('id'=>$PAGE->cm->id));
         $lessonnode->add(get_string('manualgrading', 'lesson'), $url);
     }
 

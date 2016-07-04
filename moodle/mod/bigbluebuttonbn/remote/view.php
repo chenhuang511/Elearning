@@ -16,7 +16,7 @@ require_once($CFG->dirroot . '/mod/bigbluebuttonbn/remote/locallib.php');
 $id = required_param('id', PARAM_INT);              // Course Module ID, or
 $b  = optional_param('n', 0, PARAM_INT);            // bigbluebuttonbn instance ID
 $group  = optional_param('group', 0, PARAM_INT);    // group instance ID
-$nonajax = optional_param('nonajax', true, PARAM_BOOL);
+$nonajax = optional_param('nonajax', false, PARAM_BOOL);
 
 if ($id) {
     if (!$cm = get_remote_course_module_by_cmid('bigbluebuttonbn', $id)) {
@@ -161,7 +161,7 @@ if( $bigbluebuttonbn->newwindow == 1 ) {
 
 // Validate if the user is in a role allowed to join
 if ( !has_capability('moodle/category:manage', $context) && !has_capability('mod/bigbluebuttonbn:join', $context) ) {
-    if (!$nonajax) {
+    if ($nonajax) {
         echo $OUTPUT->header();
     }
     if (isguestuser()) {
@@ -172,7 +172,7 @@ if ( !has_capability('moodle/category:manage', $context) && !has_capability('mod
             get_login_url(), $CFG->wwwroot.'/course/view.php?id='.$course->id);
     }
 
-    if (!$nonajax) {
+    if ($nonajax) {
         echo $OUTPUT->footer();
     }
     exit;
@@ -186,7 +186,7 @@ $bbbsession['joinURL'] = $CFG->wwwroot.'/mod/bigbluebuttonbn/bbb_view.php?action
 
 $bigbluebuttonbn_view = '';
 
-if (!$nonajax) {
+if ($nonajax) {
     // Output starts here
     echo $OUTPUT->header();
 }
@@ -278,7 +278,7 @@ if (!empty($bigbluebuttonbn->openingtime) && $now < $bigbluebuttonbn->openingtim
     $PAGE->requires->js_init_call('M.mod_bigbluebuttonbn.view_init', array(), false, $jsmodule);
 }
 
-if (!$nonajax) {
+if ($nonajax) {
     // Finish the page
     echo $OUTPUT->footer();
 }

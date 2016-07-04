@@ -43,7 +43,7 @@ $lesson = new lesson(get_remote_lesson_by_id($cm->instance));
 
 require_login($course, false, $cm);
 
-$url = new moodle_url('/mod/lesson/remote/api-lesson.php', array('id' => $id, 'action' => $action));
+$url = new moodle_url('/mod/lesson/remote/lesson.php', array('id' => $id, 'action' => $action));
 $PAGE->set_url($url);
 
 $context = context_module::instance($cm->id);
@@ -73,7 +73,7 @@ switch ($action) {
                 echo $title . "<br />\n";
             }
         }
-        echo $OUTPUT->confirm(get_string("confirmdeletionofthispage", "lesson"), "api-lesson.php?action=delete&id=$cm->id&pageid=$pageid", "api-view.php?id=$cm->id");
+        echo $OUTPUT->confirm(get_string("confirmdeletionofthispage", "lesson"), "lesson.php?action=delete&id=$cm->id&pageid=$pageid", "view.php?id=$cm->id");
 
         break;
     case 'move':
@@ -122,13 +122,13 @@ switch ($action) {
     case 'delete':
         $thispage = $lesson->load_page($pageid);
         $thispage->delete();
-        redirect("$CFG->wwwroot/mod/lesson/remote/api-edit.php?id=$cm->id");
+        redirect("$CFG->wwwroot/mod/lesson/remote/edit.php?id=$cm->id");
         break;
     case 'moveit':
         $after = (int)required_param('after', PARAM_INT); // target page
 
         $lesson->resort_pages($pageid, $after);
-        redirect("$CFG->wwwroot/mod/lesson/remote/api-edit.php?id=$cm->id");
+        redirect("$CFG->wwwroot/mod/lesson/remote/edit.php?id=$cm->id");
         break;
     default:
         print_error('unknowaction');

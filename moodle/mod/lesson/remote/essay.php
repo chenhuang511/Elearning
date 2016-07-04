@@ -42,7 +42,7 @@ require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/lesson:grade', $context);
 
-$url = new moodle_url('/mod/lesson/remote/api-essay.php', array('id' => $id));
+$url = new moodle_url('/mod/lesson/remote/essay.php', array('id' => $id));
 if ($mode !== 'display') {
     $url->param('mode', $mode);
 }
@@ -400,7 +400,7 @@ switch ($mode) {
                     $essayinfo = lesson_page_type_essay::extract_useranswer($essay->useranswer);
 
                     // link for each essay
-                    $url = new moodle_url('/mod/lesson/remote/api-essay.php', array('id' => $cm->id, 'mode' => 'grade', 'attemptid' => $essay->id, 'sesskey' => sesskey()));
+                    $url = new moodle_url('/mod/lesson/remote/essay.php', array('id' => $cm->id, 'mode' => 'grade', 'attemptid' => $essay->id, 'sesskey' => sesskey()));
                     $attributes = array();
                     // Different colors for all the states of an essay (graded, if sent, not graded)
                     if (!$essayinfo->graded) {

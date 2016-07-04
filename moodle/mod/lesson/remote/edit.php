@@ -40,7 +40,7 @@ $context = context_module::instance($cm->id);
 require_capability('mod/lesson:manage', $context);
 
 $mode    = optional_param('mode', get_user_preferences('lesson_view', 'collapsed'), PARAM_ALPHA);
-$PAGE->set_url('/mod/lesson/remote/api-edit.php', array('id'=>$cm->id,'mode'=>$mode));
+$PAGE->set_url('/mod/lesson/remote/edit.php', array('id'=>$cm->id,'mode'=>$mode));
 
 if ($mode != get_user_preferences('lesson_view', 'collapsed') && $mode !== 'single') {
     set_user_preference('lesson_view', $mode);

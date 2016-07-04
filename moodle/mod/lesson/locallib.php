@@ -1995,7 +1995,7 @@ class lesson extends lesson_base
         $pages = $this->load_all_pages();
 
         if (!array_key_exists($pageid, $pages) || ($after != 0 && !array_key_exists($after, $pages))) {
-            print_error('cannotfindpages', 'lesson', "$CFG->wwwroot/mod/lesson/remote/api-edit.php?id=$cm->id");
+            print_error('cannotfindpages', 'lesson', "$CFG->wwwroot/mod/lesson/remote/edit.php?id=$cm->id");
         }
 
         $pagetomove = clone($pages[$pageid]);

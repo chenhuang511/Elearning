@@ -36,7 +36,7 @@ $qtype  = optional_param('qtype', 0, PARAM_INT);
 $edit   = optional_param('edit', false, PARAM_BOOL);
 $returnto = optional_param('returnto', null, PARAM_URL);
 if (empty($returnto)) {
-    $returnto = new moodle_url('/mod/lesson/remote/api-edit.php', array('id' => $id));
+    $returnto = new moodle_url('/mod/lesson/remote/edit.php', array('id' => $id));
     $returnto->set_anchor('lesson-' . $pageid);
 }
 
@@ -49,7 +49,7 @@ require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/lesson:edit', $context);
 
-$PAGE->set_url('/mod/lesson/remote/api-editpage.php', array('pageid'=>$pageid, 'id'=>$id, 'qtype'=>$qtype));
+$PAGE->set_url('/mod/lesson/remote/editpage.php', array('pageid'=>$pageid, 'id'=>$id, 'qtype'=>$qtype));
 $PAGE->set_pagelayout('admin');
 
 if ($edit) {
@@ -141,7 +141,7 @@ if ($edit) {
     }
 
     $mform->set_data($data);
-    $PAGE->navbar->add(get_string('edit'), new moodle_url('/mod/lesson/remote/api-edit.php', array('id'=>$id)));
+    $PAGE->navbar->add(get_string('edit'), new moodle_url('/mod/lesson/remote/edit.php', array('id'=>$id)));
     $PAGE->navbar->add(get_string('editingquestionpage', 'lesson', get_string($mform->qtypestring, 'lesson')));
 } else {
     // Give the page type being created a chance to override the creation process

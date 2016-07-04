@@ -35,7 +35,7 @@ require_once($CFG->dirroot.'/mod/lesson/format.php');  // Parent class
 $id     = required_param('id', PARAM_INT);         // Course Module ID
 $pageid = optional_param('pageid', '', PARAM_INT); // Page ID
 
-$PAGE->set_url('/mod/lesson/remote/api-import.php', array('id'=>$id, 'pageid'=>$pageid));
+$PAGE->set_url('/mod/lesson/remote/import.php', array('id'=>$id, 'pageid'=>$pageid));
 
 $cm = get_remote_course_module_by_cmid('lesson', $id);
 $course = get_local_course_record($cm->course);
@@ -102,7 +102,7 @@ if ($data = $mform->get_data()) {
     }
 
     echo "<hr>";
-    echo $OUTPUT->continue_button('api-view.php?id='.$PAGE->cm->id);
+    echo $OUTPUT->continue_button('view.php?id='.$PAGE->cm->id);
 
 } else {
 

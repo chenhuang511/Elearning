@@ -208,7 +208,7 @@ class assign {
         $params['action'] = $action;
         $cm = $this->get_course_module();
         if ($cm) {
-            $currenturl = new moodle_url('/mod/assign/remote/api-view.php', array('id' => $cm->id));
+            $currenturl = new moodle_url('/mod/assign/remote/view.php', array('id' => $cm->id));
         } else {
             $currenturl = new moodle_url('/mod/assign/index.php', array('id' => $this->get_course()->id));
         }
@@ -548,7 +548,7 @@ class assign {
         }
         // Now show the right view page.
         if ($action == 'redirect') {
-            $nextpageurl = new moodle_url('/mod/assign/remote/api-view.php', $nextpageparams);
+            $nextpageurl = new moodle_url('/mod/assign/remote/view.php', $nextpageparams);
             redirect($nextpageurl);
             return;
         } else if ($action == 'savegradingresult') {
@@ -3762,18 +3762,18 @@ class assign {
             $links[$gradebookurl] = get_string('viewgradebook', 'assign');
         }
         if ($this->is_any_submission_plugin_enabled() && $this->count_submissions()) {
-            $downloadurl = '/mod/assign/remote/api-view.php?id=' . $cmid . '&action=downloadall';
+            $downloadurl = '/mod/assign/remote/view.php?id=' . $cmid . '&action=downloadall';
             $links[$downloadurl] = get_string('downloadall', 'assign');
         }
         if ($this->is_blind_marking() &&
                 has_capability('mod/assign:revealidentities', $this->get_context())) {
-            $revealidentitiesurl = '/mod/assign/remote/api-view.php?id=' . $cmid . '&action=revealidentities';
+            $revealidentitiesurl = '/mod/assign/remote/view.php?id=' . $cmid . '&action=revealidentities';
             $links[$revealidentitiesurl] = get_string('revealidentities', 'assign');
         }
         foreach ($this->get_feedback_plugins() as $plugin) {
             if ($plugin->is_enabled() && $plugin->is_visible()) {
                 foreach ($plugin->get_grading_actions() as $action => $description) {
-                    $url = '/mod/assign/remote/api-view.php' .
+                    $url = '/mod/assign/remote/view.php' .
                            '?id=' .  $cmid .
                            '&plugin=' . $plugin->get_type() .
                            '&pluginsubtype=assignfeedback' .
@@ -3877,7 +3877,7 @@ class assign {
         $o .= $this->get_renderer()->render($header);
 
         $currenturl = $CFG->wwwroot .
-                      '/mod/assign/remote/api-view.php?id=' .
+                      '/mod/assign/remote/view.php?id=' .
                       $this->get_course_module()->id .
                       '&action=grading';
 
@@ -5054,7 +5054,7 @@ class assign {
 
         if ($this->can_view_grades()) {
             // Group selector will only be displayed if necessary.
-            $currenturl = new moodle_url('/mod/assign/remote/api-view.php', array('id' => $this->get_course_module()->id));
+            $currenturl = new moodle_url('/mod/assign/remote/view.php', array('id' => $this->get_course_module()->id));
             $o .= groups_print_activity_menu($this->get_course_module(), $currenturl->out(), true);
 
             $summary = $this->get_assign_grading_summary_renderable();

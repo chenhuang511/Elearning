@@ -46,7 +46,7 @@ $currentgroup = groups_get_activity_group($cm, true);
 $context = context_module::instance($cm->id);
 require_capability('mod/lesson:viewreports', $context);
 
-$url = new moodle_url('/mod/lesson/remote/api-report.php', array('id' => $id));
+$url = new moodle_url('/mod/lesson/remote/report.php', array('id' => $id));
 $url->param('action', $action);
 if ($pageid !== null) {
     $url->param('pageid', $pageid);

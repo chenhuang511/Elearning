@@ -45,7 +45,7 @@ $context = context_module::instance($cm->id);
 $canmanage = has_capability('mod/lesson:manage', $context);
 $lessonoutput = $PAGE->get_renderer('mod_lesson');
 
-$url = new moodle_url('/mod/lesson/remote/api-continue.php', array('id' => $cm->id));
+$url = new moodle_url('/mod/lesson/remote/continue.php', array('id' => $cm->id));
 $PAGE->set_url($url);
 $PAGE->set_pagetype('mod-lesson-view');
 $PAGE->navbar->add(get_string('continue', 'lesson'));
@@ -60,7 +60,7 @@ if (!$canmanage) {
         if ($timeleft <= 0) {
             // Out of time
             $lesson->add_message(get_string('eolstudentoutoftime', 'lesson'));
-            redirect(new moodle_url('/mod/lesson/remote/api-view.php', array('id' => $cm->id, 'pageid' => LESSON_EOL, 'outoftime' => 'normal')));
+            redirect(new moodle_url('/mod/lesson/remote/view.php', array('id' => $cm->id, 'pageid' => LESSON_EOL, 'outoftime' => 'normal')));
         } else if ($timeleft < 60) {
             // One minute warning
             $lesson->add_message(get_string("studentoneminwarning", "lesson"));
@@ -149,7 +149,7 @@ if (isset($USER->modattempts[$lesson->id])) {
 
 if ($result->nodefaultresponse) {
     // Don't display feedback
-    redirect(new moodle_url('/mod/lesson/remote/api-view.php', array('id' => $cm->id, 'pageid' => $result->newpageid)));
+    redirect(new moodle_url('/mod/lesson/remote/view.php', array('id' => $cm->id, 'pageid' => $result->newpageid)));
 }
 
 /// Set Messages
@@ -172,7 +172,7 @@ if ($result->attemptsremaining != 0 && $lesson->review && !$reviewmode) {
     $lesson->add_message(get_string('attemptsremaining', 'lesson', $result->attemptsremaining));
 }
 
-$PAGE->set_url('/mod/lesson/remote/api-view.php', array('id' => $cm->id, 'pageid' => $page->id));
+$PAGE->set_url('/mod/lesson/remote/view.php', array('id' => $cm->id, 'pageid' => $page->id));
 $PAGE->set_subpage($page->id);
 
 /// Print the header, heading and tabs
@@ -191,7 +191,7 @@ if (!$reviewmode) {
 
 // User is modifying attempts - save button and some instructions
 if (isset($USER->modattempts[$lesson->id])) {
-    $url = $CFG->wwwroot . '/mod/lesson/remote/api-view.php';
+    $url = $CFG->wwwroot . '/mod/lesson/remote/view.php';
     $content = $OUTPUT->box(get_string("gotoendoflesson", "lesson"), 'center');
     $content .= $OUTPUT->box(get_string("or", "lesson"), 'center');
     $content .= $OUTPUT->box(get_string("continuetonextpage", "lesson"), 'center');
@@ -203,14 +203,14 @@ if (isset($USER->modattempts[$lesson->id])) {
 
 // Review button back
 if (!$result->correctanswer && !$result->noanswer && !$result->isessayquestion && !$reviewmode && $lesson->review && !$result->maxattemptsreached) {
-    $url = $CFG->wwwroot . '/mod/lesson/remote/api-view.php';
+    $url = $CFG->wwwroot . '/mod/lesson/remote/view.php';
     $content = html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'id', 'value' => $cm->id));
     $content .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'pageid', 'value' => $page->id));
     $content .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'submit', 'value' => get_string('reviewquestionback', 'lesson')));
     echo html_writer::tag('form', "<div class=\"singlebutton\">$content</div>", array('method' => 'post', 'action' => $url));
 }
 
-$url = new moodle_url('/mod/lesson/remote/api-view.php', array('id' => $cm->id, 'pageid' => $result->newpageid));
+$url = new moodle_url('/mod/lesson/remote/view.php', array('id' => $cm->id, 'pageid' => $result->newpageid));
 if ($lesson->review && !$result->correctanswer && !$result->noanswer && !$result->isessayquestion && !$result->maxattemptsreached) {
     // Review button continue
     echo $OUTPUT->single_button($url, get_string('reviewquestioncontinue', 'lesson'), true);

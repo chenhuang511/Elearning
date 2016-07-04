@@ -60,7 +60,7 @@ $quiz = $quizobj->get_quiz();
 get_remote_quiz_view_quiz($quiz->id);
 
 // Initialize $PAGE, compute blocks.
-$PAGE->set_url('/mod/quiz/remote/api-view.php', array('id' => $cm->id));
+$PAGE->set_url('/mod/quiz/remote/view.php', array('id' => $cm->id));
 
 // Create view object which collects all the information the renderer will need.
 $viewobj = new mod_quiz_view_object();

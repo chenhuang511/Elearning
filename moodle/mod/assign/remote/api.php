@@ -25,7 +25,7 @@ $urlparams = array('id' => $id,
     'rownum' => optional_param('rownum', 0, PARAM_INT),
     'useridlistid' => optional_param('useridlistid', $assign->get_useridlist_key_id(), PARAM_ALPHANUM));
 
-$url = new moodle_url('/mod/assign/remote/api-view.php', $urlparams);
+$url = new moodle_url('/mod/assign/remote/view.php', $urlparams);
 $PAGE->set_url($url);
 
 $completion=new completion_info($course);
