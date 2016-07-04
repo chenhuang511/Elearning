@@ -22,8 +22,6 @@ function moodle_webservice_client($options, $usecache = true, $assoc = false)
         if (!class_exists('Zend_Http_Client')) {
             set_include_path(get_include_path().PATH_SEPARATOR.$CFG->libdir . '/zend/');
             require_once($CFG->libdir . '/zend/Zend/Http/Client.php');
-        } else {
-            require_once($CFG->libdir . '/zend/Zend/Http/Client.php');
         }
 
         $client = new Zend_Http_Client($serverUrl);
