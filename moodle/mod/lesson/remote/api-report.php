@@ -143,16 +143,8 @@ if ($action === 'delete') {
         list($sort, $sortparams) = users_order_by_sql('u');
 
         $params['lessonid'] = $lesson->id;
-        $ufields = user_picture::fields('u');
-        $sql = "SELECT DISTINCT $ufields
-                FROM {user} u
-                JOIN (SELECT userid, lessonid FROM {lesson_attempts} a1 UNION
-                SELECT userid, lessonid FROM {lesson_branch} b1) a ON u.id = a.userid
-                JOIN ($esql) ue ON ue.id = a.userid
-                WHERE a.lessonid = :lessonid
-                ORDER BY $sort";
 
-        $students = $DB->get_recordset_sql($sql, $params);
+        $students = get_remote_user_by_lessonid($params, $esql);
         if (!$students->valid()) {
             $students->close();
             $nothingtodisplay = true;
@@ -195,7 +187,7 @@ if ($action === 'delete') {
     // Build an array for output.
     $studentdata = array();
 
-    $attempts = $DB->get_recordset('lesson_attempts', array('lessonid' => $lesson->id), 'timeseen');
+    $attempts = get_remote_recordset_lesson_attempts_by_lessonid($lesson->id);
     foreach ($attempts as $attempt) {
         // if the user is not in the array or if the retry number is not in the sub array, add the data for that try.
         if (empty($studentdata[$attempt->userid]) || empty($studentdata[$attempt->userid][$attempt->retry])) {
@@ -248,7 +240,7 @@ if ($action === 'delete') {
     }
     $attempts->close();
 
-    $branches = $DB->get_recordset('lesson_branch', array('lessonid' => $lesson->id), 'timeseen');
+    $branches = get_remote_recordset_lesson_branch_by_lessonid($lesson->id);
     foreach ($branches as $branch) {
         // If the user is not in the array or if the retry number is not in the sub array, add the data for that try.
         if (empty($studentdata[$branch->userid]) || empty($studentdata[$branch->userid][$branch->retry])) {

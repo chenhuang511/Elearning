@@ -42,7 +42,7 @@ require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/lesson:grade', $context);
 
-$url = new moodle_url('/mod/lesson/essay.php', array('id' => $id));
+$url = new moodle_url('/mod/lesson/remote/api-essay.php', array('id' => $id));
 if ($mode !== 'display') {
     $url->param('mode', $mode);
 }

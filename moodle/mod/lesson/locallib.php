@@ -818,11 +818,11 @@ abstract class lesson_add_page_form_base extends moodleform
         if ($this->_customdata['edit'] === true) {
             $mform->addElement('hidden', 'edit', 1);
             $mform->setType('edit', PARAM_BOOL);
-            $this->add_action_buttons(get_string('cancel'), get_string('savepage', 'lesson'));
+            $this->add_action_buttons(get_string('cancel'), get_string('savepage', 'lesson'), true);
         } else if ($this->qtype === 'questiontype') {
-            $this->add_action_buttons(get_string('cancel'), get_string('addaquestionpage', 'lesson'));
+            $this->add_action_buttons(get_string('cancel'), get_string('addaquestionpage', 'lesson'), true);
         } else {
-            $this->add_action_buttons(get_string('cancel'), get_string('savepage', 'lesson'));
+            $this->add_action_buttons(get_string('cancel'), get_string('savepage', 'lesson'), true);
         }
     }
 
@@ -2305,7 +2305,16 @@ abstract class lesson_page extends lesson_base
         $editor->id = $newpage->id;
         $editor->contents_editor = $properties->contents_editor;
         $editor = file_postupdate_standard_editor($editor, 'contents', array('noclean' => true, 'maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes' => $maxbytes), $context, 'mod_lesson', 'page_contents', $editor->id);
-        $DB->update_record("lesson_pages", $editor);
+        $data = array();
+
+        $i = 0;
+        foreach ($editor as $key => $val) {
+            $data["data[$i][name]"] = $key;
+            $data["data[$i][value]"] = $val;
+            $i++;
+        }
+
+        $result = update_remote_lesson_pages($newpage->id, $data);
 
         if ($newpage->prevpageid > 0) {
             $DB->set_field("lesson_pages", "nextpageid", $newpage->id, array("id" => $newpage->prevpageid));
@@ -2459,11 +2468,14 @@ abstract class lesson_page extends lesson_base
         if ($prevpageid === null) {
             $prevpageid = $this->properties->prevpageid;
         }
-        $obj = new stdClass;
-        $obj->id = $this->properties->id;
-        $obj->prevpageid = $prevpageid;
-        $obj->nextpageid = $nextpageid;
-        $DB->update_record('lesson_pages', $obj);
+
+        $data = array();
+        $data['data[0][name]'] = 'prevpageid';
+        $data['data[0][value]'] = $prevpageid;
+        $data['data[1][name]'] = 'nextpageid';
+        $data['data[1][value]'] = $nextpageid;
+
+        $result = update_remote_lesson_pages($this->properties->id, $data);
     }
 
     /**
@@ -2844,7 +2856,16 @@ abstract class lesson_page extends lesson_base
         }
         $properties->timemodified = time();
         $properties = file_postupdate_standard_editor($properties, 'contents', array('noclean' => true, 'maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes' => $maxbytes), $context, 'mod_lesson', 'page_contents', $properties->id);
-        $DB->update_record("lesson_pages", $properties);
+
+        $data = array();
+        $i = 0;
+
+        foreach ($properties as $key => $val) {
+            $data["data[$i][name]"] = $key;
+            $data["data[$i][value]"] = $val;
+            $i++;
+        }
+        $result = update_remote_lesson_pages($this->properties->id, $data);
 
         // Trigger an event: page updated.
         \mod_lesson\event\page_updated::create_from_lesson_page($this, $context)->trigger();
@@ -3070,7 +3091,7 @@ abstract class lesson_page extends lesson_base
                 $data['data[11][value]'] = $answer->responseformat;
 
                 $answer->id = save_remote_lesson_answers($data);
-                
+
                 if (isset($properties->response_editor[$i])) {
                     $this->save_answers_files($context, $PAGE->course->maxbytes, $answer,
                         $properties->answer_editor[$i], $properties->response_editor[$i]);

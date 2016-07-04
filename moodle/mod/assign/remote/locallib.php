@@ -5,12 +5,12 @@ require_once($CFG->dirroot . '/lib/remote/lib.php');
 
 
 /**
- * get lesson by id
+ * get assign by id
  *
- * @param int $lessonid . the id of lesson
+ * @param int $assignid . the id of assign
  * @param array $options . the options
  *
- * @return stdClass $lesson
+ * @return stdClass $asssign
  */
 function get_remote_assign_by_id($assignid, $options = array())
 {
@@ -24,54 +24,14 @@ function get_remote_assign_by_id($assignid, $options = array())
     ));
 }
 
-function get_remote_assign_submission_status($assignid) {
-    global $CFG, $USER;
-
-    require_once($CFG->dirroot . '/mnet/lib.php');
-    $hostname = mnet_get_hostname_from_uri($CFG->wwwroot);
-    // Get the IP address for that host - if this fails, it will return the hostname string
-    $hostip = gethostbyname($hostname);
-
-    return moodle_webservice_client(array(
-        'domain' => HUB_URL,
-        'token' => HOST_TOKEN,
-        'function_name' => 'local_mod_assign_get_submission_status',
-        'params' => array('assignid' => $assignid, "ip_address" => $hostip, "username" => $USER->username),
-    ));
-}
-
-function get_remote_submissions_by_assign_id($assignmentids, $options = array())
-{
-    return moodle_webservice_client(array_merge($options,
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN_M,
-            'function_name' => 'mod_assign_get_submissions',
-            'params' => array('assignmentids' => $assignmentids),
-        )
-    ));
-}
-
-function get_remote_submissions_by_assign_ids_and_ip($assignmentids, $ip, $options = array()) {
-    return moodle_webservice_client(array_merge($options,
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_assign_get_submissions_by_host_ip',
-            'params' => array('assignmentids' => $assignmentids, 'ip' => $ip),
-        )
-    ));
-}
-
-function get_list_user_id_from_submissions($submissions = array()) {
-    $usersid = array();
-    foreach ($submissions as $submission) {
-        $usersid[] = $submission->userid;
-    }
-    return $usersid;
-}
-
-//hanv: 16/06/2016
+/**
+ * get assign submission status
+ *
+ * @param int $assignid - the id of assign
+ * @param int $userid - the id of user - default is null
+ *
+ * @return stdClass $submissionstatus
+ */
 function get_remote_get_submission_status($assignid, $userid = null)
 {   
     return moodle_webservice_client(
@@ -84,29 +44,14 @@ function get_remote_get_submission_status($assignid, $userid = null)
     );
 }
 
-function get_remote_enrolled_users($courseid, $options = array()) {
-    return moodle_webservice_client(array_merge($options,
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN_M,
-            'function_name' => 'core_enrol_get_enrolled_users',
-            'params' => array('courseid' => $courseid),
-        )
-    ));
-}
-
-function get_remote_enrolled_users_by_ip($courseid, $ip, $options = array()) {
-    $resp = moodle_webservice_client(array_merge($options,
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_enrol_get_enrolled_users_by_hostip',
-            'params' => array('courseid' => $courseid, 'ip' => $ip),
-        )
-    ));
-    return $resp;
-}
-// Minhnd
+/**
+ * get assign onlinetext submission on hub
+ *
+ * @param int $submissionid . the id of submission
+ * @param array $options . the options
+ *
+ * @return stdClass $onlinetextsubmission
+ */
 function get_remote_onlinetext_submission($submissionid, $options = array()) {
     return moodle_webservice_client(array_merge($options,
         array(
@@ -118,7 +63,13 @@ function get_remote_onlinetext_submission($submissionid, $options = array()) {
     ), false);
 }
 
-// Minhnd
+/**
+ * get assign assignment feedback comment on hub
+ *
+ * @param int $gradeid . the id of grade
+ *
+ * @return stdClass feedbackcomments
+ */
 function get_remote_assignfeedback_comments($gradeid) {
     $resp = moodle_webservice_client(
         array(
@@ -132,6 +83,16 @@ function get_remote_assignfeedback_comments($gradeid) {
     return $resp->feedbackcomments;
 }
 
+/**
+ * get value of assign plugin config
+ *
+ * @param int $dbparams['assignment'] . the assignment id
+ * @param string $dbparams['plugin'] . plugin name
+ * @param string $dbparams['subtype'] . subtype
+ * @param string $dbparams['name'] . name
+ *
+ * @return stdClass $value
+ */
 function get_remote_assign_plugin_config($dbparams){
     return moodle_webservice_client(
         array(
@@ -143,6 +104,17 @@ function get_remote_assign_plugin_config($dbparams){
     );
 }
 
+/**
+ * Get assign comment status include: countcomment, getcomment
+ *
+ * @param int $params['itemid'] . the item id
+ * @param string $params['commentarea'] . the comment area
+ * @param int $params['contextid'] . the context id
+ * @param int $params['instanceid'] . the instance id
+ * @param int $params['courseid'] . the course id
+ *
+ * @return stdClass object include: countcomment, getcomment, warnning
+ */
 function get_remote_assign_comment_status($params)
 {
     return moodle_webservice_client(
@@ -155,17 +127,15 @@ function get_remote_assign_comment_status($params)
     );
 }
 
-function get_remote_assign_count_file_submission($params){
-    return moodle_webservice_client(
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_assign_get_count_file_submission',
-            'params' => $params
-        ), false
-    );
-}
-
+/**
+ * Count submission with status by host id.
+ *
+ * @param int $params['assignid'] . the assign id
+ * @param string $params['hostip'] . the hostip, eg: 192.168.1.88 ...
+ * @param string $params['status'] . the status of submission
+ *
+ * @return int value . count submission with status
+ */
 function get_remote_count_submissions_with_status_by_host_id($params){
     return moodle_webservice_client(
         array(
@@ -177,6 +147,15 @@ function get_remote_count_submissions_with_status_by_host_id($params){
     );
 }
 
+/**
+ * Count submission need grading by host id.
+ *
+ * @param int $params['assignid'] . the assign id
+ * @param string $params['hostip'] . the hostip, eg: 192.168.1.88 ...
+ * @param string $params['status'] . the status of submission
+ *
+ * @return int value . count submission need grading
+ */
 function get_remote_count_submissions_need_grading_by_host_id($params){
     return moodle_webservice_client(
         array(
@@ -188,6 +167,16 @@ function get_remote_count_submissions_need_grading_by_host_id($params){
     );
 }
 
+/**
+ * Get submission by assignid, userid, groupid.
+ *
+ * @param int $params['assignment'] . the assign id
+ * @param string $params['useremail'] . the email user
+ * @param int $params['groupid'] . the group id
+ * @param int $params['attemptnumber'] . the attemptnumber submisison
+ *
+ * @return stdClass $results . list submissions
+ */
 function get_submission_by_assignid_userid_groupid($params){
     
     if(!isset($params['attemptnumber']))
@@ -210,6 +199,15 @@ function get_submission_by_assignid_userid_groupid($params){
     return $results;
 }
 
+/**
+ * Get grades by assignid, userid.
+ *
+ * @param int $params['assignment'] . the assign id
+ * @param string $params['useremail'] . the email user
+ * @param int $params['attemptnumber'] . the attemptnumber
+ *
+ * @return stdClass $results . list grades
+ */
 function get_assign_grades_by_assignid_userid($params){
     
     if(!isset($params['attemptnumber']))
@@ -232,9 +230,18 @@ function get_assign_grades_by_assignid_userid($params){
     return $results;
 }
 
+/**
+ * Get attemptnumber by assignid, userid, groupid.
+ *
+ * @param int $params['assignment'] . the assign id
+ * @param string $params['useremail'] . the email user
+ * @param int $params['groupid'] . the group id
+ *
+ * @return stdClass $attemptnumbers->result . list attemptnumbers
+ */
 function get_attemptnumber_by_assignid_userid_groupid($params){
     
-    $attemptnumbers =  moodle_webservice_client(
+    $attemptnumbers = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
@@ -246,6 +253,14 @@ function get_attemptnumber_by_assignid_userid_groupid($params){
     return $attemptnumbers->result;
 }
 
+/**
+ * Get user flags by assignid, userid.
+ *
+ * @param int $params['assignment'] . the assign id
+ * @param string $params['useremail'] . the email user
+ *
+ * @return stdClass $flags->userflags .
+ */
 function get_user_flags_by_assignid_userid($params){
     $flags =  moodle_webservice_client(
         array(
@@ -262,6 +277,15 @@ function get_user_flags_by_assignid_userid($params){
     return $flags->userflags;
 }
 
+/**
+ * Set submission lastest.
+ *
+ * @param int $params['assignment'] . the assign id
+ * @param string $params['useremail'] . the email user
+ * @param int $params['groupid'] . the group id
+ *
+ * @return boolean $resp->result . check if success
+ */
 function set_submission_lastest($params){
 
     $resp = moodle_webservice_client(
@@ -276,6 +300,19 @@ function set_submission_lastest($params){
     return $resp->result;
 }
 
+/**
+ * Create submission on hub.
+ *
+ * @param int $submission['assignment'] . the assign id
+ * @param string $submission['useremail'] . the email user
+ * @param int $submission['timecreated'] . the time created
+ * @param int $submission['timemodified'] . the time modified
+ * @param string $submission['status'] . the status
+ * @param int $submission['attemptnumber'] . the attempnumber
+ * @param int $submission['latest'] . the lastest
+ *
+ * @return int $resp->sid . the new submission id just created
+ */
 function create_remote_submission($submission){
 
     $resp = moodle_webservice_client(
@@ -298,6 +335,19 @@ function create_remote_submission($submission){
     return $resp->sid;
 }
 
+/**
+ * Create grade on hub.
+ *
+ * @param int $grade['assignment'] . the assign id
+ * @param string $grade['useremail'] . the email user
+ * @param int $grade['timecreated'] . the time created
+ * @param int $grade['timemodified'] . the time modified
+ * @param int $grade['grader'] . the grader
+ * @param int $grade['grade'] . the grade score
+ * @param int $grade['attemptnumber'] . the attemptnumber
+ *
+ * @return int $resp->gid . the new grade id just created
+ */
 function create_remote_grade($grade){
     if(!isset($grade->attemptnumber))
         $grade->attemptnumber = 0;
@@ -322,6 +372,13 @@ function create_remote_grade($grade){
     return $resp->gid;
 }
 
+/**
+ * Get submissions by submission id.
+ *
+ * @param int $sid . the submission id
+ *
+ * @return stdClass $resp->assignsubmisison . the assign submission
+ */
 function get_remote_submission_by_id($sid){
 
     $resp = moodle_webservice_client(
@@ -336,6 +393,21 @@ function get_remote_submission_by_id($sid){
     return $resp->assignsubmisison;
 }
 
+/**
+ * Save submission on hub
+ *
+ * @param int $assignmentid . the id of assign
+ * @param int $userid . the id of user on hub 
+ * @param array plugindata[onlinetext_editor][text] . content in onlinetext editor
+ * @param array plugindata[onlinetext_editor][format] . format of onlinetext editor
+ * @param array plugindata[onlinetext_editor][itemid] . the id of submission
+ * @param array plugindata[files_filemanager] . The id of a draft area containing files for this submission 
+ * @param array plugindata[id] . the id of course module
+ * @param array plugindata[userid] . the id of user on hub
+ * @param array plugindata[files] . the numbers of file send to hub
+ *
+ * @return bool . check if success
+ */
 function save_remote_submission($assignmentid, $userid, $data){
 
     if ($data->onlinetext_editor){
@@ -378,6 +450,27 @@ function save_remote_submission($assignmentid, $userid, $data){
     return false;
 }
 
+/**
+ * Create fakefile on hub.
+ *
+ * @param string $fakefile['contenthash'] . the contenthash
+ * @param string $fakefile['pathnamehash'] . the pathnamehash
+ * @param int $fakefile['instanceid'] . the instance id
+ * @param string $fakefile['component'] . the component of file
+ * @param string $fakefile['filearea'] . the filearea of file
+ * @param int $fakefile['itemid'] . the assign id
+ * @param string $fakefile['filepath'] . the filepath of file
+ * @param string $fakefile['filename'] . the filename of file
+ * @param int $fakefile['userid'] . the id of user on hub
+ * @param int $fakefile['filesize'] . the filesize of file
+ * @param string $fakefile['mimetype'] . the type of file
+ * @param string $fakefile['author'] . the author of file
+ * @param string $fakefile['license'] . the license of file
+ * @param int $fakefile['timecreated'] . the time created
+ * @param int $fakefile['timemodified'] . the time modified
+ *
+ * @return int $resp->fid . the new fakefile id just created
+ */
 function create_fakefile_on_hub($fakefile){
     $rparams = array(
         'contenthash'       =>  $fakefile->contenthash,
@@ -406,9 +499,19 @@ function create_fakefile_on_hub($fakefile){
         ), false
     );
 
-    return $resp;
+    return $resp->fid;
 }
 
+/**
+ * Delete fakefile on hub.
+ *
+ * @param string $rparams['component'] . the component of file
+ * @param string $rparams['filearea'] . the filearea of file
+ * @param int $rparams['itemid'] . the id of assgin
+ * @param int $rparams['userid'] . the id of user on hub
+ *
+ * @return bool $resp->ret . check if success
+ */
 function delete_fakefile_on_hub($rparams){
     $resp = moodle_webservice_client(
         array(
@@ -419,6 +522,6 @@ function delete_fakefile_on_hub($rparams){
         ), false
     );
 
-    return $resp;
+    return $resp->ret;
 }
 

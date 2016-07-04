@@ -635,10 +635,10 @@ class comment {
             if ($component) {
                 $params['component'] = $component;
             }
-            if(MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
                 $this->totalcommentcount = $DB->count_records_select('comments', $where, $params);
             }
-            else{
+            else if(MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
                 $rparams = $this->get_remote_params();
                 $rparams['component'] = $component;
                 $this->totalcommentcount = get_remote_assign_comment_status($rparams)->countcomment;
@@ -866,7 +866,7 @@ class comment {
         if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
             $comments = $this->get_comments($page);
         }
-        else{
+        else if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
             global $USER, $OUTPUT;
 
             $rparams = $this->get_remote_params();
