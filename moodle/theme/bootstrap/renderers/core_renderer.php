@@ -244,7 +244,7 @@ class theme_bootstrap_core_renderer extends core_renderer {
                     'title' => $menunode->get_title()));
             }
         }
-        return $content;
+        return $content . '</li>';
     }
 
     /**

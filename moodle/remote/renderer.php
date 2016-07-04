@@ -188,6 +188,8 @@ class core_remote_renderer extends plugin_renderer_base
         }
         $content .= html_writer::tag('button', 'Đọc thêm', array('class' => 'btn-readmore'));
         $content .= html_writer::end_tag('div');
+        $content .= html_writer::end_tag('div');
+        $content .= html_writer::end_tag('div');
         echo $content;
     }
 

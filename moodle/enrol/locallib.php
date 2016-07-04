@@ -720,7 +720,7 @@ class course_enrolment_manager {
      * @param int $userid
      * @return int|false
      */
-    public function assign_role_to_user($roleid, $userid) {
+    public function assign_role_to_user($roleid, $userid, $remote_role_assignment = false) {
         require_capability('moodle/role:assign', $this->context);
         if (!array_key_exists($roleid, $this->get_assignable_roles())) {
             if (defined('AJAX_SCRIPT')) {
@@ -728,6 +728,11 @@ class course_enrolment_manager {
             }
             return false;
         }
+
+        if ($remote_role_assignment && $this->context instanceof context_course) {
+            remote_assign_role_to_user($roleid, $userid, $this->context->instanceid);
+        }
+
         return role_assign($roleid, $userid, $this->context->id, '', NULL);
     }
 

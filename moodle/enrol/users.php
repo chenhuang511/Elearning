@@ -102,7 +102,7 @@ if ($action) {
                 $mform = new enrol_users_assign_form(NULL, array('user'=>$user, 'course'=>$course, 'assignable'=>$manager->get_assignable_roles()));
                 $mform->set_data($PAGE->url->params());
                 $data = $mform->get_data();
-                if ($mform->is_cancelled() || ($data && array_key_exists($data->roleid, $manager->get_assignable_roles()) && $manager->assign_role_to_user($data->roleid, $user->id))) {
+                if ($mform->is_cancelled() || ($data && array_key_exists($data->roleid, $manager->get_assignable_roles()) && $manager->assign_role_to_user($data->roleid, $user->id, true))) {
                     redirect($PAGE->url);
                 } else {
                     $pagetitle = get_string('assignroles', 'role');

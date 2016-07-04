@@ -14,15 +14,16 @@ function moodle_webservice_client($options, $usecache = true, $assoc = false)
             $webservicecache = cache::make_from_params(cache_store::MODE_APPLICATION, 'core', 'webservice');
             $cachekey = 'wes-' . $options['domain'] . $options['token'] . $options['function_name'];
         }
-        if (strpos($CFG->libdir . '/zend/', get_include_path()) === false) {
-            set_include_path(get_include_path().PATH_SEPARATOR.$CFG->libdir . '/zend/');
-        }
 
         $serverUrl = $options['domain'] . '/webservice/rest/server.php' . '?wstoken=' .
             $options['token'] . '&wsfunction=' .
             $options['function_name'] . '&moodlewsrestformat=json';
 
-        require_once($CFG->libdir . '/zend/Zend/Http/Client.php');
+        if (!class_exists('Zend_Http_Client')) {
+            set_include_path(get_include_path().PATH_SEPARATOR.$CFG->libdir . '/zend/');
+            require_once($CFG->libdir . '/zend/Zend/Http/Client.php');
+        }
+
         $client = new Zend_Http_Client($serverUrl);
 
         if (isset($options['params'])) {
@@ -155,16 +156,20 @@ function get_remote_course_sections($courseid, $usesq = false)
     return $retval;
 }
 
-function get_remote_mapping_user()
+function get_remote_mapping_user($user = null)
 {
     global $USER, $CFG;
 
     require_once($CFG->dirroot . '/mnet/lib.php');
     $hostname = mnet_get_hostname_from_uri($CFG->wwwroot);
     $hostip = gethostbyname($hostname);
-    $username = $USER->username;
-    $email = $USER->email;
-
+    if ($user === null) {
+        $username = $USER->username;
+        $email = $USER->email;
+    } else {
+        $username = $user->username;
+        $email = $user->email;
+    }
     return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
@@ -172,6 +177,23 @@ function get_remote_mapping_user()
             'function_name' => 'local_get_remote_mapping_user',
             'params' => array('ipaddress' => $hostip, 'username' => $username, 'email' => $email)
         )
+    );
+}
+
+function remote_assign_role_to_user($roleid, $userid, $courseid)
+{
+    global $DB;
+
+    $user = $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
+    $remoteuser = get_remote_mapping_user($user);
+
+    return moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_remote_assign_role_to_user',
+            'params' => array('roleid' => $roleid, 'userid' => $remoteuser[0]->id, 'courseid' => $courseid)
+        ), false
     );
 }
 

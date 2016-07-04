@@ -476,9 +476,7 @@ class assign_submission_file extends assign_submission_plugin {
      * @param stdClass $submission
      */
     public function is_empty(stdClass $submission) {
-//        return $this->count_files($submission->id, ASSIGNSUBMISSION_FILE_FILEAREA) == 0;
-        // Fake not empty on host.
-        return false;
+        return $this->count_files($submission->id, ASSIGNSUBMISSION_FILE_FILEAREA) == 0;
     }
 
     /**
