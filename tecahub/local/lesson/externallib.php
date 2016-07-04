@@ -13,6 +13,7 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once("$CFG->libdir/externallib.php");
 
+
 /**
  * Lesson external functions
  *
