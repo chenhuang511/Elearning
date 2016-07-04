@@ -18,7 +18,7 @@ function get_remote_questionnaire_by_id($id) {
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_bigbluebuttonbn_get_bigbluebuttonbn_by_id',
+            'function_name' => 'local_questionnaire_get_question_by_id',
             'params' => array('id' => $id)
         )
     );

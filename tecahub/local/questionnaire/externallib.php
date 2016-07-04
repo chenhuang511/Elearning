@@ -70,8 +70,7 @@ class local_questionnaire_external extends external_api {
         //validate parameter
         $params = self::validate_parameters(self::questionnaire_get_question_by_id_parameters(),
             array('id' => $id));
-		require_once($CFG->dirroot . '/question/engine/bank.php');
-        return load_for_cache($id);
+        return $DB->get_record('questionnaire', array('id' => $params['id']), '*', MUST_EXIST);
     }
 
     /**
@@ -86,25 +85,24 @@ class local_questionnaire_external extends external_api {
             new external_single_structure(
                 array(
                     'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
-                    'category' => new external_value(PARAM_INT, 'category',VALUE_OPTIONAL),
-                    'parent' => new external_value(PARAM_INT, 'parent', VALUE_OPTIONAL),
+                    'course' => new external_value(PARAM_INT, 'course',VALUE_OPTIONAL),
                     'name' => new external_value(PARAM_RAW, 'Question name'),
-                    'questiontext' => new external_value(PARAM_RAW, 'Question introduction text.', VALUE_OPTIONAL),
-                    'questiontextformat' => new external_value(PARAM_INT, 'questiontext format.', VALUE_OPTIONAL),
-                    'generalfeedback' => new external_value(PARAM_RAW, 'generalfeedback.', VALUE_OPTIONAL),
-                    'generalfeedbackformat' => new external_value(PARAM_INT, 'general feedback format.', VALUE_OPTIONAL),
-                    'defaultmark' => new external_value(PARAM_FLOAT, 'default mark.', VALUE_OPTIONAL),
-                    'penalty' => new external_value(PARAM_FLOAT, 'penalty.', VALUE_OPTIONAL),
-                    'qtype' => new external_value(PARAM_RAW, 'qtype', VALUE_OPTIONAL),
-                    'length' => new external_value(PARAM_INT, 'length', VALUE_OPTIONAL),
-                    'stamp' => new external_value(PARAM_RAW, 'stamp'),
-                    'version' => new external_value(PARAM_RAW, 'Question version'),
-                    'hidden' => new external_value(PARAM_INT, '	hidden', VALUE_OPTIONAL),
-                    'timecreated' => new external_value(PARAM_INT, 'The time when the question was added to the question bank.', VALUE_OPTIONAL),
+                    'intro' => new external_value(PARAM_TEXT, 'Question introduction text.', VALUE_OPTIONAL),
+                    'introformat' => new external_value(PARAM_INT, 'questiontext format.', VALUE_OPTIONAL),
+                    'qtype' => new external_value(PARAM_INT, 'qtype.', VALUE_OPTIONAL),
+                    'respondenttype' => new external_value(PARAM_RAW, 'respondenttype', VALUE_OPTIONAL),
+                    'resp_eligible' => new external_value(PARAM_RAW, 'resp_eligible', VALUE_OPTIONAL),
+                    'resp_view' => new external_value(PARAM_INT, 'resp_view', VALUE_OPTIONAL),
+                    'opendate' => new external_value(PARAM_INT, 'opendate', VALUE_OPTIONAL),
+                    'closedate' => new external_value(PARAM_INT, 'closedate', VALUE_OPTIONAL),
+                    'resume' => new external_value(PARAM_RAW, 'resume'),
+                    'navigate' => new external_value(PARAM_RAW, 'navigate'),
+                    'grade' => new external_value(PARAM_INT, '	grade', VALUE_OPTIONAL),
+                    'sid' => new external_value(PARAM_INT, 'sid', VALUE_OPTIONAL),
                     'timemodified' => new external_value(PARAM_INT, 'Last modified time.', VALUE_OPTIONAL),
                     'createdby' => new external_value(PARAM_INT, 'created by.', VALUE_OPTIONAL),
-                    'modifiedby' => new external_value(PARAM_INT, 'modified by.', VALUE_OPTIONAL),
-                    'contextid' => new external_value(PARAM_INT, 'comtext id.'),
+                    'completionsubmit' => new external_value(PARAM_INT, 'completionsubmit', VALUE_OPTIONAL),
+                    'autonum' => new external_value(PARAM_INT, 'autonum'),
                 )
             )
         );
