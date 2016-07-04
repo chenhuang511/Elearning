@@ -81,7 +81,7 @@ switch ($action) {
         if (!array_key_exists($roleid, $manager->get_assignable_roles())) {
             throw new enrol_ajax_exception('invalidrole');
         }
-        if (!has_capability('moodle/role:assign', $manager->get_context()) || !$manager->assign_role_to_user($roleid, $user->id)) {
+        if (!has_capability('moodle/role:assign', $manager->get_context()) || !$manager->assign_role_to_user($roleid, $user->id, true)) {
             throw new enrol_ajax_exception('assignnotpermitted');
         }
         $outcome->response->roleid = $roleid;
