@@ -110,11 +110,26 @@ if ($action === 'delete') {
                     $data['data[2][name]'] = 'retry';
                     $data['data[2][value]'] = $try;
                     $result = delete_remote_moodle_table('lesson_attempts', $data);
-                    $DB->execute("UPDATE {lesson_attempts} SET retry = retry - 1 WHERE userid = ? AND lessonid = ? AND retry > ?", array($userid, $lesson->id, $try));
+                    
+                    $params = array();
+                    $params['params[0][name]'] = 'userid';
+                    $params['params[0][op]'] = '=';
+                    $params['params[0][value]'] = $userid;
+                    $params['params[1][name]'] = 'lessonid';
+                    $params['params[1][op]'] = '=';
+                    $params['params[1][value]'] = $lesson->id;
+                    $params['params[2][name]'] = 'retry';
+                    $params['params[2][op]'] = '>';
+                    $params['params[2][value]'] = $try;
+
+                    $data = array();
+                    $data['data[0][name]'] = 'retry';
+                    $data['data[0][value]'] = 'retry - 1';
+
+                    $result = update_remote_mdl_table('lesson_attempts', $params, $data);
 
                     /// Remove seen branches and update the retry number
-                    $result = delete_remote_moodle_table('lesson_branch', $data);
-                    $DB->execute("UPDATE {lesson_branch} SET retry = retry - 1 WHERE userid = ? AND lessonid = ? AND retry > ?", array($userid, $lesson->id, $try));
+                    $result = update_remote_mdl_table('lesson_branch', $params, $data);
 
                     /// update central gradebook
                     lesson_update_grades($lesson, $userid);

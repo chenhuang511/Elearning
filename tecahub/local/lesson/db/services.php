@@ -418,4 +418,12 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_update_mdl_table' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'update_mdl_table',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'update mdl table',
+        'type' => 'read',
+        'ajax' => true
+    ),
 );

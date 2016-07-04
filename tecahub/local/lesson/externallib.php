@@ -3342,4 +3342,81 @@ class local_mod_lesson_external extends external_api
     {
         return self::get_lesson_branch_by_lessonid_and_userid_and_retry_returns();
     }
+
+    public static function update_mdl_table_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'tablename' => new external_value(PARAM_RAW, 'tablename'),
+                'params' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'op' => new external_value(PARAM_RAW, 'param op'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'data name'),
+                            'value' => new external_value(PARAM_RAW, 'data value'),
+                        )
+                    ), 'the data to be saved'
+                )
+            )
+        );
+    }
+
+    public static function update_mdl_table($tablename, $params, $data)
+    {
+        global $DB;
+
+        $warnings = array();
+
+        $params = self::validate_parameters(self::update_mdl_table_parameters(), array(
+            'tablename' => $tablename,
+            'params' => $params,
+            'data' => $data
+        ));
+
+        $sql = "UPDATE {$params['tablename']} SET ";
+
+
+        foreach ($params['data'] as $element) {
+            $sql .= $element['name'] . "=" . $element['value'];
+        }
+
+        $sql .= " WHERE ";
+        $parameters = array();
+
+        foreach ($params['params'] as $p) {
+            $sql .= $p['name'] . $p['op'] . '?';
+            $parameters = array_merge($parameters, array($p['value']));
+        }
+
+        $result = array();
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $DB->execute($sql, $parameters);
+
+        $transaction->allow_commit();
+
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function update_mdl_table_returns()
+    {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }
