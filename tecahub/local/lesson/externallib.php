@@ -1418,6 +1418,48 @@ class local_mod_lesson_external extends external_api
         return self::get_lesson_attempts_by_lessonid_and_userid_returns();
     }
 
+    public static function get_lesson_attempts_by_lessonid_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'lessonid' => new external_value(PARAM_INT, 'the lesson id')
+            )
+        );
+    }
+
+    public static function get_lesson_attempts_by_lessonid($lessonid)
+    {
+        global $DB;
+
+        $warnings = array();
+
+        // validate params
+        $params = self::validate_parameters(self::get_lesson_attempts_by_lessonid_parameters(),
+            array(
+                'lessonid' => $lessonid
+            )
+        );
+
+        $parameters = array("lessonid" => $params['lessonid']);
+
+        $result = array();
+        $attempts = $DB->get_records_select("lesson_attempts", "lessonid = :lessonid", $parameters, "timeseen");
+
+        if (!$attempts) {
+            $attempts = array();
+        }
+
+        $result['attempts'] = $attempts;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_lesson_attempts_by_lessonid_returns()
+    {
+        return self::get_lesson_attempts_by_lessonid_and_userid_returns();
+    }
+
     /**
      * Returns description of method parameters
      *
@@ -3220,13 +3262,13 @@ class local_mod_lesson_external extends external_api
 
         $result = array();
 
-        $user = $DB->get_record_sql($sql, $params['params']);
+        $user = $DB->get_records_sql($sql, $params['params']);
 
         if (!$user) {
             $user = new stdClass();
         }
 
-        $result['user'] = $user;
+        $result['users'] = $user;
         $result['warnings'] = $warnings;
 
         return $result;
@@ -3236,22 +3278,68 @@ class local_mod_lesson_external extends external_api
     {
         return new external_single_structure(
             array(
-                'user' => new external_single_structure(
-                    array(
-                        'id' => new external_value(PARAM_INT, 'id'),
-                        'picture' => new external_value(PARAM_INT, 'picture'),
-                        'firstname' => new external_value(PARAM_RAW, 'first name'),
-                        'lastname' => new external_value(PARAM_RAW, 'last name'),
-                        'firstnamephonetic' => new external_value(PARAM_RAW, 'first name phonetic'),
-                        'lastnamephonetic' => new external_value(PARAM_RAW, 'last name phonetic'),
-                        'middlename' => new external_value(PARAM_RAW, 'middle name'),
-                        'alternatename' => new external_value(PARAM_RAW, 'alternate name'),
-                        'imagealt' => new external_value(PARAM_RAW, 'image alt'),
-                        'email' => new external_value(PARAM_RAW, 'email'),
-                    )
+                'users' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'id'),
+                            'picture' => new external_value(PARAM_INT, 'picture'),
+                            'firstname' => new external_value(PARAM_RAW, 'first name'),
+                            'lastname' => new external_value(PARAM_RAW, 'last name'),
+                            'firstnamephonetic' => new external_value(PARAM_RAW, 'first name phonetic'),
+                            'lastnamephonetic' => new external_value(PARAM_RAW, 'last name phonetic'),
+                            'middlename' => new external_value(PARAM_RAW, 'middle name'),
+                            'alternatename' => new external_value(PARAM_RAW, 'alternate name'),
+                            'imagealt' => new external_value(PARAM_RAW, 'image alt'),
+                            'email' => new external_value(PARAM_RAW, 'email'),
+                        )
+                    ), ' user data'
                 ),
                 'warnings' => new external_warnings()
             )
         );
+    }
+
+    public static function get_lesson_branch_by_lessonid_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'lessonid' => new external_value(PARAM_INT, 'lesson id'),
+                'sort' => new external_value(PARAM_RAW, 'sort by')
+            )
+        );
+    }
+
+    public static function get_lesson_branch_by_lessonid($lessonid, $sort)
+    {
+        global $DB;
+
+        $warnings = array();
+
+        // validate params
+        $params = self::validate_parameters(self::get_lesson_branch_by_lessonid_parameters(),
+            array(
+                'lessonid' => $lessonid,
+                'sort' => $sort
+            )
+        );
+
+        $result = array();
+
+        $branches = $DB->get_records('lesson_branch', array('lessonid' => $params['lessonid']), $params['sort']);
+
+        if (!$branches) {
+            $branches = array();
+        }
+
+        $result['branches'] = $branches;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+
+    public static function get_lesson_branch_by_lessonid_returns()
+    {
+        return self::get_lesson_branch_by_lessonid_and_userid_and_retry_returns();
     }
 }

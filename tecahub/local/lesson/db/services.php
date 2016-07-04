@@ -210,6 +210,14 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_get_lesson_branch_by_lessonid' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_lesson_branch_by_lessonid',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get lesson branch by lessonid',
+        'type' => 'read',
+        'ajax' => true
+    ),
     'local_mod_save_lesson_branch' => array(
         'classname' => 'local_mod_lesson_external',
         'methodname' => 'save_lesson_branch',
@@ -255,6 +263,14 @@ $functions = array(
         'methodname' => 'get_lesson_attempts_by_lessonid_and_pageid',
         'classpath' => 'local/lesson/externallib.php',
         'description' => 'Get list lesson attempts by lessonid and pageid',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_lesson_attempts_by_lessonid' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_lesson_attempts_by_lessonid',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Get list lesson attempts by lessonid',
         'type' => 'read',
         'ajax' => true
     ),
