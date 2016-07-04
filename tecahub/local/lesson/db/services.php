@@ -130,6 +130,14 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_update_lesson_pages' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_count_lesson_pages_by_lessonid',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'update lesson pages',
+        'type' => 'read',
+        'ajax' => true
+    ),
     'local_mod_get_lesson_timer_by_userid_and_lessonid' => array(
         'classname' => 'local_mod_lesson_external',
         'methodname' => 'get_lesson_timer_by_userid_and_lessonid',
@@ -383,6 +391,14 @@ $functions = array(
         'methodname' => 'check_record_exists',
         'classpath' => 'local/lesson/externallib.php',
         'description' => 'check record exists',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_user_by_lessonid' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_user_by_lessonid',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'get user by lessonid',
         'type' => 'read',
         'ajax' => true
     ),

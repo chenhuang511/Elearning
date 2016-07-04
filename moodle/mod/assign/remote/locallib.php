@@ -329,7 +329,7 @@ function get_remote_submission_by_id($sid){
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_assign_get_submission_by_id',
-            'params' => array('id'=>$sid)
+            'params' => array('id' => $sid)
         ), false
     );
 
@@ -352,7 +352,8 @@ function save_remote_submission($assignmentid, $userid, $data){
                     'plugindata[onlinetext_editor][format]' => (int)$onlinetext_editor[format],
                     'plugindata[onlinetext_editor][itemid]' => $onlinetext_editor[itemid]
                 )
-            ));
+            ), false
+        );
     }
     if ($data->files_filemanager){
         $resp = moodle_webservice_client(
@@ -368,12 +369,56 @@ function save_remote_submission($assignmentid, $userid, $data){
                     'plugindata[userid]' => $data->userid,
                     'plugindata[files]' => $data->files
                 )
-            ));
+            ), false
+        );
     }
 
     if (empty($resp))
         return true;
     return false;
+}
 
+function create_fakefile_on_hub($fakefile){
+    $rparams = array(
+        'contenthash'       =>  $fakefile->contenthash,
+        'pathnamehash'      =>  $fakefile->pathnamehash,
+        'instanceid'        =>  $fakefile->instanceid,
+        'component'         =>  $fakefile->component,
+        'filearea'          =>  $fakefile->filearea,
+        'itemid'            =>  $fakefile->itemid,
+        'filepath'          =>  $fakefile->filepath,
+        'filename'          =>  $fakefile->filename,
+        'userid'            =>  $fakefile->userid,
+        'filesize'          =>  $fakefile->filesize,
+        'mimetype'          =>  $fakefile->mimetype,
+        'author'            =>  $fakefile->author,
+        'license'           =>  $fakefile->license,
+        'timecreated'       =>  $fakefile->timecreated,
+        'timemodified'      =>  $fakefile->timemodified,
+    );
+
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_create_fakefile_on_hub',
+            'params' => $rparams,
+        ), false
+    );
+
+    return $resp;
+}
+
+function delete_fakefile_on_hub($rparams){
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_delete_fakefile_on_hub',
+            'params' => $rparams,
+        ), false
+    );
+
+    return $resp;
 }
 

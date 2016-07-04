@@ -871,59 +871,6 @@ class local_mod_assign_external extends external_api {
         );
     }
 
-    // MINHND: Get comment status
-    public static function get_count_file_submission_parameters(){
-        return new external_function_parameters(
-            array(
-                'instanceid' => new external_value(PARAM_INT, 'instance ID'),
-                'submissionid' => new external_value(PARAM_INT, 'submission ID'),
-                'area' => new external_value(PARAM_RAW, 'Area'),
-            )
-        );
-    }
-    
-    public static function get_count_file_submission($instanceid, $submissionid, $area){
-
-        $warnings = array();
-
-        // Now, build the result.
-        $result = array();
-
-        //Validate param
-        $params = self::validate_parameters(self::get_count_file_submission_parameters(),
-            array(
-                'instanceid' => $instanceid,
-                'submissionid' => $submissionid,
-                'area' => $area
-            )
-        );
-        
-        $fs = get_file_storage();
-        $context = context_module::instance($params['instanceid']);
-        
-        $files = $fs->get_area_files($context->id,
-            'assignsubmission_file',
-            $params['area'],
-            $params['submissionid'],
-            'id',
-            false);
-
-        $result['countfile'] = count($files);
-
-        $result['warnings'] = $warnings;
-        
-        return $result;
-    }
-
-    public static function get_count_file_submission_returns(){
-        return new external_single_structure(
-            array(
-                'countfile' => new external_value(PARAM_INT, 'count file', VALUE_OPTIONAL),
-                'warnings' => new external_warnings()
-            )
-        );
-    }
-    
     // MINHD: Count submissions with status by host id
     public static function count_submissions_with_status_by_host_id_parameters(){
         return new external_function_parameters(
@@ -1997,6 +1944,174 @@ class local_mod_assign_external extends external_api {
         return new external_single_structure(
             array(
                 'gid' => new external_value(PARAM_INT, 'assign grade ID'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    /**
+     * Describes the parameters for create fakefile on hub
+     * @return external_external_function_parameters
+     */
+    public static function create_fakefile_on_hub_parameters(){
+        return new external_function_parameters(
+            array(
+                'contenthash' => new external_value(PARAM_RAW, 'content hash'),
+                'pathnamehash' => new external_value(PARAM_RAW, 'pathname hash'),
+                'instanceid' => new external_value(PARAM_INT, 'instance id'),
+                'component' => new external_value(PARAM_RAW, 'component'),
+                'filearea' => new external_value(PARAM_RAW, 'filearea'),
+                'itemid' => new external_value(PARAM_INT, 'item id'),
+                'filepath' => new external_value(PARAM_RAW, 'filepath'),
+                'filename' => new external_value(PARAM_RAW, 'filename'),
+                'userid' => new external_value(PARAM_INT, 'userid'),
+                'filesize' => new external_value(PARAM_INT, 'filesize '),
+                'mimetype' => new external_value(PARAM_RAW, 'mimetype'),
+                'author' => new external_value(PARAM_RAW, 'author'),
+                'license' => new external_value(PARAM_RAW, 'license'),
+                'timecreated' => new external_value(PARAM_INT, 'timecreated'),
+                'timemodified' => new external_value(PARAM_INT, 'timemodified'),
+            )
+        );
+    }
+
+    /**
+     * Returns file id.
+     *
+     * @param array params about information file
+     * @return idnumber of file just created
+     */
+    public static function create_fakefile_on_hub($contenthash, $pathnamehash, $instanceid, $component, 
+                                                  $filearea, $itemid, $filepath, $filename, $userid, 
+                                                  $filesize, $mimetype, $author, $license, $timecreated, $timemodified){
+        global $DB;
+
+        $warnings = array();
+
+        $result = array();
+
+        //Validate param
+        $params = self::validate_parameters(self::create_fakefile_on_hub_parameters(), array(
+            'contenthash' => $contenthash,
+            'pathnamehash' => $pathnamehash,
+            'instanceid' => $instanceid,
+            'component' => $component,
+            'filearea' => $filearea,
+            'itemid' => $itemid,
+            'filepath' => $filepath,
+            'filename' => $filename,
+            'userid' => $userid,
+            'filesize' => $filesize,
+            'mimetype' => $mimetype,
+            'author' => $author,
+            'license' => $license,
+            'timecreated' => $timecreated,
+            'timemodified' => $timemodified,
+        ));
+        
+        $context = context_module::instance($params['instanceid']);
+        
+        $fakefile = new stdClass();
+        $fakefile->contenthash = $params['contenthash'];
+        $fakefile->pathnamehash = $params['pathnamehash'];
+        $fakefile->contextid = $context->id;
+        $fakefile->component = $params['component'];
+        $fakefile->filearea = $params['filearea'];
+        $fakefile->itemid = $params['itemid'];
+        $fakefile->filepath = $params['filepath'];
+        $fakefile->filename = $params['filename'];
+        $fakefile->userid = $params['userid'];
+        $fakefile->filesize = $params['filesize'];
+        $fakefile->mimetype = $params['mimetype'];
+        $fakefile->author = $params['author'];
+        $fakefile->source = $params['source'];
+        $fakefile->license = $params['license'];
+        $fakefile->timecreated = $params['timecreated'];
+        $fakefile->timemodified = $params['timemodified'];
+
+        $result['fid'] = $DB->insert_record('files', $fakefile);
+
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    /**
+     * Describes the create_fakefile_on_hub return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function create_fakefile_on_hub_returns(){
+        return new external_single_structure(
+            array(
+                'fid' => new external_value(PARAM_INT, 'file ID'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    /**
+     * Describes the parameters for delete fakefile on hub
+     * @return external_external_function_parameters
+     */
+    public static function delete_fakefile_on_hub_parameters(){
+        return new external_function_parameters(
+            array(
+                'component' => new external_value(PARAM_RAW, 'component'),
+                'filearea' => new external_value(PARAM_RAW, 'filearea'),
+                'itemid' => new external_value(PARAM_INT, 'item id'),
+                'userid' => new external_value(PARAM_INT, 'userid'),
+            )
+        );
+    }
+
+    /**
+     * Delete fakefile on hub .
+     *
+     * @param $component component of file
+     * @param $filearea filearea of file
+     * @param $itemid item id
+     * @param $userid user id
+     * @return boolean 
+     */
+    public static function delete_fakefile_on_hub($component, $filearea, $itemid, $userid){
+        global $DB;
+
+        $warnings = array();
+
+        $result = array();
+
+        //Validate param
+        $params = self::validate_parameters(self::delete_fakefile_on_hub_parameters(), array(
+            'component' => $component,
+            'filearea' => $filearea,
+            'itemid' => $itemid,
+            'userid' => $userid,
+        ));
+
+        $result['ret'] = $DB->delete_records('files', array(
+            'component' => $params['component'],
+            'filearea' => $params['filearea'],
+            'itemid' => $params['itemid'],
+            'userid' => $params['userid'],
+        ));
+
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    /**
+     * Describes the delele_fakefile_on_hub return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function delete_fakefile_on_hub_returns(){
+        return new external_single_structure(
+            array(
+                'ret' => new external_value(PARAM_BOOL, 'boolean'),
                 'warnings' => new external_warnings()
             )
         );

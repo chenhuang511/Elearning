@@ -503,7 +503,7 @@ class local_mod_lesson_external extends external_api
             $page = $DB->get_record('lesson_pages', array('id' => $params['id']));
         }
 
-        if(!$page) {
+        if (!$page) {
             $page = new stdClass();
         }
 
@@ -1526,7 +1526,7 @@ class local_mod_lesson_external extends external_api
 
         $grades = $DB->get_records('lesson_grades', array('lessonid' => $params['lessonid']), $params['sort']);
 
-        if(!$grades) {
+        if (!$grades) {
             $grades = array();
         }
 
@@ -2064,7 +2064,7 @@ class local_mod_lesson_external extends external_api
 
         $parameters = array();
 
-        foreach($params['data'] as $element) {
+        foreach ($params['data'] as $element) {
             $parameters = array_merge($parameters, [$element['name'] => $element['value']]);
         }
 
@@ -3125,5 +3125,133 @@ class local_mod_lesson_external extends external_api
     public static function get_lesson_timer_by_lessonid_returns()
     {
         return self::get_lesson_timer_by_userid_and_lessonid_returns();
+    }
+
+    public static function update_lesson_pages_parameters()
+    {
+        return self::update_lesson_timer_parameters();
+    }
+
+    public static function update_lesson_pages($id, $data)
+    {
+        global $DB;
+
+        $warnings = array();
+
+        $params = array(
+            'id' => $id,
+            'data' => $data
+        );
+
+        $params = self::validate_parameters(self::update_lesson_pages_parameters(), $params);
+
+        $page = $DB->get_record('lesson_pages', array('id' => $params['id']), '*', MUST_EXIST);
+
+        $result = array();
+
+        if (!$page) {
+            $result['status'] = false;
+            $warnings['message'] = 'have no data record';
+            return $result;
+        }
+
+        foreach ($params['data'] as $element) {
+            $page->$element['name'] = $element['value'];
+        }
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $DB->update_record('lesson_pages', $page);
+        $transaction->allow_commit();
+
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function update_lesson_pages_returns()
+    {
+        return self::update_lesson_timer_returns();
+    }
+
+    public static function get_user_by_lessonid_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'params' => new external_single_structure(
+                    array(
+                        'eu1_guestid' => new external_value(PARAM_INT, 'guest id'),
+                        'eu1_courseid' => new external_value(PARAM_INT, 'course id'),
+                        'eu1_enabled' => new external_value(PARAM_INT, 'enabled'),
+                        'eu1_active' => new external_value(PARAM_INT, 'active'),
+                        'eu1_now1' => new external_value(PARAM_INT, 'now 1'),
+                        'eu1_now2' => new external_value(PARAM_INT, 'now 2'),
+                        'lessonid' => new external_value(PARAM_INT, 'lessonid id')
+                    )
+                ),
+                'esql' => new external_value(PARAM_RAW, 'query sql')
+            )
+        );
+    }
+
+    public static function get_user_by_lessonid($params, $esql)
+    {
+        global $DB;
+
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_user_by_lessonid_parameters(), array(
+            'params' => $params,
+            'esql' => $esql
+        ));
+
+        list($sort, $sortparams) = users_order_by_sql('u');
+
+        $ufields = user_picture::fields('u');
+        $enrolsql = $params['esql'];
+        $sql = "SELECT DISTINCT $ufields
+                FROM {user} u
+                JOIN (SELECT userid, lessonid FROM {lesson_attempts} a1 UNION
+                SELECT userid, lessonid FROM {lesson_branch} b1) a ON u.id = a.userid
+                JOIN ($enrolsql) ue ON ue.id = a.userid
+                WHERE a.lessonid = :lessonid
+                ORDER BY $sort";
+
+        $result = array();
+
+        $user = $DB->get_record_sql($sql, $params['params']);
+
+        if (!$user) {
+            $user = new stdClass();
+        }
+
+        $result['user'] = $user;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_user_by_lessonid_returns()
+    {
+        return new external_single_structure(
+            array(
+                'user' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'id'),
+                        'picture' => new external_value(PARAM_INT, 'picture'),
+                        'firstname' => new external_value(PARAM_RAW, 'first name'),
+                        'lastname' => new external_value(PARAM_RAW, 'last name'),
+                        'firstnamephonetic' => new external_value(PARAM_RAW, 'first name phonetic'),
+                        'lastnamephonetic' => new external_value(PARAM_RAW, 'last name phonetic'),
+                        'middlename' => new external_value(PARAM_RAW, 'middle name'),
+                        'alternatename' => new external_value(PARAM_RAW, 'alternate name'),
+                        'imagealt' => new external_value(PARAM_RAW, 'image alt'),
+                        'email' => new external_value(PARAM_RAW, 'email'),
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
     }
 }
