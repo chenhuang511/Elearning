@@ -32,6 +32,20 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/fdefine.php');
 
+function get_cat_id_by_remote_id($remotecatid) {
+    global $DB;
+
+    $retval = $remotecatid;
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $retval = $DB->get_field('course_categories', 'id', array('remoteid' => $remotecatid));
+        if (!$retval) {
+            $retval = $remotecatid;
+        }
+    }
+
+    return $retval;
+}
+
 function get_course_id_by_remote_id($remotecourseid) {
     global $DB;
 
