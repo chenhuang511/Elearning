@@ -966,3 +966,17 @@ function get_remote_recordset_lesson_branch_by_lessonid($lessonid, $sort = 'time
 
     return new json_moodle_recordset($result->branches);
 }
+
+function update_remote_mdl_table($tablename, $params, $data)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_update_mdl_table',
+            'params' => array_merge(array_merge(array('tablename' => $tablename), $params), $data),
+        )
+    );
+
+    return $result->status;
+}
