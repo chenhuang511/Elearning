@@ -81,29 +81,27 @@ class local_questionnaire_external extends external_api {
      * @since Moodle 2.2
      */
     public static function questionnaire_get_question_by_id_returns() {
-        return new external_multiple_structure(
-            new external_single_structure(
-                array(
-                    'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
-                    'course' => new external_value(PARAM_INT, 'course',VALUE_OPTIONAL),
-                    'name' => new external_value(PARAM_RAW, 'Question name'),
-                    'intro' => new external_value(PARAM_TEXT, 'Question introduction text.', VALUE_OPTIONAL),
-                    'introformat' => new external_value(PARAM_INT, 'questiontext format.', VALUE_OPTIONAL),
-                    'qtype' => new external_value(PARAM_INT, 'qtype.', VALUE_OPTIONAL),
-                    'respondenttype' => new external_value(PARAM_RAW, 'respondenttype', VALUE_OPTIONAL),
-                    'resp_eligible' => new external_value(PARAM_RAW, 'resp_eligible', VALUE_OPTIONAL),
-                    'resp_view' => new external_value(PARAM_INT, 'resp_view', VALUE_OPTIONAL),
-                    'opendate' => new external_value(PARAM_INT, 'opendate', VALUE_OPTIONAL),
-                    'closedate' => new external_value(PARAM_INT, 'closedate', VALUE_OPTIONAL),
-                    'resume' => new external_value(PARAM_RAW, 'resume'),
-                    'navigate' => new external_value(PARAM_RAW, 'navigate'),
-                    'grade' => new external_value(PARAM_INT, '	grade', VALUE_OPTIONAL),
-                    'sid' => new external_value(PARAM_INT, 'sid', VALUE_OPTIONAL),
-                    'timemodified' => new external_value(PARAM_INT, 'Last modified time.', VALUE_OPTIONAL),
-                    'createdby' => new external_value(PARAM_INT, 'created by.', VALUE_OPTIONAL),
-                    'completionsubmit' => new external_value(PARAM_INT, 'completionsubmit', VALUE_OPTIONAL),
-                    'autonum' => new external_value(PARAM_INT, 'autonum'),
-                )
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
+                'course' => new external_value(PARAM_INT, 'course', VALUE_OPTIONAL),
+                'name' => new external_value(PARAM_RAW, 'Question name'),
+                'intro' => new external_value(PARAM_TEXT, 'Question introduction text.', VALUE_OPTIONAL),
+                'introformat' => new external_value(PARAM_INT, 'questiontext format.', VALUE_OPTIONAL),
+                'qtype' => new external_value(PARAM_INT, 'qtype.', VALUE_OPTIONAL),
+                'respondenttype' => new external_value(PARAM_RAW, 'respondenttype', VALUE_OPTIONAL),
+                'resp_eligible' => new external_value(PARAM_RAW, 'resp_eligible', VALUE_OPTIONAL),
+                'resp_view' => new external_value(PARAM_INT, 'resp_view', VALUE_OPTIONAL),
+                'opendate' => new external_value(PARAM_INT, 'opendate', VALUE_OPTIONAL),
+                'closedate' => new external_value(PARAM_INT, 'closedate', VALUE_OPTIONAL),
+                'resume' => new external_value(PARAM_RAW, 'resume'),
+                'navigate' => new external_value(PARAM_RAW, 'navigate'),
+                'grade' => new external_value(PARAM_INT, '	grade', VALUE_OPTIONAL),
+                'sid' => new external_value(PARAM_INT, 'sid', VALUE_OPTIONAL),
+                'timemodified' => new external_value(PARAM_INT, 'Last modified time.', VALUE_OPTIONAL),
+                'createdby' => new external_value(PARAM_INT, 'created by.', VALUE_OPTIONAL),
+                'completionsubmit' => new external_value(PARAM_INT, 'completionsubmit', VALUE_OPTIONAL),
+                'autonum' => new external_value(PARAM_INT, 'autonum'),
             )
         );
     }    
