@@ -170,5 +170,5 @@ function loadRemoteContent() {
 }
 
 (function ($) {
-    //$(document).ready(loadRemoteContent);
+    $(document).ready(loadRemoteContent);
 }).call(this, jQuery);
