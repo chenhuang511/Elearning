@@ -258,6 +258,30 @@ class assign_submission_file extends assign_submission_plugin {
             'groupname' => $groupname
         );
 
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $condition = array('component' => 'assignsubmission_file', 'filearea'=> ASSIGNSUBMISSION_FILE_FILEAREA, 'itemid' => $submission->id);
+            $fakefiles = $DB->get_records('files', $condition);
+
+            $rusers = get_remote_mapping_user();
+            $condition['userid'] = $rusers[0]->id;
+
+            delete_fakefile_on_hub($condition);
+
+            if ($fakefiles){
+                foreach ($fakefiles as $fakefile){
+                    if (!$fakefile->source){
+                        continue;
+                    }
+                    $context = $DB->get_record('context', array('id' => $fakefile->contextid));
+
+                    $fakefile->userid = $rusers[0]->id;
+                    $fakefile->instanceid = $context->instanceid;
+                    
+                    create_fakefile_on_hub($fakefile);
+                }
+            }
+        }
+
         if ($filesubmission) {
             $filesubmission->numfiles = $this->count_files($submission->id,
                                                            ASSIGNSUBMISSION_FILE_FILEAREA);
