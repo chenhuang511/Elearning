@@ -141,7 +141,7 @@ class lesson_page_type_branchtable extends lesson_page
             $params['pageid'] = $this->properties->id;
             $params['sesskey'] = sesskey();
             $params['jumpto'] = $answer->jumpto;
-            $url = new moodle_url('/mod/lesson/remote/api-continue.php', $params);
+            $url = new moodle_url('/mod/lesson/remote/continue.php', $params);
             $buttons[] = $renderer->single_button($url, strip_tags(format_text($answer->answer, FORMAT_MOODLE, $options)));
             $i++;
         }
@@ -234,7 +234,7 @@ class lesson_page_type_branchtable extends lesson_page
 
         $result = save_remote_lesson_branch($data);
 
-        redirect(new moodle_url('/mod/lesson/remote/api-view.php', array('id' => $PAGE->cm->id, 'pageid' => $newpageid)));
+        redirect(new moodle_url('/mod/lesson/remote/view.php', array('id' => $PAGE->cm->id, 'pageid' => $newpageid)));
     }
 
     public function display_answers(html_table $table)
@@ -302,7 +302,7 @@ class lesson_page_type_branchtable extends lesson_page
     public function add_page_link($previd)
     {
         global $PAGE, $CFG;
-        $addurl = new moodle_url('/mod/lesson/remote/api-editpage.php', array('id' => $PAGE->cm->id, 'pageid' => $previd, 'qtype' => LESSON_PAGE_BRANCHTABLE));
+        $addurl = new moodle_url('/mod/lesson/remote/editpage.php', array('id' => $PAGE->cm->id, 'pageid' => $previd, 'qtype' => LESSON_PAGE_BRANCHTABLE));
         return array('addurl' => $addurl, 'type' => LESSON_PAGE_BRANCHTABLE, 'name' => get_string('addabranchtable', 'lesson'));
     }
 

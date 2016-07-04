@@ -39,10 +39,10 @@ $lesson = new lesson(get_remote_lesson_by_id($cm->instance));
 
 require_login($course, false, $cm);
 
-$PAGE->set_url('/mod/lesson/remote/api-grade.php', array('id'=>$cm->id));
+$PAGE->set_url('/mod/lesson/remote/grade.php', array('id'=>$cm->id));
 
 if (has_capability('mod/lesson:viewreports', context_module::instance($cm->id))) {
-    redirect('remote/api-report.php?id='.$cm->id);
+    redirect('remote/report.php?id='.$cm->id);
 } else {
-    redirect('remote/api-view.php?id='.$cm->id);
+    redirect('remote/view.php?id='.$cm->id);
 }

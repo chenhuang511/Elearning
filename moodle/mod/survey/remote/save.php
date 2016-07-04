@@ -47,7 +47,7 @@ if (!$course = get_local_course_record($cm->course)) {
     print_error('coursemisconf');
 }
 
-$PAGE->set_url('/mod/survey/remote/api-save.php', array('id' => $id));
+$PAGE->set_url('/mod/survey/remote/save.php', array('id' => $id));
 require_login($course, false, $cm);
 
 $context = context_module::instance($cm->id);

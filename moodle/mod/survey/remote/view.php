@@ -38,7 +38,7 @@ if (! $course = get_local_course_record($cm->course)) {
     print_error('coursemisconf');
 }
 
-$PAGE->set_url('/mod/survey/remote/api-view.php', array('id' => $id));
+$PAGE->set_url('/mod/survey/remote/view.php', array('id' => $id));
 
 require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
@@ -143,7 +143,7 @@ if ($surveyalreadydone) {
     exit;
 }
 
-$actionlink = $CFG->wwwroot . '\mod\survey\remote\api-save.php';
+$actionlink = $CFG->wwwroot . '\mod\survey\remote\save.php';
 
 echo "<form method=\"post\" action=\"$actionlink\" id=\"surveyform\">";
 echo '<div>';

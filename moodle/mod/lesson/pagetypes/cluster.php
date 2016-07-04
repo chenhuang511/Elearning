@@ -86,7 +86,7 @@ class lesson_page_type_cluster extends lesson_page
     public function add_page_link($previd)
     {
         global $PAGE, $CFG;
-        $addurl = new moodle_url('/mod/lesson/remote/api-editpage.php', array('id' => $PAGE->cm->id, 'pageid' => $previd, 'sesskey' => sesskey(), 'qtype' => LESSON_PAGE_CLUSTER));
+        $addurl = new moodle_url('/mod/lesson/remote/editpage.php', array('id' => $PAGE->cm->id, 'pageid' => $previd, 'sesskey' => sesskey(), 'qtype' => LESSON_PAGE_CLUSTER));
         return array('addurl' => $addurl, 'type' => LESSON_PAGE_CLUSTER, 'name' => get_string('addcluster', 'lesson'));
     }
 
@@ -193,6 +193,6 @@ class lesson_add_page_form_cluster extends lesson_add_page_form_base
         $newanswer->jumpto = LESSON_CLUSTERJUMP;
         $newanswerid = $DB->insert_record("lesson_answers", $newanswer);
         $lesson->add_message(get_string('addedcluster', 'lesson'), 'notifysuccess');
-        redirect($CFG->wwwroot . '/mod/lesson/remote/api-edit.php?id=' . $PAGE->cm->id);
+        redirect($CFG->wwwroot . '/mod/lesson/remote/edit.php?id=' . $PAGE->cm->id);
     }
 }

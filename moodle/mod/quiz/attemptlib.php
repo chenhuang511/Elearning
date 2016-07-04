@@ -336,7 +336,7 @@ class quiz {
      */
     public function view_url($isremote = false) {
         global $CFG;
-        $path = ($isremote)?'/mod/quiz/remote/api-view.php?id=':'/mod/quiz/view.php?id=';
+        $path = ($isremote)?'/mod/quiz/remote/view.php?id=':'/mod/quiz/view.php?id=';
         return $CFG->wwwroot . $path . $this->cm->id;
     }
 

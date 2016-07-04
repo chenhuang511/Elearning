@@ -53,7 +53,7 @@ $lesson->update_effective_access($USER->id);
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
 
-$url = new moodle_url('/mod/lesson/remote/api-view.php', array('id' => $id));
+$url = new moodle_url('/mod/lesson/remote/view.php', array('id' => $id));
 if ($pageid !== null) {
     $url->param('pageid', $pageid);
 }
@@ -180,7 +180,7 @@ if (empty($pageid)) {
             $lesson->add_message(get_string('lessonnotready2', 'lesson')); // a nice message to the student
         } else {
             if (!get_remote_count_by_lessonid_and_userid('lesson_pages', $lesson->id)) {
-                redirect("$CFG->wwwroot/mod/lesson/remote/api-edit.php?id=$cm->id"); // no pages - redirect to add pages
+                redirect("$CFG->wwwroot/mod/lesson/remote/edit.php?id=$cm->id"); // no pages - redirect to add pages
             } else {
                 $lesson->add_message(get_string('lessonpagelinkingbroken', 'lesson'));  // ok, bad mojo
             }
@@ -252,7 +252,7 @@ if (empty($pageid)) {
 
             if ($lesson->timelimit) {
                 if ($lesson->retake) {
-                    $continuelink = new single_button(new moodle_url('/mod/lesson/remote/api-view.php',
+                    $continuelink = new single_button(new moodle_url('/mod/lesson/remote/view.php',
                         array('id' => $cm->id, 'class' => 'remote-link-action', 'pageid' => $lesson->firstpageid, 'startlastseen' => 'no')),
                         get_string('continue', 'lesson'), 'get');
 
@@ -413,7 +413,7 @@ if ($pageid != LESSON_EOL) {
             'title' => $page->title,
             'contents' => $page->get_contents()
         );
-        $mform = new lesson_page_without_answers($CFG->wwwroot . '/mod/lesson/remote/api-continue.php', $customdata);
+        $mform = new lesson_page_without_answers($CFG->wwwroot . '/mod/lesson/remote/continue.php', $customdata);
         $mform->set_data($data);
         ob_start();
         $mform->display();
@@ -579,7 +579,7 @@ if ($pageid != LESSON_EOL) {
         // $ntries is decremented above
         if (!$attempts = $lesson->get_attempts($ntries)) {
             $attempts = array();
-            $url = new moodle_url('/mod/lesson/remote/api-view.php', array('id' => $PAGE->cm->id));
+            $url = new moodle_url('/mod/lesson/remote/view.php', array('id' => $PAGE->cm->id));
         } else {
             $firstattempt = current($attempts);
             $pageid = $firstattempt->pageid;
@@ -588,7 +588,7 @@ if ($pageid != LESSON_EOL) {
             $lastattempt = end($attempts);
             $USER->modattempts[$lesson->id] = $lastattempt->pageid;
 
-            $url = new moodle_url('/mod/lesson/remote/api-view.php', array('id' => $PAGE->cm->id, 'pageid' => $pageid));
+            $url = new moodle_url('/mod/lesson/remote/view.php', array('id' => $PAGE->cm->id, 'pageid' => $pageid));
         }
         $lessoncontent .= html_writer::link($url, get_string('reviewlesson', 'lesson'), array('class' => 'centerpadded lessonbutton standardbutton'));
     } elseif ($lesson->modattempts && $canmanage) {

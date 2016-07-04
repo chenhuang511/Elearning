@@ -1884,7 +1884,7 @@ class global_navigation extends navigation_node {
                 $activity->onclick = $cm->onclick;
                 $url = $cm->url;
                 if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-                    $url->set_path('/mod/'.$cm->modname.'/remote/api-view.php');
+                    $url->set_path('/mod/'.$cm->modname.'/remote/view.php');
                     $url->add_param(array('nonajax'=>true));
                 }
                 if (!$url) {

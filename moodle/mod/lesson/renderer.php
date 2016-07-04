@@ -115,7 +115,7 @@ class mod_lesson_renderer extends plugin_renderer_base
         global $CFG;
         $output = $this->output->box_start('password-form');
         $output .= $this->output->box_start('generalbox boxaligncenter');
-        $output .= '<form id="password" method="post" action="' . $CFG->wwwroot . '/mod/lesson/remote/api-view.php" autocomplete="off">';
+        $output .= '<form id="password" method="post" action="' . $CFG->wwwroot . '/mod/lesson/remote/view.php" autocomplete="off">';
         $output .= '<fieldset class="invisiblefieldset center">';
         $output .= '<input type="hidden" name="id" value="' . $this->page->cm->id . '" />';
         $output .= '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
@@ -176,11 +176,11 @@ class mod_lesson_renderer extends plugin_renderer_base
         global $CFG;
         $output = $this->output->box(get_string('youhaveseen', 'lesson'), 'generalbox boxaligncenter text-center');
         $output .= $this->output->box_start('center bhxh-buttons text-center');
-        $yeslink = html_writer::link('#', get_string('yes'), array('class' => 'remote-link-action btn btn-primary', 'data-module' => json_encode(array('url' => $CFG->wwwroot . '/mod/lesson/remote/api-view.php', 'params' => array('id' => $this->page->cm->id, 'pageid' => $lastpageseenid, 'startlastseen' => 'yes'), 'method' => 'get'))));
+        $yeslink = html_writer::link('#', get_string('yes'), array('class' => 'remote-link-action btn btn-primary', 'data-module' => json_encode(array('url' => $CFG->wwwroot . '/mod/lesson/remote/view.php', 'params' => array('id' => $this->page->cm->id, 'pageid' => $lastpageseenid, 'startlastseen' => 'yes'), 'method' => 'get'))));
         $output .= html_writer::tag('span', $yeslink, array('class' => 'lessonbutton standardbutton'));
         $output .= '&nbsp;';
 
-        $nolink = html_writer::link('#', get_string('no'), array('class' => 'remote-link-action btn btn-danger', 'data-module' => json_encode(array('url' => $CFG->wwwroot . '/mod/lesson/remote/api-view.php', 'params' => array('id' => $this->page->cm->id, 'pageid' => $lesson->firstpageid, 'startlastseen' => 'no'), 'method' => 'get'))));
+        $nolink = html_writer::link('#', get_string('no'), array('class' => 'remote-link-action btn btn-danger', 'data-module' => json_encode(array('url' => $CFG->wwwroot . '/mod/lesson/remote/view.php', 'params' => array('id' => $this->page->cm->id, 'pageid' => $lesson->firstpageid, 'startlastseen' => 'no'), 'method' => 'get'))));
         $output .= html_writer::tag('span', $nolink, array('class' => 'lessonbutton standardbutton'));
 
         $output .= $this->output->box_end();
@@ -234,7 +234,7 @@ class mod_lesson_renderer extends plugin_renderer_base
         while ($pageid != 0) {
             $page = $lesson->load_page($pageid);
             $data = array();
-            $url = new moodle_url('/mod/lesson/remote/api-edit.php', array(
+            $url = new moodle_url('/mod/lesson/remote/edit.php', array(
                 'id' => $this->page->cm->id,
                 'mode' => 'single',
                 'pageid' => $page->id
@@ -359,7 +359,7 @@ class mod_lesson_renderer extends plugin_renderer_base
 
         $links = array();
 
-        $importquestionsurl = new moodle_url('/mod/lesson/remote/api-import.php', array('id' => $this->page->cm->id, 'pageid' => $prevpageid));
+        $importquestionsurl = new moodle_url('/mod/lesson/remote/import.php', array('id' => $this->page->cm->id, 'pageid' => $prevpageid));
         $links[] = html_writer::link($importquestionsurl, get_string('importquestions', 'lesson'));
 
         $manager = lesson_page_type_manager::get($lesson);
@@ -367,7 +367,7 @@ class mod_lesson_renderer extends plugin_renderer_base
             $links[] = html_writer::link($link['addurl'], $link['name']);
         }
 
-        $addquestionurl = new moodle_url('/mod/lesson/remote/api-editpage.php', array('id' => $this->page->cm->id, 'pageid' => $prevpageid));
+        $addquestionurl = new moodle_url('/mod/lesson/remote/editpage.php', array('id' => $this->page->cm->id, 'pageid' => $prevpageid));
         $links[] = html_writer::link($addquestionurl, get_string('addaquestionpagehere', 'lesson'));
 
         return $this->output->box(implode(" | \n", $links), 'addlinks');
@@ -416,23 +416,23 @@ class mod_lesson_renderer extends plugin_renderer_base
         $actions = array();
 
         if ($printmove) {
-            $url = new moodle_url('/mod/lesson/remote/api-lesson.php',
+            $url = new moodle_url('/mod/lesson/remote/lesson.php',
                 array('id' => $this->page->cm->id, 'action' => 'move', 'pageid' => $page->id, 'sesskey' => sesskey()));
             $label = get_string('movepagenamed', 'lesson', format_string($page->title));
             $img = html_writer::img($this->output->pix_url('t/move'), $label, array('class' => 'iconsmall'));
             $actions[] = html_writer::link($url, $img, array('title' => $label));
         }
-        $url = new moodle_url('/mod/lesson/remote/api-editpage.php', array('id' => $this->page->cm->id, 'pageid' => $page->id, 'edit' => 1));
+        $url = new moodle_url('/mod/lesson/remote/editpage.php', array('id' => $this->page->cm->id, 'pageid' => $page->id, 'edit' => 1));
         $label = get_string('updatepagenamed', 'lesson', format_string($page->title));
         $img = html_writer::img($this->output->pix_url('t/edit'), $label, array('class' => 'iconsmall'));
         $actions[] = html_writer::link($url, $img, array('title' => $label));
 
-        $url = new moodle_url('/mod/lesson/remote/api-view.php', array('id' => $this->page->cm->id, 'pageid' => $page->id));
+        $url = new moodle_url('/mod/lesson/remote/view.php', array('id' => $this->page->cm->id, 'pageid' => $page->id));
         $label = get_string('previewpagenamed', 'lesson', format_string($page->title));
         $img = html_writer::img($this->output->pix_url('t/preview'), $label, array('class' => 'iconsmall'));
         $actions[] = html_writer::link($url, $img, array('title' => $label));
 
-        $url = new moodle_url('/mod/lesson/remote/api-lesson.php',
+        $url = new moodle_url('/mod/lesson/remote/lesson.php',
             array('id' => $this->page->cm->id, 'action' => 'confirmdelete', 'pageid' => $page->id, 'sesskey' => sesskey()));
         $label = get_string('deletepagenamed', 'lesson', format_string($page->title));
         $img = html_writer::img($this->output->pix_url('t/delete'), $label, array('class' => 'iconsmall'));
@@ -447,7 +447,7 @@ class mod_lesson_renderer extends plugin_renderer_base
             }
             $options[0] = get_string('question', 'lesson');
 
-            $addpageurl = new moodle_url('/mod/lesson/remote/api-editpage.php', array('id' => $this->page->cm->id, 'pageid' => $page->id, 'sesskey' => sesskey()));
+            $addpageurl = new moodle_url('/mod/lesson/remote/editpage.php', array('id' => $this->page->cm->id, 'pageid' => $page->id, 'sesskey' => sesskey()));
             $addpageselect = new single_select($addpageurl, 'qtype', $options, null, array('' => get_string('addanewpage', 'lesson') . '...'), 'addpageafter' . $page->id);
             $addpageselector = $this->output->render($addpageselect);
         }
