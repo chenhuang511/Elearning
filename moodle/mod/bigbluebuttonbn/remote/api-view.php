@@ -28,11 +28,11 @@ if ($id) {
 
     $bigbluebuttonbn = get_remote_bigbluebuttonbn_by_id($cm->instance);
 } elseif ($b) {
-    $bigbluebuttonbn = get_remote_bigbluebuttonbn_by_id($cm->instance);
+    $bigbluebuttonbn = get_remote_bigbluebuttonbn_by_id($b);
     if (!$course = get_local_course_record($quiz->course)) {
         print_error('invalidcourseid');
     }
-    if (!$cm = get_remote_course_module_by_instance('bigbluebuttonbn', $quiz->id)->cm) {
+    if (!$cm = get_remote_course_module_by_instance('bigbluebuttonbn', $b)->cm) {
         print_error('invalidcoursemodule');
     }
 } else {
@@ -319,7 +319,7 @@ function bigbluebuttonbn_view_joining($bbbsession){
     }
 
     echo $OUTPUT->box_start('generalbox boxaligncenter', 'bigbluebuttonbn_view_action_button_box');
-    echo '<br><br><span id="join_button"><input id="join_button_input" type="button" value="Join session" onclick="M.mod_bigbluebuttonbn.broker_joinNow(\'http://192.168.1.252/mod/bigbluebuttonbn/bbb_view.php?action=join&amp;id=1148&amp;bigbluebuttonbn=1\', \'This conference is in progress.\', false);"></span>&nbsp;<span id="end_button"></span>';
+    echo '<br><br><span id="join_button"></span>&nbsp;<span id="end_button"></span>';
     echo $OUTPUT->box_end();
 
     bigbluebuttonbn_view_recordings($bbbsession);
