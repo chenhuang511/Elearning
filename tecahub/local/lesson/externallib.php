@@ -3337,7 +3337,6 @@ class local_mod_lesson_external extends external_api
         return $result;
     }
 
-
     public static function get_lesson_branch_by_lessonid_returns()
     {
         return self::get_lesson_branch_by_lessonid_and_userid_and_retry_returns();

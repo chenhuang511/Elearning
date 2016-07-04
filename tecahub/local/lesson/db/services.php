@@ -206,7 +206,7 @@ $functions = array(
         'classname' => 'local_mod_lesson_external',
         'methodname' => 'get_lesson_branch_by_lessonid_and_userid_and_retry',
         'classpath' => 'local/lesson/externallib.php',
-        'description' => 'Get lesson branch by lessonid and userid and retry',
+        'description' => 'Get list lesson branch by lessonid and userid and retry',
         'type' => 'read',
         'ajax' => true
     ),
@@ -214,7 +214,7 @@ $functions = array(
         'classname' => 'local_mod_lesson_external',
         'methodname' => 'get_lesson_branch_by_lessonid',
         'classpath' => 'local/lesson/externallib.php',
-        'description' => 'Get lesson branch by lessonid',
+        'description' => 'Get list lesson branch by lessonid',
         'type' => 'read',
         'ajax' => true
     ),

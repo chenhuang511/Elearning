@@ -4,6 +4,7 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->dirroot . '/lib/remote/lib.php');
 require_once($CFG->dirroot . '/lib/additionallib.php');
 require_once($CFG->dirroot . '/mnet/service/enrol/locallib.php');
+require_once($CFG->dirroot . '/lib/dml/json_moodle_recordset.php');
 
 /**
  * get lesson by id
@@ -780,7 +781,7 @@ function save_remote_lesson_timer($timer)
 
 function update_remote_lesson_timer($id, $timer)
 {
-    return moodle_webservice_client(
+    $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
@@ -788,6 +789,8 @@ function update_remote_lesson_timer($id, $timer)
             'params' => array_merge(array('id' => $id), $timer)
         )
     );
+
+    return $result->status;
 }
 
 function get_remote_duration_lesson_timer_by_lessonid_and_userid($lessonid, $userid)
@@ -906,4 +909,60 @@ function check_remote_record_exists($tablename, $name, $value)
     );
 
     return $result->status;
+}
+
+function update_remote_lesson_pages($id, $page)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_update_lesson_pages',
+            'params' => array_merge(array('id' => $id), $page)
+        )
+    );
+
+    return $result->status;
+}
+
+function get_remote_user_by_lessonid($params, $esql)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_user_by_lessonid',
+            'params' => array('params' => $params, 'esql' => $esql),
+        )
+    );
+
+    return new json_moodle_recordset($result->users);
+}
+
+function get_remote_recordset_lesson_attempts_by_lessonid($lessonid)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_lesson_attempts_by_lessonid',
+            'params' => array('lessonid' => $lessonid),
+        )
+    );
+
+    return new json_moodle_recordset($result->attempts);
+}
+
+function get_remote_recordset_lesson_branch_by_lessonid($lessonid, $sort = 'timeseen')
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_lesson_branch_by_lessonid',
+            'params' => array('lessonid' => $lessonid, 'sort' => $sort),
+        )
+    );
+
+    return new json_moodle_recordset($result->branches);
 }
