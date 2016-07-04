@@ -10,6 +10,7 @@
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/locallib.php');
+require_once(dirname(__FILE__).'/remote/locallib.php');
 
 global $PAGE, $USER, $CFG, $SESSION, $DB;
 
@@ -34,9 +35,19 @@ if( empty($params['action']) ) {
     if( empty($error) && $params['action'] != "recording_ready" ) {
 
         if ($params['bigbluebuttonbn'] != 0) {
-            $bigbluebuttonbn = $DB->get_record('bigbluebuttonbn', array('id' => $params['bigbluebuttonbn']), '*', MUST_EXIST);
-            $course = $DB->get_record('course', array('id' => $bigbluebuttonbn->course), '*', MUST_EXIST);
-            $cm = get_coursemodule_from_instance('bigbluebuttonbn', $bigbluebuttonbn->id, $course->id, false, MUST_EXIST);
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+                $bigbluebuttonbn = get_remote_bigbluebuttonbn_by_id($params['bigbluebuttonbn']);
+                if (!$cm = get_remote_course_module_by_instance('bigbluebuttonbn', $params['bigbluebuttonbn'])->cm) {
+                    print_error('invalidcoursemodule');
+                }
+                if (!$course = get_local_course_record($cm->course)) {
+                    print_error('coursemisconf');
+                }
+            } else {
+                $bigbluebuttonbn = $DB->get_record('bigbluebuttonbn', array('id' => $params['bigbluebuttonbn']), '*', MUST_EXIST);
+                $course = $DB->get_record('course', array('id' => $bigbluebuttonbn->course), '*', MUST_EXIST);
+                $cm = get_coursemodule_from_instance('bigbluebuttonbn', $bigbluebuttonbn->id, $course->id, false, MUST_EXIST);
+            }
             $context = bigbluebuttonbn_get_context_module($cm->id);
         }
 

@@ -10,6 +10,7 @@
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/locallib.php');
+require_once(dirname(__FILE__).'/remote/locallib.php');
 
 $id = optional_param('id', 0, PARAM_INT);  // course_module ID, or
 $bn = optional_param('bn', 0, PARAM_INT);  // bigbluebuttonbn instance ID
@@ -20,13 +21,34 @@ $tags = optional_param('tags', '', PARAM_TEXT);
 $errors = optional_param('errors', '', PARAM_TEXT);
 
 if ($id) {
-    $cm = get_coursemodule_from_id('bigbluebuttonbn', $id, 0, false, MUST_EXIST);
-    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-    $bigbluebuttonbn = $DB->get_record('bigbluebuttonbn', array('id' => $cm->instance), '*', MUST_EXIST);
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+        $cm = get_coursemodule_from_id('bigbluebuttonbn', $id, 0, false, MUST_EXIST);
+        $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+        $bigbluebuttonbn = $DB->get_record('bigbluebuttonbn', array('id' => $cm->instance), '*', MUST_EXIST);
+    } else {
+        if (!$cm = get_remote_course_module_by_cmid('bigbluebuttonbn', $id)) {
+            print_error('invalidcoursemodule');
+        }
+        if (!$course = get_local_course_record($cm->course)) {
+            print_error('coursemisconf');
+        }
+
+        $bigbluebuttonbn = get_remote_bigbluebuttonbn_by_id($cm->instance);
+    }
 } elseif ($bn) {
-    $bigbluebuttonbn = $DB->get_record('bigbluebuttonbn', array('id' => $bn), '*', MUST_EXIST);
-    $course = $DB->get_record('course', array('id' => $bigbluebuttonbn->course), '*', MUST_EXIST);
-    $cm = get_coursemodule_from_instance('bigbluebuttonbn', $bigbluebuttonbn->id, $course->id, false, MUST_EXIST);
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+        $bigbluebuttonbn = $DB->get_record('bigbluebuttonbn', array('id' => $bn), '*', MUST_EXIST);
+        $course = $DB->get_record('course', array('id' => $bigbluebuttonbn->course), '*', MUST_EXIST);
+        $cm = get_coursemodule_from_instance('bigbluebuttonbn', $bigbluebuttonbn->id, $course->id, false, MUST_EXIST);
+    } else {
+        $bigbluebuttonbn = get_remote_bigbluebuttonbn_by_id($b);
+        if (!$course = get_local_course_record($quiz->course)) {
+            print_error('invalidcourseid');
+        }
+        if (!$cm = get_remote_course_module_by_instance('bigbluebuttonbn', $b)->cm) {
+            print_error('invalidcoursemodule');
+        }
+    }
 } else {
     print_error('You must specify a course_module ID or a BigBlueButtonBN instance ID');
 }
