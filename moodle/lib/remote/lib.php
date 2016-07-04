@@ -19,12 +19,11 @@ function moodle_webservice_client($options, $usecache = true, $assoc = false)
             $options['token'] . '&wsfunction=' .
             $options['function_name'] . '&moodlewsrestformat=json';
 
-        try {
-            require_once($CFG->libdir . '/zend/Zend/Http/Client.php');
-        } catch (Exception $ex) {
+        if (!@include_once($CFG->libdir . '/zend/Zend/Http/Client.php')) {
             set_include_path(get_include_path().PATH_SEPARATOR.$CFG->libdir . '/zend/');
             require_once($CFG->libdir . '/zend/Zend/Http/Client.php');
         }
+
         $client = new Zend_Http_Client($serverUrl);
 
         if (isset($options['params'])) {
