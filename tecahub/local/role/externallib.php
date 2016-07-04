@@ -29,12 +29,12 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir . '/externallib.php');
 
 class local_role_external extends external_api {
-	
+    
     public static function remote_assign_role_to_user_parameters() {
         return new external_function_parameters(
             array('roleid' => new external_value(PARAM_TEXT, 'Role id'),
                 'userid' => new external_value(PARAM_TEXT, 'user id'),
-		'courseid' => new external_value(PARAM_TEXT, 'Course id'))
+        'courseid' => new external_value(PARAM_TEXT, 'Course id'))
         );
     }
 
@@ -44,11 +44,11 @@ class local_role_external extends external_api {
         //validate parameter
         $params = self::validate_parameters(self::remote_assign_role_to_user_parameters(),
             array('roleid' => $roleid, 'userid' => $userid, 'courseid' => $courseid));
-				
-	$course = $DB->get_record("course", array('id' => $courseid), "*", MUST_EXIST);
+                
+        $course = $DB->get_record("course", array('id' => $courseid), "*", MUST_EXIST);
         $context = context_course::instance($course->id);
-		
-	return role_assign($roleid, $userid, $context->id, 'enrol_mnet', NULL);
+        
+        return role_assign($roleid, $userid, $context->id, 'enrol_mnet', NULL);
     }
 
     /**
