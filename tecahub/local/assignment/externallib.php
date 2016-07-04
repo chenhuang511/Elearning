@@ -798,8 +798,8 @@ class local_mod_assign_external extends external_api {
                 'itemid' => new external_value(PARAM_INT, 'item ID'),
                 'commentarea' => new external_value(PARAM_RAW, 'comment area'),
                 'component' => new external_value(PARAM_RAW, 'component'),
-                'instanceid' => new external_value(PARAM_RAW, 'instance ID'),
-                'courseid' => new external_value(PARAM_RAW, 'course ID')
+                'instanceid' => new external_value(PARAM_INT, 'instance ID'),
+                'courseid' => new external_value(PARAM_INT, 'course ID')
             )
         );
     }
@@ -953,6 +953,7 @@ class local_mod_assign_external extends external_api {
     public static function count_submissions_with_status_by_host_id_returns(){
         return new external_value(PARAM_INT, 'count submission with status by host id');
     }
+
     // MINHD: Count submissions need grading by host id
     public static function count_submissions_need_grading_by_host_id_parameters(){
         return new external_function_parameters(
@@ -2073,7 +2074,7 @@ class local_mod_assign_external extends external_api {
      * @param $filearea filearea of file
      * @param $itemid item id
      * @param $userid user id
-     * @return boolean 
+     * @return boolean $result
      */
     public static function delete_fakefile_on_hub($component, $filearea, $itemid, $userid){
         global $DB;
