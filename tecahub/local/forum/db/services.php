@@ -33,30 +33,7 @@
  * @license	   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$functions = array(
-	'local_mod_wiki_get_wiki_by_id' => array(
-		'classname'	  => 'local_mod_wiki_external',
-		'methodname'  => 'get_mod_wiki_by_id',
-		'classpath'	  => 'local/wiki/externallib.php',
-		'description' => "Get wiki by wiki id or by wiki identify",
-		'type'		  => 'read',
-		'ajax'		  => true
-	),
-	'local_mod_wiki_get_first_page' => array(
-		'classname'	  => 'local_mod_wiki_external',
-		'methodname'  => 'get_mod_wiki_first_page',
-		'classpath'	  => 'local/wiki/externallib.php',
-		'description' => "Get first page by subwiki id or by subwiki identify",
-		'type'		  => 'read',
-		'ajax'		  => true
-	),
-	'local_mod_wiki_get_page_for_editing' => array(
-		'classname'	  => 'local_mod_wiki_external',
-		'methodname'  => 'get_mod_wiki_current_version',
-		'classpath'	  => 'local/wiki/externallib.php',
-		'description' => "Get current version wiki id",
-		'type'		  => 'read',
-		'ajax'		  => true
-	),
-);
+//$functions = array(
+//
+//);
 

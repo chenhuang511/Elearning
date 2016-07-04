@@ -22,8 +22,8 @@
  */
 
     require_once(dirname(__FILE__) . '/../../../config.php');
-require_once($CFG->dirroot . '/lib/remote/lib.php');
-require_once($CFG->dirroot . '/course/remote/locallib.php');
+    require_once($CFG->dirroot . '/lib/remote/lib.php');
+    require_once($CFG->dirroot . '/course/remote/locallib.php');
     require_once($CFG->libdir.'/completionlib.php');
 
     $id          = optional_param('id', 0, PARAM_INT);       // Course Module ID
