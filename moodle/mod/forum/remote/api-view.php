@@ -21,8 +21,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-    require_once('../../../config.php');
-    //require_once('lib.php');
+    require_once(dirname(__FILE__) . '/../../../config.php');
+require_once($CFG->dirroot . '/lib/remote/lib.php');
+require_once($CFG->dirroot . '/course/remote/locallib.php');
     require_once($CFG->libdir.'/completionlib.php');
 
     $id          = optional_param('id', 0, PARAM_INT);       // Course Module ID
@@ -48,10 +49,10 @@
     $PAGE->set_url('/mod/forum/view.php', $params);
 
     if ($id) {
-        if (! $cm = get_coursemodule_from_id('forum', $id)) {
+        if (! $cm =get_remote_course_module_by_cmid('forum', $id)) {
             print_error('invalidcoursemodule');
         }
-        if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
+        if (! $course = get_local_course_record($cm->course)) {
             print_error('coursemisconf');
         }
         if (! $forum = $DB->get_record("forum", array("id" => $cm->instance))) {
@@ -137,7 +138,7 @@
     // mode control.
     if ($forum->type == 'single') {
         $discussion = NULL;
-        $discussions = $DB->get_records('forum_discussions', array('forum'=>$forum->id), 'timemodified ASC');
+        $discussions = get_remote_discussion_by_forumid($forum->id);
         if (!empty($discussions)) {
             $discussion = array_pop($discussions);
         }
