@@ -510,11 +510,13 @@ function chat_get_latest_message($chatid, $groupid=0) {
  * @param object $course
  * @return bool|int Returns the chat users sid or false
  */
-function chat_login_user($chatid, $version, $groupid, $course) {
+function chat_login_user($chatid, $version, $groupid, $course, $userid = null) {
     global $USER, $DB;
+	
+	$userid = ($userid == null)?$USER->id:$userid;
 
     if (($version != 'sockets') and $chatuser = $DB->get_record('chat_users', array('chatid' => $chatid,
-                                                                                    'userid' => $USER->id,
+                                                                                    'userid' => $userid,
                                                                                     'groupid' => $groupid))) {
         // This will update logged user information.
         $chatuser->version  = $version;
@@ -536,7 +538,7 @@ function chat_login_user($chatid, $version, $groupid, $course) {
     } else {
         $chatuser = new stdClass();
         $chatuser->chatid   = $chatid;
-        $chatuser->userid   = $USER->id;
+        $chatuser->userid   = $userid;
         $chatuser->groupid  = $groupid;
         $chatuser->version  = $version;
         $chatuser->ip       = $USER->lastip;

@@ -49,6 +49,7 @@ class mod_chat_external extends external_api {
     public static function login_user_parameters() {
         return new external_function_parameters(
             array(
+				'userid' => new external_value(PARAM_INT, 'chat user id'),
                 'chatid' => new external_value(PARAM_INT, 'chat instance id'),
                 'groupid' => new external_value(PARAM_INT, 'group id, 0 means that the function will determine the user group',
                                                 VALUE_DEFAULT, 0),
@@ -65,11 +66,12 @@ class mod_chat_external extends external_api {
      * @since Moodle 3.0
      * @throws moodle_exception
      */
-    public static function login_user($chatid, $groupid = 0) {
+    public static function login_user($userid, $chatid, $groupid = 0) {
         global $DB;
 
         $params = self::validate_parameters(self::login_user_parameters(),
                                             array(
+												'userid' => $userid,
                                                 'chatid' => $chatid,
                                                 'groupid' => $groupid
                                             ));
@@ -105,7 +107,7 @@ class mod_chat_external extends external_api {
 
         // Get the unique chat session id.
         // Since we are going to use the chat via Web Service requests we set the ajax version (since it's the most similar).
-        if (!$chatsid = chat_login_user($chat->id, 'ajax', $groupid, $course)) {
+        if (!$chatsid = chat_login_user($chat->id, 'ajax', $groupid, $course, $userid)) {
             throw moodle_exception('cantlogin', 'chat');
         }
 
