@@ -521,14 +521,13 @@ function questionnaire_extend_settings_navigation(settings_navigation $settings,
     $cm = $PAGE->cm;
     $course = $PAGE->course;
 
-    if (! $questionnaire = $DB->get_record("questionnaire", array("id" => $cm->instance))) {
+    if (! $questionnaire = get_remote_questionnaire_by_id($cm->instance)) {
         print_error('invalidcoursemodule');
     }
 
     $courseid = $course->id;
     $questionnaire = new questionnaire(0, $questionnaire, $course, $cm);
-
-    if ($owner = $DB->get_field('questionnaire_survey', 'owner', array('id' => $questionnaire->sid))) {
+    if ($owner = get_remote_field_owner_questionnaire_by_id($questionnaire->sid)) {
         $owner = (trim($owner) == trim($courseid));
     } else {
         $owner = true;

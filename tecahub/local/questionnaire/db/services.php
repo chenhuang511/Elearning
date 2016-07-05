@@ -41,5 +41,37 @@ $functions = array(
 		'description' => "Get question by id",
 		'type'		  => 'read',
 		'ajax'		  => true
-	),	
+	),
+	'local_questionnaire_get_field_owner_questionnaire_by_id' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'questionnaire_get_field_owner_questionnaire_by_id',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get field owner by id",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_questionnaire_get_questionnaire_survey_by_id' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'questionnaire_get_questionnaire_survey_by_id',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get questionnaire_survey by id",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_questionnaire_get_questionnaire_question_by_sid' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'questionnaire_get_questionnaire_question_by_sid',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get questionnaire_question by condition",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_questionnaire_get_questionnaire_quest_choice_by_question_id' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'questionnaire_get_questionnaire_quest_choice_by_question_id',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get questionnaire_question by condition",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 );

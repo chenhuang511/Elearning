@@ -123,11 +123,9 @@ abstract class base {
             $qtypes = $DB->get_records('questionnaire_question_type', array(), 'typeid',
                                        'typeid, type, has_choices, response_table');
         }
-
         if ($id) {
-            $question = $DB->get_record('questionnaire_question', array('id' => $id));
+            $question = get_remote_questionnaire_by_id($id);
         }
-
         if (is_object($question)) {
             $this->id = $question->id;
             $this->survey_id = $question->survey_id;
@@ -197,8 +195,7 @@ abstract class base {
 
     private function get_choices() {
         global $DB;
-
-        if ($choices = $DB->get_records('questionnaire_quest_choice', array('question_id' => $this->id), 'id ASC')) {
+        if ($choices = get_remote_questionnaire_quest_choice_by_question_id($this->id)) {
             foreach ($choices as $choice) {
                 $this->choices[$choice->id] = new \stdClass();
                 $this->choices[$choice->id]->content = $choice->content;
