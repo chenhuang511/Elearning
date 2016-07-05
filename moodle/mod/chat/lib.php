@@ -513,6 +513,14 @@ function chat_get_latest_message($chatid, $groupid=0) {
 function chat_login_user($chatid, $version, $groupid, $course) {
     global $USER, $DB;
 
+    if (MOODLE_RUN_MODE == MOODLE_MODE_HUB) {
+        $user = get_remote_mapping_user();
+        if (!$chatsid = get_remote_chat_login_user($user[0]->id, $chatid)) {
+            print_error('cantlogin', 'chat');
+        }
+        return $chatsid->chatsid;
+    }
+
     if (($version != 'sockets') and $chatuser = $DB->get_record('chat_users', array('chatid' => $chatid,
                                                                                     'userid' => $USER->id,
                                                                                     'groupid' => $groupid))) {
@@ -654,7 +662,7 @@ function chat_update_chat_times($chatid=0) {
  * @return int The message ID.
  * @since Moodle 2.6
  */
-function chat_send_chatmessage($chatuser, $messagetext, $system = false, $cm = null) {
+function chat_send_chatmessage($chatuser, $messagetext, $system = false, $cm = null, $chatsid = null) {
     global $DB;
 
     $message = new stdClass();
@@ -665,9 +673,14 @@ function chat_send_chatmessage($chatuser, $messagetext, $system = false, $cm = n
     $message->system    = $system ? 1 : 0;
     $message->timestamp = time();
 
-    $messageid = $DB->insert_record('chat_messages', $message);
-    $DB->insert_record('chat_messages_current', $message);
-    $message->id = $messageid;
+    if (MOODLE_RUN_MODE == MOODLE_MODE_HOST) {
+        $messageid = $DB->insert_record('chat_messages', $message);
+        $DB->insert_record('chat_messages_current', $message);
+        $message->id = $messageid;
+    } else {
+        $messageid = remote_chat_send_chat_message($chatsid, $messagetext);
+        $message->id = $messageid;
+    }
 
     if (!$system) {
 
@@ -1209,7 +1222,8 @@ function chat_supports($feature) {
     }
 }
 
-function chat_extend_navigation($navigation, $course, $module, $cm) {
+//todo: add suffix rm
+function chat_extend_navigation_rm($navigation, $course, $module, $cm) {
     global $CFG;
 
     $currentgroup = groups_get_activity_group($cm, true);
@@ -1350,4 +1364,28 @@ function chat_view($chat, $course, $cm, $context) {
     // Completion.
     $completion = new completion_info($course);
     $completion->set_module_viewed($cm);
+}
+
+/**
+ * Add a get_coursemodule_info function in case any assignment type wants to add 'extra' information
+ * for the course (see resource).
+ *
+ * Given a course_module object, this function returns any "extra" information that may be needed
+ * when printing this activity in a course listing.  See get_array_of_activities() in course/lib.php.
+ *
+ * @param stdClass $coursemodule The coursemodule object (record).
+ * @return cached_cm_info An object on information that the courses
+ *                        will know about (most noticeably, an icon).
+ */
+function chat_get_coursemodule_info($coursemodule) {
+    global $CFG;
+
+    require_once($CFG->dirroot . '/mod/chat/remote/locallib.php');
+    $chat = get_remote_chat_by_id($coursemodule->instance);
+
+    $result = new cached_cm_info();
+    $result->name = $chat->name;
+    $result->content = format_module_intro('quiz', $chat, $coursemodule->id, false);
+
+    return $result;
 }

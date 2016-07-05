@@ -16,6 +16,7 @@
 
 require_once('../../../config.php');
 require_once('../lib.php');
+require_once('../remote/locallib.php');
 
 $id      = required_param('id', PARAM_INT);
 $groupid = optional_param('groupid', 0, PARAM_INT); // Only for teachers.
@@ -29,9 +30,15 @@ $PAGE->set_url($url);
 $PAGE->set_popup_notification_allowed(false); // No popup notifications in the chat window.
 $PAGE->requires->strings_for_js(array('coursetheme', 'bubble', 'compact'), 'mod_chat');
 
-$chat = $DB->get_record('chat', array('id' => $id), '*', MUST_EXIST);
-$course = $DB->get_record('course', array('id' => $chat->course), '*', MUST_EXIST);
-$cm = get_coursemodule_from_instance('chat', $chat->id, $course->id, false, MUST_EXIST);
+if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+    $chat = $DB->get_record('chat', array('id' => $id), '*', MUST_EXIST);
+    $course = $DB->get_record('course', array('id' => $chat->course), '*', MUST_EXIST);
+    $cm = get_coursemodule_from_instance('chat', $chat->id, $course->id, false, MUST_EXIST);
+} else {
+    $chat = get_remote_chat_by_id($id);
+    $course = get_local_course_record($chat->course);
+    $cm = get_remote_course_module_by_instance('chat', $chat->id)->cm;
+}
 
 $context = context_module::instance($cm->id);
 require_login($course, false, $cm);
@@ -65,6 +72,7 @@ if ($theme != 'course_theme' and !file_exists(dirname(__FILE__) . '/theme/'.$the
 if (!$chatsid = chat_login_user($chat->id, 'ajax', $groupid, $course)) {
     print_error('cantlogin', 'chat');
 }
+
 $courseshortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
 $module = array(
     'name'      => 'mod_chat_ajax', // Chat gui's are not real plugins, we have to break the naming standards for JS modules here.

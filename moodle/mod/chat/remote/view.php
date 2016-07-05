@@ -18,6 +18,7 @@
 
 require_once(dirname(dirname(dirname(__FILE__))) . '/../config.php');
 require_once($CFG->dirroot . '/mod/chat/lib.php');
+require_once($CFG->dirroot . '/mod/chat/remote/locallib.php');
 require_once($CFG->libdir . '/completionlib.php');
 
 $id   = optional_param('id', 0, PARAM_INT);
@@ -35,20 +36,20 @@ if ($id) {
 
     chat_update_chat_times($cm->instance);
 
-    if (! $chat = $DB->get_record('chat', array('id' => $cm->instance))) {
+    if (! $chat = get_remote_chat_by_id($cm->instance)) {
         print_error('invalidid', 'chat');
     }
 
 } else {
     chat_update_chat_times($c);
 
-    if (! $chat = $DB->get_record('chat', array('id' => $c))) {
+    if (! $chat = get_remote_chat_by_id($c)) {
         print_error('coursemisconf');
     }
     if (! $course = $DB->get_record('course', array('id' => $chat->course))) {
         print_error('coursemisconf');
     }
-    if (! $cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
+    if (! $cm = get_remote_course_module_by_instance('chat', $chat->id)->cm) {
         print_error('invalidcoursemodule');
     }
 }
