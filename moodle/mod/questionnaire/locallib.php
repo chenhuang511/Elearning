@@ -1047,7 +1047,7 @@ function questionnaire_get_standard_page_items($id = null, $a = null) {
         }
 
     } else {
-        if (! $questionnaire = $DB->get_record("questionnaire", array("id" => $a))) {
+        if (! $questionnaire = get_remote_questionnaire_by_id($a)) {
             print_error('invalidcoursemodule');
         }
         if (! $course = $DB->get_record("course", array("id" => $questionnaire->course))) {
@@ -1057,6 +1057,5 @@ function questionnaire_get_standard_page_items($id = null, $a = null) {
             print_error('invalidcoursemodule');
         }
     }
-
     return (array($cm, $course, $questionnaire));
 }

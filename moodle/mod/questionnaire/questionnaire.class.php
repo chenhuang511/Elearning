@@ -41,9 +41,8 @@ class questionnaire {
         global $DB;
 
         if ($id) {
-            $questionnaire = $DB->get_record('questionnaire', array('id' => $id));
+            $questionnaire = get_remote_questionnaire_by_id($id);
         }
-
         if (is_object($questionnaire)) {
             $properties = get_object_vars($questionnaire);
             foreach ($properties as $property => $value) {
@@ -82,7 +81,7 @@ class questionnaire {
         global $DB;
 
         if ($sid) {
-            $this->survey = $DB->get_record('questionnaire_survey', array('id' => $sid));
+            $this->survey = get_remote_questionnaire_survey_by_id($sid);
         } else if (is_object($survey)) {
             $this->survey = clone($survey);
         }
@@ -119,9 +118,7 @@ class questionnaire {
             $this->questions = array();
             $this->questionsbysec = array();
         }
-
-        $select = 'survey_id = '.$sid.' AND deleted != \'y\'';
-        if ($records = $DB->get_records_select('questionnaire_question', $select, null, 'position')) {
+        if ($records = get_remote_questionnaire_question_by_sid($sid)) {
             $sec = 1;
             $isbreak = false;
             foreach ($records as $record) {
@@ -521,7 +518,7 @@ class questionnaire {
     public function can_view_all_responses($usernumresp = null) {
         global $USER, $DB, $SESSION;
 
-        if ($owner = $DB->get_field('questionnaire_survey', 'owner', array('id' => $this->sid))) {
+        if ($owner = get_remote_field_owner_questionnaire_by_id($this->sid)) {
             $owner = (trim($owner) == trim($this->course->id));
         } else {
             $owner = true;
@@ -809,7 +806,7 @@ class questionnaire {
         // Available group modes (0 = no groups; 1 = separate groups; 2 = visible groups).
         if ($rid) {
             $courseid = $this->course->id;
-            if ($resp = $DB->get_record('questionnaire_response', array('id' => $rid)) ) {
+            if ($resp = get_remote_questionnaire_response_by_rid($rid) ) {
                 if ($this->respondenttype == 'fullname') {
                     $userid = $resp->username;
                     // Display name of group(s) that student belongs to... if questionnaire is set to Groups separate or visible.
@@ -1174,7 +1171,6 @@ class questionnaire {
                 }
             }
         }
-
         return($newsid);
     }
 

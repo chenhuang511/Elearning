@@ -18,6 +18,7 @@ require_once("../../../config.php");
 require_once($CFG->dirroot.'/mod/questionnaire/locallib.php');
 require_once($CFG->libdir . '/completionlib.php');
 require_once($CFG->dirroot.'/mod/questionnaire/questionnaire.class.php');
+require_once($CFG->dirroot . '/mod/questionnaire/remote/locallib.php');
 
 if (!isset($SESSION->questionnaire)) {
     $SESSION->questionnaire = new stdClass();
@@ -32,7 +33,7 @@ $sid = optional_param('sid', null, PARAM_INT);  // Survey id.
 list($cm, $course, $questionnaire) = questionnaire_get_standard_page_items($id, $a);
 
 // Check login and get context.
-require_course_login($course, true, $cm);
+require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 
 $url = new moodle_url($CFG->wwwroot.'/mod/questionnaire/view.php');
@@ -44,11 +45,9 @@ if (isset($id)) {
 if (isset($sid)) {
     $url->param('sid', $sid);
 }
-
 $PAGE->set_url($url);
 $PAGE->set_context($context);
 $questionnaire = new questionnaire(0, $questionnaire, $course, $cm);
-
 $PAGE->set_title(format_string($questionnaire->name));
 
 $PAGE->set_heading(format_string($course->fullname));
@@ -69,7 +68,6 @@ $currentgroupid = groups_get_activity_group($cm);
 if (!groups_is_member($currentgroupid, $USER->id)) {
     $currentgroupid = 0;
 }
-
 if (!$questionnaire->is_active()) {
     if ($questionnaire->capabilities->manage) {
         $msg = 'removenotinuse';

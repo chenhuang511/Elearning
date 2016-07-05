@@ -86,7 +86,7 @@ class local_questionnaire_external extends external_api {
                 'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
                 'course' => new external_value(PARAM_INT, 'course'),
                 'name' => new external_value(PARAM_TEXT, 'Question name'),
-                'intro' => new external_value(PARAM_TEXT, 'Question introduction text'),
+                'intro' => new external_value(PARAM_RAW, 'Question introduction text'),
                 'introformat' => new external_value(PARAM_INT, 'questiontext format'),
                 'qtype' => new external_value(PARAM_INT, 'qtype'),
                 'respondenttype' => new external_value(PARAM_TEXT, 'respondenttype'),
@@ -99,10 +99,149 @@ class local_questionnaire_external extends external_api {
                 'grade' => new external_value(PARAM_INT, '	grade'),
                 'sid' => new external_value(PARAM_INT, 'sid'),
                 'timemodified' => new external_value(PARAM_INT, 'Last modified time'),
-                'createdby' => new external_value(PARAM_INT, 'created by'),
                 'completionsubmit' => new external_value(PARAM_INT, 'completionsubmit'),
                 'autonum' => new external_value(PARAM_INT, 'autonum'),
             )
         );
-    }    
+    }
+    /**
+     * get field owner in questionnaire_survey
+     */
+    public static function questionnaire_get_field_owner_questionnaire_by_id_parameters() {
+        return new external_function_parameters(
+            array('id' => new external_value(PARAM_INT, 'id')
+            )
+        );
+    }
+
+    public function questionnaire_get_field_owner_questionnaire_by_id($id){
+        global $CFG, $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::questionnaire_get_field_owner_questionnaire_by_id_parameters(),
+            array('id' => $id));
+        return $DB->get_field('questionnaire_survey', 'owner', array('id' => $params['id']));
+    }
+
+    public static function questionnaire_get_field_owner_questionnaire_by_id_returns()
+    {
+        return new external_value(PARAM_TEXT, 'owner');
+    }
+
+    /**
+     * get record questionnaire_survey
+     */
+    public static function questionnaire_get_questionnaire_survey_by_id_parameters() {
+        return new external_function_parameters(
+            array('id' => new external_value(PARAM_INT, 'id'))
+        );
+    }
+
+    public function questionnaire_get_questionnaire_survey_by_id($id){
+        global $CFG, $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::questionnaire_get_questionnaire_survey_by_id_parameters(),
+            array('id' => $id));
+        return $DB->get_record('questionnaire_survey', array('id' => $params['id']), '*', MUST_EXIST);
+    }
+
+    public static function questionnaire_get_questionnaire_survey_by_id_returns()
+    {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
+                'name' => new external_value(PARAM_TEXT, 'Question name'),
+                'owner' => new external_value(PARAM_TEXT, 'Question introduction text'),
+                'realm' => new external_value(PARAM_TEXT, 'questiontext format'),
+                'status' => new external_value(PARAM_INT, 'qtype'),
+                'title' => new external_value(PARAM_TEXT, 'respondenttype'),
+                'email' => new external_value(PARAM_TEXT, 'resp_eligible'),
+                'subtitle' => new external_value(PARAM_RAW, 'resp_view'),
+                'info' => new external_value(PARAM_RAW, 'opendate'),
+                'theme' => new external_value(PARAM_TEXT, 'closedate'),
+                'thanks_page' => new external_value(PARAM_TEXT, 'resume'),
+                'thank_head' => new external_value(PARAM_TEXT, 'navigate'),
+                'thank_body' => new external_value(PARAM_RAW, '	grade'),
+                'feedbacksections' => new external_value(PARAM_INT, 'sid'),
+                'feedbacknotes' => new external_value(PARAM_RAW, 'Last modified time'),
+                'feedbackscores' => new external_value(PARAM_INT, 'completionsubmit'),
+                'chart_type' => new external_value(PARAM_TEXT, 'autonum'),
+            )
+        );
+    }
+    /**
+     * get record questionnaire_question by sid
+     */
+    public static function questionnaire_get_questionnaire_question_by_sid_parameters() {
+        return new external_function_parameters(
+            array('sid' => new external_value(PARAM_INT, 'sid'))
+        );
+    }
+
+    public function questionnaire_get_questionnaire_question_by_sid($sid){
+        global $CFG, $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::questionnaire_get_questionnaire_question_by_sid_parameters(),
+            array('sid' => $sid));
+        $select = 'survey_id = '.$params['sid'].' AND deleted != \'y\'';
+        return $DB->get_records_select('questionnaire_question', $select, null, 'position');
+    }
+
+    public static function questionnaire_get_questionnaire_question_by_sid_returns()
+    {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
+                    'survey_id' => new external_value(PARAM_INT, 'survey_id'),
+                    'name' => new external_value(PARAM_TEXT, 'name'),
+                    'type_id' => new external_value(PARAM_INT, 'type_id'),
+                    'result_id' => new external_value(PARAM_INT, 'result_id'),
+                    'length' => new external_value(PARAM_INT, 'length'),
+                    'precise' => new external_value(PARAM_INT, 'precise'),
+                    'position' => new external_value(PARAM_INT, 'position'),
+                    'content' => new external_value(PARAM_RAW, 'content'),
+                    'required' => new external_value(PARAM_TEXT, 'required'),
+                    'deleted' => new external_value(PARAM_TEXT, 'deleted'),
+                    'dependquestion' => new external_value(PARAM_INT, 'dependquestion'),
+                    'dependchoice' => new external_value(PARAM_INT, 'dependchoice'),
+                )
+            )
+        );
+    }
+    
+    /**
+     * get record questionnaire_quest_choice by question id
+     */
+    public static function questionnaire_get_questionnaire_quest_choice_by_question_id_parameters() {
+        return new external_function_parameters(
+            array('question_id' => new external_value(PARAM_INT, 'question_id'))
+        );
+    }
+
+    public function questionnaire_get_questionnaire_quest_choice_by_question_id($question_id){
+        global $CFG, $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::questionnaire_get_questionnaire_quest_choice_by_question_id_parameters(),
+            array('question_id' => $question_id));
+
+        return $DB->get_records('questionnaire_quest_choice', array('question_id' => $params['question_id']), 'id ASC');
+    }
+
+    public static function questionnaire_get_questionnaire_quest_choice_by_question_id_returns()
+    {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
+                    'question_id' => new external_value(PARAM_INT, 'question_id'),
+                    'content' => new external_value(PARAM_RAW, 'content'),
+                    'value' => new external_value(PARAM_RAW, 'value'),
+                )
+            )
+        );
+    }
 }
