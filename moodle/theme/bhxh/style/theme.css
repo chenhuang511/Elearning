@@ -33,6 +33,59 @@ a:focus {
     background: #dedede;
 }
 
+.icon-bxh{
+    display: inline-block;
+    width: 24px;
+    height: 26px;
+    background-size: cover;
+    margin-right: 7px;
+}
+
+.icon-bxh.icon-assign{ 
+
+    background: url([[pix:theme|img-menu/icon-assignment]]);
+}
+
+.icon-bxh.icon-chat{ 
+
+    background: url([[pix:theme|img-menu/icon-chat]]);
+}
+
+.icon-bxh.icon-data{ 
+
+    background: url([[pix:theme|img-menu/icon-data]]) ;
+}
+
+.icon-bxh.icon-forum{ 
+
+    background: url([[pix:theme|img-menu/icon-forum]]);
+}
+
+.icon-bxh.icon-glossary{ 
+
+    background: url([[pix:theme|img-menu/icon-glossary]]);
+}
+
+.icon-bxh.icon-page{ 
+
+    background: url([[pix:theme|img-menu/icon-page]]);
+}
+
+.icon-bxh.icon-quiz{ 
+ 
+    background: url([[pix:theme|img-menu/icon-quiz]]);
+}
+
+.icon-bxh.icon-resource{ 
+
+    background: url([[pix:theme|img-menu/icon-resource]]);
+}
+
+.icon-bxh.icon-url{ 
+
+    background: url([[pix:theme|img-menu/icon-url]]);
+}
+
 #header {
     border-bottom: 1px solid #e8e3e3;
     margin-bottom: 10px;
@@ -1946,7 +1999,7 @@ div.backup-section + form,
 .block .header h2 {
     font-weight: normal;
     font-size: 21px;
-    color: #ff6600;
+    color: #656565;
     padding: 18px;
     text-transform: none;
 }
