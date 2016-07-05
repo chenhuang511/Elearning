@@ -52,7 +52,7 @@ class local_mod_forum_external extends external_api
     public static function get_forum_by_id_parameters()
     {
         return new external_function_parameters(
-            array('id' => new external_value(PARAM_INT, 'forum id'))
+            array('forumid' => new external_value(PARAM_INT, 'forum id'))
         );
     }
 
