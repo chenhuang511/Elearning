@@ -270,7 +270,7 @@
     $modnamesplural = get_module_types_names(true);
     $modnamesused = $modinfo->get_used_module_names();
     $mods = $modinfo->get_cms();
-    $sections = $modinfo->get_section_info_all();
+    //$sections = $modinfo->get_section_info_all();
 
     // CAUTION, hacky fundamental variable defintion to follow!
     // Note that because of the way course fromats are constructed though

@@ -164,3 +164,17 @@ function get_remote_course_section_nav_by_section($sectionid)
         )
     );
 }
+
+function get_remote_course_format_options($courseid, $format, $sectionid)
+{
+    global $DB;
+    $remotecourseid = $DB->get_field('course', 'remoteid', array('id' => $courseid), MUST_EXIST);
+    return moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_get_remote_course_format_options',
+            'params' => array('courseid' => $remotecourseid, 'format' => $format, 'sectionid' => $sectionid),
+        )
+    );
+}

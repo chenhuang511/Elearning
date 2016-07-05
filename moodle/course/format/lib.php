@@ -581,7 +581,7 @@ abstract class format_base {
      * @return array
      */
     public function get_format_options($section = null) {
-        global $DB;
+        global $DB, $CFG;
         if ($section === null) {
             $options = $this->course_format_options();
         } else {
@@ -620,11 +620,16 @@ abstract class format_base {
                 // overwrite the default options values with those stored in course_format_options table
                 // nothing can be stored if we are interested in generic course ($this->courseid == 0)
                 // or generic section ($sectionid === 0)
-                $records = $DB->get_records('course_format_options',
+                if (MOODLE_RUN_MODE === MOODLE_MODE_HOST || $this->courseid == SITEID) {
+                    $records = $DB->get_records('course_format_options',
                         array('courseid' => $this->courseid,
-                              'format' => $this->format,
-                              'sectionid' => $sectionid
-                            ), '', 'id,name,value');
+                            'format' => $this->format,
+                            'sectionid' => $sectionid
+                        ), '', 'id,name,value');
+                } else {
+                    require_once($CFG->dirroot . '/course/remote/locallib.php');
+                    $records = get_remote_course_format_options($this->courseid, $this->format, $sectionid);
+                }
                 foreach ($records as $record) {
                     if (array_key_exists($record->name, $this->formatoptions[$sectionid])) {
                         $value = $record->value;
@@ -707,7 +712,7 @@ abstract class format_base {
      * @return bool whether there were any changes to the options values
      */
     protected function update_format_options($data, $sectionid = null) {
-        global $DB;
+        global $DB, $CFG;
         if (!$sectionid) {
             $allformatoptions = $this->course_format_options();
             $sectionid = 0;
@@ -727,11 +732,16 @@ abstract class format_base {
             }
             $cached[$key] = ($sectionid === 0 || !empty($option['cache']));
         }
-        $records = $DB->get_records('course_format_options',
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST || $this->courseid === SITEID) {
+            $records = $DB->get_records('course_format_options',
                 array('courseid' => $this->courseid,
-                      'format' => $this->format,
-                      'sectionid' => $sectionid
-                    ), '', 'name,id,value');
+                    'format' => $this->format,
+                    'sectionid' => $sectionid
+                ), '', 'name,id,value');
+        } else {
+            require_once($CFG->dirroot . '/course/remote/locallib.php');
+            $records = get_remote_course_format_options($this->courseid, $this->format, $sectionid);
+        }
         $changed = $needrebuild = false;
         $data = (array)$data;
         foreach ($defaultoptions as $key => $value) {
