@@ -771,7 +771,6 @@ class local_course_external extends external_api
 
         return $DB->get_records('course_format_options',
                         array('courseid' => $courseid,
-                            'format' => $format,
                             'sectionid' => $sectionid
                         ), '', 'id,name,value');
     }
