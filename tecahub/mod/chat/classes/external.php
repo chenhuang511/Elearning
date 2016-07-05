@@ -189,7 +189,7 @@ class mod_chat_external extends external_api {
 
             $returnedusers[] = array(
                 'id' => $user->id,
-				'chatid' => $user->chatid,
+				'chatid' => $chatuser->chatid,
                 'fullname' => fullname($user),
                 'profileimageurl' => $profileimageurl
             );
