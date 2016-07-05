@@ -54,7 +54,7 @@ class local_mod_chat_external extends external_api {
      * @since Moodle 2.2
      */
     public static function get_chat_by_id_returns() {
-        return new new external_single_structure(
+        return new external_single_structure(
 			array(
 				'id' => new external_value(PARAM_INT, 'course id'),
 				'name'  => new external_value(PARAM_TEXT, 'course id'),
