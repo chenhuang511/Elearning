@@ -23,6 +23,7 @@
  */
 
 require_once($CFG->dirroot.'/calendar/lib.php');
+require_once($CFG->dirroot.'/mod/chat/remote/locallib.php');
 
 // The HTML head for the message window to start with (<!-- nix --> is used to get some browsers starting with output.
 global $CHAT_HTMLHEAD;
@@ -480,8 +481,12 @@ function chat_get_users($chatid, $groupid=0, $groupingid=0) {
  * @param int $groupid
  * @return array
  */
-function chat_get_latest_message($chatid, $groupid=0) {
+function chat_get_latest_message($chatid, $groupid=0, $chatsid = null) {
     global $DB;
+
+    if (MOODLE_RUN_MODE == MOODLE_MODE_HUB) {
+        return get_remote_chat_latest_messages($chatsid)[0];
+    }
 
     $params = array('chatid' => $chatid, 'groupid' => $groupid);
 
@@ -1327,8 +1332,12 @@ function chat_page_type_list($pagetype, $parentcontext, $currentcontext) {
  * @return array    list of messages
  * @since  Moodle 3.0
  */
-function chat_get_latest_messages($chatuser, $chatlasttime) {
+function chat_get_latest_messages($chatuser, $chatlasttime, $chatsid = null) {
     global $DB;
+
+    if (MOODLE_RUN_MODE == MOODLE_MODE_HUB) {
+        return get_remote_chat_latest_messages($chatsid);
+    }
 
     $params = array('groupid' => $chatuser->groupid, 'chatid' => $chatuser->chatid, 'lasttime' => $chatlasttime);
 

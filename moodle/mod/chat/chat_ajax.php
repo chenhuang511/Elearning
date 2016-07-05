@@ -115,7 +115,7 @@ switch ($action) {
             chat_delete_old_users();
         }
 
-        if ($latestmessage = chat_get_latest_message($chatuser->chatid, $chatuser->groupid)) {
+        if ($latestmessage = chat_get_latest_message($chatuser->chatid, $chatuser->groupid, $chatsid)) {
             $chatnewlasttime = $latestmessage->timestamp;
         } else {
             $chatnewlasttime = 0;
@@ -125,7 +125,7 @@ switch ($action) {
             $chatlasttime = time() - $CFG->chat_old_ping;
         }
 
-        $messages = chat_get_latest_messages($chatuser, $chatlasttime);
+        $messages = chat_get_latest_messages($chatuser, $chatlasttime, $chatsid);
 
         if (!empty($messages)) {
             $num = count($messages);
