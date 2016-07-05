@@ -828,7 +828,7 @@ section#discussion-container.discussion.container div.discussion-body div#discus
     padding: 10px;
 }
 
-#frontpage-course-list .coursebox .coursename > .dimmed {
+#frontpage-course-list .coursebox .coursename a {
     color: #0078bf;
     font-weight: 24px;
     font-size: 16px;

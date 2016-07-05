@@ -49,34 +49,25 @@ class local_mod_forum_external extends external_api
      * @since Moodle 2.2
      *
      */
-    public static function get_mod_forum_by_id_parameters()
+    public static function get_forum_by_id_parameters()
     {
         return new external_function_parameters(
-            array('id' => new external_value(PARAM_INT, 'forum id'))
+            array('forumid' => new external_value(PARAM_INT, 'forum id'))
         );
     }
 
-    /**
-     * Get Quiz object
-     *
-     * @param int $id id
-     * @param array $options Options for filtering the results, used since Moodle 2.9
-     * @return array
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
-     */
-    public static function get_mod_forum_by_id($id)
+    public static function get_forum_by_id($forumid)
     {
         global $CFG, $DB;
 
         $warnings = array();
 
         //validate parameter
-        $params = self::validate_parameters(self::get_mod_forum_by_id_parameters(),
-            array('id' => $id));
+        $params = self::validate_parameters(self::get_forum_by_id_parameters(),
+            array('forumid' => $forumid));
         $result = array();
 
-        $forum = $DB->get_record('forum', array('id' => $params['id']), '*', MUST_EXIST);
+        $forum = $DB->get_record('forum', array('id' => $params['forumid']), '*', MUST_EXIST);
         if(!$forum) {
             $forum = new stdClass();
         }
@@ -93,22 +84,35 @@ class local_mod_forum_external extends external_api
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_mod_forum_by_id_returns()
+    public static function get_forum_by_id_returns()
     {
         return new external_single_structure(
             array(
                 'forum' => new external_single_structure(
                     array(
                         'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
+                        'type' => new external_value(PARAM_TEXT, 'Page title'),
                         'course' => new external_value(PARAM_INT, 'Foreign key reference to the course this page is part of.', VALUE_OPTIONAL),
                         'name' => new external_value(PARAM_TEXT, 'Page name.'),
                         'intro' => new external_value(PARAM_RAW, 'Page introduction text.'),
                         'introformat' => new external_format_value(PARAM_INT, 'intro', VALUE_OPTIONAL),
-                        'timecreated' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
-                        'firstpagetitle' => new external_value(PARAM_TEXT, 'Foreign key reference to the course this quiz is part of.', VALUE_OPTIONAL),
-                        'defaultformat' => new external_value(PARAM_TEXT, 'Page introduction text.'),
-                        'editbegin' => new external_format_value(PARAM_INT, 'Display or Not', VALUE_OPTIONAL),
-                        'editend' => new external_value(PARAM_INT, 'Page name.'),
+                        'assessed' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
+                        'assesstimestart' => new external_value(PARAM_INT, 'Foreign key reference to the course this quiz is part of.'),
+                        'assesstimefinish' => new external_value(PARAM_INT, 'Page introduction text.'),
+                        'scale' => new external_format_value(PARAM_INT, 'Display or Not', VALUE_OPTIONAL),
+                        'maxbytes' => new external_value(PARAM_INT, 'Page name.'),
+                        'maxattachments' => new external_value(PARAM_INT, 'Page name.'),
+                        'forcesubscribe' => new external_value(PARAM_INT, 'Page name.'),
+                        'trackingtype' => new external_value(PARAM_INT, 'Page name.'),
+                        'rsstype' => new external_value(PARAM_INT, 'Page name.'),
+                        'rssarticles' => new external_value(PARAM_INT, 'Page name.'),
+                        'warnafter' => new external_value(PARAM_INT, 'Page name.'),
+                        'blockafter' => new external_value(PARAM_INT, 'Page name.'),
+                        'blockperiod' => new external_value(PARAM_INT, 'Page name.'),
+                        'completiondiscussions' => new external_value(PARAM_INT, 'Page name.'),
+                        'completionreplies' => new external_value(PARAM_INT, 'Page name.'),
+                        'completionposts' => new external_value(PARAM_INT, 'Page name.'),
+                        'displaywordcount' => new external_value(PARAM_INT, 'Page name.'),
                         'timemodified' => new external_format_value(PARAM_INT, 'intro', VALUE_OPTIONAL)
                     )
                 ),

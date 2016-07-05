@@ -35,7 +35,7 @@
 
 $functions = array(
 	'local_get_course_content_by_id' => array(
-		'classname'   => 'local_mod_course_external',
+		'classname'   => 'local_course_external',
 		'methodname'  => 'get_course_content_by_id',
 		'classpath'   => 'local/course/externallib.php',
 		'description' => "Get Course Content with courses id",
@@ -43,7 +43,7 @@ $functions = array(
 		'ajax'        => true
 	),
 	'local_get_course_thumbnail_by_id' => array(
-		'classname'   => 'local_mod_course_external',
+		'classname'   => 'local_course_external',
 		'methodname'  => 'get_course_thumbnail_by_id',
 		'classpath'   => 'local/course/externallib.php',
 		'description' => "Get thumbnail url with courses id",
@@ -51,7 +51,7 @@ $functions = array(
 		'ajax'        => true
 	),
 	'local_get_course_mods' => array(
-		'classname'   => 'local_mod_course_external',
+		'classname'   => 'local_course_external',
 		'methodname'  => 'get_remote_course_mods',
 		'classpath'   => 'local/course/externallib.php',
 		'description' => "Get course modules with courses id",
@@ -59,7 +59,7 @@ $functions = array(
 		'ajax'        => true
 	),
 	'local_get_course_sections' => array(
-		'classname'   => 'local_mod_course_external',
+		'classname'   => 'local_course_external',
 		'methodname'  => 'get_remote_course_sections',
 		'classpath'   => 'local/course/externallib.php',
 		'description' => "Get course sessions with courses id",
@@ -67,7 +67,7 @@ $functions = array(
 		'ajax'        => true
 	),
 	'local_get_course_module_info' => array(
-		'classname'	  => 'local_mod_course_external',
+		'classname'	  => 'local_course_external',
 		'methodname'  => 'get_course_module_info',
 		'classpath'	  => 'local/course/externallib.php',
 		'description' => "Get course module info by give module name and instance id",
@@ -75,7 +75,7 @@ $functions = array(
 		'ajax'		  => true
 	),
 	'local_get_course_module_by_cmid' => array(
-		'classname'	  => 'local_mod_course_external',
+		'classname'	  => 'local_course_external',
 		'methodname'  => 'get_course_module_by_cmid',
 		'classpath'	  => 'local/course/externallib.php',
 		'description' => "Get course by module name and id of course module",
@@ -83,7 +83,7 @@ $functions = array(
 		'ajax'		  => true
 	),	
 	'local_get_course_info_by_course_id' => array(
-		'classname'     => 'local_mod_course_external',
+		'classname'     => 'local_course_external',
 		'methodname'    => 'get_course_info_by_course_id',
 		'classpath'     => 'local/course/externallib.php',
 		'description'   => 'Get course information by course id',
@@ -91,7 +91,7 @@ $functions = array(
 		'ajax'		    => true
 	),
 	'local_get_name_modules_by_id' => array(
-		'classname'     => 'local_mod_course_external',
+		'classname'     => 'local_course_external',
 		'methodname'    => 'get_name_modules_by_id',
 		'classpath'     => 'local/course/externallib.php',
 		'description'   => 'Get name of modules by id',
@@ -99,11 +99,19 @@ $functions = array(
 		'ajax'		    => true
 	),
 	'local_get_remote_course_section_nav' => array(
-		'classname'     => 'local_mod_course_external',
+		'classname'     => 'local_course_external',
 		'methodname'    => 'get_remote_course_section_nav',
 		'classpath'     => 'local/course/externallib.php',
 		'description'   => 'Get remote course section for navigation',
 		'type'		    => 'read',
 		'ajax'		    => true
 	),
+	'local_get_remote_course_format_options' => array(
+		'classname'     => 'local_course_external',
+		'methodname'    => 'get_remote_course_format_options',
+		'classpath'     => 'local/course/externallib.php',
+		'description'   => 'Get remote course section for navigation',
+		'type'		    => 'read',
+		'ajax'		    => true
+	),	
 );
