@@ -525,3 +525,56 @@ function delete_fakefile_on_hub($rparams){
     return $resp->ret;
 }
 
+/**
+ * Submit submission for grading.
+ *
+ * @param int $assignment . the id of assignment
+ * @param int $userid . the id of user
+ * @param int $data['id'] . the id of course module
+ * @param string $data['action'] . the action of form
+ * @param string $data['submitbutton'] . the name of button submit
+ *
+ * @return bool $resp . check if success
+ */
+function submit_remote_for_grading($assignment, $userid, $data){
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_submit_remote_for_grading',
+            'params' => array(
+                'assignment' => $assignment,
+                'userid' => $userid,
+                'data' => $data
+            ),
+        ), false
+    );
+
+    if (empty($resp))
+        return true;
+    return false;
+}
+
+/**
+ * Get submission info for participants on hub.
+ *
+ * @param int $assignment - the id of assignment
+ * @param array $emailparticipants['email'] - list email participant send to hub
+ *
+ * @return stdClass $resp - list submission info for participants 
+ */
+function get_remote_submission_info_for_participants($assignment, $emailparticipants){
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_get_remote_submission_info_for_participants',
+            'params' => array(
+                'assignment' => $assignment,
+                'emails' => $emailparticipants,
+            ),
+        ), false
+    );
+    return $resp->ret;
+}
+
