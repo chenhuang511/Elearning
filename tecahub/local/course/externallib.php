@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/course/externallib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.2
  */
-class local_mod_course_external extends external_api
+class local_course_external extends external_api
 {
 
     //region _VIETNH
@@ -744,6 +744,48 @@ class local_mod_course_external extends external_api
                     'name of the force theme', VALUE_OPTIONAL),
                 'cacherev' => new external_value(PARAM_ALPHANUMEXT, 'course format option name'),
                 'sectionnumber' => new external_value(PARAM_INT, 'section number')
+            )
+        );
+    }
+	
+	public static function get_remote_course_format_options_parameters()
+    {
+        return new external_function_parameters(
+            array(
+				'courseid' => new external_value(PARAM_INT, 'the section id'),
+				'format' => new external_value(PARAM_TEXT, 'the section id'),
+                'sectionid' => new external_value(PARAM_INT, 'the section id'),
+            )
+        );
+    }
+
+    public static function get_remote_course_format_options($courseid, $format, $sectionid)
+    {
+        global $DB;
+
+        $params = self::validate_parameters(self::get_remote_course_format_options_parameters(), array(
+            'courseid' => $courseid,
+			'format' => $format,
+			'sectionid' => $sectionid
+        ));
+
+        return $DB->get_records('course_format_options',
+                        array('courseid' => $courseid,
+                            'format' => $format,
+                            'sectionid' => $sectionid
+                        ), '', 'id,name,value');
+    }
+
+    public static function get_remote_course_format_options_returns()
+    {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'course id'),
+				'courseid' => new external_value(PARAM_INT, 'course id'),
+				'format' => new external_value(PARAM_TEXT, 'course id'),
+				'sectionid' => new external_value(PARAM_INT, 'course id'),
+				'name'  => new external_value(PARAM_TEXT, 'course id'),
+				'value' => new external_value(PARAM_RAW, 'longtext'),
             )
         );
     }
