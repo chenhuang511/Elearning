@@ -55,7 +55,7 @@
         if (! $course = get_local_course_record($cm->course)) {
             print_error('coursemisconf');
         }
-        if (! $forum = $DB->get_record("forum", array("id" => $cm->instance))) {
+        if (! $forum = get_remote_forum_by_id($cm->instance)) {
             print_error('invalidforumid', 'forum');
         }
         if ($forum->type == 'single') {
