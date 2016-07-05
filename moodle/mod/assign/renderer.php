@@ -220,6 +220,8 @@ class mod_assign_renderer extends plugin_renderer_base {
      * @return string
      */
     public function render_assign_header(assign_header $header) {
+        global $CFG, $PAGE;
+        
         $o = '';
 
         if ($header->subpage) {
@@ -228,8 +230,17 @@ class mod_assign_renderer extends plugin_renderer_base {
 
         $this->page->set_title(get_string('pluginname', 'assign'));
         $this->page->set_heading($this->page->course->fullname);
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+        
+        
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST || $CFG->nonajax) {
             $o .= $this->output->header();
+        }else{
+            // Header with JS
+            $PAGE->set_state(moodle_page::STATE_PRINTING_HEADER);
+            $o .= $this->get_renderer()->standard_head_html();
+            // Need submit permission to submit an assignment.
+            $o .= $this->get_renderer()->standard_top_of_body_html();
+            $PAGE->set_state(moodle_page::STATE_IN_BODY);
         }
 
         $heading = format_string($header->assign->name, false, array('context' => $header->context));

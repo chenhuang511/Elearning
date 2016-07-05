@@ -1486,8 +1486,28 @@ class assign {
                                AND g.assignment = :assignmentid2
                                AND g.attemptnumber = s.attemptnumber
                          WHERE u.id ' . $insql;
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $records = $DB->get_records_sql($sql, $params);
+        } else{
+            $emailparticipants = array();
+            // Send list email to hub, cus userid on host not unique on hub
+            foreach($participants as $participant){
+                $emailparticipants[] = $participant->email;
+            }
 
-        $records = $DB->get_records_sql($sql, $params);
+            $records = array();
+            $rrecords = get_remote_submission_info_for_participants($assignid, $emailparticipants);
+            if (!$rrecords){
+                return $participants;
+            }
+
+            // Convert result to normal
+            foreach ($rrecords as $rrecord){
+                $user = $DB->get_record('user', array('email' => $rrecord->email));
+                $rrecord->id = $user->id;
+                $records[$rrecord->id] = $rrecord;
+            }
+        }
 
         if ($this->get_instance()->teamsubmission) {
             // Get all groups.
@@ -1541,7 +1561,7 @@ class assign {
      */
     public function list_participants_with_filter_status_and_group($currentgroup) {
         $participants = $this->list_participants($currentgroup, false);
-
+        
         if (empty($participants)) {
             return $participants;
         } else {
@@ -3957,15 +3977,14 @@ class assign {
             $userid = $this->get_user_id_for_uniqueid($blindid);
         }
 
-        // @TODO : $currentgroup = groups_get_activity_group($this->get_course_module(), true);
-        $currentgroup = false;
+        $currentgroup = groups_get_activity_group($this->get_course_module(), true);
         $framegrader = new grading_app($userid, $currentgroup, $this);
 
         $o .= $this->get_renderer()->render($framegrader);
 
         $o .= $this->view_footer();
 
-//        \mod_assign\event\grading_table_viewed::create_from_assign($this)->trigger();
+        \mod_assign\event\grading_table_viewed::create_from_assign($this)->trigger();
 
         return $o;
     }
@@ -4076,13 +4095,6 @@ class assign {
 
         $o = '';
 
-        // Header with JS
-        $PAGE->set_state(moodle_page::STATE_PRINTING_HEADER);
-        $o .= $this->get_renderer()->standard_head_html();
-        // Need submit permission to submit an assignment.
-        $o .= $this->get_renderer()->standard_top_of_body_html();
-        $PAGE->set_state(moodle_page::STATE_IN_BODY);
-
         require_once($CFG->dirroot . '/mod/assign/submission_form.php');
         // Need submit permission to submit an assignment.
         $userid = optional_param('userid', $USER->id, PARAM_INT);
@@ -4136,7 +4148,11 @@ class assign {
 
         $o .= $this->get_renderer()->render(new assign_form('editsubmissionform', $mform));
 
-        $o .= $this->get_renderer()->footer(true);
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST || $CFG->nonajax) {
+            $o .= $this->view_footer();
+        }else{
+            $o .= $this->get_renderer()->footer(true);
+        }
 
         \mod_assign\event\submission_form_viewed::create_from_user($this, $user)->trigger();
 
@@ -4491,7 +4507,7 @@ class assign {
                                                                         $data));
         }
         $o = '';
-        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST || $CFG->nonajax){
             $o .= $this->get_renderer()->header();
         }
 
@@ -4500,7 +4516,7 @@ class assign {
                                                                    $mform);
         $o .= $this->get_renderer()->render($submitforgradingpage);
 
-        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST || $CFG->nonajax){
             $o .= $this->view_footer();
             
             \mod_assign\event\submission_confirmation_form_viewed::create_from_assign($this)->trigger();
@@ -5025,15 +5041,7 @@ class assign {
         $instance = $this->get_instance();
 
         $o = '';
-
-        // Header with JS
-        $PAGE->set_state(moodle_page::STATE_PRINTING_HEADER);
-        $o .= $this->get_renderer()->standard_head_html();
-        // Need submit permission to submit an assignment.
-        $o .= $this->get_renderer()->standard_top_of_body_html();
-        $PAGE->set_state(moodle_page::STATE_IN_BODY);
-
-
+        
         $postfix = '';
         if ($this->has_visible_attachments()) {
             $postfix = $this->render_area_files('mod_assign', ASSIGN_INTROATTACHMENT_FILEAREA, 0);
@@ -5067,7 +5075,11 @@ class assign {
             $o .= $this->view_student_summary($USER, true);
         }
 
-        $o .= $this->get_renderer()->footer(true);
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST || $CFG->nonajax) {
+            $o .= $this->view_footer();
+        }else{
+            $o .= $this->get_renderer()->footer(true);
+        }
 
         \mod_assign\event\submission_status_viewed::create_from_assign($this)->trigger();
 
@@ -5955,7 +5967,12 @@ class assign {
             if ($mform->get_data() == false) {
                 return false;
             }
-            return $this->submit_for_grading($data, $notices);
+            if (MOODLE_MODE_HUB === MOODLE_MODE_HOST){
+                return $this->submit_for_grading($data, $notices);
+            } else{
+                $userid = get_remote_mapping_user();
+                return submit_remote_for_grading($this->get_instance()->id, $userid[0]->id, $data);
+            }
         }
         return true;
     }

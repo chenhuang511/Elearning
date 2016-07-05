@@ -154,6 +154,14 @@ $functions = array(
 		'type'		  => 'write',
 		'ajax'		  => true
 	),
+	'local_mod_assign_submit_remote_for_grading' => array(
+		'classname'	  => 'local_mod_assign_external',
+		'methodname'  => 'submit_remote_for_grading',
+		'classpath'	  => 'local/assignment/externallib.php',
+		'description' => "Submit submission for grading",
+		'type'		  => 'write',
+		'ajax'		  => true
+	),
 	'local_mod_assign_get_remote_submission_status' => array(
 		'classname'	  => 'local_mod_assign_external',
 		'methodname'  => 'get_remote_submission_status',
@@ -200,6 +208,14 @@ $functions = array(
 		'classpath'	  => 'local/assignment/externallib.php',
 		'description' => "Delete fakefile on hub",
 		'type'		  => 'write',
+		'ajax'		  => true
+	),
+	'local_mod_assign_get_remote_submission_info_for_participants' => array(
+		'classname'	  => 'local_mod_assign_external',
+		'methodname'  => 'get_remote_submission_info_for_participants',
+		'classpath'	  => 'local/assignment/externallib.php',
+		'description' => "Get submission info for participants",
+		'type'		  => 'read',
 		'ajax'		  => true
 	),
 );
