@@ -732,7 +732,7 @@ class local_course_external extends external_api
                     'timestamp when the course have been modified', VALUE_OPTIONAL),
                 'enablecompletion' => new external_value(PARAM_INT,
                     'Enabled, control via completion and activity settings. Disbaled,
-									not shown in activity settings.',
+                                    not shown in activity settings.',
                     VALUE_OPTIONAL),
                 'completionnotify' => new external_value(PARAM_INT,
                     '1: yes 0: no', VALUE_OPTIONAL),
@@ -747,13 +747,13 @@ class local_course_external extends external_api
             )
         );
     }
-	
-	public static function get_remote_course_format_options_parameters()
+    
+    public static function get_remote_course_format_options_parameters()
     {
         return new external_function_parameters(
             array(
-				'courseid' => new external_value(PARAM_INT, 'the section id'),
-				'format' => new external_value(PARAM_TEXT, 'the section id'),
+                'courseid' => new external_value(PARAM_INT, 'the section id'),
+                'format' => new external_value(PARAM_TEXT, 'the section id'),
                 'sectionid' => new external_value(PARAM_INT, 'the section id'),
             )
         );
@@ -765,8 +765,8 @@ class local_course_external extends external_api
 
         $params = self::validate_parameters(self::get_remote_course_format_options_parameters(), array(
             'courseid' => $courseid,
-			'format' => $format,
-			'sectionid' => $sectionid
+            'format' => $format,
+            'sectionid' => $sectionid
         ));
 
         return $DB->get_records('course_format_options',
@@ -778,14 +778,13 @@ class local_course_external extends external_api
 
     public static function get_remote_course_format_options_returns()
     {
-        return new external_single_structure(
-            array(
-                'id' => new external_value(PARAM_INT, 'course id'),
-				'courseid' => new external_value(PARAM_INT, 'course id'),
-				'format' => new external_value(PARAM_TEXT, 'course id'),
-				'sectionid' => new external_value(PARAM_INT, 'course id'),
-				'name'  => new external_value(PARAM_TEXT, 'course id'),
-				'value' => new external_value(PARAM_RAW, 'longtext'),
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'course id'),
+                    'name'  => new external_value(PARAM_TEXT, 'course id'),
+                    'value' => new external_value(PARAM_RAW, 'longtext'),
+                )
             )
         );
     }
