@@ -57,10 +57,9 @@
                                     <?php
                                 } else { ?>
                                     <a class="sublink get-remote-content"
-                                       data-module='<?php echo json_encode(array('url' => $CFG->wwwroot . '/mod/' . $module->modname . '/remote/view.php', 'params' => array('id' => $module->id), 'method' => 'get')); ?>'
-                                       href='<?php echo $CFG->wwwroot . '/mod/' . $module->modname . '/remote/view.php?id=' . $module->id.'&nonajax=true'; ?>'>
-                                        <i class="fa fa-angle-double-right" aria-hidden="true"></i>
-                                        <?php echo $module->name; ?>
+                                       data-module='<?php echo json_encode(array('url' => $CFG->wwwroot . '/mod/' . $module->modname . '/remote/api-view.php', 'params' => array('id' => $module->id), 'method' => 'get')); ?>'
+                                       href="#">
+                                        <span class="icon-bxh icon-<?php echo $module->modname; ?>" ></span><?php echo $module->name; ?>
                                     </a>
                                 <?php } ?>
                             <?php }
