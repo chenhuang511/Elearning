@@ -35,7 +35,7 @@
 
 $functions = array(
     'local_mod_get_forum_by_id' => array(
-        'classname' => 'local_mod_lesson_external',
+        'classname' => 'local_mod_forum_external',
         'methodname' => 'get_forum_by_id',
         'classpath' => 'local/forum/externallib.php',
         'description' => 'Get forum by id',
