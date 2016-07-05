@@ -1397,6 +1397,7 @@ class local_mod_assign_external extends external_api {
      * Save a student submission for a single assignment
      *
      * @param int $assignmentid The id of the assignment
+     * @param int $userid - The id of user
      * @param array $plugindata - The submitted data for plugins
      * @return array of warnings to indicate any errors
      * @since Moodle 2.6
@@ -1444,6 +1445,82 @@ class local_mod_assign_external extends external_api {
      * @since Moodle 2.6
      */
     public static function save_remote_submission_returns() {
+        return new external_warnings();
+    }
+    
+    /**
+     * Describes the parameters for submit_remote_for_grading
+     * @return external_external_function_parameters
+     * @since  Moodle 2.6
+     */
+    public static function submit_remote_for_grading_parameters() {
+        return new external_function_parameters(
+            array(
+                'assignment' => new external_value(PARAM_INT, 'The assignment id to operate on'),
+                'userid' => new external_value(PARAM_INT, 'The userid'),
+                'data' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'The course module id to operate'),
+                        'action' => new external_value(PARAM_RAW, 'The action to show'),
+                        'submitbutton' => new external_value(PARAM_RAW, 'Name of submissbutton', VALUE_OPTIONAL),
+                    )
+                )
+            )
+        );
+    }
+
+    /**
+     * Submit submission for grading
+     *
+     * @param int $assignmentid The id of the assignment
+     * @param int $userid The id of the user
+     * @param array $data - The submitted data for grading
+     * @return array of warnings to indicate any errors
+     * @since Moodle 2.6
+     */
+    public static function submit_remote_for_grading($assignment, $userid, $data) {
+        global $CFG, $USER;
+
+        $params = self::validate_parameters(self::save_remote_submission_parameters(),
+            array('assignment' => $assignment,
+                'userid' => $userid,
+                'data' => $data));
+
+        $USER->id = $params['userid'];
+
+        $cm = get_coursemodule_from_instance('assign', $params['assignment'], 0, false, MUST_EXIST);
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        $assignment = new assign($context, $cm, null);
+
+        $notices = array();
+
+        if (!$assignment->submissions_open($USER->id)) {
+            $notices[] = get_string('submissionsclosed', 'assign');
+        } else {
+            $submitdata = (object)$params['data'];
+            $assignment->submit_for_grading($submitdata, $notices);
+        }
+
+        $warnings = array();
+        foreach ($notices as $notice) {
+            $warnings[] = self::generate_warning($params['assignment'],
+                'couldnotsavesubmission',
+                $notice);
+        }
+
+        return $warnings;
+    }
+
+    /**
+     * Describes the return value for submit_remote_for_grading
+     *
+     * @return external_single_structure
+     * @since Moodle 2.6
+     */
+    public static function submit_remote_for_grading_returns() {
         return new external_warnings();
     }
 
@@ -2113,6 +2190,108 @@ class local_mod_assign_external extends external_api {
         return new external_single_structure(
             array(
                 'ret' => new external_value(PARAM_BOOL, 'boolean'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    /**
+     * Describes the parameters for get remote submission info for participant
+     *
+     * @return external_external_function_parameters
+     */
+    public static function get_remote_submission_info_for_participants_parameters(){
+        return new external_function_parameters(
+            array(
+                'assignment' => new external_value(PARAM_INT, 'The assignment id to operate on'),
+                'emails' => new external_multiple_structure(
+                    new external_value(PARAM_RAW, 'The email of user')
+                )
+            )
+        );
+    }
+
+    /**
+     * Returns a list submission info for participant.
+     *
+     * @param int $assignment - the id of assignment
+     * @param array $emails - The list of email participants
+     * 
+     * @return array of warnings and submission information for participants
+     * @throws required_capability_exception
+     */
+    public static function get_remote_submission_info_for_participants($assignment, $emails){
+        global $DB;
+
+        $warnings = array();
+
+        $result = array();
+
+        //Validate param
+        $params = self::validate_parameters(self::get_remote_submission_info_for_participants_parameters(),
+            array(
+                'assignment' => $assignment,
+                'emails' => $emails,
+            )
+        );
+
+        $participants = $DB->get_records_list('user', 'email', $params['emails']);
+
+        if (empty($participants)) {
+            $result['ret'] = array();
+            $result['warnings'] = $warnings;
+            return $result;
+        }
+        
+        list($insql, $qparams) = $DB->get_in_or_equal(array_keys($participants), SQL_PARAMS_NAMED);
+
+
+        $qparams['assignmentid1'] = $params['assignment'];
+        $qparams['assignmentid2'] = $params['assignment'];
+
+        $sql = 'SELECT u.id, s.status, s.timemodified AS stime, g.timemodified AS gtime, g.grade FROM {user} u
+                         LEFT JOIN {assign_submission} s
+                                ON u.id = s.userid
+                               AND s.assignment = :assignmentid1
+                               AND s.latest = 1
+                         LEFT JOIN {assign_grades} g
+                                ON u.id = g.userid
+                               AND g.assignment = :assignmentid2
+                               AND g.attemptnumber = s.attemptnumber
+                         WHERE u.id ' . $insql;
+
+        $result['ret'] = $DB->get_records_sql($sql, $qparams);
+
+        foreach ($result['ret'] as $parinfo){
+            $user = $DB->get_record('user', array('id' => $parinfo->id));
+            $parinfo->email = $user->email;
+        }
+
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    /**
+     * Describes the get_remote_submission_info_for_participant return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function get_remote_submission_info_for_participants_returns(){
+        return new external_single_structure(
+            array(
+                'ret' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'email' => new external_value(PARAM_RAW, 'The email of user'),
+                            'status' => new external_value(PARAM_RAW, 'The status of submission'),
+                            'stime' => new external_value(PARAM_INT, 'Start time'),
+                            'gtime' => new external_value(PARAM_INT, 'Grade time'),
+                            'grade' => new external_value(PARAM_INT, 'Grade score'),
+                        )
+                    )
+                ),
                 'warnings' => new external_warnings()
             )
         );
