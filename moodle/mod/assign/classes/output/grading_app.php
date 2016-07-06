@@ -150,13 +150,17 @@ class grading_app implements templatable, renderable {
                 $export->cutoffdatestr = $late;
             }
         }
-
+        
         $export->defaultsendnotifications = $this->assignment->get_instance()->sendstudentnotifications;
         $export->rarrow = $output->rarrow();
         $export->larrow = $output->larrow();
         // List of identity fields to display (the user info will not contain any fields the user cannot view anyway).
         $export->showuseridentity = $CFG->showuseridentity;
-
+        // Check on mode hub or host
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $export->modehub = true;
+        }
+        
         return $export;
     }
 

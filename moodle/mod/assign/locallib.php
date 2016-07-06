@@ -208,7 +208,11 @@ class assign {
         $params['action'] = $action;
         $cm = $this->get_course_module();
         if ($cm) {
-            $currenturl = new moodle_url('/mod/assign/remote/view.php', array('id' => $cm->id));
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $currenturl = new moodle_url('/mod/assign/view.php', array('id' => $cm->id));
+            }else{
+                $currenturl = new moodle_url('/mod/assign/remote/view.php', array('id' => $cm->id));
+            }
         } else {
             $currenturl = new moodle_url('/mod/assign/index.php', array('id' => $this->get_course()->id));
         }
@@ -548,7 +552,11 @@ class assign {
         }
         // Now show the right view page.
         if ($action == 'redirect') {
-            $nextpageurl = new moodle_url('/mod/assign/remote/view.php', $nextpageparams);
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $nextpageurl = new moodle_url('/mod/assign/view.php', $nextpageparams);
+            }else{
+                $nextpageurl = new moodle_url('/mod/assign/remote/view.php', $nextpageparams);
+            }
             redirect($nextpageurl);
             return;
         } else if ($action == 'savegradingresult') {
@@ -2998,8 +3006,13 @@ class assign {
                                         get_string('downloadall', 'assign'));
             $result .= $this->get_renderer()->render($header);
             $result .= $this->get_renderer()->notification(get_string('nosubmission', 'assign'));
-            $url = new moodle_url('/mod/assign/view.php', array('id'=>$this->get_course_module()->id,
-                                                                    'action'=>'grading'));
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $url = new moodle_url('/mod/assign/view.php', array('id'=>$this->get_course_module()->id,
+                    'action'=>'grading'));
+            } else{
+                $url = new moodle_url('/mod/assign/remote/view.php', array('id'=>$this->get_course_module()->id,
+                    'action'=>'grading'));
+            }
             $result .= $this->get_renderer()->continue_button($url);
             $result .= $this->view_footer();
         } else if ($zipfile = $this->pack_files($filesforzipping)) {
@@ -3096,6 +3109,11 @@ class assign {
             $userid = $USER->id;
         }
 
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $user = $DB->get_record('user', array('id' => $userid));
+            $rruser = get_remote_mapping_user($user);
+        }
+        
         // If the userid is not null then use userid.
         $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid, 'groupid'=>0);
         if ($attemptnumber >= 0) {
@@ -3108,10 +3126,9 @@ class assign {
         if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
             $submissions = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', '*', 0, 1);
         }
-        else if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-            unset($params['userid']);
-            $params['useremail'] = $this->get_email_from_userid($userid);
-            
+        else{
+            $params['userid'] = $rruser[0]->id;
+            $params['mode'] = 'DESC';
             $submissions = get_submission_by_assignid_userid_groupid($params);
         }
 
@@ -3383,6 +3400,7 @@ class assign {
         $this->register_return_link('grade', $returnparams);
 
         $user = $DB->get_record('user', array('id' => $userid));
+
         $submission = $this->get_user_submission($userid, false, $attemptnumber);
         $submissiongroup = null;
         $teamsubmission = null;
@@ -3782,23 +3800,40 @@ class assign {
             $links[$gradebookurl] = get_string('viewgradebook', 'assign');
         }
         if ($this->is_any_submission_plugin_enabled() && $this->count_submissions()) {
-            $downloadurl = '/mod/assign/remote/view.php?id=' . $cmid . '&action=downloadall';
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $downloadurl = '/mod/assign/view.php?id=' . $cmid . '&action=downloadall';
+            } else{
+                $downloadurl = '/mod/assign/remote/view.php?id=' . $cmid . '&action=downloadall';
+            }
             $links[$downloadurl] = get_string('downloadall', 'assign');
         }
         if ($this->is_blind_marking() &&
                 has_capability('mod/assign:revealidentities', $this->get_context())) {
-            $revealidentitiesurl = '/mod/assign/remote/view.php?id=' . $cmid . '&action=revealidentities';
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+                $revealidentitiesurl = '/mod/assign/view.php?id=' . $cmid . '&action=revealidentities';
+            } else {
+                $revealidentitiesurl = '/mod/assign/remote/view.php?id=' . $cmid . '&action=revealidentities';
+            }
             $links[$revealidentitiesurl] = get_string('revealidentities', 'assign');
         }
         foreach ($this->get_feedback_plugins() as $plugin) {
             if ($plugin->is_enabled() && $plugin->is_visible()) {
                 foreach ($plugin->get_grading_actions() as $action => $description) {
-                    $url = '/mod/assign/remote/view.php' .
-                           '?id=' .  $cmid .
-                           '&plugin=' . $plugin->get_type() .
-                           '&pluginsubtype=assignfeedback' .
-                           '&action=viewpluginpage&pluginaction=' . $action;
-                    $links[$url] = $description;
+                    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                        $url = '/mod/assign/view.php' .
+                            '?id=' .  $cmid .
+                            '&plugin=' . $plugin->get_type() .
+                            '&pluginsubtype=assignfeedback' .
+                            '&action=viewpluginpage&pluginaction=' . $action;
+                    } else {
+                        $url = '/mod/assign/remote/view.php' .
+                            '?id=' .  $cmid .
+                            '&plugin=' . $plugin->get_type() .
+                            '&pluginsubtype=assignfeedback' .
+                            '&action=viewpluginpage&pluginaction=' . $action;
+                        $links[$url] = $description;
+
+                    }
                 }
             }
         }
@@ -3895,11 +3930,18 @@ class assign {
                                     get_string('grading', 'assign'),
                                     $actionformtext);
         $o .= $this->get_renderer()->render($header);
-
-        $currenturl = $CFG->wwwroot .
-                      '/mod/assign/remote/view.php?id=' .
-                      $this->get_course_module()->id .
-                      '&action=grading';
+        
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $currenturl = $CFG->wwwroot .
+                '/mod/assign/view.php?id=' .
+                $this->get_course_module()->id .
+                '&action=grading';
+        } else {
+            $currenturl = $CFG->wwwroot .
+                '/mod/assign/remote/view.php?id=' .
+                $this->get_course_module()->id .
+                '&action=grading';
+        }
 
         $o .= groups_print_activity_menu($this->get_course_module(), $currenturl, true);
 
@@ -4583,7 +4625,7 @@ class assign {
         // Check remote course
         if(MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
             $ruser = get_remote_mapping_user();
-            $remotesubmission = get_remote_get_submission_status($instance->id, $ruser['0']->id)->lastattempt;
+            $remotesubmission = get_remote_get_submission_status($instance->id, $ruser['0']->id);
             unset($remotesubmission->submission->plugins);
             $submissionplugins = $this->get_submission_plugins();
             
@@ -4684,11 +4726,12 @@ class assign {
             if (!$feedback){
                 return;
             }
-            $adminid = reset(explode(',', $CFG->siteadmins));
 
             $grader = $DB->get_record('user', array('email' => $feedback->grade->grader));
-            if(!$grader)
-                $grader = $DB->get_record('user', array('id' => (int)$adminid));
+
+//            $adminid = reset(explode(',', $CFG->siteadmins));
+//            if(!$grader)
+//                $grader = $DB->get_record('user', array('id' => (int)$adminid));
 
             unset($feedback->plugins);
 
@@ -4775,7 +4818,6 @@ class assign {
      * @return assign_attempt_history renderable object
      */
     public function get_assign_attempt_history_renderable($user) {
-
         $allsubmissions = $this->get_all_submissions($user->id);
         $allgrades = $this->get_all_grades($user->id);
 
@@ -4896,6 +4938,24 @@ class assign {
             $userid = $USER->id;
         }
 
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $grades = array();
+            $user = $DB->get_record('user', array('id' => $userid));
+            $ruser = get_remote_mapping_user($user);
+            $submissionstatus = get_remote_get_submission_status($this->get_instance()->id, $ruser[0]->id );
+
+
+            foreach($submissionstatus->previousattempts as $previousattemp){
+                // Switch grader on hub to host
+                $grader = $DB->get_record('user', array('email' => $previousattemp->grade->grader));
+                $previousattemp->grade->grader = $grader;
+
+                $grades[$previousattemp->grade->id] = $previousattemp->grade;
+            }
+
+            return $grades;
+        }
+
         $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid);
 
         $grades = $DB->get_records('assign_grades', $params, 'attemptnumber ASC');
@@ -4974,9 +5034,18 @@ class assign {
             // Params to get the user submissions.
             $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid);
         }
-
-        // Return the submissions ordered by attempt.
-        $submissions = $DB->get_records('assign_submission', $params, 'attemptnumber ASC');
+        if (MOODLE_RUN_MODE === MOODLE_RUN_HOST){
+            // Return the submissions ordered by attempt.
+            $submissions = $DB->get_records('assign_submission', $params, 'attemptnumber ASC');
+        } else {
+            $user = $DB->get_record('user', array('id' => $userid));
+            $ruser = get_remote_mapping_user($user);
+            
+            $params['userid'] = $ruser[0]->id;
+            $params['mode'] = 'ASC';
+            
+            $submissions = get_submission_by_assignid_userid_groupid($params);
+        }
 
         return $submissions;
     }
@@ -5062,7 +5131,11 @@ class assign {
 
         if ($this->can_view_grades()) {
             // Group selector will only be displayed if necessary.
-            $currenturl = new moodle_url('/mod/assign/remote/view.php', array('id' => $this->get_course_module()->id));
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $currenturl = new moodle_url('/mod/assign/view.php', array('id' => $this->get_course_module()->id));
+            } else{
+                $currenturl = new moodle_url('/mod/assign/remote/view.php', array('id' => $this->get_course_module()->id));
+            }
             $o .= groups_print_activity_menu($this->get_course_module(), $currenturl->out(), true);
 
             $summary = $this->get_assign_grading_summary_renderable();
@@ -7742,7 +7815,11 @@ class assign {
             if (empty($SESSION->mod_assign_useridlist[$this->get_useridlist_key($useridlistid)])) {
                 // If the userid list is not stored we must not save, as it is possible that the user in a
                 // given row position may not be the same now as when the grading page was generated.
-                $url = new moodle_url('/mod/assign/view.php', array('id' => $this->get_course_module()->id));
+                if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                    $url = new moodle_url('/mod/assign/view.php', array('id' => $this->get_course_module()->id));
+                } else{
+                    $url = new moodle_url('/mod/assign/remote/view.php', array('id' => $this->get_course_module()->id));
+                }
                 throw new moodle_exception('useridlistnotcached', 'mod_assign', $url);
             }
             $useridlist = $SESSION->mod_assign_useridlist[$this->get_useridlist_key($useridlistid)];
