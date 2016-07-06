@@ -174,7 +174,12 @@ if ($pageid == LESSON_UNSEENBRANCHPAGE) {
 $attemptflag = false;
 if (empty($pageid)) {
     // make sure there are pages to view
-    $lessonpageid = get_remote_field_lesson_pages_by_lessonid_and_prevpageid($lesson->id, 0);
+    $params = array();
+    $params['parameters[0][name]'] = "lessonid";
+    $params['parameters[0][value]'] = $lesson->id;
+    $params['parameters[1][name]'] = "prevpageid";
+    $params['parameters[1][value]'] = 0;
+    $lessonpageid = get_remote_field_by("lesson_pages", $params, "id");
     if (!$lessonpageid) {
         if (!$canmanage) {
             $lesson->add_message(get_string('lessonnotready2', 'lesson')); // a nice message to the student
@@ -282,7 +287,12 @@ if (empty($pageid)) {
         }
     }
     // start at the first page
-    if (!$pageid = get_remote_field_lesson_pages_by_lessonid_and_prevpageid($lesson->id, 0)) {
+    $params = array();
+    $params['parameters[0][name]'] = "lessonid";
+    $params['parameters[0][value]'] = $lesson->id;
+    $params['parameters[1][name]'] = "prevpageid";
+    $params['parameters[1][value]'] = 0;
+    if (!$pageid = get_remote_field_by("lesson_pages", $params, "id")) {
         print_error('cannotfindfirstpage', 'lesson');
     }
 /// This is the code for starting a timed test

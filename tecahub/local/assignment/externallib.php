@@ -1025,14 +1025,15 @@ class local_mod_assign_external extends external_api {
         return new external_function_parameters(
             array(
                 'assignment' => new external_value(PARAM_INT, 'asssign ID'),
-                'useremail' => new external_value(PARAM_RAW, 'user email'),
+                'userid' => new external_value(PARAM_INT, 'user ID'),
                 'groupid' => new external_value(PARAM_INT, 'group ID'),
-                'attemptnumber' => new external_value(PARAM_INT, 'attempnumber')
+                'attemptnumber' => new external_value(PARAM_INT, 'attempnumber'),
+                'mode' => new external_value(PARAM_RAW, 'order by DESC or ASC', VALUE_OPTIONAL)
             )
         );
     }
 
-    public static function get_submission_by_assignid_userid_groupid($assignment, $useremail, $groupid, $attempnumber){
+    public static function get_submission_by_assignid_userid_groupid($assignment, $userid, $groupid, $attempnumber, $mode){
         global $DB;
 
         $warnings = array();
@@ -1043,19 +1044,23 @@ class local_mod_assign_external extends external_api {
         $params = self::validate_parameters(self::get_submission_by_assignid_userid_groupid_parameters(),
             array(
                 'assignment' => $assignment,
-                'useremail' => $useremail,
+                'userid' => $userid,
                 'groupid' => $groupid,
-                'attemptnumber' => $attempnumber
+                'attemptnumber' => $attempnumber,
+                'mode' => $mode
             )
         );
         if (!$params["attemptnumber"]){
             unset($params["attemptnumber"]);
         }
+        if ($params['mode'] == 'DESC'){
+            unset($params['mode']);
+            $result['submissions'] = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', '*', 0, 1);
+        } else {
+            unset($params['mode']);
+            $result['submissions'] = $DB->get_records('assign_submission', $params, 'attemptnumber ASC');
+        }
         
-        $params['userid'] = self::get_userid_from_email($params['useremail']);
-        unset($params["useremail"]);
-
-        $result['submissions'] = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', '*', 0, 1);
         $result['warnings'] = $warnings;       
         
         return $result;
@@ -1687,7 +1692,7 @@ class local_mod_assign_external extends external_api {
 
                 if ($grade) {
                     // From object to id.
-                    $grade->grader = $grade->grader->id;
+                    $grade->grader = $grade->grader->email;
                     $feedbackplugins = self::get_plugins_data($assign, $previousattempts->feedbackplugins, $grade);
 
                     $attempt['grade'] = $grade;

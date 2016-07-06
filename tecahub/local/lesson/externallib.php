@@ -225,184 +225,6 @@ class local_mod_lesson_external extends external_api
      * @return external_function_parameters
      * @since Moodle 3.0
      */
-    public static function get_field_lesson_pages_by_lessonid_and_prevpageid_parameters()
-    {
-        return new external_function_parameters(
-            array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
-                'prevpageid' => new external_value(PARAM_INT, 'the previous page id')
-            )
-        );
-    }
-
-    /**
-     * Get field of lesson pages by lessonid and prevpageid
-     *
-     * @param $lessonid . The id of lesson
-     * @param $prevpageid . The previous page id
-     * @param array $options
-     * @return mixed
-     * @throws invalid_parameter_exception
-     */
-    public static function get_field_lesson_pages_by_lessonid_and_prevpageid($lessonid, $prevpageid)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        // validate params
-        $params = self::validate_parameters(self::get_field_lesson_pages_by_lessonid_and_prevpageid_parameters(),
-            array(
-                'lessonid' => $lessonid,
-                'prevpageid' => $prevpageid
-            )
-        );
-
-        $result = array();
-
-        $id = $DB->get_field('lesson_pages', 'id', array('lessonid' => $params['lessonid'], 'prevpageid' => $params['prevpageid']));
-
-        if (!$id) {
-            $id = 0;
-        }
-
-        $result['id'] = $id;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 3.0
-     */
-    public static function get_field_lesson_pages_by_lessonid_and_prevpageid_returns()
-    {
-        return new external_single_structure(
-            array(
-                'id' => new external_value(PARAM_INT, 'id'),
-                'warnings' => new external_warnings()
-            )
-        );
-    }
-
-    public static function get_field_lesson_pages_by_lessonid_and_nextpageid_parameters()
-    {
-        return new external_function_parameters(
-            array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
-                'nextpageid' => new external_value(PARAM_INT, 'the next page id')
-            )
-        );
-    }
-
-    public static function get_field_lesson_pages_by_lessonid_and_nextpageid($lessonid, $nextpageid)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        // validate params
-        $params = self::validate_parameters(self::get_field_lesson_pages_by_lessonid_and_nextpageid_parameters(),
-            array(
-                'lessonid' => $lessonid,
-                'nextpageid' => $nextpageid
-            )
-        );
-
-        $result = array();
-
-        $id = $DB->get_field('lesson_pages', 'id', array('lessonid' => $params['lessonid'], 'nextpageid' => $params['nextpageid']));
-
-        if (!$id) {
-            $id = 0;
-        }
-
-        $result['id'] = $id;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    public static function get_field_lesson_pages_by_lessonid_and_nextpageid_returns()
-    {
-        return self::get_field_lesson_pages_by_lessonid_and_prevpageid_returns();
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.0
-     */
-    public static function get_field_lesson_pages_by_id_parameters()
-    {
-        return new external_function_parameters(
-            array('id' => new external_value(PARAM_INT, 'the id'),
-                'field' => new external_value(PARAM_TEXT, 'the field which selected')
-            )
-        );
-    }
-
-    /**
-     * Get field of lesson page by id
-     *
-     * @param $id . The id
-     * @param $field . The field in lesson page
-     * @param array $options
-     * @return mixed
-     * @throws invalid_parameter_exception
-     */
-    public static function get_field_lesson_pages_by_id($id, $field)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        // validate params
-        $params = self::validate_parameters(self::get_field_lesson_pages_by_id_parameters(),
-            array(
-                'id' => $id,
-                'field' => $field
-            )
-        );
-
-        $result = array();
-
-        $field = $DB->get_field('lesson_pages', $params['field'], array("id" => $params['id']));
-
-        if (!$field) {
-            $result['field'] = 0;
-        }
-
-        $result['field'] = $field;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 3.0
-     */
-    public static function get_field_lesson_pages_by_id_returns()
-    {
-        return new external_single_structure(
-            array(
-                'field' => new external_value(PARAM_RAW, 'field'),
-                'warnings' => new external_warnings()
-            )
-        );
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.0
-     */
     public static function get_lesson_pages_by_id_and_lessonid_parameters()
     {
         return new external_function_parameters(
@@ -3049,51 +2871,6 @@ class local_mod_lesson_external extends external_api
         );
     }
 
-    public static function get_field_lesson_answers_by_pageid_and_lessonid_parameters()
-    {
-        return new external_function_parameters(
-            array(
-                'pageid' => new external_value(PARAM_INT, 'the page id'),
-                'lessonid' => new external_value(PARAM_INT, 'the lesson id'),
-                'field' => new external_value(PARAM_RAW, 'field')
-            )
-        );
-    }
-
-    public static function get_field_lesson_answers_by_pageid_and_lessonid($pageid, $lessonid, $field)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        // validate params
-        $params = self::validate_parameters(self::get_field_lesson_answers_by_pageid_and_lessonid_parameters(),
-            array(
-                'pageid' => $pageid,
-                'lessonid' => $lessonid,
-                'field' => $field
-            )
-        );
-
-        $result = array();
-
-        $field = $DB->get_field('lesson_answers', $params['field'], array("pageid" => $params['pageid'], "lessonid" => $params['lessonid']));
-
-        if (!$field) {
-            $result['field'] = 0;
-        }
-
-        $result['field'] = $field;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    public static function get_field_lesson_answers_by_pageid_and_lessonid_returns()
-    {
-        return self::get_field_lesson_pages_by_id_returns();
-    }
-
     public static function check_record_exists_parameters()
     {
         return new external_function_parameters(
@@ -3458,7 +3235,7 @@ class local_mod_lesson_external extends external_api
 
         $f = $DB->get_field($params['modname'], $params['field'], $arr);
 
-        if(!$f) {
+        if (!$f) {
             $f = 0;
         }
 
@@ -3474,6 +3251,63 @@ class local_mod_lesson_external extends external_api
         return new external_single_structure(
             array(
                 'field' => new external_value(PARAM_RAW, 'field'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_count_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'modname' => new external_value(PARAM_RAW, 'mod name'),
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'sort' => new external_value(PARAM_RAW, 'sort')
+            )
+        );
+    }
+
+    public static function get_count_by($modname, $parameters, $sort)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_count_by_parameters(), array(
+            'modname' => $modname,
+            'parameters' => $parameters,
+            'sort' => $sort
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+        if ($params['sort'] === '') {
+            $count = $DB->count_records($params['modname'], $arr);
+        } else {
+            $count = $DB->count_records($params['modname'], $arr, $params['sort']);
+        }
+
+        $result['count'] = $count;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_count_by_returns()
+    {
+        return new external_function_parameters(
+            array(
+                'count' => new external_value(PARAM_INT, 'count row'),
                 'warnings' => new external_warnings()
             )
         );

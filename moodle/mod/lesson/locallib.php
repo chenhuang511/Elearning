@@ -1412,7 +1412,12 @@ class lesson extends lesson_base
         global $DB;
         if ($this->firstpageid == null) {
             if (!$this->loadedallpages) {
-                $firstpageid = get_remote_field_lesson_pages_by_lessonid_and_prevpageid($this->properties->id, 0);
+                $params = array();
+                $params['parameters[0][name]'] = "lessonid";
+                $params['parameters[0][value]'] = $this->properties->id;
+                $params['parameters[1][name]'] = "prevpageid";
+                $params['parameters[1][value]'] = 0;
+                $firstpageid = get_remote_field_by("lesson_pages", $params, "id");
                 if (!$firstpageid) {
                     print_error('cannotfindfirstpage', 'lesson');
                 }
@@ -1434,7 +1439,13 @@ class lesson extends lesson_base
         global $DB;
         if ($this->lastpageid == null) {
             if (!$this->loadedallpages) {
-                $lastpageid = get_remote_field_lesson_pages_by_lessonid_and_nextpageid($this->properties->id, 0);
+                $params = array();
+                $params['paremeters[0][name]'] = "lessonid";
+                $params['paremeters[0][value]'] = $this->properties->id;
+                $params['paremeters[1][name]'] = "nextpageid";
+                $params['paremeters[1][value]'] = 0;
+
+                $lastpageid = get_remote_field_by("lesson_pages", $params, "id");
                 if (!$lastpageid) {
                     print_error('cannotfindlastpage', 'lesson');
                 }
@@ -1686,9 +1697,13 @@ class lesson extends lesson_base
         if ($module) {
             $modname = get_remote_name_modules_by_id($module->module);
             if ($modname) {
-                $instancename = $DB->get_field($modname, 'name', array('id' => $module->instance));
+                $params = array();
+                $params['parameters[0][name]'] = "id";
+                $params['parameters[0][value]'] = $module->instance;
+
+                $instancename = get_remote_field_by($modname, $params, 'name');
                 if ($instancename) {
-                    return html_writer::link(new moodle_url('/mod/' . $modname . '/view.php', array('id' => $this->properties->activitylink)),
+                    return html_writer::link(new moodle_url('/mod/' . $modname . '/remote/view.php', array('id' => $this->properties->activitylink)),
                         get_string('activitylinkname', 'lesson', $instancename),
                         array('class' => 'centerpadded lessonbutton standardbutton'));
                 }
@@ -1893,7 +1908,13 @@ class lesson extends lesson_base
                     }
                     $clusterendid = $lessonpages[$clusterendid]->nextpageid;
                 }
-                $exitjump = get_remote_field_lesson_answers_by_pageid_and_lessonid($clusterendid, $this->properties->id, 'jumpto');
+                $params = array();
+                $params['parameters[0][name]'] = "pageid";
+                $params['parameters[0][value]'] = $clusterendid;
+                $params['parameters[1][name]'] = "lessonid";
+                $params['parameters[1][value]'] = $this->properties->id;
+
+                $exitjump = get_remote_field_by('lesson_answers', $params, 'jumpto');
                 if ($exitjump == LESSON_NEXTPAGE) {
                     $exitjump = $lessonpages[$clusterendid]->nextpageid;
                 }
@@ -1908,7 +1929,12 @@ class lesson extends lesson_base
                             if ($page->id === $clusterendid) {
                                 $found = true;
                             } else if ($page->qtype == LESSON_PAGE_ENDOFCLUSTER) {
-                                $exitjump = get_remote_field_lesson_answers_by_pageid_and_lessonid($page->id, $this->properties->id, 'jumpto');
+                                $params = array();
+                                $params['parameters[0][name]'] = "pageid";
+                                $params['parameters[0][value]'] = $page->id;
+                                $params['parameters[1][name]'] = "lessonid";
+                                $params['parameters[1][value]'] = $this->properties->id;
+                                $exitjump = get_remote_field_by('lesson_answers', $params, 'jumpto');
                                 if ($exitjump == LESSON_NEXTPAGE) {
                                     $exitjump = $lessonpages[$page->id]->nextpageid;
                                 }
@@ -2292,7 +2318,13 @@ abstract class lesson_page extends lesson_base
             $data['data[9][value]'] = $prevpage->id;
             $data['data[10][value]'] = $prevpage->nextpageid;
         } else {
-            $nextpage = get_remote_field_lesson_pages_by_lessonid_and_prevpageid($lesson->id, 0);
+            $params = array();
+            $params['parameters[0][name]'] = "lessonid";
+            $params['parameters[0][value]'] = $lesson->id;
+            $params['parameters[1][name]'] = "prevpageid";
+            $params['parameters[1][value]'] = 0;
+
+            $nextpage = get_remote_field_by('lesson_pages', $params, 'id');
             if ($nextpage) {
                 // This is the first page, there are existing pages put this at the start
                 $data['data[10][value]'] = $nextpage->id;
@@ -2738,7 +2770,10 @@ abstract class lesson_page extends lesson_base
             } elseif ($jumpto == LESSON_CLUSTERJUMP) {
                 $jumptitle = get_string('clusterjump', 'lesson');
             } else {
-                if (!$jumptitle = get_remote_field_lesson_pages_by_id($jumpto)) {
+                $params = array();
+                $params['parameters[0][name]'] = "id";
+                $params['parameters[0][value]'] = $jumpto;
+                if (!$jumptitle = get_remote_field_by("lesson_pages", $params, "title")) {
                     $jumptitle = '<strong>' . get_string('notdefined', 'lesson') . '</strong>';
                 }
             }
@@ -2910,42 +2945,53 @@ abstract class lesson_page extends lesson_base
                 $result = save_remote_lesson_answers($data);
             }
         } else {
+            $data = array();
             for ($i = 0; $i < $this->lesson->maxanswers; $i++) {
                 if (!array_key_exists($i, $this->answers)) {
-                    $this->answers[$i] = new stdClass;
-                    $this->answers[$i]->lessonid = $this->lesson->id;
-                    $this->answers[$i]->pageid = $this->id;
-                    $this->answers[$i]->timecreated = $this->timecreated;
+                    $data[$i]["data[0][name]"] = "lessonid";
+                    $data[$i]["data[0][value]"] = $this->lesson->id;
+                    $data[$i]["data[1][name]"] = "pageid";
+                    $data[$i]["data[1][value]"] = $this->id;
+                    $data[$i]["data[2][name]"] = "timecreated";
+                    $data[$i]["data[2][value]"] = $this->timecreated;
                 }
 
                 if (isset($properties->answer_editor[$i])) {
                     if (is_array($properties->answer_editor[$i])) {
                         // Multichoice and true/false pages have an HTML editor.
-                        $this->answers[$i]->answer = $properties->answer_editor[$i]['text'];
-                        $this->answers[$i]->answerformat = $properties->answer_editor[$i]['format'];
+                        $data[$i]["data[3][name]"] = "answer";
+                        $data[$i]["data[3][value]"] = $properties->answer_editor[$i]['text'];
+                        $data[$i]["data[4][name]"] = "answerformat";
+                        $data[$i]["data[4][value]"] = $properties->answer_editor[$i]['format'];
                     } else {
                         // Branch tables, shortanswer and mumerical pages have only a text field.
-                        $this->answers[$i]->answer = $properties->answer_editor[$i];
-                        $this->answers[$i]->answerformat = FORMAT_MOODLE;
+                        $data[$i]["data[3][name]"] = "answer";
+                        $data[$i]["data[3][value]"] = $properties->answer_editor[$i];
+                        $data[$i]["data[4][name]"] = "answerformat";
+                        $data[$i]["data[4][value]"] = FORMAT_MOODLE;
                     }
                 }
 
                 if (!empty($properties->response_editor[$i]) && is_array($properties->response_editor[$i])) {
-                    $this->answers[$i]->response = $properties->response_editor[$i]['text'];
-                    $this->answers[$i]->responseformat = $properties->response_editor[$i]['format'];
+                    $data[$i]["data[5][name]"] = "response";
+                    $data[$i]["data[5][value]"] = $properties->response_editor[$i]['text'];
+                    $data[$i]["data[6][name]"] = "responseformat";
+                    $data[$i]["data[6][value]"] = $properties->response_editor[$i]['format'];
                 }
 
                 if (isset($this->answers[$i]->answer) && $this->answers[$i]->answer != '') {
                     if (isset($properties->jumpto[$i])) {
-                        $this->answers[$i]->jumpto = $properties->jumpto[$i];
+                        $data[$i]["data[7][name]"] = "jumpto";
+                        $data[$i]["data[7][value]"] = $properties->jumpto[$i];
                     }
                     if ($this->lesson->custom && isset($properties->score[$i])) {
-                        $this->answers[$i]->score = $properties->score[$i];
+                        $data[$i]["data[8][name]"] = "score";
+                        $data[$i]["data[8][value]"] = $properties->score[$i];
                     }
                     if (!isset($this->answers[$i]->id)) {
-                        $this->answers[$i]->id = $DB->insert_record("lesson_answers", $this->answers[$i]);
+                        $result = save_remote_lesson_answers($data[$i]);
                     } else {
-                        $DB->update_record("lesson_answers", $this->answers[$i]->properties());
+                        $result = update_remote_lesson_answers($this->answers[$i]->properties->id, $data[$i]);
                     }
 
                     // Save files in answers and responses.
@@ -3219,12 +3265,22 @@ abstract class lesson_page extends lesson_base
             $jump[LESSON_CLUSTERJUMP] = get_string("clusterjump", "lesson");
         }
         if (!optional_param('firstpage', 0, PARAM_INT)) {
-            $apageid = get_remote_field_lesson_pages_by_lessonid_and_prevpageid($lesson->id, 0);
+            $params = array();
+            $params['parameters[0][name]'] = "lessonid";
+            $params['parameters[0][value]'] = $lesson->id;
+            $params['parameters[1][name]'] = "prevpageid";
+            $params['parameters[1][value]'] = 0;
+
+            $apageid = get_remote_field_by("lesson_pages", $params, "id");
             while (true) {
                 if ($apageid) {
-                    $title = get_remote_field_lesson_pages_by_id($apageid, 'title');
+                    $params = array();
+                    $params['parameters[0][name]'] = "id";
+                    $params['parameters[0][value]'] = $apageid;
+
+                    $title = get_remote_field_by("lesson_pages", $params, "title");
                     $jump[$apageid] = strip_tags(format_string($title, true));
-                    $apageid = get_remote_field_lesson_pages_by_id($apageid, 'nextpageid');
+                    $apageid = get_remote_field_by("lesson_pages", $params, "nextpageid");
                 } else {
                     // last page reached
                     break;

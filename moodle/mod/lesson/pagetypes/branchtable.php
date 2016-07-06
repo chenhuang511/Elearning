@@ -91,14 +91,22 @@ class lesson_page_type_branchtable extends lesson_page
         $jump[LESSON_RANDOMBRANCH] = get_string("randombranch", "lesson");
 
         if (!$firstpage) {
-            if (!$apageid = get_remote_field_lesson_pages_by_lessonid_and_prevpageid($lesson->id, 0)) {
+            $params = array();
+            $params['parameters[0][name]'] = "lessonid";
+            $params['parameters[0][value]'] = $lesson->id;
+            $params['parameters[1][name]'] = "prevpageid";
+            $params['parameters[1][value]'] = 0;
+            if (!$apageid = get_remote_field_by("lesson_pages", $params, "id")) {
                 print_error('cannotfindfirstpage', 'lesson');
             }
             while (true) {
                 if ($apageid) {
-                    $title = get_remote_field_lesson_pages_by_id($apageid);
+                    $params = array();
+                    $params['parameters[0][name]'] = "id";
+                    $params['parameters[0][value]'] = $apageid;
+                    $title = get_remote_field_by("lesson_pages", $params, "title");
                     $jump[$apageid] = $title;
-                    $apageid = intval(get_remote_field_lesson_pages_by_id($apageid, 'nextpageid'));
+                    $apageid = intval(get_remote_field_by("lesson_pages", $params, "nextpageid"));
                 } else {
                     // last page reached
                     break;

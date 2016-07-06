@@ -75,7 +75,7 @@ class local_mod_label_external extends external_api
      * @return external_single_structure
      * @since Moodle 3.1
      */
-    public static function get_url_by_id_returns()
+    public static function get_label_by_id_returns()
     {
         return new external_single_structure(
 			array(

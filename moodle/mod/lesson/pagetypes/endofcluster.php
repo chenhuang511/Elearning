@@ -70,7 +70,13 @@ class lesson_page_type_endofcluster extends lesson_page {
 
     public function override_next_page() {
         global $DB;
-        $jump = get_remote_field_lesson_answers_by_pageid_and_lessonid($this->properties->id, $this->lesson->id, 'jumpto');
+        $params = array();
+        $params['parameters[0][name]'] ="pageid";
+        $params['parameters[0][value]'] =$this->properties->id;
+        $params['parameters[1][name]'] ="lessonid";
+        $params['parameters[1][value]'] =$this->lesson->id;
+
+        $jump = get_remote_field_by("lesson_answers", $params, "jumpto");
         if ($jump == LESSON_NEXTPAGE) {
             if ($this->properties->nextpageid == 0) {
                 return LESSON_EOL;
