@@ -2389,7 +2389,7 @@ class local_mod_lesson_external extends external_api
         return $result;
     }
 
-    public static function get_list_lesson_branch_by_return()
+    public static function get_list_lesson_branch_by_returns()
     {
         return new external_single_structure(
             array(
@@ -2467,7 +2467,7 @@ class local_mod_lesson_external extends external_api
         return $result;
     }
 
-    public static function get_list_lesson_attempts_by_return()
+    public static function get_list_lesson_attempts_by_returns()
     {
         return new external_single_structure(
             array(
@@ -2546,7 +2546,7 @@ class local_mod_lesson_external extends external_api
         return $result;
     }
 
-    public static function get_list_lesson_answers_by_return()
+    public static function get_list_lesson_answers_by_returns()
     {
         return new external_single_structure(
             array(
