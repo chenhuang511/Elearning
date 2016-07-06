@@ -46,10 +46,10 @@
     if ($search) {
         $params['search'] = $search;
     }
-    $PAGE->set_url('/mod/forum/view.php', $params);
+    $PAGE->set_url('/mod/forum/remote/view.php', $params);
 
     if ($id) {
-        if (! $cm =get_remote_course_module_by_cmid('forum', $id)) {
+        if (! $cm = get_remote_course_module_by_cmid('forum', $id)) {
             print_error('invalidcoursemodule');
         }
         if (! $course = get_local_course_record($cm->course)) {
@@ -68,18 +68,18 @@
         $strforum = get_string("modulename", "forum");
     } else if ($f) {
 
-        if (! $forum = $DB->get_record("forum", array("id" => $f))) {
+        if (! $forum = get_remote_forum_by_id( $f ) ) {
             print_error('invalidforumid', 'forum');
         }
-        if (! $course = $DB->get_record("course", array("id" => $forum->course))) {
+        if (! $course = get_local_course_record($forum->course)) {
             print_error('coursemisconf');
         }
 
-        if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
+        if (! $cm = get_remote_course_module_by_instance("forum", $forum->id, $course->id)) {
             print_error('missingparameter');
         }
         // move require_course_login here to use forced language for course
-        // fix for MDL-6926
+        // fix for MDL-6926S
         require_course_login($course, true, $cm);
         $strforums = get_string("modulenameplural", "forum");
         $strforum = get_string("modulename", "forum");
@@ -100,7 +100,6 @@
         $rsstitle = format_string($course->shortname, true, array('context' => context_course::instance($course->id))) . ': ' . format_string($forum->name);
         rss_add_http_header($context, 'mod_forum', $forum, $rsstitle);
     }
-
 /// Print header.
 
     $PAGE->set_title($forum->name);
@@ -127,7 +126,7 @@
     }
 
 /// find out current groups mode
-    groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/forum/view.php?id=' . $cm->id);
+    groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/forum/remote/view.php?id=' . $cm->id);
 
     $SESSION->fromdiscussion = qualified_me();   // Return here if we post or set subscription etc
 
