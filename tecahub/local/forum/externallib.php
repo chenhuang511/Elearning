@@ -68,7 +68,7 @@ class local_mod_forum_external extends external_api
         $result = array();
 
         $forum = $DB->get_record('forum', array('id' => $params['forumid']), '*', MUST_EXIST);
-        if(!$forum) {
+        if (!$forum) {
             $forum = new stdClass();
         }
 
@@ -120,7 +120,8 @@ class local_mod_forum_external extends external_api
             )
         );
     }
-     public static function get_forum_post_by_discussion_and_userid_parameters()
+
+    public static function get_forum_post_by_discussion_and_userid_parameters()
     {
         return new external_function_parameters(
             array(
@@ -128,10 +129,10 @@ class local_mod_forum_external extends external_api
                 'userid' => new external_value(PARAM_INT, 'user id'),
             )
         );
-         
+
     }
 
-    public static function get_forum_post_by_discussion_and_userid($discussion,$userid)
+    public static function get_forum_post_by_discussion_and_userid($discussion, $userid)
     {
         global $CFG, $DB;
 
@@ -144,20 +145,21 @@ class local_mod_forum_external extends external_api
                 'userid' => $userid
             )
         );
-        
+
         $result = array();
 
-        $forum = $DB->get_record('forum', array('discussion' => $params['discussion'],'userid' => $params['userid']), '*', MUST_EXIST);
+        $forum = $DB->get_record('forum', array('discussion' => $params['discussion'], 'userid' => $params['userid']), '*', MUST_EXIST);
 
-        if(!$forum) {
+        if (!$forum) {
             $forum = new stdClass();
         }
 
         $result['forum'] = $forum;
         $result['warnings'] = $warnings;
-        
+
         return $result;
     }
+
     public static function get_forum_post_by_discussion_and_userid_returns()
     {
         return new external_single_structure(
@@ -174,10 +176,181 @@ class local_mod_forum_external extends external_api
                         'subject' => new external_value(PARAM_TEXT, 'subject'),
                         'message' => new external_value(PARAM_RAW, 'message'),
                         'messageformat' => new external_value(PARAM_INT, 'messageformat', VALUE_DEFAULT),
-                         'attachment' => new external_value(PARAM_TEXT, 'attachment'),
+                        'attachment' => new external_value(PARAM_TEXT, 'attachment'),
                         'totalscore' => new external_value(PARAM_INT, 'totalscore'),
                         'mailnow' => new external_value(PARAM_INT, 'mailnow', VALUE_DEFAULT),
                     )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_forum_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'sort' => new external_value(PARAM_RAW, 'sort'),
+                'mustexists' => new external_value(PARAM_BOOL, 'must exists')
+            )
+        );
+    }
+
+    public static function get_forum_by($parameters, $sort, $mustexists)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_forum_by_parameters(), array(
+            'parameters' => $parameters,
+            'sort' => $sort,
+            'mustexists' => $mustexists
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+
+        if ($params['mustexists'] === FALSE) {
+            $forum = $DB->get_record("forum", $arr);
+        } else {
+            $forum = $DB->get_record("forum", $arr, '*', MUST_EXIST);
+        }
+
+        if(!$forum) {
+            $forum = new stdClass();
+        }
+
+        $result['forum'] =$forum;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    public static function get_forum_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'forum' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
+                        'type' => new external_value(PARAM_TEXT, 'Page title'),
+                        'course' => new external_value(PARAM_INT, 'Foreign key reference to the course this page is part of.', VALUE_OPTIONAL),
+                        'name' => new external_value(PARAM_TEXT, 'Page name.'),
+                        'intro' => new external_value(PARAM_RAW, 'Page introduction text.'),
+                        'introformat' => new external_format_value(PARAM_INT, 'intro', VALUE_OPTIONAL),
+                        'assessed' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
+                        'assesstimestart' => new external_value(PARAM_INT, 'Foreign key reference to the course this quiz is part of.'),
+                        'assesstimefinish' => new external_value(PARAM_INT, 'Page introduction text.'),
+                        'scale' => new external_format_value(PARAM_INT, 'Display or Not', VALUE_OPTIONAL),
+                        'maxbytes' => new external_value(PARAM_INT, 'Page name.'),
+                        'maxattachments' => new external_value(PARAM_INT, 'Page name.'),
+                        'forcesubscribe' => new external_value(PARAM_INT, 'Page name.'),
+                        'trackingtype' => new external_value(PARAM_INT, 'Page name.'),
+                        'rsstype' => new external_value(PARAM_INT, 'Page name.'),
+                        'rssarticles' => new external_value(PARAM_INT, 'Page name.'),
+                        'warnafter' => new external_value(PARAM_INT, 'Page name.'),
+                        'blockafter' => new external_value(PARAM_INT, 'Page name.'),
+                        'blockperiod' => new external_value(PARAM_INT, 'Page name.'),
+                        'completiondiscussions' => new external_value(PARAM_INT, 'Page name.'),
+                        'completionreplies' => new external_value(PARAM_INT, 'Page name.'),
+                        'completionposts' => new external_value(PARAM_INT, 'Page name.'),
+                        'displaywordcount' => new external_value(PARAM_INT, 'Page name.'),
+                        'timemodified' => new external_format_value(PARAM_INT, 'intro', VALUE_OPTIONAL)
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_list_forum_discussions_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'sort' => new external_value(PARAM_RAW, 'sort'),
+                'limitfrom' => new external_value(PARAM_INT, 'limit from'),
+                'limitnum' => new external_value(PARAM_INT, 'limit num')
+            )
+        );
+    }
+
+    public static function get_list_forum_discussions_by($parameters, $sort, $limitfrom, $limitnum)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_list_lesson_overrides_by_parameters(), array(
+            'parameters' => $parameters,
+            'sort' => $sort,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+        if (($params['limitfrom'] == 0 && $params['limitnum'] == 0) && $params['sort'] == '') {
+            $discussions = $DB->get_records("forum_discussions", $arr);
+        } else if (($params['limitfrom'] == 0 && $params['limitnum'] == 0) && $params['sort'] != '') {
+            $discussions = $DB->get_records("forum_discussions", $arr, $params['sort']);
+        } else {
+            $discussions = $DB->get_records("forum_discussions", $arr, $params['sort'], '*', $params['limitfrom'], $params['limitnum']);
+        }
+
+        if (!$discussions) {
+            $discussions = array();
+        }
+
+        $result['discussions'] = $discussions;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_list_forum_discussions_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'discussions' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'the id'),
+                            'course' => new external_value(PARAM_INT, 'the course id'),
+                            'forum' => new external_value(PARAM_INT, 'the forum id'),
+                            'name' => new external_value(PARAM_RAW, 'the name'),
+                            'firstpost' => new external_value(PARAM_INT, 'first post'),
+                            'userid' => new external_value(PARAM_INT, 'the user id'),
+                            'groupid' => new external_value(PARAM_INT, 'the group id'),
+                            'assessed' => new external_value(PARAM_INT, 'the assessed'),
+                            'timemodified' => new external_value(PARAM_INT, 'time modified'),
+                            'usermodified' => new external_value(PARAM_INT, 'user modified'),
+                            'timestart' => new external_value(PARAM_INT, 'time start'),
+                            'timeend' => new external_value(PARAM_INT, 'time end'),
+                            'pinned' => new external_value(PARAM_INT, 'pinned')
+                        )
+                    ), 'forum discussions'
                 ),
                 'warnings' => new external_warnings()
             )
