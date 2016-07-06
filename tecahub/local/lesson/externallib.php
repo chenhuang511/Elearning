@@ -587,90 +587,6 @@ class local_mod_lesson_external extends external_api
      * @return external_function_parameters
      * @since Moodle 3.0
      */
-    public static function get_lesson_pages_by_lessonid_parameters()
-    {
-        return new external_function_parameters(
-            array(
-                'lessonid' => new external_value(PARAM_INT, 'the lesson id')
-            )
-        );
-    }
-
-    /**
-     * Get list lesson page by lessonid
-     *
-     * @param $lessonid
-     * @param array $options
-     * @return array
-     * @throws invalid_parameter_exception
-     */
-    public static function get_lesson_pages_by_lessonid($lessonid)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        // validate params
-        $params = self::validate_parameters(self::get_lesson_pages_by_lessonid_parameters(),
-            array(
-                'lessonid' => $lessonid
-            )
-        );
-
-        $result = array();
-
-        $pages = $DB->get_records_select("lesson_pages", "lessonid = :lessonid", array('lessonid' => $params['lessonid']));
-
-        if (!$pages) {
-            $pages = array();
-        }
-
-        $result['pages'] = $pages;
-        $result['warning'] = $warnings;
-
-        return $result;
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 3.0
-     */
-    public static function get_lesson_pages_by_lessonid_returns()
-    {
-        return new external_single_structure(
-            array(
-                'pages' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'id' => new external_value(PARAM_INT, 'the lesson page id'),
-                            'lessonid' => new external_value(PARAM_INT, 'lesson id', VALUE_DEFAULT),
-                            'prevpageid' => new external_value(PARAM_INT, 'previous page id', VALUE_DEFAULT),
-                            'nextpageid' => new external_value(PARAM_INT, 'next page id', VALUE_DEFAULT),
-                            'qtype' => new external_value(PARAM_INT, 'qtype', VALUE_DEFAULT),
-                            'qoption' => new external_value(PARAM_INT, 'qoption', VALUE_DEFAULT),
-                            'layout' => new external_value(PARAM_INT, 'layout', VALUE_REQUIRED),
-                            'display' => new external_value(PARAM_INT, 'display', VALUE_REQUIRED),
-                            'timecreated' => new external_value(PARAM_INT, 'time created', VALUE_DEFAULT),
-                            'timemodified' => new external_value(PARAM_INT, 'time modified', VALUE_DEFAULT),
-                            'title' => new external_value(PARAM_RAW, 'title'),
-                            'contents' => new external_value(PARAM_RAW, 'contents'),
-                            'contentsformat' => new external_value(PARAM_INT, 'contents format', VALUE_DEFAULT)
-                        )
-                    ), 'lesson pages'
-                ),
-                'warnings' => new external_warnings()
-            )
-        );
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.0
-     */
     public static function get_maxgrade_lesson_grades_by_userid_and_lessonid_parameters()
     {
         return new external_function_parameters(
@@ -897,87 +813,6 @@ class local_mod_lesson_external extends external_api
                     )
                 ),
                 "warnings" => new external_warnings()
-            )
-        );
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.0
-     */
-    public static function get_lesson_overrides_by_lessonid_parameters()
-    {
-        return new external_function_parameters(
-            array('lessonid' => new external_value(PARAM_INT, 'the lesson id')
-            )
-        );
-    }
-
-    /**
-     * Get list of lesson overrides by lessonid
-     *
-     * @param $lessonid
-     * @param array $options
-     * @return array
-     * @throws invalid_parameter_exception
-     */
-    public static function get_lesson_overrides_by_lessonid($lessonid)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        // validate params
-        $params = self::validate_parameters(self::get_lesson_overrides_by_lessonid_parameters(),
-            array(
-                'lessonid' => $lessonid,
-            )
-        );
-
-        $result = array();
-
-        $overrides = $DB->get_records('lesson_overrides', array('lessonid' => $params['lessonid']), 'id');
-
-        if (!$overrides) {
-            $overrides = array();
-        }
-
-        $result['overrides'] = $overrides;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 3.0
-     */
-    public static function get_lesson_overrides_by_lessonid_returns()
-    {
-        return new external_single_structure(
-            array(
-                'overrides' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'id' => new external_value(PARAM_INT, 'the id'),
-                            'lessonid' => new external_value(PARAM_INT, 'the lessonid', VALUE_DEFAULT),
-                            'groupid' => new external_value(PARAM_INT, 'the groupid'),
-                            'userid' => new external_value(PARAM_INT, 'the userid'),
-                            'available' => new external_value(PARAM_INT, 'available'),
-                            'deadline' => new external_value(PARAM_INT, 'deadline'),
-                            'timelimit' => new external_value(PARAM_INT, 'time limit'),
-                            'review' => new external_value(PARAM_INT, 'review'),
-                            'maxattempts' => new external_value(PARAM_INT, 'max attempts'),
-                            'retake' => new external_value(PARAM_INT, 'retake'),
-                            'password' => new external_value(PARAM_TEXT, 'password')
-                        )
-                    ), 'lesson overrides'
-                ),
-                'warnings' => new external_warnings()
             )
         );
     }
@@ -1630,51 +1465,6 @@ class local_mod_lesson_external extends external_api
                 'warnings' => new external_warnings()
             )
         );
-    }
-
-    public static function get_list_lesson_pages_by_id_and_lessonid_parameters()
-    {
-        return new external_function_parameters(
-            array(
-                'id' => new external_value(PARAM_INT, 'the id'),
-                'lessonid' => new external_value(PARAM_INT, 'the lesson id')
-            )
-        );
-    }
-
-    public static function get_list_lesson_pages_by_id_and_lessonid($id, $lessonid)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        $params = self::validate_parameters(self::get_list_lesson_pages_by_id_and_lessonid_parameters(), array(
-            'id' => $id,
-            'lessonid' => $lessonid
-        ));
-
-        $result = array();
-
-        $parameters = array(
-            $params['lessonid'],
-            $params['id']
-        );
-
-        $pages = $DB->get_records_select("lesson_pages", "lessonid = ? AND id = ?", $parameters);
-
-        if (!$pages) {
-            $pages = array();
-        }
-
-        $result['pages'] = $pages;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    public static function get_list_lesson_pages_by_id_and_lessonid_returns()
-    {
-        return self::get_lesson_pages_by_lessonid_returns();
     }
 
     public static function get_lesson_attempts_by_id_parameters()
@@ -2568,6 +2358,170 @@ class local_mod_lesson_external extends external_api
                             'responseformat' => new external_value(PARAM_INT, 'response format')
                         )
                     ), 'lesson answers'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_list_lesson_pages_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'sort' => new external_value(PARAM_RAW, 'sort'),
+                'limitfrom' => new external_value(PARAM_INT, 'limit from'),
+                'limitnum' => new external_value(PARAM_INT, 'limit num')
+            )
+        );
+    }
+
+    public static function get_list_lesson_pages_by($parameters, $sort, $limitfrom, $limitnum)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_list_lesson_pages_by_parameters(), array(
+            'parameters' => $parameters,
+            'sort' => $sort,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+        if (($params['limitfrom'] == 0 && $params['limitnum'] == 0) && $params['sort'] == '') {
+            $pages = $DB->get_records("lesson_pages", $arr);
+        } else if (($params['limitfrom'] == 0 && $params['limitnum'] == 0) && $params['sort'] != '') {
+            $pages = $DB->get_records("lesson_pages", $arr, $params['sort']);
+        } else {
+            $pages = $DB->get_records("lesson_pages", $arr, $params['sort'], '*', $params['limitfrom'], $params['limitnum']);
+        }
+
+        if (!$pages) {
+            $pages = array();
+        }
+
+        $result['pages'] = $pages;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_list_lesson_pages_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'pages' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'the lesson page id'),
+                            'lessonid' => new external_value(PARAM_INT, 'lesson id', VALUE_DEFAULT),
+                            'prevpageid' => new external_value(PARAM_INT, 'previous page id', VALUE_DEFAULT),
+                            'nextpageid' => new external_value(PARAM_INT, 'next page id', VALUE_DEFAULT),
+                            'qtype' => new external_value(PARAM_INT, 'qtype', VALUE_DEFAULT),
+                            'qoption' => new external_value(PARAM_INT, 'qoption', VALUE_DEFAULT),
+                            'layout' => new external_value(PARAM_INT, 'layout', VALUE_REQUIRED),
+                            'display' => new external_value(PARAM_INT, 'display', VALUE_REQUIRED),
+                            'timecreated' => new external_value(PARAM_INT, 'time created', VALUE_DEFAULT),
+                            'timemodified' => new external_value(PARAM_INT, 'time modified', VALUE_DEFAULT),
+                            'title' => new external_value(PARAM_RAW, 'title'),
+                            'contents' => new external_value(PARAM_RAW, 'contents'),
+                            'contentsformat' => new external_value(PARAM_INT, 'contents format', VALUE_DEFAULT)
+                        )
+                    ), 'lesson pages'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_list_lesson_overrides_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'sort' => new external_value(PARAM_RAW, 'sort'),
+                'limitfrom' => new external_value(PARAM_INT, 'limit from'),
+                'limitnum' => new external_value(PARAM_INT, 'limit num')
+            )
+        );
+    }
+
+    public static function get_list_lesson_overrides_by($parameters, $sort, $limitfrom, $limitnum)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_list_lesson_overrides_by_parameters(), array(
+            'parameters' => $parameters,
+            'sort' => $sort,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+        if (($params['limitfrom'] == 0 && $params['limitnum'] == 0) && $params['sort'] == '') {
+            $overrides = $DB->get_records("lesson_overrides", $arr);
+        } else if (($params['limitfrom'] == 0 && $params['limitnum'] == 0) && $params['sort'] != '') {
+            $overrides = $DB->get_records("lesson_overrides", $arr, $params['sort']);
+        } else {
+            $overrides = $DB->get_records("lesson_overrides", $arr, $params['sort'], '*', $params['limitfrom'], $params['limitnum']);
+        }
+
+        if (!$overrides) {
+            $overrides = array();
+        }
+
+        $result['overrides'] = $overrides;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_list_lesson_overrides_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'overrides' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'the id'),
+                            'lessonid' => new external_value(PARAM_INT, 'the lessonid', VALUE_DEFAULT),
+                            'groupid' => new external_value(PARAM_INT, 'the groupid'),
+                            'userid' => new external_value(PARAM_INT, 'the userid'),
+                            'available' => new external_value(PARAM_INT, 'available'),
+                            'deadline' => new external_value(PARAM_INT, 'deadline'),
+                            'timelimit' => new external_value(PARAM_INT, 'time limit'),
+                            'review' => new external_value(PARAM_INT, 'review'),
+                            'maxattempts' => new external_value(PARAM_INT, 'max attempts'),
+                            'retake' => new external_value(PARAM_INT, 'retake'),
+                            'password' => new external_value(PARAM_TEXT, 'password')
+                        )
+                    ), 'lesson overrides'
                 ),
                 'warnings' => new external_warnings()
             )

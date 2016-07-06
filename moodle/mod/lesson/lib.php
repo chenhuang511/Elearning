@@ -38,7 +38,8 @@ defined('MOODLE_INTERNAL') || die();
  * @param object $lesson Lesson post data from the form
  * @return int
  **/
-function lesson_add_instance($data, $mform) {
+function lesson_add_instance($data, $mform)
+{
     global $DB;
 
     $cmid = $data->coursemodule;
@@ -69,7 +70,8 @@ function lesson_add_instance($data, $mform) {
  * @param object $lesson Lesson post data from the form
  * @return boolean
  **/
-function lesson_update_instance($data, $mform) {
+function lesson_update_instance($data, $mform)
+{
     global $DB;
 
     $data->id = $data->instance;
@@ -104,14 +106,15 @@ function lesson_update_instance($data, $mform) {
  * @param object $lesson the lesson object.
  * @param object $override (optional) limit to a specific override
  */
-function lesson_update_events($lesson, $override = null) {
+function lesson_update_events($lesson, $override = null)
+{
     global $CFG, $DB;
 
     require_once($CFG->dirroot . '/calendar/lib.php');
 
     // Load the old events relating to this lesson.
     $conds = array('modulename' => 'lesson',
-                   'instance' => $lesson->id);
+        'instance' => $lesson->id);
     if (!empty($override)) {
         // Only load events for this override.
         if (isset($override->userid)) {
@@ -126,7 +129,10 @@ function lesson_update_events($lesson, $override = null) {
     if (empty($override)) {
         // We are updating the primary settings for the lesson, so we
         // need to add all the overrides.
-        $overrides = get_remote_lesson_overrides_by_lessonid($lesson->id);
+        $params = array();
+        $params['parameters[0][name]'] = "lessonid";
+        $params['parameters[0][value]'] = $lesson->id;
+        $overrides = get_remote_list_lesson_overrides_by($params, "id");
         // As well as the original lesson (empty override).
         $overrides[] = new stdClass();
     } else {
@@ -135,13 +141,13 @@ function lesson_update_events($lesson, $override = null) {
     }
 
     foreach ($overrides as $current) {
-        $groupid   = isset($current->groupid) ? $current->groupid : 0;
-        $userid    = isset($current->userid) ? $current->userid : 0;
-        $available  = isset($current->available) ? $current->available : $lesson->available;
+        $groupid = isset($current->groupid) ? $current->groupid : 0;
+        $userid = isset($current->userid) ? $current->userid : 0;
+        $available = isset($current->available) ? $current->available : $lesson->available;
         $deadline = isset($current->deadline) ? $current->deadline : $lesson->deadline;
 
         // Only add open/close events for an override if they differ from the lesson default.
-        $addopen  = empty($current->id) || !empty($current->available);
+        $addopen = empty($current->id) || !empty($current->available);
         $addclose = empty($current->id) || !empty($current->deadline);
 
         if (!empty($lesson->coursemodule)) {
@@ -153,15 +159,15 @@ function lesson_update_events($lesson, $override = null) {
         $event = new stdClass();
         $event->description = format_module_intro('lesson', $lesson, $cmid);
         // Events module won't show user events when the courseid is nonzero.
-        $event->courseid    = ($userid) ? 0 : $lesson->course;
-        $event->groupid     = $groupid;
-        $event->userid      = $userid;
-        $event->modulename  = 'lesson';
-        $event->instance    = $lesson->id;
-        $event->timestart   = $available;
+        $event->courseid = ($userid) ? 0 : $lesson->course;
+        $event->groupid = $groupid;
+        $event->userid = $userid;
+        $event->modulename = 'lesson';
+        $event->instance = $lesson->id;
+        $event->timestart = $available;
         $event->timeduration = max($deadline - $available, 0);
-        $event->visible     = instance_is_visible('lesson', $lesson);
-        $event->eventtype   = 'open';
+        $event->visible = instance_is_visible('lesson', $lesson);
+        $event->eventtype = 'open';
 
         // Determine the event name.
         if ($groupid) {
@@ -193,14 +199,14 @@ function lesson_update_events($lesson, $override = null) {
                 calendar_event::create($event);
             } else {
                 // Separate start and end events.
-                $event->timeduration  = 0;
+                $event->timeduration = 0;
                 if ($available && $addopen) {
                     if ($oldevent = array_shift($oldevents)) {
                         $event->id = $oldevent->id;
                     } else {
                         unset($event->id);
                     }
-                    $event->name = $eventname.' ('.get_string('lessonopens', 'lesson').')';
+                    $event->name = $eventname . ' (' . get_string('lessonopens', 'lesson') . ')';
                     // The method calendar_event::create will reuse a db record if the id field is set.
                     calendar_event::create($event);
                 }
@@ -210,7 +216,7 @@ function lesson_update_events($lesson, $override = null) {
                     } else {
                         unset($event->id);
                     }
-                    $event->name      = $eventname.' ('.get_string('lessoncloses', 'lesson').')';
+                    $event->name = $eventname . ' (' . get_string('lessoncloses', 'lesson') . ')';
                     $event->timestart = $deadline;
                     $event->eventtype = 'close';
                     calendar_event::create($event);
@@ -236,7 +242,8 @@ function lesson_update_events($lesson, $override = null) {
  * @param int $courseid
  * @return bool
  */
-function lesson_refresh_events($courseid = 0) {
+function lesson_refresh_events($courseid = 0)
+{
     global $DB;
 
     if ($courseid == 0) {
@@ -265,7 +272,8 @@ function lesson_refresh_events($courseid = 0) {
  * @param int $id
  * @return bool
  */
-function lesson_delete_instance($id) {
+function lesson_delete_instance($id)
+{
     global $DB, $CFG;
     require_once($CFG->dirroot . '/mod/lesson/locallib.php');
 
@@ -283,7 +291,8 @@ function lesson_delete_instance($id) {
  * @param boolean $feedback to specify if the process must output a summary of its work
  * @return boolean
  */
-function lesson_delete_course($course, $feedback=true) {
+function lesson_delete_course($course, $feedback = true)
+{
     return true;
 }
 
@@ -301,7 +310,8 @@ function lesson_delete_course($course, $feedback=true) {
  * @param object $lesson
  * @return object
  */
-function lesson_user_outline($course, $user, $mod, $lesson) {
+function lesson_user_outline($course, $user, $mod, $lesson)
+{
     global $CFG, $DB;
 
     require_once("$CFG->libdir/gradelib.php");
@@ -360,7 +370,8 @@ function lesson_user_outline($course, $user, $mod, $lesson) {
  * @param object $lesson
  * @return bool
  */
-function lesson_user_complete($course, $user, $mod, $lesson) {
+function lesson_user_complete($course, $user, $mod, $lesson)
+{
     global $DB, $OUTPUT, $CFG;
 
     require_once("$CFG->libdir/gradelib.php");
@@ -398,27 +409,27 @@ function lesson_user_complete($course, $user, $mod, $lesson) {
         echo $OUTPUT->container($status);
 
         if ($grade->str_feedback) {
-            echo $OUTPUT->container(get_string('feedback').': '.$grade->str_feedback);
+            echo $OUTPUT->container(get_string('feedback') . ': ' . $grade->str_feedback);
         }
     }
 
     // Display the lesson progress.
     // Attempt, pages viewed, questions answered, correct answers, time.
-    $params = array ("lessonid" => $lesson->id, "userid" => $user->id);
+    $params = array("lessonid" => $lesson->id, "userid" => $user->id);
     $attempts = $DB->get_records_select("lesson_attempts", "lessonid = :lessonid AND userid = :userid", $params, "retry, timeseen");
     $branches = $DB->get_records_select("lesson_branch", "lessonid = :lessonid AND userid = :userid", $params, "retry, timeseen");
     if (!empty($attempts) or !empty($branches)) {
         echo $OUTPUT->box_start();
         $table = new html_table();
         // Table Headings.
-        $table->head = array (get_string("attemptheader", "lesson"),
+        $table->head = array(get_string("attemptheader", "lesson"),
             get_string("totalpagesviewedheader", "lesson"),
             get_string("numberofpagesviewedheader", "lesson"),
             get_string("numberofcorrectanswersheader", "lesson"),
             get_string("time"));
         $table->width = "100%";
-        $table->align = array ("center", "center", "center", "center", "center");
-        $table->size = array ("*", "*", "*", "*", "*");
+        $table->align = array("center", "center", "center", "center", "center");
+        $table->size = array("*", "*", "*", "*", "*");
         $table->cellpadding = 2;
         $table->cellspacing = 0;
 
@@ -462,7 +473,7 @@ function lesson_user_complete($course, $user, $mod, $lesson) {
             }
         }
         if ($npages > 0) {
-                $table->data[] = array($retry + 1, $npages, $nquestions, $ncorrect, userdate($timeseen));
+            $table->data[] = array($retry + 1, $npages, $nquestions, $ncorrect, userdate($timeseen));
         }
         echo html_writer::table($table);
         echo $OUTPUT->box_end();
@@ -486,7 +497,8 @@ function lesson_user_complete($course, $user, $mod, $lesson) {
  * @param array $htmlarray Store overview output array( course ID => 'lesson' => HTML output )
  * @return void
  */
-function lesson_print_overview($courses, &$htmlarray) {
+function lesson_print_overview($courses, &$htmlarray)
+{
     global $USER, $CFG, $DB, $OUTPUT;
 
     if (!$lessons = get_all_instances_in_courses('lesson', $courses)) {
@@ -564,7 +576,8 @@ function lesson_print_overview($courses, &$htmlarray) {
     foreach ($lessons as $lesson) {
         if ($lesson->deadline != 0                                         // The lesson has a deadline
             and $lesson->deadline >= $now                                  // And it is before the deadline has been met
-            and ($lesson->available == 0 or $lesson->available <= $now)) { // And the lesson is available
+            and ($lesson->available == 0 or $lesson->available <= $now)
+        ) { // And the lesson is available
 
             // Visibility.
             $class = (!$lesson->visible) ? 'dimmed' : '';
@@ -584,14 +597,15 @@ function lesson_print_overview($courses, &$htmlarray) {
             if (has_capability('mod/lesson:manage', $context)) {
                 // This is a teacher, Get the Number of user attempts.
                 $attempts = $DB->count_records('lesson_grades', array('lessonid' => $lesson->id));
-                $str     .= $OUTPUT->box(get_string('xattempts', 'lesson', $attempts), 'info');
-                $str      = $OUTPUT->box($str, 'lesson overview');
+                $str .= $OUTPUT->box(get_string('xattempts', 'lesson', $attempts), 'info');
+                $str = $OUTPUT->box($str, 'lesson overview');
             } else {
                 // This is a student, See if the user has at least started the lesson.
                 if (isset($lastviewed[$lesson->id]->timeseen)) {
                     // See if the user has finished this attempt.
                     if (isset($completedattempts[$lesson->id]) &&
-                             ($completedattempts[$lesson->id] == ($lastviewed[$lesson->id]->retry + 1))) {
+                        ($completedattempts[$lesson->id] == ($lastviewed[$lesson->id]->retry + 1))
+                    ) {
                         // Are additional attempts allowed?
                         if ($lesson->retake) {
                             // User can retake the lesson.
@@ -656,7 +670,8 @@ function lesson_print_overview($courses, &$htmlarray) {
  * @global stdClass
  * @return bool true
  */
-function lesson_cron () {
+function lesson_cron()
+{
     global $CFG;
 
     return true;
@@ -671,20 +686,20 @@ function lesson_cron () {
  * @param int $userid optional user id, 0 means all users
  * @return array array of grades, false if none
  */
-function lesson_get_user_grades($lesson, $userid=0) {
+function lesson_get_user_grades($lesson, $userid = 0)
+{
     global $CFG, $DB;
 
-    $params = array("lessonid" => $lesson->id,"lessonid2" => $lesson->id);
+    $params = array("lessonid" => $lesson->id, "lessonid2" => $lesson->id);
 
     if (!empty($userid)) {
         $params["userid"] = $userid;
         $params["userid2"] = $userid;
         $user = "AND u.id = :userid";
         $fuser = "AND uu.id = :userid2";
-    }
-    else {
-        $user="";
-        $fuser="";
+    } else {
+        $user = "";
+        $fuser = "";
     }
 
     if ($lesson->retake) {
@@ -729,9 +744,10 @@ function lesson_get_user_grades($lesson, $userid=0) {
  * @param int $userid specific user only, 0 means all
  * @param bool $nullifnone
  */
-function lesson_update_grades($lesson, $userid=0, $nullifnone=true) {
+function lesson_update_grades($lesson, $userid = 0, $nullifnone = true)
+{
     global $CFG, $DB;
-    require_once($CFG->libdir.'/gradelib.php');
+    require_once($CFG->libdir . '/gradelib.php');
 
     if ($lesson->grade == 0 || $lesson->practice) {
         lesson_grade_item_update($lesson);
@@ -741,7 +757,7 @@ function lesson_update_grades($lesson, $userid=0, $nullifnone=true) {
 
     } else if ($userid and $nullifnone) {
         $grade = new stdClass();
-        $grade->userid   = $userid;
+        $grade->userid = $userid;
         $grade->rawgrade = null;
         lesson_grade_item_update($lesson, $grade);
 
@@ -760,25 +776,26 @@ function lesson_update_grades($lesson, $userid=0, $nullifnone=true) {
  * @param array|object $grades optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return int 0 if ok, error code otherwise
  */
-function lesson_grade_item_update($lesson, $grades=null) {
+function lesson_grade_item_update($lesson, $grades = null)
+{
     global $CFG;
     if (!function_exists('grade_update')) { //workaround for buggy PHP versions
-        require_once($CFG->libdir.'/gradelib.php');
+        require_once($CFG->libdir . '/gradelib.php');
     }
 
     if (array_key_exists('cmidnumber', $lesson)) { //it may not be always present
-        $params = array('itemname'=>$lesson->name, 'idnumber'=>$lesson->cmidnumber);
+        $params = array('itemname' => $lesson->name, 'idnumber' => $lesson->cmidnumber);
     } else {
-        $params = array('itemname'=>$lesson->name);
+        $params = array('itemname' => $lesson->name);
     }
 
     if (!$lesson->practice and $lesson->grade > 0) {
-        $params['gradetype']  = GRADE_TYPE_VALUE;
-        $params['grademax']   = $lesson->grade;
-        $params['grademin']   = 0;
+        $params['gradetype'] = GRADE_TYPE_VALUE;
+        $params['grademax'] = $lesson->grade;
+        $params['grademin'] = 0;
     } else if (!$lesson->practice and $lesson->grade < 0) {
-        $params['gradetype']  = GRADE_TYPE_SCALE;
-        $params['scaleid']   = -$lesson->grade;
+        $params['gradetype'] = GRADE_TYPE_SCALE;
+        $params['scaleid'] = -$lesson->grade;
 
         // Make sure current grade fetched correctly from $grades
         $currentgrade = null;
@@ -793,13 +810,13 @@ function lesson_grade_item_update($lesson, $grades=null) {
         // When converting a score to a scale, use scale's grade maximum to calculate it.
         if (!empty($currentgrade) && $currentgrade->rawgrade !== null) {
             $grade = grade_get_grades($lesson->course, 'mod', 'lesson', $lesson->id, $currentgrade->userid);
-            $params['grademax']   = reset($grade->items)->grademax;
+            $params['grademax'] = reset($grade->items)->grademax;
         }
     } else {
-        $params['gradetype']  = GRADE_TYPE_NONE;
+        $params['gradetype'] = GRADE_TYPE_NONE;
     }
 
-    if ($grades  === 'reset') {
+    if ($grades === 'reset') {
         $params['reset'] = true;
         $grades = null;
     } else if (!empty($grades)) {
@@ -811,7 +828,7 @@ function lesson_grade_item_update($lesson, $grades=null) {
         }
         foreach ($grades as $key => $grade) {
             if (!is_array($grade)) {
-                $grades[$key] = $grade = (array) $grade;
+                $grades[$key] = $grade = (array)$grade;
             }
             //check raw grade isnt null otherwise we erroneously insert a grade of 0
             if ($grade['rawgrade'] !== null) {
@@ -836,8 +853,9 @@ function lesson_grade_item_update($lesson, $grades=null) {
  *
  * @return array
  */
-function lesson_get_view_actions() {
-    return array('view','view all');
+function lesson_get_view_actions()
+{
+    return array('view', 'view all');
 }
 
 /**
@@ -850,8 +868,9 @@ function lesson_get_view_actions() {
  *
  * @return array
  */
-function lesson_get_post_actions() {
-    return array('end','start');
+function lesson_get_post_actions()
+{
+    return array('end', 'start');
 }
 
 /**
@@ -862,7 +881,8 @@ function lesson_get_post_actions() {
  * @param object $lesson Lesson form data
  * @return void
  **/
-function lesson_process_pre_save(&$lesson) {
+function lesson_process_pre_save(&$lesson)
+{
     global $DB;
 
     $lesson->timemodified = time();
@@ -915,7 +935,8 @@ function lesson_process_pre_save(&$lesson) {
  * @param object $lesson Lesson form data
  * @return void
  **/
-function lesson_process_post_save(&$lesson) {
+function lesson_process_post_save(&$lesson)
+{
     // Update the events relating to this lesson.
     lesson_update_events($lesson);
 }
@@ -927,13 +948,14 @@ function lesson_process_post_save(&$lesson) {
  *
  * @param $mform form passed by reference
  */
-function lesson_reset_course_form_definition(&$mform) {
+function lesson_reset_course_form_definition(&$mform)
+{
     $mform->addElement('header', 'lessonheader', get_string('modulenameplural', 'lesson'));
-    $mform->addElement('advcheckbox', 'reset_lesson', get_string('deleteallattempts','lesson'));
+    $mform->addElement('advcheckbox', 'reset_lesson', get_string('deleteallattempts', 'lesson'));
     $mform->addElement('advcheckbox', 'reset_lesson_user_overrides',
-            get_string('removealluseroverrides', 'lesson'));
+        get_string('removealluseroverrides', 'lesson'));
     $mform->addElement('advcheckbox', 'reset_lesson_group_overrides',
-            get_string('removeallgroupoverrides', 'lesson'));
+        get_string('removeallgroupoverrides', 'lesson'));
 }
 
 /**
@@ -941,10 +963,11 @@ function lesson_reset_course_form_definition(&$mform) {
  * @param object $course
  * @return array
  */
-function lesson_reset_course_form_defaults($course) {
+function lesson_reset_course_form_defaults($course)
+{
     return array('reset_lesson' => 1,
-            'reset_lesson_group_overrides' => 1,
-            'reset_lesson_user_overrides' => 1);
+        'reset_lesson_group_overrides' => 1,
+        'reset_lesson_user_overrides' => 1);
 }
 
 /**
@@ -955,14 +978,15 @@ function lesson_reset_course_form_defaults($course) {
  * @param int $courseid
  * @param string optional type
  */
-function lesson_reset_gradebook($courseid, $type='') {
+function lesson_reset_gradebook($courseid, $type = '')
+{
     global $CFG, $DB;
 
     $sql = "SELECT l.*, cm.idnumber as cmidnumber, l.course as courseid
               FROM {lesson} l, {course_modules} cm, {modules} m
              WHERE m.name='lesson' AND m.id=cm.module AND cm.instance=l.id AND l.course=:course";
-    $params = array ("course" => $courseid);
-    if ($lessons = $DB->get_records_sql($sql,$params)) {
+    $params = array("course" => $courseid);
+    if ($lessons = $DB->get_records_sql($sql, $params)) {
         foreach ($lessons as $lesson) {
             lesson_grade_item_update($lesson, 'reset');
         }
@@ -978,7 +1002,8 @@ function lesson_reset_gradebook($courseid, $type='') {
  * @param object $data the data submitted from the reset course.
  * @return array status array
  */
-function lesson_reset_userdata($data) {
+function lesson_reset_userdata($data)
+{
     global $CFG, $DB;
 
     $componentstr = get_string('modulenameplural', 'lesson');
@@ -989,7 +1014,7 @@ function lesson_reset_userdata($data) {
                          FROM {lesson} l
                         WHERE l.course=:course";
 
-        $params = array ("course" => $data->courseid);
+        $params = array("course" => $data->courseid);
         $lessons = $DB->get_records_sql($lessonssql, $params);
 
         // Get rid of attempts files.
@@ -1014,26 +1039,26 @@ function lesson_reset_userdata($data) {
             lesson_reset_gradebook($data->courseid);
         }
 
-        $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallattempts', 'lesson'), 'error'=>false);
+        $status[] = array('component' => $componentstr, 'item' => get_string('deleteallattempts', 'lesson'), 'error' => false);
     }
 
     // Remove user overrides.
     if (!empty($data->reset_lesson_user_overrides)) {
         $DB->delete_records_select('lesson_overrides',
-                'lessonid IN (SELECT id FROM {lesson} WHERE course = ?) AND userid IS NOT NULL', array($data->courseid));
+            'lessonid IN (SELECT id FROM {lesson} WHERE course = ?) AND userid IS NOT NULL', array($data->courseid));
         $status[] = array(
-        'component' => $componentstr,
-        'item' => get_string('useroverridesdeleted', 'lesson'),
-        'error' => false);
+            'component' => $componentstr,
+            'item' => get_string('useroverridesdeleted', 'lesson'),
+            'error' => false);
     }
     // Remove group overrides.
     if (!empty($data->reset_lesson_group_overrides)) {
         $DB->delete_records_select('lesson_overrides',
-        'lessonid IN (SELECT id FROM {lesson} WHERE course = ?) AND groupid IS NOT NULL', array($data->courseid));
+            'lessonid IN (SELECT id FROM {lesson} WHERE course = ?) AND groupid IS NOT NULL', array($data->courseid));
         $status[] = array(
-        'component' => $componentstr,
-        'item' => get_string('groupoverridesdeleted', 'lesson'),
-        'error' => false);
+            'component' => $componentstr,
+            'item' => get_string('groupoverridesdeleted', 'lesson'),
+            'error' => false);
     }
     /// updating dates - shift may be negative too
     if ($data->timeshift) {
@@ -1047,7 +1072,7 @@ function lesson_reset_userdata($data) {
                          AND deadline <> 0", array($data->timeshift, $data->courseid));
 
         shift_course_mod_dates('lesson', array('available', 'deadline'), $data->timeshift, $data->courseid);
-        $status[] = array('component'=>$componentstr, 'item'=>get_string('datechanged'), 'error'=>false);
+        $status[] = array('component' => $componentstr, 'item' => get_string('datechanged'), 'error' => false);
     }
 
     return $status;
@@ -1057,7 +1082,8 @@ function lesson_reset_userdata($data) {
  * Returns all other caps used in module
  * @return array
  */
-function lesson_get_extra_capabilities() {
+function lesson_get_extra_capabilities()
+{
     return array('moodle/site:accessallgroups');
 }
 
@@ -1071,8 +1097,9 @@ function lesson_get_extra_capabilities() {
  * @param string $feature FEATURE_xx constant for requested feature
  * @return mixed True if module supports feature, false if not, null if doesn't know
  */
-function lesson_supports($feature) {
-    switch($feature) {
+function lesson_supports($feature)
+{
+    switch ($feature) {
         case FEATURE_GROUPS:
             return true;
         case FEATURE_GROUPINGS:
@@ -1106,7 +1133,8 @@ function lesson_supports($feature) {
  * @param bool $type Type of comparison (or/and; can be used as return value if no conditions)
  * @return bool True if completed, false if not, $type if conditions not set.
  */
-function lesson_get_completion_state($course, $cm, $userid, $type) {
+function lesson_get_completion_state($course, $cm, $userid, $type)
+{
     global $CFG, $DB;
 
     // Get lesson details.
@@ -1116,7 +1144,7 @@ function lesson_get_completion_state($course, $cm, $userid, $type) {
     // If completion option is enabled, evaluate it and return true/false.
     if ($lesson->completionendreached) {
         $value = $DB->record_exists('lesson_timer', array(
-                'lessonid' => $lesson->id, 'userid' => $userid, 'completed' => 1));
+            'lessonid' => $lesson->id, 'userid' => $userid, 'completed' => 1));
         if ($type == COMPLETION_AND) {
             $result = $result && $value;
         } else {
@@ -1124,7 +1152,7 @@ function lesson_get_completion_state($course, $cm, $userid, $type) {
         }
     }
     if ($lesson->completiontimespent != 0) {
-        $duration = get_remote_duration_lesson_timer_by_lessonid_and_userid($lesson->id,$userid);
+        $duration = get_remote_duration_lesson_timer_by_lessonid_and_userid($lesson->id, $userid);
         if (!$duration) {
             $duration = 0;
         }
@@ -1136,6 +1164,7 @@ function lesson_get_completion_state($course, $cm, $userid, $type) {
     }
     return $result;
 }
+
 /**
  * This function extends the settings navigation block for the site.
  *
@@ -1145,7 +1174,8 @@ function lesson_get_completion_state($course, $cm, $userid, $type) {
  * @param settings_navigation $settings
  * @param navigation_node $lessonnode
  */
-function lesson_extend_settings_navigation($settings, $lessonnode) {
+function lesson_extend_settings_navigation($settings, $lessonnode)
+{
     global $PAGE, $DB;
 
     // We want to add these new nodes after the Edit settings node, and before the
@@ -1162,13 +1192,13 @@ function lesson_extend_settings_navigation($settings, $lessonnode) {
     if (has_capability('mod/lesson:manageoverrides', $PAGE->cm->context)) {
         $url = new moodle_url('/mod/lesson/remote/api-overrides.php', array('cmid' => $PAGE->cm->id));
         $node = navigation_node::create(get_string('groupoverrides', 'lesson'),
-                new moodle_url($url, array('mode' => 'group')),
-                navigation_node::TYPE_SETTING, null, 'mod_lesson_groupoverrides');
+            new moodle_url($url, array('mode' => 'group')),
+            navigation_node::TYPE_SETTING, null, 'mod_lesson_groupoverrides');
         $lessonnode->add_node($node, $beforekey);
 
         $node = navigation_node::create(get_string('useroverrides', 'lesson'),
-                new moodle_url($url, array('mode' => 'user')),
-                navigation_node::TYPE_SETTING, null, 'mod_lesson_useroverrides');
+            new moodle_url($url, array('mode' => 'user')),
+            navigation_node::TYPE_SETTING, null, 'mod_lesson_useroverrides');
         $lessonnode->add_node($node, $beforekey);
     }
 
@@ -1184,14 +1214,14 @@ function lesson_extend_settings_navigation($settings, $lessonnode) {
 
     if (has_capability('mod/lesson:viewreports', $PAGE->cm->context)) {
         $reportsnode = $lessonnode->add(get_string('reports', 'lesson'));
-        $url = new moodle_url('/mod/lesson/remote/report.php', array('id'=>$PAGE->cm->id, 'action'=>'reportoverview'));
+        $url = new moodle_url('/mod/lesson/remote/report.php', array('id' => $PAGE->cm->id, 'action' => 'reportoverview'));
         $reportsnode->add(get_string('overview', 'lesson'), $url);
-        $url = new moodle_url('/mod/lesson/remote/report.php', array('id'=>$PAGE->cm->id, 'action'=>'reportdetail'));
+        $url = new moodle_url('/mod/lesson/remote/report.php', array('id' => $PAGE->cm->id, 'action' => 'reportdetail'));
         $reportsnode->add(get_string('detailedstats', 'lesson'), $url);
     }
 
     if (has_capability('mod/lesson:grade', $PAGE->cm->context)) {
-        $url = new moodle_url('/mod/lesson/remote/essay.php', array('id'=>$PAGE->cm->id));
+        $url = new moodle_url('/mod/lesson/remote/essay.php', array('id' => $PAGE->cm->id));
         $lessonnode->add(get_string('manualgrading', 'lesson'), $url);
     }
 
@@ -1205,27 +1235,28 @@ function lesson_extend_settings_navigation($settings, $lessonnode) {
  * @param string $type 'import' if import list, otherwise export list assumed
  * @return array sorted list of import/export formats available
  */
-function lesson_get_import_export_formats($type) {
+function lesson_get_import_export_formats($type)
+{
     global $CFG;
     $fileformats = core_component::get_plugin_list("qformat");
 
-    $fileformatname=array();
-    foreach ($fileformats as $fileformat=>$fdir) {
+    $fileformatname = array();
+    foreach ($fileformats as $fileformat => $fdir) {
         $format_file = "$fdir/format.php";
-        if (file_exists($format_file) ) {
+        if (file_exists($format_file)) {
             require_once($format_file);
         } else {
             continue;
         }
         $classname = "qformat_$fileformat";
         $format_class = new $classname();
-        if ($type=='import') {
+        if ($type == 'import') {
             $provided = $format_class->provide_import();
         } else {
             $provided = $format_class->provide_export();
         }
         if ($provided) {
-            $fileformatnames[$fileformat] = get_string('pluginname', 'qformat_'.$fileformat);
+            $fileformatnames[$fileformat] = get_string('pluginname', 'qformat_' . $fileformat);
         }
     }
     natcasesort($fileformatnames);
@@ -1247,7 +1278,8 @@ function lesson_get_import_export_formats($type) {
  * @param array $options additional options affecting the file serving
  * @return bool false if file not found, does not return if found - justsend the file
  */
-function lesson_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
+function lesson_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array())
+{
     global $CFG, $DB;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
@@ -1270,21 +1302,21 @@ function lesson_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
         if (!$page = get_remote_lesson_pages_by_id($pageid)) {
             return false;
         }
-        $fullpath = "/$context->id/mod_lesson/$filearea/$pageid/".implode('/', $args);
+        $fullpath = "/$context->id/mod_lesson/$filearea/$pageid/" . implode('/', $args);
 
     } else if ($filearea === 'page_answers' || $filearea === 'page_responses') {
         $itemid = (int)array_shift($args);
         if (!$pageanswers = get_remote_lesson_answers_by_id($itemid)) {
             return false;
         }
-        $fullpath = "/$context->id/mod_lesson/$filearea/$itemid/".implode('/', $args);
+        $fullpath = "/$context->id/mod_lesson/$filearea/$itemid/" . implode('/', $args);
 
     } else if ($filearea === 'essay_responses') {
         $itemid = (int)array_shift($args);
         if (!$attempt = get_remote_lesson_attempts_by_id($itemid)) {
             return false;
         }
-        $fullpath = "/$context->id/mod_lesson/$filearea/$itemid/".implode('/', $args);
+        $fullpath = "/$context->id/mod_lesson/$filearea/$itemid/" . implode('/', $args);
 
     } else if ($filearea === 'mediafile') {
         if (count($args) > 1) {
@@ -1292,7 +1324,7 @@ function lesson_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
             // then it is surely the file name. The itemid is sometimes used to prevent browser caching.
             array_shift($args);
         }
-        $fullpath = "/$context->id/mod_lesson/$filearea/0/".implode('/', $args);
+        $fullpath = "/$context->id/mod_lesson/$filearea/0/" . implode('/', $args);
 
     } else {
         return false;
@@ -1314,7 +1346,8 @@ function lesson_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
  * @category files
  * @return array a list of available file areas
  */
-function lesson_get_file_areas() {
+function lesson_get_file_areas()
+{
     $areas = array();
     $areas['page_contents'] = get_string('pagecontents', 'mod_lesson');
     $areas['mediafile'] = get_string('mediafile', 'mod_lesson');
@@ -1341,7 +1374,8 @@ function lesson_get_file_areas() {
  * @param string $filename file name
  * @return file_info_stored
  */
-function lesson_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
+function lesson_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename)
+{
     global $CFG, $DB;
 
     if (!has_capability('moodle/course:managefiles', $context)) {
@@ -1388,11 +1422,12 @@ function lesson_get_file_info($browser, $areas, $course, $cm, $context, $fileare
  * @param stdClass $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block
  */
-function lesson_page_type_list($pagetype, $parentcontext, $currentcontext) {
+function lesson_page_type_list($pagetype, $parentcontext, $currentcontext)
+{
     $module_pagetype = array(
-        'mod-lesson-*'=>get_string('page-mod-lesson-x', 'lesson'),
-        'mod-lesson-view'=>get_string('page-mod-lesson-view', 'lesson'),
-        'mod-lesson-edit'=>get_string('page-mod-lesson-edit', 'lesson'));
+        'mod-lesson-*' => get_string('page-mod-lesson-x', 'lesson'),
+        'mod-lesson-view' => get_string('page-mod-lesson-view', 'lesson'),
+        'mod-lesson-edit' => get_string('page-mod-lesson-edit', 'lesson'));
     return $module_pagetype;
 }
 
@@ -1405,7 +1440,8 @@ function lesson_page_type_list($pagetype, $parentcontext, $currentcontext) {
  * @param stdClass $context the context
  * @param int $draftitemid the draft item
  */
-function lesson_update_media_file($lessonid, $context, $draftitemid) {
+function lesson_update_media_file($lessonid, $context, $draftitemid)
+{
     global $DB;
 
     // Set the filestorage object.
@@ -1437,7 +1473,8 @@ function lesson_update_media_file($lessonid, $context, $draftitemid) {
  * @return cached_cm_info An object on information that the courses
  *                        will know about (most noticeably, an icon).
  */
-function lesson_get_coursemodule_info($coursemodule) {
+function lesson_get_coursemodule_info($coursemodule)
+{
     global $CFG;
 
     require_once($CFG->dirroot . '/mod/lesson/remote/locallib.php');

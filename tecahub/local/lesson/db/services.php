@@ -66,22 +66,6 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
-    'local_mod_get_list_lesson_pages_by_id_and_lessonid' => array(
-        'classname' => 'local_mod_lesson_external',
-        'methodname' => 'get_list_lesson_pages_by_id_and_lessonid',
-        'classpath' => 'local/lesson/externallib.php',
-        'description' => 'Get list lesson pages by id and lesson id',
-        'type' => 'read',
-        'ajax' => true
-    ),
-    'local_mod_get_lesson_pages_by_lessonid' => array(
-        'classname' => 'local_mod_lesson_external',
-        'methodname' => 'get_lesson_pages_by_lessonid',
-        'classpath' => 'local/lesson/externallib.php',
-        'description' => 'Get lesson page bylesson id. Return a list',
-        'type' => 'read',
-        'ajax' => true
-    ),
     'local_mod_get_lesson_pages_by_id' => array(
         'classname' => 'local_mod_lesson_external',
         'methodname' => 'get_lesson_pages_by_id',
@@ -194,14 +178,6 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
-    'local_mod_get_lesson_overrides_by_lessonid' => array(
-        'classname' => 'local_mod_lesson_external',
-        'methodname' => 'get_lesson_overrides_by_lessonid',
-        'classpath' => 'local/lesson/externallib.php',
-        'description' => 'Get list of lesson overrides by lessonid',
-        'type' => 'read',
-        'ajax' => true
-    ),
     'local_mod_get_lesson_overrides_by_lessonid_and_userid' => array(
         'classname' => 'local_mod_lesson_external',
         'methodname' => 'get_lesson_overrides_by_lessonid_and_userid',
@@ -303,6 +279,22 @@ $functions = array(
         'methodname' => 'get_list_lesson_answers_by',
         'classpath' => 'local/lesson/externallib.php',
         'description' => 'get list of lesson answers by',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_list_lesson_pages_by' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_list_lesson_pages_by',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'get list of lesson pages by',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_list_lesson_overrides_by' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_list_lesson_overrides_by',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'get list of lesson overrides by',
         'type' => 'read',
         'ajax' => true
     ),

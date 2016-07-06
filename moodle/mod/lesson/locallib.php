@@ -269,7 +269,11 @@ function lesson_random_question_jump($lesson, $pageid)
     global $DB;
 
     // get the lesson pages
-    $lessonpages = get_remote_list_lesson_pages_by_lessonid($lesson->id);
+    $params = array();
+    $params['parameters[0][name]'] = "lessonid";
+    $params['parameters[0][value]'] = $lesson->id;
+
+    $lessonpages = get_remote_list_lesson_pages_by($params);
     if (!$lessonpages) {
         print_error('cannotfindpages', 'lesson');
     }
@@ -353,15 +357,18 @@ function lesson_grade($lesson, $ntries, $userid = 0)
         list($usql, $parameters) = $DB->get_in_or_equal(array_keys($attemptset));
         array_unshift($parameters, $lesson->id);
 
-
-        $pages = get_remote_list_lesson_pages_by_id_and_lessonid($parameters[1], $parameters[0]);
+        $params = array();
+        $params['parameters[0][name]'] = "lessonid";
+        $params['parameters[0][value]'] = $parameters[0];
+        $params['parameters[1][name]'] = "id";
+        $params['parameters[1][value]'] = $parameters[1];
+        $pages = get_remote_list_lesson_pages_by($params);
 
         $params = array();
         $params['parameters[0][name]'] = "lessonid";
         $params['parameters[0][value]'] = $parameters[0];
         $params['parameters[1][name]'] = "pageid";
         $params['parameters[1][value]'] = $parameters[1];
-
         $answers = get_remote_list_lesson_answers_by($params, "id");
 
         // Number of pages answered
@@ -1223,8 +1230,10 @@ class lesson extends lesson_base
     public function delete_all_overrides()
     {
         global $DB;
-
-        $overrides = get_remote_lesson_overrides_by_lessonid($this->properties->id);
+        $params = array();
+        $params['parameters[0][name]'] = "lessonid";
+        $params['parameters[0][value]'] = $this->properties->id;
+        $overrides = get_remote_list_lesson_overrides_by($params, "id");
         foreach ($overrides as $override) {
             $this->delete_override($override->id);
         }
@@ -3843,7 +3852,11 @@ class lesson_page_type_manager
     public function load_all_pages(lesson $lesson)
     {
         global $DB;
-        $pages = get_remote_list_lesson_pages_by_lessonid($lesson->id);
+
+        $params = array();
+        $params['parameters[0][name]'] = "lessonid";
+        $params['parameters[0][value]'] = $lesson->id;
+        $pages = get_remote_list_lesson_pages_by($params);
         if (!$pages) {
             return array(); // Records returned empty.
         }
