@@ -74,4 +74,20 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_save_response_by_mbl' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'save_response_by_mbl',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get questionnaire_question by condition",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_update_response_by_mbl' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'update_response_by_mbl',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get questionnaire_question by condition",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 );

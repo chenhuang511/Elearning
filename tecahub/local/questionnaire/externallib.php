@@ -244,4 +244,155 @@ class local_questionnaire_external extends external_api {
             )
         );
     }
+    /**
+     * save response
+     */
+    public static function save_response_by_mbl_parameters()
+    {
+        return new external_function_parameters (
+            array(
+                'tablename' => new external_value(PARAM_TEXT, ' the table name'),
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'data name'),
+                            'value' => new external_value(PARAM_RAW, 'data value'),
+                        )
+                    ), 'the data to be saved'
+                )
+            )
+        );
+    }
+
+    /**
+     * create new a response
+     *
+     * @param $data
+     * @return array
+     * @throws invalid_parameter_exception
+     */
+    public static function save_response_by_mbl($tablename, $data)
+    {
+        global $DB;
+
+        $params = array(
+            'tablename' => $tablename,
+            'data' => $data
+        );
+
+        $params = self::validate_parameters(self::save_response_questionnaire_parameters(), $params);
+
+        $data = new stdClass();
+
+        foreach ($params['data'] as $element) {
+            $data->$element['name'] = $element['value'];
+        }
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $id = $DB->insert_record($tablename, $data);
+
+        $transaction->allow_commit();
+
+        $result = array();
+        $result['id'] = $id;
+
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
+    public static function save_response_by_mbl_returns()
+    {
+        return new external_value(PARAM_INT, 'Standard Moodle primary key.');
+    }
+    /**
+     * update response
+     */
+    public static function update_response_by_mbl_parameters()
+    {
+        return new external_function_parameters (
+            array(
+                'tablename' => new external_value(PARAM_TEXT, ' the table name'),
+                'id' => new external_value(PARAM_TEXT, 'key id'),
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'data name'),
+                            'value' => new external_value(PARAM_RAW, 'data value'),
+                        )
+                    ), 'the data to be saved'
+                )
+            )
+        );
+    }
+
+    /**
+     * create new a response
+     *
+     * @param $data
+     * @return array
+     * @throws invalid_parameter_exception
+     */
+    public static function update_response_by_mbl($tablename, $id, $data)
+    {
+        global $DB;
+
+        $warnings = array();
+
+        $params = array(
+            'tablename' => $tablename,
+            'id' => $id,
+            'data' => $data
+        );
+
+        $params = self::validate_parameters(self::update_response_by_mbl_parameters(), $params);
+
+        $result = array();
+
+        $data = $DB->get_record($tablename, array('id' => $params['id']), '*', MUST_EXIST);
+
+        if (!$data) {
+            $result['status'] = false;
+            $warnings['message'] = "Cannot find data record";
+            $result['warnings'] = $warnings;
+
+            return $result;
+        }
+
+        foreach ($params['data'] as $key => $value) {
+            $data->$key = $value;
+        }
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $DB->update_record($tablename, $data);
+
+        $transaction->allow_commit();
+
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
+    public static function update_response_by_mbl_returns()
+    {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
 }
