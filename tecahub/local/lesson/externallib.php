@@ -3419,4 +3419,64 @@ class local_mod_lesson_external extends external_api
             )
         );
     }
+
+    public static function get_field_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'modname' => new external_value(PARAM_RAW, 'mod name'),
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'field' => new external_value(PARAM_RAW, 'field')
+            )
+        );
+    }
+
+    public static function get_field_by($modname, $parameters, $field)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_field_by(), array(
+            'modname' => $modname,
+            'parameters' => $parameters,
+            'field' => $field
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+
+        $f = $DB->get_field($params['modname'], $params['field'], $arr);
+
+        if(!$f) {
+            $f = 0;
+        }
+
+        $result['field'] = $f;
+        $result['warnings'] = $warnings;
+
+        return $result;
+
+    }
+
+    public static function get_field_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'field' => new external_value(PARAM_RAW, 'field'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
 }
