@@ -52,53 +52,6 @@ function get_remote_lesson_pages_by_lessonid_and_prevpageid($lessonid, $prevpage
 }
 
 /**
- * Get field of lesson pages by lessonid and prevpageid
- *
- * @param $lessonid
- * @param $prevpageid
- * @param array $options
- * @return false|mixed
- */
-function get_remote_field_lesson_pages_by_lessonid_and_prevpageid($lessonid, $prevpageid)
-{
-    $result = moodle_webservice_client(
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_get_field_lesson_pages_by_lessonid_and_prevpageid',
-            'params' => array('lessonid' => $lessonid, 'prevpageid' => $prevpageid)
-        )
-    );
-    return $result->id;
-}
-
-function get_remote_field_lesson_pages_by_lessonid_and_nextpageid($lessonid, $nextpageid)
-{
-    $result = moodle_webservice_client(
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_get_field_lesson_pages_by_lessonid_and_nextpageid',
-            'params' => array('lessonid' => $lessonid, 'nextpageid' => $nextpageid)
-        )
-    );
-    return $result->id;
-}
-
-function get_remote_field_lesson_answers_by_pageid_and_lessonid($pageid, $lessonid, $field = 'jumpto')
-{
-    $result = moodle_webservice_client(
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_get_field_lesson_answers_by_pageid_and_lessonid',
-            'params' => array('pageid' => $pageid, 'lessonid' => $lessonid, 'field' => $field)
-        )
-    );
-    return $result->field;
-}
-
-/**
  * get lesson page by pageid and lessonid
  *
  * @param int @id. The id of lesson page
@@ -405,27 +358,6 @@ function save_remote_lesson_branch($branch)
             'params' => array_merge($branch)
         )
     );
-}
-
-/**
- * Get field of lesson page by id
- *
- * @param $id
- * @param string $field
- * @return false|mixed
- */
-function get_remote_field_lesson_pages_by_id($id, $field = 'title')
-{
-    $result = moodle_webservice_client(
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_get_field_lesson_pages_by_id',
-            'params' => array('id' => $id, 'field' => $field)
-        )
-    );
-
-    return $result->field;
 }
 
 /**
@@ -979,4 +911,18 @@ function update_remote_mdl_table($tablename, $params, $data)
     );
 
     return $result->status;
+}
+
+function get_remote_field_by($modname, $parameters, $field = 'name')
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_field_by',
+            'params' => array_merge(array('modname' => $modname, 'field' => $field), $parameters),
+        )
+    );
+
+    return $result->field;
 }

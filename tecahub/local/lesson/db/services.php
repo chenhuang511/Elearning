@@ -90,30 +90,6 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
-    'local_mod_get_field_lesson_pages_by_id' => array(
-        'classname' => 'local_mod_lesson_external',
-        'methodname' => 'get_field_lesson_pages_by_id',
-        'classpath' => 'local/lesson/externallib.php',
-        'description' => 'get field of lesson pages by id',
-        'type' => 'read',
-        'ajax' => true
-    ),
-    'local_mod_get_field_lesson_pages_by_lessonid_and_prevpageid' => array(
-        'classname' => 'local_mod_lesson_external',
-        'methodname' => 'get_field_lesson_pages_by_lessonid_and_prevpageid',
-        'classpath' => 'local/lesson/externallib.php',
-        'description' => 'Get id of lesson page by lessonid and prevpageid',
-        'type' => 'read',
-        'ajax' => true
-    ),
-    'local_mod_get_field_lesson_pages_by_lessonid_and_nextpageid' => array(
-        'classname' => 'local_mod_lesson_external',
-        'methodname' => 'get_field_lesson_pages_by_lessonid_and_nextpageid',
-        'classpath' => 'local/lesson/externallib.php',
-        'description' => 'Get id of lesson page by lessonid and nextpageid',
-        'type' => 'read',
-        'ajax' => true
-    ),
     'local_mod_save_lesson_pages' => array(
         'classname' => 'local_mod_lesson_external',
         'methodname' => 'save_lesson_pages',
@@ -295,14 +271,6 @@ $functions = array(
         'methodname' => 'get_lesson_answers_by_pageid_and_lessonid',
         'classpath' => 'local/lesson/externallib.php',
         'description' => 'Get field lesson answers by pageid and lessonid',
-        'type' => 'read',
-        'ajax' => true
-    ),
-    'local_mod_get_field_lesson_answers_by_pageid_and_lessonid' => array(
-        'classname' => 'local_mod_lesson_external',
-        'methodname' => 'get_field_lesson_answers_by_pageid_and_lessonid',
-        'classpath' => 'local/lesson/externallib.php',
-        'description' => 'Get lesson answer by pageid and lessonid',
         'type' => 'read',
         'ajax' => true
     ),
