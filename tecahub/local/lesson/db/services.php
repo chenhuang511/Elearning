@@ -411,7 +411,6 @@ $functions = array(
         'ajax' => true
     ),
     'local_mod_get_user_by_lessonid' => array(
-    'local_mod_get_user_by_lessonid' => array(
         'classname' => 'local_mod_lesson_external',
         'methodname' => 'get_user_by_lessonid',
         'classpath' => 'local/lesson/externallib.php',
