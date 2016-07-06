@@ -18,6 +18,7 @@ define('AJAX_SCRIPT', true);
 
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once(dirname(__FILE__) . '/lib.php');
+require_once(dirname(__FILE__) . '/remote/locallib.php');
 
 $action       = optional_param('action', '', PARAM_ALPHANUM);
 $beepid       = optional_param('beep', '', PARAM_RAW);
@@ -31,17 +32,32 @@ if (!confirm_sesskey()) {
     throw new moodle_exception('invalidsesskey', 'error');
 }
 
-if (!$chatuser = $DB->get_record('chat_users', array('sid' => $chatsid))) {
-    throw new moodle_exception('notlogged', 'chat');
-}
-if (!$chat = $DB->get_record('chat', array('id' => $chatuser->chatid))) {
-    throw new moodle_exception('invaliduserid', 'error');
-}
-if (!$course = $DB->get_record('course', array('id' => $chat->course))) {
-    throw new moodle_exception('invalidcourseid', 'error');
-}
-if (!$cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
-    throw new moodle_exception('invalidcoursemodule', 'error');
+if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+    if (!$chatuser = $DB->get_record('chat_users', array('sid' => $chatsid))) {
+        throw new moodle_exception('notlogged', 'chat');
+    }
+    if (!$chat = $DB->get_record('chat', array('id' => $chatuser->chatid))) {
+        throw new moodle_exception('invaliduserid', 'error');
+    }
+    if (!$course = $DB->get_record('course', array('id' => $chat->course))) {
+        throw new moodle_exception('invalidcourseid', 'error');
+    }
+    if (!$cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
+        throw new moodle_exception('invalidcoursemodule', 'error');
+    }
+} else {
+    if (!$chatuser = get_remote_chat_user($chatsid)) {
+        throw new moodle_exception('notlogged', 'chat');
+    }
+    if (!$chat = get_remote_chat_by_id($chatuser->chatid)) {
+        throw new moodle_exception('invaliduserid', 'error');
+    }
+    if (!$course = get_local_course_record($chat->course)) {
+        throw new moodle_exception('invalidcourseid', 'error');
+    }
+    if (!$cm = $cm = get_remote_course_module_by_instance('chat', $chat->id)->cm) {
+        throw new moodle_exception('invalidcoursemodule', 'error');
+    }
 }
 
 if (!isloggedin()) {
@@ -83,7 +99,7 @@ switch ($action) {
 
         if (!empty($chatmessage)) {
 
-            chat_send_chatmessage($chatuser, $chatmessage, 0, $cm);
+            chat_send_chatmessage($chatuser, $chatmessage, 0, $cm, $chatsid);
 
             $chatuser->lastmessageping = time() - 2;
             $DB->update_record('chat_users', $chatuser);
@@ -99,7 +115,7 @@ switch ($action) {
             chat_delete_old_users();
         }
 
-        if ($latestmessage = chat_get_latest_message($chatuser->chatid, $chatuser->groupid)) {
+        if ($latestmessage = chat_get_latest_message($chatuser->chatid, $chatuser->groupid, $chatsid)) {
             $chatnewlasttime = $latestmessage->timestamp;
         } else {
             $chatnewlasttime = 0;
@@ -109,7 +125,7 @@ switch ($action) {
             $chatlasttime = time() - $CFG->chat_old_ping;
         }
 
-        $messages = chat_get_latest_messages($chatuser, $chatlasttime);
+        $messages = chat_get_latest_messages($chatuser, $chatlasttime, $chatsid);
 
         if (!empty($messages)) {
             $num = count($messages);

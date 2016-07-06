@@ -1540,7 +1540,7 @@ function quiz_num_attempt_summary($quiz, $cm, $returnzero = false, $currentgroup
     }else{
         $numattempts = get_remote_count_attempts($quiz->id)->num;
     }
-
+    
     if ($numattempts || $returnzero) {
         if (groups_get_activity_groupmode($cm)) {
             $a = new stdClass();
@@ -1902,11 +1902,11 @@ function quiz_get_coursemodule_info($coursemodule) {
     global $CFG;
 
     require_once($CFG->dirroot . '/mod/quiz/remote/locallib.php');
-    $lesson = get_remote_quiz_by_id($coursemodule->instance);
+    $quiz = get_remote_quiz_by_id($coursemodule->instance);
 
     $result = new cached_cm_info();
-    $result->name = $lesson->name;
-    $result->content = format_module_intro('quiz', $lesson, $coursemodule->id, false);
+    $result->name = $quiz->name;
+    $result->content = format_module_intro('quiz', $quiz, $coursemodule->id, false);
 
     return $result;
 }

@@ -98,4 +98,29 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_quiz_report_get_significant_questions' => array(
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'report_get_significant_questions',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Get the slots of real questions (not descriptions) in this quiz, in order.",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_quiz_report_get_grand_total' => array(
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'get_grand_total',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Querry db with sql params to get grand total",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_quiz_report_get_rowdata_for_tableview' => array(
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'get_rowdata_for_tableview',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Show quiz number of attempts summary to those who can view report.",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+
 );

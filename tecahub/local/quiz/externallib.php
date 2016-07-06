@@ -30,6 +30,7 @@ require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 require_once($CFG->dirroot . '/question/engine/lib.php');
 require_once($CFG->dirroot . '/mod/quiz/classes/external.php');
+require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
 
 /**
  * Course external functions
@@ -866,6 +867,239 @@ ORDER BY
         return new external_single_structure(
             array(
                 'num' => new external_value(PARAM_INT, 'num attempts', VALUE_OPTIONAL),
+            )
+        );
+    }
+
+    /**
+     * Hanv 02/07/2016
+     * Get the slots of real questions (not descriptions) in this quiz, in order.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     *
+     */
+    public static function report_get_significant_questions_parameters() {
+        return new external_function_parameters (
+            array(
+                'quizid' => new external_value(PARAM_INT, 'quiz id'),
+            )
+        );
+    }
+
+    /**
+     * Get the slots of real questions (not descriptions) in this quiz, in order.
+     *
+     * @param int $quizid quizid
+     * @return array
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function report_get_significant_questions($quizid) {
+        global $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::report_get_significant_questions_parameters(),
+            array('quizid' => $quizid));
+
+        $qsbyslot = $DB->get_records_sql("
+            SELECT slot.slot,
+                   q.id,
+                   q.length,
+                   slot.maxmark
+
+              FROM {question} q
+              JOIN {quiz_slots} slot ON slot.questionid = q.id
+
+             WHERE slot.quizid = ?
+               AND q.length > 0
+
+          ORDER BY slot.slot", array($params['quizid']));
+
+        $number = 1;
+        foreach ($qsbyslot as $question) {
+            $question->number = $number;
+            $number += $question->length;
+        }
+        return $qsbyslot;
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.9 Options available
+     * @since Moodle 2.2
+     */
+    public static function report_get_significant_questions_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'slot' => new external_value(PARAM_INT, 'slot.'),
+                    'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
+                    'length' => new external_value(PARAM_INT, 'length', VALUE_OPTIONAL),
+                    'maxmark' => new external_value(PARAM_FLOAT, 'max mark.', VALUE_OPTIONAL),
+                    'number' => new external_value(PARAM_INT, 'number', VALUE_OPTIONAL),
+                )
+            )
+        );
+    }
+
+    /**
+     * Hanv 04/07/2016
+     * Querry db with sql params to get grand total.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     *
+     */
+    public static function get_grand_total_parameters() {
+        return new external_function_parameters (
+            array(
+                'countsql' => new external_value(PARAM_RAW, 'countsql'),
+                'countparam' => new  external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'name'),
+                            'value' => new external_value(PARAM_INT, 'value'),
+                        )
+                    )
+                ),
+            )
+        );
+    }
+
+    /**
+     * Querry db with sql params to get grand total.
+     *
+     * @param int $quizid quizid
+     * @param string $ipaddress ipaddress
+     * @return array
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function get_grand_total($countsql, $countparam) {
+        global $CFG, $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::get_grand_total_parameters(),
+            array('countsql' => $countsql, 'countparam' => $countparam));
+
+        $branch = array();
+        foreach ($params['countparam'] as $element) {
+            $branch[$element['name']] = $element['value'];
+        }
+
+        $grandtotal = $DB->count_records_sql($params['countsql'], $branch);
+        $res = array();
+        $res['grandtotal'] = $grandtotal;
+        return $res;
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.9 Options available
+     * @since Moodle 2.2
+     */
+    public static function get_grand_total_returns() {
+        return new external_single_structure(
+            array(
+                'grandtotal' => new external_value(PARAM_INT, 'grand total', VALUE_OPTIONAL),
+            )
+        );
+    }
+
+    /**
+     * Hanv 04/07/2016
+     * Querry db with sql params to get grand total.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     *
+     */
+    public static function get_rowdata_for_tableview_parameters() {
+        return new external_function_parameters (
+            array(
+                'sql' => new external_value(PARAM_RAW, 'sql'),
+                'param' => new  external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'name'),
+                            'value' => new external_value(PARAM_INT, 'value'),
+                        )
+                    )
+                ),
+                'pagestart' => new external_value(PARAM_INT, 'page start'),
+                'pagesize' => new external_value(PARAM_INT, 'page size'),
+            )
+        );
+    }
+
+    /**
+     * Querry db with sql params to get grand total.
+     *
+     * @param int $quizid quizid
+     * @param string $ipaddress ipaddress
+     * @return array
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function get_rowdata_for_tableview($sql, $param, $pagestart, $pagesize) {
+        global $CFG, $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::get_rowdata_for_tableview_parameters(),
+            array('sql' => $sql, 'param' => $param, 'pagestart' => $pagestart, 'pagesize' => $pagesize));
+
+        $branch = array();
+        foreach ($params['param'] as $element) {
+            $branch[$element['name']] = $element['value'];
+        }
+
+        $rowdata = $DB->get_records_sql($params['sql'], $branch, $params['pagestart'], $params['pagesize']);
+        return $rowdata;
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.9 Options available
+     * @since Moodle 2.2
+     */
+    public static function get_rowdata_for_tableview_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'uniqueid' => new external_value(PARAM_RAW, 'grand total', VALUE_OPTIONAL),
+                    'gradedattempt' => new external_value(PARAM_INT, 'graded attempt', VALUE_OPTIONAL),
+                    'usageid' => new external_value(PARAM_INT, 'usageid', VALUE_OPTIONAL),
+                    'attempt' => new external_value(PARAM_INT, 'attempt id', VALUE_OPTIONAL),
+                    'userid' => new external_value(PARAM_INT, 'userid', VALUE_OPTIONAL),
+                    'idnumber' => new external_value(PARAM_RAW, 'idnumber', VALUE_OPTIONAL),
+                    'firstnamephonetic' => new external_value(PARAM_RAW, 'firstname phonetic', VALUE_OPTIONAL),
+                    'lastnamephonetic' => new external_value(PARAM_RAW, 'lastname phonetic', VALUE_OPTIONAL),
+                    'middlename' => new external_value(PARAM_RAW, 'middlename', VALUE_OPTIONAL),
+                    'alternatename' => new external_value(PARAM_RAW, 'alternate name', VALUE_OPTIONAL),
+                    'firstname' => new external_value(PARAM_RAW, 'first name', VALUE_OPTIONAL),
+                    'lastname' => new external_value(PARAM_RAW, 'last name', VALUE_OPTIONAL),
+                    'picture' => new external_value(PARAM_RAW, 'picture', VALUE_OPTIONAL),
+                    'imagealt' => new external_value(PARAM_RAW, 'image alt', VALUE_OPTIONAL),
+                    'institution' => new external_value(PARAM_RAW, 'institution', VALUE_OPTIONAL),
+                    'department' => new external_value(PARAM_RAW, 'department', VALUE_OPTIONAL),
+                    'email' => new external_value(PARAM_RAW, 'email', VALUE_OPTIONAL),
+                    'state' => new external_value(PARAM_RAW, 'state', VALUE_OPTIONAL),
+                    'sumgrades' => new external_value(PARAM_FLOAT, 'sum grades', VALUE_OPTIONAL),
+                    'timefinish' => new external_value(PARAM_INT, 'timefinish', VALUE_OPTIONAL),
+                    'timestart' => new external_value(PARAM_INT, 'timestart', VALUE_OPTIONAL),
+                    'duration' => new external_value(PARAM_INT, 'duration', VALUE_OPTIONAL),
+                    'regraded' => new external_value(PARAM_INT, 'regraded', VALUE_OPTIONAL),
+                )
             )
         );
     }

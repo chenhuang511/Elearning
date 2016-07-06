@@ -426,4 +426,12 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_get_field_by' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_field_by',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'get field of modname by',
+        'type' => 'read',
+        'ajax' => true
+    ),
 );

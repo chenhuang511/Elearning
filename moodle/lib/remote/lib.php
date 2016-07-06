@@ -158,7 +158,7 @@ function get_remote_course_sections($courseid, $usesq = false)
 
 function get_remote_mapping_user($user = null)
 {
-    global $USER, $CFG;
+    global $DB, $USER, $CFG;
 
     require_once($CFG->dirroot . '/mnet/lib.php');
     $hostname = mnet_get_hostname_from_uri($CFG->wwwroot);
@@ -167,6 +167,9 @@ function get_remote_mapping_user($user = null)
         $username = $USER->username;
         $email = $USER->email;
     } else {
+        if (!is_object($user)) {
+            $user = $DB->get_record('user', array('id' => $user), '*', MUST_EXIST);
+        }
         $username = $user->username;
         $email = $user->email;
     }
