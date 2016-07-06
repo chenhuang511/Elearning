@@ -42,5 +42,15 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
-);
 
+
+
+    'local_mod_get_forum_post_by_discussion_and_userid' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'get_forum_post_by_discussion_and_userid',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'Get forum post bydiscussion and user id',
+        'type' => 'read',
+        'ajax' => true
+    ),
+);

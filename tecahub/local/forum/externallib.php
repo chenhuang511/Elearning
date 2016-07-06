@@ -120,6 +120,71 @@ class local_mod_forum_external extends external_api
             )
         );
     }
+     public static function get_forum_post_by_discussion_and_userid_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'discussion' => new external_value(PARAM_INT, 'discussion'),
+                'userid' => new external_value(PARAM_INT, 'user id'),
+            )
+        );
+         
+    }
+
+    public static function get_forum_post_by_discussion_and_userid($discussion,$userid)
+    {
+        global $CFG, $DB;
+
+        $warnings = array();
+
+        //validate parameter
+        $params = self::validate_parameters(self::get_forum_post_by_discussion_and_userid_parameters(),
+            array(
+                'discussion' => $discussion,
+                'userid' => $userid
+            )
+        );
+        
+        $result = array();
+
+        $forum = $DB->get_record('forum', array('discussion' => $params['discussion'],'userid' => $params['userid']), '*', MUST_EXIST);
+
+        if(!$forum) {
+            $forum = new stdClass();
+        }
+
+        $result['forum'] = $forum;
+        $result['warnings'] = $warnings;
+        
+        return $result;
+    }
+    public static function get_forum_post_by_discussion_and_userid_returns()
+    {
+        return new external_single_structure(
+            array(
+                'forum' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'forum id'),
+                        'discussion' => new external_value(PARAM_INT, 'discussion', VALUE_DEFAULT),
+                        'parent' => new external_value(PARAM_INT, 'parent'),
+                        'userid' => new external_value(PARAM_TEXT, 'userid'),
+                        'created' => new external_value(PARAM_INT, 'created', VALUE_DEFAULT),
+                        'modified' => new external_value(PARAM_INT, 'modified'),
+                        'mailed' => new external_value(PARAM_INT, 'mailed', VALUE_DEFAULT),
+                        'subject' => new external_value(PARAM_TEXT, 'subject'),
+                        'message' => new external_value(PARAM_RAW, 'message'),
+                        'messageformat' => new external_value(PARAM_INT, 'messageformat', VALUE_DEFAULT),
+                         'attachment' => new external_value(PARAM_TEXT, 'attachment'),
+                        'totalscore' => new external_value(PARAM_INT, 'totalscore'),
+                        'mailnow' => new external_value(PARAM_INT, 'mailnow', VALUE_DEFAULT),
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+
 
 //    /**
 //     * Hanv 24/05/2016
