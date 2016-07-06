@@ -1883,7 +1883,7 @@ class global_navigation extends navigation_node {
                 $activity->nodetype = navigation_node::NODETYPE_LEAF;
                 $activity->onclick = $cm->onclick;
                 $url = $cm->url;
-                if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+                if (MOODLE_RUN_MODE === MOODLE_MODE_HUB && $url != null) {
                     $url->set_path('/mod/'.$cm->modname.'/remote/view.php');
                     $url->add_param(array('nonajax'=>true));
                 }

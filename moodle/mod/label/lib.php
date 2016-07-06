@@ -120,9 +120,16 @@ function label_delete_instance($id) {
  * @return cached_cm_info|null
  */
 function label_get_coursemodule_info($coursemodule) {
-    global $DB;
+    global $DB, $CFG;
 
-    if ($label = $DB->get_record('label', array('id'=>$coursemodule->instance), 'id, name, intro, introformat')) {
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+        $label = $DB->get_record('label', array('id'=>$coursemodule->instance), 'id, name, intro, introformat');
+    } else {
+        require_once($CFG->dirroot . '/mod/label/remote/locallib.php');
+        $label = get_remote_label_by_id($coursemodule->instance);
+    }
+
+    if ($label) {
         if (empty($label->name)) {
             // label name missing, fix it
             $label->name = "label{$label->id}";
