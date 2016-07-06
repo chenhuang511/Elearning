@@ -1557,7 +1557,7 @@ class table_sql extends flexible_table {
      * @param bool $useinitialsbar do you want to use the initials bar. Bar
      * will only be used if there is a fullname column defined for the table.
      */
-    function query_db($pagesize, $useinitialsbar=true) {
+    function query_db($pagesize, $useinitialsbar=true, $modname = null) {
         global $DB;
         if (!$this->is_downloading()) {
             if ($this->countsql === NULL) {
@@ -1565,7 +1565,7 @@ class table_sql extends flexible_table {
                 $this->countparams = $this->sql->params;
             }
 
-            if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HUB && $modname == 'quiz'){
                 $this->mapping_users($this->countparams);
                 $countparams = array();
                 $index = 0;
@@ -1583,7 +1583,7 @@ class table_sql extends flexible_table {
             }
 
             list($wsql, $wparams) = $this->get_sql_where();
-            if ($wsql) {//@TODO: dont test here...
+            if ($wsql) {
                 $this->countsql .= ' AND '.$wsql;
                 $this->countparams = array_merge($this->countparams, $wparams);
 
@@ -1610,7 +1610,7 @@ class table_sql extends flexible_table {
                 {$sort}";
 
         if (!$this->is_downloading()) {
-            if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HUB && $modname == 'quiz'){
                 $this->mapping_users($this->sql->params);
                 $params = array();
                 $index = 0;
@@ -1619,12 +1619,10 @@ class table_sql extends flexible_table {
                     $params["param[$index][value]"]=$val;
                     $index++;
                 }
-//                print_r($sql);die;
                 $this->rawdata = get_remote_report_get_rowdata ($sql, $params, $this->get_page_start(), $this->get_page_size());
             }else{
                 $this->rawdata = $DB->get_records_sql($sql, $this->sql->params, $this->get_page_start(), $this->get_page_size());
             }
-//            var_dump($this->rawdata);die;
         } else {
             $this->rawdata = $DB->get_records_sql($sql, $this->sql->params);
         }
