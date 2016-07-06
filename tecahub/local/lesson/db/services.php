@@ -100,7 +100,7 @@ $functions = array(
     ),
     'local_mod_update_lesson_pages' => array(
         'classname' => 'local_mod_lesson_external',
-        'methodname' => 'get_count_lesson_pages_by_lessonid',
+        'methodname' => 'update_lesson_pages',
         'classpath' => 'local/lesson/externallib.php',
         'description' => 'update lesson pages',
         'type' => 'read',
