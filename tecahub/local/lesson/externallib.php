@@ -3443,7 +3443,7 @@ class local_mod_lesson_external extends external_api
         global $DB;
         $warnings = array();
 
-        $params = self::validate_parameters(self::get_field_by(), array(
+        $params = self::validate_parameters(self::get_field_by_parameters(), array(
             'modname' => $modname,
             'parameters' => $parameters,
             'field' => $field
