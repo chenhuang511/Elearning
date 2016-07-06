@@ -54,12 +54,16 @@ class rank extends base {
                 } else {
                     $rank = intval($other);
                 }
-                $record = new \stdClass();
-                $record->response_id = $rid;
-                $record->question_id = $this->question->id;
-                $record->choice_id = $cid;
-                $record->rank = $rank;
-                $resid = $DB->insert_record($this->response_table(), $record);
+                $data = array();
+                $data['data[0][name]'] = 'response_id';
+                $data['data[0][value]'] = $rid;
+                $data['data[1][name]'] = 'question_id';
+                $data['data[1][value]'] = $this->question->id;
+                $data['data[2][name]'] = 'choice_id';
+                $data['data[2][value]'] = $cid;
+                $data['data[3][name]'] = 'rank';
+                $data['data[3][value]'] = $rank;
+                $resid = save_remote_response_by_mbl($this->response_table(), $data);
             }
             return $resid;
         } else { // THIS SHOULD NEVER HAPPEN.
@@ -68,11 +72,14 @@ class rank extends base {
             } else {
                 $rank = intval($val);
             }
-            $record = new \stdClass();
-            $record->response_id = $rid;
-            $record->question_id = $this->question->id;
-            $record->rank = $rank;
-            return $DB->insert_record($this->response_table(), $record);
+            $data = array();
+            $data['data[0][name]'] = 'response_id';
+            $data['data[0][value]'] = $rid;
+            $data['data[1][name]'] = 'question_id';
+            $data['data[1][value]'] = $this->question->id;
+            $data['data[2][name]'] = 'rank';
+            $data['data[2][value]'] = $rank;
+            return save_remote_response_by_mbl($this->response_table(), $data);
         }
     }
 

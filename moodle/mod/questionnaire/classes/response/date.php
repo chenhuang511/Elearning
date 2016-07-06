@@ -48,11 +48,14 @@ class date extends base {
         }
         // Now use ISO date formatting.
         $checkdateresult = questionnaire_check_date($thisdate, true);
-        $record = new \stdClass();
-        $record->response_id = $rid;
-        $record->question_id = $this->question->id;
-        $record->response = $checkdateresult;
-        return $DB->insert_record($this->response_table(), $record);
+        $data = array();
+        $data['data[0][name]'] = 'response_id';
+        $data['data[0][value]'] = $rid;
+        $data['data[1][name]'] = 'question_id';
+        $data['data[1][value]'] = $this->question->id;
+        $data['data[2][name]'] = 'response';
+        $data['data[2][value]'] = $checkdateresult;
+        return save_remote_response_by_mbl($this->response_table(), $data);
     }
 
     protected function get_results($rids=false) {

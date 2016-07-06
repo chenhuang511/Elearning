@@ -358,11 +358,16 @@ function questionnaire_cleanup() {
 function questionnaire_record_submission(&$questionnaire, $userid, $rid=0) {
     global $DB;
 
-    $attempt['qid'] = $questionnaire->id;
-    $attempt['userid'] = $userid;
-    $attempt['rid'] = $rid;
-    $attempt['timemodified'] = time();
-    return $DB->insert_record("questionnaire_attempts", (object)$attempt, false);
+    $data = array();
+    $data['data[0][name]'] = 'qid';
+    $data['data[0][value]'] = $questionnaire->id;
+    $data['data[1][name]'] = 'userid';
+    $data['data[1][value]'] = $userid;
+    $data['data[2][name]'] = 'rid';
+    $data['data[2][value]'] = $rid;
+    $data['data[3][name]'] = 'timemodified';
+    $data['data[3][value]'] = time();
+    return save_remote_response_by_mbl("questionnaire_attempts", $data);
 }
 
 function questionnaire_delete_survey($sid, $questionnaireid) {
@@ -1050,10 +1055,10 @@ function questionnaire_get_standard_page_items($id = null, $a = null) {
         if (! $questionnaire = get_remote_questionnaire_by_id($a)) {
             print_error('invalidcoursemodule');
         }
-        if (! $course = $DB->get_record("course", array("id" => $questionnaire->course))) {
+        if (! $course = get_local_course_record($questionnaire->course)) {
             print_error('coursemisconf');
         }
-        if (! $cm = get_coursemodule_from_instance("questionnaire", $questionnaire->id, $course->id)) {
+        if (! $cm = get_remote_course_module_by_instance('questionnaire', $a)->cm) {
             print_error('invalidcoursemodule');
         }
     }

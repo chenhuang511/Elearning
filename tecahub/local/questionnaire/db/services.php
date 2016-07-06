@@ -78,7 +78,7 @@ $functions = array(
 		'classname'	  => 'local_questionnaire_external',
 		'methodname'  => 'save_response_by_mbl',
 		'classpath'	  => 'local/questionnaire/externallib.php',
-		'description' => "Get questionnaire_question by condition",
+		'description' => "Save response by table name",
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
@@ -86,7 +86,87 @@ $functions = array(
 		'classname'	  => 'local_questionnaire_external',
 		'methodname'  => 'update_response_by_mbl',
 		'classpath'	  => 'local/questionnaire/externallib.php',
-		'description' => "Get questionnaire_question by condition",
+		'description' => "update response by table name",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_get_questionnaire_attempts' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'get_questionnaire_attempts',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get questionnaire attempts by condition",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_get_questionnaire_response' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'get_questionnaire_response',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get questionnaire response by condition",
+		'type'		  => 'read',
+		'ajax'		  => true
+	), ////continue
+	'local_mod_get_questionnaire_bool_question' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'get_questionnaire_bool_question',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get questionnaire_bool and question",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_get_questionnaire_single_question_choice' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'get_questionnaire_single_question_choice',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get single and question and choice",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_get_questionnaire_multiple_question_choice' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'get_questionnaire_multiple_question_choice',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get multiple and question and choice",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_get_questionnaire_gest_choice' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'get_questionnaire_gest_choice',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get questionnaire gest choice",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_get_questionnaire_other_question_choice' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'get_questionnaire_other_question_choice',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get questionnaire other and question and choice",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_get_questionnaire_rank_question_choice' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'get_questionnaire_rank_question_choice',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get questionnaire rank and question and choice",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_get_questionnaire_text_question' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'get_questionnaire_text_question',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get questionnaire text and question",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_get_questionnaire_date_question' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'get_questionnaire_date_question',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get questionnaire date and question",
 		'type'		  => 'read',
 		'ajax'		  => true
 	),

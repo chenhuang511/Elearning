@@ -58,12 +58,16 @@ class multiple extends single {
                     array_push($val, $cid);
                 }
                 if (preg_match("/[^ \t\n]/", $other)) {
-                    $record = new \stdClass();
-                    $record->response_id = $rid;
-                    $record->question_id = $this->question->id;
-                    $record->choice_id = $cid;
-                    $record->response = $other;
-                    $resid = $DB->insert_record('questionnaire_response_other', $record);
+                    $data = array();
+                    $data['data[0][name]'] = 'response_id';
+                    $data['data[0][value]'] = $rid;
+                    $data['data[1][name]'] = 'question_id';
+                    $data['data[1][value]'] = $this->question->id;
+                    $data['data[2][name]'] = 'choice_id';
+                    $data['data[2][value]'] = $cid;
+                    $data['data[3][name]'] = 'response';
+                    $data['data[3][value]'] = $other;
+                    $resid = save_remote_response_by_mbl('questionnaire_response_other', $data);
                 }
             }
         }
@@ -78,11 +82,14 @@ class multiple extends single {
                 if (preg_match("/other_q[0-9]+/", $cid)) {
                     continue;
                 }
-                $record = new \stdClass();
-                $record->response_id = $rid;
-                $record->question_id = $this->question->id;
-                $record->choice_id = $cid;
-                $resid = $DB->insert_record($this->response_table(), $record);
+                $data = array();
+                $data['data[0][name]'] = 'response_id';
+                $data['data[0][value]'] = $rid;
+                $data['data[1][name]'] = 'question_id';
+                $data['data[1][value]'] = $this->question->id;
+                $data['data[2][name]'] = 'choice_id';
+                $data['data[2][value]'] = $cid;
+                $resid = save_remote_response_by_mbl($this->response_table(), $data);
             }
         }
         return $resid;

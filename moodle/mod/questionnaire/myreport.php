@@ -18,6 +18,7 @@
 
 require_once("../../config.php");
 require_once($CFG->dirroot.'/mod/questionnaire/questionnaire.class.php');
+require_once($CFG->dirroot . '/mod/questionnaire/remote/locallib.php');
 
 $instance = required_param('instance', PARAM_INT);   // Questionnaire ID.
 $userid = optional_param('user', $USER->id, PARAM_INT);
@@ -25,18 +26,12 @@ $rid = optional_param('rid', null, PARAM_INT);
 $byresponse = optional_param('byresponse', 0, PARAM_INT);
 $action = optional_param('action', 'summary', PARAM_RAW);
 $currentgroupid = optional_param('group', 0, PARAM_INT); // Groupid.
+$id = optional_param('id', 0, PARAM_INT);
 
-if (! $questionnaire = $DB->get_record("questionnaire", array("id" => $instance))) {
-    print_error('incorrectquestionnaire', 'questionnaire');
-}
-if (! $course = $DB->get_record("course", array("id" => $questionnaire->course))) {
-    print_error('coursemisconf');
-}
-if (! $cm = get_coursemodule_from_instance("questionnaire", $questionnaire->id, $course->id)) {
-    print_error('invalidcoursemodule');
-}
+list($cm, $course, $questionnaire) = questionnaire_get_standard_page_items($id, $instance);
 
-require_course_login($course, true, $cm);
+require_login($course, true, $cm);
+
 $context = context_module::instance($cm->id);
 $questionnaire->canviewallgroups = has_capability('moodle/site:accessallgroups', $context);
 // Should never happen, unless called directly by a snoop...
@@ -68,13 +63,11 @@ $PAGE->set_heading(format_string($course->fullname));
 $questionnaire = new questionnaire(0, $questionnaire, $course, $cm);
 $sid = $questionnaire->survey->id;
 $courseid = $course->id;
-
 // Tab setup.
 if (!isset($SESSION->questionnaire)) {
     $SESSION->questionnaire = new stdClass();
 }
 $SESSION->questionnaire->current_tab = 'myreport';
-
 switch ($action) {
     case 'summary':
         if (empty($questionnaire->survey)) {
@@ -82,8 +75,8 @@ switch ($action) {
         }
         $SESSION->questionnaire->current_tab = 'mysummary';
         $select = 'survey_id = '.$questionnaire->sid.' AND username = \''.$userid.'\' AND complete=\'y\'';
-        $resps = $DB->get_records_select('questionnaire_response', $select);
-        if (!$resps = $DB->get_records_select('questionnaire_response', $select)) {
+        $resps = get_remote_questionnaire_response($select);
+        if (!$resps) {
             $resps = array();
         }
         $rids = array_keys($resps);
@@ -115,7 +108,7 @@ switch ($action) {
         $SESSION->questionnaire->current_tab = 'myvall';
         $select = 'survey_id = '.$questionnaire->sid.' AND username = \''.$userid.'\' AND complete=\'y\'';
         $sort = 'submitted ASC';
-        $resps = $DB->get_records_select('questionnaire_response', $select, $params = null, $sort);
+        $resps = get_remote_questionnaire_response($select, $sort);
         $titletext = get_string('myresponses', 'questionnaire');
 
         // Print the page header.
@@ -163,20 +156,16 @@ switch ($action) {
         }
         $select = 'survey_id = '.$questionnaire->sid.' AND username = \''.$userid.'\' AND complete=\'y\'';
         $sort = 'submitted ASC';
-        $resps = $DB->get_records_select('questionnaire_response', $select, $params = null, $sort);
+        $resps = get_remote_questionnaire_response($select, $sort);
         // All participants.
-        $sql = "SELECT R.id, R.survey_id, R.submitted, R.username
-         FROM {questionnaire_response} R
-         WHERE R.survey_id = ? AND
-               R.complete='y'
-         ORDER BY R.id";
-        if (!($respsallparticipants = $DB->get_records_sql($sql, array($sid)))) {
+        $select = 'survey_id = '.$sid.' AND complete=\'y\' ';
+        $sort = 'id ASC';
+        if (!($respsallparticipants = get_remote_questionnaire_response($select, $sort))) {
             $respsallparticipants = array();
         }
         $select = 'survey_id = '.$questionnaire->sid.' AND username = \''.$userid.'\' AND complete=\'y\'';
-        $fields = "id,survey_id,submitted,username";
-        $params = array();
-        $respsuser = $DB->get_records_select('questionnaire_response', $select, $params, $sort = '', $fields);
+        $sort = 'id ASC';
+        $respsuser = get_remote_questionnaire_response($select, $sort);
         $SESSION->questionnaire->numrespsallparticipants = count ($respsallparticipants);
         $SESSION->questionnaire->numselectedresps = $SESSION->questionnaire->numrespsallparticipants;
         $iscurrentgroupmember = false;
@@ -252,7 +241,6 @@ switch ($action) {
         } else {
             $titletext = get_string('yourresponse', 'questionnaire');
         }
-
         $compare = false;
         // Print the page header.
         echo $OUTPUT->header();

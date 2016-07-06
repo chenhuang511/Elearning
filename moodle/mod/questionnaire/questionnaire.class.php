@@ -463,7 +463,7 @@ class questionnaire {
         global $USER, $DB;
 
         if (!empty($rid)) {
-            $response = $DB->get_record('questionnaire_response', array('id' => $rid));
+            $response = get_remote_questionnaire_response_by_rid($rid);
 
             // If the response was not found, can't view it.
             if (empty($response)) {
@@ -561,11 +561,13 @@ class questionnaire {
 
         if (!$userid) {
             // Provide for groups setting.
-            return $DB->count_records('questionnaire_response', array('survey_id' => $this->sid, 'complete' => 'y'));
+            $select = 'survey_id = '.$this->sid.' AND complete=\'y\'';
         } else {
-            return $DB->count_records('questionnaire_response', array('survey_id' => $this->sid, 'username' => $userid,
-                                      'complete' => 'y'));
+            $select = 'survey_id = '.$this->sid.' AND username = \''.$userid.'\' AND complete=\'y\'';
         }
+        $sort = '';
+        $resps = get_remote_questionnaire_response($select, $sort);
+        return count($resps);
     }
 
     private function has_required($section = 0) {
@@ -1323,17 +1325,22 @@ class questionnaire {
     private function response_commit($rid) {
         global $DB;
 
-        $record = new stdClass();
-        $record->id = $rid;
-        $record->complete = 'y';
-        $record->submitted = time();
+        $data = array();
+        $data['data[0][name]'] = 'complete';
+        $data['data[0][value]'] = 'y';
+        $data['data[1][name]'] = 'submitted';
+        $data['data[1][value]'] = time();
 
         if ($this->grade < 0) {
-            $record->grade = 1;  // Don't know what to do if its a scale...
+            // Don't know what to do if its a scale...
+            $data['data[2][name]'] = 'grade';
+            $data['data[2][value]'] = 1;
         } else {
-            $record->grade = $this->grade;
+            $data['data[2][name]'] = 'grade';
+            $data['data[2][value]'] = $this->grade;
         }
-        return $DB->update_record('questionnaire_response', $record);
+
+        return update_remote_response_by_mbl('questionnaire_response', $rid, $data);
     }
 
     private function get_response($username, $rid = 0) {
@@ -1535,18 +1542,20 @@ class questionnaire {
 
     public function response_insert($sid, $section, $rid, $userid, $resume=false) {
         global $DB, $USER;
-
-        $record = new stdClass();
-        $record->submitted = time();
+        $data = array();
+        $data['data[0][name]'] = 'submitted';
+        $data['data[0][value]'] = time();
 
         if (empty($rid)) {
-            // Create a uniqe id for this response.
-            $record->survey_id = $sid;
-            $record->username = $userid;
-            $rid = $DB->insert_record('questionnaire_response', $record);
+//            $rid = $DB->insert_record('questionnaire_response', $record);
+            $data['data[1][name]'] = 'survey_id';
+            $data['data[1][value]'] = $sid;
+            $data['data[2][name]'] = 'username';
+            $data['data[2][value]'] = $userid;
+
+            $rid = save_remote_response_by_mbl('questionnaire_response', $data);
         } else {
-            $record->id = $rid;
-            $DB->update_record('questionnaire_response', $record);
+            update_remote_response_by_mbl('questionnaire_response',$rid, $data);
         }
         if ($resume) {
             // Log this saved response.

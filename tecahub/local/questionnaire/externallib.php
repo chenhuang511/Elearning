@@ -280,7 +280,7 @@ class local_questionnaire_external extends external_api {
             'data' => $data
         );
 
-        $params = self::validate_parameters(self::save_response_questionnaire_parameters(), $params);
+        $params = self::validate_parameters(self::save_response_by_mbl_parameters(), $params);
 
         $data = new stdClass();
 
@@ -294,10 +294,7 @@ class local_questionnaire_external extends external_api {
 
         $transaction->allow_commit();
 
-        $result = array();
-        $result['id'] = $id;
-
-        return $result;
+        return $id;
     }
 
     /**
@@ -318,7 +315,7 @@ class local_questionnaire_external extends external_api {
         return new external_function_parameters (
             array(
                 'tablename' => new external_value(PARAM_TEXT, ' the table name'),
-                'id' => new external_value(PARAM_TEXT, 'key id'),
+                'id' => new external_value(PARAM_INT, 'key id'),
                 'data' => new external_multiple_structure(
                     new external_single_structure(
                         array(
@@ -365,7 +362,7 @@ class local_questionnaire_external extends external_api {
         }
 
         foreach ($params['data'] as $key => $value) {
-            $data->$key = $value;
+            $data->$value['name'] = $value['value'];
         }
 
         $transaction = $DB->start_delegated_transaction();
@@ -392,6 +389,349 @@ class local_questionnaire_external extends external_api {
             array(
                 'status' => new external_value(PARAM_BOOL, 'status: true if success'),
                 'warnings' => new external_warnings(),
+            )
+        );
+    }
+
+    /**
+     * get record questionnaire attempts by condition
+     */
+    public static function get_questionnaire_attempts_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'condition' => new external_value(PARAM_RAW, 'condition'),
+                'sort'      => new external_value(PARAM_RAW, 'sort')
+            )
+        );
+    }
+
+    public function get_questionnaire_attempts($condition, $sort)
+    {
+        global $CFG, $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::get_questionnaire_attempts_parameters(),
+            array('condition' => $condition, 'sort' => $sort));
+
+        return $DB->get_records_select('questionnaire_attempts', $params['condition'], null, $params['sort']);
+    }
+
+    public static function get_questionnaire_attempts_returns()
+    {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
+                    'qid' => new external_value(PARAM_INT, 'question_id'),
+                    'userid' => new external_value(PARAM_INT, 'content'),
+                    'rid' => new external_value(PARAM_INT, 'value'),
+                    'timemodified' => new external_value(PARAM_INT, 'value'),
+                )
+            )
+        );
+    }
+    /**
+     * get record questionnaire response by condition
+     */
+    public static function get_questionnaire_response_parameters()
+    {
+        return self::get_questionnaire_attempts_parameters();
+    }
+
+    public function get_questionnaire_response($condition, $sort)
+    {
+        global $CFG, $DB;
+        //validate parameter
+        $params = self::validate_parameters(self::get_questionnaire_response_parameters(),
+            array('condition' => $condition, 'sort' => $sort));
+
+        return $DB->get_records_select('questionnaire_response', $params['condition'], null, $params['sort']);
+    }
+
+    public static function get_questionnaire_response_returns()
+    {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
+                    'survey_id' => new external_value(PARAM_INT, 'question_id'),
+                    'submitted' => new external_value(PARAM_INT, 'content'),
+                    'complete' => new external_value(PARAM_TEXT, 'value'),
+                    'grade' => new external_value(PARAM_INT, 'value'),
+                    'username' => new external_value(PARAM_TEXT, 'value'),
+                )
+            )
+        );
+    }
+    /**
+ * get record questionnaire response by condition
+ */
+    //continue
+    public static function get_questionnaire_bool_question_parameters()
+    {
+        return self::get_questionnaire_attempts_parameters();
+    }
+
+    public function get_questionnaire_bool_question($condition, $sort)
+    {
+        global $CFG, $DB;
+        //validate parameter
+        $params = self::validate_parameters(self::get_questionnaire_response_parameters(),
+            array('condition' => $condition, 'sort' => $sort));
+
+        return $DB->get_records_select('questionnaire_response', $params['condition'], null, $params['sort']);
+    }
+
+    public static function get_questionnaire_bool_question_returns()
+    {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
+                    'survey_id' => new external_value(PARAM_INT, 'question_id'),
+                    'submitted' => new external_value(PARAM_INT, 'content'),
+                    'complete' => new external_value(PARAM_TEXT, 'value'),
+                    'grade' => new external_value(PARAM_INT, 'value'),
+                    'username' => new external_value(PARAM_TEXT, 'value'),
+                )
+            )
+        );
+    }
+    /**
+ * get record questionnaire response by condition
+ */
+    //continue
+    public static function get_questionnaire_single_question_choice_parameters()
+    {
+        return self::get_questionnaire_attempts_parameters();
+    }
+
+    public function get_questionnaire_single_question_choice($condition, $sort)
+    {
+        global $CFG, $DB;
+        //validate parameter
+        $params = self::validate_parameters(self::get_questionnaire_response_parameters(),
+            array('condition' => $condition, 'sort' => $sort));
+
+        return $DB->get_records_select('questionnaire_response', $params['condition'], null, $params['sort']);
+    }
+
+    public static function get_questionnaire_single_question_choice_returns()
+    {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
+                    'survey_id' => new external_value(PARAM_INT, 'question_id'),
+                    'submitted' => new external_value(PARAM_INT, 'content'),
+                    'complete' => new external_value(PARAM_TEXT, 'value'),
+                    'grade' => new external_value(PARAM_INT, 'value'),
+                    'username' => new external_value(PARAM_TEXT, 'value'),
+                )
+            )
+        );
+    }
+    /**
+ * get record questionnaire response by condition
+ */
+    //continue
+    public static function get_questionnaire_multiple_question_choice_parameters()
+    {
+        return self::get_questionnaire_attempts_parameters();
+    }
+
+    public function get_questionnaire_multiple_question_choice($condition, $sort)
+    {
+        global $CFG, $DB;
+        //validate parameter
+        $params = self::validate_parameters(self::get_questionnaire_response_parameters(),
+            array('condition' => $condition, 'sort' => $sort));
+
+        return $DB->get_records_select('questionnaire_response', $params['condition'], null, $params['sort']);
+    }
+
+    public static function get_questionnaire_multiple_question_choice_returns()
+    {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
+                    'survey_id' => new external_value(PARAM_INT, 'question_id'),
+                    'submitted' => new external_value(PARAM_INT, 'content'),
+                    'complete' => new external_value(PARAM_TEXT, 'value'),
+                    'grade' => new external_value(PARAM_INT, 'value'),
+                    'username' => new external_value(PARAM_TEXT, 'value'),
+                )
+            )
+        );
+    }
+    /**
+ * get record questionnaire response by condition
+ */
+    //continue
+    public static function get_questionnaire_gest_choice_parameters()
+    {
+        return self::get_questionnaire_attempts_parameters();
+    }
+
+    public function get_questionnaire_gest_choice($condition, $sort)
+    {
+        global $CFG, $DB;
+        //validate parameter
+        $params = self::validate_parameters(self::get_questionnaire_response_parameters(),
+            array('condition' => $condition, 'sort' => $sort));
+
+        return $DB->get_records_select('questionnaire_response', $params['condition'], null, $params['sort']);
+    }
+
+    public static function get_questionnaire_gest_choice_returns()
+    {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
+                    'survey_id' => new external_value(PARAM_INT, 'question_id'),
+                    'submitted' => new external_value(PARAM_INT, 'content'),
+                    'complete' => new external_value(PARAM_TEXT, 'value'),
+                    'grade' => new external_value(PARAM_INT, 'value'),
+                    'username' => new external_value(PARAM_TEXT, 'value'),
+                )
+            )
+        );
+    }
+    /**
+ * get record questionnaire response by condition
+ */
+    //continue
+    public static function get_questionnaire_other_question_choice_parameters()
+    {
+        return self::get_questionnaire_attempts_parameters();
+    }
+
+    public function get_questionnaire_other_question_choice($condition, $sort)
+    {
+        global $CFG, $DB;
+        //validate parameter
+        $params = self::validate_parameters(self::get_questionnaire_response_parameters(),
+            array('condition' => $condition, 'sort' => $sort));
+
+        return $DB->get_records_select('questionnaire_response', $params['condition'], null, $params['sort']);
+    }
+
+    public static function get_questionnaire_other_question_choice_returns()
+    {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
+                    'survey_id' => new external_value(PARAM_INT, 'question_id'),
+                    'submitted' => new external_value(PARAM_INT, 'content'),
+                    'complete' => new external_value(PARAM_TEXT, 'value'),
+                    'grade' => new external_value(PARAM_INT, 'value'),
+                    'username' => new external_value(PARAM_TEXT, 'value'),
+                )
+            )
+        );
+    }
+    /**
+ * get record questionnaire response by condition
+ */
+    //continue
+    public static function get_questionnaire_rank_question_choice_parameters()
+    {
+        return self::get_questionnaire_attempts_parameters();
+    }
+
+    public function get_questionnaire_rank_question_choice($condition, $sort)
+    {
+        global $CFG, $DB;
+        //validate parameter
+        $params = self::validate_parameters(self::get_questionnaire_response_parameters(),
+            array('condition' => $condition, 'sort' => $sort));
+
+        return $DB->get_records_select('questionnaire_response', $params['condition'], null, $params['sort']);
+    }
+
+    public static function get_questionnaire_rank_question_choice_returns()
+    {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
+                    'survey_id' => new external_value(PARAM_INT, 'question_id'),
+                    'submitted' => new external_value(PARAM_INT, 'content'),
+                    'complete' => new external_value(PARAM_TEXT, 'value'),
+                    'grade' => new external_value(PARAM_INT, 'value'),
+                    'username' => new external_value(PARAM_TEXT, 'value'),
+                )
+            )
+        );
+    }
+    /**
+ * get record questionnaire response by condition
+ */
+    //continue
+    public static function get_questionnaire_text_question_parameters()
+    {
+        return self::get_questionnaire_attempts_parameters();
+    }
+
+    public function get_questionnaire_text_question($condition, $sort)
+    {
+        global $CFG, $DB;
+        //validate parameter
+        $params = self::validate_parameters(self::get_questionnaire_response_parameters(),
+            array('condition' => $condition, 'sort' => $sort));
+
+        return $DB->get_records_select('questionnaire_response', $params['condition'], null, $params['sort']);
+    }
+
+    public static function get_questionnaire_text_question_returns()
+    {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
+                    'survey_id' => new external_value(PARAM_INT, 'question_id'),
+                    'submitted' => new external_value(PARAM_INT, 'content'),
+                    'complete' => new external_value(PARAM_TEXT, 'value'),
+                    'grade' => new external_value(PARAM_INT, 'value'),
+                    'username' => new external_value(PARAM_TEXT, 'value'),
+                )
+            )
+        );
+    }
+    /**
+ * get record questionnaire response by condition
+ */
+    public static function get_questionnaire_date_question_parameters()
+    {
+        return self::get_questionnaire_attempts_parameters();
+    }
+
+    public function get_questionnaire_date_question($condition, $sort)
+    {
+        global $CFG, $DB;
+        //validate parameter
+        $params = self::validate_parameters(self::get_questionnaire_response_parameters(),
+            array('condition' => $condition, 'sort' => $sort));
+
+        return $DB->get_records_select('questionnaire_response', $params['condition'], null, $params['sort']);
+    }
+
+    public static function get_questionnaire_date_question_returns()
+    {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
+                    'survey_id' => new external_value(PARAM_INT, 'question_id'),
+                    'submitted' => new external_value(PARAM_INT, 'content'),
+                    'complete' => new external_value(PARAM_TEXT, 'value'),
+                    'grade' => new external_value(PARAM_INT, 'value'),
+                    'username' => new external_value(PARAM_TEXT, 'value'),
+                )
             )
         );
     }
