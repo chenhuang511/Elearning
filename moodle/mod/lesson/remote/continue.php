@@ -72,8 +72,12 @@ if (!$canmanage) {
 
 // record answer (if necessary) and show response (if none say if answer is correct or not)
 $page = $lesson->load_page(required_param('pageid', PARAM_INT));
-
-$userhasgrade = get_remote_count_by_lessonid_and_userid('lesson_grades', $lesson->id, $USER->id);
+$params = array();
+$params['parameters[0][name]'] = "lessonid";
+$params['parameters[0][value]'] = $lesson->id;
+$params['parameters[1][name]'] = "userid";
+$params['parameters[1][value]'] = $USER->id;
+$userhasgrade = get_remote_count_by("lesson_grades", $params);
 $reviewmode = false;
 if ($userhasgrade && !$lesson->retake) {
     $reviewmode = true;
@@ -96,7 +100,12 @@ if (isset($USER->modattempts[$lesson->id])) {
         $result->newpageid = LESSON_EOL;
     } else {
         //$nretakes = $DB->count_records("lesson_grades", array("lessonid" => $lesson->id, "userid" => $USER->id));
-        $nretakes = get_remote_count_by_lessonid_and_userid('lesson_grades', $lesson->id, $USER->id);
+        $params = array();
+        $params['parameters[0][name]'] = "lessonid";
+        $params['parameters[0][value]'] = $lesson->id;
+        $params['parameters[1][name]'] = "userid";
+        $params['parameters[1][value]'] = $USER->id;
+        $nretakes = get_remote_count_by("lesson_grades", $params);
         $nretakes--; // make sure we are looking at the right try.
         $attempts = $DB->get_records("lesson_attempts", array("lessonid" => $lesson->id, "userid" => $USER->id, "retry" => $nretakes), "timeseen", "id, pageid");
         $found = false;

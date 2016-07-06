@@ -33,7 +33,7 @@ function get_remote_assign_by_id($assignid, $options = array())
  * @return stdClass $submissionstatus
  */
 function get_remote_get_submission_status($assignid, $userid = null)
-{   
+{
     return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
@@ -171,19 +171,24 @@ function get_remote_count_submissions_need_grading_by_host_id($params){
  * Get submission by assignid, userid, groupid.
  *
  * @param int $params['assignment'] . the assign id
- * @param string $params['useremail'] . the email user
+ * @param string $params['userid'] . the user id
  * @param int $params['groupid'] . the group id
  * @param int $params['attemptnumber'] . the attemptnumber submisison
+ * @param int $params['mode'] . order by DESC or ASC
  *
  * @return stdClass $results . list submissions
  */
 function get_submission_by_assignid_userid_groupid($params){
     
-    if(!isset($params['attemptnumber']))
+    if(!isset($params['attemptnumber'])){
         $params['attemptnumber'] = 0;
-    
+    }
+    if(!isset($params['groupid'])){
+        $params['groupid'] = 0;
+    }
+
     $results = array();
-    
+
     $submissions =  moodle_webservice_client(
         array(
             'domain' => HUB_URL,

@@ -66,7 +66,12 @@ $canmanage = has_capability('mod/lesson:manage', $context);
 $lessonoutput = $PAGE->get_renderer('mod_lesson');
 
 $reviewmode = false;
-$userhasgrade = get_remote_count_by_lessonid_and_userid('lesson_grades', $lesson->id, $USER->id);
+$params = array();
+$params['parameters[0][name]'] = "lessonid";
+$params['parameters[0][value]'] = $lesson->id;
+$params['parameters[1][name]'] = "userid";
+$params['parameters[1][value]'] = $USER->id;
+$userhasgrade = get_remote_count_by("lesson_grades", $params);
 $retake = $lesson->retake;
 if ($userhasgrade && !$retake) {
     $reviewmode = true;
@@ -117,7 +122,14 @@ if (!$canmanage) {
             // check for the timespent condition
             if ($conditions->timespent) {
                 $timespent = false;
-                if ($attempttimes = get_remote_list_lesson_timer_by_userid_and_lessonid($USER->id, $dependentlesson->id)) {
+
+                $params = array();
+                $params['parameters[0][name]'] = "userid";
+                $params['parameters[0][value]'] = $USER->id;
+                $params['parameters[1][name]'] = "lessonid";
+                $params['parameters[1][value]'] = $dependentlesson->id;
+
+                if ($attempttimes = get_remote_list_lesson_timer_by($params, "starttime")) {
                     // go through all the times and test to see if any of them satisfy the condition
                     foreach ($attempttimes as $attempttime) {
                         $duration = $attempttime->lessontime - $attempttime->starttime;
@@ -134,7 +146,12 @@ if (!$canmanage) {
             // check for the gradebetterthan condition
             if ($conditions->gradebetterthan) {
                 $gradebetterthan = false;
-                if ($studentgrades = get_remote_list_lesson_grades_by_lessonid_and_userid($dependentlesson->id, $USER->id)) {
+                $params = array();
+                $params['parameters[0][name]'] = "lessonid";
+                $params['parameters[0][value]'] = $dependentlesson->id;
+                $params['parameters[1][name]'] = "userid";
+                $params['parameters[1][value]'] = $USER->id;
+                if ($studentgrades = get_remote_list_lesson_grades_by($params)) {
                     // go through all the grades and test to see if any of them satisfy the condition
                     foreach ($studentgrades as $studentgrade) {
                         if ($studentgrade->grade >= $conditions->gradebetterthan) {
@@ -149,8 +166,12 @@ if (!$canmanage) {
 
             // check for the completed condition
             if ($conditions->completed) {
-                //if (!$DB->count_records('lesson_grades', array('userid' => $USER->id, 'lessonid' => $dependentlesson->id))) {
-                if (!get_remote_count_by_lessonid_and_userid('lesson_grades', $dependentlesson->id, $USER->id)) {
+                $params = array();
+                $params['parameters[0][name]'] = "lessonid";
+                $params['parameters[0][value]'] = $dependentlesson->id;
+                $params['parameters[1][name]'] = "userid";
+                $params['parameters[1][value]'] = $USER->id;
+                if (!get_remote_count_by("lesson_grades", $params)) {
                     $errors[] = get_string('completederror', 'lesson');
                 }
             }
@@ -174,12 +195,20 @@ if ($pageid == LESSON_UNSEENBRANCHPAGE) {
 $attemptflag = false;
 if (empty($pageid)) {
     // make sure there are pages to view
-    $lessonpageid = get_remote_field_lesson_pages_by_lessonid_and_prevpageid($lesson->id, 0);
+    $params = array();
+    $params['parameters[0][name]'] = "lessonid";
+    $params['parameters[0][value]'] = $lesson->id;
+    $params['parameters[1][name]'] = "prevpageid";
+    $params['parameters[1][value]'] = 0;
+    $lessonpageid = get_remote_field_by("lesson_pages", $params, "id");
     if (!$lessonpageid) {
         if (!$canmanage) {
             $lesson->add_message(get_string('lessonnotready2', 'lesson')); // a nice message to the student
         } else {
-            if (!get_remote_count_by_lessonid_and_userid('lesson_pages', $lesson->id)) {
+            $params = array();
+            $params['parameters[0][name]'] = "lessonid";
+            $params['parameters[0][value]'] = $lesson->id;
+            if (!get_remote_count_by("lesson_pages", $lesson->id)) {
                 redirect("$CFG->wwwroot/mod/lesson/remote/edit.php?id=$cm->id"); // no pages - redirect to add pages
             } else {
                 $lesson->add_message(get_string('lessonpagelinkingbroken', 'lesson'));  // ok, bad mojo
@@ -188,7 +217,12 @@ if (empty($pageid)) {
     }
 
     // if no pageid given see if the lesson has been started
-    $retries = get_remote_count_by_lessonid_and_userid('lesson_grades', $lesson->id, $USER->id);
+    $params = array();
+    $params['parameters[0][name]'] = "lessonid";
+    $params['parameters[0][value]'] = $lesson->id;
+    $params['parameters[0][name]'] = "userid";
+    $params['parameters[0][value]'] = $USER->id;
+    $retries = get_remote_count_by("lesson_grades", $params);
 
     if ($retries > 0) {
         $attemptflag = true;
@@ -198,7 +232,7 @@ if (empty($pageid)) {
         unset($USER->modattempts[$lesson->id]);  // if no pageid, then student is NOT reviewing
     }
     // If there are any questions that have been answered correctly (or not) in this attempt.
-    $allattempts = get_remote_lesson_attempts_by_lessonid_and_userid($lesson->id, $USER->id, $retries, 0, -1);
+    $allattempts = $lesson->get_attempts($retries);
     if (!empty($allattempts)) {
         $attempt = end($allattempts);
         $attemptpage = $lesson->load_page($attempt->pageid);
@@ -221,7 +255,15 @@ if (empty($pageid)) {
         }
     }
 
-    if ($branchtables = get_remote_lesson_branch_by_lessonid_and_userid_and_retry($lesson->id, $USER->id, $retries)) {
+    $params = array();
+    $params['parameters[0][name]'] = "lessonid";
+    $params['parameters[0][value]'] = $lesson->id;
+    $params['parameters[1][name]'] = "userid";
+    $params['parameters[1][value]'] = $USER->id;
+    $params['parameters[2][name]'] = "retry";
+    $params['parameters[2][value]'] = $retries;
+
+    if ($branchtables = get_remote_list_lesson_branch_by($params, "timeseen DESC")) {
         // in here, user has viewed a branch table
         $lastbranchtable = current($branchtables);
         if (count($allattempts) > 0) {
@@ -246,8 +288,15 @@ if (empty($pageid)) {
     }
     // Check to see if end of lesson was reached.
     if ((isset($lastpageseen) && ($lastpageseen != LESSON_EOL))) {
-        if ((get_remote_count_by_lessonid_and_userid('lesson_attempts', $lesson->id, $USER->id, $retries) > 0)
-            || get_remote_count_by_lessonid_and_userid('lesson_branch', $lesson->id, $USER->id, $retries) > 0
+        $params = array();
+        $params['parameters[0][name]'] = "lessonid";
+        $params['parameters[0][value]'] = $lesson->id;
+        $params['parameters[1][name]'] = "userid";
+        $params['parameters[1][value]'] = $USER->id;
+        $params['parameters[1][name]'] = "retry";
+        $params['parameters[1][value]'] = $retries;
+        if ((get_remote_count_by("lesson_attempts", $params) > 0)
+            || get_remote_count_by("lesson_branch", $params) > 0
         ) {
 
             if ($lesson->timelimit) {
@@ -282,7 +331,12 @@ if (empty($pageid)) {
         }
     }
     // start at the first page
-    if (!$pageid = get_remote_field_lesson_pages_by_lessonid_and_prevpageid($lesson->id, 0)) {
+    $params = array();
+    $params['parameters[0][name]'] = "lessonid";
+    $params['parameters[0][value]'] = $lesson->id;
+    $params['parameters[1][name]'] = "prevpageid";
+    $params['parameters[1][value]'] = 0;
+    if (!$pageid = get_remote_field_by("lesson_pages", $params, "id")) {
         print_error('cannotfindfirstpage', 'lesson');
     }
 /// This is the code for starting a timed test
@@ -342,8 +396,12 @@ if ($pageid != LESSON_EOL) {
 
         if ($page->qtype == LESSON_PAGE_BRANCHTABLE && $lesson->minquestions) {
             // tell student how many questions they have seen, how many are required and their grade
-            //$ntries = $DB->count_records("lesson_grades", array("lessonid" => $lesson->id, "userid" => $USER->id));
-            $ntries = get_remote_count_by_lessonid_and_userid('lesson_grades', $lesson->id, $USER->id);
+            $params = array();
+            $params['parameters[0][name]'] = "lessonid";
+            $params['parameters[0][value]'] = $lesson->id;
+            $params['parameters[1][name]'] = "userid";
+            $params['parameters[1][value]'] = $USER->id;
+            $ntries = get_remote_count_by("lesson_grades", $params);
             $gradeinfo = lesson_grade($lesson, $ntries);
             if ($gradeinfo->attempts) {
                 if ($gradeinfo->nquestions < $lesson->minquestions) {
@@ -393,7 +451,12 @@ if ($pageid != LESSON_EOL) {
         // this is for modattempts option.  Find the users previous answer to this page,
         //   and then display it below in answer processing
         if (isset($USER->modattempts[$lesson->id])) {
-            $retries = get_remote_count_by_lessonid_and_userid('lesson_grades', $lesson->id, $USER->id);
+            $params = array();
+            $params['parameters[0][name]'] = "lessonid";
+            $params['parameters[0][value]'] = $lesson->id;
+            $params['parameters[1][name]'] = "userid";
+            $params['parameters[1][value]'] = $USER->id;
+            $retries = get_remote_count_by("lesson_grades", $params);
             if (!$attempts = $lesson->get_attempts($retries - 1, false, $page->id)) {
                 print_error('cannotfindpreattempt', 'lesson');
             }
@@ -442,8 +505,12 @@ if ($pageid != LESSON_EOL) {
     // Used to check to see if the student ran out of time
     $outoftime = optional_param('outoftime', '', PARAM_ALPHA);
 
-    //$ntries = $DB->count_records("lesson_grades", array("lessonid" => $lesson->id, "userid" => $USER->id));
-    $ntries = get_remote_count_by_lessonid_and_userid('lesson_grades', $lesson->id, $USER->id);
+    $params = array();
+    $params['parameters[0][name]'] = "lessonid";
+    $params['parameters[0][value]'] = $lesson->id;
+    $params['parameters[1][name]'] = "userid";
+    $params['parameters[1][value]'] = $USER->id;
+    $ntries = get_remote_count_by("lesson_grades", $params);
 
     if (isset($USER->modattempts[$lesson->id])) {
         $ntries--;  // need to look at the old attempts :)

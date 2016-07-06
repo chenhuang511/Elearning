@@ -530,7 +530,7 @@ function chat_login_user($chatid, $version, $groupid, $course, $userid = null) {
             $chatuser->ip = getremoteaddr();
         }
 
-        if (($chatuser->course != $course->id) or ($chatuser->userid != $USER->id)) {
+        if (($chatuser->course != $course->id) or ($chatuser->userid != $userid)) {
             return false;
         }
         $DB->update_record('chat_users', $chatuser);

@@ -67,7 +67,11 @@ switch ($action) {
             echo $OUTPUT->heading(get_string("thefollowingpagesjumptothispage", "lesson"));
             echo "<p align=\"center\">\n";
             foreach ($answers as $answer) {
-                if (!$title = get_remote_field_lesson_pages_by_id($answer->pageid, 'title')) {
+                $params = array();
+                $params['parameters[0][name]'] = "id";
+                $params['parameters[0][value]'] = $answer->pageid;
+
+                if (!$title = get_remote_field_by("lesson_pages", $params, "title")) {
                     print_error('cannotfindpagetitle', 'lesson');
                 }
                 echo $title . "<br />\n";
@@ -79,14 +83,18 @@ switch ($action) {
     case 'move':
         $PAGE->navbar->add(get_string($action, 'lesson'));
 
-        $title = get_remote_field_lesson_pages_by_id($pageid, 'title');
+        $params = array();
+        $params['parameters[0][name]'] = "id";
+        $params['parameters[0][value]'] = $pageid;
+        $title = get_remote_field_by("lesson_pages", $params, "title");
+        
 
         echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('moving', 'lesson', format_String($title)));
         echo $OUTPUT->heading(get_string("moving", "lesson", format_string($title)), 3);
 
         if (!$page = get_remote_lesson_pages_by_lessonid_and_prevpageid($lesson->id, 0)) {
-        print_error('cannotfindfirstpage', 'lesson');
-    }
+            print_error('cannotfindfirstpage', 'lesson');
+        }
 
         echo html_writer::start_tag('div', array('class' => 'move-page'));
 

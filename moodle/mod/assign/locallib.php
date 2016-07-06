@@ -208,7 +208,11 @@ class assign {
         $params['action'] = $action;
         $cm = $this->get_course_module();
         if ($cm) {
-            $currenturl = new moodle_url('/mod/assign/remote/view.php', array('id' => $cm->id));
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $currenturl = new moodle_url('/mod/assign/view.php', array('id' => $cm->id));
+            }else{
+                $currenturl = new moodle_url('/mod/assign/remote/view.php', array('id' => $cm->id));
+            }
         } else {
             $currenturl = new moodle_url('/mod/assign/index.php', array('id' => $this->get_course()->id));
         }
@@ -548,7 +552,11 @@ class assign {
         }
         // Now show the right view page.
         if ($action == 'redirect') {
-            $nextpageurl = new moodle_url('/mod/assign/remote/view.php', $nextpageparams);
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $nextpageurl = new moodle_url('/mod/assign/view.php', $nextpageparams);
+            }else{
+                $nextpageurl = new moodle_url('/mod/assign/remote/view.php', $nextpageparams);
+            }
             redirect($nextpageurl);
             return;
         } else if ($action == 'savegradingresult') {
@@ -2998,8 +3006,13 @@ class assign {
                                         get_string('downloadall', 'assign'));
             $result .= $this->get_renderer()->render($header);
             $result .= $this->get_renderer()->notification(get_string('nosubmission', 'assign'));
-            $url = new moodle_url('/mod/assign/view.php', array('id'=>$this->get_course_module()->id,
-                                                                    'action'=>'grading'));
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $url = new moodle_url('/mod/assign/view.php', array('id'=>$this->get_course_module()->id,
+                    'action'=>'grading'));
+            } else{
+                $url = new moodle_url('/mod/assign/remote/view.php', array('id'=>$this->get_course_module()->id,
+                    'action'=>'grading'));
+            }
             $result .= $this->get_renderer()->continue_button($url);
             $result .= $this->view_footer();
         } else if ($zipfile = $this->pack_files($filesforzipping)) {
@@ -3096,6 +3109,11 @@ class assign {
             $userid = $USER->id;
         }
 
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $user = $DB->get_record('user', array('id' => $userid));
+            $rruser = get_remote_mapping_user($user);
+        }
+        
         // If the userid is not null then use userid.
         $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid, 'groupid'=>0);
         if ($attemptnumber >= 0) {
@@ -3108,10 +3126,9 @@ class assign {
         if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
             $submissions = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', '*', 0, 1);
         }
-        else if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-            unset($params['userid']);
-            $params['useremail'] = $this->get_email_from_userid($userid);
-            
+        else{
+            $params['userid'] = $rruser[0]->id;
+            $params['mode'] = 'DESC';
             $submissions = get_submission_by_assignid_userid_groupid($params);
         }
 
@@ -3383,6 +3400,7 @@ class assign {
         $this->register_return_link('grade', $returnparams);
 
         $user = $DB->get_record('user', array('id' => $userid));
+
         $submission = $this->get_user_submission($userid, false, $attemptnumber);
         $submissiongroup = null;
         $teamsubmission = null;
@@ -3777,27 +3795,43 @@ class assign {
 
         $links = array();
         if (has_capability('gradereport/grader:view', $this->get_course_context()) &&
-                has_capability('moodle/grade:viewall', $this->get_course_context())) {
+            has_capability('moodle/grade:viewall', $this->get_course_context())) {
             $gradebookurl = '/grade/report/grader/index.php?id=' . $this->get_course()->id;
             $links[$gradebookurl] = get_string('viewgradebook', 'assign');
         }
         if ($this->is_any_submission_plugin_enabled() && $this->count_submissions()) {
-            $downloadurl = '/mod/assign/remote/view.php?id=' . $cmid . '&action=downloadall';
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $downloadurl = '/mod/assign/view.php?id=' . $cmid . '&action=downloadall';
+            } else{
+                $downloadurl = '/mod/assign/remote/view.php?id=' . $cmid . '&action=downloadall';
+            }
             $links[$downloadurl] = get_string('downloadall', 'assign');
         }
         if ($this->is_blind_marking() &&
                 has_capability('mod/assign:revealidentities', $this->get_context())) {
-            $revealidentitiesurl = '/mod/assign/remote/view.php?id=' . $cmid . '&action=revealidentities';
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+                $revealidentitiesurl = '/mod/assign/view.php?id=' . $cmid . '&action=revealidentities';
+            } else {
+                $revealidentitiesurl = '/mod/assign/remote/view.php?id=' . $cmid . '&action=revealidentities';
+            }
             $links[$revealidentitiesurl] = get_string('revealidentities', 'assign');
         }
         foreach ($this->get_feedback_plugins() as $plugin) {
             if ($plugin->is_enabled() && $plugin->is_visible()) {
                 foreach ($plugin->get_grading_actions() as $action => $description) {
-                    $url = '/mod/assign/remote/view.php' .
-                           '?id=' .  $cmid .
-                           '&plugin=' . $plugin->get_type() .
-                           '&pluginsubtype=assignfeedback' .
-                           '&action=viewpluginpage&pluginaction=' . $action;
+                    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                        $url = '/mod/assign/view.php' .
+                            '?id=' .  $cmid .
+                            '&plugin=' . $plugin->get_type() .
+                            '&pluginsubtype=assignfeedback' .
+                            '&action=viewpluginpage&pluginaction=' . $action;
+                    } else {
+                        $url = '/mod/assign/remote/view.php' .
+                            '?id=' .  $cmid .
+                            '&plugin=' . $plugin->get_type() .
+                            '&pluginsubtype=assignfeedback' .
+                            '&action=viewpluginpage&pluginaction=' . $action;
+                    }
                     $links[$url] = $description;
                 }
             }
@@ -3847,38 +3881,38 @@ class assign {
 
         // Print options for changing the filter and changing the number of results per page.
         $gradingoptionsformparams = array('cm'=>$cmid,
-                                          'contextid'=>$this->context->id,
-                                          'userid'=>$USER->id,
-                                          'submissionsenabled'=>$this->is_any_submission_plugin_enabled(),
-                                          'showquickgrading'=>$showquickgrading,
-                                          'quickgrading'=>$quickgrading,
-                                          'markingworkflowopt'=>$markingworkflowoptions,
-                                          'markingallocationopt'=>$markingallocationoptions,
-                                          'showonlyactiveenrolopt'=>$showonlyactiveenrolopt,
-                                          'showonlyactiveenrol'=>$this->show_only_active_users());
+            'contextid'=>$this->context->id,
+            'userid'=>$USER->id,
+            'submissionsenabled'=>$this->is_any_submission_plugin_enabled(),
+            'showquickgrading'=>$showquickgrading,
+            'quickgrading'=>$quickgrading,
+            'markingworkflowopt'=>$markingworkflowoptions,
+            'markingallocationopt'=>$markingallocationoptions,
+            'showonlyactiveenrolopt'=>$showonlyactiveenrolopt,
+            'showonlyactiveenrol'=>$this->show_only_active_users());
 
         $classoptions = array('class'=>'gradingoptionsform');
         $gradingoptionsform = new mod_assign_grading_options_form(null,
-                                                                  $gradingoptionsformparams,
-                                                                  'post',
-                                                                  '',
-                                                                  $classoptions);
+            $gradingoptionsformparams,
+            'post',
+            '',
+            $classoptions);
 
         $batchformparams = array('cm'=>$cmid,
-                                 'submissiondrafts'=>$this->get_instance()->submissiondrafts,
-                                 'duedate'=>$this->get_instance()->duedate,
-                                 'attemptreopenmethod'=>$this->get_instance()->attemptreopenmethod,
-                                 'feedbackplugins'=>$this->get_feedback_plugins(),
-                                 'context'=>$this->get_context(),
-                                 'markingworkflow'=>$markingworkflow,
-                                 'markingallocation'=>$markingallocation);
+            'submissiondrafts'=>$this->get_instance()->submissiondrafts,
+            'duedate'=>$this->get_instance()->duedate,
+            'attemptreopenmethod'=>$this->get_instance()->attemptreopenmethod,
+            'feedbackplugins'=>$this->get_feedback_plugins(),
+            'context'=>$this->get_context(),
+            'markingworkflow'=>$markingworkflow,
+            'markingallocation'=>$markingallocation);
         $classoptions = array('class'=>'gradingbatchoperationsform');
 
         $gradingbatchoperationsform = new mod_assign_grading_batch_operations_form(null,
-                                                                                   $batchformparams,
-                                                                                   'post',
-                                                                                   '',
-                                                                                   $classoptions);
+            $batchformparams,
+            'post',
+            '',
+            $classoptions);
 
         $gradingoptionsdata = new stdClass();
         $gradingoptionsdata->perpage = $perpage;
@@ -3889,17 +3923,24 @@ class assign {
 
         $actionformtext = $this->get_renderer()->render($gradingactions);
         $header = new assign_header($this->get_instance(),
-                                    $this->get_context(),
-                                    false,
-                                    $this->get_course_module()->id,
-                                    get_string('grading', 'assign'),
-                                    $actionformtext);
+            $this->get_context(),
+            false,
+            $this->get_course_module()->id,
+            get_string('grading', 'assign'),
+            $actionformtext);
         $o .= $this->get_renderer()->render($header);
 
-        $currenturl = $CFG->wwwroot .
-                      '/mod/assign/remote/view.php?id=' .
-                      $this->get_course_module()->id .
-                      '&action=grading';
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $currenturl = $CFG->wwwroot .
+                '/mod/assign/view.php?id=' .
+                $this->get_course_module()->id .
+                '&action=grading';
+        } else {
+            $currenturl = $CFG->wwwroot .
+                '/mod/assign/remote/view.php?id=' .
+                $this->get_course_module()->id .
+                '&action=grading';
+        }
 
         $o .= groups_print_activity_menu($this->get_course_module(), $currenturl, true);
 
@@ -3919,9 +3960,9 @@ class assign {
             $table = $this->get_renderer()->render($gradingtable);
             $page = optional_param('page', null, PARAM_INT);
             $quickformparams = array('cm'=>$this->get_course_module()->id,
-                                     'gradingtable'=>$table,
-                                     'sendstudentnotifications' => $this->get_instance()->sendstudentnotifications,
-                                     'page' => $page);
+                'gradingtable'=>$table,
+                'sendstudentnotifications' => $this->get_instance()->sendstudentnotifications,
+                'page' => $page);
             $quickgradingform = new mod_assign_quick_grading_form(null, $quickformparams);
 
             $o .= $this->get_renderer()->render(new assign_form('quickgradingform', $quickgradingform));
@@ -3941,13 +3982,12 @@ class assign {
         $users = array_keys($this->list_participants($currentgroup, true));
         if (count($users) != 0 && $this->can_grade()) {
             // If no enrolled user in a course then don't display the batch operations feature.
-            $assignform = new assign_form('gradingbatchoperationsform', $gradingbatchoperationsform, 'M.mod_assign.init_grading_table');
+            $assignform = new assign_form('gradingbatchoperationsform', $gradingbatchoperationsform);
             $o .= $this->get_renderer()->render($assignform);
         }
-        $withjsgradingoptions = (MOODLE_RUN_MODE === MOODLE_MODE_HUB) ? '' : 'M.mod_assign.init_grading_options';
         $assignform = new assign_form('gradingoptionsform',
-                                      $gradingoptionsform,
-                                      $withjsgradingoptions);
+            $gradingoptionsform,
+            'M.mod_assign.init_grading_options');
         $o .= $this->get_renderer()->render($assignform);
         return $o;
     }
@@ -3997,19 +4037,17 @@ class assign {
         global $CFG, $PAGE;
 
         $o = '';
-        $PAGE->set_state(moodle_page::STATE_PRINTING_HEADER);
-        $o .= $this->get_renderer()->standard_head_html();
         // Need submit permission to submit an assignment.
-        $o .= $this->get_renderer()->standard_top_of_body_html();
-        $PAGE->set_state(moodle_page::STATE_IN_BODY);
         $this->require_view_grades();
         require_once($CFG->dirroot . '/mod/assign/gradeform.php');
 
         // Only load this if it is.
         $o .= $this->view_grading_table();
 
+        $o .= $this->view_footer();
+
         \mod_assign\event\grading_table_viewed::create_from_assign($this)->trigger();
-        $o .= $this->get_renderer()->footer(true);
+
         return $o;
     }
 
@@ -4583,7 +4621,7 @@ class assign {
         // Check remote course
         if(MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
             $ruser = get_remote_mapping_user();
-            $remotesubmission = get_remote_get_submission_status($instance->id, $ruser['0']->id)->lastattempt;
+            $remotesubmission = get_remote_get_submission_status($instance->id, $ruser['0']->id);
             unset($remotesubmission->submission->plugins);
             $submissionplugins = $this->get_submission_plugins();
             
@@ -4684,11 +4722,12 @@ class assign {
             if (!$feedback){
                 return;
             }
-            $adminid = reset(explode(',', $CFG->siteadmins));
 
             $grader = $DB->get_record('user', array('email' => $feedback->grade->grader));
-            if(!$grader)
-                $grader = $DB->get_record('user', array('id' => (int)$adminid));
+
+//            $adminid = reset(explode(',', $CFG->siteadmins));
+//            if(!$grader)
+//                $grader = $DB->get_record('user', array('id' => (int)$adminid));
 
             unset($feedback->plugins);
 
@@ -4775,7 +4814,6 @@ class assign {
      * @return assign_attempt_history renderable object
      */
     public function get_assign_attempt_history_renderable($user) {
-
         $allsubmissions = $this->get_all_submissions($user->id);
         $allgrades = $this->get_all_grades($user->id);
 
@@ -4896,6 +4934,24 @@ class assign {
             $userid = $USER->id;
         }
 
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $grades = array();
+            $user = $DB->get_record('user', array('id' => $userid));
+            $ruser = get_remote_mapping_user($user);
+            $submissionstatus = get_remote_get_submission_status($this->get_instance()->id, $ruser[0]->id );
+
+
+            foreach($submissionstatus->previousattempts as $previousattemp){
+                // Switch grader on hub to host
+                $grader = $DB->get_record('user', array('email' => $previousattemp->grade->grader));
+                $previousattemp->grade->grader = $grader;
+
+                $grades[$previousattemp->grade->id] = $previousattemp->grade;
+            }
+
+            return $grades;
+        }
+
         $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid);
 
         $grades = $DB->get_records('assign_grades', $params, 'attemptnumber ASC');
@@ -4974,9 +5030,18 @@ class assign {
             // Params to get the user submissions.
             $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid);
         }
-
-        // Return the submissions ordered by attempt.
-        $submissions = $DB->get_records('assign_submission', $params, 'attemptnumber ASC');
+        if (MOODLE_RUN_MODE === MOODLE_RUN_HOST){
+            // Return the submissions ordered by attempt.
+            $submissions = $DB->get_records('assign_submission', $params, 'attemptnumber ASC');
+        } else {
+            $user = $DB->get_record('user', array('id' => $userid));
+            $ruser = get_remote_mapping_user($user);
+            
+            $params['userid'] = $ruser[0]->id;
+            $params['mode'] = 'ASC';
+            
+            $submissions = get_submission_by_assignid_userid_groupid($params);
+        }
 
         return $submissions;
     }
@@ -5062,7 +5127,11 @@ class assign {
 
         if ($this->can_view_grades()) {
             // Group selector will only be displayed if necessary.
-            $currenturl = new moodle_url('/mod/assign/remote/view.php', array('id' => $this->get_course_module()->id));
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $currenturl = new moodle_url('/mod/assign/view.php', array('id' => $this->get_course_module()->id));
+            } else{
+                $currenturl = new moodle_url('/mod/assign/remote/view.php', array('id' => $this->get_course_module()->id));
+            }
             $o .= groups_print_activity_menu($this->get_course_module(), $currenturl->out(), true);
 
             $summary = $this->get_assign_grading_summary_renderable();
@@ -7742,7 +7811,11 @@ class assign {
             if (empty($SESSION->mod_assign_useridlist[$this->get_useridlist_key($useridlistid)])) {
                 // If the userid list is not stored we must not save, as it is possible that the user in a
                 // given row position may not be the same now as when the grading page was generated.
-                $url = new moodle_url('/mod/assign/view.php', array('id' => $this->get_course_module()->id));
+                if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                    $url = new moodle_url('/mod/assign/view.php', array('id' => $this->get_course_module()->id));
+                } else{
+                    $url = new moodle_url('/mod/assign/remote/view.php', array('id' => $this->get_course_module()->id));
+                }
                 throw new moodle_exception('useridlistnotcached', 'mod_assign', $url);
             }
             $useridlist = $SESSION->mod_assign_useridlist[$this->get_useridlist_key($useridlistid)];

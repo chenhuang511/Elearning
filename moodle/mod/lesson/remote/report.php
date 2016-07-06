@@ -77,8 +77,12 @@ if ($action === 'delete') {
                     $try -= $modifier;
 
                     /// Clean up the timer table by removing using the order - this is silly, it should be linked to specific attempt (skodak)
-                    $params = array("userid" => $userid, "lessonid" => $lesson->id);
-                    $timers = get_remote_list_lesson_timer_by_userid_and_lessonid($userid, $lesson->id, $try, 1);
+                    $params = array();
+                    $params['parameters[0][name]'] = "userid";
+                    $params['parameters[0][value]'] = $userid;
+                    $params['parameters[1][name]'] = "lessonid";
+                    $params['parameters[1][value]'] = $lesson->id;
+                    $timers = get_remote_list_lesson_timer_by($params, "starttime", $try, 1);
 
                     if ($timers) {
                         $timer = reset($timers);
@@ -90,7 +94,13 @@ if ($action === 'delete') {
                     }
 
                     // Remove the grade from the grades tables - this is silly, it should be linked to specific attempt (skodak).
-                    $grades = get_remote_list_lesson_grades_by_lessonid_and_userid($lesson->id, $userid, $try, 1, "completed");
+                    $params = array();
+                    $params['parameters[0][name]'] = "lessonid";
+                    $params['parameters[0][value]'] = $lesson->id;
+                    $params['parameters[1][name]'] = "userid";
+                    $params['parameters[1][value]'] = $userid;
+
+                    $grades = get_remote_list_lesson_grades_by($params, "completed", $try, 1);
 
                     if ($grades) {
                         $grade = reset($grades);
@@ -110,7 +120,7 @@ if ($action === 'delete') {
                     $data['data[2][name]'] = 'retry';
                     $data['data[2][value]'] = $try;
                     $result = delete_remote_moodle_table('lesson_attempts', $data);
-                    
+
                     $params = array();
                     $params['params[0][name]'] = 'userid';
                     $params['params[0][op]'] = '=';
@@ -147,8 +157,16 @@ if ($action === 'delete') {
      **************************************************************************/
 
     // Count the number of branch and question pages in this lesson.
-    $branchcount = get_remote_count_lesson_pages_by_lessonid($lesson->id, LESSON_PAGE_BRANCHTABLE);
-    $questioncount = (intval(get_remote_count_lesson_pages_by_lessonid($lesson->id, 0)) - $branchcount);
+    $params = array();
+    $params['parameters[0][name]'] = "lessonid";
+    $params['parameters[0][value]'] = $lesson->id;
+    $params['parameters[1][name]'] = "qtype";
+    $params['parameters[1][value]'] = LESSON_PAGE_BRANCHTABLE;
+
+    $branchcount = get_remote_count_by("lesson_pages", $params);
+
+    $params['parameters[1][value]'] = 0;
+    $questioncount = (intval(get_remote_count_by("lesson_pages", $params)) - $branchcount);
 
     // Only load students if there attempts for this lesson.
     $attempts = check_remote_record_exists('lesson_attempts', 'lessonid', $lesson->id);
@@ -181,11 +199,19 @@ if ($action === 'delete') {
         exit();
     }
 
-    if (!$grades = get_remote_list_lesson_grades_by_lessonid($lesson->id)) {
+    $params = array();
+    $params['parameters[0][name]'] = "lessonid";
+    $params['parameters[0][value]'] = $lesson->id;
+
+    if (!$grades = get_remote_list_lesson_grades_by($params, "completed")) {
         $grades = array();
     }
 
-    if (!$times = get_remote_list_lesson_timer_by_lessonid($lesson->id)) {
+    $params = array();
+    $params['parameters[0][name]'] = "lessonid";
+    $params['parameters[0][value]'] = $lesson->id;
+
+    if (!$times = get_remote_list_lesson_timer_by($params, "starttime")) {
         $times = array();
     }
 
@@ -201,8 +227,11 @@ if ($action === 'delete') {
 
     // Build an array for output.
     $studentdata = array();
+    $params = array();
+    $params['parameters[0][name]'] = "lessonid";
+    $params['parameters[0][value]'] = $lesson->id;
 
-    $attempts = get_remote_recordset_lesson_attempts_by_lessonid($lesson->id);
+    $attempts = get_remote_recordset_lesson_attempts_by_lessonid($params);
     foreach ($attempts as $attempt) {
         // if the user is not in the array or if the retry number is not in the sub array, add the data for that try.
         if (empty($studentdata[$attempt->userid]) || empty($studentdata[$attempt->userid][$attempt->retry])) {
@@ -254,8 +283,11 @@ if ($action === 'delete') {
         }
     }
     $attempts->close();
+    $params = array();
+    $params['parameters[0][name]'] = "lessonid";
+    $params['parameters[0][value]'] = $lesson->id;
 
-    $branches = get_remote_recordset_lesson_branch_by_lessonid($lesson->id);
+    $branches = get_remote_recordset_lesson_branch_by_lessonid($params);
     foreach ($branches as $branch) {
         // If the user is not in the array or if the retry number is not in the sub array, add the data for that try.
         if (empty($studentdata[$branch->userid]) || empty($studentdata[$branch->userid][$branch->retry])) {
@@ -541,7 +573,14 @@ if ($action === 'delete') {
     $pagestats = array();
     while ($pageid != 0) { // EOL
         $page = $lessonpages[$pageid];
-        if ($allanswers = get_remote_list_lesson_attempts_by_lessonid_and_pageid($lesson->id, $page->id)) {
+
+        $params = array();
+        $params['parameters[0][name]'] = "lessonid";
+        $params['parameters[0][value]'] = $lesson->id;
+        $params['parameters[1][name]'] = "pageid";
+        $params['parameters[1][value]'] = $page->id;
+
+        if ($allanswers = get_remote_list_lesson_attempts_by($params, "timeseen")) {
             // get them ready for processing
             $orderedanswers = array();
             foreach ($allanswers as $singleanswer) {
@@ -595,11 +634,21 @@ if ($action === 'delete') {
         $answerpage->grayout = $page->grayout;
         $answerpage->context = $context;
 
+        $params = array();
+        $params['parameters[0][name]'] = "lessonid";
+        $params['parameters[0][value]'] = $lesson->id;
+        $params['parameters[1][name]'] = "userid";
+        $params['parameters[1][value]'] = $userid;
+        $params['parameters[2][name]'] = "retry";
+        $params['parameters[2][value]'] = $try;
+        $params['parameters[3][name]'] = "pageid";
+        $params['parameters[3][value]'] = $page->id;
+
         if (empty($userid)) {
             // there is no userid, so set these vars and display stats.
             $answerpage->grayout = 0;
             $useranswer = null;
-        } elseif ($useranswers = get_remote_list_lesson_attempts_by_lessonid_and_userid_and_retry_and_pageid($lesson->id, $userid, $try, $page->id)) {
+        } elseif ($useranswers = get_remote_list_lesson_attempts_by($params, "timeseen")) {
             // get the user's answer for this page
             // need to find the right one
             $i = 0;
@@ -639,8 +688,12 @@ if ($action === 'delete') {
         $table->align = array('right', 'left');
         $table->attributes['class'] = 'compacttable generaltable';
 
-        $params = array("lessonid" => $lesson->id, "userid" => $userid);
-        if (!$grades = get_remote_list_lesson_grades_by_lessonid_and_userid($lesson->id, $userid, $try, 1, "completed")) {
+        $params = array();
+        $params['parameters[0][name]'] = "lessonid";
+        $params['parameters[0][value]'] = $lesson->id;
+        $params['parameters[1][name]'] = "userid";
+        $params['parameters[1][value]'] = $userid;
+        if (!$grades = get_remote_list_lesson_grades_by($params, "completed", $try, 1)) {
             $grade = -1;
             $completed = -1;
         } else {
@@ -648,7 +701,14 @@ if ($action === 'delete') {
             $completed = $grade->completed;
             $grade = round($grade->grade, 2);
         }
-        if (!$times = get_remote_list_lesson_timer_by_userid_and_lessonid($userid, $lesson->id, $try, 1, "starttime")) {
+
+        $params = array();
+        $params['parameters[0][name]'] = "userid";
+        $params['parameters[0][value]'] = $userid;
+        $params['parameters[1][name]'] = "lessonid";
+        $params['parameters[1][value]'] = $lesson->id;
+
+        if (!$times = get_remote_list_lesson_timer_by($params, "starttime", $try, 1)) {
             $timetotake = -1;
         } else {
             $timetotake = current($times);

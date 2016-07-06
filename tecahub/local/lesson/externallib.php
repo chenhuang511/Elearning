@@ -225,184 +225,6 @@ class local_mod_lesson_external extends external_api
      * @return external_function_parameters
      * @since Moodle 3.0
      */
-    public static function get_field_lesson_pages_by_lessonid_and_prevpageid_parameters()
-    {
-        return new external_function_parameters(
-            array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
-                'prevpageid' => new external_value(PARAM_INT, 'the previous page id')
-            )
-        );
-    }
-
-    /**
-     * Get field of lesson pages by lessonid and prevpageid
-     *
-     * @param $lessonid . The id of lesson
-     * @param $prevpageid . The previous page id
-     * @param array $options
-     * @return mixed
-     * @throws invalid_parameter_exception
-     */
-    public static function get_field_lesson_pages_by_lessonid_and_prevpageid($lessonid, $prevpageid)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        // validate params
-        $params = self::validate_parameters(self::get_field_lesson_pages_by_lessonid_and_prevpageid_parameters(),
-            array(
-                'lessonid' => $lessonid,
-                'prevpageid' => $prevpageid
-            )
-        );
-
-        $result = array();
-
-        $id = $DB->get_field('lesson_pages', 'id', array('lessonid' => $params['lessonid'], 'prevpageid' => $params['prevpageid']));
-
-        if (!$id) {
-            $id = 0;
-        }
-
-        $result['id'] = $id;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 3.0
-     */
-    public static function get_field_lesson_pages_by_lessonid_and_prevpageid_returns()
-    {
-        return new external_single_structure(
-            array(
-                'id' => new external_value(PARAM_INT, 'id'),
-                'warnings' => new external_warnings()
-            )
-        );
-    }
-
-    public static function get_field_lesson_pages_by_lessonid_and_nextpageid_parameters()
-    {
-        return new external_function_parameters(
-            array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
-                'nextpageid' => new external_value(PARAM_INT, 'the next page id')
-            )
-        );
-    }
-
-    public static function get_field_lesson_pages_by_lessonid_and_nextpageid($lessonid, $nextpageid)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        // validate params
-        $params = self::validate_parameters(self::get_field_lesson_pages_by_lessonid_and_nextpageid_parameters(),
-            array(
-                'lessonid' => $lessonid,
-                'nextpageid' => $nextpageid
-            )
-        );
-
-        $result = array();
-
-        $id = $DB->get_field('lesson_pages', 'id', array('lessonid' => $params['lessonid'], 'nextpageid' => $params['nextpageid']));
-
-        if (!$id) {
-            $id = 0;
-        }
-
-        $result['id'] = $id;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    public static function get_field_lesson_pages_by_lessonid_and_nextpageid_returns()
-    {
-        return self::get_field_lesson_pages_by_lessonid_and_prevpageid_returns();
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.0
-     */
-    public static function get_field_lesson_pages_by_id_parameters()
-    {
-        return new external_function_parameters(
-            array('id' => new external_value(PARAM_INT, 'the id'),
-                'field' => new external_value(PARAM_TEXT, 'the field which selected')
-            )
-        );
-    }
-
-    /**
-     * Get field of lesson page by id
-     *
-     * @param $id . The id
-     * @param $field . The field in lesson page
-     * @param array $options
-     * @return mixed
-     * @throws invalid_parameter_exception
-     */
-    public static function get_field_lesson_pages_by_id($id, $field)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        // validate params
-        $params = self::validate_parameters(self::get_field_lesson_pages_by_id_parameters(),
-            array(
-                'id' => $id,
-                'field' => $field
-            )
-        );
-
-        $result = array();
-
-        $field = $DB->get_field('lesson_pages', $params['field'], array("id" => $params['id']));
-
-        if (!$field) {
-            $result['field'] = 0;
-        }
-
-        $result['field'] = $field;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 3.0
-     */
-    public static function get_field_lesson_pages_by_id_returns()
-    {
-        return new external_single_structure(
-            array(
-                'field' => new external_value(PARAM_RAW, 'field'),
-                'warnings' => new external_warnings()
-            )
-        );
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.0
-     */
     public static function get_lesson_pages_by_id_and_lessonid_parameters()
     {
         return new external_function_parameters(
@@ -531,94 +353,6 @@ class local_mod_lesson_external extends external_api
      * @return external_function_parameters
      * @since Moodle 3.0
      */
-    public static function get_lesson_timer_by_userid_and_lessonid_parameters()
-    {
-        return new external_function_parameters(
-            array('userid' => new external_value(PARAM_INT, 'user id'),
-                'lessonid' => new external_value(PARAM_INT, 'lesson id'),
-                'limitfrom' => new external_value(PARAM_INT, 'limit from'),
-                'limitnum' => new external_value(PARAM_INT, 'limit num'),
-                'sort' => new external_value(PARAM_RAW, 'sort')
-            )
-        );
-    }
-
-    /**
-     * get leson timer by userid and lessonid
-     *
-     * @param $userid
-     * @param $lessonid
-     * @param array $options
-     * @return mixed
-     * @throws invalid_parameter_exception
-     */
-    public static function get_lesson_timer_by_userid_and_lessonid($userid, $lessonid, $limitfrom, $limitnum, $sort)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        $arr = array(
-            'userid' => $userid,
-            'lessonid' => $lessonid,
-            'limitfrom' => $limitfrom,
-            'limitnum' => $limitnum,
-            'sort' => $sort
-        );
-
-
-        // validate params
-        $params = self::validate_parameters(self::get_lesson_timer_by_userid_and_lessonid_parameters(),
-            $arr
-        );
-
-        $result = array();
-        $timers = $DB->get_records('lesson_timer', array('userid' => $params['userid'], 'lessonid' => $params['lessonid']), $params['sort'], '*', $params['limitfrom'], $params['limitnum']);
-
-        if (!$timers) {
-            $timers = new stdClass();
-        }
-
-        $result['timers'] = $timers;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 3.0
-     */
-    public static function get_lesson_timer_by_userid_and_lessonid_returns()
-    {
-        return new external_single_structure(
-            array(
-                'timers' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'id' => new external_value(PARAM_INT, 'the lesson timer id'),
-                            'lessonid' => new external_value(PARAM_INT, 'the lesson id', VALUE_DEFAULT),
-                            'userid' => new external_value(PARAM_INT, 'the user id', VALUE_DEFAULT),
-                            'starttime' => new external_value(PARAM_INT, 'start time', VALUE_DEFAULT),
-                            'lessontime' => new external_value(PARAM_INT, 'lesson time', VALUE_DEFAULT),
-                            'completed' => new external_value(PARAM_INT, 'completed', VALUE_DEFAULT)
-                        )
-                    ), 'the lesson timer'
-                ),
-                'warnings' => new external_warnings()
-            )
-        );
-    }
-
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.0
-     */
     public static function get_lesson_grades_by_userid_and_lessonid_parameters()
     {
         return new external_function_parameters(
@@ -687,456 +421,6 @@ class local_mod_lesson_external extends external_api
                 'completed' => new external_value(PARAM_INT, 'completed', VALUE_DEFAULT)
             )
         );
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.0
-     */
-    public static function get_lesson_branch_by_lessonid_and_userid_and_retry_parameters()
-    {
-        return new external_function_parameters(
-            array('lessonid' => new external_value(PARAM_INT, 'lesson id'),
-                'userid' => new external_value(PARAM_INT, 'user id'),
-                'retry' => new external_value(PARAM_INT, 'retry'),
-                'sort' => new external_value(PARAM_TEXT, 'sort by')
-            )
-        );
-    }
-
-    /**
-     * get lesson branch
-     *
-     * @param $lessonid
-     * @param $userid
-     * @param $retry
-     * @param array $options
-     * @return mixed
-     * @throws invalid_parameter_exception
-     */
-    public static function get_lesson_branch_by_lessonid_and_userid_and_retry($lessonid, $userid, $retry, $sort)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        // validate params
-        $params = self::validate_parameters(self::get_lesson_branch_by_lessonid_and_userid_and_retry_parameters(),
-            array(
-                'lessonid' => $lessonid,
-                'userid' => $userid,
-                'retry' => $retry,
-                'sort' => $sort
-            )
-        );
-
-        $sortby = 'timeseen ASC';
-
-        if ($params['sort'] === 'desc') {
-            $sortby = "timeseen DESC";
-        }
-
-        $result = array();
-
-        $branches = $DB->get_records('lesson_branch', array('lessonid' => $params['lessonid'], 'userid' => $params['userid'], 'retry' => $params['retry']), $sortby);
-
-        if (!$branches) {
-            $branches = array();
-        }
-
-        $result['branches'] = $branches;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 3.0
-     */
-    public static function get_lesson_branch_by_lessonid_and_userid_and_retry_returns()
-    {
-        return new external_single_structure(
-            array(
-                'branches' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'id' => new external_value(PARAM_INT, 'id'),
-                            'lessonid' => new external_value(PARAM_INT, 'lesson id', VALUE_DEFAULT),
-                            'userid' => new external_value(PARAM_INT, 'user id', VALUE_DEFAULT),
-                            'pageid' => new external_value(PARAM_INT, 'page id', VALUE_DEFAULT),
-                            'retry' => new external_value(PARAM_INT, 'retry', VALUE_DEFAULT),
-                            'flag' => new external_value(PARAM_INT, 'flag', VALUE_DEFAULT),
-                            'timeseen' => new external_value(PARAM_INT, 'time seen', VALUE_DEFAULT),
-                            'nextpageid' => new external_value(PARAM_INT, 'next page id', VALUE_DEFAULT)
-                        ), 'lesson branch'
-                    )
-                ),
-                'warnings' => new external_warnings()
-            )
-        );
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.0
-     */
-    public static function get_lesson_attempts_by_lessonid_and_userid_parameters()
-    {
-        return new external_function_parameters(
-            array('lessonid' => new external_value(PARAM_INT, 'lesson id'),
-                'userid' => new external_value(PARAM_INT, 'user id'),
-                'correct' => new external_value(PARAM_INT, 'correct', VALUE_DEFAULT, 0),
-                'pageid' => new external_value(PARAM_INT, 'page id', VALUE_DEFAULT, -1),
-                'retry' => new external_value(PARAM_INT, 'retry'),
-                'orderby' => new external_value(PARAM_TEXT, 'timeseen order by', VALUE_DEFAULT, 'asc')
-            )
-        );
-    }
-
-    /**
-     * Get lesson attempts by lessonid and userid
-     *
-     * @param $lessonid
-     * @param $userid
-     * @param $correct
-     * @param $pageid
-     * @param $retry
-     * @param $orderby
-     * @param array $options
-     * @return array
-     * @throws invalid_parameter_exception
-     */
-    public static function get_lesson_attempts_by_lessonid_and_userid($lessonid, $userid, $correct, $pageid, $retry, $orderby)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        $arr = array(
-            'lessonid' => $lessonid,
-            'userid' => $userid,
-            'retry' => $retry
-        );
-
-        if (!empty($correct) && $correct != 0) { // 0: false, 1: true
-            $arr = array_merge($arr, array('correct' => 1));
-        }
-        if (!empty($pageid) && $pageid != -1) { // -1: null
-            $arr = array_merge($arr, array('pageid' => $pageid));
-        }
-
-        // validate params
-        $params = self::validate_parameters(self::get_lesson_attempts_by_lessonid_and_userid_parameters(),
-            $arr
-        );
-
-        $parameters = [
-            'lessonid' => $params['lessonid'],
-            'userid' => $params['userid'],
-            'retry' => $params['retry']
-        ];
-
-        if (isset($arr['correct'])) {
-            $parameters = array_merge($parameters, array('correct' => $params['correct']));
-        }
-        if (isset($arr['pageid'])) {
-            $parameters = array_merge($parameters, array('pageid' => $params['pageid']));
-        }
-
-        $timeseen = 'timeseen ASC';
-        if (!empty($orderby) && $orderby === 'desc') {
-            $timeseen = 'timeseen DESC';
-        }
-
-        $result = array();
-
-        $attempts = $DB->get_records('lesson_attempts', $parameters, $timeseen);
-
-        if (!$attempts) {
-            $attempts = array();
-        }
-
-        $result['attempts'] = $attempts;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 3.0
-     */
-    public static function get_lesson_attempts_by_lessonid_and_userid_returns()
-    {
-        return new external_single_structure(
-            array(
-                'attempts' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'id' => new external_value(PARAM_INT, ''),
-                            'lessonid' => new external_value(PARAM_INT, 'lesson id', VALUE_DEFAULT),
-                            'pageid' => new external_value(PARAM_INT, 'page id', VALUE_DEFAULT),
-                            'userid' => new external_value(PARAM_INT, 'user id', VALUE_DEFAULT),
-                            'answerid' => new external_value(PARAM_INT, 'answer id', VALUE_DEFAULT),
-                            'retry' => new external_value(PARAM_INT, 'retry', VALUE_DEFAULT),
-                            'correct' => new external_value(PARAM_INT, 'correct', VALUE_DEFAULT),
-                            'useranswer' => new external_value(PARAM_RAW, 'user answer'),
-                            'timeseen' => new external_value(PARAM_INT, 'time seen', VALUE_DEFAULT)
-                        )
-                    ), 'lesson attempts'
-                ),
-                'warnings' => new external_warnings()
-            )
-        );
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.0
-     */
-    public static function get_lesson_attempts_by_pageid_parameters()
-    {
-        return new external_function_parameters(
-            array('pageid' => new external_value(PARAM_INT, 'page id')
-            )
-        );
-    }
-
-    /**
-     * Get list of lesson attempts by pageid
-     *
-     * @param $pageid
-     * @return array
-     * @throws invalid_parameter_exception
-     */
-    public static function get_lesson_attempts_by_pageid($pageid)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        // validate params
-        $params = self::validate_parameters(self::get_lesson_attempts_by_pageid_parameters(),
-            array(
-                'pageid' => $pageid
-            )
-        );
-
-        $result = array();
-
-        $attempts = $DB->get_records('lesson_attempts', array('pageid' => $params['pageid']));
-
-        if (!$attempts) {
-            $attempts = array();
-        }
-
-        $result['attempts'] = $attempts;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 3.0
-     */
-    public static function get_lesson_attempts_by_pageid_returns()
-    {
-        return self::get_lesson_attempts_by_lessonid_and_userid_returns();
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.0
-     */
-    public static function get_count_by_lessonid_and_userid_parameters()
-    {
-        return new external_function_parameters(
-            array('tablename' => new external_value(PARAM_TEXT, 'table name'),
-                'lessonid' => new external_value(PARAM_INT, 'the lesson id'),
-                'userid' => new external_value(PARAM_INT, 'the user id', VALUE_DEFAULT, 0),
-                'retry' => new external_value(PARAM_INT, 'the retry', VALUE_DEFAULT, -1),
-                'orderby' => new external_value(PARAM_TEXT, 'order by', VALUE_DEFAULT, '')
-            )
-        );
-    }
-
-    /**
-     * get retries of lesson grades
-     *
-     * @param $lessonid
-     * @param $userid
-     * @param array $options
-     * @return int
-     * @throws invalid_parameter_exception
-     */
-    public static function get_count_by_lessonid_and_userid($tablename, $lessonid, $userid, $retry, $orderby)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        $arr = array(
-            'tablename' => $tablename,
-            'lessonid' => $lessonid
-        );
-
-        if ($userid > 0) {
-            $arr = array_merge($arr, array('userid' => $userid));
-        }
-        if (($arr['tablename'] === 'lesson_attempts' || $arr['tablename'] === 'lesson_branch') && $retry >= 0) {
-            $arr = array_merge($arr, array('retry' => $retry));
-        }
-        if (!is_null($orderby) || !empty($orderby)) {
-            $arr = array_merge($arr, array('orderby' => $orderby));
-        }
-
-        // validate params
-        $params = self::validate_parameters(self::get_count_by_lessonid_and_userid_parameters(),
-            $arr
-        );
-
-        $parameters = array("lessonid" => $params['lessonid']);
-
-        if (isset($arr['userid'])) {
-            $parameters = array_merge($parameters, array("userid" => $params['userid']));
-        }
-        if (isset($arr['retry'])) {
-            $parameters = array_merge($parameters, array("retry" => $params['retry']));
-        }
-
-        if (isset($arr['orderby'])) {
-            $show = $arr['orderby'];
-        }
-
-        $result = array();
-
-        $retries = $DB->count_records($params['tablename'], $parameters, $show);
-
-        if (!$retries) {
-            $result['retries'] = 0;
-        }
-
-        $result['retries'] = $retries;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 3.0
-     */
-    public static function get_count_by_lessonid_and_userid_returns()
-    {
-        return new external_single_structure(
-            array(
-                'retries' => new external_value(PARAM_INT, 'retries'),
-                'warnings' => new external_warnings()
-            )
-        );
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.0
-     */
-    public static function get_lesson_answers_by_pageid_and_lessonid_parameters()
-    {
-        return new external_function_parameters(
-            array('pageid' => new external_value(PARAM_INT, 'the page id'),
-                'lessonid' => new external_value(PARAM_INT, 'the lesson id')
-            )
-        );
-    }
-
-    /**
-     * Get lesson answers by pageid and lessonid
-     *
-     * @param $pageid
-     * @param $lessonid
-     * @param array $options
-     * @return array
-     * @throws invalid_parameter_exception
-     */
-    public static function get_lesson_answers_by_pageid_and_lessonid($pageid, $lessonid)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        // validate params
-        $params = self::validate_parameters(self::get_lesson_answers_by_pageid_and_lessonid_parameters(),
-            array(
-                'pageid' => $pageid,
-                'lessonid' => $lessonid
-            )
-        );
-
-        $result = array();
-
-        $answers = $DB->get_records('lesson_answers', array('pageid' => $params['pageid'], 'lessonid' => $params['lessonid']), 'id');
-
-        if (!$answers) {
-            $answers = array();
-        }
-
-        $result['answers'] = $answers;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 3.0
-     */
-    public static function get_lesson_answers_by_pageid_and_lessonid_returns()
-    {
-        return new external_single_structure(
-            array(
-                'answers' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'id' => new external_value(PARAM_INT, 'id'),
-                            'lessonid' => new external_value(PARAM_INT, 'lesson id'),
-                            'pageid' => new external_value(PARAM_INT, 'page id'),
-                            'jumpto' => new external_value(PARAM_INT, 'jumpto'),
-                            'grade' => new external_value(PARAM_INT, 'grade'),
-                            'score' => new external_value(PARAM_INT, 'score'),
-                            'flags' => new external_value(PARAM_INT, 'flags'),
-                            'timecreated' => new external_value(PARAM_INT, 'time created'),
-                            'timemodified' => new external_value(PARAM_INT, 'time modified'),
-                            'answer' => new external_value(PARAM_RAW, 'answer'),
-                            'answerformat' => new external_value(PARAM_INT, 'answer format'),
-                            'response' => new external_value(PARAM_RAW, 'response'),
-                            'responseformat' => new external_value(PARAM_INT, 'response format')
-                        )
-                    ), 'lesson answers'
-                ),
-                'warnings' => new external_warnings()
-            ));
     }
 
     /**
@@ -1219,369 +503,6 @@ class local_mod_lesson_external extends external_api
                 'warnings' => new external_warnings()
             )
         );
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.0
-     */
-    public static function get_lesson_answers_by_lessonid_parameters()
-    {
-        return new external_function_parameters(
-            array('lessonid' => new external_value(PARAM_INT, 'the lesson id')
-            )
-        );
-    }
-
-    /**
-     * Get lesson answers by lessonid
-     *
-     * @param $lessonid
-     * @param array $options
-     * @return array
-     * @throws invalid_parameter_exception
-     */
-    public static function get_lesson_answers_by_lessonid($lessonid)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        // validate params
-        $params = self::validate_parameters(self::get_lesson_answers_by_lessonid_parameters(),
-            array(
-                'lessonid' => $lessonid
-            )
-        );
-
-        $result = array();
-
-        $answers = $DB->get_records_select("lesson_answers", "lessonid = :lessonid", array('lessonid' => $params['lessonid']));
-
-        if (!$answers) {
-            $answers = array();
-        }
-
-        $result['answers'] = $answers;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 3.0
-     */
-    public static function get_lesson_answers_by_lessonid_returns()
-    {
-        return self::get_lesson_answers_by_pageid_and_lessonid_returns();
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.0
-     */
-    public static function get_lesson_attempts_by_lessonid_and_userid_and_retry_parameters()
-    {
-        return new external_function_parameters(
-            array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
-                'userid' => new external_value(PARAM_INT, 'the user id'),
-                'retry' => new external_value(PARAM_INT, 'the retry')
-            )
-        );
-    }
-
-    public static function get_lesson_attempts_by_lessonid_and_userid_and_retry($lessonid, $userid, $retry)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        // validate params
-        $params = self::validate_parameters(self::get_lesson_attempts_by_lessonid_and_userid_and_retry_parameters(),
-            array(
-                'lessonid' => $lessonid,
-                'userid' => $userid,
-                'retry' => $retry
-            )
-        );
-
-        $result = array();
-        $attempts = $DB->get_records_select("lesson_attempts", "lessonid = :lessonid AND userid = :userid AND retry = :retry",
-            array('lessonid' => $params['lessonid'], 'userid' => $params['userid'], 'retry' => $params['retry']), "timeseen");
-
-        if (!$attempts) {
-            $attempts = array();
-        }
-
-        $result['attempts'] = $attempts;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    public static function get_lesson_attempts_by_lessonid_and_userid_and_retry_returns()
-    {
-        return self::get_lesson_attempts_by_lessonid_and_userid_returns();
-    }
-
-    public static function get_lesson_attempts_by_lessonid_and_userid_and_retry_and_pageid_parameters()
-    {
-        return new external_function_parameters(
-            array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
-                'userid' => new external_value(PARAM_INT, 'the user id'),
-                'retry' => new external_value(PARAM_INT, 'the retry'),
-                'pageid' => new external_value(PARAM_INT, 'the page id')
-            )
-        );
-    }
-
-    public static function get_lesson_attempts_by_lessonid_and_userid_and_retry_and_pageid($lessonid, $userid, $retry, $pageid)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        // validate params
-        $params = self::validate_parameters(self::get_lesson_attempts_by_lessonid_and_userid_and_retry_and_pageid_parameters(),
-            array(
-                'lessonid' => $lessonid,
-                'userid' => $userid,
-                'retry' => $retry,
-                'pageid' => $pageid
-            )
-        );
-
-        $result = array();
-        $attempts = $DB->get_records("lesson_attempts", array('lessonid' => $params['lessonid'], 'userid' => $params['userid'], 'retry' => $params['retry'], "pageid" => $params['pageid']), "timeseen");
-
-        if (!$attempts) {
-            $attempts = array();
-        }
-
-        $result['attempts'] = $attempts;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    public static function get_lesson_attempts_by_lessonid_and_userid_and_retry_and_pageid_returns()
-    {
-        return self::get_lesson_attempts_by_lessonid_and_userid_returns();
-    }
-
-    public static function get_lesson_attempts_by_lessonid_and_pageid_parameters()
-    {
-        return new external_function_parameters(
-            array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
-                'pageid' => new external_value(PARAM_INT, 'the page id')
-            )
-        );
-    }
-
-    public static function get_lesson_attempts_by_lessonid_and_pageid($lessonid, $pageid)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        // validate params
-        $params = self::validate_parameters(self::get_lesson_attempts_by_lessonid_and_pageid_parameters(),
-            array(
-                'lessonid' => $lessonid,
-                'pageid' => $pageid
-            )
-        );
-
-        $parameters = array("lessonid" => $params['lessonid'], "pageid" => $params['pageid']);
-
-        $result = array();
-        $attempts = $DB->get_records_select("lesson_attempts", "lessonid = :lessonid AND pageid = :pageid", $parameters, "timeseen");
-
-        if (!$attempts) {
-            $attempts = array();
-        }
-
-        $result['attempts'] = $attempts;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    public static function get_lesson_attempts_by_lessonid_and_pageid_returns()
-    {
-        return self::get_lesson_attempts_by_lessonid_and_userid_returns();
-    }
-
-    public static function get_lesson_attempts_by_lessonid_parameters()
-    {
-        return new external_function_parameters(
-            array(
-                'lessonid' => new external_value(PARAM_INT, 'the lesson id')
-            )
-        );
-    }
-
-    public static function get_lesson_attempts_by_lessonid($lessonid)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        // validate params
-        $params = self::validate_parameters(self::get_lesson_attempts_by_lessonid_parameters(),
-            array(
-                'lessonid' => $lessonid
-            )
-        );
-
-        $parameters = array("lessonid" => $params['lessonid']);
-
-        $result = array();
-        $attempts = $DB->get_records_select("lesson_attempts", "lessonid = :lessonid", $parameters, "timeseen");
-
-        if (!$attempts) {
-            $attempts = array();
-        }
-
-        $result['attempts'] = $attempts;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    public static function get_lesson_attempts_by_lessonid_returns()
-    {
-        return self::get_lesson_attempts_by_lessonid_and_userid_returns();
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.0
-     */
-    public static function get_lesson_grades_by_lessonid_and_userid_parameters()
-    {
-        return new external_function_parameters(
-            array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
-                'userid' => new external_value(PARAM_INT, 'the user id'),
-                'limitfrom' => new external_value(PARAM_INT, 'limit from'),
-                'limitnum' => new external_value(PARAM_INT, 'limit num'),
-                'sort' => new external_value(PARAM_RAW, 'sort')
-            )
-        );
-    }
-
-    /**
-     * Get leson grades by lessonid and userid
-     *
-     * @param $lessonid
-     * @param $userid
-     * @param array $options
-     * @return array
-     * @throws invalid_parameter_exception
-     */
-    public static function get_lesson_grades_by_lessonid_and_userid($lessonid, $userid, $limitfrom, $limitnum, $sort)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        // validate params
-        $params = self::validate_parameters(self::get_lesson_grades_by_lessonid_and_userid_parameters(),
-            array(
-                'lessonid' => $lessonid,
-                'userid' => $userid,
-                'limitfrom' => $limitfrom,
-                'limitnum' => $limitnum,
-                'sort' => $sort
-            )
-        );
-
-        $result = array();
-        $grades = $DB->get_records("lesson_grades", array("lessonid" => $params['lessonid'], "userid" => $params['userid']), $params['sort']);
-
-        if (!$grades) {
-            $grades = array();
-        }
-
-        $result['grades'] = $grades;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 3.0
-     */
-    public static function get_lesson_grades_by_lessonid_and_userid_returns()
-    {
-        return new external_single_structure(
-            array(
-                'grades' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'id' => new external_value(PARAM_INT, 'lesson grade id'),
-                            'lessonid' => new external_value(PARAM_INT, 'lesson id', VALUE_DEFAULT),
-                            'userid' => new external_value(PARAM_INT, 'user id', VALUE_DEFAULT),
-                            'grade' => new external_value(PARAM_INT, 'grade', VALUE_DEFAULT),
-                            'late' => new external_value(PARAM_INT, 'late', VALUE_DEFAULT),
-                            'completed' => new external_value(PARAM_INT, 'completed', VALUE_DEFAULT)
-                        )
-                    ), 'lesson grades'
-                ),
-                'warnings' => new external_warnings()
-            )
-        );
-    }
-
-    public static function get_lesson_grades_by_lessonid_parameters()
-    {
-        return new external_function_parameters(
-            array(
-                'lessonid' => new external_value(PARAM_INT, 'the lesson id'),
-                'sort' => new external_value(PARAM_RAW, 'sort')
-            )
-        );
-    }
-
-    public static function get_lesson_grades_by_lessonid($lessonid, $sort)
-    {
-        global $DB;
-        $warnings = array();
-
-        $params = self::validate_parameters(self::get_lesson_grades_by_lessonid_parameters(), array(
-            'lessonid' => $lessonid,
-            'sort' => $sort
-        ));
-
-        $result = array();
-
-        $grades = $DB->get_records('lesson_grades', array('lessonid' => $params['lessonid']), $params['sort']);
-
-        if (!$grades) {
-            $grades = array();
-        }
-
-        $result['grades'] = $grades;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    public static function get_lesson_grades_by_lessonid_returns()
-    {
-        return self::get_lesson_grades_by_lessonid_and_userid_returns();
     }
 
     /**
@@ -2711,101 +1632,6 @@ class local_mod_lesson_external extends external_api
         );
     }
 
-    public static function get_count_lesson_attempts_parameters()
-    {
-        return new external_function_parameters(
-            array(
-                'lessonid' => new external_value(PARAM_INT, 'the lesson id'),
-                'userid' => new external_value(PARAM_INT, 'the user id'),
-                'pageid' => new external_value(PARAM_INT, 'the page id'),
-                'retry' => new external_value(PARAM_INT, 'retry'),
-                'correct' => new external_value(PARAM_INT, 'correct')
-            )
-        );
-    }
-
-    public static function get_count_lesson_attempts($lessonid, $userid, $pageid, $retry, $correct)
-    {
-        global $DB;
-        $warnings = array();
-
-        $params = self::validate_parameters(self::get_count_lesson_attempts_parameters(), array(
-            'lessonid' => $lessonid,
-            'userid' => $userid,
-            'pageid' => $pageid,
-            'retry' => $retry,
-            'correct' => $correct
-        ));
-
-        $parameters = array(
-            'userid' => $params['userid'],
-            'retry' => $params['retry']
-        );
-
-        if ($params['lessonid'] > 0) {
-            $parameters = array_merge($parameters, array('lessonid' => $params['lessonid']));
-        }
-        if ($params['pageid'] > 0) {
-            $parameters = array_merge($parameters, array('pageid' => $params['pageid']));
-        }
-        if ($params['correct'] > 0) {
-            $parameters = array_merge($parameters, array('correct' => $params['correct']));
-        }
-
-
-        $result = array();
-
-        $nattempts = $DB->count_records('lesson_attempts', $parameters);
-
-        $result['nattempts'] = $nattempts;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    public static function get_count_lesson_attempts_returns()
-    {
-        return new external_single_structure(
-            array(
-                'nattempts' => new external_value(PARAM_INT, 'count'),
-                'warnings' => new external_warnings()
-            )
-        );
-    }
-
-    public static function get_count_lesson_attempts_by_lessonid_parameters()
-    {
-        return new external_function_parameters(
-            array(
-                'lessonid' => new external_value(PARAM_INT, 'the lesson id')
-            )
-        );
-    }
-
-    public static function get_count_lesson_attempts_by_lessonid($lessonid)
-    {
-        global $DB;
-        $warnings = array();
-
-        $params = self::validate_parameters(self::get_count_lesson_attempts_by_lessonid_parameters(), array(
-            'lessonid' => $lessonid
-        ));
-
-        $result = array();
-
-        $nattempts = $DB->count_records('lesson_attempts', array('lessonid' => $params['lessonid']));
-
-        $result['nattempts'] = $nattempts;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    public static function get_count_lesson_attempts_by_lessonid_returns()
-    {
-        return self::get_count_lesson_attempts_returns();
-    }
-
     public static function get_list_lesson_pages_by_id_and_lessonid_parameters()
     {
         return new external_function_parameters(
@@ -2849,58 +1675,6 @@ class local_mod_lesson_external extends external_api
     public static function get_list_lesson_pages_by_id_and_lessonid_returns()
     {
         return self::get_lesson_pages_by_lessonid_returns();
-    }
-
-    public static function get_count_lesson_pages_by_lessonid_parameters()
-    {
-        return new external_function_parameters(
-            array(
-                'lessonid' => new external_value(PARAM_INT, 'the lesson id'),
-                'qtype' => new external_value(PARAM_INT, 'the qtype')
-            )
-        );
-    }
-
-    public static function get_count_lesson_pages_by_lessonid($lessonid, $qtype)
-    {
-        global $DB;
-        $warnings = array();
-
-        $params = self::validate_parameters(self::get_count_lesson_pages_by_lessonid_parameters(), array(
-            'lessonid' => $lessonid,
-            'qtype' => $qtype
-        ));
-
-        $result = array();
-
-        $parameters = array(
-            'lessonid' => $params['lessonid']
-        );
-
-        if ($params['qtype'] != 0) {
-            $parameters = array_merge($parameters, array('qtype' => $params['qtype']));
-        }
-
-        $pagecount = $DB->count_records('lesson_pages', $parameters);
-
-        if (!$pagecount) {
-            $pagecount = 0;
-        }
-
-        $result['pagecount'] = $pagecount;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    public static function get_count_lesson_pages_by_lessonid_returns()
-    {
-        return new external_single_structure(
-            array(
-                'pagecount' => new external_value(PARAM_INT, 'count row'),
-                'warnings' => new external_warnings()
-            )
-        );
     }
 
     public static function get_lesson_attempts_by_id_parameters()
@@ -3049,51 +1823,6 @@ class local_mod_lesson_external extends external_api
         );
     }
 
-    public static function get_field_lesson_answers_by_pageid_and_lessonid_parameters()
-    {
-        return new external_function_parameters(
-            array(
-                'pageid' => new external_value(PARAM_INT, 'the page id'),
-                'lessonid' => new external_value(PARAM_INT, 'the lesson id'),
-                'field' => new external_value(PARAM_RAW, 'field')
-            )
-        );
-    }
-
-    public static function get_field_lesson_answers_by_pageid_and_lessonid($pageid, $lessonid, $field)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        // validate params
-        $params = self::validate_parameters(self::get_field_lesson_answers_by_pageid_and_lessonid_parameters(),
-            array(
-                'pageid' => $pageid,
-                'lessonid' => $lessonid,
-                'field' => $field
-            )
-        );
-
-        $result = array();
-
-        $field = $DB->get_field('lesson_answers', $params['field'], array("pageid" => $params['pageid'], "lessonid" => $params['lessonid']));
-
-        if (!$field) {
-            $result['field'] = 0;
-        }
-
-        $result['field'] = $field;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    public static function get_field_lesson_answers_by_pageid_and_lessonid_returns()
-    {
-        return self::get_field_lesson_pages_by_id_returns();
-    }
-
     public static function check_record_exists_parameters()
     {
         return new external_function_parameters(
@@ -3128,46 +1857,6 @@ class local_mod_lesson_external extends external_api
     public static function check_record_exists_returns()
     {
         return self::save_lesson_branch_returns();
-    }
-
-    public static function get_lesson_timer_by_lessonid_parameters()
-    {
-        return new external_function_parameters(
-            array(
-                'lessonid' => new external_value(PARAM_INT, 'the lesson id'),
-                'sort' => new external_value(PARAM_RAW, 'sort')
-            )
-        );
-    }
-
-    public static function get_lesson_timer_by_lessonid($lessonid, $sort)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        $params = self::validate_parameters(self::get_lesson_timers_by_lessonid_parameters(), array(
-            'lessonid' => $lessonid,
-            'sort' => $sort
-        ));
-
-        $result = array();
-
-        $timers = $DB->get_records('lesson_timer', array('lessonid' => $params['lessonid']), $params['sort']);
-
-        if (!$timers) {
-            $timers = array();
-        }
-
-        $result['timers'] = $timers;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    public static function get_lesson_timer_by_lessonid_returns()
-    {
-        return self::get_lesson_timer_by_userid_and_lessonid_returns();
     }
 
     public static function update_lesson_pages_parameters()
@@ -3300,49 +1989,6 @@ class local_mod_lesson_external extends external_api
         );
     }
 
-    public static function get_lesson_branch_by_lessonid_parameters()
-    {
-        return new external_function_parameters(
-            array(
-                'lessonid' => new external_value(PARAM_INT, 'lesson id'),
-                'sort' => new external_value(PARAM_RAW, 'sort by')
-            )
-        );
-    }
-
-    public static function get_lesson_branch_by_lessonid($lessonid, $sort)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        // validate params
-        $params = self::validate_parameters(self::get_lesson_branch_by_lessonid_parameters(),
-            array(
-                'lessonid' => $lessonid,
-                'sort' => $sort
-            )
-        );
-
-        $result = array();
-
-        $branches = $DB->get_records('lesson_branch', array('lessonid' => $params['lessonid']), $params['sort']);
-
-        if (!$branches) {
-            $branches = array();
-        }
-
-        $result['branches'] = $branches;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    public static function get_lesson_branch_by_lessonid_returns()
-    {
-        return self::get_lesson_branch_by_lessonid_and_userid_and_retry_returns();
-    }
-
     public static function update_mdl_table_parameters()
     {
         return new external_function_parameters(
@@ -3443,7 +2089,7 @@ class local_mod_lesson_external extends external_api
         global $DB;
         $warnings = array();
 
-        $params = self::validate_parameters(self::get_field_by(), array(
+        $params = self::validate_parameters(self::get_field_by_parameters(), array(
             'modname' => $modname,
             'parameters' => $parameters,
             'field' => $field
@@ -3458,7 +2104,7 @@ class local_mod_lesson_external extends external_api
 
         $f = $DB->get_field($params['modname'], $params['field'], $arr);
 
-        if(!$f) {
+        if (!$f) {
             $f = 0;
         }
 
@@ -3474,6 +2120,455 @@ class local_mod_lesson_external extends external_api
         return new external_single_structure(
             array(
                 'field' => new external_value(PARAM_RAW, 'field'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_count_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'modname' => new external_value(PARAM_RAW, 'mod name'),
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'sort' => new external_value(PARAM_RAW, 'sort')
+            )
+        );
+    }
+
+    public static function get_count_by($modname, $parameters, $sort)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_count_by_parameters(), array(
+            'modname' => $modname,
+            'parameters' => $parameters,
+            'sort' => $sort
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+        if ($params['sort'] === '') {
+            $count = $DB->count_records($params['modname'], $arr);
+        } else {
+            $count = $DB->count_records($params['modname'], $arr, $params['sort']);
+        }
+
+        $result['count'] = $count;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_count_by_returns()
+    {
+        return new external_function_parameters(
+            array(
+                'count' => new external_value(PARAM_INT, 'count row'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_list_lesson_grades_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'sort' => new external_value(PARAM_RAW, 'sort'),
+                'limitfrom' => new external_value(PARAM_INT, 'limit from'),
+                'limitnum' => new external_value(PARAM_INT, 'limit num')
+            )
+        );
+    }
+
+    public static function get_list_lesson_grades_by($parameters, $sort, $limitfrom, $limitnum)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_list_lesson_grades_by_parameters(), array(
+            'parameters' => $parameters,
+            'sort' => $sort,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+        if (($params['limitfrom'] == 0 && $params['limitnum'] == 0) && $params['sort'] == '') {
+            $grades = $DB->get_records("lesson_grades", $arr);
+        } else if (($params['limitfrom'] == 0 && $params['limitnum'] == 0) && $params['sort'] != '') {
+            $grades = $DB->get_records("lesson_grades", $arr, $params['sort']);
+        } else {
+            $grades = $DB->get_records("lesson_grades", $arr, $params['sort'], '*', $params['limitfrom'], $params['limitnum']);
+        }
+
+        if (!$grades) {
+            $grades = array();
+        }
+
+        $result['grades'] = $grades;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_list_lesson_grades_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'grades' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'lesson grade id'),
+                            'lessonid' => new external_value(PARAM_INT, 'lesson id'),
+                            'userid' => new external_value(PARAM_INT, 'user id'),
+                            'grade' => new external_value(PARAM_INT, 'grade'),
+                            'late' => new external_value(PARAM_INT, 'late'),
+                            'completed' => new external_value(PARAM_INT, 'completed')
+                        )
+                    ), 'lesson grades'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_list_lesson_timer_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'sort' => new external_value(PARAM_RAW, 'sort'),
+                'limitfrom' => new external_value(PARAM_INT, 'limit from'),
+                'limitnum' => new external_value(PARAM_INT, 'limit num')
+            )
+        );
+    }
+
+    public static function get_list_lesson_timer_by($parameters, $sort, $limitfrom, $limitnum)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_list_lesson_timer_by_parameters(), array(
+            'parameters' => $parameters,
+            'sort' => $sort,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+        if (($params['limitfrom'] == 0 && $params['limitnum'] == 0) && $params['sort'] == '') {
+            $timers = $DB->get_records("lesson_timer", $arr);
+        } else if (($params['limitfrom'] == 0 && $params['limitnum'] == 0) && $params['sort'] != '') {
+            $timers = $DB->get_records("lesson_timer", $arr, $params['sort']);
+        } else {
+            $timers = $DB->get_records("lesson_timer", $arr, $params['sort'], '*', $params['limitfrom'], $params['limitnum']);
+        }
+
+        if (!$timers) {
+            $timers = array();
+        }
+
+        $result['timers'] = $timers;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_list_lesson_timer_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'timers' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'the lesson timer id'),
+                            'lessonid' => new external_value(PARAM_INT, 'the lesson id', VALUE_DEFAULT),
+                            'userid' => new external_value(PARAM_INT, 'the user id', VALUE_DEFAULT),
+                            'starttime' => new external_value(PARAM_INT, 'start time', VALUE_DEFAULT),
+                            'lessontime' => new external_value(PARAM_INT, 'lesson time', VALUE_DEFAULT),
+                            'completed' => new external_value(PARAM_INT, 'completed', VALUE_DEFAULT)
+                        )
+                    ), 'the lesson timer'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_list_lesson_branch_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'sort' => new external_value(PARAM_RAW, 'sort'),
+                'limitfrom' => new external_value(PARAM_INT, 'limit from'),
+                'limitnum' => new external_value(PARAM_INT, 'limit num')
+            )
+        );
+    }
+
+    public static function get_list_lesson_branch_by($parameters, $sort, $limitfrom, $limitnum)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_list_lesson_branch_by_parameters(), array(
+            'parameters' => $parameters,
+            'sort' => $sort,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+        if (($params['limitfrom'] == 0 && $params['limitnum'] == 0) && $params['sort'] == '') {
+            $branches = $DB->get_records("lesson_branch", $arr);
+        } else if (($params['limitfrom'] == 0 && $params['limitnum'] == 0) && $params['sort'] != '') {
+            $branches = $DB->get_records("lesson_branch", $arr, $params['sort']);
+        } else {
+            $branches = $DB->get_records("lesson_branch", $arr, $params['sort'], '*', $params['limitfrom'], $params['limitnum']);
+        }
+
+        if (!$branches) {
+            $branches = array();
+        }
+
+        $result['branches'] = $branches;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_list_lesson_branch_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'branches' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'id'),
+                            'lessonid' => new external_value(PARAM_INT, 'lesson id'),
+                            'userid' => new external_value(PARAM_INT, 'user id'),
+                            'pageid' => new external_value(PARAM_INT, 'page id'),
+                            'retry' => new external_value(PARAM_INT, 'retry'),
+                            'flag' => new external_value(PARAM_INT, 'flag'),
+                            'timeseen' => new external_value(PARAM_INT, 'time seen'),
+                            'nextpageid' => new external_value(PARAM_INT, 'next page id')
+                        ), 'lesson branch'
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_list_lesson_attempts_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'sort' => new external_value(PARAM_RAW, 'sort'),
+                'limitfrom' => new external_value(PARAM_INT, 'limit from'),
+                'limitnum' => new external_value(PARAM_INT, 'limit num')
+            )
+        );
+    }
+
+    public static function get_list_lesson_attempts_by($parameters, $sort, $limitfrom, $limitnum)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_list_lesson_attempts_by_parameters(), array(
+            'parameters' => $parameters,
+            'sort' => $sort,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+        if (($params['limitfrom'] == 0 && $params['limitnum'] == 0) && $params['sort'] == '') {
+            $attempts = $DB->get_records("lesson_attempts", $arr);
+        } else if (($params['limitfrom'] == 0 && $params['limitnum'] == 0) && $params['sort'] != '') {
+            $attempts = $DB->get_records("lesson_attempts", $arr, $params['sort']);
+        } else {
+            $attempts = $DB->get_records("lesson_attempts", $arr, $params['sort'], '*', $params['limitfrom'], $params['limitnum']);
+        }
+
+        if (!$attempts) {
+            $attempts = array();
+        }
+
+        $result['attempts'] = $attempts;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_list_lesson_attempts_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'attempts' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, ''),
+                            'lessonid' => new external_value(PARAM_INT, 'lesson id', VALUE_DEFAULT),
+                            'pageid' => new external_value(PARAM_INT, 'page id', VALUE_DEFAULT),
+                            'userid' => new external_value(PARAM_INT, 'user id', VALUE_DEFAULT),
+                            'answerid' => new external_value(PARAM_INT, 'answer id', VALUE_DEFAULT),
+                            'retry' => new external_value(PARAM_INT, 'retry', VALUE_DEFAULT),
+                            'correct' => new external_value(PARAM_INT, 'correct', VALUE_DEFAULT),
+                            'useranswer' => new external_value(PARAM_RAW, 'user answer'),
+                            'timeseen' => new external_value(PARAM_INT, 'time seen', VALUE_DEFAULT)
+                        )
+                    ), 'lesson attempts'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_list_lesson_answers_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'sort' => new external_value(PARAM_RAW, 'sort'),
+                'limitfrom' => new external_value(PARAM_INT, 'limit from'),
+                'limitnum' => new external_value(PARAM_INT, 'limit num')
+            )
+        );
+    }
+
+    public static function get_list_lesson_answers_by($parameters, $sort, $limitfrom, $limitnum)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_list_lesson_answers_by_parameters(), array(
+            'parameters' => $parameters,
+            'sort' => $sort,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+        if (($params['limitfrom'] == 0 && $params['limitnum'] == 0) && $params['sort'] == '') {
+            $answers = $DB->get_records("lesson_answers", $arr);
+        } else if (($params['limitfrom'] == 0 && $params['limitnum'] == 0) && $params['sort'] != '') {
+            $answers = $DB->get_records("lesson_answers", $arr, $params['sort']);
+        } else {
+            $answers = $DB->get_records("lesson_answers", $arr, $params['sort'], '*', $params['limitfrom'], $params['limitnum']);
+        }
+
+        if (!$answers) {
+            $answers = array();
+        }
+
+        $result['answers'] = $answers;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_list_lesson_answers_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'answers' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'id'),
+                            'lessonid' => new external_value(PARAM_INT, 'lesson id'),
+                            'pageid' => new external_value(PARAM_INT, 'page id'),
+                            'jumpto' => new external_value(PARAM_INT, 'jumpto'),
+                            'grade' => new external_value(PARAM_INT, 'grade'),
+                            'score' => new external_value(PARAM_INT, 'score'),
+                            'flags' => new external_value(PARAM_INT, 'flags'),
+                            'timecreated' => new external_value(PARAM_INT, 'time created'),
+                            'timemodified' => new external_value(PARAM_INT, 'time modified'),
+                            'answer' => new external_value(PARAM_RAW, 'answer'),
+                            'answerformat' => new external_value(PARAM_INT, 'answer format'),
+                            'response' => new external_value(PARAM_RAW, 'response'),
+                            'responseformat' => new external_value(PARAM_INT, 'response format')
+                        )
+                    ), 'lesson answers'
+                ),
                 'warnings' => new external_warnings()
             )
         );
