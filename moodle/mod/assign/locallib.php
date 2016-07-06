@@ -3795,7 +3795,7 @@ class assign {
 
         $links = array();
         if (has_capability('gradereport/grader:view', $this->get_course_context()) &&
-                has_capability('moodle/grade:viewall', $this->get_course_context())) {
+            has_capability('moodle/grade:viewall', $this->get_course_context())) {
             $gradebookurl = '/grade/report/grader/index.php?id=' . $this->get_course()->id;
             $links[$gradebookurl] = get_string('viewgradebook', 'assign');
         }
@@ -3882,38 +3882,38 @@ class assign {
 
         // Print options for changing the filter and changing the number of results per page.
         $gradingoptionsformparams = array('cm'=>$cmid,
-                                          'contextid'=>$this->context->id,
-                                          'userid'=>$USER->id,
-                                          'submissionsenabled'=>$this->is_any_submission_plugin_enabled(),
-                                          'showquickgrading'=>$showquickgrading,
-                                          'quickgrading'=>$quickgrading,
-                                          'markingworkflowopt'=>$markingworkflowoptions,
-                                          'markingallocationopt'=>$markingallocationoptions,
-                                          'showonlyactiveenrolopt'=>$showonlyactiveenrolopt,
-                                          'showonlyactiveenrol'=>$this->show_only_active_users());
+            'contextid'=>$this->context->id,
+            'userid'=>$USER->id,
+            'submissionsenabled'=>$this->is_any_submission_plugin_enabled(),
+            'showquickgrading'=>$showquickgrading,
+            'quickgrading'=>$quickgrading,
+            'markingworkflowopt'=>$markingworkflowoptions,
+            'markingallocationopt'=>$markingallocationoptions,
+            'showonlyactiveenrolopt'=>$showonlyactiveenrolopt,
+            'showonlyactiveenrol'=>$this->show_only_active_users());
 
         $classoptions = array('class'=>'gradingoptionsform');
         $gradingoptionsform = new mod_assign_grading_options_form(null,
-                                                                  $gradingoptionsformparams,
-                                                                  'post',
-                                                                  '',
-                                                                  $classoptions);
+            $gradingoptionsformparams,
+            'post',
+            '',
+            $classoptions);
 
         $batchformparams = array('cm'=>$cmid,
-                                 'submissiondrafts'=>$this->get_instance()->submissiondrafts,
-                                 'duedate'=>$this->get_instance()->duedate,
-                                 'attemptreopenmethod'=>$this->get_instance()->attemptreopenmethod,
-                                 'feedbackplugins'=>$this->get_feedback_plugins(),
-                                 'context'=>$this->get_context(),
-                                 'markingworkflow'=>$markingworkflow,
-                                 'markingallocation'=>$markingallocation);
+            'submissiondrafts'=>$this->get_instance()->submissiondrafts,
+            'duedate'=>$this->get_instance()->duedate,
+            'attemptreopenmethod'=>$this->get_instance()->attemptreopenmethod,
+            'feedbackplugins'=>$this->get_feedback_plugins(),
+            'context'=>$this->get_context(),
+            'markingworkflow'=>$markingworkflow,
+            'markingallocation'=>$markingallocation);
         $classoptions = array('class'=>'gradingbatchoperationsform');
 
         $gradingbatchoperationsform = new mod_assign_grading_batch_operations_form(null,
-                                                                                   $batchformparams,
-                                                                                   'post',
-                                                                                   '',
-                                                                                   $classoptions);
+            $batchformparams,
+            'post',
+            '',
+            $classoptions);
 
         $gradingoptionsdata = new stdClass();
         $gradingoptionsdata->perpage = $perpage;
@@ -3924,13 +3924,13 @@ class assign {
 
         $actionformtext = $this->get_renderer()->render($gradingactions);
         $header = new assign_header($this->get_instance(),
-                                    $this->get_context(),
-                                    false,
-                                    $this->get_course_module()->id,
-                                    get_string('grading', 'assign'),
-                                    $actionformtext);
+            $this->get_context(),
+            false,
+            $this->get_course_module()->id,
+            get_string('grading', 'assign'),
+            $actionformtext);
         $o .= $this->get_renderer()->render($header);
-        
+
         if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
             $currenturl = $CFG->wwwroot .
                 '/mod/assign/view.php?id=' .
@@ -3961,9 +3961,9 @@ class assign {
             $table = $this->get_renderer()->render($gradingtable);
             $page = optional_param('page', null, PARAM_INT);
             $quickformparams = array('cm'=>$this->get_course_module()->id,
-                                     'gradingtable'=>$table,
-                                     'sendstudentnotifications' => $this->get_instance()->sendstudentnotifications,
-                                     'page' => $page);
+                'gradingtable'=>$table,
+                'sendstudentnotifications' => $this->get_instance()->sendstudentnotifications,
+                'page' => $page);
             $quickgradingform = new mod_assign_quick_grading_form(null, $quickformparams);
 
             $o .= $this->get_renderer()->render(new assign_form('quickgradingform', $quickgradingform));
@@ -3983,13 +3983,12 @@ class assign {
         $users = array_keys($this->list_participants($currentgroup, true));
         if (count($users) != 0 && $this->can_grade()) {
             // If no enrolled user in a course then don't display the batch operations feature.
-            $assignform = new assign_form('gradingbatchoperationsform', $gradingbatchoperationsform, 'M.mod_assign.init_grading_table');
+            $assignform = new assign_form('gradingbatchoperationsform', $gradingbatchoperationsform);
             $o .= $this->get_renderer()->render($assignform);
         }
-        $withjsgradingoptions = (MOODLE_RUN_MODE === MOODLE_MODE_HUB) ? '' : 'M.mod_assign.init_grading_options';
         $assignform = new assign_form('gradingoptionsform',
-                                      $gradingoptionsform,
-                                      $withjsgradingoptions);
+            $gradingoptionsform,
+            'M.mod_assign.init_grading_options');
         $o .= $this->get_renderer()->render($assignform);
         return $o;
     }
@@ -4039,19 +4038,17 @@ class assign {
         global $CFG, $PAGE;
 
         $o = '';
-        $PAGE->set_state(moodle_page::STATE_PRINTING_HEADER);
-        $o .= $this->get_renderer()->standard_head_html();
         // Need submit permission to submit an assignment.
-        $o .= $this->get_renderer()->standard_top_of_body_html();
-        $PAGE->set_state(moodle_page::STATE_IN_BODY);
         $this->require_view_grades();
         require_once($CFG->dirroot . '/mod/assign/gradeform.php');
 
         // Only load this if it is.
         $o .= $this->view_grading_table();
 
+        $o .= $this->view_footer();
+
         \mod_assign\event\grading_table_viewed::create_from_assign($this)->trigger();
-        $o .= $this->get_renderer()->footer(true);
+
         return $o;
     }
 
