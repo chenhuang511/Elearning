@@ -61,8 +61,14 @@ $formattextdefoptions->context = $context;
 
 if ($attemptid > 0) {
     $attempt = get_remote_lesson_attempts_by_id($attemptid);
-    $answer = get_remote_lesson_answers_by_pageid_and_lessonid($attempt->pageid, $lesson->id);
-    //$answer = $DB->get_record('lesson_answers', array('lessonid' => $lesson->id, 'pageid' => $attempt->pageid));
+
+    $params = array();
+    $params['parameters[0][name]'] = "lessonid";
+    $params['parameters[0][value]'] = $lesson->id;
+    $params['parameters[1][name]'] = "pageid";
+    $params['parameters[1][value]'] = $attempt->pageid;
+     // TODO: chua lam cho nay
+    $answer = $DB->get_record('lesson_answers', array('lessonid' => $lesson->id, 'pageid' => $attempt->pageid));
     $user = $DB->get_record('user', array('id' => $attempt->userid));
     // Apply overrides.
     $lesson->update_effective_access($user->id);
@@ -235,7 +241,13 @@ switch ($mode) {
                 $a = new stdClass;
 
                 // Set the grade
-                $grades = get_remote_list_lesson_grades_by_lessonid_and_userid($lesson->id, $attempt->userid, $attempt->retry, 1, 'completed');
+                $params = array();
+                $params['parameters[0][name]'] = "lessonid";
+                $params['parameters[0][value]'] = $lesson->id;
+                $params['parameters[1][name]'] = "userid";
+                $params['parameters[1][value]'] = $attempt->userid;
+
+                $grades = get_remote_list_lesson_grades_by($params, "completed", $attempt->retry, 1);
                 $grade = current($grades);
                 $a->newgrade = $grade->grade;
 

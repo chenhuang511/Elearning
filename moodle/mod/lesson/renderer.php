@@ -490,7 +490,12 @@ class mod_lesson_renderer extends plugin_renderer_base
         if (has_capability('mod/lesson:manage', $context)) {
             return $this->output->box(get_string('teacherongoingwarning', 'lesson'), "ongoing center");
         } else {
-            $ntries = get_remote_count_by_lessonid_and_userid('lesson_grades',$lesson->id, $USER->id);
+            $params = array();
+            $params['parameters[0][name]'] = "userid";
+            $params['parameters[0][value]'] = $USER->id;
+            $params['parameters[1][name]'] = "lessonid";
+            $params['parameters[1][value]'] = $lesson->id;
+            $ntries = get_remote_count_by("lesson_grades", $params);
             if (isset($USER->modattempts[$lesson->id])) {
                 $ntries--;
             }
@@ -541,7 +546,13 @@ class mod_lesson_renderer extends plugin_renderer_base
             }
 
             // current attempt number
-            $ntries = get_remote_count_by_lessonid_and_userid('lesson_grades', $lesson->id, $USER->id);
+            $params = array();
+            $params['parameters[0][name]'] = "userid";
+            $params['parameters[0][value]'] = $USER->id;
+            $params['parameters[1][name]'] = "lessonid";
+            $params['parameters[1][value]'] = $lesson->id;
+
+            $ntries = get_remote_count_by("lesson_grades", $params);
             if (!$ntries) {
                 $ntries = 0;  // may not be necessary
             }
@@ -555,7 +566,16 @@ class mod_lesson_renderer extends plugin_renderer_base
 
             $viewedbranches = array();
             // collect all of the branch tables viewed
-            $branches = get_remote_pageid_lesson_branch_by_lessonid_and_userid_and_retry($lesson->id, $USER->id, $ntries);
+
+            $params = array();
+            $params['parameters[0][name]'] = "lessonid";
+            $params['parameters[0][value]'] = $lesson->id;
+            $params['parameters[1][name]'] = "userid";
+            $params['parameters[1][value]'] = $USER->id;
+            $params['parameters[2][name]'] = "retry";
+            $params['parameters[2][value]'] = $ntries;
+
+            $branches = get_remote_list_pageid_lesson_branch_by($params, "timeseen ASC");
             if ($branches) {
                 foreach ($branches as $branch) {
                     $viewedbranches[$branch->pageid] = $branch;

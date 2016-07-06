@@ -46,7 +46,10 @@ if (!isset($course)) {
 $tabs = $row = $inactive = $activated = array();
 
 /// user attempt count for reports link hover (completed attempts - much faster)
-$attemptscount = get_remote_count_lesson_attempts_by_lessonid($lesson->id);
+$params = array();
+$params['parameters[0][name]'] = "lessonid";
+$params['parameters[0][value]'] = $lesson->id;
+$attemptscount = get_remote_count_by("lesson_attempts", $params);
 
 $row[] = new tabobject('view', "$CFG->wwwroot/mod/lesson/remote/view.php?id=$cm->id", get_string('preview', 'lesson'), get_string('previewlesson', 'lesson', format_string($lesson->name)));
 $row[] = new tabobject('edit', "$CFG->wwwroot/mod/lesson/remote/edit.php?id=$cm->id", get_string('edit', 'lesson'), get_string('edita', 'moodle', format_string($lesson->name)));

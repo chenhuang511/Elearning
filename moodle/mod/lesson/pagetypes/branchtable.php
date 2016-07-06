@@ -189,7 +189,13 @@ class lesson_page_type_branchtable extends lesson_page
         } else {
             $branchflag = 0;
         }
-        $grades = get_remote_list_lesson_grades_by_lessonid_and_userid($this->lesson->id, $USER->id);
+
+        $params = array();
+        $params['parameters[0][name]'] = "lessonid";
+        $params['parameters[0][value]'] = $this->lesson->id;
+        $params['parameters[1][name]'] = "userid";
+        $params['parameters[2][value]'] = $USER->id;
+        $grades = get_remote_list_lesson_grades_by($params, "grade DESC");
 
         if ($grades) {
             $retries = count($grades);
