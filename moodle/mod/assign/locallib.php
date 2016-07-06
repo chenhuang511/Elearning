@@ -3831,9 +3831,8 @@ class assign {
                             '&plugin=' . $plugin->get_type() .
                             '&pluginsubtype=assignfeedback' .
                             '&action=viewpluginpage&pluginaction=' . $action;
-                        $links[$url] = $description;
-
                     }
+                    $links[$url] = $description;
                 }
             }
         }
