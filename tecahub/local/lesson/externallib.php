@@ -3292,9 +3292,9 @@ class local_mod_lesson_external extends external_api
 
         $result = array();
         if ($params['sort'] === '') {
-            $count = $DB->count_records($params['modname'], $params['field'], $arr);
+            $count = $DB->count_records($params['modname'], $arr);
         } else {
-            $count = $DB->count_records($params['modname'], $params['field'], $arr, $params['sort']);
+            $count = $DB->count_records($params['modname'], $arr, $params['sort']);
         }
 
         $result['count'] = $count;
