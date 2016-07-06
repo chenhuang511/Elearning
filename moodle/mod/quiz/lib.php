@@ -1540,7 +1540,7 @@ function quiz_num_attempt_summary($quiz, $cm, $returnzero = false, $currentgroup
     }else{
         $numattempts = get_remote_count_attempts($quiz->id)->num;
     }
-
+    
     if ($numattempts || $returnzero) {
         if (groups_get_activity_groupmode($cm)) {
             $a = new stdClass();

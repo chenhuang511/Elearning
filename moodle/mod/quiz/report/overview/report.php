@@ -46,7 +46,7 @@ class quiz_overview_report extends quiz_attempts_report {
                 $this->init('overview', 'quiz_overview_settings_form', $quiz, $cm, $course);
         $options = new quiz_overview_options('overview', $quiz, $cm, $course);
 
-        if ($fromform = $this->form->get_data()) {
+        if ($fromform = $this->form->get_data()) { //TODO : waitting test...
             $options->process_settings_from_form($fromform);
 
         } else {
@@ -63,7 +63,11 @@ class quiz_overview_report extends quiz_attempts_report {
         }
 
         // Load the required questions.
-        $questions = quiz_report_get_significant_questions($quiz);
+        if(MOODLE_RUN_MODE==MOODLE_MODE_HUB){
+            $questions = get_remote_significant_questions($quiz->id);
+        }else{
+            $questions = quiz_report_get_significant_questions($quiz);
+        }
 
         // Prepare for downloading, if applicable.
         $courseshortname = format_string($course->shortname, true,
@@ -102,7 +106,12 @@ class quiz_overview_report extends quiz_attempts_report {
             }
         }
 
-        $hasquestions = quiz_has_questions($quiz->id);
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $hasquestions = quiz_has_questions($quiz->id);
+        }else{
+            $r_questions = get_remote_get_slots_by_quizid($quiz->id);
+            $hasquestions = !empty($r_questions);
+        }
         if (!$table->is_downloading()) {
             if (!$hasquestions) {
                 echo quiz_no_questions_message($quiz, $cm, $this->context);
@@ -119,9 +128,14 @@ class quiz_overview_report extends quiz_attempts_report {
         $hasstudents = $students && (!$currentgroup || $groupstudents);
         if ($hasquestions && ($hasstudents || $options->attempts == self::ALL_WITH)) {
             // Construct the SQL.
-            $fields = $DB->sql_concat('u.id', "'#'", 'COALESCE(quiza.attempt, 0)') .
+            // @TODO: hardcode here, MUST_FIX
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+                $fields = 'MOODLELIB.UNDO_MEGA_HACK(MOODLELIB.TRICONCAT(u.id, \'#\', COALESCE(quiza.attempt, 0))) AS uniqueid,';
+            }else{
+                $fields = $DB->sql_concat('u.id', "'#'", 'COALESCE(quiza.attempt, 0)') .
                     ' AS uniqueid, ';
-
+            }
+            
             list($fields, $from, $where, $params) = $table->base_sql($allowed);
 
             $table->set_count_sql("SELECT COUNT(1) FROM $from WHERE $where", $params);
@@ -144,11 +158,12 @@ class quiz_overview_report extends quiz_attempts_report {
             if (!$table->is_downloading()) {
                 // Output the regrade buttons.
                 if (has_capability('mod/quiz:regrade', $this->context)) {
+                    // @TODO: not handle here(dont handle and test with group...)
                     $regradesneeded = $this->count_question_attempts_needing_regrade(
                             $quiz, $groupstudents);
                     if ($currentgroup) {
                         $a= new stdClass();
-                        $a->groupname = groups_get_group_name($currentgroup);
+                        $a->groupname = groups_get_group_name($currentgroup);//@TODO API here...
                         $a->coursestudents = get_string('participants');
                         $a->countregradeneeded = $regradesneeded;
                         $regradealldrydolabel =
@@ -181,7 +196,7 @@ class quiz_overview_report extends quiz_attempts_report {
                     echo '</form>';
                     echo '</div>';
                 }
-                // Print information on the grading method.
+                // Print information on the grading method. @TODO: handle here...
                 if ($strattempthighlight = quiz_report_highlighting_grading_method(
                         $quiz, $this->qmsubselect, $options->onlygraded)) {
                     echo '<div class="quizattemptcounts">' . $strattempthighlight . '</div>';
@@ -197,6 +212,7 @@ class quiz_overview_report extends quiz_attempts_report {
                 $headers[] = null;
             }
 
+            //@TODO: doing...
             $this->add_user_columns($table, $columns, $headers);
             $this->add_state_column($columns, $headers);
             $this->add_time_columns($columns, $headers);

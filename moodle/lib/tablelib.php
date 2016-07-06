@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
+require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 defined('MOODLE_INTERNAL') || die();
 
 /**#@+
@@ -1539,6 +1539,18 @@ class table_sql extends flexible_table {
     }
 
     /**
+     * HaNV : function mapping user by user id to change $this->countparams
+     */
+    function mapping_users(array &$hostusers) {
+        foreach ($hostusers as $key => &$val){
+            if(substr(trim($key),0,1) == 'u'){
+                $val = get_remote_mapping_user($val)[0]->id;
+            }
+        }
+        unset($val);
+    }
+
+    /**
      * Query the db. Store results in the table object for use by build_table.
      *
      * @param int $pagesize size of page for paginated displayed table.
@@ -1552,13 +1564,26 @@ class table_sql extends flexible_table {
                 $this->countsql = 'SELECT COUNT(1) FROM '.$this->sql->from.' WHERE '.$this->sql->where;
                 $this->countparams = $this->sql->params;
             }
-            $grandtotal = $DB->count_records_sql($this->countsql, $this->countparams);
+
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+                $this->mapping_users($this->countparams);
+                $countparams = array();
+                $index = 0;
+                foreach ($this->countparams as $key => $val){
+                    $countparams["countparam[$index][name]"]=$key;
+                    $countparams["countparam[$index][value]"]=$val;
+                    $index++;
+                }
+                $grandtotal = get_remote_report_get_grand_total($this->countsql, $countparams)->grandtotal;
+            }else{
+                $grandtotal = $DB->count_records_sql($this->countsql, $this->countparams);
+            }
             if ($useinitialsbar && !$this->is_downloading()) {
                 $this->initialbars($grandtotal > $pagesize);
             }
 
             list($wsql, $wparams) = $this->get_sql_where();
-            if ($wsql) {
+            if ($wsql) {//@TODO: dont test here...
                 $this->countsql .= ' AND '.$wsql;
                 $this->countparams = array_merge($this->countparams, $wparams);
 
@@ -1585,7 +1610,21 @@ class table_sql extends flexible_table {
                 {$sort}";
 
         if (!$this->is_downloading()) {
-            $this->rawdata = $DB->get_records_sql($sql, $this->sql->params, $this->get_page_start(), $this->get_page_size());
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+                $this->mapping_users($this->sql->params);
+                $params = array();
+                $index = 0;
+                foreach ($this->sql->params as $key => $val){
+                    $params["param[$index][name]"]=$key;
+                    $params["param[$index][value]"]=$val;
+                    $index++;
+                }
+//                print_r($sql);die;
+                $this->rawdata = get_remote_report_get_rowdata ($sql, $params, $this->get_page_start(), $this->get_page_size());
+            }else{
+                $this->rawdata = $DB->get_records_sql($sql, $this->sql->params, $this->get_page_start(), $this->get_page_size());
+            }
+//            var_dump($this->rawdata);die;
         } else {
             $this->rawdata = $DB->get_records_sql($sql, $this->sql->params);
         }

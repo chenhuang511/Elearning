@@ -1297,8 +1297,14 @@ class mod_quiz_renderer extends plugin_renderer_base {
         }
 
         require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
-        $url = new moodle_url('/mod/quiz/report.php', array(
-            'id' => $cm->id, 'mode' => quiz_report_default_report($context)));
+        if(MOODLE_RUN_MODE == MOODLE_MODE_HOST){
+            $url = new moodle_url('/mod/quiz/report.php', array(
+                'id' => $cm->id, 'mode' => quiz_report_default_report($context)));
+        }
+        else{
+            $url = new moodle_url('/mod/quiz/remote/report.php', array(
+                'id' => $cm->id, 'mode' => quiz_report_default_report($context)));
+        }
         return html_writer::link($url, $summary);
     }
 

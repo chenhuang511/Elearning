@@ -14,6 +14,7 @@ require_once($CFG->dirroot . '/lib/dml/mysqli_native_moodle_recordset.php');
 require_once($CFG->dirroot . '/lib/remote/lib.php');
 require_once($CFG->dirroot . '/lib/additionallib.php');
 require_once($CFG->dirroot . '/mnet/service/enrol/locallib.php');
+require_once($CFG->dirroot . '/mnet/lib.php');
 
 function get_remote_quiz_by_id($id) {
     return moodle_webservice_client(
@@ -321,6 +322,42 @@ function get_remote_count_attempts($quizid) {
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_quiz_count_attempt_summary',
             'params' => array('quizid' => $quizid, 'ipaddress' => $hostip)
+        ), false
+    );
+    return $resp;
+}
+
+function get_remote_significant_questions($quizid) {
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_quiz_report_get_significant_questions',
+            'params' => array('quizid' => $quizid)
+        ), false
+    );
+    return $resp;
+}
+
+function get_remote_report_get_grand_total($countsql, $countparam) {
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_quiz_report_get_grand_total',
+            'params' => array_merge(array('countsql' => $countsql), $countparam)
+        ), false
+    );
+    return $resp;
+}
+
+function get_remote_report_get_rowdata($sql, $param, $pagestart, $pagesize) {
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_quiz_report_get_rowdata_for_tableview',
+            'params' => array_merge(array('sql' => $sql, 'pagestart' => $pagestart, 'pagesize' => $pagesize), $param)
         ), false
     );
     return $resp;
