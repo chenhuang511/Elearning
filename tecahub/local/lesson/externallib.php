@@ -3235,7 +3235,7 @@ class local_mod_lesson_external extends external_api
 
         $f = $DB->get_field($params['modname'], $params['field'], $arr);
 
-        if(!$f) {
+        if (!$f) {
             $f = 0;
         }
 
@@ -3251,6 +3251,63 @@ class local_mod_lesson_external extends external_api
         return new external_single_structure(
             array(
                 'field' => new external_value(PARAM_RAW, 'field'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_count_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'modname' => new external_value(PARAM_RAW, 'mod name'),
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'sort' => new external_value(PARAM_RAW, 'sort')
+            )
+        );
+    }
+
+    public static function get_count_by($modname, $parameters, $sort)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_count_by_parameters(), array(
+            'modname' => $modname,
+            'parameters' => $parameters,
+            'sort' => $sort
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+        if ($params['sort'] === '') {
+            $count = $DB->count_records($params['modname'], $params['field'], $arr);
+        } else {
+            $count = $DB->count_records($params['modname'], $params['field'], $arr, $params['sort']);
+        }
+
+        $result['count'] = $count;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_count_by_returns()
+    {
+        return new external_function_parameters(
+            array(
+                'count' => new external_value(PARAM_INT, 'count row'),
                 'warnings' => new external_warnings()
             )
         );
