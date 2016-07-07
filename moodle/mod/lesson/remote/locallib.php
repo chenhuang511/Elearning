@@ -186,13 +186,13 @@ function get_remote_list_lesson_answers_by($parameters, $sort = '', $limitfrom =
         )
     );
 
-    $attempts = array();
+    $answers = array();
 
-    foreach ($result->attempts as $attempt) {
-        $attempts[$attempt->id] = $attempt;
+    foreach ($result->answers as $answer) {
+        $answers[$answer->id] = $answer;
     }
 
-    return $attempts;
+    return $answers;
 }
 
 function get_remote_list_lesson_grades_by($parameters, $sort = '', $limitfrom = 0, $limitnum = 0)
