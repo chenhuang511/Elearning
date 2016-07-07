@@ -360,7 +360,7 @@ function wiki_grades($wikiid) {
 /**
  * This function returns if a scale is being used by one wiki
  * it it has support for grading and scales. Commented code should be
- * modified if necessary. See forum, glossary or journal modules
+ * modified if necessary. See wiki, glossary or journal modules
  * as reference.
  *
  * @param int $wikiid ID of an instance of this module
@@ -748,24 +748,16 @@ function wiki_page_view($wiki, $page, $course, $cm, $context, $uid = null, $othe
  *                        will know about (most noticeably, an icon).
  */
 function wiki_get_coursemodule_info($coursemodule) {
-    global $CFG, $DB;
+    global $CFG;
 
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
-        $dbparams = array('id' => $coursemodule->instance);
-        if (!$wiki = $DB->get_record('wiki', $dbparams)) {
-            return false;
-        }
-    } else if(MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        require_once($CFG->dirroot . '/mod/wiki/remote/locallib.php');
-        if (!$wiki = get_remote_wiki_by_id($coursemodule->instance)) {
-            return false;
-        }
-    }
+    require_once($CFG->dirroot . '/mod/wiki/remote/locallib.php');
+    $params = array();
+    $params['parameters[0][name]'] = "id";
+    $params['parameters[0][value]'] = $coursemodule->instance;
+    $wiki = get_remote_wiki_by($params, '', true);
 
     $result = new cached_cm_info();
     $result->name = $wiki->name;
-
-    // Convert intro to html. Do not filter cached version, filters run at display time.
     $result->content = format_module_intro('wiki', $wiki, $coursemodule->id, false);
 
     return $result;

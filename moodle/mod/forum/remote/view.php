@@ -68,7 +68,7 @@ if ($id) {
     }
     // move require_course_login here to use forced language for course
     // fix for MDL-6926
-    require_course_login($course, true, $cm);
+    require_login($course, false, $cm);
     $strforums = get_string("modulenameplural", "forum");
     $strforum = get_string("modulename", "forum");
 } else if ($f) {

@@ -115,7 +115,7 @@ if (!isloggedin() or isguestuser()) {
     exit;
 }
 
-require_login(0, false);   // Script is useless unless they're logged in
+require_login($course, false, $cm);   // Script is useless unless they're logged in
 
 if (!empty($forum)) {      // User is starting a new discussion in a forum
     if (! $cm = get_remote_course_module_by_cmid('forum', $id)) {
