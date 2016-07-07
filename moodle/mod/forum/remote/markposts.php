@@ -48,6 +48,7 @@ if (! $forum = get_remote_forum_by($param) {
 $param = array();
 $param['parameters[0][name]'] = 'id';
 $param['parameters[0][value]']= $forum->course;
+
 if (! $course = get_remote_forum_by( $param)) {
     print_error('invalidcourseid');
 }
