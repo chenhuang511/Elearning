@@ -76,6 +76,7 @@ switch ($action) {
         $SESSION->questionnaire->current_tab = 'mysummary';
         $select = 'survey_id = '.$questionnaire->sid.' AND username = \''.$userid.'\' AND complete=\'y\'';
         $resps = get_remote_questionnaire_response($select);
+        $resps = change_key_by_value($resps, 'id');
         if (!$resps) {
             $resps = array();
         }
@@ -109,6 +110,7 @@ switch ($action) {
         $select = 'survey_id = '.$questionnaire->sid.' AND username = \''.$userid.'\' AND complete=\'y\'';
         $sort = 'submitted ASC';
         $resps = get_remote_questionnaire_response($select, $sort);
+        $resps = change_key_by_value($resps, 'id');
         $titletext = get_string('myresponses', 'questionnaire');
 
         // Print the page header.
@@ -118,6 +120,7 @@ switch ($action) {
         include('tabs.php');
 
         echo $OUTPUT->heading($titletext.':');
+
         $questionnaire->view_all_responses($resps);
 
         // Finish the page.
@@ -230,7 +233,7 @@ switch ($action) {
             }
         }
 
-        $rids = array_keys($resps);
+        $rids = array_map(function ($ar) {return $ar->id;}, $resps);
         if (!$rid) {
             // If more than one response for this respondent, display most recent response.
             $rid = end($rids);

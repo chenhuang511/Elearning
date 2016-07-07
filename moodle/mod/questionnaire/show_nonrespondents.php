@@ -25,6 +25,7 @@
 
 require_once("../../config.php");
 require_once($CFG->dirroot.'/mod/questionnaire/locallib.php');
+require_once($CFG->dirroot.'/mod/questionnaire/remote/locallib.php');
 require_once($CFG->dirroot.'/mod/questionnaire/questionnaire.class.php');
 require_once($CFG->libdir.'/tablelib.php');
 
@@ -50,18 +51,22 @@ $SESSION->questionnaire->current_tab = 'nonrespondents';
 
 // Get the objects.
 
-if ($id) {
-    if (! $cm = get_coursemodule_from_id('questionnaire', $id)) {
-        print_error('invalidcoursemodule');
-    }
+if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+	if ($id) {
+	    if (! $cm = get_coursemodule_from_id('questionnaire', $id)) {
+	        print_error('invalidcoursemodule');
+	    }
 
-    if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
-        print_error('coursemisconf');
-    }
+	    if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
+	        print_error('coursemisconf');
+	    }
 
-    if (! $questionnaire = $DB->get_record("questionnaire", array("id" => $cm->instance))) {
-        print_error('invalidcoursemodule');
-    }
+	    if (! $questionnaire = $DB->get_record("questionnaire", array("id" => $cm->instance))) {
+	        print_error('invalidcoursemodule');
+	    }
+	}
+} else {
+	list($cm, $course, $questionnaire) = questionnaire_get_standard_page_items($id, $qid);
 }
 
 $questionnaire = new questionnaire($sid, $questionnaire, $course, $cm);

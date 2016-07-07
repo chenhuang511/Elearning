@@ -104,26 +104,41 @@ class single extends base {
         if (!empty($rids)) {
             list($rsql, $rparams) = $DB->get_in_or_equal($rids);
             $params = array_merge($params, $rparams);
-            $rsql = ' AND response_id ' . $rsql;
+			if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+				$rsql = ' AND response_id ' . $rsql;
+			} else {
+            	$rsql = ' AND response_id IN (' . implode(',',$rids) . ')';
+			}
         }
         // Added qc.id to preserve original choices ordering.
-        $sql = 'SELECT rt.id, qc.id as cid, qc.content ' .
+		if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        	$sql = 'SELECT rt.id, qc.id as cid, qc.content ' .
                'FROM {questionnaire_quest_choice} qc, ' .
                '{'.$this->response_table().'} rt ' .
                'WHERE qc.question_id= ? AND qc.content NOT LIKE \'!other%\' AND ' .
                      'rt.question_id=qc.question_id AND rt.choice_id=qc.id' . $rsql . ' ' .
                'ORDER BY qc.id';
-
-        $rows = $DB->get_records_sql($sql, $params);
-
-        // Handle 'other...'.
-        $sql = 'SELECT rt.id, rt.response, qc.content ' .
+			$rows = $DB->get_records_sql($sql, $params);
+		} else {
+	        $sql_select = 'qc.question_id= '.$this->question->id.' AND ' .
+	                     'rt.question_id=qc.question_id AND qc.content NOT LIKE \'!other%\' AND rt.choice_id=qc.id' . $rsql;
+	        $sql_sort = "qc.id";
+	        $rows = get_remote_questionnaire_choice_single($sql_select, $sql_sort);
+        }
+		// Handle 'other...'.
+		if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+			$sql = 'SELECT rt.id, rt.response, qc.content ' .
                'FROM {questionnaire_response_other} rt, ' .
                     '{questionnaire_quest_choice} qc ' .
                'WHERE rt.question_id= ? AND rt.choice_id=qc.id' . $rsql . ' ' .
                'ORDER BY qc.id';
-
-        if ($recs = $DB->get_records_sql($sql, $params)) {
+			$recs = $DB->get_records_sql($sql, $params);
+		} else {
+	        $sql_select = 'rt.question_id= '.$this->question->id.' AND rt.choice_id=qc.id' . $rsql;
+	        $sql_sort = 'qc.id';
+			$recs = get_remote_questionnaire_choice_other($sql_select, $sql_sort);
+		}
+        if ($recs) {
             $i = 1;
             foreach ($recs as $rec) {
                 $rows['other'.$i] = new \stdClass();

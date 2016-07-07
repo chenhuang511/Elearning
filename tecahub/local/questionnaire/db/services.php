@@ -170,4 +170,44 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_get_questionnaire_quest_choice_by_condition' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'get_questionnaire_quest_choice_by_condition',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get questionnaire date and question",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_get_questionnaire_fb_sections' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'get_questionnaire_fb_sections',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get questionnaire fb sections",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_get_questionnaire_feedback' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'get_questionnaire_feedback',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get questionnaire feedback",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_get_questionnaire_choice_single' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'get_questionnaire_choice_single',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get questionnaire choice and single",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_get_questionnaire_choice_other' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'get_questionnaire_choice_other',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get questionnaire choice and other",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 );

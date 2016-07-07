@@ -456,7 +456,11 @@ class questionnaire {
     }
 
     public function is_survey_owner() {
-        return (!empty($this->survey->owner) && ($this->course->id == $this->survey->owner));
+		if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+ 			return (!empty($this->survey->owner) && ($this->course->id == $this->survey->owner));
+		} else {
+			return (!empty($this->survey->owner) && ($this->course->remoteid == $this->survey->owner));
+		}
     }
 
     public function can_view_response($rid) {
@@ -519,7 +523,11 @@ class questionnaire {
         global $USER, $DB, $SESSION;
 
         if ($owner = get_remote_field_owner_questionnaire_by_id($this->sid)) {
-            $owner = (trim($owner) == trim($this->course->id));
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+				$owner = (trim($owner) == trim($this->course->id));
+			} else {
+				$owner = (trim($owner) == trim($this->course->remoteid));
+			}
         } else {
             $owner = true;
         }
@@ -1605,11 +1613,20 @@ class questionnaire {
         }
 
         // Response_bool (yes/no).
-        $sql = 'SELECT q.id '.$col.', a.choice_id '.
+		if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+			$sql = 'SELECT q.id '.$col.', a.choice_id '.
                'FROM {questionnaire_response_bool} a, {questionnaire_question} q '.
                'WHERE a.response_id= ? AND a.question_id=q.id ';
-        if ($records = $DB->get_records_sql($sql, array($rid))) {
-            foreach ($records as $qid => $row) {
+			$records = $DB->get_records_sql($sql, array($rid))
+		} else {
+			$select = 'a.response_id='.$rid.'  AND a.question_id=q.id';
+			$records = get_remote_questionnaire_bool_question($select)
+		}
+        if ($records) {
+            foreach ($records as $key => $row) {
+				if(MOODLE_RUN_MODE !== MOODLE_MODE_HOST){
+                	$qid = $row->id;
+				}
                 $choice = $row->choice_id;
                 if (isset ($row->name) && $row->name == '') {
                     $noname = true;
@@ -1632,11 +1649,20 @@ class questionnaire {
         }
 
         // Response_single (radio button or dropdown).
-        $sql = 'SELECT q.id '.$col.', q.type_id as q_type, c.content as ccontent,c.id as cid '.
+		if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+			$sql = 'SELECT q.id '.$col.', q.type_id as q_type, c.content as ccontent,c.id as cid '.
                'FROM {questionnaire_resp_single} a, {questionnaire_question} q, {questionnaire_quest_choice} c '.
                'WHERE a.response_id = ? AND a.question_id=q.id AND a.choice_id=c.id ';
-        if ($records = $DB->get_records_sql($sql, array($rid))) {
+			$records = $DB->get_records_sql($sql, array($rid))
+		} else {
+			$select = 'a.response_id = '.$rid.' AND a.question_id=q.id AND a.choice_id=c.id';
+			$records = get_remote_questionnaire_single_question_choice($select)
+		}
+        if ($records) {
             foreach ($records as $qid => $row) {
+                if(MOODLE_RUN_MODE !== MOODLE_MODE_HOST){
+                	$qid = $row->id;
+				}
                 $cid = $row->cid;
                 $qtype = $row->q_type;
                 if ($csvexport) {
@@ -1685,11 +1711,17 @@ class questionnaire {
         }
 
         // Response_multiple.
-        $sql = 'SELECT a.id as aid, q.id as qid '.$col.',c.content as ccontent,c.id as cid '.
+		if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+			$sql = 'SELECT a.id as aid, q.id as qid '.$col.',c.content as ccontent,c.id as cid '.
                'FROM {questionnaire_resp_multiple} a, {questionnaire_question} q, {questionnaire_quest_choice} c '.
                'WHERE a.response_id = ? AND a.question_id=q.id AND a.choice_id=c.id '.
                'ORDER BY a.id,a.question_id,c.id';
         $records = $DB->get_records_sql($sql, array($rid));
+		} else {
+	        $select = 'a.response_id = '.$rid.' AND a.question_id=q.id AND a.choice_id=c.id';
+	        $sort = 'a.id,a.question_id,c.id';
+	        $records = get_remote_questionnaire_multiple_question_choice($select, $sort);
+		}
         if ($csvexport) {
             $tmp = null;
             if (!empty($records)) {
@@ -1807,12 +1839,19 @@ class questionnaire {
             // Response_other.
             // This will work even for multiple !other fields within one question
             // AND for identical !other responses in different questions JR.
-        $sql = 'SELECT c.id as cid, c.content as content, a.response as aresponse, q.id as qid, q.position as position,
+		if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+			$sql = 'SELECT c.id as cid, c.content as content, a.response as aresponse, q.id as qid, q.position as position,
                                     q.type_id as type_id, q.name as name '.
                'FROM {questionnaire_response_other} a, {questionnaire_question} q, {questionnaire_quest_choice} c '.
                'WHERE a.response_id= ? AND a.question_id=q.id AND a.choice_id=c.id '.
                'ORDER BY a.question_id,c.id ';
-        if ($records = $DB->get_records_sql($sql, array($rid))) {
+			$records = $DB->get_records_sql($sql, array($rid));
+		} else {
+	        $select = 'a.response_id= '.$rid.' AND a.question_id=q.id AND a.choice_id=c.id ';
+	        $sort = 'a.question_id,c.id';
+			$records = get_remote_questionnaire_other_question_choice($select, $sort)
+		}
+        if ($records) {
             foreach ($records as $record) {
                 $newrow = array();
                 $position = $record->position;
@@ -1841,12 +1880,19 @@ class questionnaire {
         }
 
         // Response_rank.
-        $sql = 'SELECT a.id as aid, q.id AS qid, q.precise AS precise, c.id AS cid '.$col.', c.content as ccontent,
+		if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){ 
+			$sql = 'SELECT a.id as aid, q.id AS qid, q.precise AS precise, c.id AS cid '.$col.', c.content as ccontent,
                                 a.rank as arank '.
                'FROM {questionnaire_response_rank} a, {questionnaire_question} q, {questionnaire_quest_choice} c '.
                'WHERE a.response_id= ? AND a.question_id=q.id AND a.choice_id=c.id '.
                'ORDER BY aid, a.question_id, c.id';
-        if ($records = $DB->get_records_sql($sql, array($rid))) {
+			$records = $DB->get_records_sql($sql, array($rid));
+		} else {
+	        $select = 'a.response_id= '.$rid.' AND a.question_id=q.id AND a.choice_id=c.id';
+	        $sort = 'aid, a.question_id, c.id';
+			$records = get_remote_questionnaire_rank_question_choice($select, $sort)
+		}
+        if ($records) {
             foreach ($records as $row) {
                 // Next two are 'qid' and 'cid', each with numeric and hash keys.
                 $osgood = false;
@@ -1895,11 +1941,20 @@ class questionnaire {
         }
 
         // Response_text.
-        $sql = 'SELECT q.id '.$col.', a.response as aresponse '.
+		if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+			$sql = 'SELECT q.id '.$col.', a.response as aresponse '.
                'FROM {questionnaire_response_text} a, {questionnaire_question} q '.
                'WHERE a.response_id=\''.$rid.'\' AND a.question_id=q.id ';
-        if ($records = $DB->get_records_sql($sql)) {
+			$records = $DB->get_records_sql($sql);
+		} else {
+	        $select = 'a.response_id=\''.$rid.'\' AND a.question_id=q.id';
+			$records = get_remote_questionnaire_text_question($select);
+		}
+        if ($records) {
             foreach ($records as $qid => $row) {
+				if(MOODLE_RUN_MODE !== MOODLE_MODE_HOST){
+                	$qid = $row->id;
+				}
                 unset($row->id);
                 $row = (array)$row;
                 $newrow = array();
@@ -1915,12 +1970,21 @@ class questionnaire {
         }
 
         // Response_date.
-        $sql = 'SELECT q.id '.$col.', a.response as aresponse '.
+		if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        	$sql = 'SELECT q.id '.$col.', a.response as aresponse '.
                'FROM {questionnaire_response_date} a, {questionnaire_question} q '.
                'WHERE a.response_id=\''.$rid.'\' AND a.question_id=q.id ';
-        if ($records = $DB->get_records_sql($sql)) {
+			$records = $DB->get_records_sql($sql);
+		} else {
+	        $select = 'a.response_id=\''.$rid.'\' AND a.question_id=q.id';
+			$records = get_remote_questionnaire_date_question($select);
+		}
+        if ($records) {
             $dateformat = get_string('strfdate', 'questionnaire');
             foreach ($records as $qid => $row) {
+                if(MOODLE_RUN_MODE !== MOODLE_MODE_HOST){
+                	$qid = $row->id;
+				}
                 unset ($row->id);
                 $row = (array)$row;
                 $newrow = array();
@@ -2345,20 +2409,35 @@ class questionnaire {
             $sql = "";
             $castsql = $DB->sql_cast_char2int('r.username');
             if ($uid !== false) { // One participant only.
-                $sql = "SELECT r.id, r.survey_id
+				if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+					$sql = "SELECT r.id, r.survey_id
                           FROM {questionnaire_response} r
                          WHERE r.survey_id='{$this->survey->id}' AND
                                r.username = $uid AND
                                r.complete='y'
                          ORDER BY r.id";
+				} else {
+	                $sql_select = "survey_id='{$this->survey->id}' AND username = $uid AND complete='y'";
+	                $sql_sort = 'id';
+				}
                 // All participants or all members of a group.
             } else if ($currentgroupid == 0) {
-                $sql = "SELECT r.id, r.survey_id, r.username as userid
+//                $sql = "SELECT r.id, r.survey_id, r.username as userid
+//                          FROM {questionnaire_response} r
+//                         WHERE r.survey_id='{$this->survey->id}' AND
+//                               r.complete='y'
+//                         ORDER BY r.id";
+				if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+					$sql = "SELECT r.id, r.survey_id, r.username as userid
                           FROM {questionnaire_response} r
                          WHERE r.survey_id='{$this->survey->id}' AND
                                r.complete='y'
                          ORDER BY r.id";
-            } else { // Members of a specific group.
+				} else {
+	                $sql_select = "survey_id='{$this->survey->id}' AND complete='y'";
+	                $sql_sort = 'id';
+				}
+            } else { // Members of a specific group. // sua
                 $sql = "SELECT r.id, r.survey_id
                           FROM {questionnaire_response} r,
                                 {groups_members} gm
@@ -2368,7 +2447,12 @@ class questionnaire {
                                ".$castsql."=gm.userid
                          ORDER BY r.id";
             }
-            if (!($rows = $DB->get_records_sql($sql))) {
+			if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+				$rows = $DB->get_records_sql($sql);
+			} else {
+				$rows = get_remote_questionnaire_response($sql_select, $sql_sort);
+			}
+            if (!($rows)) {
                 echo (get_string('noresponses', 'questionnaire'));
                 $SESSION->questionnaire->noresponses = true;
                 return;
@@ -3081,7 +3165,12 @@ class questionnaire {
 
         require_once($CFG->libdir.'/tablelib.php');
         require_once($CFG->dirroot.'/mod/questionnaire/drawchart.php');
-        if ($resp = $DB->get_record('questionnaire_response', array('id' => $rid)) ) {
+		if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){ 
+			$resp = $DB->get_record('questionnaire_response', array('id' => $rid));
+		} else {
+			$resp = get_remote_questionnaire_response_by_rid($rid);
+		}
+        if ($resp) {
             $userid = $resp->username;
             if ($user = $DB->get_record('user', array('id' => $userid))) {
                 $ruser = fullname($user);
@@ -3116,12 +3205,13 @@ class questionnaire {
         $questions = $this->questions;
 
         // Find if there are any feedbacks in this questionnaire.
-        $sql = "SELECT * FROM {questionnaire_fb_sections} WHERE survey_id = $sid AND section IS NOT NULL";
-        if (!$fbsections = $DB->get_records_sql($sql)) {
+//        $sql = "SELECT * FROM {questionnaire_fb_sections} WHERE survey_id = $sid AND section IS NOT NULL";
+        $sql_select = "survey_id = $sid AND section IS NOT NULL";
+        if (!$fbsections = get_remote_questionnaire_fb_sections($sql_select)) {
             return null;
         }
 
-        $fbsectionsnb = array_keys($fbsections);
+        $fbsectionsnb = array_map(function ($ar) {return $ar->id;}, $fbsectionsnb);
         // Calculate max score per question in questionnaire.
         $qmax = array();
         $totalscore = 0;
@@ -3180,11 +3270,13 @@ class questionnaire {
         }
         foreach ($rids as $rrid) {
             // Get responses for bool (Yes/No).
-            $sql = 'SELECT q.id, q.type_id as q_type, a.choice_id as cid '.
-                            'FROM {questionnaire_response_bool} a, {questionnaire_question} q '.
-                            'WHERE a.response_id = ? AND a.question_id=q.id ';
-            if ($responses = $DB->get_records_sql($sql, array($rrid))) {
+//            $sql = 'SELECT q.id, q.type_id as q_type, a.choice_id as cid '.
+//                            'FROM {questionnaire_response_bool} a, {questionnaire_question} q '.
+//                            'WHERE a.response_id = ? AND a.question_id=q.id ';
+            $sql_select = "a.response_id = '$rrid' AND a.question_id=q.id";
+            if ($responses = get_remote_questionnaire_bool_question($sql_select)) {
                 foreach ($responses as $qid => $response) {
+                    $qid = $response->id;
                     $responsescore = ($response->cid == 'y' ? 1 : 0);
                     // Individual score.
                     // If this is current user's response OR if current user is viewing another group's results.
@@ -3206,11 +3298,13 @@ class questionnaire {
             }
 
             // Get responses for single (Radio or Dropbox).
-            $sql = 'SELECT q.id, q.type_id as q_type, c.content as ccontent,c.id as cid, c.value as score  '.
-                            'FROM {questionnaire_resp_single} a, {questionnaire_question} q, {questionnaire_quest_choice} c '.
-                            'WHERE a.response_id = ? AND a.question_id=q.id AND a.choice_id=c.id ';
-            if ($responses = $DB->get_records_sql($sql, array($rrid))) {
+//            $sql = 'SELECT q.id, q.type_id as q_type, c.content as ccontent,c.id as cid, c.value as score  '.
+//                            'FROM {questionnaire_resp_single} a, {questionnaire_question} q, {questionnaire_quest_choice} c '.
+//                            'WHERE a.response_id = ? AND a.question_id=q.id AND a.choice_id=c.id ';
+            $sql_select = "a.response_id = '$rrid' AND a.question_id=q.id AND a.choice_id=c.id";
+            if ($responses = get_remote_questionnaire_single_question_choice($sql_select)) {
                 foreach ($responses as $qid => $response) {
+                    $qid = $response->id;
                     // Individual score.
                     // If this is current user's response OR if current user is viewing another group's results.
                     if ($rrid == $rid || $allresponses) {
@@ -3231,11 +3325,13 @@ class questionnaire {
             }
 
             // Get responses for response_rank (Rate).
-            $sql = 'SELECT a.id as aid, q.id AS qid, c.id AS cid, a.rank as arank '.
-                            'FROM {questionnaire_response_rank} a, {questionnaire_question} q, {questionnaire_quest_choice} c '.
-                            'WHERE a.response_id= ? AND a.question_id=q.id AND a.choice_id=c.id '.
-                            'ORDER BY aid, a.question_id,c.id';
-            if ($responses = $DB->get_records_sql($sql, array($rrid))) {
+//            $sql = 'SELECT a.id as aid, q.id AS qid, c.id AS cid, a.rank as arank '.
+//                            'FROM {questionnaire_response_rank} a, {questionnaire_question} q, {questionnaire_quest_choice} c '.
+//                            'WHERE a.response_id= ? AND a.question_id=q.id AND a.choice_id=c.id '.
+//                            'ORDER BY aid, a.question_id,c.id';
+            $sql_select = "a.response_id= '$rrid' AND a.question_id=q.id AND a.choice_id=c.id";
+            $sql_sort = "aid, a.question_id,c.id";
+            if ($responses = get_remote_questionnaire_rank_question_choice($sql_select, $sql_sort)) {
                 // We need to store the number of sub-questions for each rate questions.
                 $rank = array();
                 $firstcid = array();
@@ -3246,13 +3342,13 @@ class questionnaire {
                         $qscore[$qid] = 0;
                         $allqscore[$qid] = 0;
                     }
-                    $firstcid[$qid] = $DB->get_record('questionnaire_quest_choice',
-                                    array('question_id' => $qid), 'id', IGNORE_MULTIPLE);
+                    $firstcid[$qid] = get_remote_questionnaire_quest_choice_by_question_id($qid)[0];
                     $firstcidid = $firstcid[$qid]->id;
                     $cidvalue = $firstcidid + $rank;
-                    $sql = "SELECT * FROM {questionnaire_quest_choice} WHERE id = $cidvalue";
+                    $sql_select = "id = $cidvalue";
+//                    $sql = "SELECT * FROM {questionnaire_quest_choice} WHERE id = $cidvalue"; // sua
 
-                    if ($value = $DB->get_record_sql($sql)) {
+                    if ($value = get_remote_questionnaire_quest_choice_by_condition($sql_select)) {
                         // Individual score.
                         // If this is current user's response OR if current user is viewing another group's results.
                         if ($rrid == $rid || $allresponses) {
@@ -3278,15 +3374,19 @@ class questionnaire {
             $sectionlabel = $fbsections[$sectionid]->sectionlabel;
 
             $sectionheading = $fbsections[$sectionid]->sectionheading;
-            $feedbacks = $DB->get_records('questionnaire_feedback', array('section_id' => $sectionid));
+            $sql_select = "section_id = $sectionid";
+            $feedbacks = get_remote_questionnaire_feedback($sql_select);
+//            $feedbacks = $DB->get_records('questionnaire_feedback', array('section_id' => $sectionid));
             $labels = array();
             foreach ($feedbacks as $feedback) {
                 if ($feedback->feedbacklabel != '') {
                     $labels[] = $feedback->feedbacklabel;
                 }
             }
-            $feedback = $DB->get_record_select('questionnaire_feedback',
-                            'section_id = ? AND minscore <= ? AND ? < maxscore', array($sectionid, $scorepercent, $scorepercent));
+//            $feedback = $DB->get_record_select('questionnaire_feedback',
+//                            'section_id = ? AND minscore <= ? AND ? < maxscore', array($sectionid, $scorepercent, $scorepercent));
+            $sql_select = "section_id = $sectionid AND minscore <= $scorepercent AND $scorepercent < maxscore";
+            $feedback = get_remote_questionnaire_feedback($sql_select)[0];
 
             // To eliminate all potential % chars in heading text (might interfere with the sprintf function).
             $sectionheading = str_replace('%', '', $sectionheading);
@@ -3400,10 +3500,12 @@ class questionnaire {
                 $sectionheading = format_text($sectionheading, 1, $formatoptions);
                 $feedbackmessages[] = $OUTPUT->box_start('reportQuestionTitle');
                 $feedbackmessages[] = format_text($sectionheading, FORMAT_HTML);
-                $feedback = $DB->get_record_select('questionnaire_feedback',
-                                'section_id = ? AND minscore <= ? AND ? < maxscore',
-                                array($feedbacksectionid, $scorepercent[$section], $scorepercent[$section]),
-                                'id,feedbacktext,feedbacktextformat');
+//                $feedback = $DB->get_record_select('questionnaire_feedback',
+//                                'section_id = ? AND minscore <= ? AND ? < maxscore',
+//                                array($feedbacksectionid, $scorepercent[$section], $scorepercent[$section]),
+//                                'id,feedbacktext,feedbacktextformat');
+                $sql_select = "section_id = $feedbacksectionid AND minscore <= $scorepercent[$section] AND $scorepercent[$section] < maxscore";
+                $feedback = get_remote_questionnaire_feedback($sql_select)[0];
                 $feedbackmessages[] = $OUTPUT->box_end();
                 if (!empty($feedback->feedbacktext)) {
                     // Clean the text, ready for display.
