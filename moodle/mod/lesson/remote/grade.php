@@ -35,7 +35,10 @@ $id = required_param('id', PARAM_INT);
 
 $cm = get_remote_course_module_by_cmid('lesson', $id);
 $course = get_local_course_record($cm->course);
-$lesson = new lesson(get_remote_lesson_by_id($cm->instance));
+$params = array();
+$params['parameters[0][name]'] = "id";
+$params['parameters[0][value]'] = $cm->instance;
+$lesson = new lesson(get_remote_lesson_by($params, '', true));
 
 require_login($course, false, $cm);
 

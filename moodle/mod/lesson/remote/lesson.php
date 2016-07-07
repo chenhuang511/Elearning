@@ -39,7 +39,10 @@ $pageid = required_param('pageid', PARAM_INT);
 
 $cm = get_remote_course_module_by_cmid('lesson', $id);
 $course = get_local_course_record($cm->course);
-$lesson = new lesson(get_remote_lesson_by_id($cm->instance));
+$params = array();
+$params['parameters[0][name]'] = "id";
+$params['parameters[0][value]'] = $cm->instance;
+$lesson = new lesson(get_remote_lesson_by($params, '', true));
 
 require_login($course, false, $cm);
 
@@ -87,12 +90,17 @@ switch ($action) {
         $params['parameters[0][name]'] = "id";
         $params['parameters[0][value]'] = $pageid;
         $title = get_remote_field_by("lesson_pages", $params, "title");
-        
+
 
         echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('moving', 'lesson', format_String($title)));
         echo $OUTPUT->heading(get_string("moving", "lesson", format_string($title)), 3);
 
-        if (!$page = get_remote_lesson_pages_by_lessonid_and_prevpageid($lesson->id, 0)) {
+        $params = array();
+        $params['parameters[0][name]'] = "lessonid";
+        $params['parameters[0][value]'] = $lesson->id;
+        $params['parameters[1][name]'] = "prevpageid";
+        $params['parameters[1][value]'] = 0;
+        if (!$page = get_remote_lesson_pages_by($params, '', true)) {
             print_error('cannotfindfirstpage', 'lesson');
         }
 
@@ -116,7 +124,10 @@ switch ($action) {
                 echo html_writer::end_tag('div');
             }
             if ($page->nextpageid) {
-                if (!$page = get_remote_lesson_pages_by_id($page->nextpageid)) {
+                $params = array();
+                $params['parameters[0][name]'] = "id";
+                $params['parameters[0][value]'] = $page->nextpageid;
+                if (!$page = get_remote_lesson_pages_by($params)) {
                     print_error('cannotfindnextpage', 'lesson');
                 }
             } else {

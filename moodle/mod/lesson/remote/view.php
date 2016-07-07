@@ -41,8 +41,11 @@ $backtocourse = optional_param('backtocourse', false, PARAM_RAW);
 // get course module
 $cm = get_remote_course_module_by_cmid('lesson', $id);
 $course = get_local_course_record($cm->course);
-$lesson = get_remote_lesson_by_id($cm->instance);
-$lesson = new lesson($lesson);
+
+$params = array();
+$params['parameters[0][name]'] = "id";
+$params['parameters[0][value]'] = $cm->instance;
+$lesson = new lesson(get_remote_lesson_by($params, '', true));
 
 require_login($course, false, $cm);
 
@@ -113,7 +116,10 @@ if (!$canmanage) {
             exit();
         }
     } else if ($lesson->dependency) { // check for dependencies
-        if ($dependentlesson = get_remote_lesson_by_id($lesson->dependency)) {
+        $params = array();
+        $params['parameters[0][name]'] = "id";
+        $params['parameters[0][value]'] = $lesson->dependency;
+        if ($dependentlesson = get_remote_lesson_by($params, '', true)) {
             // lesson exists, so we can proceed
             $conditions = unserialize($lesson->conditions);
             // assume false for all
@@ -236,7 +242,10 @@ if (empty($pageid)) {
     if (!empty($allattempts)) {
         $attempt = end($allattempts);
         $attemptpage = $lesson->load_page($attempt->pageid);
-        $jumpto = get_remote_lesson_answers_by_id($attempt->answerid)->jumpto;
+        $params = array();
+        $params['parameters[0][name]'] = "id";
+        $params['parameters[0][value]'] = $attempt->answerid;
+        $jumpto = get_remote_lesson_answers_by($params)->jumpto;
         // convert the jumpto to a proper page id
         if ($jumpto == 0) {
             // Check if a question has been incorrectly answered AND no more attempts at it are left.

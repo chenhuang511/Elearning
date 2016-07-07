@@ -37,7 +37,10 @@ $nothingtodisplay = false;
 
 $cm = get_remote_course_module_by_cmid('lesson', $id);
 $course = get_local_course_record($cm->course);
-$lesson = new lesson(get_remote_lesson_by_id($cm->instance));
+$params = array();
+$params['parameters[0][name]'] = "id";
+$params['parameters[0][value]'] = $cm->instance;
+$lesson = new lesson(get_remote_lesson_by($params, '', true));
 
 require_login($course, false, $cm);
 
@@ -169,8 +172,11 @@ if ($action === 'delete') {
     $questioncount = (intval(get_remote_count_by("lesson_pages", $params)) - $branchcount);
 
     // Only load students if there attempts for this lesson.
-    $attempts = check_remote_record_exists('lesson_attempts', 'lessonid', $lesson->id);
-    $branches = check_remote_record_exists('lesson_branch', 'lessonid', $lesson->id);
+    $params = array();
+    $params['parameters[0][name]'] = "lessonid";
+    $params['parameters[0][value]'] = $lesson->id;
+    $attempts = check_remote_record_exists("lesson_attempts", $params);
+    $branches = check_remote_record_exists("lesson_branch", $params);
     if ($attempts or $branches) {
         list($esql, $params) = get_enrolled_sql($context, '', $currentgroup, true);
         list($sort, $sortparams) = users_order_by_sql('u');

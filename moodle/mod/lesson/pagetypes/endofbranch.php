@@ -150,7 +150,10 @@ class lesson_add_page_form_endofbranch extends lesson_add_page_form_base {
         $timenow = time();
 
         // the new page is not the first page (end of branch always comes after an existing page)
-        if (!$page = get_remote_lesson_pages_by_id($pageid)) {
+        $params = array();
+        $params['parameters[0][name]'] = "id";
+        $params['parameters[0][value]'] = $pageid;
+        if (!$page = get_remote_lesson_pages_by($params)) {
             print_error('cannotfindpagerecord', 'lesson');
         }
         // chain back up to find the (nearest branch table)
@@ -158,7 +161,10 @@ class lesson_add_page_form_endofbranch extends lesson_add_page_form_base {
         $btpageid = $btpage->id;
         while (($btpage->qtype != LESSON_PAGE_BRANCHTABLE) && ($btpage->prevpageid > 0)) {
             $btpageid = $btpage->prevpageid;
-            if (!$btpage = get_remote_lesson_pages_by_id($btpageid)) {
+            $params = array();
+            $params['parameters[0][name]'] = "id";
+            $params['parameters[0][value]'] = $btpageid;
+            if (!$btpage = get_remote_lesson_pages_by($params)) {
                 print_error('cannotfindpagerecord', 'lesson');
             }
         }

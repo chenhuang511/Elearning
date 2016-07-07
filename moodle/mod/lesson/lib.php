@@ -247,11 +247,14 @@ function lesson_refresh_events($courseid = 0)
     global $DB;
 
     if ($courseid == 0) {
-        if (!$lessons = get_remote_list_lesson_by_courseid(0)) {
+        if (!$lessons = get_remote_list_lesson_by()) {
             return true;
         }
     } else {
-        if (!$lessons = get_remote_list_lesson_by_courseid($courseid)) {
+        $params = array();
+        $params['parameters[0][name]'] = "course";
+        $params['parameters[0][value]'] = $courseid;
+        if (!$lessons = get_remote_list_lesson_by($params)) {
             return true;
         }
     }
@@ -277,8 +280,10 @@ function lesson_delete_instance($id)
     global $DB, $CFG;
     require_once($CFG->dirroot . '/mod/lesson/locallib.php');
 
-    $lesson = get_remote_lesson_by_id($id);
-    $lesson = new lesson($lesson);
+    $params = array();
+    $params['parameters[0][name]'] = "id";
+    $params['parameters[0][value]'] = $id;
+    $lesson = new lesson(get_remote_lesson_by($params, '', true));
     return $lesson->delete();
 }
 
@@ -325,14 +330,13 @@ function lesson_user_outline($course, $user, $mod, $lesson)
         if (empty($grade->grade)) {
 
             // Check to see if it an ungraded / incomplete attempt.
-            $sql = "SELECT *
-                      FROM {lesson_timer}
-                     WHERE lessonid = :lessonid
-                       AND userid = :userid
-                  ORDER BY starttime DESC";
-            $params = array('lessonid' => $lesson->id, 'userid' => $user->id);
+            $params = array();
+            $params['parameters[0][name]'] = "lessonid";
+            $params['parameters[0][value]'] = $lesson->id;
+            $params['parameters[1][name]'] = "userid";
+            $params['parameters[1][value]'] = $user->id;
 
-            if ($attempts = $DB->get_records_sql($sql, $params, 0, 1)) {
+            if ($attempts = get_remote_list_lesson_timer_by($params, "starttime DESC", 0, 1)) {
                 $attempt = reset($attempts);
                 if ($attempt->completed) {
                     $return->info = get_string("completed", "lesson");
@@ -385,14 +389,13 @@ function lesson_user_complete($course, $user, $mod, $lesson)
         $grade = reset($grades->items[0]->grades);
         if (empty($grade->grade)) {
             // Check to see if it an ungraded / incomplete attempt.
-            $sql = "SELECT *
-                      FROM {lesson_timer}
-                     WHERE lessonid = :lessonid
-                       AND userid = :userid
-                     ORDER by starttime desc";
-            $params = array('lessonid' => $lesson->id, 'userid' => $user->id);
+            $params = array();
+            $params['parameters[0][name]'] = "lessonid";
+            $params['parameters[0][value]'] = $lesson->id;
+            $params['parameters[1][name]'] = "userid";
+            $params['parameters[1][value]'] = $user->id;
 
-            if ($attempt = $DB->get_record_sql($sql, $params, IGNORE_MULTIPLE)) {
+            if ($attempt = get_remote_list_lesson_timer_by($params, "starttime desc", 0, 1)) {
                 if ($attempt->completed) {
                     $status = get_string("completed", "lesson");
                 } else {
@@ -415,9 +418,13 @@ function lesson_user_complete($course, $user, $mod, $lesson)
 
     // Display the lesson progress.
     // Attempt, pages viewed, questions answered, correct answers, time.
-    $params = array("lessonid" => $lesson->id, "userid" => $user->id);
-    $attempts = $DB->get_records_select("lesson_attempts", "lessonid = :lessonid AND userid = :userid", $params, "retry, timeseen");
-    $branches = $DB->get_records_select("lesson_branch", "lessonid = :lessonid AND userid = :userid", $params, "retry, timeseen");
+    $params = array();
+    $params['parameters[0][name]'] = "lessonid";
+    $params['parameters[0][value]'] = $lesson->id;
+    $params['parameters[1][name]'] = "userid";
+    $params['parameters[1][value]'] = $user->id;
+    $attempts = get_remote_list_lesson_attempts_by($params,"retry, timeseen");
+    $branches = get_remote_list_lesson_branch_by($params, "retry, timeseen");
     if (!empty($attempts) or !empty($branches)) {
         echo $OUTPUT->box_start();
         $table = new html_table();
@@ -596,7 +603,10 @@ function lesson_print_overview($courses, &$htmlarray)
             // Attempt information.
             if (has_capability('mod/lesson:manage', $context)) {
                 // This is a teacher, Get the Number of user attempts.
-                $attempts = $DB->count_records('lesson_grades', array('lessonid' => $lesson->id));
+                $params = array();
+                $params['parameters[0][name]'] = "lessonid";
+                $params['parameters[0][value]'] = $lesson->id;
+                $attempts = get_remote_count_by("lesson_grades", $params);
                 $str .= $OUTPUT->box(get_string('xattempts', 'lesson', $attempts), 'info');
                 $str = $OUTPUT->box($str, 'lesson overview');
             } else {
@@ -1014,8 +1024,10 @@ function lesson_reset_userdata($data)
                          FROM {lesson} l
                         WHERE l.course=:course";
 
-        $params = array("course" => $data->courseid);
-        $lessons = $DB->get_records_sql($lessonssql, $params);
+        $params = array();
+        $params['parameters[0][name]'] = "course";
+        $params['parameters[0][value]'] = $data->courseid;
+        $lessons = get_remote_list_ids_lesson_by($params);
 
         // Get rid of attempts files.
         $fs = get_file_storage();
@@ -1138,13 +1150,22 @@ function lesson_get_completion_state($course, $cm, $userid, $type)
     global $CFG, $DB;
 
     // Get lesson details.
-    $lesson = get_remote_lesson_by_id($cm->instance);
+    $params = array();
+    $params['parameters[0][name]'] = "id";
+    $params['parameters[0][value]'] = $cm->instance;
+    $lesson = get_remote_lesson_by($params, '', true);
 
     $result = $type; // Default return value.
     // If completion option is enabled, evaluate it and return true/false.
     if ($lesson->completionendreached) {
-        $value = $DB->record_exists('lesson_timer', array(
-            'lessonid' => $lesson->id, 'userid' => $userid, 'completed' => 1));
+        $params = array();
+        $params['parameters[0][name]'] ="lessonid";
+        $params['parameters[0][value]'] = $lesson->id;
+        $params['parameters[1][name]'] ="userid";
+        $params['parameters[1][value]'] = $userid;
+        $params['parameters[2][name]'] ="completed";
+        $params['parameters[2][value]'] = 1;
+        $value = check_remote_record_exists("lesson_timer", $params);
         if ($type == COMPLETION_AND) {
             $result = $result && $value;
         } else {
@@ -1291,7 +1312,10 @@ function lesson_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
         return false;
     }
 
-    if (!$lesson = get_remote_lesson_by_id($cm->instance)) {
+    $params = array();
+    $params['parameters[0][name]'] = "id";
+    $params['parameters[0][value]'] = $cm->instance;
+    if (!$lesson = get_remote_lesson_by($params, '', true)) {
         return false;
     }
 
@@ -1299,21 +1323,30 @@ function lesson_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
 
     if ($filearea === 'page_contents') {
         $pageid = (int)array_shift($args);
-        if (!$page = get_remote_lesson_pages_by_id($pageid)) {
+        $params = array();
+        $params['parameters[0][name]'] = "id";
+        $params['parameters[0][value]'] = $pageid;
+        if (!$page = get_remote_lesson_pages_by($params)) {
             return false;
         }
         $fullpath = "/$context->id/mod_lesson/$filearea/$pageid/" . implode('/', $args);
 
     } else if ($filearea === 'page_answers' || $filearea === 'page_responses') {
         $itemid = (int)array_shift($args);
-        if (!$pageanswers = get_remote_lesson_answers_by_id($itemid)) {
+        $params = array();
+        $params['parameters[0][name]'] = "id";
+        $params['parameters[0][value]'] = $itemid;
+        if (!$pageanswers = get_remote_lesson_answers_by($params)) {
             return false;
         }
         $fullpath = "/$context->id/mod_lesson/$filearea/$itemid/" . implode('/', $args);
 
     } else if ($filearea === 'essay_responses') {
         $itemid = (int)array_shift($args);
-        if (!$attempt = get_remote_lesson_attempts_by_id($itemid)) {
+        $params = array();
+        $params['parameters[0][name]'] = "id";
+        $params['parameters[0][value]'] = $itemid;
+        if (!$attempt = get_remote_lesson_attempts_by($params)) {
             return false;
         }
         $fullpath = "/$context->id/mod_lesson/$filearea/$itemid/" . implode('/', $args);
@@ -1402,7 +1435,12 @@ function lesson_get_file_info($browser, $areas, $course, $cm, $context, $fileare
 
     $itemname = $filearea;
     if ($filearea == 'page_contents') {
-        $itemname = $DB->get_field('lesson_pages', 'title', array('lessonid' => $cm->instance, 'id' => $itemid));
+        $params = array();
+        $params['parameters[0][name]'] = "lessonid";
+        $params['parameters[0][value]'] = $cm->instance;
+        $params['parameters[1][name]'] = "id";
+        $params['parameters[1][value]'] = $itemid;
+        $itemname = get_remote_field_by("lesson_pages", $params, "title");
         $itemname = format_string($itemname, true, array('context' => $context));
     } else {
         $areas = lesson_get_file_areas();
@@ -1478,7 +1516,10 @@ function lesson_get_coursemodule_info($coursemodule)
     global $CFG;
 
     require_once($CFG->dirroot . '/mod/lesson/remote/locallib.php');
-    $lesson = get_remote_lesson_by_id($coursemodule->instance);
+    $params = array();
+    $params['parameters[0][name]'] = "id";
+    $params['parameters[0][value]'] = $coursemodule->instance;
+    $lesson = get_remote_lesson_by($params, '', true);
 
     $result = new cached_cm_info();
     $result->name = $lesson->name;
