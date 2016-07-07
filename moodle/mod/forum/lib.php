@@ -1791,7 +1791,12 @@ function forum_scale_used($forumid, $scaleid)
     global $DB;
     $return = false;
 
-    $rec = $DB->get_record("forum", array("id" => "$forumid", "scale" => "-$scaleid"));
+    $params = array();
+    $params['parameteres[0][name]'] = "id";
+    $params['parameteres[0][value]'] = $forumid;
+    $params['parameteres[1][name]'] = "scale";
+    $params['parameteres[1][value]'] = $scaleid;
+    $rec = get_remote_forum_by($params);
 
     if (!empty($rec) && !empty($scaleid)) {
         $return = true;
@@ -3095,6 +3100,7 @@ function forum_get_course_forum($courseid, $type)
         return false;
     }
     $sectionid = course_add_cm_to_section($courseid, $mod->coursemodule, 0);
+    
     return $DB->get_record("forum", array("id" => "$forum->id"));
 }
 
