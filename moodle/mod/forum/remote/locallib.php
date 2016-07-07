@@ -50,7 +50,7 @@ function get_remote_forum_by($parameters, $sort = '', $mustexists = FALSE)
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
-            'function_name' => 'get_forum_by',
+            'function_name' => 'local_mod_get_forum_by',
             'params' => array_merge(array('sort' => $sort, 'mustexists' => $mustexists), $parameters),
         )
     );

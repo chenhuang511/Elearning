@@ -31,486 +31,6 @@ class local_mod_lesson_external extends external_api
      * @return external_function_parameters
      * @since Moodle 3.0
      */
-    public static function get_lesson_by_id_parameters()
-    {
-        return new external_function_parameters(
-            array(
-                'lessonid' => new external_value(PARAM_INT, 'the lesson id')
-            )
-        );
-    }
-
-    /**
-     * Get lesson by id
-     *
-     * @param int $id . The lesson id
-     * @return array of warnings and the lesson
-     * @since Moodle 3.0
-     * @throws moodle_exception
-     */
-    public static function get_lesson_by_id($lessonid)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        // validate params
-        $params = self::validate_parameters(self::get_lesson_by_id_parameters(),
-            array(
-                'lessonid' => $lessonid,
-            )
-        );
-
-        $result = array();
-
-        $lesson = $DB->get_record('lesson', array('id' => $params['lessonid']), '*', MUST_EXIST);
-
-        if (!$lesson) {
-            $lesson = new stdClass();
-        }
-
-        $result['lesson'] = $lesson;
-        $result['warnigs'] = $warnings;
-
-        return $result;
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 3.0
-     */
-    public static function get_lesson_by_id_returns()
-    {
-        return new external_single_structure(
-            array(
-                'lesson' => new external_single_structure(
-                    array(
-                        'id' => new external_value(PARAM_INT, 'lesson id'),
-                        'course' => new external_value(PARAM_INT, 'course id', VALUE_DEFAULT),
-                        'name' => new external_value(PARAM_RAW, 'lesson name'),
-                        'intro' => new external_value(PARAM_RAW, 'lesson intro'),
-                        'introformat' => new external_value(PARAM_INT, 'intro format', VALUE_DEFAULT),
-                        'practice' => new external_value(PARAM_INT, 'practice', VALUE_DEFAULT),
-                        'modattempts' => new external_value(PARAM_INT, 'mod attempts', VALUE_DEFAULT),
-                        'usepassword' => new external_value(PARAM_INT, 'use password', VALUE_DEFAULT),
-                        'password' => new external_value(PARAM_TEXT, 'password'),
-                        'dependency' => new external_value(PARAM_INT, 'dependency', VALUE_DEFAULT),
-                        'conditions' => new external_value(PARAM_RAW, 'condition'),
-                        'grade' => new external_value(PARAM_INT, 'grade', VALUE_DEFAULT),
-                        'custom' => new external_value(PARAM_INT, 'custom', VALUE_DEFAULT),
-                        'ongoing' => new external_value(PARAM_INT, 'on going', VALUE_DEFAULT),
-                        'usemaxgrade' => new external_value(PARAM_INT, 'use max grade', VALUE_DEFAULT),
-                        'maxanswers' => new external_value(PARAM_INT, 'max answer'),
-                        'maxattempts' => new external_value(PARAM_INT, 'max attempts'),
-                        'review' => new external_value(PARAM_INT, 'review', VALUE_DEFAULT),
-                        'nextpagedefault' => new external_value(PARAM_INT, 'next page default', VALUE_DEFAULT),
-                        'feedback' => new external_value(PARAM_INT, 'feedback', VALUE_REQUIRED),
-                        'minquestions' => new external_value(PARAM_INT, 'min question', VALUE_DEFAULT),
-                        'maxpages' => new external_value(PARAM_INT, 'max page', VALUE_DEFAULT),
-                        'timelimit' => new external_value(PARAM_INT, 'time limit', VALUE_DEFAULT),
-                        'retake' => new external_value(PARAM_INT, 'retake', VALUE_DEFAULT),
-                        'activitylink' => new external_value(PARAM_INT, 'activity link', VALUE_REQUIRED),
-                        'mediafile' => new external_value(PARAM_TEXT, 'media file', VALUE_DEFAULT),
-                        'mediaheight' => new external_value(PARAM_INT, 'media height'),
-                        'mediawidth' => new external_value(PARAM_INT, 'media width'),
-                        'mediaclose' => new external_value(PARAM_INT, 'media close'),
-                        'slideshow' => new external_value(PARAM_INT, 'slideshow'),
-                        'width' => new external_value(PARAM_INT, 'slideshow width'),
-                        'height' => new external_value(PARAM_INT, 'slideshow height'),
-                        'bgcolor' => new external_value(PARAM_TEXT, 'background color'),
-                        'displayleft' => new external_value(PARAM_INT, 'display left'),
-                        'displayleftif' => new external_value(PARAM_INT, 'display left if', VALUE_DEFAULT),
-                        'progressbar' => new external_value(PARAM_INT, 'progress bar', VALUE_DEFAULT),
-                        'available' => new external_value(PARAM_INT, 'available', VALUE_DEFAULT),
-                        'deadline' => new external_value(PARAM_INT, 'deadline', VALUE_DEFAULT),
-                        'timemodified' => new external_value(PARAM_INT, 'time modified', VALUE_DEFAULT),
-                        'completionendreached' => new external_value(PARAM_INT, 'completion end reached', VALUE_DEFAULT),
-                        'completiontimespent' => new external_value(PARAM_INT, 'completion time spent', VALUE_DEFAULT)
-                    )
-                ),
-                'warnings' => new external_warnings()
-            )
-        );
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.0
-     */
-    public static function get_lesson_pages_by_lessonid_and_prevpageid_parameters()
-    {
-        return new external_function_parameters(
-            array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
-                'prevpageid' => new external_value(PARAM_INT, 'the previous page id'),
-            )
-        );
-    }
-
-    /**
-     * Get lesson pages by lessonid and prevpageid
-     *
-     * @param int $lessonid the lesson id
-     * @param int $prevpageid . The previous page id
-     * @return array of warnings and the lesson
-     * @since Moodle 3.0
-     * @throws moodle_exception
-     */
-    public static function get_lesson_pages_by_lessonid_and_prevpageid($lessonid, $prevpageid)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        // validate params
-        $params = self::validate_parameters(self::get_lesson_pages_by_lessonid_and_prevpageid_parameters(),
-            array(
-                'lessonid' => $lessonid,
-                'prevpageid' => $prevpageid
-            )
-        );
-
-        $result = array();
-
-        $page = $DB->get_record('lesson_pages', array('lessonid' => $params['lessonid'], 'prevpageid' => $params['prevpageid']), '*', MUST_EXIST);
-
-        if (!$page) {
-            $page = new stdClass();
-        }
-
-        $result['page'] = $page;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 3.0
-     */
-    public static function get_lesson_pages_by_lessonid_and_prevpageid_returns()
-    {
-        return new external_single_structure(
-            array(
-                'page' => new external_single_structure(
-                    array(
-                        'id' => new external_value(PARAM_INT, 'the lesson page id'),
-                        'lessonid' => new external_value(PARAM_INT, 'lesson id', VALUE_DEFAULT),
-                        'prevpageid' => new external_value(PARAM_INT, 'previous page id', VALUE_DEFAULT),
-                        'nextpageid' => new external_value(PARAM_INT, 'next page id', VALUE_DEFAULT),
-                        'qtype' => new external_value(PARAM_INT, 'qtype', VALUE_DEFAULT),
-                        'qoption' => new external_value(PARAM_INT, 'qoption', VALUE_DEFAULT),
-                        'layout' => new external_value(PARAM_INT, 'layout', VALUE_REQUIRED),
-                        'display' => new external_value(PARAM_INT, 'display', VALUE_REQUIRED),
-                        'timecreated' => new external_value(PARAM_INT, 'time created', VALUE_DEFAULT),
-                        'timemodified' => new external_value(PARAM_INT, 'time modified', VALUE_DEFAULT),
-                        'title' => new external_value(PARAM_RAW, 'title'),
-                        'contents' => new external_value(PARAM_RAW, 'contents'),
-                        'contentsformat' => new external_value(PARAM_INT, 'contents format', VALUE_DEFAULT)
-                    )
-                ),
-                'warnings' => new external_warnings()
-            )
-        );
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.0
-     */
-    public static function get_lesson_pages_by_id_and_lessonid_parameters()
-    {
-        return new external_function_parameters(
-            array('id' => new external_value(PARAM_INT, 'the id'),
-                'lessonid' => new external_value(PARAM_INT, 'the lesson id')
-            )
-        );
-    }
-
-    /**
-     * Get lesson page by pageid and lessonid
-     *
-     * @param $pageid
-     * @param $lessonid
-     * @param array $options
-     * @return mixed
-     * @throws invalid_parameter_exception
-     */
-    public static function get_lesson_pages_by_id_and_lessonid($id, $lessonid)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        // validate params
-        $params = self::validate_parameters(self::get_lesson_pages_by_id_and_lessonid_parameters(),
-            array(
-                'lessonid' => $lessonid,
-                'id' => $id
-            )
-        );
-
-        $result = array();
-
-        $page = $DB->get_record('lesson_pages', array('id' => $params['id'], 'lessonid' => $params['lessonid']), '*', MUST_EXIST);
-
-        if (!$page) {
-            $page = new stdClass();
-        }
-
-        $result['page'] = $page;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 3.0
-     */
-    public static function get_lesson_pages_by_id_and_lessonid_returns()
-    {
-        return self::get_lesson_pages_by_lessonid_and_prevpageid_returns();
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.0
-     */
-    public static function get_lesson_pages_by_id_parameters()
-    {
-        return new external_function_parameters(
-            array('id' => new external_value(PARAM_INT, 'the id'),
-                'mustexist' => new external_value(PARAM_BOOL, 'must exist')
-            )
-        );
-    }
-
-    /**
-     * Get lesson pages by id
-     *
-     * @param $id
-     * @param $mustexist
-     * @return mixed
-     * @throws invalid_parameter_exception
-     */
-    public static function get_lesson_pages_by_id($id, $mustexist)
-    {
-        global $DB;
-        $warnings = array();
-
-        // validate params
-        $params = self::validate_parameters(self::get_lesson_pages_by_id_parameters(),
-            array(
-                'id' => $id,
-                'mustexist' => $mustexist
-            )
-        );
-
-        $result = array();
-
-        if ($params['mustexist']) {
-            $page = $DB->get_record('lesson_pages', array('id' => $params['id']), '*', MUST_EXIST);
-        } else {
-            $page = $DB->get_record('lesson_pages', array('id' => $params['id']));
-        }
-
-        if (!$page) {
-            $page = new stdClass();
-        }
-
-        $result['page'] = $page;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 3.0
-     */
-    public static function get_lesson_pages_by_id_returns()
-    {
-        return self::get_lesson_pages_by_lessonid_and_prevpageid_returns();
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.0
-     */
-    public static function get_lesson_grades_by_userid_and_lessonid_parameters()
-    {
-        return new external_function_parameters(
-            array('useid' => new external_value(PARAM_INT, 'user id'),
-                'lessonid' => new external_value(PARAM_INT, 'lesson id'),
-                'options' => new external_multiple_structure (
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_ALPHANUM,
-                                'The expected keys (value format) are:
-                                                excludemodules (bool) Do not return modules, return only the sections structure
-                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
-                                                sectionid (int) Return only this section
-                                                sectionnumber (int) Return only this section with number (order)
-                                                cmid (int) Return only this module information (among the whole sections structure)
-                                                modname (string) Return only modules with this name "label, forum, etc..."
-                                                modid (int) Return only the module with this id (to be used with modname'),
-                            'value' => new external_value(PARAM_RAW, 'the value of the option,
-                                                                    this param is personaly validated in the external function.')
-                        )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
-            )
-        );
-    }
-
-    /**
-     * get lesson grades by userid and lessonid
-     *
-     * @param $userid
-     * @param $lessonid
-     * @param array $options
-     * @return mixed
-     * @throws invalid_parameter_exception
-     */
-    public static function get_lesson_grades_by_userid_and_lessonid($userid, $lessonid, $options = array())
-    {
-        global $DB;
-
-        // validate params
-        $params = self::validate_parameters(self::get_lesson_grades_by_userid_and_lessonid_parameters(),
-            array(
-                'userid' => $userid,
-                'lessonid' => $lessonid,
-                'options' => $options
-            )
-        );
-
-        return $DB->get_record('lesson_grades', array('userid' => $params['userid'], 'lessonid' => $params['lessonid']), '*', MUST_EXIST);
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 3.0
-     */
-    public static function get_lesson_grades_by_userid_and_lessonid_returns()
-    {
-        return new external_single_structure(
-            array(
-                'id' => new external_value(PARAM_INT, 'lesson grade id'),
-                'lessonid' => new external_value(PARAM_INT, 'lesson id', VALUE_DEFAULT),
-                'userid' => new external_value(PARAM_INT, 'user id', VALUE_DEFAULT),
-                'grade' => new external_value(PARAM_INT, 'grade', VALUE_DEFAULT),
-                'late' => new external_value(PARAM_INT, 'late', VALUE_DEFAULT),
-                'completed' => new external_value(PARAM_INT, 'completed', VALUE_DEFAULT)
-            )
-        );
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.0
-     */
-    public static function get_lesson_answers_by_id_parameters()
-    {
-        return new external_function_parameters(
-            array(
-                'id' => new external_value(PARAM_INT, 'the id')
-            )
-        );
-    }
-
-    /**
-     * Get lesson answers by id
-     *
-     * @param $id
-     * @param array $options
-     * @return mixed
-     * @throws invalid_parameter_exception
-     */
-    public static function get_lesson_answers_by_id($id)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        // validate params
-        $params = self::validate_parameters(self::get_lesson_answers_by_id_parameters(),
-            array(
-                'id' => $id
-            )
-        );
-
-        $result = array();
-
-        $answer = $DB->get_record("lesson_answers", array("id" => $params['id']));
-
-        if (!$answer) {
-            $answer = new stdClass();
-        }
-
-        $result['answer'] = $answer;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 3.0
-     */
-    public static function get_lesson_answers_by_id_returns()
-    {
-        return new external_single_structure(
-            array(
-                'answer' => new external_single_structure(
-                    array(
-                        'id' => new external_value(PARAM_INT, 'id'),
-                        'lessonid' => new external_value(PARAM_INT, 'lesson id'),
-                        'pageid' => new external_value(PARAM_INT, 'page id'),
-                        'jumpto' => new external_value(PARAM_INT, 'jumpto'),
-                        'grade' => new external_value(PARAM_INT, 'grade'),
-                        'score' => new external_value(PARAM_INT, 'score'),
-                        'flags' => new external_value(PARAM_INT, 'flags'),
-                        'timecreated' => new external_value(PARAM_INT, 'time created'),
-                        'timemodified' => new external_value(PARAM_INT, 'time modified'),
-                        'answer' => new external_value(PARAM_RAW, 'answer'),
-                        'answerformat' => new external_value(PARAM_INT, 'answer format'),
-                        'response' => new external_value(PARAM_RAW, 'response'),
-                        'responseformat' => new external_value(PARAM_INT, 'response format')
-                    )
-                ),
-                'warnings' => new external_warnings()
-            )
-        );
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.0
-     */
     public static function save_lesson_branch_parameters()
     {
         return new external_function_parameters (
@@ -651,168 +171,6 @@ class local_mod_lesson_external extends external_api
                     )
                 ),
                 'warnings' => new external_warnings()
-            )
-        );
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.0
-     */
-    public static function get_lesson_overrides_by_id_parameters()
-    {
-        return new external_function_parameters(
-            array(
-                'id' => new external_value(PARAM_INT, 'the id')
-            )
-        );
-    }
-
-    /**
-     * Get lesson overrides by id
-     *
-     * @param $id
-     * @param array $options
-     * @return mixed
-     * @throws invalid_parameter_exception
-     */
-    public static function get_lesson_overrides_by_id($id)
-    {
-        global $DB;
-
-        $warnings = arrray();
-
-        // validate params
-        $params = self::validate_parameters(self::get_lesson_overrides_by_id_parameters(),
-            array(
-                'id' => $id
-            )
-        );
-
-        $result = array();
-
-        $override = $DB->get_record('lesson_overrides', array('id' => $params['id']), '*', MUST_EXIST);
-
-        if (!$override) {
-            $override = new stdClass();
-        }
-
-        $result['override'] = $override;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 3.0
-     */
-    public static function get_lesson_overrides_by_id_returns()
-    {
-        return new external_single_structure(
-            array(
-                'override' => new external_single_structure(
-                    array(
-                        'id' => new external_value(PARAM_INT, 'the id'),
-                        'lessonid' => new external_value(PARAM_INT, 'the lessonid'),
-                        'groupid' => new external_value(PARAM_INT, 'the groupid'),
-                        'userid' => new external_value(PARAM_INT, 'the userid'),
-                        'available' => new external_value(PARAM_INT, 'available'),
-                        'deadline' => new external_value(PARAM_INT, 'deadline'),
-                        'timelimit' => new external_value(PARAM_INT, 'time limit'),
-                        'review' => new external_value(PARAM_INT, 'review'),
-                        'maxattempts' => new external_value(PARAM_INT, 'max attempts'),
-                        'retake' => new external_value(PARAM_INT, 'retake'),
-                        'password' => new external_value(PARAM_TEXT, 'password')
-                    )
-                ),
-                'warnings' => new external_warnings()
-            )
-        );
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.0
-     */
-    public static function get_lesson_overrides_by_lessonid_and_userid_parameters()
-    {
-        return new external_function_parameters(
-            array('lessonid' => new external_value(PARAM_INT, 'the lesson id'),
-                'userid' => new external_value(PARAM_INT, 'the user id')
-            )
-        );
-    }
-
-    /**
-     * Get lesson overrides by lessonid and userid
-     *
-     * @param $lessonid
-     * @param $userid
-     * @param array $options
-     * @return mixed
-     * @throws invalid_parameter_exception
-     */
-    public static function get_lesson_overrides_by_lessonid_and_userid($lessonid, $userid)
-    {
-        global $DB;
-
-        // validate params
-        $params = self::validate_parameters(self::get_lesson_overrides_by_lessonid_and_userid_parameters(),
-            array(
-                'lessonid' => $lessonid,
-                'userid' => $userid
-            )
-        );
-
-        $warnings = array();
-
-        $override = $DB->get_record('lesson_overrides', array('lessonid' => $params['lessonid'], 'userid' => $params['userid']));
-
-        $result = array();
-
-        if (!$override) {
-            $override = new stdClass();
-        }
-
-        $result['override'] = $override;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 3.0
-     */
-    public static function get_lesson_overrides_by_lessonid_and_userid_returns()
-    {
-        return new external_single_structure(
-            array(
-                "override" => new external_single_structure(
-                    array(
-                        'id' => new external_value(PARAM_INT, 'the id'),
-                        'lessonid' => new external_value(PARAM_INT, 'the lessonid'),
-                        'groupid' => new external_value(PARAM_INT, 'the groupid'),
-                        'userid' => new external_value(PARAM_INT, 'the userid'),
-                        'available' => new external_value(PARAM_INT, 'available'),
-                        'deadline' => new external_value(PARAM_INT, 'deadline'),
-                        'timelimit' => new external_value(PARAM_INT, 'time limit'),
-                        'review' => new external_value(PARAM_INT, 'review'),
-                        'maxattempts' => new external_value(PARAM_INT, 'max attempts'),
-                        'retake' => new external_value(PARAM_INT, 'retake'),
-                        'password' => new external_value(PARAM_RAW, 'password')
-                    )
-                ),
-                "warnings" => new external_warnings()
             )
         );
     }
@@ -1467,178 +825,42 @@ class local_mod_lesson_external extends external_api
         );
     }
 
-    public static function get_lesson_attempts_by_id_parameters()
-    {
-        return new external_function_parameters(
-            array(
-                'id' => new external_value(PARAM_INT, 'id')
-            )
-        );
-    }
-
-    public static function get_lesson_attempts_by_id($id)
-    {
-        global $DB;
-        $warnings = array();
-
-        $params = self::validate_parameters(self::get_lesson_attempts_by_id_parameters(), array(
-            'id' => $id
-        ));
-
-        $result = array();
-
-        $attempt = $DB->get_record('lesson_attempts', array('id' => $params['id']));
-
-        if (!$attempt) {
-            $attempt = new stdClass();
-        }
-
-        $result['attempt'] = $attempt;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    public static function get_lesson_attempts_by_id_returns()
-    {
-        return new external_single_structure(
-            array(
-                'attempt' => new external_single_structure(
-                    array(
-                        'id' => new external_value(PARAM_INT, ''),
-                        'lessonid' => new external_value(PARAM_INT, 'lesson id', VALUE_DEFAULT),
-                        'pageid' => new external_value(PARAM_INT, 'page id', VALUE_DEFAULT),
-                        'userid' => new external_value(PARAM_INT, 'user id', VALUE_DEFAULT),
-                        'answerid' => new external_value(PARAM_INT, 'answer id', VALUE_DEFAULT),
-                        'retry' => new external_value(PARAM_INT, 'retry', VALUE_DEFAULT),
-                        'correct' => new external_value(PARAM_INT, 'correct', VALUE_DEFAULT),
-                        'useranswer' => new external_value(PARAM_RAW, 'user answer'),
-                        'timeseen' => new external_value(PARAM_INT, 'time seen', VALUE_DEFAULT)
-                    )
-                ),
-                'warnings' => new external_warnings()
-            )
-        );
-    }
-
-    public static function get_list_lesson_by_courseid_parameters()
-    {
-        return new external_function_parameters(
-            array(
-                'courseid' => new external_value(PARAM_INT, 'the course id')
-            )
-        );
-    }
-
-    public static function get_list_lesson_by_courseid($courseid)
-    {
-        global $DB;
-        $warnings = arrray();
-
-        $params = self::validate_parameters(self::get_list_lesson_by_courseid_parameters(), array(
-            'courseid' => $courseid
-        ));
-
-        $result = array();
-
-        if ($params['courseid'] == 0) {
-            $lessons = $DB->get_records('lessons');
-        } else {
-            $lessons = $DB->get_records('lesson', array('course' => $params['courseid']));
-        }
-
-        if (!$lessons) {
-            $lessons = array();
-        }
-
-        $result['lessons'] = $lessons;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    public static function get_list_lesson_by_courseid_returns()
-    {
-        return new external_single_structure(
-            array(
-                'lessons' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'id' => new external_value(PARAM_INT, 'lesson id'),
-                            'course' => new external_value(PARAM_INT, 'course id', VALUE_DEFAULT),
-                            'name' => new external_value(PARAM_RAW, 'lesson name'),
-                            'intro' => new external_value(PARAM_RAW, 'lesson intro'),
-                            'introformat' => new external_value(PARAM_INT, 'intro format', VALUE_DEFAULT),
-                            'practice' => new external_value(PARAM_INT, 'practice', VALUE_DEFAULT),
-                            'modattempts' => new external_value(PARAM_INT, 'mod attempts', VALUE_DEFAULT),
-                            'usepassword' => new external_value(PARAM_INT, 'use password', VALUE_DEFAULT),
-                            'password' => new external_value(PARAM_TEXT, 'password'),
-                            'dependency' => new external_value(PARAM_INT, 'dependency', VALUE_DEFAULT),
-                            'conditions' => new external_value(PARAM_RAW, 'condition'),
-                            'grade' => new external_value(PARAM_INT, 'grade', VALUE_DEFAULT),
-                            'custom' => new external_value(PARAM_INT, 'custom', VALUE_DEFAULT),
-                            'ongoing' => new external_value(PARAM_INT, 'on going', VALUE_DEFAULT),
-                            'usemaxgrade' => new external_value(PARAM_INT, 'use max grade', VALUE_DEFAULT),
-                            'maxanswers' => new external_value(PARAM_INT, 'max answer'),
-                            'maxattempts' => new external_value(PARAM_INT, 'max attempts'),
-                            'review' => new external_value(PARAM_INT, 'review', VALUE_DEFAULT),
-                            'nextpagedefault' => new external_value(PARAM_INT, 'next page default', VALUE_DEFAULT),
-                            'feedback' => new external_value(PARAM_INT, 'feedback', VALUE_REQUIRED),
-                            'minquestions' => new external_value(PARAM_INT, 'min question', VALUE_DEFAULT),
-                            'maxpages' => new external_value(PARAM_INT, 'max page', VALUE_DEFAULT),
-                            'timelimit' => new external_value(PARAM_INT, 'time limit', VALUE_DEFAULT),
-                            'retake' => new external_value(PARAM_INT, 'retake', VALUE_DEFAULT),
-                            'activitylink' => new external_value(PARAM_INT, 'activity link', VALUE_REQUIRED),
-                            'mediafile' => new external_value(PARAM_TEXT, 'media file', VALUE_DEFAULT),
-                            'mediaheight' => new external_value(PARAM_INT, 'media height'),
-                            'mediawidth' => new external_value(PARAM_INT, 'media width'),
-                            'mediaclose' => new external_value(PARAM_INT, 'media close'),
-                            'slideshow' => new external_value(PARAM_INT, 'slideshow'),
-                            'width' => new external_value(PARAM_INT, 'slideshow width'),
-                            'height' => new external_value(PARAM_INT, 'slideshow height'),
-                            'bgcolor' => new external_value(PARAM_TEXT, 'background color'),
-                            'displayleft' => new external_value(PARAM_INT, 'display left'),
-                            'displayleftif' => new external_value(PARAM_INT, 'display left if', VALUE_DEFAULT),
-                            'progressbar' => new external_value(PARAM_INT, 'progress bar', VALUE_DEFAULT),
-                            'available' => new external_value(PARAM_INT, 'available', VALUE_DEFAULT),
-                            'deadline' => new external_value(PARAM_INT, 'deadline', VALUE_DEFAULT),
-                            'timemodified' => new external_value(PARAM_INT, 'time modified', VALUE_DEFAULT),
-                            'completionendreached' => new external_value(PARAM_INT, 'completion end reached', VALUE_DEFAULT),
-                            'completiontimespent' => new external_value(PARAM_INT, 'completion time spent', VALUE_DEFAULT)
-                        )
-                    ), 'lesson data'
-                ),
-                'warnings' => new external_warnings()
-            )
-        );
-    }
-
     public static function check_record_exists_parameters()
     {
         return new external_function_parameters(
             array(
-                'tablename' => new external_value(PARAM_RAW, ' the table name'),
-                'name' => new external_value(PARAM_RAW, 'the name'),
-                'value' => new external_value(PARAM_RAW, 'the value')
+                'modname' => new external_value(PARAM_RAW, ' the mod name'),
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                )
             )
         );
     }
 
-    public static function check_record_exists($tablename, $name, $value)
+    public static function check_record_exists($modname, $parameters)
     {
         global $DB;
 
         $warnings = array();
 
         $params = self::validate_parameters(self::check_record_exists_parameters(), array(
-            'tablename' => $tablename,
-            'name' => $name,
-            'value' => $value
+            'modname' => $modname,
+            'parameters' => $parameters,
         ));
 
         $result = array();
 
-        $result['status'] = $DB->record_exists($params['tablename'], array($params['name'] => $params['value']));
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result['status'] = $DB->record_exists($params['modname'], $arr);
         $result['warnings'] = $warnings;
 
         return $result;
@@ -1967,6 +1189,495 @@ class local_mod_lesson_external extends external_api
         return new external_function_parameters(
             array(
                 'count' => new external_value(PARAM_INT, 'count row'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_lesson_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'sort' => new external_value(PARAM_RAW, 'sort'),
+                'mustexists' => new external_value(PARAM_BOOL, 'must exists')
+            )
+        );
+    }
+
+    public static function get_lesson_by($parameters, $sort, $mustxists)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_lesson_by_parameters(), array(
+            'parameters' => $parameters,
+            'sort' => $sort,
+            'mustexists' => $mustxists
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+
+        if ($params['mustexists'] === FALSE && $params['sort'] === '') {
+            $lesson = $DB->get_record("lesson", $arr);
+        } else if ($params['mustexists'] === FALSE && $params['sort'] != '') {
+            $lesson = $DB->get_record("lesson", $arr, $params['sort']);
+        } else {
+            $lesson = $DB->get_record("lesson", $arr, '*', MUST_EXIST);
+        }
+
+        if (!$lesson) {
+            $lesson = new stdClass();
+        }
+
+        $result['lesson'] = $lesson;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    public static function get_lesson_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'lesson' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'lesson id'),
+                        'course' => new external_value(PARAM_INT, 'course id', VALUE_DEFAULT),
+                        'name' => new external_value(PARAM_RAW, 'lesson name'),
+                        'intro' => new external_value(PARAM_RAW, 'lesson intro'),
+                        'introformat' => new external_value(PARAM_INT, 'intro format', VALUE_DEFAULT),
+                        'practice' => new external_value(PARAM_INT, 'practice', VALUE_DEFAULT),
+                        'modattempts' => new external_value(PARAM_INT, 'mod attempts', VALUE_DEFAULT),
+                        'usepassword' => new external_value(PARAM_INT, 'use password', VALUE_DEFAULT),
+                        'password' => new external_value(PARAM_TEXT, 'password'),
+                        'dependency' => new external_value(PARAM_INT, 'dependency', VALUE_DEFAULT),
+                        'conditions' => new external_value(PARAM_RAW, 'condition'),
+                        'grade' => new external_value(PARAM_INT, 'grade', VALUE_DEFAULT),
+                        'custom' => new external_value(PARAM_INT, 'custom', VALUE_DEFAULT),
+                        'ongoing' => new external_value(PARAM_INT, 'on going', VALUE_DEFAULT),
+                        'usemaxgrade' => new external_value(PARAM_INT, 'use max grade', VALUE_DEFAULT),
+                        'maxanswers' => new external_value(PARAM_INT, 'max answer'),
+                        'maxattempts' => new external_value(PARAM_INT, 'max attempts'),
+                        'review' => new external_value(PARAM_INT, 'review', VALUE_DEFAULT),
+                        'nextpagedefault' => new external_value(PARAM_INT, 'next page default', VALUE_DEFAULT),
+                        'feedback' => new external_value(PARAM_INT, 'feedback', VALUE_REQUIRED),
+                        'minquestions' => new external_value(PARAM_INT, 'min question', VALUE_DEFAULT),
+                        'maxpages' => new external_value(PARAM_INT, 'max page', VALUE_DEFAULT),
+                        'timelimit' => new external_value(PARAM_INT, 'time limit', VALUE_DEFAULT),
+                        'retake' => new external_value(PARAM_INT, 'retake', VALUE_DEFAULT),
+                        'activitylink' => new external_value(PARAM_INT, 'activity link', VALUE_REQUIRED),
+                        'mediafile' => new external_value(PARAM_TEXT, 'media file', VALUE_DEFAULT),
+                        'mediaheight' => new external_value(PARAM_INT, 'media height'),
+                        'mediawidth' => new external_value(PARAM_INT, 'media width'),
+                        'mediaclose' => new external_value(PARAM_INT, 'media close'),
+                        'slideshow' => new external_value(PARAM_INT, 'slideshow'),
+                        'width' => new external_value(PARAM_INT, 'slideshow width'),
+                        'height' => new external_value(PARAM_INT, 'slideshow height'),
+                        'bgcolor' => new external_value(PARAM_TEXT, 'background color'),
+                        'displayleft' => new external_value(PARAM_INT, 'display left'),
+                        'displayleftif' => new external_value(PARAM_INT, 'display left if', VALUE_DEFAULT),
+                        'progressbar' => new external_value(PARAM_INT, 'progress bar', VALUE_DEFAULT),
+                        'available' => new external_value(PARAM_INT, 'available', VALUE_DEFAULT),
+                        'deadline' => new external_value(PARAM_INT, 'deadline', VALUE_DEFAULT),
+                        'timemodified' => new external_value(PARAM_INT, 'time modified', VALUE_DEFAULT),
+                        'completionendreached' => new external_value(PARAM_INT, 'completion end reached', VALUE_DEFAULT),
+                        'completiontimespent' => new external_value(PARAM_INT, 'completion time spent', VALUE_DEFAULT)
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_lesson_pages_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'sort' => new external_value(PARAM_RAW, 'sort'),
+                'mustexists' => new external_value(PARAM_BOOL, 'must exists')
+            )
+        );
+    }
+
+    public static function get_lesson_pages_by($parameters, $sort, $mustxists)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_lesson_pages_by_parameters(), array(
+            'parameters' => $parameters,
+            'sort' => $sort,
+            'mustexists' => $mustxists
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+
+        if ($params['mustexists'] === FALSE && $params['sort'] === '') {
+            $page = $DB->get_record("lesson_pages", $arr);
+        } else if ($params['mustexists'] === FALSE && $params['sort'] != '') {
+            $page = $DB->get_record("lesson_pages", $arr, $params['sort']);
+        } else {
+            $page = $DB->get_record("lesson_pages", $arr, '*', MUST_EXIST);
+        }
+
+        if (!$page) {
+            $page = new stdClass();
+        }
+
+        $result['page'] = $page;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    public static function get_lesson_pages_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'page' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'the lesson page id'),
+                        'lessonid' => new external_value(PARAM_INT, 'lesson id', VALUE_DEFAULT),
+                        'prevpageid' => new external_value(PARAM_INT, 'previous page id', VALUE_DEFAULT),
+                        'nextpageid' => new external_value(PARAM_INT, 'next page id', VALUE_DEFAULT),
+                        'qtype' => new external_value(PARAM_INT, 'qtype', VALUE_DEFAULT),
+                        'qoption' => new external_value(PARAM_INT, 'qoption', VALUE_DEFAULT),
+                        'layout' => new external_value(PARAM_INT, 'layout', VALUE_REQUIRED),
+                        'display' => new external_value(PARAM_INT, 'display', VALUE_REQUIRED),
+                        'timecreated' => new external_value(PARAM_INT, 'time created', VALUE_DEFAULT),
+                        'timemodified' => new external_value(PARAM_INT, 'time modified', VALUE_DEFAULT),
+                        'title' => new external_value(PARAM_RAW, 'title'),
+                        'contents' => new external_value(PARAM_RAW, 'contents'),
+                        'contentsformat' => new external_value(PARAM_INT, 'contents format', VALUE_DEFAULT)
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_lesson_grades_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'sort' => new external_value(PARAM_RAW, 'sort'),
+                'mustexists' => new external_value(PARAM_BOOL, 'must exists')
+            )
+        );
+    }
+
+    public static function get_lesson_grades_by($parameters, $sort, $mustxists)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_lesson_grades_by_parameters(), array(
+            'parameters' => $parameters,
+            'sort' => $sort,
+            'mustexists' => $mustxists
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+
+        if ($params['mustexists'] === FALSE && $params['sort'] === '') {
+            $grade = $DB->get_record("lesson_grades", $arr);
+        } else if ($params['mustexists'] === FALSE && $params['sort'] != '') {
+            $grade = $DB->get_record("lesson_grades", $arr, $params['sort']);
+        } else {
+            $grade = $DB->get_record("lesson_grades", $arr, '*', MUST_EXIST);
+        }
+
+        if (!$grade) {
+            $grade = new stdClass();
+        }
+
+        $result['grade'] = $grade;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    public static function get_lesson_grades_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'grade' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'lesson grade id'),
+                        'lessonid' => new external_value(PARAM_INT, 'lesson id', VALUE_DEFAULT),
+                        'userid' => new external_value(PARAM_INT, 'user id', VALUE_DEFAULT),
+                        'grade' => new external_value(PARAM_INT, 'grade', VALUE_DEFAULT),
+                        'late' => new external_value(PARAM_INT, 'late', VALUE_DEFAULT),
+                        'completed' => new external_value(PARAM_INT, 'completed', VALUE_DEFAULT)
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_lesson_answers_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'sort' => new external_value(PARAM_RAW, 'sort'),
+                'mustexists' => new external_value(PARAM_BOOL, 'must exists')
+            )
+        );
+    }
+
+    public static function get_lesson_answers_by($parameters, $sort, $mustxists)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_lesson_answers_by_parameters(), array(
+            'parameters' => $parameters,
+            'sort' => $sort,
+            'mustexists' => $mustxists
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+
+        if ($params['mustexists'] === FALSE && $params['sort'] === '') {
+            $answer = $DB->get_record("lesson_answers", $arr);
+        } else if ($params['mustexists'] === FALSE && $params['sort'] != '') {
+            $answer = $DB->get_record("lesson_answers", $arr, $params['sort']);
+        } else {
+            $answer = $DB->get_record("lesson_answers", $arr, '*', MUST_EXIST);
+        }
+
+        if (!$answer) {
+            $answer = new stdClass();
+        }
+
+        $result['answer'] = $answer;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    public static function get_lesson_answers_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'answer' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'id'),
+                        'lessonid' => new external_value(PARAM_INT, 'lesson id'),
+                        'pageid' => new external_value(PARAM_INT, 'page id'),
+                        'jumpto' => new external_value(PARAM_INT, 'jumpto'),
+                        'grade' => new external_value(PARAM_INT, 'grade'),
+                        'score' => new external_value(PARAM_INT, 'score'),
+                        'flags' => new external_value(PARAM_INT, 'flags'),
+                        'timecreated' => new external_value(PARAM_INT, 'time created'),
+                        'timemodified' => new external_value(PARAM_INT, 'time modified'),
+                        'answer' => new external_value(PARAM_RAW, 'answer'),
+                        'answerformat' => new external_value(PARAM_INT, 'answer format'),
+                        'response' => new external_value(PARAM_RAW, 'response'),
+                        'responseformat' => new external_value(PARAM_INT, 'response format')
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_lesson_overrides_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'sort' => new external_value(PARAM_RAW, 'sort'),
+                'mustexists' => new external_value(PARAM_BOOL, 'must exists')
+            )
+        );
+    }
+
+    public static function get_lesson_overrides_by($parameters, $sort, $mustxists)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_lesson_overrides_by_parameters(), array(
+            'parameters' => $parameters,
+            'sort' => $sort,
+            'mustexists' => $mustxists
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+
+        if ($params['mustexists'] === FALSE && $params['sort'] === '') {
+            $override = $DB->get_record("lesson_overrides", $arr);
+        } else if ($params['mustexists'] === FALSE && $params['sort'] != '') {
+            $override = $DB->get_record("lesson_overrides", $arr, $params['sort']);
+        } else {
+            $override = $DB->get_record("lesson_overrides", $arr, '*', MUST_EXIST);
+        }
+
+        if (!$override) {
+            $override = new stdClass();
+        }
+
+        $result['override'] = $override;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    public static function get_lesson_overrides_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'override' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'the id'),
+                        'lessonid' => new external_value(PARAM_INT, 'the lessonid'),
+                        'groupid' => new external_value(PARAM_INT, 'the groupid'),
+                        'userid' => new external_value(PARAM_INT, 'the userid'),
+                        'available' => new external_value(PARAM_INT, 'available'),
+                        'deadline' => new external_value(PARAM_INT, 'deadline'),
+                        'timelimit' => new external_value(PARAM_INT, 'time limit'),
+                        'review' => new external_value(PARAM_INT, 'review'),
+                        'maxattempts' => new external_value(PARAM_INT, 'max attempts'),
+                        'retake' => new external_value(PARAM_INT, 'retake'),
+                        'password' => new external_value(PARAM_TEXT, 'password')
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_lesson_attempts_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'sort' => new external_value(PARAM_RAW, 'sort'),
+                'mustexists' => new external_value(PARAM_BOOL, 'must exists')
+            )
+        );
+    }
+
+    public static function get_lesson_attempts_by($parameters, $sort, $mustxists)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_lesson_attempts_by_parameters(), array(
+            'parameters' => $parameters,
+            'sort' => $sort,
+            'mustexists' => $mustxists
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+
+        if ($params['mustexists'] === FALSE && $params['sort'] === '') {
+            $attempt = $DB->get_record("lesson_attempts", $arr);
+        } else if ($params['mustexists'] === FALSE && $params['sort'] != '') {
+            $attempt = $DB->get_record("lesson_attempts", $arr, $params['sort']);
+        } else {
+            $attempt = $DB->get_record("lesson_attempts", $arr, '*', MUST_EXIST);
+        }
+
+        if (!$attempt) {
+            $attempt = new stdClass();
+        }
+
+        $result['attempt'] = $attempt;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    public static function get_lesson_attempts_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'attempt' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, ''),
+                        'lessonid' => new external_value(PARAM_INT, 'lesson id', VALUE_DEFAULT),
+                        'pageid' => new external_value(PARAM_INT, 'page id', VALUE_DEFAULT),
+                        'userid' => new external_value(PARAM_INT, 'user id', VALUE_DEFAULT),
+                        'answerid' => new external_value(PARAM_INT, 'answer id', VALUE_DEFAULT),
+                        'retry' => new external_value(PARAM_INT, 'retry', VALUE_DEFAULT),
+                        'correct' => new external_value(PARAM_INT, 'correct', VALUE_DEFAULT),
+                        'useranswer' => new external_value(PARAM_RAW, 'user answer'),
+                        'timeseen' => new external_value(PARAM_INT, 'time seen', VALUE_DEFAULT)
+                    )
+                ),
                 'warnings' => new external_warnings()
             )
         );
@@ -2528,4 +2239,116 @@ class local_mod_lesson_external extends external_api
         );
     }
 
+    public static function get_list_lesson_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'sort' => new external_value(PARAM_RAW, 'sort'),
+                'limitfrom' => new external_value(PARAM_INT, 'limit from'),
+                'limitnum' => new external_value(PARAM_INT, 'limit num')
+            )
+        );
+    }
+
+    public static function get_list_lesson_by($parameters, $sort, $limitfrom, $limitnum)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_list_lesson_by_parameters(), array(
+            'parameters' => $parameters,
+            'sort' => $sort,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+        if (!$arr) {
+            $lessons = $DB->get_records("lesson");
+        } else if (($params['limitfrom'] == 0 && $params['limitnum'] == 0) && $params['sort'] == '') {
+            $lessons = $DB->get_records("lesson", $arr);
+        } else if (($params['limitfrom'] == 0 && $params['limitnum'] == 0) && $params['sort'] != '') {
+            $lessons = $DB->get_records("lesson", $arr, $params['sort']);
+        } else {
+            $lessons = $DB->get_records("lesson", $arr, $params['sort'], '*', $params['limitfrom'], $params['limitnum']);
+        }
+
+        if (!$lessons) {
+            $lessons = array();
+        }
+
+        $result['lessons'] = $lessons;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_list_lesson_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'lessons' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'lesson id'),
+                            'course' => new external_value(PARAM_INT, 'course id', VALUE_DEFAULT),
+                            'name' => new external_value(PARAM_RAW, 'lesson name'),
+                            'intro' => new external_value(PARAM_RAW, 'lesson intro'),
+                            'introformat' => new external_value(PARAM_INT, 'intro format', VALUE_DEFAULT),
+                            'practice' => new external_value(PARAM_INT, 'practice', VALUE_DEFAULT),
+                            'modattempts' => new external_value(PARAM_INT, 'mod attempts', VALUE_DEFAULT),
+                            'usepassword' => new external_value(PARAM_INT, 'use password', VALUE_DEFAULT),
+                            'password' => new external_value(PARAM_TEXT, 'password'),
+                            'dependency' => new external_value(PARAM_INT, 'dependency', VALUE_DEFAULT),
+                            'conditions' => new external_value(PARAM_RAW, 'condition'),
+                            'grade' => new external_value(PARAM_INT, 'grade', VALUE_DEFAULT),
+                            'custom' => new external_value(PARAM_INT, 'custom', VALUE_DEFAULT),
+                            'ongoing' => new external_value(PARAM_INT, 'on going', VALUE_DEFAULT),
+                            'usemaxgrade' => new external_value(PARAM_INT, 'use max grade', VALUE_DEFAULT),
+                            'maxanswers' => new external_value(PARAM_INT, 'max answer'),
+                            'maxattempts' => new external_value(PARAM_INT, 'max attempts'),
+                            'review' => new external_value(PARAM_INT, 'review', VALUE_DEFAULT),
+                            'nextpagedefault' => new external_value(PARAM_INT, 'next page default', VALUE_DEFAULT),
+                            'feedback' => new external_value(PARAM_INT, 'feedback', VALUE_REQUIRED),
+                            'minquestions' => new external_value(PARAM_INT, 'min question', VALUE_DEFAULT),
+                            'maxpages' => new external_value(PARAM_INT, 'max page', VALUE_DEFAULT),
+                            'timelimit' => new external_value(PARAM_INT, 'time limit', VALUE_DEFAULT),
+                            'retake' => new external_value(PARAM_INT, 'retake', VALUE_DEFAULT),
+                            'activitylink' => new external_value(PARAM_INT, 'activity link', VALUE_REQUIRED),
+                            'mediafile' => new external_value(PARAM_TEXT, 'media file', VALUE_DEFAULT),
+                            'mediaheight' => new external_value(PARAM_INT, 'media height'),
+                            'mediawidth' => new external_value(PARAM_INT, 'media width'),
+                            'mediaclose' => new external_value(PARAM_INT, 'media close'),
+                            'slideshow' => new external_value(PARAM_INT, 'slideshow'),
+                            'width' => new external_value(PARAM_INT, 'slideshow width'),
+                            'height' => new external_value(PARAM_INT, 'slideshow height'),
+                            'bgcolor' => new external_value(PARAM_TEXT, 'background color'),
+                            'displayleft' => new external_value(PARAM_INT, 'display left'),
+                            'displayleftif' => new external_value(PARAM_INT, 'display left if', VALUE_DEFAULT),
+                            'progressbar' => new external_value(PARAM_INT, 'progress bar', VALUE_DEFAULT),
+                            'available' => new external_value(PARAM_INT, 'available', VALUE_DEFAULT),
+                            'deadline' => new external_value(PARAM_INT, 'deadline', VALUE_DEFAULT),
+                            'timemodified' => new external_value(PARAM_INT, 'time modified', VALUE_DEFAULT),
+                            'completionendreached' => new external_value(PARAM_INT, 'completion end reached', VALUE_DEFAULT),
+                            'completiontimespent' => new external_value(PARAM_INT, 'completion time spent', VALUE_DEFAULT)
+                        )
+                    ), 'lesson overrides'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

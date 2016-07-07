@@ -107,7 +107,10 @@ class lesson_page_type_truefalse extends lesson_page
             return $result;
         }
         $result->answerid = $data->answerid;
-        $answer = get_remote_lesson_answers_by_id($result->answerid);
+        $params = array();
+        $params['parameters[0][name]'] = "id";
+        $params['parameters[0][value]'] = $result->answerid;
+        $answer = get_remote_lesson_answers_by($params);
         $answer = parent::rewrite_answers_urls($answer);
         if ($this->lesson->jumpto_is_correct($this->properties->id, $answer->jumpto)) {
             $result->correctanswer = true;

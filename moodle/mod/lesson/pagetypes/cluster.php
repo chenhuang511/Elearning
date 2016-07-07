@@ -147,7 +147,12 @@ class lesson_add_page_form_cluster extends lesson_add_page_form_base
 
         if ($pageid == 0) {
             if ($lesson->has_pages()) {
-                if (!$page = get_remote_lesson_pages_by_lessonid_and_prevpageid($lesson->id, 0)) {
+                $params = array();
+                $params['parameters[0][name]'] = "lessonid";
+                $params['parameters[0][value]'] = $lesson->id;
+                $params['parameters[1][name]'] = "prevpageid";
+                $params['parameters[1][value]'] = 0;
+                if (!$page = get_remote_lesson_pages_by($params, '', true)) {
                     print_error('cannotfindpagerecord', 'lesson');
                 }
             } else {
@@ -156,7 +161,10 @@ class lesson_add_page_form_cluster extends lesson_add_page_form_base
                 $page->id = 0;
             }
         } else {
-            if (!$page = get_remote_lesson_pages_by_id($pageid)) {
+            $params = array();
+            $params['parameters[0][name]'] = "id";
+            $params['parameters[0][value]'] = $pageid;
+            if (!$page = get_remote_lesson_pages_by($params)) {
                 print_error('cannotfindpagerecord', 'lesson');
             }
         }
