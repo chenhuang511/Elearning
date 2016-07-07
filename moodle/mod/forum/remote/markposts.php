@@ -42,13 +42,13 @@ $PAGE->set_url($url);
 $param = array();
 $param['parameters[0][name]'] = 'id';
 $param['parameters[0][value]']= $f;
-if (! $forum = get_remote_forum_by("forum",$param) {
+if (! $forum = get_remote_forum_by($param) {
     print_error('invalidforumid', 'forum');
 }
 $param = array();
 $param['parameters[0][name]'] = 'id';
 $param['parameters[0][value]']= $forum->course;
-if (! $course = get_remote_forum_by("course", $param)) {
+if (! $course = get_remote_forum_by( $param)) {
     print_error('invalidcourseid');
 }
 
@@ -88,7 +88,7 @@ $params['parameteres[1][value]']= $forum->id;
 
 if ($mark == 'read') {
     if (!empty($d)) {
-        if (! $discussion = get_remote_list_forum_discussions_by('forum_discussions',$params) {
+        if (! $discussion = get_remote_list_forum_discussions_by($params) {
             print_error('invaliddiscussionid', 'forum');
         }
 

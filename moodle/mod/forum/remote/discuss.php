@@ -343,7 +343,7 @@ if ($forum->type != 'single'
         // Check forum types and eliminate simple discussions.
         $forummenu['parameters[0][name]'] = "course";
         $forummenu['parameters[0][value]'] = $course->id;
-        $forumcheck = get_remote_forum_by('forum',$forummenu,$sort,'id,type');
+        $forumcheck = get_remote_list_forum_posts_by($forummenu,$sort,'0,0');
         //$forumcheck = $DB->get_remote('forum', array('course' => $course->id), '', 'id, type');
         foreach ($modinfo->instances['forum'] as $forumcm) {
             if (!$forumcm->uservisible || !has_capability('mod/forum:startdiscussion',
