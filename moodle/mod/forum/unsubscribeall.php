@@ -32,7 +32,7 @@ $PAGE->set_url('/mod/forum/unsubscribeall.php');
 require_login(null, false);
 $PAGE->set_context(context_user::instance($USER->id));
 
-$return = $CFG->wwwroot.'/';
+$return = $CFG->wwwroot . '/';
 
 if (isguestuser()) {
     redirect($return);
@@ -49,11 +49,11 @@ echo $OUTPUT->heading($strunsubscribeall);
 if (data_submitted() and $confirm and confirm_sesskey()) {
     $forums = \mod_forum\subscriptions::get_unsubscribable_forums();
 
-    foreach($forums as $forum) {
+    foreach ($forums as $forum) {
         \mod_forum\subscriptions::unsubscribe_user($USER->id, $forum, context_module::instance($forum->cm), true);
     }
     $DB->delete_records('forum_discussion_subs', array('userid' => $USER->id));
-    $DB->set_field('user', 'autosubscribe', 0, array('id'=>$USER->id));
+    $DB->set_field('user', 'autosubscribe', 0, array('id' => $USER->id));
 
     echo $OUTPUT->box(get_string('unsubscribealldone', 'forum'));
     echo $OUTPUT->continue_button($return);
@@ -63,7 +63,11 @@ if (data_submitted() and $confirm and confirm_sesskey()) {
 } else {
     $count = new stdClass();
     $count->forums = count(\mod_forum\subscriptions::get_unsubscribable_forums());
-    $count->discussions = $DB->count_records('forum_discussion_subs', array('userid' => $USER->id));
+
+    $params = array();
+    $params['parameters[0][name]'] = "userid";
+    $params['parameters[0][value]'] = $USER->id;
+    $count->discussions = get_remote_count_forum_by("forum_discussion_subs", $params);
 
     if ($count->forums || $count->discussions) {
         if ($count->forums && $count->discussions) {
@@ -73,7 +77,7 @@ if (data_submitted() and $confirm and confirm_sesskey()) {
         } else if ($count->discussions) {
             $msg = get_string('unsubscribeallconfirmdiscussions', 'forum', $count);
         }
-        echo $OUTPUT->confirm($msg, new moodle_url('unsubscribeall.php', array('confirm'=>1)), $return);
+        echo $OUTPUT->confirm($msg, new moodle_url('unsubscribeall.php', array('confirm' => 1)), $return);
         echo $OUTPUT->footer();
         die;
 
