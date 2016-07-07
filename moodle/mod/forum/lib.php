@@ -8085,3 +8085,27 @@ function mod_forum_myprofile_navigation(core_user\output\myprofile\tree $tree, $
 
     return true;
 }
+
+function forum_get_coursemodule_info($coursemodule) {
+    global $CFG, $DB;
+
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+        $dbparams = array('id' => $coursemodule->instance);
+        if (!$forum = $DB->get_record('forum', $dbparams)) {
+            return false;
+        }
+    } else if(MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        require_once($CFG->dirroot . '/mod/forum/remote/locallib.php');
+        if (!$forum = get_remote_forum_by_id($coursemodule->instance)) {
+            return false;
+        }
+    }
+
+    $result = new cached_cm_info();
+    $result->name = $forum->name;
+
+    // Convert intro to html. Do not filter cached version, filters run at display time.
+    $result->content = format_module_intro('forum', $forum, $coursemodule->id, false);
+
+    return $result;
+}
