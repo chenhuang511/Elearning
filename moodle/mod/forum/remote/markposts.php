@@ -39,12 +39,16 @@ if ($returnpage !== 'index.php') {
     $url->param('returnpage', $returnpage);
 }
 $PAGE->set_url($url);
-
-if (! $forum = $DB->get_record("forum", array("id" => $f))) {
+$param = array();
+$param['parameters[0][name]'] = 'id';
+$param['parameters[0][value]']= $f;
+if (! $forum = get_remote_forum_by("forum",$param) {
     print_error('invalidforumid', 'forum');
 }
-
-if (! $course = $DB->get_record("course", array("id" => $forum->course))) {
+$param = array();
+$param['parameters[0][name]'] = 'id';
+$param['parameters[0][value]']= $forum->course;
+if (! $course = get_remote_forum_by("course", $param)) {
     print_error('invalidcourseid');
 }
 
@@ -76,9 +80,15 @@ $info = new stdClass();
 $info->name  = fullname($user);
 $info->forum = format_string($forum->name);
 
+$params = array();
+$params['parameteres[0][name]']= 'id';
+$params['parameteres[0][value]']= $d;
+$params['parameteres[1][name]']= 'forum';
+$params['parameteres[1][value]']= $forum->id;
+
 if ($mark == 'read') {
     if (!empty($d)) {
-        if (! $discussion = $DB->get_record('forum_discussions', array('id'=> $d, 'forum'=> $forum->id))) {
+        if (! $discussion = get_remote_list_forum_discussions_by('forum_discussions',$params) {
             print_error('invaliddiscussionid', 'forum');
         }
 
