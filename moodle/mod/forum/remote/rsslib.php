@@ -56,6 +56,7 @@ function forum_rss_get_feed($context, $args)
     $params = array();
     $params['parameters[0][name]'] = "id";
     $params['parameters[0][value]'] = $forumid;
+
     $forum = get_remote_forum_by($params, '', true);
     if (!rss_enabled_for_mod('forum', $forum)) {
         return null;

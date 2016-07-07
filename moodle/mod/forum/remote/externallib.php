@@ -437,9 +437,17 @@ class mod_forum_external extends external_api {
             throw new invalid_parameter_exception('Invalid value for sortdirection parameter (value: ' . $sortdirection . '),' .
                 'allowed values are: ' . implode(',', $directionallowedvalues));
         }
+        $params = array();
+        $params['parameteres[0][name]']='id';
+        $params['parameteres[0][value]']= $forumid;
 
-        $forum = $DB->get_record('forum', array('id' => $forumid), '*', MUST_EXIST);
-        $course = $DB->get_record('course', array('id' => $forum->course), '*', MUST_EXIST);
+        $forum = get_remote_forum_by($params,'',true);
+
+        $params = array();
+        $params['parameteres[0][name]']='id';
+        $params['parameteres[0][value]']= $forum->course;
+
+        $course = get_remote_forum_by($params,'',true);
         $cm = get_coursemodule_from_instance('forum', $forum->id, $course->id, false, MUST_EXIST);
 
         // Validate the module context. It checks everything that affects the module visibility (including groupings, etc..).
@@ -644,7 +652,11 @@ class mod_forum_external extends external_api {
         $warnings = array();
 
         // Request and permission validation.
-        $forum = $DB->get_record('forum', array('id' => $params['forumid']), 'id', MUST_EXIST);
+        $params = array();
+        $params['parameteres[0][name]'] = 'id';
+        $params['parameteres[0][value]'] = 'id';
+
+        $forum = get_remote_forum_by($params,$sort,true);
         list($course, $cm) = get_course_and_cm_from_instance($forum, 'forum');
 
         $context = context_module::instance($cm->id);
@@ -707,9 +719,17 @@ class mod_forum_external extends external_api {
                 'discussionid' => $discussionid
             ));
         $warnings = array();
+        $params = array();
+        $params['parameteres[0][name]'] = 'id';
+        $params['parameteres[0][value]'] = $params['discussionid'];
 
-        $discussion = $DB->get_record('forum_discussions', array('id' => $params['discussionid']), '*', MUST_EXIST);
-        $forum = $DB->get_record('forum', array('id' => $discussion->forum), '*', MUST_EXIST);
+        $discussion = get_remote_forum_discussions_by($params,'',true);
+
+        $params = array();
+        $params['parameteres[0][name]'] = 'id';
+        $params['parameteres[0][value]'] = $discussion->forum;
+
+        $forum = get_remote_forum_by($params,'',true);
         list($course, $cm) = get_course_and_cm_from_instance($forum, 'forum');
 
         // Validate the module context. It checks everything that affects the module visibility (including groupings, etc..).
@@ -825,12 +845,20 @@ class mod_forum_external extends external_api {
             throw new moodle_exception('invalidparentpostid', 'forum');
         }
 
-        if (!$discussion = $DB->get_record("forum_discussions", array("id" => $parent->discussion))) {
+        $params = array();
+        $params['parameteres[0][name]'] = 'id';
+        $params['parameteres[0][value]'] = $parent->discussion;
+
+        if (!$discussion = get_remote_forum_discussions_by($params)) {
             throw new moodle_exception('notpartofdiscussion', 'forum');
         }
 
         // Request and permission validation.
-        $forum = $DB->get_record('forum', array('id' => $discussion->forum), '*', MUST_EXIST);
+        $params = array();
+        $params['parameteres[0][name]'] = 'id';
+        $params['parameteres[0][value]'] = $discussion->forum;
+
+        $forum = get_remote_forum_by($params,'',true);
         list($course, $cm) = get_course_and_cm_from_instance($forum, 'forum');
 
         $context = context_module::instance($cm->id);
@@ -995,7 +1023,11 @@ class mod_forum_external extends external_api {
         $warnings = array();
 
         // Request and permission validation.
-        $forum = $DB->get_record('forum', array('id' => $params['forumid']), '*', MUST_EXIST);
+        $params = array();
+        $params['parameteres[0][name]'] = 'id';
+        $params['parameteres[0][value]'] = $params['forumid'];
+
+        $forum = get_remote_forum_by($params,'',true);
         list($course, $cm) = get_course_and_cm_from_instance($forum, 'forum');
 
         $context = context_module::instance($cm->id);
@@ -1133,7 +1165,11 @@ class mod_forum_external extends external_api {
         $warnings = array();
 
         // Request and permission validation.
-        $forum = $DB->get_record('forum', array('id' => $params['forumid']), '*', MUST_EXIST);
+        $params = array();
+        $params['parameteres[0][name]'] = 'id';
+        $params['parameteres[0][value]'] = $params['forumid'];
+        
+        $forum = get_remote_forum_by($params,'',true);
         list($course, $cm) = get_course_and_cm_from_instance($forum, 'forum');
 
         $context = context_module::instance($cm->id);
