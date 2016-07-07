@@ -821,7 +821,7 @@ if ($mform_post->is_cancelled()) {
             $param['parameteres[0][name]'] = 'id';
             $param['parameteres[0][value]'] = $realpost->userid;
 
-            $realuser = get_remote_forum_posts_by( $param));
+            $realuser = get_remote_forum_posts_by( $param);
             $message .= '<br />'.get_string("editedpostupdated", "forum", fullname($realuser));
         }
 
