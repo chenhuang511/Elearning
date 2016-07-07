@@ -583,3 +583,17 @@ function get_remote_submission_info_for_participants($assignment, $emailparticip
     return $resp->ret;
 }
 
+function update_remote_user_flags($assignmentid, $userflags) {
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN_M,
+            'function_name' => 'mod_assign_set_user_flags',
+            'params' => array(
+                'assignmentid' => $assignmentid,
+                'userflags' => $userflags,
+            ),
+        ), false
+    );
+    return $resp;
+}

@@ -2166,8 +2166,23 @@ class assign {
         if ($flags->userid <= 0 || $flags->assignment <= 0 || $flags->id <= 0) {
             return false;
         }
-
-        $result = $DB->update_record('assign_user_flags', $flags);
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+            $result = $DB->update_record('assign_user_flags', $flags);
+        } elseif (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $ruser = get_remote_mapping_user($flags->userid);
+            $uid = $ruser[0]->id;
+            $aflags = json_decode(json_encode($flags), true);
+            $aflags['userid'] = $uid;
+            unset($aflags['assignment']);
+            unset($aflags['id']);
+            $userflags = array();
+            foreach($aflags as $key => $value) {
+                $fkey = 'userflags[0][' . $key . ']';
+                $userflags[$fkey] = $value;
+            }
+            $res = update_remote_user_flags($flags->assignment, $userflags);
+            $result = $res[0]->id !== -1;
+        }
         return $result;
     }
 
