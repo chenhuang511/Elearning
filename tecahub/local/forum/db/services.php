@@ -58,11 +58,35 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_get_forum_discussions_by' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'get_forum_discussions_by',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'Get forum discussions by',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_forum_posts_by' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'get_forum_posts_by',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'Get forum posts by',
+        'type' => 'read',
+        'ajax' => true
+    ),
     'local_mod_get_list_forum_discussions_by' => array(
         'classname' => 'local_mod_forum_external',
         'methodname' => 'get_list_forum_discussions_by',
         'classpath' => 'local/forum/externallib.php',
         'description' => 'Get list forum discussions by',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_list_forum_posts_by' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'get_list_forum_posts_by',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'Get list forum posts by',
         'type' => 'read',
         'ajax' => true
     ),

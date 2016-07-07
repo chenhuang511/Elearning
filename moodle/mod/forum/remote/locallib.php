@@ -57,6 +57,32 @@ function get_remote_forum_by($parameters, $sort = '', $mustexists = FALSE)
 
     return $result->forum;
 }
+function get_remote_forum_discussions_by($parameters, $sort = '', $mustexists = FALSE)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_forum_discussions_by',
+            'params' => array_merge(array('sort' => $sort, 'mustexists' => $mustexists), $parameters),
+        )
+    );
+
+    return $result->discussion;
+}
+function get_remote_forum_posts_by($parameters, $sort = '', $mustexists = FALSE)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_forum_posts_by',
+            'params' => array_merge(array('sort' => $sort, 'mustexists' => $mustexists), $parameters),
+        )
+    );
+
+    return $result->post;
+}
 
 function get_remote_list_forum_discussions_by($parameters, $sort = '', $limitfrom = 0, $limitnum = 0)
 {
@@ -76,5 +102,24 @@ function get_remote_list_forum_discussions_by($parameters, $sort = '', $limitfro
     }
 
     return $discussions;
+}
+function get_remote_list_forum_posts_by($parameters, $sort = '', $limitfrom = 0, $limitnum = 0)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_list_forum_posts_by',
+            'params' => array_merge(array('sort' => $sort, 'limitfrom' => $limitfrom, 'limitnum' => $limitnum), $parameters)
+        )
+    );
+
+    $posts = array();
+
+    foreach ($result->posts as $post) {
+        $posts[$post->id] = $post;
+    }
+
+    return $posts;
 }
 

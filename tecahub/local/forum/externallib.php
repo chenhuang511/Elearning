@@ -274,6 +274,161 @@ class local_mod_forum_external extends external_api
         );
     }
 
+    public static function get_forum_discussions_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'sort' => new external_value(PARAM_RAW, 'sort'),
+                'mustexists' => new external_value(PARAM_BOOL, 'must exists')
+            )
+        );
+    }
+
+    public static function get_forum_discussions_by($parameters, $sort, $mustexists)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_forum_discussions_by_parameters(), array(
+            'parameters' => $parameters,
+            'sort' => $sort,
+            'mustexists' => $mustexists
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+
+        if ($params['mustexists'] === FALSE) {
+            $discussion = $DB->get_record("forum_discussions", $arr);
+        } else {
+            $discussion = $DB->get_record("forum_discussions", $arr, '*', MUST_EXIST);
+        }
+
+        if(!$discussion) {
+            $discussion = new stdClass();
+        }
+
+        $result['discussion'] =$discussion;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    public static function get_forum_discussions_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'discussion' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'the id'),
+                        'course' => new external_value(PARAM_INT, 'the course id'),
+                        'forum' => new external_value(PARAM_INT, 'the forum id'),
+                        'name' => new external_value(PARAM_RAW, 'the name'),
+                        'firstpost' => new external_value(PARAM_INT, 'first post'),
+                        'userid' => new external_value(PARAM_INT, 'the user id'),
+                        'groupid' => new external_value(PARAM_INT, 'the group id'),
+                        'assessed' => new external_value(PARAM_INT, 'the assessed'),
+                        'timemodified' => new external_value(PARAM_INT, 'time modified'),
+                        'usermodified' => new external_value(PARAM_INT, 'user modified'),
+                        'timestart' => new external_value(PARAM_INT, 'time start'),
+                        'timeend' => new external_value(PARAM_INT, 'time end'),
+                        'pinned' => new external_value(PARAM_INT, 'pinned')
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_forum_posts_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'sort' => new external_value(PARAM_RAW, 'sort'),
+                'mustexists' => new external_value(PARAM_BOOL, 'must exists')
+            )
+        );
+    }
+
+    public static function get_forum_posts_by($parameters, $sort, $mustexists)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_forum_posts_by_parameters(), array(
+            'parameters' => $parameters,
+            'sort' => $sort,
+            'mustexists' => $mustexists
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+
+        if ($params['mustexists'] === FALSE) {
+            $post = $DB->get_record("forum_posts", $arr);
+        } else {
+            $post = $DB->get_record("forum_posts", $arr, '*', MUST_EXIST);
+        }
+
+        if(!$post) {
+            $post = new stdClass();
+        }
+
+        $result['post'] =$post;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    public static function get_forum_posts_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'post' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'the id'),
+                        'discussion' => new external_value(PARAM_INT, 'the discussion id'),
+                        'parent' => new external_value(PARAM_INT, 'the parent'),
+                        'userid' => new external_value(PARAM_INT, 'the user id'),
+                        'created' => new external_value(PARAM_INT, 'created'),
+                        'modified' => new external_value(PARAM_INT, 'modified'),
+                        'mailed' => new external_value(PARAM_INT, 'mailed'),
+                        'subject' => new external_value(PARAM_RAW, 'the subject'),
+                        'message' => new external_value(PARAM_RAW, 'the message'),
+                        'messageformat' => new external_value(PARAM_INT, 'message format'),
+                        'messagetrust' => new external_value(PARAM_INT, 'message trust'),
+                        'attachment' => new external_value(PARAM_RAW, 'attachment'),
+                        'totalscore' => new external_value(PARAM_INT, 'total score'),
+                        'mailnow' => new external_value(PARAM_INT, 'mail now')
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
     public static function get_list_forum_discussions_by_parameters()
     {
         return new external_function_parameters(
@@ -298,7 +453,7 @@ class local_mod_forum_external extends external_api
         global $DB;
         $warnings = array();
 
-        $params = self::validate_parameters(self::get_list_lesson_overrides_by_parameters(), array(
+        $params = self::validate_parameters(self::get_list_forum_discussions_by_parameters(), array(
             'parameters' => $parameters,
             'sort' => $sort,
             'limitfrom' => $limitfrom,
@@ -351,6 +506,90 @@ class local_mod_forum_external extends external_api
                             'pinned' => new external_value(PARAM_INT, 'pinned')
                         )
                     ), 'forum discussions'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_list_forum_posts_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'sort' => new external_value(PARAM_RAW, 'sort'),
+                'limitfrom' => new external_value(PARAM_INT, 'limit from'),
+                'limitnum' => new external_value(PARAM_INT, 'limit num')
+            )
+        );
+    }
+
+    public static function get_list_forum_posts_by($parameters, $sort, $limitfrom, $limitnum)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_list_forum_posts_by_parameters(), array(
+            'parameters' => $parameters,
+            'sort' => $sort,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+        if (($params['limitfrom'] == 0 && $params['limitnum'] == 0) && $params['sort'] == '') {
+            $posts = $DB->get_records("forum_posts", $arr);
+        } else if (($params['limitfrom'] == 0 && $params['limitnum'] == 0) && $params['sort'] != '') {
+            $posts = $DB->get_records("forum_posts", $arr, $params['sort']);
+        } else {
+            $posts = $DB->get_records("forum_posts", $arr, $params['sort'], '*', $params['limitfrom'], $params['limitnum']);
+        }
+
+        if (!$posts) {
+            $posts = array();
+        }
+
+        $result['posts'] = $posts;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_list_forum_posts_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'posts' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'the id'),
+                            'discussion' => new external_value(PARAM_INT, 'the discussion id'),
+                            'parent' => new external_value(PARAM_INT, 'the parent'),
+                            'userid' => new external_value(PARAM_INT, 'the user id'),
+                            'created' => new external_value(PARAM_INT, 'created'),
+                            'modified' => new external_value(PARAM_INT, 'modified'),
+                            'mailed' => new external_value(PARAM_INT, 'mailed'),
+                            'subject' => new external_value(PARAM_RAW, 'the subject'),
+                            'message' => new external_value(PARAM_RAW, 'the message'),
+                            'messageformat' => new external_value(PARAM_INT, 'message format'),
+                            'messagetrust' => new external_value(PARAM_INT, 'message trust'),
+                            'attachment' => new external_value(PARAM_RAW, 'attachment'),
+                            'totalscore' => new external_value(PARAM_INT, 'total score'),
+                            'mailnow' => new external_value(PARAM_INT, 'mail now')
+                        )
+                    ), 'forum posts'
                 ),
                 'warnings' => new external_warnings()
             )
