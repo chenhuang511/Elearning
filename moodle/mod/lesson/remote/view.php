@@ -84,13 +84,16 @@ if ($userhasgrade && !$retake) {
 ///     Check lesson availability
 ///     Check for password
 ///     Check dependencies
+
 if (!$canmanage) {
     if (!$lesson->is_accessible()) {  // Deadline restrictions
+         echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('notavailable'));
         if ($lesson->deadline != 0 && time() > $lesson->deadline) {
             echo $lessonoutput->lesson_inaccessible(get_string('lessonclosed', 'lesson', userdate($lesson->deadline)));
         } else {
             echo $lessonoutput->lesson_inaccessible(get_string('lessonopen', 'lesson', userdate($lesson->available)));
         }
+        echo $lessonoutput->footer();
         exit();
     } else if ($lesson->usepassword && empty($USER->lessonloggedin[$lesson->id])) { // Password protected lesson code
         $correctpass = false;
@@ -112,7 +115,9 @@ if (!$canmanage) {
             }
         }
         if (!$correctpass) {
+            echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('passwordprotectedlesson', 'lesson', format_string($lesson->name)));
             echo $lessonoutput->login_prompt($lesson, $userpassword !== '');
+            echo $lessonoutput->footer();
             exit();
         }
     } else if ($lesson->dependency) { // check for dependencies
@@ -183,7 +188,10 @@ if (!$canmanage) {
             }
 
             if (!empty($errors)) {  // print out the errors if any
+                echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('completethefollowingconditions', 'lesson', format_string($lesson->name)));
                 echo $lessonoutput->dependancy_errors($dependentlesson, $errors);
+                echo $lessonoutput->footer();
+
                 exit();
             }
         }
@@ -327,15 +335,18 @@ if (empty($pageid)) {
             } else {
                 echo $lessonoutput->continue_links($lesson, $lastpageseen);
             }
+            echo $lessonoutput->footer();
             exit();
         }
     }
 
     if ($attemptflag) {
         if (!$lesson->retake) {
+            echo $lessonoutput->header($lesson, $cm, 'view', '', null, get_string("noretake", "lesson"));
             $url = new moodle_url($CFG->wwwroot . '/my/?', array('id' => $course->id));
             $courselink = new single_button($url, get_string('returntocourse', 'lesson'), 'get');
             echo $lessonoutput->message(get_string("noretake", "lesson"), $courselink);
+            echo $lessonoutput->footer();
             exit();
         }
     }
@@ -494,6 +505,7 @@ if ($pageid != LESSON_EOL) {
     }
 
     lesson_add_fake_blocks($PAGE, $cm, $lesson, $timer);
+    echo $lessonoutput->header($lesson, $cm, $currenttab, $extraeditbuttons, $lessonpageid, $extrapagetitle);
     if ($attemptflag) {
         // We are using level 3 header because attempt heading is a sub-heading of lesson title (MDL-30911).
         echo $OUTPUT->heading(get_string('attempt', 'lesson', $retries), 3);
@@ -507,6 +519,7 @@ if ($pageid != LESSON_EOL) {
     }
     echo $lessoncontent;
     echo $lessonoutput->progress_bar($lesson);
+    echo $lessonoutput->footer();
 } else {
 
     $lessoncontent = '';
@@ -687,5 +700,7 @@ if ($pageid != LESSON_EOL) {
     }
 
     lesson_add_fake_blocks($PAGE, $cm, $lesson, $timer);
+    echo $lessonoutput->header($lesson, $cm, $currenttab, $extraeditbuttons, $lessonpageid, get_string("congratulations", "lesson"));
     echo $lessoncontent;
+    echo $lessonoutput->footer();
 }
