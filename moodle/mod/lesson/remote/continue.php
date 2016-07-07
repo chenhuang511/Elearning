@@ -231,3 +231,4 @@ if ($lesson->review && !$result->correctanswer && !$result->noanswer && !$result
     // Normal continue button
     echo $OUTPUT->single_button($url, get_string('continue', 'lesson'), true);
 }
+echo $lessonoutput->footer();
