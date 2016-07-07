@@ -32,15 +32,19 @@ $id = required_param('id', PARAM_INT);
 
 $cm = get_remote_course_module_by_cmid('lesson', $id);
 $course = get_local_course_record($cm->course);
-$lesson = new lesson(get_remote_lesson_by_id($cm->instance));
+
+$params = array();
+$params['parameters[0][name]'] = "id";
+$params['parameters[0][value]'] = $cm->instance;
+$lesson = new lesson(get_remote_lesson_by($params, '', true));
 
 require_login($course, false, $cm);
 
 $context = context_module::instance($cm->id);
 require_capability('mod/lesson:manage', $context);
 
-$mode    = optional_param('mode', get_user_preferences('lesson_view', 'collapsed'), PARAM_ALPHA);
-$PAGE->set_url('/mod/lesson/remote/edit.php', array('id'=>$cm->id,'mode'=>$mode));
+$mode = optional_param('mode', get_user_preferences('lesson_view', 'collapsed'), PARAM_ALPHA);
+$PAGE->set_url('/mod/lesson/remote/edit.php', array('id' => $cm->id, 'mode' => $mode));
 
 if ($mode != get_user_preferences('lesson_view', 'collapsed') && $mode !== 'single') {
     set_user_preference('lesson_view', $mode);
@@ -60,7 +64,7 @@ if (!$lesson->has_pages()) {
             echo $lessonoutput->display_edit_collapsed($lesson, $lesson->firstpageid);
             break;
         case 'single':
-            $pageid =  required_param('pageid', PARAM_INT);
+            $pageid = required_param('pageid', PARAM_INT);
             $PAGE->url->param('pageid', $pageid);
             $singlepage = $lesson->load_page($pageid);
             echo $lessonoutput->display_edit_full($lesson, $singlepage->id, $singlepage->prevpageid, true);

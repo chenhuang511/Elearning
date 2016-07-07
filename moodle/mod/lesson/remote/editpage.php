@@ -24,16 +24,16 @@
  **/
 
 require_once(dirname(__FILE__) . '/../../../config.php');
-require_once($CFG->dirroot.'/mod/lesson/locallib.php');
+require_once($CFG->dirroot . '/mod/lesson/locallib.php');
 require_once('../editpage_form.php');
 require_once($CFG->dirroot . '/course/remote/locallib.php');
 require_once($CFG->dirroot . '/mod/lesson/remote/locallib.php');
 
 // first get the preceeding page
 $pageid = required_param('pageid', PARAM_INT);
-$id     = required_param('id', PARAM_INT);         // Course Module ID
-$qtype  = optional_param('qtype', 0, PARAM_INT);
-$edit   = optional_param('edit', false, PARAM_BOOL);
+$id = required_param('id', PARAM_INT);         // Course Module ID
+$qtype = optional_param('qtype', 0, PARAM_INT);
+$edit = optional_param('edit', false, PARAM_BOOL);
 $returnto = optional_param('returnto', null, PARAM_URL);
 if (empty($returnto)) {
     $returnto = new moodle_url('/mod/lesson/remote/edit.php', array('id' => $id));
@@ -42,14 +42,18 @@ if (empty($returnto)) {
 
 $cm = get_remote_course_module_by_cmid('lesson', $id);
 $course = get_local_course_record($cm->course);
-$lesson = new lesson(get_remote_lesson_by_id($cm->instance));
+
+$params = array();
+$params['parameters[0][name]'] = "id";
+$params['parameters[0][value]'] = $cm->instance;
+$lesson = new lesson(get_remote_lesson_by($params, '', true));
 
 require_login($course, false, $cm);
 
 $context = context_module::instance($cm->id);
 require_capability('mod/lesson:edit', $context);
 
-$PAGE->set_url('/mod/lesson/remote/editpage.php', array('pageid'=>$pageid, 'id'=>$id, 'qtype'=>$qtype));
+$PAGE->set_url('/mod/lesson/remote/editpage.php', array('pageid' => $pageid, 'id' => $id, 'qtype' => $qtype));
 $PAGE->set_pagelayout('admin');
 
 if ($edit) {
@@ -62,7 +66,7 @@ if ($edit) {
 
 $jumpto = lesson_page::get_jumptooptions($pageid, $lesson);
 $manager = lesson_page_type_manager::get($lesson);
-$editoroptions = array('noclean'=>true, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes);
+$editoroptions = array('noclean' => true, 'maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes' => $CFG->maxbytes);
 
 // If the previous page was the Question type selection form, this form
 // will have a different name (e.g. _qf__lesson_add_page_form_selection
@@ -75,11 +79,11 @@ $editoroptions = array('noclean'=>true, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'max
 if ($qtype) {
     $mformdummy = $manager->get_page_form(0, array(
         'editoroptions' => $editoroptions,
-        'jumpto'        => $jumpto,
-        'lesson'        => $lesson,
-        'edit'          => $edit,
-        'maxbytes'      => $PAGE->course->maxbytes,
-        'returnto'      => $returnto
+        'jumpto' => $jumpto,
+        'lesson' => $lesson,
+        'edit' => $edit,
+        'maxbytes' => $PAGE->course->maxbytes,
+        'returnto' => $returnto
     ));
     if ($mformdummy->is_cancelled()) {
         redirect($returnto);
@@ -89,11 +93,11 @@ if ($qtype) {
 
 $mform = $manager->get_page_form($qtype, array(
     'editoroptions' => $editoroptions,
-    'jumpto'        => $jumpto,
-    'lesson'        => $lesson,
-    'edit'          => $edit,
-    'maxbytes'      => $PAGE->course->maxbytes,
-    'returnto'      => $returnto
+    'jumpto' => $jumpto,
+    'lesson' => $lesson,
+    'edit' => $edit,
+    'maxbytes' => $PAGE->course->maxbytes,
+    'returnto' => $returnto
 ));
 
 if ($mform->is_cancelled()) {
@@ -106,12 +110,12 @@ if ($edit) {
     $data->pageid = $editpage->id;
     $data->id = $cm->id;
     $editoroptions['context'] = $context;
-    $data = file_prepare_standard_editor($data, 'contents', $editoroptions, $context, 'mod_lesson', 'page_contents',  $editpage->id);
+    $data = file_prepare_standard_editor($data, 'contents', $editoroptions, $context, 'mod_lesson', 'page_contents', $editpage->id);
 
     $answerscount = 0;
     $answers = $editpage->get_answers();
     foreach ($answers as $answer) {
-        $answereditor = 'answer_editor['.$answerscount.']';
+        $answereditor = 'answer_editor[' . $answerscount . ']';
         if (is_array($data->$answereditor)) {
             $answerdata = $data->$answereditor;
             if ($mform->get_answer_format() === LESSON_ANSWER_HTML) {
@@ -124,7 +128,7 @@ if ($edit) {
             }
         }
 
-        $responseeditor = 'response_editor['.$answerscount.']';
+        $responseeditor = 'response_editor[' . $answerscount . ']';
         if (is_array($data->$responseeditor)) {
             $responsedata = $data->$responseeditor;
             if ($mform->get_response_format() === LESSON_ANSWER_HTML) {
@@ -141,7 +145,7 @@ if ($edit) {
     }
 
     $mform->set_data($data);
-    $PAGE->navbar->add(get_string('edit'), new moodle_url('/mod/lesson/remote/edit.php', array('id'=>$id)));
+    $PAGE->navbar->add(get_string('edit'), new moodle_url('/mod/lesson/remote/edit.php', array('id' => $id)));
     $PAGE->navbar->add(get_string('editingquestionpage', 'lesson', get_string($mform->qtypestring, 'lesson')));
 } else {
     // Give the page type being created a chance to override the creation process

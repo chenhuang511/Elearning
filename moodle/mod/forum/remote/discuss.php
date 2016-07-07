@@ -24,31 +24,40 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('../../config.php');
+require_once(dirname(__FILE__) . '/../../../config.php');
+require_once($CFG->dirroot . '/mod/forum/remote/locallib.php');
+require_once($CFG->dirroot . '/course/remote/locallib.php');
 
-$d      = required_param('d', PARAM_INT);                // Discussion ID
+$d = required_param('d', PARAM_INT);                // Discussion ID
 $parent = optional_param('parent', 0, PARAM_INT);        // If set, then display this post and all children.
-$mode   = optional_param('mode', 0, PARAM_INT);          // If set, changes the layout of the thread
-$move   = optional_param('move', 0, PARAM_INT);          // If set, moves this discussion to another forum
-$mark   = optional_param('mark', '', PARAM_ALPHA);       // Used for tracking read posts if user initiated.
+$mode = optional_param('mode', 0, PARAM_INT);          // If set, changes the layout of the thread
+$move = optional_param('move', 0, PARAM_INT);          // If set, moves this discussion to another forum
+$mark = optional_param('mark', '', PARAM_ALPHA);       // Used for tracking read posts if user initiated.
 $postid = optional_param('postid', 0, PARAM_INT);        // Used for tracking read posts if user initiated.
-$pin    = optional_param('pin', -1, PARAM_INT);          // If set, pin or unpin this discussion.
+$pin = optional_param('pin', -1, PARAM_INT);          // If set, pin or unpin this discussion.
 
-$url = new moodle_url('/mod/forum/discuss.php', array('d'=>$d));
+$url = new moodle_url('/mod/forum/remote/discuss.php', array('d' => $d));
 if ($parent !== 0) {
     $url->param('parent', $parent);
 }
 $PAGE->set_url($url);
 
-$discussion = $DB->get_record('forum_discussions', array('id' => $d), '*', MUST_EXIST);
-$course = $DB->get_record('course', array('id' => $discussion->course), '*', MUST_EXIST);
-$forum = $DB->get_record('forum', array('id' => $discussion->forum), '*', MUST_EXIST);
+$params = array();
+$params['parameters[0][name]'] = "id";
+$params['parameters[0][value]'] = $id;
+
+$discussion = get_remote_forum_discussions_by($params, '', true);
+$course = get_local_course_record($discussion->course);
+
+$params['parameters[0][value]'] = $discussion->forum;
+
+$forum = get_remote_forum_by($params, '', true);
 $cm = get_coursemodule_from_instance('forum', $forum->id, $course->id, false, MUST_EXIST);
 
 require_course_login($course, true, $cm);
 
 // move this down fix for MDL-6926
-require_once($CFG->dirroot.'/mod/forum/lib.php');
+require_once($CFG->dirroot . '/mod/forum/lib.php');
 
 $modcontext = context_module::instance($cm->id);
 require_capability('mod/forum:viewdiscussion', $modcontext, NULL, true, 'noviewdiscussionspermission', 'forum');
@@ -62,9 +71,13 @@ if (!empty($CFG->enablerssfeeds) && !empty($CFG->forum_enablerssfeeds) && $forum
 
 // Move discussion if requested.
 if ($move > 0 and confirm_sesskey()) {
-    $return = $CFG->wwwroot.'/mod/forum/discuss.php?d='.$discussion->id;
+    $return = $CFG->wwwroot . '/mod/forum/remote/discuss.php?d=' . $discussion->id;
 
-    if (!$forumto = $DB->get_record('forum', array('id' => $move))) {
+    $params = array();
+    $params['parameters[0][name]'] = "id";
+    $params['parameters[0][value]'] = $move;
+
+    if (!$forumto = get_remote_forum_by($params)) {
         print_error('cannotmovetonotexist', 'forum', $return);
     }
 
@@ -74,7 +87,7 @@ if ($move > 0 and confirm_sesskey()) {
         print_error('cannotmovefromsingleforum', 'forum', $return);
     }
 
-    if (!$forumto = $DB->get_record('forum', array('id' => $move))) {
+    if (!$forumto = get_remote_forum_by($params)) {
         print_error('cannotmovetonotexist', 'forum', $return);
     }
 
@@ -166,11 +179,11 @@ if ($move > 0 and confirm_sesskey()) {
     $event->trigger();
 
     // Delete the RSS files for the 2 forums to force regeneration of the feeds
-    require_once($CFG->dirroot.'/mod/forum/rsslib.php');
+    require_once($CFG->dirroot . '/mod/forum/rsslib.php');
     forum_rss_delete_file($forum);
     forum_rss_delete_file($forumto);
 
-    redirect($return.'&move=-1&sesskey='.sesskey());
+    redirect($return . '&move=-1&sesskey=' . sesskey());
 }
 // Pin or unpin discussion if requested.
 if ($pin !== -1 && confirm_sesskey()) {
@@ -192,7 +205,7 @@ if ($pin !== -1 && confirm_sesskey()) {
             break;
     }
 
-    redirect(new moodle_url('/mod/forum/discuss.php', array('d' => $discussion->id)));
+    redirect(new moodle_url('/mod/forum/remote/discuss.php', array('d' => $discussion->id)));
 }
 
 // Trigger discussion viewed event.
@@ -215,7 +228,7 @@ if ($parent) {
     $parent = $discussion->firstpost;
 }
 
-if (! $post = forum_get_post_full($parent)) {
+if (!$post = forum_get_post_full($parent)) {
     print_error("notexists", 'forum', "$CFG->wwwroot/mod/forum/view.php?f=$forum->id");
 }
 
@@ -242,13 +255,13 @@ if (empty($forumnode)) {
 } else {
     $forumnode->make_active();
 }
-$node = $forumnode->add(format_string($discussion->name), new moodle_url('/mod/forum/discuss.php', array('d'=>$discussion->id)));
+$node = $forumnode->add(format_string($discussion->name), new moodle_url('/mod/forum/remote/discuss.php', array('d' => $discussion->id)));
 $node->display = false;
 if ($node && $post->id != $discussion->firstpost) {
     $node->add(format_string($post->subject), $PAGE->url);
 }
 
-$PAGE->set_title("$course->shortname: ".format_string($discussion->name));
+$PAGE->set_title("$course->shortname: " . format_string($discussion->name));
 $PAGE->set_heading($course->fullname);
 $PAGE->set_button($searchform);
 $renderer = $PAGE->get_renderer('mod_forum');
@@ -297,7 +310,7 @@ echo $neighbourlinks;
 echo '<div class="discussioncontrols clearfix"><div class="controlscontainer">';
 
 if (!empty($CFG->enableportfolios) && has_capability('mod/forum:exportdiscussion', $modcontext)) {
-    require_once($CFG->libdir.'/portfoliolib.php');
+    require_once($CFG->libdir . '/portfoliolib.php');
     $button = new portfolio_add_button();
     $button->set_callback_options('forum_portfolio_caller', array('discussionid' => $discussion->id), 'mod_forum');
     $button = $button->to_html(PORTFOLIO_ADD_FULL_FORM, get_string('exportdiscussion', 'mod_forum'));
@@ -307,9 +320,9 @@ if (!empty($CFG->enableportfolios) && has_capability('mod/forum:exportdiscussion
         $button = '&nbsp;';
         $buttonextraclass = ' noavailable';
     }
-    echo html_writer::tag('div', $button, array('class' => 'discussioncontrol exporttoportfolio'.$buttonextraclass));
+    echo html_writer::tag('div', $button, array('class' => 'discussioncontrol exporttoportfolio' . $buttonextraclass));
 } else {
-    echo html_writer::tag('div', '&nbsp;', array('class'=>'discussioncontrol nullcontrol'));
+    echo html_writer::tag('div', '&nbsp;', array('class' => 'discussioncontrol nullcontrol'));
 }
 
 // groups selector not needed here
@@ -318,7 +331,8 @@ forum_print_mode_form($discussion->id, $displaymode);
 echo "</div>";
 
 if ($forum->type != 'single'
-            && has_capability('mod/forum:movediscussions', $modcontext)) {
+    && has_capability('mod/forum:movediscussions', $modcontext)
+) {
 
     echo '<div class="discussioncontrol movediscussion">';
     // Popup menu to move discussions to other forums. The discussion in a
@@ -327,10 +341,14 @@ if ($forum->type != 'single'
     if (isset($modinfo->instances['forum'])) {
         $forummenu = array();
         // Check forum types and eliminate simple discussions.
-        $forumcheck = $DB->get_records('forum', array('course' => $course->id),'', 'id, type');
+        $forummenu['parameters[0][name]'] = "course";
+        $forummenu['parameters[0][value]'] = $course->id;
+        $forumcheck = get_remote_list_forum_posts_by($forummenu,$sort,'0,0');
+        //$forumcheck = $DB->get_remote('forum', array('course' => $course->id), '', 'id, type');
         foreach ($modinfo->instances['forum'] as $forumcm) {
             if (!$forumcm->uservisible || !has_capability('mod/forum:startdiscussion',
-                context_module::instance($forumcm->id))) {
+                    context_module::instance($forumcm->id))
+            ) {
                 continue;
             }
             $section = $forumcm->sectionnum;
@@ -341,15 +359,15 @@ if ($forum->type != 'single'
             $forumidcompare = $forumcm->instance != $forum->id;
             $forumtypecheck = $forumcheck[$forumcm->instance]->type !== 'single';
             if ($forumidcompare and $forumtypecheck) {
-                $url = "/mod/forum/discuss.php?d=$discussion->id&move=$forumcm->instance&sesskey=".sesskey();
+                $url = "/mod/forum/remote/discuss.php?d=$discussion->id&move=$forumcm->instance&sesskey=" . sesskey();
                 $forummenu[$section][$sectionname][$url] = format_string($forumcm->name);
             }
         }
         if (!empty($forummenu)) {
             echo '<div class="movediscussionoption">';
             $select = new url_select($forummenu, '',
-                    array('/mod/forum/discuss.php?d=' . $discussion->id => get_string("movethisdiscussionto", "forum")),
-                    'forummenu', get_string('move'));
+                array('/mod/forum/remote/discuss.php?d=' . $discussion->id => get_string("movethisdiscussionto", "forum")),
+                'forummenu', get_string('move'));
             echo $OUTPUT->render($select);
             echo "</div>";
         }
@@ -365,7 +383,7 @@ if (has_capability('mod/forum:pindiscussions', $modcontext)) {
         $pinlink = FORUM_DISCUSSION_PINNED;
         $pintext = get_string('discussionpin', 'forum');
     }
-    $button = new single_button(new moodle_url('discuss.php', array('pin' => $pinlink, 'd' => $discussion->id)), $pintext, 'post');
+    $button = new single_button(new moodle_url('/remote/discuss.php', array('pin' => $pinlink, 'd' => $discussion->id)), $pintext, 'post');
     echo html_writer::tag('div', $OUTPUT->render($button), array('class' => 'discussioncontrol pindiscussion'));
 }
 
@@ -374,18 +392,19 @@ echo "</div></div>";
 
 if (!empty($forum->blockafter) && !empty($forum->blockperiod)) {
     $a = new stdClass();
-    $a->blockafter  = $forum->blockafter;
-    $a->blockperiod = get_string('secondstotime'.$forum->blockperiod);
-    echo $OUTPUT->notification(get_string('thisforumisthrottled','forum',$a));
+    $a->blockafter = $forum->blockafter;
+    $a->blockperiod = get_string('secondstotime' . $forum->blockperiod);
+    echo $OUTPUT->notification(get_string('thisforumisthrottled', 'forum', $a));
 }
 
 if ($forum->type == 'qanda' && !has_capability('mod/forum:viewqandawithoutposting', $modcontext) &&
-            !forum_user_has_posted($forum->id,$discussion->id,$USER->id)) {
+    !forum_user_has_posted($forum->id, $discussion->id, $USER->id)
+) {
     echo $OUTPUT->notification(get_string('qandanotify', 'forum'));
 }
 
 if ($move == -1 and confirm_sesskey()) {
-    echo $OUTPUT->notification(get_string('discussionmoved', 'forum', format_string($forum->name,true)), 'notifysuccess');
+    echo $OUTPUT->notification(get_string('discussionmoved', 'forum', format_string($forum->name, true)), 'notifysuccess');
 }
 
 $canrate = has_capability('mod/forum:rate', $modcontext);

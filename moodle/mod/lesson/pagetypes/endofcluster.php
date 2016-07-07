@@ -136,7 +136,10 @@ class lesson_add_page_form_endofcluster extends lesson_add_page_form_base {
         $timenow = time();
 
         // the new page is not the first page (end of cluster always comes after an existing page)
-        if (!$page = get_remote_lesson_pages_by_id($pageid)) {
+        $params = array();
+        $params['parameters[0][name]'] = "id";
+        $params['parameters[0][value]'] = $pageid;
+        if (!$page = get_remote_lesson_pages_by($params)) {
             print_error('cannotfindpages', 'lesson');
         }
 

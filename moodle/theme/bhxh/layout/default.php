@@ -52,10 +52,7 @@ echo $OUTPUT->doctype() ?>
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
 
 <?php  require_once(dirname(__FILE__) . '/includes/header.php');  ?>
-<?php
-	$PAGE->requires->js('/theme/bhxh/javascript/bootstrap-carousel.js');
-	$PAGE->requires->js('/theme/bhxh/javascript/bootstrap-transition.js');
-?>
+
 <div class="container-fluid">
    <?php
          $toggleslideshow = theme_bhxh_get_setting('toggleslideshow');

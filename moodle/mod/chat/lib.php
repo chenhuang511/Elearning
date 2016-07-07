@@ -448,8 +448,12 @@ function chat_refresh_events($courseid = 0) {
  * @param int $groupingid
  * @return array
  */
-function chat_get_users($chatid, $groupid=0, $groupingid=0) {
+function chat_get_users($chatid, $groupid=0, $groupingid=0, $chatsid = null) {
     global $DB;
+
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        return get_remote_chat_user($chatsid);
+    }
 
     $params = array('chatid' => $chatid, 'groupid' => $groupid, 'groupingid' => $groupingid);
 

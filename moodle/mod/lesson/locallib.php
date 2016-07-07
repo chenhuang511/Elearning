@@ -269,7 +269,11 @@ function lesson_random_question_jump($lesson, $pageid)
     global $DB;
 
     // get the lesson pages
-    $lessonpages = get_remote_list_lesson_pages_by_lessonid($lesson->id);
+    $params = array();
+    $params['parameters[0][name]'] = "lessonid";
+    $params['parameters[0][value]'] = $lesson->id;
+
+    $lessonpages = get_remote_list_lesson_pages_by($params);
     if (!$lessonpages) {
         print_error('cannotfindpages', 'lesson');
     }
@@ -353,15 +357,18 @@ function lesson_grade($lesson, $ntries, $userid = 0)
         list($usql, $parameters) = $DB->get_in_or_equal(array_keys($attemptset));
         array_unshift($parameters, $lesson->id);
 
-
-        $pages = get_remote_list_lesson_pages_by_id_and_lessonid($parameters[1], $parameters[0]);
+        $params = array();
+        $params['parameters[0][name]'] = "lessonid";
+        $params['parameters[0][value]'] = $parameters[0];
+        $params['parameters[1][name]'] = "id";
+        $params['parameters[1][value]'] = $parameters[1];
+        $pages = get_remote_list_lesson_pages_by($params);
 
         $params = array();
         $params['parameters[0][name]'] = "lessonid";
         $params['parameters[0][value]'] = $parameters[0];
         $params['parameters[1][name]'] = "pageid";
         $params['parameters[1][value]'] = $parameters[1];
-
         $answers = get_remote_list_lesson_answers_by($params, "id");
 
         // Number of pages answered
@@ -1104,7 +1111,10 @@ class lesson extends lesson_base
     public static function load($lessonid)
     {
         global $DB;
-        $lesson = get_remote_lesson_by_id($lessonid);
+        $params = array();
+        $params['parameters[0][name]'] = "id";
+        $params['parameters[0][value]'] = $lessonid;
+        $lesson = get_remote_lesson_by($params, '', true);
         if (!$lesson) {
             print_error('invalidcoursemodule');
         }
@@ -1170,7 +1180,10 @@ class lesson extends lesson_base
 
         $cm = get_coursemodule_from_instance('lesson', $this->properties->id, $this->properties->course);
 
-        $override = get_remote_lesson_overrides_by_id($overrideid);
+        $params = array();
+        $params['parameters[0][name]'] = "id";
+        $params['parameters[0][value]'] = $overrideid;
+        $override = get_remote_lesson_overrides_by($params, '', true);
 
         // Delete the events.
         $conds = array('modulename' => 'lesson',
@@ -1223,8 +1236,10 @@ class lesson extends lesson_base
     public function delete_all_overrides()
     {
         global $DB;
-
-        $overrides = get_remote_lesson_overrides_by_lessonid($this->properties->id);
+        $params = array();
+        $params['parameters[0][name]'] = "lessonid";
+        $params['parameters[0][value]'] = $this->properties->id;
+        $overrides = get_remote_list_lesson_overrides_by($params, "id");
         foreach ($overrides as $override) {
             $this->delete_override($override->id);
         }
@@ -1248,7 +1263,12 @@ class lesson extends lesson_base
         global $DB;
 
         // Check for user override.
-        $override = get_remote_lesson_overrides_by_lessonid_and_userid($this->properties->id, $userid);
+        $params = array();
+        $params['parameters[0][name]'] = "lessonid";
+        $params['parameters[0][value]'] = $this->properties->id;
+        $params['parameters[1][name]'] = "userid";
+        $params['parameters[1][value]'] = $userid;
+        $override = get_remote_lesson_overrides_by($params);
 
         if (!$override) {
             $override = new stdClass();
@@ -2421,7 +2441,10 @@ abstract class lesson_page extends lesson_base
         $data['data[10][value]'] = 0; // this is the only page
 
         if ($properties->pageid) {
-            $prevpage = get_remote_lesson_pages_by_id($properties->pageid);
+            $params = array();
+            $params['parameters[0][name]'] = "id";
+            $params['parameters[0][value]'] = $properties->pageid;
+            $prevpage = get_remote_lesson_pages_by($params);
             if (!$prevpage) {
                 print_error('cannotfindpages', 'lesson');
             }
@@ -2504,7 +2527,10 @@ abstract class lesson_page extends lesson_base
         if (is_object($id) && !empty($id->qtype)) {
             $page = $id;
         } else {
-            $page = get_remote_lesson_pages_by_id($id);
+            $params = array();
+            $params['parameters[0][name]'] = "id";
+            $params['parameters[0][value]'] = $id;
+            $page = get_remote_lesson_pages_by($params);
             if (!$page) {
                 print_error('cannotfindpages', 'lesson');
             }
@@ -3651,7 +3677,10 @@ class lesson_page_answer extends lesson_base
     public static function load($id)
     {
         global $DB;
-        $answer = get_remote_lesson_answers_by_id($id);
+        $params = array();
+        $params['parameters[0][name]'] = "id";
+        $params['parameters[0][value]'] = $id;
+        $answer = get_remote_lesson_answers_by($params);
         return new lesson_page_answer($answer);
     }
 
@@ -3786,7 +3815,12 @@ class lesson_page_type_manager
     public function load_page($pageid, lesson $lesson)
     {
         global $DB;
-        $page = get_remote_lesson_pages_by_id_and_lessonid($pageid, $lesson->id);
+        $params = array();
+        $params['parameters[0][name]'] = "id";
+        $params['parameters[0][value]'] = $pageid;
+        $params['parameters[1][name]'] = "lessonid";
+        $params['parameters[1][value]'] = $lesson->id;
+        $page = get_remote_lesson_pages_by($params, '', true);
         if (!$page) {
             print_error('cannotfindpages', 'lesson');
         }
@@ -3843,7 +3877,11 @@ class lesson_page_type_manager
     public function load_all_pages(lesson $lesson)
     {
         global $DB;
-        $pages = get_remote_list_lesson_pages_by_lessonid($lesson->id);
+
+        $params = array();
+        $params['parameters[0][name]'] = "lessonid";
+        $params['parameters[0][value]'] = $lesson->id;
+        $pages = get_remote_list_lesson_pages_by($params);
         if (!$pages) {
             return array(); // Records returned empty.
         }

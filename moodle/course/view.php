@@ -33,6 +33,12 @@
 
     $course = $DB->get_record('course', $params, '*', MUST_EXIST);
 
+    if (is_remote_course($course)) {
+        define(MOODLE_RUN_MODE, MOODLE_MODE_HUB);
+    } else {
+        define(MOODLE_RUN_MODE, MOODLE_MODE_HOST);
+    }
+
     $urlparams = array('id' => $course->id);
 
     // Sectionid should get priority over section number
