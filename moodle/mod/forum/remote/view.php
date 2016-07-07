@@ -78,6 +78,7 @@ if ($id) {
     if (!$forum = get_remote_forum_by_id($prs)) {
         print_error('invalidforumid', 'forum');
     }
+    
     if (!$course = get_local_course_record($forum->course)) {
         print_error('coursemisconf');
     }
@@ -148,7 +149,8 @@ if ($forum->type == 'single') {
     $prs['parameters[0][name]'] = "forum";
     $prs['parameters[0][value]'] = $forum->id;
 
-    $discussions = get_remote_list_forum_discussions_by($prs, "timemodified ASC");
+    $discussions = get_remote_list_forum_discussions_by($prs, $sort);
+    
     if (!empty($discussions)) {
         $discussion = array_pop($discussions);
     }
