@@ -1540,14 +1540,18 @@ class table_sql extends flexible_table {
 
     /**
      * HaNV : function mapping user by user id to change $this->countparams
+     * @param array $hostusers
+     * @return array
      */
-    function mapping_users(array &$hostusers) {
-        foreach ($hostusers as $key => &$val){
+    function mapping_users(array $hostusers) {
+        $result = array();
+        foreach ($hostusers as $key => $val){
             if(substr(trim($key),0,1) == 'u'){
                 $val = get_remote_mapping_user($val)[0]->id;
             }
+            $result[trim($key)] = $val;
         }
-        unset($val);
+        return $result;
     }
 
     /**
@@ -1565,11 +1569,11 @@ class table_sql extends flexible_table {
                 $this->countparams = $this->sql->params;
             }
 
-            if(MOODLE_RUN_MODE === MOODLE_MODE_HUB && $modname == 'quiz'){
-                $this->mapping_users($this->countparams);
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+                $mapcountparams = $this->mapping_users($this->countparams);
                 $countparams = array();
                 $index = 0;
-                foreach ($this->countparams as $key => $val){
+                foreach ($mapcountparams as $key => $val){
                     $countparams["countparam[$index][name]"]=$key;
                     $countparams["countparam[$index][value]"]=$val;
                     $index++;
@@ -1611,16 +1615,33 @@ class table_sql extends flexible_table {
                 {$sort}";
 
         if (!$this->is_downloading()) {
-            if(MOODLE_RUN_MODE === MOODLE_MODE_HUB && $modname == 'quiz'){
-                $this->mapping_users($this->sql->params);
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+                $oldparams = $this->sql->params;
+                $mapsqlparams = $this->mapping_users($this->sql->params);
                 $params = array();
                 $index = 0;
-                foreach ($this->sql->params as $key => $val){
+                foreach ($mapsqlparams as $key => $val){
                     $params["param[$index][name]"]=$key;
                     $params["param[$index][value]"]=$val;
                     $index++;
                 }
                 $this->rawdata = get_remote_report_get_rowdata ($sql, $params, $this->get_page_start(), $this->get_page_size());
+
+                $mapusers = array();
+                foreach ($oldparams as $k => $v) {
+                    if (substr(trim($k),0,1) == 'u') {
+                        $remoteuser = get_remote_mapping_user($v)[0]->id;
+                        $mapusers[$remoteuser] = $v;
+                    }
+                }
+                foreach ($this->rawdata as &$row) {
+                    if(isset($mapusers[$row->userid])) {
+                        if (empty($row->id)) {
+                            $row->id = $mapusers[$row->userid];
+                        }
+                        $row->userid = $mapusers[$row->userid];
+                    }
+                }
             }else{
                 $this->rawdata = $DB->get_records_sql($sql, $this->sql->params, $this->get_page_start(), $this->get_page_size());
             }
