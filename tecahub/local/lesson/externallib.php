@@ -376,16 +376,7 @@ class local_mod_lesson_external extends external_api
                 'users' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'id' => new external_value(PARAM_INT, 'id'),
-                            'picture' => new external_value(PARAM_INT, 'picture'),
-                            'firstname' => new external_value(PARAM_RAW, 'first name'),
-                            'lastname' => new external_value(PARAM_RAW, 'last name'),
-                            'firstnamephonetic' => new external_value(PARAM_RAW, 'first name phonetic'),
-                            'lastnamephonetic' => new external_value(PARAM_RAW, 'last name phonetic'),
-                            'middlename' => new external_value(PARAM_RAW, 'middle name'),
-                            'alternatename' => new external_value(PARAM_RAW, 'alternate name'),
-                            'imagealt' => new external_value(PARAM_RAW, 'image alt'),
-                            'email' => new external_value(PARAM_RAW, 'email'),
+                            'id' => new external_value(PARAM_INT, 'id')
                         )
                     ), ' user data'
                 ),
