@@ -296,33 +296,7 @@ function get_remote_list_ids_lesson_by($parameters = array(), $sort = '', $limit
 
     return $lessons;
 }
-
-/**
- * create new a lesson branch
- *
- * @param $branch
- * @return false|mixed
- */
-function save_remote_lesson_branch($branch)
-{
-    return moodle_webservice_client(
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_save_lesson_branch',
-            'params' => array_merge($branch)
-        )
-    );
-}
-
-/**
- * Get maxgrade of lesson grades by userid and lessonid
- *
- * @param $userid
- * @param $lessonid
- * @param array $options
- * @return false|mixed
- */
+ 
 function get_remote_maxgrade_lesson_grades_by_userid_and_lessonid($userid, $lessonid)
 {
     $result = moodle_webservice_client(
@@ -336,35 +310,6 @@ function get_remote_maxgrade_lesson_grades_by_userid_and_lessonid($userid, $less
     return $result->grade;
 }
 
-/**
- * Delete a lesson object. Exam: lesson, lesson_branch, ...
- *
- * @param $tablename
- * @param $columnname
- * @param $value
- * @return false|mixed
- */
-function delete_remote_moodle_table($tablename, $data)
-{
-    $result = moodle_webservice_client(
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_delete_mdl_table',
-            'params' => array_merge(array('tablename' => $tablename), $data)
-        )
-    );
-
-    return $result->status;
-}
-
-/**
- * Get list of events by modulename and instace
- *
- * @param $modulename
- * @param $instance
- * @return false|mixed
- */
 function get_remote_list_events_by_modulename_and_instance($modulename, $instance, $userid = 0, $groupid = 0)
 {
     $result = moodle_webservice_client(
@@ -382,102 +327,6 @@ function get_remote_list_events_by_modulename_and_instance($modulename, $instanc
     }
 
     return $events;
-}
-
-/**
- * create new a lesson pages
- *
- * @param $newpage
- * @return false|mixed
- */
-function save_remote_lesson_pages($newpage)
-{
-    $result = moodle_webservice_client(
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_save_lesson_pages',
-            'params' => array_merge($newpage)
-        )
-    );
-
-    return $result->newpageid;
-}
-
-/**
- * create new a lesson attempts
- *
- * @param $attempt
- * @return false|mixed
- */
-function save_remote_lesson_attempts($attempt)
-{
-    $result = moodle_webservice_client(
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_save_lesson_attempts',
-            'params' => array_merge($attempt)
-        )
-    );
-
-    return $result->status;
-}
-
-function save_remote_lesson_answers($answer)
-{
-    $result = moodle_webservice_client(
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_save_lesson_answers',
-            'params' => array_merge($answer)
-        )
-    );
-
-    return $result->newanswerid;
-}
-
-function update_remote_lesson_answers($id, $answer)
-{
-    $result = moodle_webservice_client(
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_update_lesson_answers',
-            'params' => array_merge(array('id' => $id), $answer)
-        )
-    );
-
-    return $result->status;
-}
-
-function save_remote_lesson_timer($timer)
-{
-    $result = moodle_webservice_client(
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_save_lesson_timer',
-            'params' => array_merge($timer)
-        )
-    );
-
-    return $result->status;
-}
-
-function update_remote_lesson_timer($id, $timer)
-{
-    $result = moodle_webservice_client(
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_update_lesson_timer',
-            'params' => array_merge(array('id' => $id), $timer)
-        )
-    );
-
-    return $result->status;
 }
 
 function get_remote_duration_lesson_timer_by_lessonid_and_userid($lessonid, $userid)
@@ -502,20 +351,6 @@ function check_remote_record_exists($modname, $parameters)
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_check_record_exists',
             'params' => array_merge(array('modname' => $modname), $parameters)
-        )
-    );
-
-    return $result->status;
-}
-
-function update_remote_lesson_pages($id, $page)
-{
-    $result = moodle_webservice_client(
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_update_lesson_pages',
-            'params' => array_merge(array('id' => $id), $page)
         )
     );
 
@@ -576,6 +411,20 @@ function get_remote_recordset_lesson_branch_by_lessonid($parameters, $sort = '',
     return new json_moodle_recordset($branches);
 }
 
+function save_remote_mdl_lesson($modname, $data)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_save_mdl_lesson',
+            'params' => array_merge(array('modname' => $modname), $data),
+        )
+    );
+
+    return $result->newid;
+}
+
 function update_remote_mdl_table($tablename, $params, $data)
 {
     $result = moodle_webservice_client(
@@ -584,6 +433,34 @@ function update_remote_mdl_table($tablename, $params, $data)
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_update_mdl_table',
             'params' => array_merge(array_merge(array('tablename' => $tablename), $params), $data),
+        )
+    );
+
+    return $result->status;
+}
+
+function update_remote_mdl_lesson($modname, $id, $data)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_update_mdl_lesson',
+            'params' => array_merge(array('modname' => $modname, "id" => $id), $data),
+        )
+    );
+
+    return $result->id;
+}
+
+function delete_remote_mdl_lesson($modname, $data)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_delete_mdl_lesson',
+            'params' => array_merge(array('modname' => $modname), $data)
         )
     );
 

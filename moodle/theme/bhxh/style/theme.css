@@ -469,6 +469,7 @@ a:focus {
 .loginpanel label {
     font-weight: 400;
     padding: 0;
+    
 }
 
 .loginpanel .chk-box {
@@ -1889,7 +1890,7 @@ input#id_submitbutton,
 input#id_submitbutton2,
 .path-admin .buttons input[type="submit"],
 td.submit input {
-    background: #ff6600;
+    background: #6c92d8;
     border: 0;
     text-shadow: none;
 }
@@ -2426,10 +2427,12 @@ div.backup-section + form,
 .mform label {
     font-size: 16px;
     padding-top: 5px;
+
 }
 
 #region-main .mform:not(.unresponsive) .fitem .fitemtitle label {
     font-weight: normal;
+
 }
 
 .dir-ltr .mform .fpassword .unmask {
@@ -2443,10 +2446,12 @@ div.backup-section + form,
 .mform .fpassword .unmask label {
     font: 14px Arial, Helvetica, sans-serif;
     padding: 0 0 0 7px;
+
 }
 
 .dir-rtl .mform .fpassword .unmask label {
     padding: 0 7px 0 0;
+
 }
 
 .mform .fdescription.required {

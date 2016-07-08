@@ -450,7 +450,7 @@ class local_mod_assign_external extends external_api {
                 'timecreated'       => new external_value(PARAM_INT, 'grade creation time'),
                 'timemodified'      => new external_value(PARAM_INT, 'grade last modified time'),
                 'grader'            => new external_value(PARAM_INT, 'grader'),
-                'grade'             => new external_value(PARAM_TEXT, 'grade'),
+                'grade'             => new external_value(PARAM_FLOAT, 'grade'),
                 'gradefordisplay'   => new external_value(PARAM_RAW, 'grade rendered into a format suitable for display',
                     VALUE_OPTIONAL),
             ), 'grade information', $required
@@ -514,7 +514,7 @@ class local_mod_assign_external extends external_api {
 				'sendlatenotifications' => new external_value(PARAM_INT, 'send late notifications'),
 				'duedate' => new external_value(PARAM_INT, 'Due date'),
 				'allowsubmissionsfromdate' => new external_value(PARAM_INT, 'allow submissions from date'),
-				'grade' => new external_value(PARAM_INT, 'grade'),
+				'grade' => new external_value(PARAM_FLOAT, 'grade'),
 				'timemodified' => new external_value(PARAM_INT, 'time modified'),
 				'requiresubmissionstatement' => new external_value(PARAM_INT, 'required submission statement'),
 				'completionsubmit' => new external_value(PARAM_INT, 'completetion submit'),
@@ -746,7 +746,7 @@ class local_mod_assign_external extends external_api {
                 'feedbackcomments' => new external_single_structure(
                     array(
                         'assignment' => new external_value(PARAM_INT, 'assignment id'),
-                        'grade' => new external_value(PARAM_INT, 'grade id'),
+                        'grade' => new external_value(PARAM_FLOAT, 'grade id'),
                         'commenttext' => new external_value(PARAM_RAW, 'feedback comment text'),
                         'commentformat' => new external_value(PARAM_INT, 'feedbackcomment format'),
                     )
@@ -1028,7 +1028,7 @@ class local_mod_assign_external extends external_api {
                 'userid' => new external_value(PARAM_INT, 'user ID'),
                 'groupid' => new external_value(PARAM_INT, 'group ID'),
                 'attemptnumber' => new external_value(PARAM_INT, 'attempnumber'),
-                'mode' => new external_value(PARAM_RAW, 'order by DESC or ASC', VALUE_OPTIONAL)
+                'mode' => new external_value(PARAM_RAW, 'order by DESC or ASC')
             )
         );
     }
@@ -1050,7 +1050,7 @@ class local_mod_assign_external extends external_api {
                 'mode' => $mode
             )
         );
-        if (!$params["attemptnumber"]){
+        if ($params["attemptnumber"] < 0){
             unset($params["attemptnumber"]);
         }
         if ($params['mode'] == 'DESC'){
@@ -1854,7 +1854,7 @@ class local_mod_assign_external extends external_api {
                 'timecreated'       => new external_value(PARAM_INT, 'grade creation time'),
                 'timemodified'      => new external_value(PARAM_INT, 'grade last modified time'),
                 'grader'            => new external_value(PARAM_RAW, 'email grader'),
-                'grade'             => new external_value(PARAM_TEXT, 'grade'),
+                'grade'             => new external_value(PARAM_FLOAT, 'grade'),
                 'gradefordisplay'   => new external_value(PARAM_RAW, 'grade rendered into a format suitable for display',
                     VALUE_OPTIONAL),
             ), 'grade information', $required
@@ -1899,7 +1899,7 @@ class local_mod_assign_external extends external_api {
                 'attemptnumber' => $attemptnumber,
             )
         );
-        if (!$params["attemptnumber"]){
+        if ($params["attemptnumber"] < 0){
             unset($params["attemptnumber"]);
         }
 
@@ -1940,7 +1940,7 @@ class local_mod_assign_external extends external_api {
                             'timecreated' => new external_value(PARAM_INT, 'time created'),
                             'timemodified' => new external_value(PARAM_INT, 'time modified'),
                             'grader' => new external_value(PARAM_RAW, 'email grader'),
-                            'grade' => new external_value(PARAM_RAW, 'grade number'),
+                            'grade' => new external_value(PARAM_FLOAT, 'grade number'),
                             'attemptnumber' => new external_value(PARAM_INT, 'attemptnumber'),
                         )
                     )
@@ -1962,7 +1962,7 @@ class local_mod_assign_external extends external_api {
                 'timecreated' => new external_value(PARAM_INT, 'time created'),
                 'timemodified' => new external_value(PARAM_INT, 'time modified'),
                 'grader' => new external_value(PARAM_INT, 'grader id'),
-                'grade' => new external_value(PARAM_INT, 'grade score'),
+                'grade' => new external_value(PARAM_FLOAT, 'grade score'),
                 'attemptnumber' => new external_value(PARAM_INT, 'attempnumber'),
             )
         );
@@ -2293,7 +2293,7 @@ class local_mod_assign_external extends external_api {
                             'status' => new external_value(PARAM_RAW, 'The status of submission'),
                             'stime' => new external_value(PARAM_INT, 'Start time'),
                             'gtime' => new external_value(PARAM_INT, 'Grade time'),
-                            'grade' => new external_value(PARAM_INT, 'Grade score'),
+                            'grade' => new external_value(PARAM_FLOAT, 'Grade score'),
                         )
                     )
                 ),

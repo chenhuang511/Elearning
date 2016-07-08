@@ -117,6 +117,84 @@ class local_mod_wiki_external extends external_api
         );
     }
 
+    public static function get_wiki_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'sort' => new external_value(PARAM_RAW, 'sort'),
+                'mustexists' => new external_value(PARAM_BOOL, 'must exists')
+            )
+        );
+    }
+
+    public static function get_wiki_by($parameters, $sort, $mustexists)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_wiki_by_parameters(), array(
+            'parameters' => $parameters,
+            'sort' => $sort,
+            'mustexists' => $mustexists
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+
+        if ($params['mustexists'] === FALSE && $params['sort'] == '') {
+            $wiki = $DB->get_record("wiki", $arr);
+        } else if ($params['mustexists'] === FALSE && $params['sort'] != '') {
+            $wiki = $DB->get_record("wiki", $arr, $params['sort']);
+        } else {
+            $wiki = $DB->get_record("wiki", $arr, '*', MUST_EXIST);
+        }
+
+        if (!$wiki) {
+            $wiki = new stdClass();
+        }
+
+        $result['wiki'] = $wiki;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    public static function get_wiki_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'wiki' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
+                        'course' => new external_value(PARAM_INT, 'Foreign key reference to the course this page is part of.', VALUE_OPTIONAL),
+                        'name' => new external_value(PARAM_TEXT, 'Page name.'),
+                        'intro' => new external_value(PARAM_RAW, 'Page introduction text.'),
+                        'introformat' => new external_format_value(PARAM_INT, 'intro', VALUE_OPTIONAL),
+                        'timecreated' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
+                        'firstpagetitle' => new external_value(PARAM_TEXT, 'Foreign key reference to the course this quiz is part of.', VALUE_OPTIONAL),
+                        'wikimode' => new external_value(PARAM_TEXT, 'Page name.', VALUE_OPTIONAL),
+                        'defaultformat' => new external_value(PARAM_TEXT, 'Page introduction text.'),
+                        'editbegin' => new external_format_value(PARAM_INT, 'Display or Not', VALUE_OPTIONAL),
+                        'editend' => new external_value(PARAM_INT, 'Page name.'),
+                        'timemodified' => new external_format_value(PARAM_INT, 'intro', VALUE_OPTIONAL)
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
     /**
      * Hanv 24/05/2016
      * Return all the information about a quiz by quizid or by cm->instance from course_module

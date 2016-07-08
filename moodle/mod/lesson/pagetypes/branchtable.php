@@ -246,7 +246,7 @@ class lesson_page_type_branchtable extends lesson_page
         $data['data[6][name]'] = 'nextpageid';
         $data['data[6][value]'] = $newpageid;
 
-        $result = save_remote_lesson_branch($data);
+        $result = save_remote_mdl_lesson("lesson_branch", $data);
 
         redirect(new moodle_url('/mod/lesson/remote/view.php', array('id' => $PAGE->cm->id, 'pageid' => $newpageid)));
     }
