@@ -194,6 +194,14 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_get_list_lesson_attempts_sql' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_list_lesson_attempts_sql',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'get list of lesson attempts sql',
+        'type' => 'read',
+        'ajax' => true
+    ),
     'local_mod_get_list_lesson_by' => array(
         'classname' => 'local_mod_lesson_external',
         'methodname' => 'get_list_lesson_by',
