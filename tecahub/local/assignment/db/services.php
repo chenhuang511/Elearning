@@ -218,5 +218,13 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_assign_submit_grading_form' => array(
+		'classname'	  => 'local_mod_assign_external',
+		'methodname'  => 'submit_grading_form',
+		'classpath'	  => 'local/assignment/externallib.php',
+		'description' => "Submit the remote grading form data via ajax",
+		'type'		  => 'write',
+		'ajax'		  => true
+	),
 );
 

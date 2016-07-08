@@ -336,18 +336,23 @@ class assign_feedback_comments extends assign_feedback_plugin {
      */
     public function save(stdClass $grade, stdClass $data) {
         global $DB;
-        $feedbackcomment = $this->get_feedback_comments($grade->id);
-        if ($feedbackcomment) {
-            $feedbackcomment->commenttext = $data->assignfeedbackcomments_editor['text'];
-            $feedbackcomment->commentformat = $data->assignfeedbackcomments_editor['format'];
-            return $DB->update_record('assignfeedback_comments', $feedbackcomment);
-        } else {
-            $feedbackcomment = new stdClass();
-            $feedbackcomment->commenttext = $data->assignfeedbackcomments_editor['text'];
-            $feedbackcomment->commentformat = $data->assignfeedbackcomments_editor['format'];
-            $feedbackcomment->grade = $grade->id;
-            $feedbackcomment->assignment = $this->assignment->get_instance()->id;
-            return $DB->insert_record('assignfeedback_comments', $feedbackcomment) > 0;
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $feedbackcomment = $this->get_feedback_comments($grade->id);
+            if ($feedbackcomment) {
+                $feedbackcomment->commenttext = $data->assignfeedbackcomments_editor['text'];
+                $feedbackcomment->commentformat = $data->assignfeedbackcomments_editor['format'];
+                return $DB->update_record('assignfeedback_comments', $feedbackcomment);
+            } else {
+                $feedbackcomment = new stdClass();
+                $feedbackcomment->commenttext = $data->assignfeedbackcomments_editor['text'];
+                $feedbackcomment->commentformat = $data->assignfeedbackcomments_editor['format'];
+                $feedbackcomment->grade = $grade->id;
+                $feedbackcomment->assignment = $this->assignment->get_instance()->id;
+                return $DB->insert_record('assignfeedback_comments', $feedbackcomment) > 0;
+            }
+        }
+        else{
+            return $this->is_enabled();
         }
     }
 
