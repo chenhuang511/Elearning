@@ -643,9 +643,9 @@ class local_mod_lesson_external extends external_api
 
         $result = array();
 
-        if ($params['mustexists'] === FALSE && $params['sort'] === '') {
+        if ($params['mustexists'] == FALSE && $params['sort'] == '') {
             $page = $DB->get_record("lesson_pages", $arr);
-        } else if ($params['mustexists'] === FALSE && $params['sort'] != '') {
+        } else if ($params['mustexists'] == FALSE && $params['sort'] != '') {
             $page = $DB->get_record("lesson_pages", $arr, $params['sort']);
         } else {
             $page = $DB->get_record("lesson_pages", $arr, '*', MUST_EXIST);
