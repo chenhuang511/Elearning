@@ -316,6 +316,7 @@ class local_mod_lesson_external extends external_api
     {
         return new external_function_parameters(
             array(
+                'sql' => new external_value(PARAM_RAW, "sql"),
                 'params' => new external_single_structure(
                     array(
                         'eu1_guestid' => new external_value(PARAM_INT, 'guest id'),
@@ -326,44 +327,31 @@ class local_mod_lesson_external extends external_api
                         'eu1_now2' => new external_value(PARAM_INT, 'now 2'),
                         'lessonid' => new external_value(PARAM_INT, 'lessonid id')
                     )
-                ),
-                'esql' => new external_value(PARAM_RAW, 'query sql')
+                )
             )
         );
     }
 
-    public static function get_user_by_lessonid($params, $esql)
+    public static function get_user_by_lessonid($sql, $params)
     {
         global $DB;
 
         $warnings = array();
 
         $params = self::validate_parameters(self::get_user_by_lessonid_parameters(), array(
-            'params' => $params,
-            'esql' => $esql
+            'sql' => $sql,
+            'params' => $params
         ));
-
-        list($sort, $sortparams) = users_order_by_sql('u');
-
-        $ufields = user_picture::fields('u');
-        $enrolsql = $params['esql'];
-        $sql = "SELECT DISTINCT $ufields
-                FROM {user} u
-                JOIN (SELECT userid, lessonid FROM {lesson_attempts} a1 UNION
-                SELECT userid, lessonid FROM {lesson_branch} b1) a ON u.id = a.userid
-                JOIN ($enrolsql) ue ON ue.id = a.userid
-                WHERE a.lessonid = :lessonid
-                ORDER BY $sort";
 
         $result = array();
 
-        $user = $DB->get_records_sql($sql, $params['params']);
+        $users = $DB->get_records_sql($params['sql'], $params['params']);
 
-        if (!$user) {
-            $user = new stdClass();
+        if (!$users) {
+            $users = array();
         }
 
-        $result['users'] = $user;
+        $result['users'] = $users;
         $result['warnings'] = $warnings;
 
         return $result;
