@@ -1432,6 +1432,58 @@ class local_mod_lesson_external extends external_api
         );
     }
 
+    public static function get_list_lesson_answers_select_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'usql' => new external_value(PARAM_RAW, 'query sql'),
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                )
+            )
+        );
+    }
+
+    public static function get_list_lesson_answers_select($usql, $parameters)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_list_lesson_answers_select_parameters(), array(
+            'usql' => $usql,
+            'parameters' => $parameters
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+        $sql = $params['usql'];
+
+        $answers = $DB->get_records_select("lesson_answers", "lessonid = ? AND pageid $sql", $arr);
+
+        if (!$answers) {
+            $answers = array();
+        }
+
+        $result['answers'] = $answers;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_list_lesson_answers_select_returns()
+    {
+        return self::get_list_lesson_answers_by_returns();
+    }
+
     public static function get_list_lesson_pages_by_parameters()
     {
         return new external_function_parameters(
@@ -1513,6 +1565,59 @@ class local_mod_lesson_external extends external_api
                 'warnings' => new external_warnings()
             )
         );
+    }
+
+    public static function get_list_lesson_pages_select_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'usql' => new external_value(PARAM_RAW, 'query sql'),
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                )
+            )
+        );
+    }
+
+    public static function get_list_lesson_pages_select($usql, $parameters)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_list_lesson_pages_select_parameters(), array(
+            'usql' => $usql,
+            'parameters' => $parameters
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+
+        $sql = $params['usql'];
+
+        $pages = $DB->get_records_select("lesson_pages", "lessonid = ? AND id $sql", $arr);
+
+        if (!$pages) {
+            $pages = array();
+        }
+
+        $result['pages'] = $pages;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_list_lesson_pages_select_returns()
+    {
+        return self::get_list_lesson_pages_by_returns();
     }
 
     public static function get_list_lesson_overrides_by_parameters()
