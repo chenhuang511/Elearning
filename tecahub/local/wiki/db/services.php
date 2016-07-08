@@ -50,5 +50,13 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_get_wiki_by' => array(
+		'classname' => 'local_mod_wiki_external',
+		'methodname' => 'get_wiki_by',
+		'classpath' => 'local/wiki/externallib.php',
+		'description' => 'Get wiki by',
+		'type' => 'read',
+		'ajax' => true
+	),
 );
 
