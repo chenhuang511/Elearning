@@ -124,7 +124,11 @@ abstract class base {
                                        'typeid, type, has_choices, response_table');
         }
         if ($id) {
-            $question = get_remote_questionnaire_by_id($id);
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $question = $DB->get_record('questionnaire_question', array('id' => $id));
+            } else {
+                $question = get_remote_questionnaire_by_id($id);
+            }
         }
         if (is_object($question)) {
             $this->id = $question->id;
@@ -195,7 +199,12 @@ abstract class base {
 
     private function get_choices() {
         global $DB;
-        if ($choices = get_remote_questionnaire_quest_choice_by_question_id($this->id)) {
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $choices = $DB->get_records('questionnaire_quest_choice', array('question_id' => $this->id), 'id ASC');
+        } else {
+            $choices = get_remote_questionnaire_quest_choice_by_question_id($this->id);
+        }
+        if ($choices) {
             foreach ($choices as $choice) {
                 $this->choices[$choice->id] = new \stdClass();
                 $this->choices[$choice->id]->content = $choice->content;

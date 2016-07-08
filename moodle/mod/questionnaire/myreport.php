@@ -63,20 +63,28 @@ $PAGE->set_heading(format_string($course->fullname));
 $questionnaire = new questionnaire(0, $questionnaire, $course, $cm);
 $sid = $questionnaire->survey->id;
 $courseid = $course->id;
+
 // Tab setup.
 if (!isset($SESSION->questionnaire)) {
     $SESSION->questionnaire = new stdClass();
 }
 $SESSION->questionnaire->current_tab = 'myreport';
+
 switch ($action) {
     case 'summary':
         if (empty($questionnaire->survey)) {
             print_error('surveynotexists', 'questionnaire');
         }
         $SESSION->questionnaire->current_tab = 'mysummary';
-        $select = 'survey_id = '.$questionnaire->sid.' AND username = \''.$userid.'\' AND complete=\'y\'';
-        $resps = get_remote_questionnaire_response($select);
-        $resps = change_key_by_value($resps, 'id');
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $select = 'survey_id = '.$questionnaire->sid.' AND username = \''.$userid.'\' AND complete=\'y\'';
+            $resps = $DB->get_records_select('questionnaire_response', $select);
+        } else {
+            $select = 'survey_id = '.$questionnaire->sid.' AND username = \''.$userid.'\' AND complete=\'y\'';
+            $resps = get_remote_questionnaire_response($select);
+            $resps = change_key_by_value($resps, 'id');
+        }
+
         if (!$resps) {
             $resps = array();
         }
@@ -107,10 +115,16 @@ switch ($action) {
             print_error('surveynotexists', 'questionnaire');
         }
         $SESSION->questionnaire->current_tab = 'myvall';
+
         $select = 'survey_id = '.$questionnaire->sid.' AND username = \''.$userid.'\' AND complete=\'y\'';
         $sort = 'submitted ASC';
-        $resps = get_remote_questionnaire_response($select, $sort);
-        $resps = change_key_by_value($resps, 'id');
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $resps = $DB->get_records_select('questionnaire_response', $select, $params = null, $sort);
+        } else {
+            $resps = get_remote_questionnaire_response($select, $sort);
+            $resps = change_key_by_value($resps, 'id');
+        }
+
         $titletext = get_string('myresponses', 'questionnaire');
 
         // Print the page header.
@@ -120,7 +134,6 @@ switch ($action) {
         include('tabs.php');
 
         echo $OUTPUT->heading($titletext.':');
-
         $questionnaire->view_all_responses($resps);
 
         // Finish the page.
@@ -159,16 +172,34 @@ switch ($action) {
         }
         $select = 'survey_id = '.$questionnaire->sid.' AND username = \''.$userid.'\' AND complete=\'y\'';
         $sort = 'submitted ASC';
-        $resps = get_remote_questionnaire_response($select, $sort);
-        // All participants.
-        $select = 'survey_id = '.$sid.' AND complete=\'y\' ';
-        $sort = 'id ASC';
-        if (!($respsallparticipants = get_remote_questionnaire_response($select, $sort))) {
-            $respsallparticipants = array();
+
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $resps = $DB->get_records_select('questionnaire_response', $select, $params = null, $sort);
+            // All participants.
+            $sql = "SELECT R.id, R.survey_id, R.submitted, R.username
+                 FROM {questionnaire_response} R
+                 WHERE R.survey_id = ? AND
+                       R.complete='y'
+                 ORDER BY R.id";
+            if (!($respsallparticipants = $DB->get_records_sql($sql, array($sid)))) {
+                $respsallparticipants = array();
+            }
+            $select = 'survey_id = '.$questionnaire->sid.' AND username = \''.$userid.'\' AND complete=\'y\'';
+            $fields = "id,survey_id,submitted,username";
+            $params = array();
+        } else {
+            $resps = get_remote_questionnaire_response($select, $sort);
+            // All participants.
+            $select = 'survey_id = '.$sid.' AND complete=\'y\' ';
+            $sort = 'id ASC';
+            if (!($respsallparticipants = get_remote_questionnaire_response($select, $sort))) {
+                $respsallparticipants = array();
+            }
+            $select = 'survey_id = '.$questionnaire->sid.' AND username = \''.$userid.'\' AND complete=\'y\'';
+            $sort = 'id ASC';
+            $respsuser = get_remote_questionnaire_response($select, $sort);
         }
-        $select = 'survey_id = '.$questionnaire->sid.' AND username = \''.$userid.'\' AND complete=\'y\'';
-        $sort = 'id ASC';
-        $respsuser = get_remote_questionnaire_response($select, $sort);
+
         $SESSION->questionnaire->numrespsallparticipants = count ($respsallparticipants);
         $SESSION->questionnaire->numselectedresps = $SESSION->questionnaire->numrespsallparticipants;
         $iscurrentgroupmember = false;
@@ -232,8 +263,12 @@ switch ($action) {
                 $groupname = '<strong>'.get_string('allparticipants').'</strong>';
             }
         }
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $rids = array_keys($resps);
+        } else {
+            $rids = array_map(function ($ar) {return $ar->id;}, $resps);
+        }
 
-        $rids = array_map(function ($ar) {return $ar->id;}, $resps);
         if (!$rid) {
             // If more than one response for this respondent, display most recent response.
             $rid = end($rids);
@@ -244,6 +279,7 @@ switch ($action) {
         } else {
             $titletext = get_string('yourresponse', 'questionnaire');
         }
+
         $compare = false;
         // Print the page header.
         echo $OUTPUT->header();
