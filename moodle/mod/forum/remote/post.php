@@ -62,26 +62,42 @@ if (!isloggedin() or isguestuser()) {
         require_login();
     }
 
-    if (!empty($forum)) {      // User is starting a new discussion in a forum
-        if (! $forum = $DB->get_record('forum', array('id' => $forum))) {
+    if (!empty($forum)) {  
+        
+        // User is starting a new discussion in a forum
+        $param = array();
+        $param['parameteres[0][name]']= 'id';
+        $param['parameteres[0][value]']= $forum;
+        if (! $forum = get_remote_forum_by($param)) {
             print_error('invalidforumid', 'forum');
         }
     } else if (!empty($reply)) {      // User is writing a new reply
         if (! $parent = forum_get_post_full($reply)) {
             print_error('invalidparentpostid', 'forum');
         }
-        if (! $discussion = $DB->get_record('forum_discussions', array('id' => $parent->discussion))) {
+        $param = array();
+        $param['parameteres[0][name]']= 'id';
+        $param['parameteres[0][value]']= $parent->discussion;
+
+        if (! $discussion = get_remote_forum_discussions_by($param)) {
             print_error('notpartofdiscussion', 'forum');
         }
-        if (! $forum = $DB->get_record('forum', array('id' => $discussion->forum))) {
+        $param = array();
+        $param['parameteres[0][name]']= 'id';
+        $param['parameteres[0][value]']= $discussion->forum;
+
+        if (! $forum = get_remote_forum_by( $param )) {
             print_error('invalidforumid');
         }
     }
-    if (! $course = $DB->get_record('course', array('id' => $forum->course))) {
+    $param = array();
+    $param['parameteres[0][name]']= 'id';
+    $param['parameteres[0][value]']= $forum->course;
+    if (! $course = get_remote_forum_by( $param )) {
         print_error('invalidcourseid');
     }
 
-    if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) { // For the logs
+    if (!$cm = get_coursemodule_from_instance($forum->id, $course->id)) { // For the logs
         print_error('invalidcoursemodule');
     } else {
         $modcontext = context_module::instance($cm->id);
@@ -99,7 +115,7 @@ if (!isloggedin() or isguestuser()) {
     exit;
 }
 
-require_login(0, false);   // Script is useless unless they're logged in
+require_login($course, false, $cm);   // Script is useless unless they're logged in
 
 if (!empty($forum)) {      // User is starting a new discussion in a forum
     if (! $cm = get_remote_course_module_by_cmid('forum', $id)) {
@@ -108,7 +124,10 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     if (! $forum = get_remote_forum_by_id($cm->instance)) {
         print_error('invalidforumid', 'forum');
     }
-    if (! $course = $DB->get_record("course", array("id" => $forum->course))) {
+    $param = array();
+    $param['parameteres[0][name]']= 'id';
+    $param['parameteres[0][value]']= $forum->course;
+    if (! $course = get_remote_forum_by($param)) {
         print_error('invalidcourseid');
     }
 
@@ -165,13 +184,22 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     if (! $parent = forum_get_post_full($reply)) {
         print_error('invalidparentpostid', 'forum');
     }
-    if (! $discussion = $DB->get_record("forum_discussions", array("id" => $parent->discussion))) {
+    $param = array();
+    $param['parameteres[0][name]']= 'id';
+    $param['parameteres[0][value]']= $parent->discussion;
+    if (! $discussion = get_remote_forum_discussions_by($param)) {
         print_error('notpartofdiscussion', 'forum');
     }
-    if (! $forum = $DB->get_record("forum", array("id" => $discussion->forum))) {
+    $param = array();
+    $param['parameteres[0][name]']= 'id';
+    $param['parameteres[0][value]']= $discussion->forum;
+    if (! $forum = get_remote_forum_by($param)) {
         print_error('invalidforumid', 'forum');
     }
-    if (! $course = $DB->get_record("course", array("id" => $discussion->course))) {
+    $param = array();
+    $param['parameteres[0][name]']= 'id';
+    $param['parameteres[0][value]']= $discussion->course;
+    if (! $course = get_remote_forum_by($param)) {
         print_error('invalidcourseid');
     }
     if (! $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
@@ -249,14 +277,25 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
             print_error('invalidparentpostid', 'forum');
         }
     }
+    $param=array();
+    $param['parameteres[0][name]'] = 'id';
+    $param['parameteres[0][value]'] = $post->discussion;
 
-    if (! $discussion = $DB->get_record("forum_discussions", array("id" => $post->discussion))) {
+    if (! $discussion = get_remote_forum_discussions_by( $param)) {
         print_error('notpartofdiscussion', 'forum');
     }
-    if (! $forum = $DB->get_record("forum", array("id" => $discussion->forum))) {
+    $param=array();
+    $param['parameteres[0][name]'] = 'id';
+    $param['parameteres[0][value]'] = $discussion->forum;
+
+    if (! $forum = get_remote_forum_by($param)) {
         print_error('invalidforumid', 'forum');
     }
-    if (! $course = $DB->get_record("course", array("id" => $discussion->course))) {
+    $param=array();
+    $param['parameteres[0][name]'] = 'id';
+    $param['parameteres[0][value]'] = $discussion->course;
+
+    if (! $course = get_remote_forum_by( $param)) {
         print_error('invalidcourseid');
     }
     if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
@@ -292,27 +331,41 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
 
 }else if (!empty($delete)) {  // User is deleting a post
 
-    if (! $post = forum_get_post_full($delete)) {
+    if (!$post = forum_get_post_full($delete)) {
         print_error('invalidpostid', 'forum');
     }
-    if (! $discussion = $DB->get_record("forum_discussions", array("id" => $post->discussion))) {
+    $param = array();
+    $param['parameteres[0][name]'] = 'id';
+    $param['parameteres[0][value]'] = $post->discussion;
+
+    if (!$discussion = get_remote_forum_discussions_by($param)) {
         print_error('notpartofdiscussion', 'forum');
     }
-    if (! $forum = $DB->get_record("forum", array("id" => $discussion->forum))) {
+    $param = array();
+    $param['parameteres[0][name]'] = 'id';
+    $param['parameteres[0][value]'] = $discussion->forum;
+
+    if (!$forum = get_remote_forum_by($param)) {
         print_error('invalidforumid', 'forum');
     }
-    if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $forum->course)) {
+    if (!$cm = get_coursemodule_from_instance($forum->id, $forum->course)) {
         print_error('invalidcoursemodule');
     }
-    if (!$course = $DB->get_record('course', array('id' => $forum->course))) {
+    $param = array();
+    $param['parameteres[0][name]'] = 'id';
+    $param['parameteres[0][value]'] = $forum->course;
+
+
+    if (!$course = get_remote_forum_by('course', $param)) {
         print_error('invalidcourseid');
     }
 
     require_login($course, false, $cm);
     $modcontext = context_module::instance($cm->id);
 
-    if ( !(($post->userid == $USER->id && has_capability('mod/forum:deleteownpost', $modcontext))
-        || has_capability('mod/forum:deleteanypost', $modcontext)) ) {
+    if (!(($post->userid == $USER->id && has_capability('mod/forum:deleteownpost', $modcontext))
+        || has_capability('mod/forum:deleteanypost', $modcontext))
+    ) {
         print_error('cannotdeletepost', 'forum');
     }
 
@@ -420,10 +473,17 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     if (!$post = forum_get_post_full($prune)) {
         print_error('invalidpostid', 'forum');
     }
-    if (!$discussion = $DB->get_record("forum_discussions", array("id" => $post->discussion))) {
+    $param = array();
+    $param['parameteres[0][name]'] = 'id';
+    $param['parameteres[0][value]'] = $post->discussion ;
+
+    if (!$discussion = get_remote_forum_discussions_by( $param)) {
         print_error('notpartofdiscussion', 'forum');
     }
-    if (!$forum = $DB->get_record("forum", array("id" => $discussion->forum))) {
+    $param = array();
+    $param['parameteres[0][name]'] = 'id';
+    $param['parameteres[0][value]'] = $discussion->forum;
+    if (!$forum =get_remote_forum_by($param)) {
         print_error('invalidforumid', 'forum');
     }
     if ($forum->type == 'single') {
@@ -516,7 +576,11 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
 
     } else {
         // Display the prune form.
-        $course = $DB->get_record('course', array('id' => $forum->course));
+        $param = array();
+        $param['parameteres[0][name]'] = 'id';
+        $param['parameteres[0][value]'] = $forum->course;
+
+        $course = get_remote_forum_by($param);
         $PAGE->navbar->add(format_string($post->subject, true), new moodle_url('/mod/forum/discuss.php', array('d'=>$discussion->id)));
         $PAGE->navbar->add(get_string("prune", "forum"));
         $PAGE->set_title(format_string($discussion->name).": ".format_string($post->subject));
@@ -694,7 +758,11 @@ if ($mform_post->is_cancelled()) {
         $message = '';
 
         //fix for bug #4314
-        if (!$realpost = $DB->get_record('forum_posts', array('id' => $fromform->id))) {
+        $param = array();
+        $param['parameteres[0][name]'] = 'id';
+        $param['parameteres[0][value]'] = $fromform->id;
+
+        if (!$realpost = get_remote_forum_posts_by($param )) {
             $realpost = new stdClass();
             $realpost->userid = -1;
         }
@@ -748,7 +816,12 @@ if ($mform_post->is_cancelled()) {
         if ($realpost->userid == $USER->id) {
             $message .= '<br />'.get_string("postupdated", "forum");
         } else {
-            $realuser = $DB->get_record('user', array('id' => $realpost->userid));
+
+            $param = array();
+            $param['parameteres[0][name]'] = 'id';
+            $param['parameteres[0][value]'] = $realpost->userid;
+
+            $realuser = get_remote_forum_posts_by( $param);
             $message .= '<br />'.get_string("editedpostupdated", "forum", fullname($realuser));
         }
 
@@ -960,7 +1033,13 @@ if ($mform_post->is_cancelled()) {
 // $course, $forum are defined.  $discussion is for edit and reply only.
 
 if ($post->discussion) {
-    if (! $toppost = $DB->get_record("forum_posts", array("discussion" => $post->discussion, "parent" => 0))) {
+    $param = array();
+    $param['parameteres[0][name]'] = 'discussion';
+    $param['parameteres[0][value]'] = $post->discussion;
+    $param['parameteres[0][name]'] = 'parent';
+    $param['parameteres[1][value]'] = 0;
+
+    if (! $toppost = get_remote_forum_posts_by( $param)) {
         print_error('cannotfindparentpost', 'forum', '', $post->id);
     }
 } else {
@@ -1031,7 +1110,10 @@ if (!empty($thresholdwarning) && !$edit) {
 }
 
 if (!empty($parent)) {
-    if (!$discussion = $DB->get_record('forum_discussions', array('id' => $parent->discussion))) {
+    $param = array();
+    $param['parameteres[0][name]'] = 'id';
+    $param['parameteres[0][value]'] = $parent->discussion;
+    if (!$discussion = get_remote_forum_discussions_by($param)) {
         print_error('notpartofdiscussion', 'forum');
     }
 

@@ -1,3 +1,7 @@
+
+
+
+
 /*!
  * Bootstrap v3.3.5 (http://getbootstrap.com)
  * Copyright 2011-2015 Twitter, Inc.
@@ -2502,6 +2506,7 @@ fieldset {
   margin: 0;
   border: 0;
   min-width: 0;
+  margin-bottom: 25px; /*có thể lỗi*/
 }
 legend,
 #adminsettings h3,
@@ -2518,6 +2523,7 @@ legend,
   border-bottom: 1px solid #e5e5e5;
 }
 label {
+  margin-left: 15px;
   display: inline-block;
   max-width: 100%;
   margin-bottom: 5px;
@@ -14738,7 +14744,7 @@ select.singleselect {
   width: auto;
   max-width: 300px;
   display: inline;
-  margin: 0 0 5px 0;
+  margin: 0 0 5px 20px;
 }
 form select:focus,
 form input[type="text"]:focus,

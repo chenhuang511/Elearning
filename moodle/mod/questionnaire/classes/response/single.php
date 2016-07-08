@@ -47,16 +47,25 @@ class single extends base {
                         continue;
                     }
                     if (preg_match("/[^ \t\n]/", $other)) {
-                        $data = array();
-                        $data['data[0][name]'] = 'response_id';
-                        $data['data[0][value]'] = $rid;
-                        $data['data[1][name]'] = 'question_id';
-                        $data['data[1][value]'] = $this->question->id;
-                        $data['data[2][name]'] = 'choice_id';
-                        $data['data[2][value]'] = $cid;
-                        $data['data[3][name]'] = 'response';
-                        $data['data[3][value]'] = $other;
-                        $resid = save_remote_response_by_mbl('questionnaire_response_other', $data);
+                        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                            $record = new \stdClass();
+                            $record->response_id = $rid;
+                            $record->question_id = $this->question->id;
+                            $record->choice_id = $cid;
+                            $record->response = $other;
+                            $resid = $DB->insert_record('questionnaire_response_other', $record);
+                        } else {
+                            $data = array();
+                            $data['data[0][name]'] = 'response_id';
+                            $data['data[0][value]'] = $rid;
+                            $data['data[1][name]'] = 'question_id';
+                            $data['data[1][value]'] = $this->question->id;
+                            $data['data[2][name]'] = 'choice_id';
+                            $data['data[2][value]'] = $cid;
+                            $data['data[3][name]'] = 'response';
+                            $data['data[3][value]'] = $other;
+                            $resid = save_remote_response_by_mbl('questionnaire_response_other', $data);
+                        }
                         $val = $cid;
                         break;
                     }
@@ -69,30 +78,51 @@ class single extends base {
                 $other = optional_param('q'.$this->question->id.'_'.$cid, null, PARAM_CLEAN);
             }
             if (preg_match("/[^ \t\n]/", $other)) {
-                $data = array();
-                $data['data[0][name]'] = 'response_id';
-                $data['data[0][value]'] = $rid;
-                $data['data[1][name]'] = 'question_id';
-                $data['data[1][value]'] = $this->question->id;
-                $data['data[2][name]'] = 'choice_id';
-                $data['data[2][value]'] = $cid;
-                $data['data[3][name]'] = 'response';
-                $data['data[3][value]'] = $other;
-                $resid = save_remote_response_by_mbl('questionnaire_response_other', $data);
+                if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                    $record = new \stdClass();
+                    $record->response_id = $rid;
+                    $record->question_id = $this->question->id;
+                    $record->choice_id = $cid;
+                    $record->response = $other;
+                    $resid = $DB->insert_record('questionnaire_response_other', $record);
+                } else {
+                    $data = array();
+                    $data['data[0][name]'] = 'response_id';
+                    $data['data[0][value]'] = $rid;
+                    $data['data[1][name]'] = 'question_id';
+                    $data['data[1][value]'] = $this->question->id;
+                    $data['data[2][name]'] = 'choice_id';
+                    $data['data[2][value]'] = $cid;
+                    $data['data[3][name]'] = 'response';
+                    $data['data[3][value]'] = $other;
+                    $resid = save_remote_response_by_mbl('questionnaire_response_other', $data);
+                }
                 $val = $cid;
             }
         }
-        $data = array();
-        $data['data[0][name]'] = 'response_id';
-        $data['data[0][value]'] = $rid;
-        $data['data[1][name]'] = 'question_id';
-        $data['data[1][value]'] = $this->question->id;
-        $data['data[2][name]'] = 'choice_id';
-        $data['data[2][value]'] = isset($val) ? $val : 0;
-        if ($data['data[2][value]']) {// If "no answer" then choice_id is empty (CONTRIB-846).
-            return save_remote_response_by_mbl($this->response_table(), $data);
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $record = new \stdClass();
+            $record->response_id = $rid;
+            $record->question_id = $this->question->id;
+            $record->choice_id = isset($val) ? $val : 0;
+            if ($record->choice_id) {// If "no answer" then choice_id is empty (CONTRIB-846).
+                return $DB->insert_record($this->response_table(), $record);
+            } else {
+                return false;
+            }
         } else {
-            return false;
+            $data = array();
+            $data['data[0][name]'] = 'response_id';
+            $data['data[0][value]'] = $rid;
+            $data['data[1][name]'] = 'question_id';
+            $data['data[1][value]'] = $this->question->id;
+            $data['data[2][name]'] = 'choice_id';
+            $data['data[2][value]'] = isset($val) ? $val : 0;
+            if ($data['data[2][value]']) {// If "no answer" then choice_id is empty (CONTRIB-846).
+                return save_remote_response_by_mbl($this->response_table(), $data);
+            } else {
+                return false;
+            }
         }
     }
 
@@ -104,26 +134,41 @@ class single extends base {
         if (!empty($rids)) {
             list($rsql, $rparams) = $DB->get_in_or_equal($rids);
             $params = array_merge($params, $rparams);
-            $rsql = ' AND response_id ' . $rsql;
+			if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+				$rsql = ' AND response_id ' . $rsql;
+			} else {
+            	$rsql = ' AND response_id IN (' . implode(',',$rids) . ')';
+			}
         }
         // Added qc.id to preserve original choices ordering.
-        $sql = 'SELECT rt.id, qc.id as cid, qc.content ' .
+		if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        	$sql = 'SELECT rt.id, qc.id as cid, qc.content ' .
                'FROM {questionnaire_quest_choice} qc, ' .
                '{'.$this->response_table().'} rt ' .
                'WHERE qc.question_id= ? AND qc.content NOT LIKE \'!other%\' AND ' .
                      'rt.question_id=qc.question_id AND rt.choice_id=qc.id' . $rsql . ' ' .
                'ORDER BY qc.id';
-
-        $rows = $DB->get_records_sql($sql, $params);
-
-        // Handle 'other...'.
-        $sql = 'SELECT rt.id, rt.response, qc.content ' .
+			$rows = $DB->get_records_sql($sql, $params);
+		} else {
+	        $sql_select = 'qc.question_id= '.$this->question->id.' AND ' .
+	                     'rt.question_id=qc.question_id AND qc.content NOT LIKE \'!other%\' AND rt.choice_id=qc.id' . $rsql;
+	        $sql_sort = "qc.id";
+	        $rows = get_remote_questionnaire_choice_single($sql_select, $sql_sort);
+        }
+		// Handle 'other...'.
+		if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+			$sql = 'SELECT rt.id, rt.response, qc.content ' .
                'FROM {questionnaire_response_other} rt, ' .
                     '{questionnaire_quest_choice} qc ' .
                'WHERE rt.question_id= ? AND rt.choice_id=qc.id' . $rsql . ' ' .
                'ORDER BY qc.id';
-
-        if ($recs = $DB->get_records_sql($sql, $params)) {
+			$recs = $DB->get_records_sql($sql, $params);
+		} else {
+	        $sql_select = 'rt.question_id= '.$this->question->id.' AND rt.choice_id=qc.id' . $rsql;
+	        $sql_sort = 'qc.id';
+			$recs = get_remote_questionnaire_choice_other($sql_select, $sql_sort);
+		}
+        if ($recs) {
             $i = 1;
             foreach ($recs as $rec) {
                 $rows['other'.$i] = new \stdClass();

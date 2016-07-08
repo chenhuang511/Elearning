@@ -34,62 +34,6 @@
  */
 
 $functions = array(
-    'local_mod_get_lesson_by_id' => array(
-        'classname' => 'local_mod_lesson_external',
-        'methodname' => 'get_lesson_by_id',
-        'classpath' => 'local/lesson/externallib.php',
-        'description' => 'Get lesson by id',
-        'type' => 'read',
-        'ajax' => true
-    ),
-    'local_mod_get_list_lesson_by_courseid' => array(
-        'classname' => 'local_mod_lesson_external',
-        'methodname' => 'get_list_lesson_by_courseid',
-        'classpath' => 'local/lesson/externallib.php',
-        'description' => 'Get list lesson by course id',
-        'type' => 'read',
-        'ajax' => true
-    ),
-    'local_mod_get_lesson_pages_by_lessonid_and_prevpageid' => array(
-        'classname' => 'local_mod_lesson_external',
-        'methodname' => 'get_lesson_pages_by_lessonid_and_prevpageid',
-        'classpath' => 'local/lesson/externallib.php',
-        'description' => 'Get lesson pages by lessonid and prevpageid',
-        'type' => 'read',
-        'ajax' => true
-    ),
-    'local_mod_get_lesson_pages_by_id_and_lessonid' => array(
-        'classname' => 'local_mod_lesson_external',
-        'methodname' => 'get_lesson_pages_by_id_and_lessonid',
-        'classpath' => 'local/lesson/externallib.php',
-        'description' => 'Get lesson page by page id and lesson id',
-        'type' => 'read',
-        'ajax' => true
-    ),
-    'local_mod_get_lesson_pages_by_id' => array(
-        'classname' => 'local_mod_lesson_external',
-        'methodname' => 'get_lesson_pages_by_id',
-        'classpath' => 'local/lesson/externallib.php',
-        'description' => 'Get lesson pages by id',
-        'type' => 'read',
-        'ajax' => true
-    ),
-    'local_mod_save_lesson_pages' => array(
-        'classname' => 'local_mod_lesson_external',
-        'methodname' => 'save_lesson_pages',
-        'classpath' => 'local/lesson/externallib.php',
-        'description' => 'create new a lesson pages',
-        'type' => 'read',
-        'ajax' => true
-    ),
-    'local_mod_update_lesson_pages' => array(
-        'classname' => 'local_mod_lesson_external',
-        'methodname' => 'update_lesson_pages',
-        'classpath' => 'local/lesson/externallib.php',
-        'description' => 'update lesson pages',
-        'type' => 'read',
-        'ajax' => true
-    ),
     'local_mod_get_duration_lesson_timer_by_lessonid_and_userid' => array(
         'classname' => 'local_mod_lesson_external',
         'methodname' => 'get_duration_lesson_timer_by_lessonid_and_userid',
@@ -98,99 +42,11 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
-    'local_mod_get_lesson_attempts_by_id' => array(
-        'classname' => 'local_mod_lesson_external',
-        'methodname' => 'get_lesson_attempts_by_id',
-        'classpath' => 'local/lesson/externallib.php',
-        'description' => 'Get lesson attempts by id',
-        'type' => 'read',
-        'ajax' => true
-    ),
-    'local_mod_save_lesson_timer' => array(
-        'classname' => 'local_mod_lesson_external',
-        'methodname' => 'save_lesson_timer',
-        'classpath' => 'local/lesson/externallib.php',
-        'description' => 'Create new a lesson timer',
-        'type' => 'read',
-        'ajax' => true
-    ),
-    'local_mod_update_lesson_timer' => array(
-        'classname' => 'local_mod_lesson_external',
-        'methodname' => 'update_lesson_timer',
-        'classpath' => 'local/lesson/externallib.php',
-        'description' => 'Create new a lesson timer',
-        'type' => 'read',
-        'ajax' => true
-    ),
-    'local_mod_save_lesson_branch' => array(
-        'classname' => 'local_mod_lesson_external',
-        'methodname' => 'save_lesson_branch',
-        'classpath' => 'local/lesson/externallib.php',
-        'description' => 'insert new lesson branch',
-        'type' => 'read',
-        'ajax' => true
-    ),
-    'local_mod_save_lesson_attempts' => array(
-        'classname' => 'local_mod_lesson_external',
-        'methodname' => 'save_lesson_attempts',
-        'classpath' => 'local/lesson/externallib.php',
-        'description' => 'Create new a lesson attempts',
-        'type' => 'read',
-        'ajax' => true
-    ),
-    'local_mod_get_lesson_answers_by_id' => array(
-        'classname' => 'local_mod_lesson_external',
-        'methodname' => 'get_lesson_answers_by_id',
-        'classpath' => 'local/lesson/externallib.php',
-        'description' => 'Get lesson answers by id',
-        'type' => 'read',
-        'ajax' => true
-    ),
-    'local_mod_save_lesson_answers' => array(
-        'classname' => 'local_mod_lesson_external',
-        'methodname' => 'save_lesson_answers',
-        'classpath' => 'local/lesson/externallib.php',
-        'description' => 'Create new a lesson answers',
-        'type' => 'read',
-        'ajax' => true
-    ),
-    'local_mod_update_lesson_answers' => array(
-        'classname' => 'local_mod_lesson_external',
-        'methodname' => 'update_lesson_answers',
-        'classpath' => 'local/lesson/externallib.php',
-        'description' => 'update lesson answers',
-        'type' => 'read',
-        'ajax' => true
-    ),
     'local_mod_get_maxgrade_lesson_grades_by_userid_and_lessonid' => array(
         'classname' => 'local_mod_lesson_external',
         'methodname' => 'get_maxgrade_lesson_grades_by_userid_and_lessonid',
         'classpath' => 'local/lesson/externallib.php',
         'description' => 'Get maxgrade of lesson grades by userid and lessonid',
-        'type' => 'read',
-        'ajax' => true
-    ),
-    'local_mod_get_lesson_overrides_by_id' => array(
-        'classname' => 'local_mod_lesson_external',
-        'methodname' => 'get_lesson_overrides_by_id',
-        'classpath' => 'local/lesson/externallib.php',
-        'description' => 'Get lesson overrides by id',
-        'type' => 'read',
-        'ajax' => true
-    ),
-    'local_mod_get_lesson_overrides_by_lessonid_and_userid' => array(
-        'classname' => 'local_mod_lesson_external',
-        'methodname' => 'get_lesson_overrides_by_lessonid_and_userid',
-        'classpath' => 'local/lesson/externallib.php',
-        'description' => 'Get lesson overrides by lessonid and userid',
-        'type' => 'read',
-        'ajax' => true
-    ),
-    'local_mod_delete_mdl_table' => array(
-        'classname' => 'local_mod_lesson_external',
-        'methodname' => 'delete_mdl_table',
-        'classpath' => 'local/lesson/externallib.php',
-        'description' => 'Delete moodle table',
         'type' => 'read',
         'ajax' => true
     ),
@@ -218,14 +74,6 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
-    'local_mod_update_mdl_table' => array(
-        'classname' => 'local_mod_lesson_external',
-        'methodname' => 'update_mdl_table',
-        'classpath' => 'local/lesson/externallib.php',
-        'description' => 'update mdl table',
-        'type' => 'read',
-        'ajax' => true
-    ),
     'local_mod_get_field_by' => array(
         'classname' => 'local_mod_lesson_external',
         'methodname' => 'get_field_by',
@@ -239,6 +87,54 @@ $functions = array(
         'methodname' => 'get_count_by',
         'classpath' => 'local/lesson/externallib.php',
         'description' => 'get count of modname by',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_lesson_by' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_lesson_by',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'get lesson by',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_lesson_pages_by' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_lesson_pages_by',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'get lesson pages by',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_lesson_grades_by' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_lesson_grades_by',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'get lesson grades by',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_lesson_answers_by' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_lesson_answers_by',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'get lesson answers by',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_lesson_overrides_by' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_lesson_overrides_by',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'get lesson overrides by',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_lesson_attempts_by' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_lesson_attempts_by',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'get lesson attempts by',
         'type' => 'read',
         'ajax' => true
     ),
@@ -295,6 +191,54 @@ $functions = array(
         'methodname' => 'get_list_lesson_overrides_by',
         'classpath' => 'local/lesson/externallib.php',
         'description' => 'get list of lesson overrides by',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_list_lesson_attempts_sql' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_list_lesson_attempts_sql',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'get list of lesson attempts sql',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_list_lesson_by' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_list_lesson_by',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'get list of lesson by',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_save_mdl_lesson' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'save_mdl_lesson',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'save new a lesson object',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_update_mdl_lesson' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'update_mdl_lesson',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'update data of mdl lesson',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_update_mdl_table' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'update_mdl_table',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'update mdl table',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_delete_mdl_lesson' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'delete_mdl_lesson',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Delete moodle table',
         'type' => 'read',
         'ajax' => true
     ),

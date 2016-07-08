@@ -1791,7 +1791,12 @@ function forum_scale_used($forumid, $scaleid)
     global $DB;
     $return = false;
 
-    $rec = $DB->get_record("forum", array("id" => "$forumid", "scale" => "-$scaleid"));
+    $params = array();
+    $params['parameteres[0][name]'] = "id";
+    $params['parameteres[0][value]'] = $forumid;
+    $params['parameteres[1][name]'] = "scale";
+    $params['parameteres[1][value]'] = $scaleid;
+    $rec = get_remote_forum_by($params);
 
     if (!empty($rec) && !empty($scaleid)) {
         $return = true;
@@ -3095,6 +3100,7 @@ function forum_get_course_forum($courseid, $type)
         return false;
     }
     $sectionid = course_add_cm_to_section($courseid, $mod->coursemodule, 0);
+    
     return $DB->get_record("forum", array("id" => "$forum->id"));
 }
 
@@ -8078,4 +8084,20 @@ function mod_forum_myprofile_navigation(core_user\output\myprofile\tree $tree, $
     $tree->add_node($node);
 
     return true;
+}
+
+function forum_get_coursemodule_info($coursemodule) {
+    global $CFG;
+
+    require_once($CFG->dirroot . '/mod/forum/remote/locallib.php');
+    $params = array();
+    $params['parameters[0][name]'] = "id";
+    $params['parameters[0][value]'] = $coursemodule->instance;
+    $forum = get_remote_forum_by($params, '', true);
+
+    $result = new cached_cm_info();
+    $result->name = $forum->name;
+    $result->content = format_module_intro('forum', $forum, $coursemodule->id, false);
+
+    return $result;
 }

@@ -36,7 +36,11 @@ $mode = optional_param('mode', 'display', PARAM_ALPHA);
 
 $cm = get_remote_course_module_by_cmid('lesson', $id);
 $course = get_local_course_record($cm->course);
-$lesson = new lesson(get_remote_lesson_by_id($cm->instance));
+
+$params = array();
+$params['parameters[0][name]'] = "id";
+$params['parameters[0][value]'] = $cm->instance;
+$lesson = new lesson(get_remote_lesson_by($params, '', true));
 
 require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
@@ -60,15 +64,17 @@ $formattextdefoptions->para = false;
 $formattextdefoptions->context = $context;
 
 if ($attemptid > 0) {
-    $attempt = get_remote_lesson_attempts_by_id($attemptid);
+    $params = array();
+    $params['parameters[0][name]'] = "id";
+    $params['parameters[0][value]'] = $attemptid;
+    $attempt = get_remote_lesson_attempts_by($params);
 
     $params = array();
     $params['parameters[0][name]'] = "lessonid";
     $params['parameters[0][value]'] = $lesson->id;
     $params['parameters[1][name]'] = "pageid";
     $params['parameters[1][value]'] = $attempt->pageid;
-     // TODO: chua lam cho nay
-    $answer = $DB->get_record('lesson_answers', array('lessonid' => $lesson->id, 'pageid' => $attempt->pageid));
+    $answer = get_remote_lesson_answers_by($params);
     $user = $DB->get_record('user', array('id' => $attempt->userid));
     // Apply overrides.
     $lesson->update_effective_access($user->id);

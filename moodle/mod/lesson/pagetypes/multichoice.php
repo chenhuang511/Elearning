@@ -260,7 +260,10 @@ class lesson_page_type_multichoice extends lesson_page {
                 return $result;
             }
             $result->answerid = $data->answerid;
-            $answer = get_remote_lesson_answers_by_id($result->answerid);
+            $params = array();
+            $params['parameters[0][name]'] = "id";
+            $params['parameters[0][value]'] = $result->answerid;
+            $answer = get_remote_lesson_answers_by($params);
             if (!$answer) {
                 print_error("Continue: answer record not found");
             }

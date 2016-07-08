@@ -173,15 +173,29 @@ class mod_lesson_renderer extends plugin_renderer_base
      */
     public function continue_links(lesson $lesson, $lastpageseenid)
     {
+//        global $CFG;
+//        $output = $this->output->box(get_string('youhaveseen', 'lesson'), 'generalbox boxaligncenter text-center');
+//        $output .= $this->output->box_start('center bhxh-buttons text-center');
+//        $yeslink = html_writer::link('#', get_string('yes'), array('class' => 'remote-link-action btn btn-primary', 'data-module' => json_encode(array('url' => $CFG->wwwroot . '/mod/lesson/remote/view.php', 'params' => array('id' => $this->page->cm->id, 'pageid' => $lastpageseenid, 'startlastseen' => 'yes'), 'method' => 'get'))));
+//        $output .= html_writer::tag('span', $yeslink, array('class' => 'lessonbutton standardbutton'));
+//        $output .= '&nbsp;';
+//
+//        $nolink = html_writer::link('#', get_string('no'), array('class' => 'remote-link-action btn btn-danger', 'data-module' => json_encode(array('url' => $CFG->wwwroot . '/mod/lesson/remote/view.php', 'params' => array('id' => $this->page->cm->id, 'pageid' => $lesson->firstpageid, 'startlastseen' => 'no'), 'method' => 'get'))));
+//        $output .= html_writer::tag('span', $nolink, array('class' => 'lessonbutton standardbutton'));
+//
+//        $output .= $this->output->box_end();
+//        return $output;
+
         global $CFG;
-        $output = $this->output->box(get_string('youhaveseen', 'lesson'), 'generalbox boxaligncenter text-center');
-        $output .= $this->output->box_start('center bhxh-buttons text-center');
-        $yeslink = html_writer::link('#', get_string('yes'), array('class' => 'remote-link-action btn btn-primary', 'data-module' => json_encode(array('url' => $CFG->wwwroot . '/mod/lesson/remote/view.php', 'params' => array('id' => $this->page->cm->id, 'pageid' => $lastpageseenid, 'startlastseen' => 'yes'), 'method' => 'get'))));
-        $output .= html_writer::tag('span', $yeslink, array('class' => 'lessonbutton standardbutton'));
+        $output = $this->output->box(get_string('youhaveseen','lesson'), 'generalbox boxaligncenter');
+        $output .= $this->output->box_start('center');
+
+        $yeslink = html_writer::link(new moodle_url('/mod/lesson/remote/view.php', array('id'=>$this->page->cm->id, 'pageid'=>$lastpageseenid, 'startlastseen'=>'yes')), get_string('yes'), array('class' => 'btn btn-primary'));
+        $output .= html_writer::tag('span', $yeslink, array('class'=>'lessonbutton standardbutton'));
         $output .= '&nbsp;';
 
-        $nolink = html_writer::link('#', get_string('no'), array('class' => 'remote-link-action btn btn-danger', 'data-module' => json_encode(array('url' => $CFG->wwwroot . '/mod/lesson/remote/view.php', 'params' => array('id' => $this->page->cm->id, 'pageid' => $lesson->firstpageid, 'startlastseen' => 'no'), 'method' => 'get'))));
-        $output .= html_writer::tag('span', $nolink, array('class' => 'lessonbutton standardbutton'));
+        $nolink = html_writer::link(new moodle_url('/mod/lesson/remote/view.php', array('id'=>$this->page->cm->id, 'pageid'=>$lesson->firstpageid, 'startlastseen'=>'no')), get_string('no'), array('class' => 'btn btn-danger'));
+        $output .= html_writer::tag('span', $nolink, array('class'=>'lessonbutton standardbutton'));
 
         $output .= $this->output->box_end();
         return $output;
@@ -386,7 +400,7 @@ class mod_lesson_renderer extends plugin_renderer_base
         $output = $this->output->heading(get_string("whatdofirst", "lesson"), 3);
         $links = array();
 
-        $importquestionsurl = new moodle_url('/mod/lesson/import.php', array('id' => $this->page->cm->id, 'pageid' => $prevpageid));
+        $importquestionsurl = new moodle_url('/mod/lesson/remote/import.php', array('id' => $this->page->cm->id, 'pageid' => $prevpageid));
         $links[] = html_writer::link($importquestionsurl, get_string('importquestions', 'lesson'));
 
         $manager = lesson_page_type_manager::get($lesson);
@@ -395,7 +409,7 @@ class mod_lesson_renderer extends plugin_renderer_base
             $links[] = html_writer::link($link['addurl'], $link['name']);
         }
 
-        $addquestionurl = new moodle_url('/mod/lesson/editpage.php', array('id' => $this->page->cm->id, 'pageid' => $prevpageid, 'firstpage' => 1));
+        $addquestionurl = new moodle_url('/mod/lesson/remote/editpage.php', array('id' => $this->page->cm->id, 'pageid' => $prevpageid, 'firstpage' => 1));
         $links[] = html_writer::link($addquestionurl, get_string('addaquestionpage', 'lesson'));
 
         return $this->output->box($output . '<p>' . implode('</p><p>', $links) . '</p>', 'generalbox firstpageoptions');

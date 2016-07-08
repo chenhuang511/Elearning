@@ -32,8 +32,11 @@ $id = required_param('id', PARAM_INT);
 
 $cm = get_remote_course_module_by_cmid('lesson', $id);
 $course = get_local_course_record($cm->course);
-$lesson = get_remote_lesson_by_id($cm->instance);
-$lesson = new lesson($lesson);
+
+$params = array();
+$params['parameters[0][name]'] = "id";
+$params['parameters[0][value]'] = $cm->instance;
+$lesson = new lesson(get_remote_lesson_by($params, '', true));
 
 require_login($course, false, $cm);
 require_sesskey();
@@ -186,6 +189,7 @@ $PAGE->set_subpage($page->id);
 
 /// Print the header, heading and tabs
 lesson_add_fake_blocks($PAGE, $cm, $lesson, $timer);
+echo $lessonoutput->header($lesson, $cm, 'view', true, $page->id, get_string('continue', 'lesson'));
 
 if ($lesson->displayleft) {
     echo '<a name="maincontent" id="maincontent" title="' . get_string('anchortitle', 'lesson') . '"></a>';
@@ -227,3 +231,4 @@ if ($lesson->review && !$result->correctanswer && !$result->noanswer && !$result
     // Normal continue button
     echo $OUTPUT->single_button($url, get_string('continue', 'lesson'), true);
 }
+echo $lessonoutput->footer();

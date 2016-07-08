@@ -41,8 +41,11 @@ $backtocourse = optional_param('backtocourse', false, PARAM_RAW);
 // get course module
 $cm = get_remote_course_module_by_cmid('lesson', $id);
 $course = get_local_course_record($cm->course);
-$lesson = get_remote_lesson_by_id($cm->instance);
-$lesson = new lesson($lesson);
+
+$params = array();
+$params['parameters[0][name]'] = "id";
+$params['parameters[0][value]'] = $cm->instance;
+$lesson = new lesson(get_remote_lesson_by($params, '', true));
 
 require_login($course, false, $cm);
 
@@ -81,13 +84,16 @@ if ($userhasgrade && !$retake) {
 ///     Check lesson availability
 ///     Check for password
 ///     Check dependencies
+
 if (!$canmanage) {
     if (!$lesson->is_accessible()) {  // Deadline restrictions
+         echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('notavailable'));
         if ($lesson->deadline != 0 && time() > $lesson->deadline) {
             echo $lessonoutput->lesson_inaccessible(get_string('lessonclosed', 'lesson', userdate($lesson->deadline)));
         } else {
             echo $lessonoutput->lesson_inaccessible(get_string('lessonopen', 'lesson', userdate($lesson->available)));
         }
+        echo $lessonoutput->footer();
         exit();
     } else if ($lesson->usepassword && empty($USER->lessonloggedin[$lesson->id])) { // Password protected lesson code
         $correctpass = false;
@@ -109,11 +115,16 @@ if (!$canmanage) {
             }
         }
         if (!$correctpass) {
+            echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('passwordprotectedlesson', 'lesson', format_string($lesson->name)));
             echo $lessonoutput->login_prompt($lesson, $userpassword !== '');
+            echo $lessonoutput->footer();
             exit();
         }
     } else if ($lesson->dependency) { // check for dependencies
-        if ($dependentlesson = get_remote_lesson_by_id($lesson->dependency)) {
+        $params = array();
+        $params['parameters[0][name]'] = "id";
+        $params['parameters[0][value]'] = $lesson->dependency;
+        if ($dependentlesson = get_remote_lesson_by($params, '', true)) {
             // lesson exists, so we can proceed
             $conditions = unserialize($lesson->conditions);
             // assume false for all
@@ -177,7 +188,10 @@ if (!$canmanage) {
             }
 
             if (!empty($errors)) {  // print out the errors if any
+                echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('completethefollowingconditions', 'lesson', format_string($lesson->name)));
                 echo $lessonoutput->dependancy_errors($dependentlesson, $errors);
+                echo $lessonoutput->footer();
+
                 exit();
             }
         }
@@ -220,8 +234,8 @@ if (empty($pageid)) {
     $params = array();
     $params['parameters[0][name]'] = "lessonid";
     $params['parameters[0][value]'] = $lesson->id;
-    $params['parameters[0][name]'] = "userid";
-    $params['parameters[0][value]'] = $USER->id;
+    $params['parameters[1][name]'] = "userid";
+    $params['parameters[1][value]'] = $USER->id;
     $retries = get_remote_count_by("lesson_grades", $params);
 
     if ($retries > 0) {
@@ -236,7 +250,10 @@ if (empty($pageid)) {
     if (!empty($allattempts)) {
         $attempt = end($allattempts);
         $attemptpage = $lesson->load_page($attempt->pageid);
-        $jumpto = get_remote_lesson_answers_by_id($attempt->answerid)->jumpto;
+        $params = array();
+        $params['parameters[0][name]'] = "id";
+        $params['parameters[0][value]'] = $attempt->answerid;
+        $jumpto = get_remote_lesson_answers_by($params)->jumpto;
         // convert the jumpto to a proper page id
         if ($jumpto == 0) {
             // Check if a question has been incorrectly answered AND no more attempts at it are left.
@@ -293,12 +310,12 @@ if (empty($pageid)) {
         $params['parameters[0][value]'] = $lesson->id;
         $params['parameters[1][name]'] = "userid";
         $params['parameters[1][value]'] = $USER->id;
-        $params['parameters[1][name]'] = "retry";
-        $params['parameters[1][value]'] = $retries;
+        $params['parameters[2][name]'] = "retry";
+        $params['parameters[2][value]'] = $retries;
         if ((get_remote_count_by("lesson_attempts", $params) > 0)
             || get_remote_count_by("lesson_branch", $params) > 0
         ) {
-
+            echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('leftduringtimedsession', 'lesson'));
             if ($lesson->timelimit) {
                 if ($lesson->retake) {
                     $continuelink = new single_button(new moodle_url('/mod/lesson/remote/view.php',
@@ -318,15 +335,18 @@ if (empty($pageid)) {
             } else {
                 echo $lessonoutput->continue_links($lesson, $lastpageseen);
             }
+            echo $lessonoutput->footer();
             exit();
         }
     }
 
     if ($attemptflag) {
         if (!$lesson->retake) {
+            echo $lessonoutput->header($lesson, $cm, 'view', '', null, get_string("noretake", "lesson"));
             $url = new moodle_url($CFG->wwwroot . '/my/?', array('id' => $course->id));
             $courselink = new single_button($url, get_string('returntocourse', 'lesson'), 'get');
             echo $lessonoutput->message(get_string("noretake", "lesson"), $courselink);
+            echo $lessonoutput->footer();
             exit();
         }
     }
@@ -485,6 +505,7 @@ if ($pageid != LESSON_EOL) {
     }
 
     lesson_add_fake_blocks($PAGE, $cm, $lesson, $timer);
+    echo $lessonoutput->header($lesson, $cm, $currenttab, $extraeditbuttons, $lessonpageid, $extrapagetitle);
     if ($attemptflag) {
         // We are using level 3 header because attempt heading is a sub-heading of lesson title (MDL-30911).
         echo $OUTPUT->heading(get_string('attempt', 'lesson', $retries), 3);
@@ -498,6 +519,7 @@ if ($pageid != LESSON_EOL) {
     }
     echo $lessoncontent;
     echo $lessonoutput->progress_bar($lesson);
+    echo $lessonoutput->footer();
 } else {
 
     $lessoncontent = '';
@@ -678,5 +700,7 @@ if ($pageid != LESSON_EOL) {
     }
 
     lesson_add_fake_blocks($PAGE, $cm, $lesson, $timer);
+    echo $lessonoutput->header($lesson, $cm, $currenttab, $extraeditbuttons, $lessonpageid, get_string("congratulations", "lesson"));
     echo $lessoncontent;
+    echo $lessonoutput->footer();
 }

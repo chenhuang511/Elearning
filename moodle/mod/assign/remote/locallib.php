@@ -181,7 +181,7 @@ function get_remote_count_submissions_need_grading_by_host_id($params){
 function get_submission_by_assignid_userid_groupid($params){
     
     if(!isset($params['attemptnumber'])){
-        $params['attemptnumber'] = 0;
+        $params['attemptnumber'] = -1;
     }
     if(!isset($params['groupid'])){
         $params['groupid'] = 0;
@@ -201,6 +201,7 @@ function get_submission_by_assignid_userid_groupid($params){
     foreach ($submissions->submissions as $submission){
         $results[$submission->id] = $submission;
     }
+
     return $results;
 }
 
@@ -215,8 +216,9 @@ function get_submission_by_assignid_userid_groupid($params){
  */
 function get_assign_grades_by_assignid_userid($params){
     
-    if(!isset($params['attemptnumber']))
-        $params['attemptnumber'] = 0;
+    if(!isset($params['attemptnumber'])){
+        $params['attemptnumber'] = -1;
+    }
 
     $results = array();
 
@@ -583,3 +585,68 @@ function get_remote_submission_info_for_participants($assignment, $emailparticip
     return $resp->ret;
 }
 
+/**
+ * Returns student course total grade and grades for activities. 
+ * This function does not return category or manual items. 
+ * This function is suitable for managers or teachers not students.
+ *
+ * @param int $courseid - the id of assignment
+ * @param int $component - the id of assignment
+ * @param int $activityid - the id of assignment
+ * @param array $userids - list array user
+ *
+ * @return stdClass $resp - Returns student course total grade and grades for activities
+ */
+function core_grades_get_grades($courseid, $component, $activityid, $userids){
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'core_grades_get_grades',
+            'params' => array(
+                'courseid' => $courseid,
+                'component' => $component,
+                'activityid' => $activityid,
+                'userids[0]' => $userids,
+            ),
+        ), false
+    );
+    return $resp;
+}
+
+/**
+ * Submit the grading form data via ajax
+ *
+ * @param int $args['assignmentid'] - The assignment id to operate on
+ * @param int $args['userid'] - The user id the submission belongs to
+ * @param string $args['data'] - The data from the grading form, encoded as a json array
+ *
+ * @return array $resp - list of warnings
+ */
+function mod_remote_assign_submit_grading_form($args){
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'mod_assign_submit_grading_form',
+            'params' => $args
+        ), false
+    );
+
+    return $resp;
+}
+
+function update_remote_user_flags($assignmentid, $userflags) {
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN_M,
+            'function_name' => 'mod_assign_set_user_flags',
+            'params' => array(
+                'assignmentid' => $assignmentid,
+                'userflags' => $userflags,
+            ),
+        ), false
+    );
+    return $resp;
+}

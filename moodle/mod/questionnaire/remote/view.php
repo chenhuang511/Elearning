@@ -31,7 +31,6 @@ $a = optional_param('a', null, PARAM_INT);      // Or questionnaire ID.
 $sid = optional_param('sid', null, PARAM_INT);  // Survey id.
 
 list($cm, $course, $questionnaire) = questionnaire_get_standard_page_items($id, $a);
-
 // Check login and get context.
 require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
@@ -127,11 +126,13 @@ if (!$questionnaire->is_active()) {
 if ($questionnaire->is_active() && !$questionnaire->questions) {
     echo '<p>'.get_string('noneinuse', 'questionnaire').'</p>';
 }
+
 if ($questionnaire->is_active() && $questionnaire->capabilities->editquestions && !$questionnaire->questions) { // Sanity check.
     echo '<a href="'.$CFG->wwwroot.htmlspecialchars('/mod/questionnaire/questions.php?'.
                 'id='.$questionnaire->cm->id).'">'.'<strong>'.get_string('addquestions', 'questionnaire').'</strong></a>';
 }
 echo $OUTPUT->box_end();
+
 if (isguestuser()) {
     $output = '';
     $guestno = html_writer::tag('p', get_string('noteligible', 'questionnaire'));

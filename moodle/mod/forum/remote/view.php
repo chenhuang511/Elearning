@@ -68,7 +68,7 @@ if ($id) {
     }
     // move require_course_login here to use forced language for course
     // fix for MDL-6926
-    require_course_login($course, true, $cm);
+    require_login($course, false, $cm);
     $strforums = get_string("modulenameplural", "forum");
     $strforum = get_string("modulename", "forum");
 } else if ($f) {
@@ -78,12 +78,14 @@ if ($id) {
     if (!$forum = get_remote_forum_by_id($prs)) {
         print_error('invalidforumid', 'forum');
     }
+    
     if (!$course = get_local_course_record($forum->course)) {
         print_error('coursemisconf');
     }
 
     // TODO: kiem tra lai api nay, ro rang parameters dang sai
-    if (!$cm = get_remote_course_module_by_instance("forum", $forum->id, $course->id)) {
+    // RESOLVED: fixed like quiz issue
+    if (!$cm = get_remote_course_module_by_instance("forum", $forum->id)->cm) {
         print_error('missingparameter');
     }
     // move require_course_login here to use forced language for course
@@ -148,7 +150,8 @@ if ($forum->type == 'single') {
     $prs['parameters[0][name]'] = "forum";
     $prs['parameters[0][value]'] = $forum->id;
 
-    $discussions = get_remote_list_forum_discussions_by($prs, "timemodified ASC");
+    $discussions = get_remote_list_forum_discussions_by($prs, $sort);
+    
     if (!empty($discussions)) {
         $discussion = array_pop($discussions);
     }

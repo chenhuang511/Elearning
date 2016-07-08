@@ -47,14 +47,22 @@ class text extends base {
         }
 
         if (preg_match("/[^ \t\n]/", $val)) {
-            $data = array();
-            $data['data[0][name]'] = 'response_id';
-            $data['data[0][value]'] = $rid;
-            $data['data[1][name]'] = 'question_id';
-            $data['data[1][value]'] = $this->question->id;
-            $data['data[2][name]'] = 'response';
-            $data['data[2][value]'] = $val;
-            return save_remote_response_by_mbl($this->response_table(), $data);
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $record = new \stdClass();
+                $record->response_id = $rid;
+                $record->question_id = $this->question->id;
+                $record->response = $val;
+                return $DB->insert_record($this->response_table(), $record);
+            } else {
+                $data = array();
+                $data['data[0][name]'] = 'response_id';
+                $data['data[0][value]'] = $rid;
+                $data['data[1][name]'] = 'question_id';
+                $data['data[1][value]'] = $this->question->id;
+                $data['data[2][name]'] = 'response';
+                $data['data[2][value]'] = $val;
+                return save_remote_response_by_mbl($this->response_table(), $data);
+            }
         } else {
             return false;
         }

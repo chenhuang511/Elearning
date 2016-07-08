@@ -34,22 +34,6 @@
  */
 
 $functions = array(
-    'local_mod_get_forum_by_id' => array(
-        'classname' => 'local_mod_forum_external',
-        'methodname' => 'get_forum_by_id',
-        'classpath' => 'local/forum/externallib.php',
-        'description' => 'Get forum by id',
-        'type' => 'read',
-        'ajax' => true
-    ),
-    'local_mod_get_forum_post_by_discussion_and_userid' => array(
-        'classname' => 'local_mod_forum_external',
-        'methodname' => 'get_forum_post_by_discussion_and_userid',
-        'classpath' => 'local/forum/externallib.php',
-        'description' => 'Get forum post bydiscussion and user id',
-        'type' => 'read',
-        'ajax' => true
-    ),
     'local_mod_get_forum_by' => array(
         'classname' => 'local_mod_forum_external',
         'methodname' => 'get_forum_by',
@@ -74,6 +58,22 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_get_forum_digests_by' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'get_forum_digests_by',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'Get forum digest by',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_forum_track_prefs_by' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'get_forum_track_prefs_by',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'Get forum track prefs by',
+        'type' => 'read',
+        'ajax' => true
+    ),
     'local_mod_get_list_forum_discussions_by' => array(
         'classname' => 'local_mod_forum_external',
         'methodname' => 'get_list_forum_discussions_by',
@@ -87,6 +87,54 @@ $functions = array(
         'methodname' => 'get_list_forum_posts_by',
         'classpath' => 'local/forum/externallib.php',
         'description' => 'Get list forum posts by',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_list_forum_read_by' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'get_list_forum_read_by',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'Get list forum read by',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_delete_mdl_forum' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'delete_mdl_forum',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'Delete forum object',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_save_mdl_forum' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'save_mdl_forum',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'save new forum object',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_update_mdl_forum' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'update_mdl_forum',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'update forum object',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_field_forum_by' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'get_field_forum_by',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'Get field of forum by',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_count_forum_by' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'get_count_forum_by',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'Get count row of forum by',
         'type' => 'read',
         'ajax' => true
     ),

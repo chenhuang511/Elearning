@@ -32,7 +32,9 @@ $a = optional_param('a', null, PARAM_INT);      // questionnaire ID.
 
 $sid = optional_param('sid', null, PARAM_INT);  // Survey id.
 $resume = optional_param('resume', null, PARAM_INT);    // Is this attempt a resume of a saved attempt?
+
 list($cm, $course, $questionnaire) = questionnaire_get_standard_page_items($id, $a);
+
 // Check login and get context.
 require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
@@ -48,12 +50,12 @@ if (isset($id)) {
 $PAGE->set_url($url);
 $PAGE->set_context($context);
 $questionnaire = new questionnaire(0, $questionnaire, $course, $cm);
+
 $questionnaire->strquestionnaires = get_string("modulenameplural", "questionnaire");
 $questionnaire->strquestionnaire  = get_string("modulename", "questionnaire");
 
 // Mark as viewed.
 $completion = new completion_info($course);
-
 $completion->set_module_viewed($cm);
 
 if ($resume) {

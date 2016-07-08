@@ -521,16 +521,31 @@ function questionnaire_extend_settings_navigation(settings_navigation $settings,
     $cm = $PAGE->cm;
     $course = $PAGE->course;
 
-    if (! $questionnaire = get_remote_questionnaire_by_id($cm->instance)) {
+    if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        $questionnaire = $DB->get_record("questionnaire", array("id" => $cm->instance));
+    } else {
+        $questionnaire = get_remote_questionnaire_by_id($cm->instance);
+    }
+
+    if (! $questionnaire) {
         print_error('invalidcoursemodule');
     }
 
     $courseid = $course->id;
     $questionnaire = new questionnaire(0, $questionnaire, $course, $cm);
-    if ($owner = get_remote_field_owner_questionnaire_by_id($questionnaire->sid)) {
-        $owner = (trim($owner) == trim($courseid));
+
+    if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        if ($owner = $DB->get_field('questionnaire_survey', 'owner', array('id' => $questionnaire->sid))) {
+            $owner = (trim($owner) == trim($courseid));
+        } else {
+            $owner = true;
+        }
     } else {
-        $owner = true;
+        if ($owner = get_remote_field_owner_questionnaire_by_id($questionnaire->sid)) {
+            $owner = (trim($owner) == trim($courseid));
+        } else {
+            $owner = true;
+        }
     }
 
     // On view page, currentgroupid is not yet sent as an optional_param, so get it.

@@ -13,6 +13,20 @@ function get_remote_wiki_by_id($id) {
     return $result->wiki;
 }
 
+function get_remote_wiki_by($parameters, $sort = '', $mustexists = FALSE)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_wiki_by',
+            'params' => array_merge(array('sort' => $sort, 'mustexists' => $mustexists), $parameters),
+        )
+    );
+
+    return $result->wiki;
+}
+
 /**
  * @param $wikiid
  * @param $groupid

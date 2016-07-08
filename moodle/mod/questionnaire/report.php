@@ -17,6 +17,7 @@
 global $SESSION, $CFG;
 require_once("../../config.php");
 require_once($CFG->dirroot.'/mod/questionnaire/questionnaire.class.php');
+require_once($CFG->dirroot.'/mod/questionnaire/remote/locallib.php');
 
 $instance = optional_param('instance', false, PARAM_INT);   // Questionnaire ID.
 $action = optional_param('action', 'vall', PARAM_ALPHA);
@@ -48,18 +49,21 @@ if ($instance === false) {
 }
 $SESSION->instance = $instance;
 $usergraph = get_config('questionnaire', 'usergraph');
+if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+	if (! $questionnaire = $DB->get_record("questionnaire", array("id" => $instance))) {
+	    print_error('incorrectquestionnaire', 'questionnaire');
+	}
+	if (! $course = $DB->get_record("course", array("id" => $questionnaire->course))) {
+	    print_error('coursemisconf');
+	}
+	if (! $cm = get_coursemodule_from_instance("questionnaire", $questionnaire->id, $course->id)) {
+	    print_error('invalidcoursemodule');
+	}
+} else {
+	list($cm, $course, $questionnaire) = questionnaire_get_standard_page_items(null, $instance);
+}
 
-if (! $questionnaire = $DB->get_record("questionnaire", array("id" => $instance))) {
-    print_error('incorrectquestionnaire', 'questionnaire');
-}
-if (! $course = $DB->get_record("course", array("id" => $questionnaire->course))) {
-    print_error('coursemisconf');
-}
-if (! $cm = get_coursemodule_from_instance("questionnaire", $questionnaire->id, $course->id)) {
-    print_error('invalidcoursemodule');
-}
-
-require_course_login($course, true, $cm);
+require_login($course, true, $cm);
 
 $questionnaire = new questionnaire(0, $questionnaire, $course, $cm);
 
@@ -111,12 +115,19 @@ $SESSION->questionnaire->current_tab = 'allreport';
 
 // Get all responses for further use in viewbyresp and deleteall etc.
 // All participants.
-$sql = "SELECT r.id, r.survey_id, r.submitted, r.username
+if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+	$sql = "SELECT r.id, r.survey_id, r.submitted, r.username
          FROM {questionnaire_response} r
          WHERE r.survey_id = ? AND
                r.complete='y'
          ORDER BY r.id";
-if (!($respsallparticipants = $DB->get_records_sql($sql, array($sid)))) {
+	$respsallparticipants = $DB->get_records_sql($sql, array($sid));
+} else {
+	$sql_select = 'survey_id = '.$sid.' AND complete=\'y\'';
+	$sql_sort = 'id';
+	$respsallparticipants = get_remote_questionnaire_response($sql_select, $sql_sort);
+}
+if (!($respsallparticipants)) {
     $respsallparticipants = array();
 }
 $SESSION->questionnaire->numrespsallparticipants = count ($respsallparticipants);

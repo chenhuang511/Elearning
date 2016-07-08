@@ -7,41 +7,32 @@ require_once($CFG->dirroot . '/lib/additionallib.php');
 require_once($CFG->dirroot . '/mnet/service/enrol/locallib.php');
 require_once($CFG->dirroot . '/lib/dml/json_moodle_recordset.php');
 
-function get_remote_forum_by_id($forumid)
+function get_remote_field_forum_by($modname, $parameters, $field = 'name')
 {
     $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_get_forum_by_id',
-            'params' => array('forumid' => $forumid),
+            'function_name' => 'local_mod_get_field_forum_by',
+            'params' => array_merge(array('modname' => $modname, 'field' => $field), $parameters),
         )
     );
-    return $result->forum;
+
+    return $result->field;
 }
 
-function get_remote_discussion_by_forumid($forumid, $sort = 'timemodified ASC')
+function get_remote_count_forum_by($modname, $parameters, $sort = '')
 {
-    return moodle_webservice_client(
+    $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
-            'token' => HOST_TOKEN_M,
-            'function_name' => 'mod_forum_get_forum_discussions_paginated',
-            'params' => array('forumid' => $forumid, 'sortby' => $sort)
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_count_forum_by',
+            'params' => array_merge(array('modname' => $modname, 'sort' => $sort), $parameters),
         )
     );
-}
 
-function get_remote_forum_post_by_discussion_and_userid($discussion, $userid, $subject, $message)
-{
-    return moodle_webservice_client(
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN_M,
-            'function_name' => 'mod_forum_get_forum_discussion_posts',
-            'params' => array('discussion' => $discussion, 'userid' => $userid, 'subject' => $subject, 'message' => $message)
-        )
-    );
+    return $result->count;
 }
 
 function get_remote_forum_by($parameters, $sort = '', $mustexists = FALSE)
@@ -50,13 +41,14 @@ function get_remote_forum_by($parameters, $sort = '', $mustexists = FALSE)
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
-            'function_name' => 'get_forum_by',
+            'function_name' => 'local_mod_get_forum_by',
             'params' => array_merge(array('sort' => $sort, 'mustexists' => $mustexists), $parameters),
         )
     );
 
     return $result->forum;
 }
+
 function get_remote_forum_discussions_by($parameters, $sort = '', $mustexists = FALSE)
 {
     $result = moodle_webservice_client(
@@ -70,6 +62,7 @@ function get_remote_forum_discussions_by($parameters, $sort = '', $mustexists = 
 
     return $result->discussion;
 }
+
 function get_remote_forum_posts_by($parameters, $sort = '', $mustexists = FALSE)
 {
     $result = moodle_webservice_client(
@@ -82,6 +75,34 @@ function get_remote_forum_posts_by($parameters, $sort = '', $mustexists = FALSE)
     );
 
     return $result->post;
+}
+
+function get_remote_forum_digests_by($parameters, $sort = '', $mustexists = FALSE)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_forum_digests_by',
+            'params' => array_merge(array('sort' => $sort, 'mustexists' => $mustexists), $parameters),
+        )
+    );
+
+    return $result->digest;
+}
+
+function get_remote_forum_track_prefs_by($parameters, $sort = '', $mustexists = FALSE)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_forum_track_prefs_by',
+            'params' => array_merge(array('sort' => $sort, 'mustexists' => $mustexists), $parameters),
+        )
+    );
+
+    return $result->track;
 }
 
 function get_remote_list_forum_discussions_by($parameters, $sort = '', $limitfrom = 0, $limitnum = 0)
@@ -103,6 +124,7 @@ function get_remote_list_forum_discussions_by($parameters, $sort = '', $limitfro
 
     return $discussions;
 }
+
 function get_remote_list_forum_posts_by($parameters, $sort = '', $limitfrom = 0, $limitnum = 0)
 {
     $result = moodle_webservice_client(
@@ -121,5 +143,67 @@ function get_remote_list_forum_posts_by($parameters, $sort = '', $limitfrom = 0,
     }
 
     return $posts;
+}
+
+function get_remote_list_forum_read_by($parameters, $sort = '', $limitfrom = 0, $limitnum = 0)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_list_forum_read_by',
+            'params' => array_merge(array('sort' => $sort, 'limitfrom' => $limitfrom, 'limitnum' => $limitnum), $parameters)
+        )
+    );
+
+    $reads = array();
+
+    foreach ($result->reads as $read) {
+        $reads[$read->id] = $read;
+    }
+
+    return $reads;
+}
+
+function delete_remote_mdl_forum($modname, $parameters)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_delete_mdl_forum',
+            'params' => array_merge(array('modname' => $modname), $parameters),
+        )
+    );
+
+    return $result->post;
+}
+
+function save_remote_mdl_forum($modname, $data)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_save_mdl_forum',
+            'params' => array_merge(array('modname' => $modname), $data),
+        )
+    );
+
+    return $result->newid;
+}
+
+function update_remote_mdl_forum($modname, $id, $data)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_update_mdl_forum',
+            'params' => array_merge(array('modname' => $modname, "id" => $id), $data),
+        )
+    );
+
+    return $result->id;
 }
 

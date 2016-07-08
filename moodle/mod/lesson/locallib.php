@@ -718,7 +718,8 @@ function lesson_process_group_deleted_in_course($courseid, $groupid = null)
     global $DB;
 
     $params = array('courseid' => $courseid);
-    if ($groupid) {
+    if ($groupid)
+    {
         $params['groupid'] = $groupid;
         // We just update the group that was deleted.
         $sql = "SELECT o.id, o.lessonid
@@ -1111,7 +1112,10 @@ class lesson extends lesson_base
     public static function load($lessonid)
     {
         global $DB;
-        $lesson = get_remote_lesson_by_id($lessonid);
+        $params = array();
+        $params['parameters[0][name]'] = "id";
+        $params['parameters[0][value]'] = $lessonid;
+        $lesson = get_remote_lesson_by($params, '', true);
         if (!$lesson) {
             print_error('invalidcoursemodule');
         }
@@ -1135,17 +1139,17 @@ class lesson extends lesson_base
         $data = array();
         $data['data[0][name]'] = 'id';
         $data['data[0][value]'] = $this->properties->id;
-        $result = delete_remote_moodle_table('lesson', $data);
+        $result = delete_remote_mdl_lesson('lesson', $data);
 
         $data = array();
         $data['data[0][name]'] = 'lessonid';
         $data['data[0][value]'] = $this->properties->id;
-        $result = delete_remote_moodle_table('lesson_pages', $data);
-        $result = delete_remote_moodle_table('lesson_answers', $data);
-        $result = delete_remote_moodle_table('lesson_attempts', $data);
-        $result = delete_remote_moodle_table('lesson_grades', $data);
-        $result = delete_remote_moodle_table('lesson_timer', $data);
-        $result = delete_remote_moodle_table('lesson_branch', $data);
+        $result = delete_remote_mdl_lesson('lesson_pages', $data);
+        $result = delete_remote_mdl_lesson('lesson_answers', $data);
+        $result = delete_remote_mdl_lesson('lesson_attempts', $data);
+        $result = delete_remote_mdl_lesson('lesson_grades', $data);
+        $result = delete_remote_mdl_lesson('lesson_timer', $data);
+        $result = delete_remote_mdl_lesson('lesson_branch', $data);
 
         $events = get_remote_list_events_by_modulename_and_instance('lesson', $this->properties->id);
         if ($events) {
@@ -1177,7 +1181,10 @@ class lesson extends lesson_base
 
         $cm = get_coursemodule_from_instance('lesson', $this->properties->id, $this->properties->course);
 
-        $override = get_remote_lesson_overrides_by_id($overrideid);
+        $params = array();
+        $params['parameters[0][name]'] = "id";
+        $params['parameters[0][value]'] = $overrideid;
+        $override = get_remote_lesson_overrides_by($params, '', true);
 
         // Delete the events.
         $conds = array('modulename' => 'lesson',
@@ -1198,7 +1205,7 @@ class lesson extends lesson_base
         $data = array();
         $data['data[0][name]'] = 'id';
         $data['data[0][value]'] = $overrideid;
-        $result = delete_remote_moodle_table('lesson_overrides', $data);
+        $result = delete_remote_mdl_lesson('lesson_overrides', $data);
 
         // Set the common parameters for one of the events we will be triggering.
         $params = array(
@@ -1257,7 +1264,12 @@ class lesson extends lesson_base
         global $DB;
 
         // Check for user override.
-        $override = get_remote_lesson_overrides_by_lessonid_and_userid($this->properties->id, $userid);
+        $params = array();
+        $params['parameters[0][name]'] = "lessonid";
+        $params['parameters[0][value]'] = $this->properties->id;
+        $params['parameters[1][name]'] = "userid";
+        $params['parameters[1][value]'] = $userid;
+        $override = get_remote_lesson_overrides_by($params);
 
         if (!$override) {
             $override = new stdClass();
@@ -1679,7 +1691,7 @@ class lesson extends lesson_base
         $data['data[3][name]'] = 'lessontime';
         $data['data[3][value]'] = time();
 
-        $result = save_remote_lesson_timer($data);
+        $result = save_remote_mdl_lesson("lesson_timer", $data);
         if ($this->properties->timelimit) {
             $this->add_message(get_string('timelimitwarning', 'lesson', format_time($this->properties->timelimit)), 'center');
         }
@@ -1747,7 +1759,7 @@ class lesson extends lesson_base
         $data['data[1][name]'] = 'completed';
         $data['data[1][value]'] = $endreached;
 
-        $result = update_remote_lesson_timer($timer->id, $data);
+        $result = update_remote_mdl_lesson("lesson_timer", $timer->id, $data);
 
         // Update completion state.
         $cm = get_remote_course_module_by_instance('lesson', $this->properties()->id)->cm;
@@ -1793,8 +1805,6 @@ class lesson extends lesson_base
         $params = array();
         $params['parameters[0][name]'] = "lessonid";
         $params['parameters[0][value]'] = $this->properties->id;
-        $params['parameters[1][name]'] = "qtype";
-        $params['parameters[1][value]'] = 0;
 
         $pagecount = get_remote_count_by("lesson_pages", $params);
         return ($pagecount > 0);
@@ -2430,7 +2440,10 @@ abstract class lesson_page extends lesson_base
         $data['data[10][value]'] = 0; // this is the only page
 
         if ($properties->pageid) {
-            $prevpage = get_remote_lesson_pages_by_id($properties->pageid);
+            $params = array();
+            $params['parameters[0][name]'] = "id";
+            $params['parameters[0][value]'] = $properties->pageid;
+            $prevpage = get_remote_lesson_pages_by($params);
             if (!$prevpage) {
                 print_error('cannotfindpages', 'lesson');
             }
@@ -2450,7 +2463,7 @@ abstract class lesson_page extends lesson_base
             }
         }
 
-        $newpage->id = save_remote_lesson_pages($data);
+        $newpage->id = save_remote_mdl_lesson("lesson_pages", $data);
 
         $editor = new stdClass;
         $editor->id = $newpage->id;
@@ -2465,7 +2478,7 @@ abstract class lesson_page extends lesson_base
             $i++;
         }
 
-        $result = update_remote_lesson_pages($newpage->id, $data);
+        $result = update_remote_mdl_lesson("lesson_pages", $newpage->id, $data);
 
         if ($newpage->prevpageid > 0) {
             $DB->set_field("lesson_pages", "nextpageid", $newpage->id, array("id" => $newpage->prevpageid));
@@ -2513,7 +2526,10 @@ abstract class lesson_page extends lesson_base
         if (is_object($id) && !empty($id->qtype)) {
             $page = $id;
         } else {
-            $page = get_remote_lesson_pages_by_id($id);
+            $params = array();
+            $params['parameters[0][name]'] = "id";
+            $params['parameters[0][value]'] = $id;
+            $page = get_remote_lesson_pages_by($params);
             if (!$page) {
                 print_error('cannotfindpages', 'lesson');
             }
@@ -2558,14 +2574,14 @@ abstract class lesson_page extends lesson_base
         $data['data[0][name]'] = 'pageid';
         $data['data[0][value]'] = $this->properties->id;
 
-        $result = delete_remote_moodle_table('lesson_attempts', $data);
-        $result = delete_remote_moodle_table('lesson_branch', $data);
+        $result = delete_remote_mdl_lesson('lesson_attempts', $data);
+        $result = delete_remote_mdl_lesson('lesson_branch', $data);
         // ...now delete the answers...
-        $result = delete_remote_moodle_table('lesson_answers', $data);
+        $result = delete_remote_mdl_lesson('lesson_answers', $data);
 
         // ..and the page itself
         $data['data[0][name]'] = 'id';
-        $result = delete_remote_moodle_table('lesson_pages', $data);
+        $result = delete_remote_mdl_lesson('lesson_pages', $data);
 
         // Trigger an event: page deleted.
         $eventparams = array(
@@ -2630,7 +2646,7 @@ abstract class lesson_page extends lesson_base
         $data['data[1][name]'] = 'nextpageid';
         $data['data[1][value]'] = $nextpageid;
 
-        $result = update_remote_lesson_pages($this->properties->id, $data);
+        $result = update_remote_mdl_lesson("lesson_pages", $this->properties->id, $data);
     }
 
     /**
@@ -2726,10 +2742,10 @@ abstract class lesson_page extends lesson_base
                 $params['parameters[0][value]'] = $this->lesson->id;
                 $params['parameters[1][name]'] = "userid";
                 $params['parameters[1][value]'] = $USER->id;
-                $params['parameters[0][name]'] = "pageid";
-                $params['parameters[0][value]'] = $this->properties->id;
-                $params['parameters[1][name]'] = "retry";
-                $params['parameters[1][value]'] = $nretakes;
+                $params['parameters[2][name]'] = "pageid";
+                $params['parameters[2][value]'] = $this->properties->id;
+                $params['parameters[3][name]'] = "retry";
+                $params['parameters[3][value]'] = $nretakes;
 
                 $nattempts = get_remote_count_by("lesson_attempts", $params);
 
@@ -2777,7 +2793,7 @@ abstract class lesson_page extends lesson_base
                 // Only insert a record if we are not reviewing the lesson.
                 if (!$userisreviewing) {
                     if ($this->lesson->retake || (!$this->lesson->retake && $nretakes == 0)) {
-                        $attempt->id = save_remote_lesson_attempts($data);
+                        $attempt->id = save_remote_mdl_lesson("lesson_attempts", $data);
                         // Trigger an event: question answered.
                         $eventparams = array(
                             'context' => context_module::instance($PAGE->cm->id),
@@ -3059,7 +3075,7 @@ abstract class lesson_page extends lesson_base
             $data["data[$i][value]"] = $val;
             $i++;
         }
-        $result = update_remote_lesson_pages($this->properties->id, $data);
+        $result = update_remote_mdl_lesson("lesson_pages", $this->properties->id, $data);
 
         // Trigger an event: page updated.
         \mod_lesson\event\page_updated::create_from_lesson_page($this, $context)->trigger();
@@ -3072,7 +3088,7 @@ abstract class lesson_page extends lesson_base
                 $data['data[0][name]'] = 'id';
                 foreach ($answers as $a) {
                     $data['data[0][value]'] = $a->id;
-                    $result = delete_remote_moodle_table('lesson_answers', $data);
+                    $result = delete_remote_mdl_lesson('lesson_answers', $data);
                 }
             } else if (count($answers) == 1) {
                 $answer = array_shift($answers);
@@ -3099,9 +3115,9 @@ abstract class lesson_page extends lesson_base
                 $data['data[5][value]'] = $properties->score[0];
             }
             if (!empty($answer->id)) {
-                $result = update_remote_lesson_answers($answer->id, $data);
+                $result = update_remote_mdl_lesson("lesson_answers", $answer->id, $data);
             } else {
-                $result = save_remote_lesson_answers($data);
+                $result = save_remote_mdl_lesson("lesson_answers", $data);
             }
         } else {
             $data = array();
@@ -3148,9 +3164,9 @@ abstract class lesson_page extends lesson_base
                         $data[$i]["data[8][value]"] = $properties->score[$i];
                     }
                     if (!isset($this->answers[$i]->id)) {
-                        $result = save_remote_lesson_answers($data[$i]);
+                        $result = save_remote_mdl_lesson("lesson_answers", $data[$i]);
                     } else {
-                        $result = update_remote_lesson_answers($this->answers[$i]->properties->id, $data[$i]);
+                        $result = update_remote_mdl_lesson("lesson_answers", $this->answers[$i]->properties->id, $data[$i]);
                     }
 
                     // Save files in answers and responses.
@@ -3166,7 +3182,7 @@ abstract class lesson_page extends lesson_base
                     $data = array();
                     $data['data[0][name]'] = 'id';
                     $data['data[0][value]'] = $this->answers[$i]->id;
-                    $result = delete_remote_moodle_table('lesson_answers', $data);
+                    $result = delete_remote_mdl_lesson('lesson_answers', $data);
                     unset($this->answers[$i]);
                 }
             }
@@ -3313,7 +3329,7 @@ abstract class lesson_page extends lesson_base
                 $data['data[11][name]'] = 'responseformat';
                 $data['data[11][value]'] = $answer->responseformat;
 
-                $answer->id = save_remote_lesson_answers($data);
+                $answer->id = save_remote_mdl_lesson("lesson_answers", $data);
 
                 if (isset($properties->response_editor[$i])) {
                     $this->save_answers_files($context, $PAGE->course->maxbytes, $answer,
@@ -3660,7 +3676,10 @@ class lesson_page_answer extends lesson_base
     public static function load($id)
     {
         global $DB;
-        $answer = get_remote_lesson_answers_by_id($id);
+        $params = array();
+        $params['parameters[0][name]'] = "id";
+        $params['parameters[0][value]'] = $id;
+        $answer = get_remote_lesson_answers_by($params);
         return new lesson_page_answer($answer);
     }
 
@@ -3795,7 +3814,12 @@ class lesson_page_type_manager
     public function load_page($pageid, lesson $lesson)
     {
         global $DB;
-        $page = get_remote_lesson_pages_by_id_and_lessonid($pageid, $lesson->id);
+        $params = array();
+        $params['parameters[0][name]'] = "id";
+        $params['parameters[0][value]'] = $pageid;
+        $params['parameters[1][name]'] = "lessonid";
+        $params['parameters[1][value]'] = $lesson->id;
+        $page = get_remote_lesson_pages_by($params, '', true);
         if (!$page) {
             print_error('cannotfindpages', 'lesson');
         }
