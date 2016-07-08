@@ -317,22 +317,19 @@ class local_mod_lesson_external extends external_api
         return new external_function_parameters(
             array(
                 'sql' => new external_value(PARAM_RAW, "sql"),
-                'params' => new external_single_structure(
-                    array(
-                        'eu1_guestid' => new external_value(PARAM_INT, 'guest id'),
-                        'eu1_courseid' => new external_value(PARAM_INT, 'course id'),
-                        'eu1_enabled' => new external_value(PARAM_INT, 'enabled'),
-                        'eu1_active' => new external_value(PARAM_INT, 'active'),
-                        'eu1_now1' => new external_value(PARAM_INT, 'now 1'),
-                        'eu1_now2' => new external_value(PARAM_INT, 'now 2'),
-                        'lessonid' => new external_value(PARAM_INT, 'lessonid id')
-                    )
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
                 )
             )
         );
     }
 
-    public static function get_user_by_lessonid($sql, $params)
+    public static function get_user_by_lessonid($sql, $parameters)
     {
         global $DB;
 
@@ -340,12 +337,17 @@ class local_mod_lesson_external extends external_api
 
         $params = self::validate_parameters(self::get_user_by_lessonid_parameters(), array(
             'sql' => $sql,
-            'params' => $params
+            'parameters' => $parameters
         ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
 
         $result = array();
 
-        $users = $DB->get_records_sql($params['sql'], $params['params']);
+        $users = $DB->get_records_sql($params['sql'], $arr);
 
         if (!$users) {
             $users = array();
