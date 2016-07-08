@@ -43,14 +43,22 @@ class boolean extends base {
     public function insert_response($rid, $val) {
         global $DB;
         if (!empty($val)) { // If "no answer" then choice is empty (CONTRIB-846).
-            $data = array();
-            $data['data[0][name]'] = 'response_id';
-            $data['data[0][value]'] = $rid;
-            $data['data[1][name]'] = 'question_id';
-            $data['data[1][value]'] = $this->question->id;
-            $data['data[2][name]'] = 'choice_id';
-            $data['data[2][value]'] = $val;
-            return save_remote_response_by_mbl($this->response_table(), $data);
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $record = new \stdClass();
+                $record->response_id = $rid;
+                $record->question_id = $this->question->id;
+                $record->choice_id = $val;
+                return $DB->insert_record($this->response_table(), $record);
+            } else {
+                $data = array();
+                $data['data[0][name]'] = 'response_id';
+                $data['data[0][value]'] = $rid;
+                $data['data[1][name]'] = 'question_id';
+                $data['data[1][value]'] = $this->question->id;
+                $data['data[2][name]'] = 'choice_id';
+                $data['data[2][value]'] = $val;
+                return save_remote_response_by_mbl($this->response_table(), $data);
+            }
         } else {
             return false;
         }
