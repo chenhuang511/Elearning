@@ -400,7 +400,7 @@ class mod_lesson_renderer extends plugin_renderer_base
         $output = $this->output->heading(get_string("whatdofirst", "lesson"), 3);
         $links = array();
 
-        $importquestionsurl = new moodle_url('/mod/lesson/import.php', array('id' => $this->page->cm->id, 'pageid' => $prevpageid));
+        $importquestionsurl = new moodle_url('/mod/lesson/remote/import.php', array('id' => $this->page->cm->id, 'pageid' => $prevpageid));
         $links[] = html_writer::link($importquestionsurl, get_string('importquestions', 'lesson'));
 
         $manager = lesson_page_type_manager::get($lesson);
@@ -409,7 +409,7 @@ class mod_lesson_renderer extends plugin_renderer_base
             $links[] = html_writer::link($link['addurl'], $link['name']);
         }
 
-        $addquestionurl = new moodle_url('/mod/lesson/editpage.php', array('id' => $this->page->cm->id, 'pageid' => $prevpageid, 'firstpage' => 1));
+        $addquestionurl = new moodle_url('/mod/lesson/remote/editpage.php', array('id' => $this->page->cm->id, 'pageid' => $prevpageid, 'firstpage' => 1));
         $links[] = html_writer::link($addquestionurl, get_string('addaquestionpage', 'lesson'));
 
         return $this->output->box($output . '<p>' . implode('</p><p>', $links) . '</p>', 'generalbox firstpageoptions');

@@ -1805,8 +1805,6 @@ class lesson extends lesson_base
         $params = array();
         $params['parameters[0][name]'] = "lessonid";
         $params['parameters[0][value]'] = $this->properties->id;
-        $params['parameters[1][name]'] = "qtype";
-        $params['parameters[1][value]'] = 0;
 
         $pagecount = get_remote_count_by("lesson_pages", $params);
         return ($pagecount > 0);
