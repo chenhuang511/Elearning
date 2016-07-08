@@ -194,6 +194,9 @@ td.selected {
      float: left;
      font-size:inherit;
      width: auto;
+     height: 10px;
+     padding-bottom: 0;
+     margin-bottom: 0;
 }
 
 /* format paragraph top and bottom margins for better vertical positioning in questions text */
@@ -255,6 +258,7 @@ td.selected {
     margin: 0px;
     font-size: 1.5em;
     line-height: 1.2em;
+    font-weight: bold;
 }
 
 .qn-question,
