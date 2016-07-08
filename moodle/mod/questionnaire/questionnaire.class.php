@@ -416,8 +416,14 @@ class questionnaire {
 
     public function user_time_for_new_attempt($userid) {
         global $DB;
-
-        $select = 'qid = '.$this->id.' AND userid = '.$userid;
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $select = 'qid = '.$this->id.' AND userid = '.$userid;
+            $attempts = $DB->get_records_select('questionnaire_attempts', $select, null, 'timemodified DESC');
+        } else {
+            $sql_select = 'qid = '.$this->id.' AND userid = ' . get_remote_mapping_user($userid)[0]->id;
+            $sql_sort = 'timemodified DESC';
+            $attempts = get_remote_questionnaire_attempts($sql_select, $sql_sort);
+        }
         if (!($attempts = $DB->get_records_select('questionnaire_attempts', $select, null, 'timemodified DESC'))) {
             return true;
         }
@@ -601,10 +607,9 @@ class questionnaire {
                 // Provide for groups setting.
                 $select = 'survey_id = '.$this->sid.' AND complete=\'y\'';
             } else {
-                $select = 'survey_id = '.$this->sid.' AND username = \''.$userid.'\' AND complete=\'y\'';
+                $select = 'survey_id = '.$this->sid.' AND username = \'' . get_remote_mapping_user($userid)[0]->id . '\' AND complete=\'y\'';
             }
-            $sort = '';
-            $resps = get_remote_questionnaire_response($select, $sort);
+            $resps = get_remote_questionnaire_response($select);
             return count($resps);
         }
     }
@@ -1398,7 +1403,7 @@ class questionnaire {
                 $data['data[2][value]'] = $this->grade;
             }
 
-            return update_remote_response_by_mbl('questionnaire_response', $rid, $data);
+            return update_remote_response_by_tbl('questionnaire_response', $rid, $data);
         }
     }
 
@@ -1623,11 +1628,11 @@ class questionnaire {
                 $data['data[1][name]'] = 'survey_id';
                 $data['data[1][value]'] = $sid;
                 $data['data[2][name]'] = 'username';
-                $data['data[2][value]'] = $userid;
+                $data['data[2][value]'] = get_remote_mapping_user($userid)[0]->id;
 
-                $rid = save_remote_response_by_mbl('questionnaire_response', $data);
+                $rid = save_remote_response_by_tbl('questionnaire_response', $data);
             } else {
-                update_remote_response_by_mbl('questionnaire_response',$rid, $data);
+                update_remote_response_by_tbl('questionnaire_response',$rid, $data);
             }
         }
 
@@ -3249,7 +3254,12 @@ class questionnaire {
 		}
         if ($resp) {
             $userid = $resp->username;
-            if ($user = $DB->get_record('user', array('id' => $userid))) {
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $user = $DB->get_record('user', array('id' => $userid));
+            } else {
+                $user = $DB->get_record('user', array('id' => $USER->id));
+            }
+            if ($user) {
                 $ruser = fullname($user);
             }
         }

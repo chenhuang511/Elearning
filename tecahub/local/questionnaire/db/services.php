@@ -105,7 +105,15 @@ $functions = array(
 		'description' => "Get questionnaire response by condition",
 		'type'		  => 'read',
 		'ajax'		  => true
-	), ////continue
+	),
+	'local_mod_get_questionnaire_response_group_username' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'get_questionnaire_response_group_username',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get questionnaire response group username",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 	'local_mod_get_questionnaire_bool_question' => array(
 		'classname'	  => 'local_questionnaire_external',
 		'methodname'  => 'get_questionnaire_bool_question',
@@ -202,11 +210,83 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_get_questionnaire_choice_multiple' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'get_questionnaire_choice_multiple',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get questionnaire choice and multiple",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 	'local_mod_get_questionnaire_choice_other' => array(
 		'classname'	  => 'local_questionnaire_external',
 		'methodname'  => 'get_questionnaire_choice_other',
 		'classpath'	  => 'local/questionnaire/externallib.php',
 		'description' => "Get questionnaire choice and other",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_get_questionnaire_question' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'get_questionnaire_question',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get questionnaire question",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_get_questionnaire_date' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'get_questionnaire_date',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get questionnaire date",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_get_questionnaire_bool_count_choice' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'get_questionnaire_bool_count_choice',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get questionnaire boolean, count questionnaire choice",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_get_questionnaire_text_response_user' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'get_questionnaire_text_response_user',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get questionnaire text, response and user",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_get_questionnaire_choice_rank' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'get_questionnaire_choice_rank',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get questionnaire response choice and rank",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_get_questionnaire_choice_rank_average' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'get_questionnaire_choice_rank_average',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get questionnaire choice, rank and average",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_get_questionnaire_choice_rank_sum' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'get_questionnaire_choice_rank_sum',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get questionnaire choice, rank and sum",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_get_questionnaire_rank_count_response' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'get_questionnaire_rank_count_response',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get questionnaire rank and count response",
 		'type'		  => 'read',
 		'ajax'		  => true
 	),

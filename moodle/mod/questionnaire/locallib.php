@@ -357,7 +357,7 @@ function questionnaire_cleanup() {
 
 function questionnaire_record_submission(&$questionnaire, $userid, $rid=0) {
     global $DB;
-
+    $userid = get_remote_mapping_user($userid)[0]->id;
     $data = array();
     $data['data[0][name]'] = 'qid';
     $data['data[0][value]'] = $questionnaire->id;
@@ -367,7 +367,7 @@ function questionnaire_record_submission(&$questionnaire, $userid, $rid=0) {
     $data['data[2][value]'] = $rid;
     $data['data[3][name]'] = 'timemodified';
     $data['data[3][value]'] = time();
-    return save_remote_response_by_mbl("questionnaire_attempts", $data);
+    return save_remote_response_by_tbl("questionnaire_attempts", $data);
 }
 
 function questionnaire_delete_survey($sid, $questionnaireid) {
@@ -664,14 +664,20 @@ function questionnaire_get_incomplete_users($cm, $sid,
 
     // Nnow get all completed questionnaires.
     $params = array('survey_id' => $sid, 'complete' => 'y');
-    $sql = "SELECT username FROM {questionnaire_response} " .
-           "WHERE survey_id = :survey_id AND complete = :complete " .
-           "GROUP BY username ";
-
-    if (!$completedusers = $DB->get_records_sql($sql, $params)) {
+    if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        $sql = "SELECT username FROM {questionnaire_response} " .
+            "WHERE survey_id = :survey_id AND complete = :complete " .
+            "GROUP BY username ";
+        $completedusers = $DB->get_records_sql($sql, $params);
+        $completedusers = array_keys($completedusers);
+    } else {
+        $sql_select = " survey_id = $sid AND complete = 'y' ";
+        $completedusers = get_remote_questionnaire_response_group_username($sql_select);
+        $completedusers = array_map(function ($ar){return $ar->username;}, $completedusers);
+    }
+    if (!$completedusers) {
         return $allusers;
     }
-    $completedusers = array_keys($completedusers);
     // Now strike all completedusers from allusers.
     $allusers = array_diff($allusers, $completedusers);
     // For paging I use array_slice().

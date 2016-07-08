@@ -85,17 +85,16 @@ function get_remote_questionnaire_question_by_sid($sid) {
 
 function get_remote_questionnaire_response_by_rid($rid) {
     $condition = 'id = \''.$rid.'\'';
-    $sort = '';
     $res = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_questionnaire_response',
-            'params' => array('condition' => $condition, 'sort' => $sort)
+            'params' => array('condition' => $condition, 'sort' => '')
         )
     );
     if(empty($res[0])){
-        return null;
+        return false;
     }
     return $res[0];
 }
@@ -141,7 +140,7 @@ function get_remote_questionnaire_quest_choice_by_condition($condition, $sort=''
  * @param $branch
  * @return false|mixed
  */
-function save_remote_response_by_mbl($tablename, $data)
+function save_remote_response_by_tbl($tablename, $data)
 {
     return moodle_webservice_client(
         array(
@@ -159,7 +158,7 @@ function save_remote_response_by_mbl($tablename, $data)
  * @param $branch
  * @return false|mixed
  */
-function update_remote_response_by_mbl($tablename, $id, $data)
+function update_remote_response_by_tbl($tablename, $id, $data)
 {
     $res = moodle_webservice_client(
         array(
@@ -202,9 +201,27 @@ function get_remote_questionnaire_response($condition, $sort='')
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_questionnaire_response',
             'params' => array('condition' => $condition, 'sort' => $sort)
+        ), false
+    );
+    return (empty($res)) ? false : $res;
+}
+/**
+ * get questionnaire_response
+ *
+ * @param $branch
+ * @return false|mixed
+ */
+function get_remote_questionnaire_response_group_username($condition, $sort='')
+{
+    $res = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_questionnaire_response_group_username',
+            'params' => array('condition' => $condition, 'sort' => $sort)
         )
     );
-    return $res;
+    return (empty($res)) ? false : $res;
 }
 
 /**
@@ -223,7 +240,7 @@ function get_remote_questionnaire_bool_question($condition, $sort='')
             'params' => array('condition' => $condition, 'sort' => $sort)
         )
     );
-    return $res;
+    return (empty($res)) ? false : $res;
 }
 
 /**
@@ -397,6 +414,24 @@ function get_remote_questionnaire_choice_single($condition, $sort='')
     return $res;
 }
 /**
+ * get questionnaire single and choice
+ *
+ * @param $branch
+ * @return false|mixed
+ */
+function get_remote_questionnaire_choice_multiple($condition, $sort='')
+{
+    $res = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_questionnaire_choice_multiple',
+            'params' => array('condition' => $condition, 'sort' => $sort)
+        )
+    );
+    return $res;
+}
+/**
  * get questionnaire other and choice
  *
  * @param $branch
@@ -413,4 +448,150 @@ function get_remote_questionnaire_choice_other($condition, $sort='')
         )
     );
     return $res;
+}
+/**
+ * get questionnaire question
+ *
+ * @param $branch
+ * @return false|mixed
+ */
+function get_remote_questionnaire_question($condition, $sort='')
+{
+    $res = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_questionnaire_question',
+            'params' => array('condition' => $condition, 'sort' => $sort)
+        )
+    );
+    return $res;
+}
+/**
+ * get questionnaire question
+ *
+ * @param $branch
+ * @return false|mixed
+ */
+function get_remote_questionnaire_date($condition, $sort='')
+{
+    $res = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_questionnaire_date',
+            'params' => array('condition' => $condition, 'sort' => $sort)
+        )
+    );
+    return $res;
+}
+/**
+ * get questionnaire bool count questionnaire choice
+ *
+ * @param $branch
+ * @return false|mixed
+ */
+function get_remote_questionnaire_bool_count_choice($condition, $sort='')
+{
+    $res = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_questionnaire_bool_count_choice',
+            'params' => array('condition' => $condition, 'sort' => $sort)
+        )
+    );
+    return $res;
+}
+
+/**
+ * get questionnaire text and response and user
+ *
+ * @param $branch
+ * @return false|mixed
+ */
+function get_remote_questionnaire_text_response_user($condition, $sort='')
+{
+    $res = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_questionnaire_text_response_user',
+            'params' => array('condition' => $condition, 'sort' => $sort)
+        )
+    );
+    return $res;
+}
+/**
+ * get questionnaire text and response and user
+ *
+ * @param $branch
+ * @return false|mixed
+ */
+function get_remote_questionnaire_choice_rank($condition, $sort='')
+{
+    $res = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_questionnaire_choice_rank',
+            'params' => array('condition' => $condition, 'sort' => $sort)
+        )
+    );
+    return $res;
+}
+/**
+ * get questionnaire choice, rank and average
+ *
+ * @param $branch
+ * @return false|mixed
+ */
+function get_remote_questionnaire_choice_rank_average($condition, $sort='')
+{
+    $res = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_questionnaire_choice_rank_average',
+            'params' => array('condition' => $condition, 'sort' => $sort)
+        )
+    );
+    return $res;
+}
+/**
+ * get questionnaire choice, rank and sum
+ *
+ * @param $branch
+ * @return false|mixed
+ */
+function get_remote_questionnaire_choice_rank_sum($condition, $sort='')
+{
+    $res = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_questionnaire_choice_rank_sum',
+            'params' => array('condition' => $condition, 'sort' => $sort)
+        )
+    );
+    return $res;
+}
+
+/**
+ * get questionnaire rank and count response
+ *
+ * @param $branch
+ * @return false|mixed
+ */
+function get_remote_questionnaire_rank_count_response($condition, $sort='')
+{
+    $res = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_questionnaire_rank_count_response',
+            'params' => array('condition' => $condition, 'sort' => $sort)
+        )
+    );
+    return (empty($res)) ? false : $res;
 }

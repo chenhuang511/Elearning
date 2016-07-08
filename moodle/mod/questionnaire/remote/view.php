@@ -64,6 +64,7 @@ echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
 
 $cm = $questionnaire->cm;
 $currentgroupid = groups_get_activity_group($cm);
+$remoteuserid = get_remote_mapping_user($USER->id)[0]->id;
 if (!groups_is_member($currentgroupid, $USER->id)) {
     $currentgroupid = 0;
 }
@@ -111,8 +112,13 @@ if (!$questionnaire->is_active()) {
     }
     echo ('<div class="message">'.get_string("alreadyfilled", "questionnaire", $msgstring).'</div>');
 } else if ($questionnaire->user_can_take($USER->id)) {
-    $select = 'survey_id = '.$questionnaire->survey->id.' AND username = \''.$USER->id.'\' AND complete = \'n\'';
-    $resume = $DB->get_record_select('questionnaire_response', $select, null) !== false;
+    if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        $select = 'survey_id = '.$questionnaire->survey->id.' AND username = \''.$USER->id.'\' AND complete = \'n\'';
+        $resume = $DB->get_record_select('questionnaire_response', $select, null) !== false;
+    } else {
+        $sql_select = 'survey_id = '.$questionnaire->survey->id.' AND username = \''.$remoteuserid.'\' AND complete = \'n\'';
+        $resume = get_remote_questionnaire_response($sql_select) !== false;
+    }
     if (!$resume) {
         $complete = get_string('answerquestions', 'questionnaire');
     } else {

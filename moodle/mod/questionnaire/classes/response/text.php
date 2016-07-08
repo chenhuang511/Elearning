@@ -61,7 +61,7 @@ class text extends base {
                 $data['data[1][value]'] = $this->question->id;
                 $data['data[2][name]'] = 'response';
                 $data['data[2][value]'] = $val;
-                return save_remote_response_by_mbl($this->response_table(), $data);
+                return save_remote_response_by_tbl($this->response_table(), $data);
             }
         } else {
             return false;
@@ -72,12 +72,13 @@ class text extends base {
         global $DB;
 
         $rsql = '';
-        if (!empty($rids)) {
-            list($rsql, $params) = $DB->get_in_or_equal($rids);
-            $rsql = ' AND response_id ' . $rsql;
-        }
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            if (!empty($rids)) {
+                list($rsql, $params) = $DB->get_in_or_equal($rids);
+                $rsql = ' AND response_id ' . $rsql;
+            }
 
-        $sql = 'SELECT t.id, t.response, r.submitted AS submitted, r.username, u.username AS username, ' .
+            $sql = 'SELECT t.id, t.response, r.submitted AS submitted, r.username, u.username AS username, ' .
                 'u.id as userid, ' .
                 'r.survey_id, r.id AS rid ' .
                 'FROM {'.$this->response_table().'} t, ' .
@@ -87,7 +88,18 @@ class text extends base {
                 ' AND t.response_id = r.id' .
                 ' AND u.id = ' . $DB->sql_cast_char2int('r.username') .
                 'ORDER BY u.lastname, u.firstname, r.submitted';
-        return $DB->get_records_sql($sql, $params);
+            return $DB->get_records_sql($sql, $params);
+        } else {
+            if (!empty($rids)) {
+                $rsql = implode(',', $rids);
+                $rsql = ' AND response_id IN (' . $rsql . ')';
+            }
+            $sql_select = 'question_id=' . $this->question->id . $rsql .
+                ' AND t.response_id = r.id' .
+                ' AND u.id = r.username ';
+            $sql_sort =  'u.lastname, u.firstname, r.submitted';
+            return get_remote_questionnaire_text_response_user($sql_select, $sql_sort);
+        }
     }
 
     public function display_results($rids=false, $sort='') {
