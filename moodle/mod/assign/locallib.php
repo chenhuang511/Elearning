@@ -3246,7 +3246,7 @@ class assign {
         if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
             $flags = $DB->get_record('assign_user_flags', $params);
         }
-        else if(MOODLE_RUN_MODE ===MOODLE_MODE_HUB){
+        else if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
             unset($params['userid']);
             $params['useremail'] = $this->get_email_from_userid($userid);
             
@@ -3254,6 +3254,9 @@ class assign {
         }
 
         if ($flags) {
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+                $flags->userid = $userid;
+            }
             return $flags;
         }
 
