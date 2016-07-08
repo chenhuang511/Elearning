@@ -31,82 +31,6 @@ class local_mod_lesson_external extends external_api
      * @return external_function_parameters
      * @since Moodle 3.0
      */
-    public static function save_lesson_branch_parameters()
-    {
-        return new external_function_parameters (
-            array(
-                'data' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_RAW, 'data name'),
-                            'value' => new external_value(PARAM_RAW, 'data value'),
-                        )
-                    ), 'the data to be saved'
-                )
-            )
-        );
-    }
-
-    /**
-     * create new a lesson branch
-     *
-     * @param $data
-     * @return array
-     * @throws invalid_parameter_exception
-     */
-    public static function save_lesson_branch($data)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        $params = array(
-            'data' => $data
-        );
-
-        $params = self::validate_parameters(self::save_lesson_branch_parameters(), $params);
-
-        $branch = new stdClass();
-
-        foreach ($params['data'] as $element) {
-            $branch->$element['name'] = $element['value'];
-        }
-
-        $transaction = $DB->start_delegated_transaction();
-
-        $DB->insert_record("lesson_branch", $branch);
-
-        $transaction->allow_commit();
-
-        $result = array();
-        $result['status'] = true;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 3.0
-     */
-    public static function save_lesson_branch_returns()
-    {
-        return new external_single_structure(
-            array(
-                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
-                'warnings' => new external_warnings(),
-            )
-        );
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.0
-     */
     public static function get_maxgrade_lesson_grades_by_userid_and_lessonid_parameters()
     {
         return new external_function_parameters(
@@ -173,81 +97,6 @@ class local_mod_lesson_external extends external_api
                 'warnings' => new external_warnings()
             )
         );
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.0
-     */
-    public static function delete_mdl_table_parameters()
-    {
-        return new external_function_parameters(
-            array(
-                'tablename' => new external_value(PARAM_TEXT, ' the table name'),
-                'data' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_RAW, 'data name'),
-                            'value' => new external_value(PARAM_RAW, 'data value'),
-                        )
-                    ), 'the data to be deleted'
-                )
-            )
-        );
-    }
-
-    /**
-     * Delete lesson object
-     *
-     * @param $tablename
-     * @param $columnname
-     * @param $value
-     * @throws invalid_parameter_exception
-     */
-    public static function delete_mdl_table($tablename, $data)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        $params = array(
-            'tablename' => $tablename,
-            'data' => $data
-        );
-
-        $params = self::validate_parameters(self::delete_mdl_table_parameters(), $params);
-
-        $parameters = array();
-
-        foreach ($params['data'] as $element) {
-            $parameters = array_merge($parameters, [$element['name'] => $element['value']]);
-        }
-
-        $result = array();
-
-        $transaction = $DB->start_delegated_transaction();
-
-        $DB->delete_records($params['tablename'], $parameters);
-
-        $transaction->allow_commit();
-
-        $result['status'] = true;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 3.0
-     */
-    public static function delete_mdl_table_returns()
-    {
-        return self::save_lesson_branch_returns();
     }
 
     /**
@@ -362,419 +211,6 @@ class local_mod_lesson_external extends external_api
         );
     }
 
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.0
-     */
-    public static function save_lesson_pages_parameters()
-    {
-        return new external_function_parameters (
-            array(
-                'data' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_RAW, 'data name'),
-                            'value' => new external_value(PARAM_RAW, 'data value'),
-                        )
-                    ), 'the data to be saved'
-                )
-            )
-        );
-    }
-
-    /**
-     * create new a lesson pages
-     *
-     * @param $data
-     * @return array
-     * @throws invalid_parameter_exception
-     */
-    public static function save_lesson_pages($data)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        $params = array(
-            'data' => $data
-        );
-
-        $params = self::validate_parameters(self::save_lesson_pages_parameters(), $params);
-
-        $newpage = new stdClass();
-
-        foreach ($params['data'] as $element) {
-            $newpage->$element['name'] = $element['value'];
-        }
-
-        $result = array();
-
-        $transaction = $DB->start_delegated_transaction();
-
-        $newpageid = $DB->insert_record("lesson_pages", $newpage);
-
-        $transaction->allow_commit();
-
-        $result['newpageid'] = $newpageid;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 3.0
-     */
-    public static function save_lesson_pages_returns()
-    {
-        return new external_single_structure(
-            array(
-                'newpageid' => new external_value(PARAM_INT, 'newpageid'),
-                'warnings' => new external_warnings()
-            )
-        );
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.0
-     */
-    public static function save_lesson_attempts_parameters()
-    {
-        return new external_function_parameters (
-            array(
-                'data' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_RAW, 'data name'),
-                            'value' => new external_value(PARAM_RAW, 'data value'),
-                        )
-                    ), 'the data to be saved'
-                )
-            )
-        );
-    }
-
-    /**
-     * create a new lesson attempts
-     *
-     * @param $data
-     * @return bool|int
-     * @throws invalid_parameter_exception
-     */
-    public static function save_lesson_attempts($data)
-    {
-        global $DB;
-
-        $params = array(
-            'data' => $data
-        );
-
-        $params = self::validate_parameters(self::save_lesson_attempts_parameters(), $params);
-
-        $attempt = new stdClass();
-
-        foreach ($params['data'] as $element) {
-            $attempt->$element['name'] = $element['value'];
-        }
-
-        $transaction = $DB->start_delegated_transaction();
-
-        $newattemptid = $DB->insert_record("lesson_attempts", $attempt);
-
-        $transaction->allow_commit();
-
-        return $newattemptid;
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 3.0
-     */
-    public static function save_lesson_attempts_returns()
-    {
-        return new external_value(PARAM_INT, 'attemptid');
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.0
-     */
-    public static function save_lesson_answers_parameters()
-    {
-        return new external_function_parameters (
-            array(
-                'data' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_RAW, 'data name'),
-                            'value' => new external_value(PARAM_RAW, 'data value'),
-                        )
-                    ), 'the data to be saved'
-                )
-            )
-        );
-    }
-
-    /**
-     * create a new lesson attempts
-     *
-     * @param $data
-     * @return bool|int
-     * @throws invalid_parameter_exception
-     */
-    public static function save_lesson_answers($data)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        $params = array(
-            'data' => $data
-        );
-
-        $params = self::validate_parameters(self::save_lesson_answers_parameters(), $params);
-
-        $answer = new stdClass();
-
-        foreach ($params['data'] as $key => $value) {
-            $answer->$key = $value;
-        }
-
-        $result = array();
-
-        $transaction = $DB->start_delegated_transaction();
-
-        $newanswerid = $DB->insert_record("lesson_answers", $answer);
-
-        $transaction->allow_commit();
-
-        $result['newanswerid'] = $newanswerid;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 3.0
-     */
-    public static function save_lesson_answers_returns()
-    {
-        return new external_single_structure(
-            array(
-                'newanswerid' => new external_value(PARAM_INT, ' the new id'),
-                'warnings' => new external_warnings()
-            )
-        );
-    }
-
-    public static function update_lesson_answers_parameters()
-    {
-        return new external_function_parameters(
-            array(
-                'id' => new external_value(PARAM_INT, 'the answer id'),
-                'data' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_RAW, 'data name'),
-                            'value' => new external_value(PARAM_RAW, 'data value'),
-                        )
-                    ), 'the data to be saved'
-                )
-            )
-        );
-    }
-
-    public static function update_lesson_answers($id, $data)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        $params = array(
-            'id' => $id,
-            'data' => $data
-        );
-
-        $params = self::validate_parameters(self::update_lesson_answers_parameters(), $params);
-
-        $result = array();
-
-        $answer = $DB->get_record('lesson_answers', array('id' => $params['id']), '*', MUST_EXIST);
-
-        if (!$answer) {
-            $result['status'] = false;
-            $warnings['message'] = "Cannot find data record";
-            $result['warnings'] = $warnings;
-
-            return $result;
-        }
-
-        foreach ($params['data'] as $key => $value) {
-            $answer->$key = $value;
-        }
-
-        $transaction = $DB->start_delegated_transaction();
-
-        $DB->update_record("lesson_answers", $answer);
-
-        $transaction->allow_commit();
-
-        $result['status'] = true;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    public static function update_lesson_answers_returns()
-    {
-        return self::save_lesson_answers_returns();
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.0
-     */
-    public static function save_lesson_timer_parameters()
-    {
-        return new external_function_parameters (
-            array(
-                'data' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_RAW, 'data name'),
-                            'value' => new external_value(PARAM_RAW, 'data value'),
-                        )
-                    ), 'the data to be saved'
-                )
-            )
-        );
-    }
-
-    /**
-     * create a new lesson attempts
-     *
-     * @param $data
-     * @return bool|int
-     * @throws invalid_parameter_exception
-     */
-    public static function save_lesson_timer($data)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        $params = array(
-            'data' => $data
-        );
-
-        $params = self::validate_parameters(self::save_lesson_timer_parameters(), $params);
-
-        $timer = new stdClass();
-
-        foreach ($params['data'] as $element) {
-            $timer->$element['name'] = $element['value'];
-        }
-
-        $transaction = $DB->start_delegated_transaction();
-
-        $result = array();
-
-        $DB->insert_record("lesson_timer", $timer);
-        $transaction->allow_commit();
-
-        $result['status'] = true;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 3.0
-     */
-    public static function save_lesson_timer_returns()
-    {
-        return self::save_lesson_branch_returns();
-    }
-
-    public static function update_lesson_timer_parameters()
-    {
-        return new external_function_parameters (
-            array(
-                'id' => new external_value(PARAM_INT, 'the id'),
-                'data' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_RAW, 'data name'),
-                            'value' => new external_value(PARAM_RAW, 'data value'),
-                        )
-                    ), 'the data to be saved'
-                )
-            )
-        );
-    }
-
-    public static function update_lesson_timer($id, $data)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        $params = array(
-            'id' => $id,
-            'data' => $data
-        );
-
-        $params = self::validate_parameters(self::update_lesson_timer_parameters(), $params);
-
-        $timer = $DB->get_record('lesson_timer', array('id' => $params['id']), '*', MUST_EXIST);
-
-        $result = array();
-
-        if (!$timer) {
-            $result['status'] = false;
-            $warnings['message'] = 'have no data record';
-            return $result;
-        }
-
-        foreach ($params['data'] as $element) {
-            $timer->$element['name'] = $element['value'];
-        }
-
-        $transaction = $DB->start_delegated_transaction();
-
-        $DB->update_record('lesson_timer', $timer);
-        $transaction->allow_commit();
-
-        $result['status'] = true;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    public static function update_lesson_timer_returns()
-    {
-        return self::save_lesson_timer_returns();
-    }
-
     public static function get_duration_lesson_timer_by_lessonid_and_userid_parameters()
     {
         return new external_function_parameters(
@@ -868,55 +304,12 @@ class local_mod_lesson_external extends external_api
 
     public static function check_record_exists_returns()
     {
-        return self::save_lesson_branch_returns();
-    }
-
-    public static function update_lesson_pages_parameters()
-    {
-        return self::update_lesson_timer_parameters();
-    }
-
-    public static function update_lesson_pages($id, $data)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        $params = array(
-            'id' => $id,
-            'data' => $data
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status'),
+                'warnings' => new external_warnings()
+            )
         );
-
-        $params = self::validate_parameters(self::update_lesson_pages_parameters(), $params);
-
-        $page = $DB->get_record('lesson_pages', array('id' => $params['id']), '*', MUST_EXIST);
-
-        $result = array();
-
-        if (!$page) {
-            $result['status'] = false;
-            $warnings['message'] = 'have no data record';
-            return $result;
-        }
-
-        foreach ($params['data'] as $element) {
-            $page->$element['name'] = $element['value'];
-        }
-
-        $transaction = $DB->start_delegated_transaction();
-
-        $DB->update_record('lesson_pages', $page);
-        $transaction->allow_commit();
-
-        $result['status'] = true;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    public static function update_lesson_pages_returns()
-    {
-        return self::update_lesson_timer_returns();
     }
 
     public static function get_user_by_lessonid_parameters()
@@ -996,83 +389,6 @@ class local_mod_lesson_external extends external_api
                         )
                     ), ' user data'
                 ),
-                'warnings' => new external_warnings()
-            )
-        );
-    }
-
-    public static function update_mdl_table_parameters()
-    {
-        return new external_function_parameters(
-            array(
-                'tablename' => new external_value(PARAM_RAW, 'tablename'),
-                'params' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_RAW, 'param name'),
-                            'op' => new external_value(PARAM_RAW, 'param op'),
-                            'value' => new external_value(PARAM_RAW, 'param value'),
-                        )
-                    ), 'the params'
-                ),
-                'data' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_RAW, 'data name'),
-                            'value' => new external_value(PARAM_RAW, 'data value'),
-                        )
-                    ), 'the data to be saved'
-                )
-            )
-        );
-    }
-
-    public static function update_mdl_table($tablename, $params, $data)
-    {
-        global $DB;
-
-        $warnings = array();
-
-        $params = self::validate_parameters(self::update_mdl_table_parameters(), array(
-            'tablename' => $tablename,
-            'params' => $params,
-            'data' => $data
-        ));
-
-        $sql = "UPDATE {$params['tablename']} SET ";
-
-
-        foreach ($params['data'] as $element) {
-            $sql .= $element['name'] . "=" . $element['value'];
-        }
-
-        $sql .= " WHERE ";
-        $parameters = array();
-
-        foreach ($params['params'] as $p) {
-            $sql .= $p['name'] . $p['op'] . '?';
-            $parameters = array_merge($parameters, array($p['value']));
-        }
-
-        $result = array();
-
-        $transaction = $DB->start_delegated_transaction();
-
-        $DB->execute($sql, $parameters);
-
-        $transaction->allow_commit();
-
-        $result['status'] = true;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    public static function update_mdl_table_returns()
-    {
-        return new external_single_structure(
-            array(
-                'status' => new external_value(PARAM_BOOL, 'status'),
                 'warnings' => new external_warnings()
             )
         );
@@ -2347,6 +1663,266 @@ class local_mod_lesson_external extends external_api
                         )
                     ), 'lesson overrides'
                 ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function save_mdl_lesson_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'modname' => new external_value(PARAM_RAW, 'the mod name'),
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the data saved'
+                )
+            )
+        );
+    }
+
+    public static function save_mdl_lesson($modname, $data)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::save_mdl_lesson_parameters(), array(
+            'modname' => $modname,
+            'data' => $data
+        ));
+
+        $obj = new stdClass();
+
+        foreach ($params['data'] as $element) {
+            $obj->$element['name'] = $element['value'];
+        }
+
+        $result = array();
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $newid = $DB->insert_record($params['modname'], $obj);
+
+        $transaction->allow_commit();
+
+        $result['newid'] = $newid;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function save_mdl_lesson_returns()
+    {
+        return new external_single_structure(
+            array(
+                'newid' => new external_value(PARAM_INT, 'the new id'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function update_mdl_lesson_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'modname' => new external_value(PARAM_RAW, 'the mod name'),
+                'id' => new external_value(PARAM_INT, 'the id'),
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the data saved'
+                )
+            )
+        );
+    }
+
+    public static function update_mdl_lesson($modname, $id, $data)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::update_mdl_lesson_parameters(), array(
+            'modname' => $modname,
+            'id' => $id,
+            'data' => $data
+        ));
+
+        $result = array();
+
+        $obj = $DB->get_record($params['modname'], array("id" => $params['id']));
+
+        if (!$obj) {
+            $warnings['message'] = "Not found data record";
+            $result['id'] = 0;
+            $result['warnings'] = $warnings;
+            return $result;
+        }
+
+        foreach ($params['data'] as $element) {
+            $obj->$element['name'] = $element['value'];
+        }
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $cid = $DB->update_record($params['modname'], $obj);
+
+        $transaction->allow_commit();
+
+        $result['id'] = $cid;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function update_mdl_lesson_returns()
+    {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'the id'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function update_mdl_table_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'tablename' => new external_value(PARAM_RAW, 'tablename'),
+                'params' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'op' => new external_value(PARAM_RAW, 'param op'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'data name'),
+                            'value' => new external_value(PARAM_RAW, 'data value'),
+                        )
+                    ), 'the data to be saved'
+                )
+            )
+        );
+    }
+
+    public static function update_mdl_table($tablename, $params, $data)
+    {
+        global $DB;
+
+        $warnings = array();
+
+        $params = self::validate_parameters(self::update_mdl_table_parameters(), array(
+            'tablename' => $tablename,
+            'params' => $params,
+            'data' => $data
+        ));
+
+        $sql = "UPDATE {$params['tablename']} SET ";
+
+
+        foreach ($params['data'] as $element) {
+            $sql .= $element['name'] . "=" . $element['value'];
+        }
+
+        $sql .= " WHERE ";
+        $parameters = array();
+
+        foreach ($params['params'] as $p) {
+            $sql .= $p['name'] . $p['op'] . '?';
+            $parameters = array_merge($parameters, array($p['value']));
+        }
+
+        $result = array();
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $DB->execute($sql, $parameters);
+
+        $transaction->allow_commit();
+
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function update_mdl_table_returns()
+    {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function delete_mdl_lesson_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'tablename' => new external_value(PARAM_TEXT, ' the table name'),
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'data name'),
+                            'value' => new external_value(PARAM_RAW, 'data value'),
+                        )
+                    ), 'the data to be deleted'
+                )
+            )
+        );
+    }
+
+    public static function delete_mdl_lesson($tablename, $data)
+    {
+        global $DB;
+
+        $warnings = array();
+
+        $params = array(
+            'tablename' => $tablename,
+            'data' => $data
+        );
+
+        $params = self::validate_parameters(self::delete_mdl_lesson_parameters(), $params);
+
+        $parameters = array();
+
+        foreach ($params['data'] as $element) {
+            $parameters = array_merge($parameters, [$element['name'] => $element['value']]);
+        }
+
+        $result = array();
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $DB->delete_records($params['tablename'], $parameters);
+
+        $transaction->allow_commit();
+
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function delete_mdl_lesson_returns()
+    {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status'),
                 'warnings' => new external_warnings()
             )
         );

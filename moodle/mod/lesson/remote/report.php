@@ -93,7 +93,7 @@ if ($action === 'delete') {
                         $data = array();
                         $data['data[0][name]'] = 'id';
                         $data['data[0][value]'] = $timer->id;
-                        $result = delete_remote_moodle_table('lesson_timer', $data);
+                        $result = delete_remote_mdl_lesson('lesson_timer', $data);
                     }
 
                     // Remove the grade from the grades tables - this is silly, it should be linked to specific attempt (skodak).
@@ -111,7 +111,7 @@ if ($action === 'delete') {
                         $data = array();
                         $data['data[0][name]'] = 'id';
                         $data['data[0][value]'] = $grade->id;
-                        $result = delete_remote_moodle_table('lesson_grades', $data);
+                        $result = delete_remote_mdl_lesson('lesson_grades', $data);
                     }
 
                     /// Remove attempts and update the retry number
@@ -122,7 +122,7 @@ if ($action === 'delete') {
                     $data['data[1][value]'] = $lesson->id;
                     $data['data[2][name]'] = 'retry';
                     $data['data[2][value]'] = $try;
-                    $result = delete_remote_moodle_table('lesson_attempts', $data);
+                    $result = delete_remote_mdl_lesson('lesson_attempts', $data);
 
                     $params = array();
                     $params['params[0][name]'] = 'userid';
