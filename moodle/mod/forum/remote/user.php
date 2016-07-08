@@ -275,7 +275,7 @@ $discussions = array();
 foreach ($result->posts as $post) {
     $discussions[] = $post->discussion;
 }
-$discussions = $DB->get_records_list('forum_discussions', 'id', array_unique($discussions));
+$discussions = get_remote_list_forum_discussions_by('forum_discussions',$params);
 
 //todo Rather than retrieving the ratings for each post individually it would be nice to do them in groups
 //however this requires creating arrays of posts with each array containing all of the posts from a particular forum,
@@ -294,8 +294,8 @@ foreach ($result->posts as $post) {
     $discussion = $discussions[$post->discussion];
     $course = $result->courses[$discussion->course];
 
-    $forumurl = new moodle_url('/mod/forum/view.php', array('id' => $cm->id));
-    $discussionurl = new moodle_url('/mod/forum/discuss.php', array('d' => $post->discussion));
+    $forumurl = new moodle_url('/mod/forum/remote/view.php', array('id' => $cm->id));
+    $discussionurl = new moodle_url('/mod/forum/remote/discuss.php', array('d' => $post->discussion));
 
     // load ratings
     if ($forum->assessed != RATING_AGGREGATE_NONE) {
