@@ -328,15 +328,35 @@ abstract class quiz_attempts_report_table extends table_sql {
         if ($qubaids === null) {
             $qubaids = $this->get_qubaids_condition();
         }
-        $dm = new question_engine_data_mapper();
-        $latesstepdata = $dm->load_questions_usages_latest_steps(
+
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $qubaids = array();
+            $data = array();
+            $index1 = 0;
+            foreach ($this->rawdata as $attempt) {
+                if ($attempt->usageid > 0) {
+                    $qubaids[] = $attempt->usageid;
+                    $data["qubaids[$index1]"] = $attempt->usageid;
+                    $index1++;
+                }
+            }
+            $index2 = 0;
+            foreach ($this->questions as $question) {
+                $data["questions[$index2]"] = $question->slot;
+                $index2++;
+            }
+
+            $latesstepdata = get_remote_report_questions_usages($data);
+        }else{
+            $dm = new question_engine_data_mapper();
+            $latesstepdata = $dm->load_questions_usages_latest_steps(
                 $qubaids, array_keys($this->questions));
+        }
 
         $lateststeps = array();
         foreach ($latesstepdata as $step) {
             $lateststeps[$step->questionusageid][$step->slot] = $step;
         }
-
         return $lateststeps;
     }
 
@@ -534,7 +554,7 @@ abstract class quiz_attempts_report_table extends table_sql {
         return new qubaid_list($qubaids);
     }
 
-    public function query_db($pagesize, $useinitialsbar = true) {
+    public function query_db($pagesize, $useinitialsbar = true, $modname = null) {
         $doneslots = array();
         foreach ($this->get_sort_columns() as $column => $notused) {
             $slot = $this->is_latest_step_column($column);
@@ -544,7 +564,7 @@ abstract class quiz_attempts_report_table extends table_sql {
             }
         }
 
-        parent::query_db($pagesize, $useinitialsbar);
+        parent::query_db($pagesize, $useinitialsbar, $modname);
 
         if ($this->requires_extra_data()) {
             $this->load_extra_data();

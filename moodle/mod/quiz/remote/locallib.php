@@ -362,3 +362,51 @@ function get_remote_report_get_rowdata($sql, $param, $pagestart, $pagesize) {
     );
     return $resp;
 }
+
+function get_remote_report_questions_usages($data, $fields = null) {
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_quiz_load_questions_usages_latest_steps',
+            'params' => $data
+        ), false
+    );
+    return $resp;
+}
+
+function get_remote_report_avg_record($from, $where, $question, $params) {
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_quiz_get_report_avg_record',
+            'params' => array_merge(array('from' => $from, 'where' => $where), $question, $params)
+        ), false
+    );
+    return $resp;
+}
+
+function get_remote_check_quiz_grade_by_quizid($quizid) {
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_quiz_report_check_quiz_grade',
+            'params' => array('quizid' => $quizid)
+        ), false
+    );
+    return $resp;
+}
+
+function get_remote_report_grade_bands($sql, $params) {
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_quiz_report_get_grade_bands',
+            'params' => array_merge(array('sql' => $sql), $params)
+        ), false
+    );
+    return $resp;
+}

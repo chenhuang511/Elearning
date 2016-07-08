@@ -1603,6 +1603,7 @@ class table_sql extends flexible_table {
         if ($sort) {
             $sort = "ORDER BY $sort";
         }
+
         $sql = "SELECT
                 {$this->sql->fields}
                 FROM {$this->sql->from}
@@ -1632,7 +1633,7 @@ class table_sql extends flexible_table {
      * Convenience method to call a number of methods for you to display the
      * table.
      */
-    function out($pagesize, $useinitialsbar, $downloadhelpbutton='') {
+    function out($pagesize, $useinitialsbar, $downloadhelpbutton='', $modname = null) {
         global $DB;
         if (!$this->columns) {
             $onerow = $DB->get_record_sql("SELECT {$this->sql->fields} FROM {$this->sql->from} WHERE {$this->sql->where}", $this->sql->params);
@@ -1642,7 +1643,7 @@ class table_sql extends flexible_table {
             $this->define_headers(array_keys((array)$onerow));
         }
         $this->setup();
-        $this->query_db($pagesize, $useinitialsbar);
+        $this->query_db($pagesize, $useinitialsbar, $modname);
         $this->build_table();
         $this->finish_output();
     }

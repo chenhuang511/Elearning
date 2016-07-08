@@ -44,6 +44,7 @@ class quiz_overview_report extends quiz_attempts_report {
 
         list($currentgroup, $students, $groupstudents, $allowed) =
                 $this->init('overview', 'quiz_overview_settings_form', $quiz, $cm, $course);
+        $isremote = (MOODLE_RUN_MODE == MOODLE_MODE_HUB)?true:false;
         $options = new quiz_overview_options('overview', $quiz, $cm, $course);
 
         if ($fromform = $this->form->get_data()) { //TODO : waitting test...
@@ -63,8 +64,12 @@ class quiz_overview_report extends quiz_attempts_report {
         }
 
         // Load the required questions.
-        if(MOODLE_RUN_MODE==MOODLE_MODE_HUB){
-            $questions = get_remote_significant_questions($quiz->id);
+        if($isremote){
+            $r_questions = get_remote_significant_questions($quiz->id);
+            $questions = array();
+            foreach ($r_questions as $key => $value){
+                $questions[$value->slot] = $value;
+            }
         }else{
             $questions = quiz_report_get_significant_questions($quiz);
         }
@@ -106,11 +111,11 @@ class quiz_overview_report extends quiz_attempts_report {
             }
         }
 
-        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-            $hasquestions = quiz_has_questions($quiz->id);
-        }else{
+        if($isremote){
             $r_questions = get_remote_get_slots_by_quizid($quiz->id);
             $hasquestions = !empty($r_questions);
+        }else{
+            $hasquestions = quiz_has_questions($quiz->id);
         }
         if (!$table->is_downloading()) {
             if (!$hasquestions) {
@@ -129,12 +134,9 @@ class quiz_overview_report extends quiz_attempts_report {
         if ($hasquestions && ($hasstudents || $options->attempts == self::ALL_WITH)) {
             // Construct the SQL.
             // @TODO: hardcode here, MUST_FIX
-            if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-                $fields = 'MOODLELIB.UNDO_MEGA_HACK(MOODLELIB.TRICONCAT(u.id, \'#\', COALESCE(quiza.attempt, 0))) AS uniqueid,';
-            }else{
-                $fields = $DB->sql_concat('u.id', "'#'", 'COALESCE(quiza.attempt, 0)') .
-                    ' AS uniqueid, ';
-            }
+            $fields = $isremote?'MOODLELIB.UNDO_MEGA_HACK(MOODLELIB.TRICONCAT(u.id, \'#\', COALESCE(quiza.attempt, 0))) AS uniqueid,':
+                $DB->sql_concat('u.id', "'#'", 'COALESCE(quiza.attempt, 0)') .
+                ' AS uniqueid, ';
             
             list($fields, $from, $where, $params) = $table->base_sql($allowed);
 
@@ -212,7 +214,6 @@ class quiz_overview_report extends quiz_attempts_report {
                 $headers[] = null;
             }
 
-            //@TODO: doing...
             $this->add_user_columns($table, $columns, $headers);
             $this->add_state_column($columns, $headers);
             $this->add_time_columns($columns, $headers);
@@ -243,7 +244,7 @@ class quiz_overview_report extends quiz_attempts_report {
             $this->set_up_table_columns($table, $columns, $headers, $this->get_base_url(), $options, false);
             $table->set_attribute('class', 'generaltable generalbox grades');
 
-            $table->out($options->pagesize, true);
+            $table->out($options->pagesize, true, '', 'quiz');
         }
 
         if (!$table->is_downloading() && $options->usercanseegrades) {
@@ -261,7 +262,12 @@ class quiz_overview_report extends quiz_attempts_report {
                 }
             }
 
-            if ($DB->record_exists('quiz_grades', array('quiz'=> $quiz->id))) {
+            if($isremote){
+                $checkgrade = get_remote_check_quiz_grade_by_quizid($quiz->id)->check;
+            }else{
+                $checkgrade = $DB->record_exists('quiz_grades', array('quiz'=> $quiz->id));
+            }
+            if ($checkgrade) {
                 $imageurl = new moodle_url('/mod/quiz/report/overview/overviewgraph.php',
                         array('id' => $quiz->id));
                 $graphname = get_string('overviewreportgraph', 'quiz_overview');

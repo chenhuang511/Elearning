@@ -86,10 +86,29 @@ class quiz_overview_table extends quiz_attempts_report_table {
         global $DB;
 
         list($fields, $from, $where, $params) = $this->base_sql($users);
-        $record = $DB->get_record_sql("
+
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $this->mapping_users($params);
+            $paramdata = array();
+            $index = 0;
+            foreach ($params as $key => $val){
+                $paramdata["param[$index][name]"]=$key;
+                $paramdata["param[$index][value]"]=$val;
+                $index++;
+            }
+            $index = 0;
+            foreach ($this->questions as $question) {
+                $data["questions[$index]"] = $question->slot;
+                $index++;
+            }
+            $result = get_remote_report_avg_record($from, $where, $data, $paramdata);
+            $record = $result->record;
+        }else{
+            $record = $DB->get_record_sql("
                 SELECT AVG(quiza.sumgrades) AS grade, COUNT(quiza.sumgrades) AS numaveraged
                   FROM $from
                  WHERE $where", $params);
+        }
         $record->grade = quiz_rescale_grade($record->grade, $this->quiz, false);
 
         if ($this->is_downloading()) {
@@ -100,18 +119,24 @@ class quiz_overview_table extends quiz_attempts_report_table {
         $averagerow = array(
             $namekey    => $label,
             'sumgrades' => $this->format_average($record),
-            'feedbacktext'=> strip_tags(quiz_report_feedback_for_grade(
+            'feedbacktext'=> strip_tags(quiz_report_feedback_for_grade(// @TODO : uncheck sql here to get feedback...
                                         $record->grade, $this->quiz->id, $this->context))
         );
 
         if ($this->options->slotmarks) {
-            $dm = new question_engine_data_mapper();
-            $qubaids = new qubaid_join($from, 'quiza.uniqueid', $where, $params);
-            $avggradebyq = $dm->load_average_marks($qubaids, array_keys($this->questions));
-
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+                $r_avgs = $result->avggradebyq;
+                $avggradebyq = array();
+                foreach ($r_avgs as $r_avg) {
+                    $avggradebyq[$r_avg->slot] = $r_avg;
+                }
+            }else{
+                $dm = new question_engine_data_mapper();
+                $qubaids = new qubaid_join($from, 'quiza.uniqueid', $where, $params);
+                $avggradebyq = $dm->load_average_marks($qubaids, array_keys($this->questions));
+            }
             $averagerow += $this->format_average_grade_for_questions($avggradebyq);
         }
-
         $this->add_data_keyed($averagerow);
     }
 
@@ -294,8 +319,8 @@ class quiz_overview_table extends quiz_attempts_report_table {
         return "$alias.fraction * $alias.maxmark AS qsgrade$slot";
     }
 
-    public function query_db($pagesize, $useinitialsbar = true) {
-        parent::query_db($pagesize, $useinitialsbar);
+    public function query_db($pagesize, $useinitialsbar = true, $modname = null) {
+        parent::query_db($pagesize, $useinitialsbar, $modname);
 
         if ($this->options->slotmarks && has_capability('mod/quiz:regrade', $this->context)) {
             $this->regradedqs = $this->get_regraded_questions();

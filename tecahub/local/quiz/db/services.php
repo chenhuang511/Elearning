@@ -122,5 +122,36 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
-
+	'local_mod_quiz_load_questions_usages_latest_steps' => array(
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'load_questions_usages_latest_steps',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Load information about the latest state of each question from the database.",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_quiz_get_report_avg_record' => array(
+	'classname'	  => 'local_mod_quiz_external',
+	'methodname'  => 'get_report_avg_record',
+	'classpath'	  => 'local/quiz/externallib.php',
+	'description' => "Get average grade and count numaverage for table view.",
+	'type'		  => 'read',
+	'ajax'		  => true
+	),
+	'local_mod_quiz_report_check_quiz_grade' => array(
+	'classname'	  => 'local_mod_quiz_external',
+	'methodname'  => 'check_exist_quiz_grade',
+	'classpath'	  => 'local/quiz/externallib.php',
+	'description' => "Check exist quiz grade record in DB.",
+	'type'		  => 'read',
+	'ajax'		  => true
+	),
+	'local_mod_quiz_report_get_grade_bands' => array(
+	'classname'	  => 'local_mod_quiz_external',
+	'methodname'  => 'get_grade_bands',
+	'classpath'	  => 'local/quiz/externallib.php',
+	'description' => "get grade bands data by sql and param from host.",
+	'type'		  => 'read',
+	'ajax'		  => true
+	),
 );

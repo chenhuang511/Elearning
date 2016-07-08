@@ -227,7 +227,22 @@ ORDER BY
     $params['quizid'] = $quizid;
     $params['bandwidth'] = $bandwidth;
 
-    $data = $DB->get_records_sql_menu($sql, $params);
+    if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+        $paramdata = array();
+        $index = 0;
+        foreach ($params as $key => $val){
+            $paramdata["param[$index][name]"]=$key;
+            $paramdata["param[$index][value]"]=$val;
+            $index++;
+        }
+        $r_data = get_remote_report_grade_bands($sql, $paramdata);
+        $data = array();
+        foreach ($r_data as $datares) {
+            $data[$datares->key] = $datares->value;
+        }
+    }else{
+        $data = $DB->get_records_sql_menu($sql, $params);
+    }
 
     // We need to create array elements with values 0 at indexes where there is no element.
     $data = $data + array_fill(0, $bands + 1, 0);
@@ -238,7 +253,6 @@ ORDER BY
     // just 9 <= g <10.
     $data[$bands - 1] += $data[$bands];
     unset($data[$bands]);
-
     return $data;
 }
 

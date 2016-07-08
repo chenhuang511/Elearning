@@ -39,7 +39,7 @@ require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
  * @category   external
  * @copyright  2011 Jerome Mouneyrac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.2
+ * @since Moodle 3.1
  */
 class local_mod_quiz_external extends external_api {
     /**
@@ -47,8 +47,8 @@ class local_mod_quiz_external extends external_api {
      * Return all the information about a quiz by quizid or by cm->instance from course_module
      *
      * @return external_function_parameters
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
      *
      */
     public static function get_mod_quiz_by_id_parameters() {
@@ -69,7 +69,7 @@ class local_mod_quiz_external extends external_api {
                             'value' => new external_value(PARAM_RAW, 'the value of the option,
                                                                     this param is personaly validated in the external function.')
                         )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+                    ), 'Options, used since Moodle 3.1', VALUE_DEFAULT, array())
             )
         );
     }
@@ -77,11 +77,11 @@ class local_mod_quiz_external extends external_api {
     /**
      * Get Quiz object
      *
-     * @param int $id id
-     * @param array $options Options for filtering the results, used since Moodle 2.9
+     * @param int $id quizid
+     * @param array $options Options for filtering the results, used since Moodle 3.1
      * @return array
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
      */
     public static function get_mod_quiz_by_id($id, $options = array()) {
         global $CFG, $DB;
@@ -98,8 +98,8 @@ class local_mod_quiz_external extends external_api {
      * Returns description of method parameters
      *
      * @return external_function_parameters
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
      */
     public static function get_mod_quiz_by_id_returns() {
         return  new external_single_structure(
@@ -203,8 +203,8 @@ class local_mod_quiz_external extends external_api {
      * Return a list of ids, load the basic information about a set of questions from the questions table.
      *
      * @return external_function_parameters
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
      *
      */
     public static function get_mod_questions_by_quizid_parameters() {
@@ -225,19 +225,19 @@ class local_mod_quiz_external extends external_api {
                             'value' => new external_value(PARAM_RAW, 'the value of the option,
                                                                     this param is personaly validated in the external function.')
                         )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+                    ), 'Options, used since Moodle 3.1', VALUE_DEFAULT, array())
             )
         );
     }
 
     /**
-     * Get Question object
+     * Return a list of ids, load the basic information about a set of questions from the questions table.
      *
-     * @param int $id id
-     * @param array $options Options for filtering the results, used since Moodle 2.9
+     * @param int $id quizid
+     * @param array $options Options for filtering the results, used since Moodle 3.1
      * @return array
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
      */
     public static function get_mod_questions_by_quizid($id, $options = array()) {
         global $CFG, $DB;
@@ -257,8 +257,8 @@ class local_mod_quiz_external extends external_api {
      * Returns description of method parameters
      *
      * @return external_function_parameters
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
      */
     public static function get_mod_questions_by_quizid_returns() {
         return  new external_multiple_structure(
@@ -322,16 +322,16 @@ class local_mod_quiz_external extends external_api {
                             'value' => new external_value(PARAM_RAW, 'the value of the option,
                                                                     this param is personaly validated in the external function.')
                         )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array()
+                    ), 'Options, used since Moodle 3.1', VALUE_DEFAULT, array()
                 )
             )
         );
     }
 
     /**
-     * Get Attempt object
+     * Return all the information about attempt by atemptid
      *
-     * @param int $attemptid attemptidid
+     * @param int $attemptid attemptid
      * @param array $options Options for filtering the results, used since Moodle 3.1
      * @return array
      * @since Moodle 3.1 Options available
@@ -387,8 +387,8 @@ class local_mod_quiz_external extends external_api {
      * Return all the information about question_usages
      *
      * @return external_function_parameters
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
      *
      */
     public static function get_mod_load_questions_usage_by_activity_parameters() {
@@ -415,7 +415,7 @@ class local_mod_quiz_external extends external_api {
     }
 
     /**
-     * Get quba object
+     * Return all the information about question_usages
      *
      * @param int $unique unique
      * @param array $options Options for filtering the results, used since Moodle 3.1
@@ -540,8 +540,8 @@ ORDER BY
      * Return all the information about slots by quizid
      *
      * @return external_function_parameters
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
      *
      */
     public static function get_mod_slots_by_quizid_parameters() {
@@ -562,13 +562,13 @@ ORDER BY
                             'value' => new external_value(PARAM_RAW, 'the value of the option,
                                                                     this param is personaly validated in the external function.')
                         )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+                    ), 'Options, used since Moodle 3.1', VALUE_DEFAULT, array())
             )
         );
     }
 
     /**
-     * Get slots object
+     * Return all the information about slots by quizid
      *
      * @param int $quizid quizid
      * @param array $options Options for filtering the results, used since Moodle 3.1
@@ -612,8 +612,8 @@ ORDER BY
      * Return all the information about sections by quizid
      *
      * @return external_function_parameters
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
      *
      */
     public static function get_mod_sections_by_quizid_parameters() {
@@ -634,13 +634,13 @@ ORDER BY
                             'value' => new external_value(PARAM_RAW, 'the value of the option,
                                                                     this param is personaly validated in the external function.')
                         )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+                    ), 'Options, used since Moodle 3.1', VALUE_DEFAULT, array())
             )
         );
     }
 
     /**
-     * Get slots object
+     * Return all the information about sections by quizid
      *
      * @param int $quizid quizid
      * @param array $options Options for filtering the results, used since Moodle 3.1
@@ -662,7 +662,7 @@ ORDER BY
     /**
      * Describes a single attempt structure.
      *
-     * @return external_single_structure the attempt structure
+     * @return external_single_structure
      */
     public static function get_mod_sections_by_quizid_returns() {
         return new external_multiple_structure(
@@ -859,9 +859,9 @@ ORDER BY
     /**
      * Returns description of method parameters
      *
-     * @return external_function_parameters
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
+     * @return external_single_structure
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
      */
     public static function count_attempt_summary_returns() {
         return new external_single_structure(
@@ -928,9 +928,9 @@ ORDER BY
     /**
      * Returns description of method parameters
      *
-     * @return external_function_parameters
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
+     * @return external_multiple_structure
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
      */
     public static function report_get_significant_questions_returns() {
         return new external_multiple_structure(
@@ -963,7 +963,7 @@ ORDER BY
                     new external_single_structure(
                         array(
                             'name' => new external_value(PARAM_RAW, 'name'),
-                            'value' => new external_value(PARAM_INT, 'value'),
+                            'value' => new external_value(PARAM_RAW, 'value'),
                         )
                     )
                 ),
@@ -1002,8 +1002,8 @@ ORDER BY
      * Returns description of method parameters
      *
      * @return external_function_parameters
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
      */
     public static function get_grand_total_returns() {
         return new external_single_structure(
@@ -1030,7 +1030,7 @@ ORDER BY
                     new external_single_structure(
                         array(
                             'name' => new external_value(PARAM_RAW, 'name'),
-                            'value' => new external_value(PARAM_INT, 'value'),
+                            'value' => new external_value(PARAM_RAW, 'value'),
                         )
                     )
                 ),
@@ -1043,9 +1043,6 @@ ORDER BY
     /**
      * Querry db with sql params to get grand total.
      *
-     * @param int $quizid quizid
-     * @param string $ipaddress ipaddress
-     * @return array
      * @since Moodle 3.1 Options available
      * @since Moodle 3.1
      */
@@ -1068,9 +1065,7 @@ ORDER BY
     /**
      * Returns description of method parameters
      *
-     * @return external_function_parameters
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
+     * @return external_multiple_structure
      */
     public static function get_rowdata_for_tableview_returns() {
         return new external_multiple_structure(
@@ -1099,6 +1094,313 @@ ORDER BY
                     'timestart' => new external_value(PARAM_INT, 'timestart', VALUE_OPTIONAL),
                     'duration' => new external_value(PARAM_INT, 'duration', VALUE_OPTIONAL),
                     'regraded' => new external_value(PARAM_INT, 'regraded', VALUE_OPTIONAL),
+                )
+            )
+        );
+    }
+
+    /**
+     * Hanv 07/07/2016
+     * Load information about the latest state of each question from the database.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     *
+     */
+    public static function load_questions_usages_latest_steps_parameters() {
+        return new external_function_parameters(
+            array(
+                'qubaids' => new external_multiple_structure(new external_value(PARAM_INT, 'quba ID')),
+                'questions' => new external_multiple_structure(new external_value(PARAM_INT, 'questions'))
+            )
+        );
+    }
+
+    /**
+     * Load information about the latest state of each question from the database.
+     *
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function load_questions_usages_latest_steps($qubaids, $questions, $fields = null) {
+        global $CFG, $DB;
+
+        $params = self::validate_parameters(self::load_questions_usages_latest_steps_parameters(),
+            array('qubaids' => $qubaids,'questions' => $questions));
+        $qubavalues = array();
+        foreach ($qubaids as $qubaid) {
+            $qubavalues[] = $qubaid;
+        }
+
+        $quesvalues = array();
+        foreach ($questions as $question) {
+            $quesvalues[$question] = $question;
+        }
+        
+        $qubaids = new qubaid_list($qubavalues);
+        
+        $dm = new question_engine_data_mapper();
+        $latesstepdata = $dm->load_questions_usages_latest_steps(
+            $qubaids, array_keys($quesvalues));
+        return $latesstepdata;
+    }
+
+    /**
+     * Describes a single attempt structure.
+     *
+     * @return external_multiple_structure
+     */
+    public static function load_questions_usages_latest_steps_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'id.',
+                        VALUE_OPTIONAL),
+                    'questionattemptid' => new external_value(PARAM_INT, 'questionattemptid is question_attempt id.',
+                        VALUE_OPTIONAL),
+                    'questionusageid' => new external_value(PARAM_INT, 'questionusageid.',
+                        VALUE_OPTIONAL),
+                    'slot' => new external_value(PARAM_INT, 'slot.', VALUE_OPTIONAL),
+                    'behaviour' => new external_value(PARAM_RAW, 'behaviour.',
+                        VALUE_OPTIONAL),
+                    'questionid' => new external_value(PARAM_INT, 'question id.', VALUE_OPTIONAL),
+                    'variant' => new external_value(PARAM_INT, 'variant.',
+                        VALUE_OPTIONAL),
+                    'maxmark' => new external_value(PARAM_FLOAT, 'max mark.',
+                        VALUE_OPTIONAL),
+                    'minfraction' => new external_value(PARAM_FLOAT, 'min fraction.',
+                        VALUE_OPTIONAL),
+                    'maxfraction' => new external_value(PARAM_FLOAT, 'max fraction.', VALUE_OPTIONAL),
+                    'flagged' => new external_value(PARAM_INT, 'flagged.',
+                        VALUE_OPTIONAL),
+                    'questionsummary' => new external_value(PARAM_RAW, 'question summary.',
+                        VALUE_OPTIONAL),
+                    'rightanswer' => new external_value(PARAM_RAW, 'right answer.',
+                        VALUE_OPTIONAL),
+                    'responsesummary' => new external_value(PARAM_RAW, 'response summary.',
+                        VALUE_OPTIONAL),
+                    'timemodified' => new external_value(PARAM_INT, 'Last modified time.', VALUE_OPTIONAL),
+                    'attemptstepid' => new external_value(PARAM_INT, 'question_attempt_steps id.', VALUE_OPTIONAL),
+                    'sequencenumber' => new external_value(PARAM_INT, 'sequence number.', VALUE_OPTIONAL),
+                    'state' => new external_value(PARAM_RAW, 'state.', VALUE_OPTIONAL),
+                    'fraction' => new external_value(PARAM_FLOAT, 'fraction.', VALUE_OPTIONAL),
+                    'timecreated' => new external_value(PARAM_INT, 'The time create.',
+                        VALUE_OPTIONAL),
+                    'userid' => new external_value(PARAM_INT, 'user id.', VALUE_OPTIONAL)
+                )
+            )
+        );
+    }
+
+    /**
+     * Hanv 08/07/2016
+     * Get average grade and count numaverage for table view.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     *
+     */
+    public static function get_report_avg_record_parameters() {
+        return new external_function_parameters (
+            array(
+                'from' => new external_value(PARAM_RAW, 'from'),
+                'where' => new external_value(PARAM_RAW, 'where'),
+                'questions' => new external_multiple_structure(new external_value(PARAM_INT, 'questions')),
+                'param' => new  external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'name'),
+                            'value' => new external_value(PARAM_INT, 'value'),
+                        )
+                    )
+                ),
+            )
+        );
+    }
+
+    /**
+     * Get average grade and count numaverage for table view.
+     *
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function get_report_avg_record($from, $where, $questions, $param) {
+        global $CFG, $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::get_report_avg_record_parameters(),
+            array('from' => $from, 'where' => $where, 'questions' => $questions, 'param' => $param));
+
+        $branch = array();
+        foreach ($params['param'] as $element) {
+            $branch[$element['name']] = $element['value'];
+        }
+
+        $quesvalues = array();
+        foreach ($questions as $question) {
+            $quesvalues[$question] = $question;
+        }
+
+        $record = $DB->get_record_sql("
+                SELECT AVG(quiza.sumgrades) AS grade, COUNT(quiza.sumgrades) AS numaveraged
+                  FROM $from
+                 WHERE $where", $branch);
+
+        $dm = new question_engine_data_mapper();
+        $qubaids = new qubaid_join($from, 'quiza.uniqueid', $where, $branch);
+        $avggradebyq = $dm->load_average_marks($qubaids, array_keys($quesvalues));
+        $result = array();
+        $result['record'] = $record;
+        $result['avggradebyq'] = $avggradebyq;
+        return $result;
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function get_report_avg_record_returns() {
+        return new external_single_structure(
+            array(
+                'record' => new external_single_structure(
+                    array(
+                        'grade' => new external_value(PARAM_FLOAT, 'grand total', VALUE_OPTIONAL),
+                        'numaveraged' => new external_value(PARAM_INT, 'graded attempt', VALUE_OPTIONAL),
+                    )
+                ),
+                'avggradebyq' => new  external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'slot' => new external_value(PARAM_INT, 'slot'),
+                            'averagefraction' => new external_value(PARAM_FLOAT, 'averagefraction'),
+                            'numaveraged' => new external_value(PARAM_INT, 'numaveraged'),
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    /**
+     * Hanv 08/07/2016
+     * Check exist quiz grade record in DB.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     *
+     */
+    public static function check_exist_quiz_grade_parameters() {
+        return new external_function_parameters (
+            array(
+                'quizid' => new external_value(PARAM_INT, 'quizid'),
+            )
+        );
+    }
+
+    /**
+     * Check exist quiz grade record in DB.
+     *
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function check_exist_quiz_grade($quizid) {
+        global $CFG, $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::check_exist_quiz_grade_parameters(),
+            array('quizid' => $quizid));
+        $checkgrade = $DB->record_exists('quiz_grades', array('quiz'=> $params['quizid']));
+        $result = array('check' => $checkgrade);
+        return $result;
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function check_exist_quiz_grade_returns() {
+        return new external_single_structure(
+            array(
+                'check' => new external_value(PARAM_BOOL, 'check quiz grade', VALUE_OPTIONAL),
+            )
+        );
+    }
+
+    /**
+     * Hanv 08/07/2016
+     * get grade bands data by sql and param from host.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     *
+     */
+    public static function get_grade_bands_parameters() {
+        return new external_function_parameters (
+            array(
+                'sql' => new external_value(PARAM_RAW, 'sql'),
+                'param' => new  external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'name'),
+                            'value' => new external_value(PARAM_RAW, 'value'),
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    /**
+     * Check exist quiz grade record in DB.
+     *
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function get_grade_bands($sql, $param) {
+        global $CFG, $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::get_grade_bands_parameters(),
+            array('sql' => $sql, 'param' => $param));
+        $branch = array();
+        foreach ($params['param'] as $element) {
+            $branch[$element['name']] = $element['value'];
+        }
+
+        $data = $DB->get_records_sql_menu($sql, $branch);
+        $result = array();
+        $index = 0;
+        foreach ($data as $key => $val){
+            $result[$index]["key"]=$key;
+            $result[$index]["value"]=$val;
+            $index++;
+        }
+        return $result;
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function get_grade_bands_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'key' => new external_value(PARAM_RAW, 'key', VALUE_OPTIONAL),
+                    'value' => new external_value(PARAM_RAW, 'value', VALUE_OPTIONAL),
                 )
             )
         );
