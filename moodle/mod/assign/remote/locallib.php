@@ -619,7 +619,7 @@ function core_grades_get_grades($courseid, $component, $activityid, $userids){
  *
  * @param int $args['assignmentid'] - The assignment id to operate on
  * @param int $args['userid'] - The user id the submission belongs to
- * @param string $args['data'] - The data from the grading form, encoded as a json array
+ * @param string $args['data'] - The data from the grading form, encoded as a json
  *
  * @return array $resp - list of warnings
  */
@@ -628,7 +628,7 @@ function mod_remote_assign_submit_grading_form($args){
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
-            'function_name' => 'mod_assign_submit_grading_form',
+            'function_name' => 'local_mod_assign_submit_grading_form',
             'params' => $args
         ), false
     );

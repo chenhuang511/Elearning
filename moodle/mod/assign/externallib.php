@@ -1533,9 +1533,10 @@ class mod_assign_external extends external_api {
      */
     public static function submit_grading_form($assignmentid, $userid, $jsonformdata) {
         global $CFG, $USER;
-
+        
         require_once($CFG->dirroot . '/mod/assign/locallib.php');
         require_once($CFG->dirroot . '/mod/assign/gradeform.php');
+        require_once($CFG->dirroot . '/mod/assign/remote/locallib.php');
 
         $params = self::validate_parameters(self::submit_grading_form_parameters(),
                                             array(
@@ -1544,39 +1545,90 @@ class mod_assign_external extends external_api {
                                                 'jsonformdata' => $jsonformdata
                                             ));
 
-        $cm = get_coursemodule_from_instance('assign', $params['assignmentid'], 0, false, MUST_EXIST);
-        $context = context_module::instance($cm->id);
-        self::validate_context($context);
-
-        $assignment = new assign($context, $cm, null);
-
-        $serialiseddata = json_decode($params['jsonformdata']);
-
-        $data = array();
-        parse_str($serialiseddata, $data);
-
         $warnings = array();
 
-        $options = array(
-            'userid' => $params['userid'],
-            'attemptnumber' => $data['attemptnumber'],
-            'rownum' => 0,
-            'gradingpanel' => true
-        );
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            // Handle on hub
+            $cm = get_remote_course_module_by_instance("assign", $params['assignmentid'])->cm;
+            $context = context_module::instance($cm->id);
+            
+            $assignment = new assign($context, $cm, null);
 
-        $customdata = (object) $data;
-        $formparams = array($assignment, $customdata, $options);
+            $serialiseddata = json_decode($params['jsonformdata']);
 
-        // Data is injected into the form by the last param for the constructor.
-        $mform = new mod_assign_grade_form(null, $formparams, 'post', '', null, true, $data);
-        $validateddata = $mform->get_data();
+            $data = array();
+            parse_str($serialiseddata, $data);
 
-        if ($validateddata) {
-            $assignment->save_grade($params['userid'], $validateddata);
-        } else {
-            $warnings[] = self::generate_warning($params['assignmentid'],
-                                                 'couldnotsavegrade',
-                                                 'Form validation failed.');
+            $options = array(
+                'userid' => $params['userid'],
+                'attemptnumber' => $data['attemptnumber'],
+                'rownum' => 0,
+                'gradingpanel' => true
+            );
+
+            $customdata = (object) $data;
+            $formparams = array($assignment, $customdata, $options);
+
+            // Data is injected into the form by the last param for the constructor.
+            $mform = new mod_assign_grade_form(null, $formparams, 'post', '', null, true, $data);
+            $validateddata = $mform->get_data();
+            
+            if ($validateddata) {
+                $result = $assignment->save_grade($params['userid'], $validateddata);
+            } else {
+                $warnings[] = self::generate_warning($params['assignmentid'],
+                                                     'couldnotsavegrade',
+                                                     'Form validation failed.');
+            }
+
+            if($result){
+                // Handle to hub
+                $ruser = get_remote_mapping_user($params['userid']); 
+                $guser = get_remote_mapping_user($USER->id);
+                $params['userid'] = $ruser[0]->id;
+                $params['guserid'] = $guser[0]->id;
+
+                $reps = mod_remote_assign_submit_grading_form($params);
+                if($reps){
+                    $warnings = $reps;
+                }
+
+            }
+
+        } else{
+            $cm = get_coursemodule_from_instance('assign', $params['assignmentid'], 0, false, MUST_EXIST);
+            $context = context_module::instance($cm->id);
+            self::validate_context($context);
+
+            $assignment = new assign($context, $cm, null);
+
+            $serialiseddata = json_decode($params['jsonformdata']);
+
+            $data = array();
+            parse_str($serialiseddata, $data);
+
+            $options = array(
+                'userid' => $params['userid'],
+                'attemptnumber' => $data['attemptnumber'],
+                'rownum' => 0,
+                'gradingpanel' => true
+            );
+
+            $customdata = (object) $data;
+            $formparams = array($assignment, $customdata, $options);
+
+            // Data is injected into the form by the last param for the constructor.
+            $mform = new mod_assign_grade_form(null, $formparams, 'post', '', null, true, $data);
+            $validateddata = $mform->get_data();
+
+            if ($validateddata) {
+                $assignment->save_grade($params['userid'], $validateddata);
+            } else {
+                $warnings[] = self::generate_warning($params['assignmentid'],
+                                                     'couldnotsavegrade',
+                                                     'Form validation failed.');
+            }
+
         }
 
 

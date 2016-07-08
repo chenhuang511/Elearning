@@ -5054,8 +5054,7 @@ class assign {
             // Return the submissions ordered by attempt.
             $submissions = $DB->get_records('assign_submission', $params, 'attemptnumber ASC');
         } else {
-            $user = $DB->get_record('user', array('id' => $userid));
-            $ruser = get_remote_mapping_user($user);
+            $ruser = get_remote_mapping_user($userid);
             
             $params['userid'] = $ruser[0]->id;
             $params['mode'] = 'ASC';
@@ -7691,17 +7690,20 @@ class assign {
             }
         }
 
-        // We do not want to update the timemodified if no grade was added.
-        if (!empty($formdata->addattempt) ||
-                ($originalgrade !== null && $originalgrade != -1) ||
-                ($grade->grade !== null && $grade->grade != -1) ||
-                $feedbackmodified) {
-            $this->update_grade($grade, !empty($formdata->addattempt));
-        }
-        // Note the default if not provided for this option is true (e.g. webservices).
-        // This is for backwards compatibility.
-        if (!isset($formdata->sendstudentnotifications) || $formdata->sendstudentnotifications) {
-            $this->notify_grade_modified($grade, true);
+        // @TODO: Change userid from hub to host
+        if (MOODLE_MODE_HUB == MOODLE_MODE_HOST){
+            // We do not want to update the timemodified if no grade was added.
+            if (!empty($formdata->addattempt) ||
+                    ($originalgrade !== null && $originalgrade != -1) ||
+                    ($grade->grade !== null && $grade->grade != -1) ||
+                    $feedbackmodified) {
+                $this->update_grade($grade, !empty($formdata->addattempt));
+            }
+            // Note the default if not provided for this option is true (e.g. webservices).
+            // This is for backwards compatibility.
+            if (!isset($formdata->sendstudentnotifications) || $formdata->sendstudentnotifications) {
+                $this->notify_grade_modified($grade, true);
+            }
         }
     }
 
