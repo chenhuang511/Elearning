@@ -234,8 +234,8 @@ if (empty($pageid)) {
     $params = array();
     $params['parameters[0][name]'] = "lessonid";
     $params['parameters[0][value]'] = $lesson->id;
-    $params['parameters[0][name]'] = "userid";
-    $params['parameters[0][value]'] = $USER->id;
+    $params['parameters[1][name]'] = "userid";
+    $params['parameters[1][value]'] = $USER->id;
     $retries = get_remote_count_by("lesson_grades", $params);
 
     if ($retries > 0) {
@@ -310,12 +310,12 @@ if (empty($pageid)) {
         $params['parameters[0][value]'] = $lesson->id;
         $params['parameters[1][name]'] = "userid";
         $params['parameters[1][value]'] = $USER->id;
-        $params['parameters[1][name]'] = "retry";
-        $params['parameters[1][value]'] = $retries;
+        $params['parameters[2][name]'] = "retry";
+        $params['parameters[2][value]'] = $retries;
         if ((get_remote_count_by("lesson_attempts", $params) > 0)
             || get_remote_count_by("lesson_branch", $params) > 0
         ) {
-
+            echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('leftduringtimedsession', 'lesson'));
             if ($lesson->timelimit) {
                 if ($lesson->retake) {
                     $continuelink = new single_button(new moodle_url('/mod/lesson/remote/view.php',

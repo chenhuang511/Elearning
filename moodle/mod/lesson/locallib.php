@@ -718,7 +718,8 @@ function lesson_process_group_deleted_in_course($courseid, $groupid = null)
     global $DB;
 
     $params = array('courseid' => $courseid);
-    if ($groupid) {
+    if ($groupid)
+    {
         $params['groupid'] = $groupid;
         // We just update the group that was deleted.
         $sql = "SELECT o.id, o.lessonid
@@ -2743,10 +2744,10 @@ abstract class lesson_page extends lesson_base
                 $params['parameters[0][value]'] = $this->lesson->id;
                 $params['parameters[1][name]'] = "userid";
                 $params['parameters[1][value]'] = $USER->id;
-                $params['parameters[0][name]'] = "pageid";
-                $params['parameters[0][value]'] = $this->properties->id;
-                $params['parameters[1][name]'] = "retry";
-                $params['parameters[1][value]'] = $nretakes;
+                $params['parameters[2][name]'] = "pageid";
+                $params['parameters[2][value]'] = $this->properties->id;
+                $params['parameters[3][name]'] = "retry";
+                $params['parameters[3][value]'] = $nretakes;
 
                 $nattempts = get_remote_count_by("lesson_attempts", $params);
 

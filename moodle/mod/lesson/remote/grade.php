@@ -45,7 +45,7 @@ require_login($course, false, $cm);
 $PAGE->set_url('/mod/lesson/remote/grade.php', array('id'=>$cm->id));
 
 if (has_capability('mod/lesson:viewreports', context_module::instance($cm->id))) {
-    redirect('remote/report.php?id='.$cm->id);
+    redirect('remote/remote/report.php?id='.$cm->id);
 } else {
-    redirect('remote/view.php?id='.$cm->id);
+    redirect('remote/remote/view.php?id='.$cm->id);
 }
