@@ -70,18 +70,29 @@ class date extends base {
         global $DB;
 
         $rsql = '';
-        $params = array($this->question->id);
-        if (!empty($rids)) {
-            list($rsql, $rparams) = $DB->get_in_or_equal($rids);
-            $params = array_merge($params, $rparams);
-            $rsql = ' AND response_id ' . $rsql;
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $params = array($this->question->id);
+            if (!empty($rids)) {
+                list($rsql, $rparams) = $DB->get_in_or_equal($rids);
+                $params = array_merge($params, $rparams);
+                $rsql = ' AND response_id ' . $rsql;
+            }
+
+            $sql = 'SELECT id, response ' .
+                'FROM {'.$this->response_table().'} ' .
+                'WHERE question_id= ? ' . $rsql;
+
+            return $DB->get_records_sql($sql, $params);
+        } else {
+            if (!empty($rids)) {
+                $rsql = implode(',', $rids);
+                $rsql = ' AND response_id IN (' . $rsql . ')';
+            }
+
+            $sql_select = 'question_id= ' . $this->question->id . $rsql;
+
+            return get_remote_questionnaire_date($sql_select);
         }
-
-        $sql = 'SELECT id, response ' .
-               'FROM {'.$this->response_table().'} ' .
-               'WHERE question_id= ? ' . $rsql;
-
-        return $DB->get_records_sql($sql, $params);
     }
 
     public function display_results($rids=false, $sort='') {

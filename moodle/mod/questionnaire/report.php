@@ -630,9 +630,15 @@ switch ($action) {
     case 'vresp': // View by response.
 
     default:
-        if (empty($questionnaire->survey)) {
+	    if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+	        $tempid = $course->id;
+	    } else {
+	        $tempid = $course->remoteid;
+	    }
+
+	    if (empty($questionnaire->survey)) {
             print_error('surveynotexists', 'questionnaire');
-        } else if ($questionnaire->survey->owner != $course->id) {
+        } else if ($questionnaire->survey->owner != $tempid) {
             print_error('surveyowner', 'questionnaire');
         }
         $ruser = false;
@@ -661,7 +667,6 @@ switch ($action) {
                 }
             }
         }
-
         if ($byresponse || $rid) {
             // Available group modes (0 = no groups; 1 = separate groups; 2 = visible groups).
             if ($groupmode > 0) {

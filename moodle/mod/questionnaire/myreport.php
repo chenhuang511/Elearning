@@ -22,6 +22,7 @@ require_once($CFG->dirroot . '/mod/questionnaire/remote/locallib.php');
 
 $instance = required_param('instance', PARAM_INT);   // Questionnaire ID.
 $userid = optional_param('user', $USER->id, PARAM_INT);
+$remoteuserid = get_remote_mapping_user($userid)[0]->id;
 $rid = optional_param('rid', null, PARAM_INT);
 $byresponse = optional_param('byresponse', 0, PARAM_INT);
 $action = optional_param('action', 'summary', PARAM_RAW);
@@ -80,7 +81,7 @@ switch ($action) {
             $select = 'survey_id = '.$questionnaire->sid.' AND username = \''.$userid.'\' AND complete=\'y\'';
             $resps = $DB->get_records_select('questionnaire_response', $select);
         } else {
-            $select = 'survey_id = '.$questionnaire->sid.' AND username = \''.$userid.'\' AND complete=\'y\'';
+            $select = 'survey_id = '.$questionnaire->sid.' AND username = \''.$remoteuserid.'\' AND complete=\'y\'';
             $resps = get_remote_questionnaire_response($select);
             $resps = change_key_by_value($resps, 'id');
         }
@@ -116,11 +117,12 @@ switch ($action) {
         }
         $SESSION->questionnaire->current_tab = 'myvall';
 
-        $select = 'survey_id = '.$questionnaire->sid.' AND username = \''.$userid.'\' AND complete=\'y\'';
         $sort = 'submitted ASC';
         if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $select = 'survey_id = '.$questionnaire->sid.' AND username = \''.$userid.'\' AND complete=\'y\'';
             $resps = $DB->get_records_select('questionnaire_response', $select, $params = null, $sort);
         } else {
+            $select = 'survey_id = '.$questionnaire->sid.' AND username = \''.$remoteuserid.'\' AND complete=\'y\'';
             $resps = get_remote_questionnaire_response($select, $sort);
             $resps = change_key_by_value($resps, 'id');
         }
@@ -170,10 +172,10 @@ switch ($action) {
                 }
             }
         }
-        $select = 'survey_id = '.$questionnaire->sid.' AND username = \''.$userid.'\' AND complete=\'y\'';
-        $sort = 'submitted ASC';
 
+        $sort = 'submitted ASC';
         if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $select = 'survey_id = '.$questionnaire->sid.' AND username = \''.$userid.'\' AND complete=\'y\'';
             $resps = $DB->get_records_select('questionnaire_response', $select, $params = null, $sort);
             // All participants.
             $sql = "SELECT R.id, R.survey_id, R.submitted, R.username
@@ -187,7 +189,9 @@ switch ($action) {
             $select = 'survey_id = '.$questionnaire->sid.' AND username = \''.$userid.'\' AND complete=\'y\'';
             $fields = "id,survey_id,submitted,username";
             $params = array();
+            $respsuser = $DB->get_records_select('questionnaire_response', $select, $params, $sort = '', $fields);
         } else {
+            $select = 'survey_id = '.$questionnaire->sid.' AND username = \'' . $remoteuserid . '\' AND complete=\'y\'';
             $resps = get_remote_questionnaire_response($select, $sort);
             // All participants.
             $select = 'survey_id = '.$sid.' AND complete=\'y\' ';
@@ -195,7 +199,7 @@ switch ($action) {
             if (!($respsallparticipants = get_remote_questionnaire_response($select, $sort))) {
                 $respsallparticipants = array();
             }
-            $select = 'survey_id = '.$questionnaire->sid.' AND username = \''.$userid.'\' AND complete=\'y\'';
+            $select = 'survey_id = '.$questionnaire->sid.' AND username = \'' . $remoteuserid . '\' AND complete=\'y\'';
             $sort = 'id ASC';
             $respsuser = get_remote_questionnaire_response($select, $sort);
         }

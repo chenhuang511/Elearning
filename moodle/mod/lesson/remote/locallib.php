@@ -175,6 +175,26 @@ function get_remote_list_lesson_attempts_by($parameters, $sort = '', $limitfrom 
     return $attempts;
 }
 
+function get_remote_list_lesson_attempts_sql($sql, $parameters)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_list_lesson_attempts_sql',
+            'params' => array_merge(array('sql' => $sql), $parameters)
+        )
+    );
+
+    $attempts = array();
+
+    foreach ($result->attempts as $attempt) {
+        $attempts[$attempt->id] = $attempt;
+    }
+
+    return $attempts;
+}
+
 function get_remote_list_lesson_answers_by($parameters, $sort = '', $limitfrom = 0, $limitnum = 0)
 {
     $result = moodle_webservice_client(
@@ -183,6 +203,26 @@ function get_remote_list_lesson_answers_by($parameters, $sort = '', $limitfrom =
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_list_lesson_answers_by',
             'params' => array_merge(array('sort' => $sort, 'limitfrom' => $limitfrom, 'limitnum' => $limitnum), $parameters)
+        )
+    );
+
+    $answers = array();
+
+    foreach ($result->answers as $answer) {
+        $answers[$answer->id] = $answer;
+    }
+
+    return $answers;
+}
+
+function get_remote_list_lesson_answers_select($usql, $parameters)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_list_lesson_answers_select',
+            'params' => array_merge(array('usql' => $usql), $parameters)
         )
     );
 
@@ -223,6 +263,26 @@ function get_remote_list_lesson_pages_by($parameters, $sort = '', $limitfrom = 0
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_list_lesson_pages_by',
             'params' => array_merge(array('sort' => $sort, 'limitfrom' => $limitfrom, 'limitnum' => $limitnum), $parameters)
+        )
+    );
+
+    $pages = array();
+
+    foreach ($result->pages as $page) {
+        $pages[$page->id] = $page;
+    }
+
+    return $pages;
+}
+
+function get_remote_list_lesson_pages_select($usql, $parameters)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_list_lesson_pages_select',
+            'params' => array_merge(array('usql' => $usql), $parameters)
         )
     );
 
@@ -296,7 +356,7 @@ function get_remote_list_ids_lesson_by($parameters = array(), $sort = '', $limit
 
     return $lessons;
 }
- 
+
 function get_remote_maxgrade_lesson_grades_by_userid_and_lessonid($userid, $lessonid)
 {
     $result = moodle_webservice_client(
@@ -357,21 +417,28 @@ function check_remote_record_exists($modname, $parameters)
     return $result->status;
 }
 
-function get_remote_user_by_lessonid($params, $esql)
+function get_remote_user_by_lessonid($sql, $parameters)
 {
     $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_user_by_lessonid',
-            'params' => array('params' => $params, 'esql' => $esql),
+            'params' => array_merge(array('sql' => $sql), $parameters),
         )
     );
 
-    return new json_moodle_recordset($result->users);
+    $users = array();
+
+    foreach ($result->users as $user) {
+        $users[$user->id] = $user;
+    }
+
+    //return $users;
+    return new json_moodle_recordset($users);
 }
 
-function get_remote_recordset_lesson_attempts_by_lessonid($parameters, $sort = '', $limitfrom = 0, $limitnum = 0)
+function get_remote_recordset_lesson_attempts_by_lessonid($parameters, $sort = '', $limitfrom = 0, $limitnum = 1)
 {
     $result = moodle_webservice_client(
         array(
@@ -391,7 +458,7 @@ function get_remote_recordset_lesson_attempts_by_lessonid($parameters, $sort = '
     return new json_moodle_recordset($attempts);
 }
 
-function get_remote_recordset_lesson_branch_by_lessonid($parameters, $sort = '', $limitfrom = 0, $limitnum = 0)
+function get_remote_recordset_lesson_branch_by_lessonid($parameters, $sort = '', $limitfrom = 0, $limitnum = 1)
 {
     $result = moodle_webservice_client(
         array(
@@ -407,7 +474,6 @@ function get_remote_recordset_lesson_branch_by_lessonid($parameters, $sort = '',
     foreach ($result->branches as $branch) {
         $branches[$branch->id] = $branch;
     }
-
     return new json_moodle_recordset($branches);
 }
 

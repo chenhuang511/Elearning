@@ -178,9 +178,25 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_get_list_lesson_answers_select' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_list_lesson_answers_select',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'get list of lesson answers by',
+        'type' => 'read',
+        'ajax' => true
+    ),
     'local_mod_get_list_lesson_pages_by' => array(
         'classname' => 'local_mod_lesson_external',
         'methodname' => 'get_list_lesson_pages_by',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'get list of lesson pages by',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_list_lesson_pages_select' => array(
+        'classname' => 'local_mod_lesson_external',
+        'methodname' => 'get_list_lesson_pages_select',
         'classpath' => 'local/lesson/externallib.php',
         'description' => 'get list of lesson pages by',
         'type' => 'read',

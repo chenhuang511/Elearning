@@ -71,7 +71,7 @@ class rank extends base {
                     $data['data[2][value]'] = $cid;
                     $data['data[3][name]'] = 'rank';
                     $data['data[3][value]'] = $rank;
-                    $resid = save_remote_response_by_mbl($this->response_table(), $data);
+                    $resid = save_remote_response_by_tbl($this->response_table(), $data);
                 }
             }
             return $resid;
@@ -95,7 +95,7 @@ class rank extends base {
                 $data['data[1][value]'] = $this->question->id;
                 $data['data[2][name]'] = 'rank';
                 $data['data[2][value]'] = $rank;
-                return save_remote_response_by_mbl($this->response_table(), $data);
+                return save_remote_response_by_tbl($this->response_table(), $data);
             }
         }
     }
@@ -105,15 +105,25 @@ class rank extends base {
 
         $rsql = '';
         if (!empty($rids)) {
-            list($rsql, $params) = $DB->get_in_or_equal($rids);
-            $rsql = ' AND response_id ' . $rsql;
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                list($rsql, $params) = $DB->get_in_or_equal($rids);
+                $rsql = ' AND response_id ' . $rsql;
+            } else {
+                $rsql = implode(',', $rsql);
+                $rsql = ' AND response_id IN (' . $rsql . ')';
+            }
         }
 
         if ($this->question->type_id == QUESRATE) {
             // JR there can't be an !other field in rating questions ???
             $rankvalue = array();
             $select = 'question_id=' . $this->question->id . ' AND content NOT LIKE \'!other%\' ORDER BY id ASC';
-            if ($rows = $DB->get_records_select('questionnaire_quest_choice', $select)) {
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $rows = $DB->get_records_select('questionnaire_quest_choice', $select);
+            } else {
+                $rows = get_remote_questionnaire_quest_choice_by_condition($select);
+            }
+            if ($rows) {
                 foreach ($rows as $row) {
                     $this->counts[$row->content] = new \stdClass();
                     $nbna = $DB->count_records($this->response_table(), array('question_id' => $this->question->id,
@@ -130,13 +140,21 @@ class rank extends base {
             // Usual case.
             if (!$isrestricted) {
                 if (!empty ($rankvalue)) {
-                    $sql = "SELECT r.id, c.content, r.rank, c.id AS choiceid
-                    FROM {questionnaire_quest_choice} c, {".$this->response_table()."} r
-                    WHERE r.choice_id = c.id
-                    AND c.question_id = " . $this->question->id . "
-                    AND r.rank >= 0{$rsql}
-                    ORDER BY choiceid";
-                    $results = $DB->get_records_sql($sql, $params);
+                    if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                        $sql = "SELECT r.id, c.content, r.rank, c.id AS choiceid
+                            FROM {questionnaire_quest_choice} c, {".$this->response_table()."} r
+                            WHERE r.choice_id = c.id
+                            AND c.question_id = " . $this->question->id . "
+                            AND r.rank >= 0{$rsql}
+                            ORDER BY choiceid";
+                        $results = $DB->get_records_sql($sql, $params);
+                    } else {
+                        $sql_select = "r.choice_id = c.id
+                            AND c.question_id = " . $this->question->id . "
+                            AND r.rank >= 0" . $rsql;
+                        $sql_sort = "choiceid";
+                        $results = get_remote_questionnaire_choice_rank($sql_select, $sql_sort);
+                    }
                     $value = array();
                     foreach ($results as $result) {
                         if (isset ($value[$result->choiceid])) {
@@ -147,7 +165,8 @@ class rank extends base {
                     }
                 }
 
-                $sql = "SELECT c.id, c.content, a.average, a.num
+                if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                    $sql = "SELECT c.id, c.content, a.average, a.num
                         FROM {questionnaire_quest_choice} c
                         INNER JOIN
                              (SELECT c2.id, AVG(a2.rank+1) AS average, COUNT(a2.response_id) AS num
@@ -155,7 +174,12 @@ class rank extends base {
                               WHERE c2.question_id = ? AND a2.question_id = ? AND a2.choice_id = c2.id AND a2.rank >= 0{$rsql}
                               GROUP BY c2.id) a ON a.id = c.id
                               order by c.id";
-                $results = $DB->get_records_sql($sql, array_merge(array($this->question->id, $this->question->id), $params));
+                    $results = $DB->get_records_sql($sql, array_merge(array($this->question->id, $this->question->id), $params));
+                } else {
+                    $sql_select = "c2.question_id = " . $this->question->id . " AND a2.question_id = " . $this->question->id . " AND a2.choice_id = c2.id AND a2.rank >= 0 " . $rsql;
+                    $sql_sort = "c.id";
+                    $results = get_remote_questionnaire_choice_rank_average($sql_select, $sql_sort);
+                }
                 if (!empty ($rankvalue)) {
                     foreach ($results as $key => $result) {
                         $result->averagevalue = $value[$key] / $result->num;
@@ -169,14 +193,19 @@ class rank extends base {
                 return $results;
                 // Case where scaleitems is less than possible choices.
             } else {
-                $sql = "SELECT c.id, c.content, a.sum, a.num
+                if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                    $sql = "SELECT c.id, c.content, a.sum, a.num
                         FROM {questionnaire_quest_choice} c
                         INNER JOIN
                              (SELECT c2.id, SUM(a2.rank+1) AS sum, COUNT(a2.response_id) AS num
                               FROM {questionnaire_quest_choice} c2, {".$this->response_table()."} a2
                               WHERE c2.question_id = ? AND a2.question_id = ? AND a2.choice_id = c2.id AND a2.rank >= 0{$rsql}
                               GROUP BY c2.id) a ON a.id = c.id";
-                $results = $DB->get_records_sql($sql, array_merge(array($this->question->id, $this->question->id), $params));
+                    $results = $DB->get_records_sql($sql, array_merge(array($this->question->id, $this->question->id), $params));
+                } else {
+                    $sql_select = "c2.question_id = " . $this->question->id . " AND a2.question_id = " . $this->question->id . " AND a2.choice_id = c2.id AND a2.rank >= 0 " . $rsql;
+                    $results = get_remote_questionnaire_choice_rank_sum($sql_select);
+                }
                 // Formula to calculate the best ranking order.
                 $nbresponses = count($rids);
                 foreach ($results as $key => $result) {
@@ -187,11 +216,16 @@ class rank extends base {
                 return $results;
             }
         } else {
-            $sql = 'SELECT A.rank, COUNT(A.response_id) AS num ' .
-                   'FROM {'.$this->response_table().'} A ' .
-                   'WHERE A.question_id= ? ' . $rsql . ' ' .
-                   'GROUP BY A.rank';
-            return $DB->get_records_sql($sql, array_merge(array($this->question->id), $params));
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $sql = 'SELECT A.rank, COUNT(A.response_id) AS num ' .
+                    'FROM {'.$this->response_table().'} A ' .
+                    'WHERE A.question_id= ? ' . $rsql . ' ' .
+                    'GROUP BY A.rank';
+                return $DB->get_records_sql($sql, array_merge(array($this->question->id), $params));
+            } else {
+                $sql_select = ' A.question_id= ' .$this->question->id . $rsql;
+                return get_remote_questionnaire_rank_count_response($sql_select);
+            }
         }
     }
 

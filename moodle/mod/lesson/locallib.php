@@ -331,17 +331,15 @@ function lesson_grade($lesson, $ntries, $userid = 0)
     $total = 0;
     $earned = 0;
 
-    $params = array();
-    $params['parameters[0][name]'] = "lessonid";
-    $params['parameters[0][value]'] = $lesson->id;
-    $params['parameters[1][name]'] = "userid";
-    $params['parameters[1][value]'] = $userid;
-    $params['parameters[2][name]'] = "retry";
-    $params['parameters[2][value]'] = $ntries;
-
-    $useranswers = get_remote_list_lesson_attempts_by($params, "timeseen");
-
-    if ($useranswers) {
+    $params = array("lessonid" => $lesson->id, "userid" => $userid, "retry" => $ntries);
+    $prs = array();
+    $prs['parameters[0][name]'] = "lessonid";
+    $prs['parameters[0][value]'] = $lesson->id;
+    $prs['parameters[1][name]'] = "userid";
+    $prs['parameters[1][value]'] = $userid;
+    $prs['parameters[2][name]'] = "retry";
+    $prs['parameters[2][value]'] = $ntries;
+    if ($useranswers = get_remote_list_lesson_attempts_by($prs, "timeseen")) {
         // group each try with its page
         $attemptset = array();
         foreach ($useranswers as $useranswer) {
@@ -357,19 +355,15 @@ function lesson_grade($lesson, $ntries, $userid = 0)
         list($usql, $parameters) = $DB->get_in_or_equal(array_keys($attemptset));
         array_unshift($parameters, $lesson->id);
 
-        $params = array();
-        $params['parameters[0][name]'] = "lessonid";
-        $params['parameters[0][value]'] = $parameters[0];
-        $params['parameters[1][name]'] = "id";
-        $params['parameters[1][value]'] = $parameters[1];
-        $pages = get_remote_list_lesson_pages_by($params);
-
-        $params = array();
-        $params['parameters[0][name]'] = "lessonid";
-        $params['parameters[0][value]'] = $parameters[0];
-        $params['parameters[1][name]'] = "pageid";
-        $params['parameters[1][value]'] = $parameters[1];
-        $answers = get_remote_list_lesson_answers_by($params, "id");
+        $prs = array();
+        $i = 0;
+        foreach ($parameters as $key => $val) {
+            $prs["parameters[$i][name]"] = $key;
+            $prs["parameters[$i][value]"] = $val;
+            $i++;
+        }
+        $pages = get_remote_list_lesson_pages_select($usql, $prs);
+        $answers = get_remote_list_lesson_answers_select($usql, $prs);
 
         // Number of pages answered
         $nquestions = count($pages);
@@ -718,8 +712,7 @@ function lesson_process_group_deleted_in_course($courseid, $groupid = null)
     global $DB;
 
     $params = array('courseid' => $courseid);
-    if ($groupid)
-    {
+    if ($groupid) {
         $params['groupid'] = $groupid;
         // We just update the group that was deleted.
         $sql = "SELECT o.id, o.lessonid
@@ -2519,24 +2512,23 @@ abstract class lesson_page extends lesson_base
      * @param lesson $lesson
      * @return lesson_page Specialised lesson_page object
      */
-    final public static function load($id, lesson $lesson)
-    {
+    final public static function load($id, lesson $lesson) {
         global $DB;
 
         if (is_object($id) && !empty($id->qtype)) {
             $page = $id;
         } else {
-            $params = array();
-            $params['parameters[0][name]'] = "id";
-            $params['parameters[0][value]'] = $id;
-            $page = get_remote_lesson_pages_by($params);
+            $prs = array();
+            $prs['parameters[0][name]'] = "id";
+            $prs['parameters[0][value]'] = $id;
+            $page = get_remote_lesson_pages_by($prs);
             if (!$page) {
                 print_error('cannotfindpages', 'lesson');
             }
         }
         $manager = lesson_page_type_manager::get($lesson);
 
-        $class = 'lesson_page_type_' . $manager->get_page_type_idstring($page->qtype);
+        $class = 'lesson_page_type_'.$manager->get_page_type_idstring($page->qtype);
         if (!class_exists($class)) {
             $class = 'lesson_page';
         }

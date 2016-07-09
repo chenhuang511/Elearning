@@ -209,7 +209,7 @@ class local_mod_wiki_external extends external_api
         return new external_function_parameters(
             array(
                 'subwikiid' => new external_value(PARAM_INT, 'wiki id'),
-                'module' => new external_value(PARAM_TEXT, 'wiki id', VALUE_OPTIONAL),
+                'module' => new external_value(PARAM_TEXT, 'wiki id'),
             )
         );
     }

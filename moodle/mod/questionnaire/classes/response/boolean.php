@@ -57,7 +57,7 @@ class boolean extends base {
                 $data['data[1][value]'] = $this->question->id;
                 $data['data[2][name]'] = 'choice_id';
                 $data['data[2][value]'] = $val;
-                return save_remote_response_by_mbl($this->response_table(), $data);
+                return save_remote_response_by_tbl($this->response_table(), $data);
             }
         } else {
             return false;
@@ -68,19 +68,28 @@ class boolean extends base {
         global $DB;
 
         $rsql = '';
-        $params = array($this->question->id);
-        if (!empty($rids)) {
-            list($rsql, $rparams) = $DB->get_in_or_equal($rids);
-            $params = array_merge($params, $rparams);
-            $rsql = ' AND response_id ' . $rsql;
-        }
-        $params[] = '';
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $params = array($this->question->id);
+            if (!empty($rids)) {
+                list($rsql, $rparams) = $DB->get_in_or_equal($rids);
+                $params = array_merge($params, $rparams);
+                $rsql = ' AND response_id ' . $rsql;
+            }
+            $params[] = '';
 
-        $sql = 'SELECT choice_id, COUNT(response_id) AS num ' .
-               'FROM {'.$this->response_table().'} ' .
-               'WHERE question_id= ? ' . $rsql . ' AND choice_id != ? ' .
-               'GROUP BY choice_id';
-        return $DB->get_records_sql($sql, $params);
+            $sql = 'SELECT choice_id, COUNT(response_id) AS num ' .
+                'FROM {'.$this->response_table().'} ' .
+                'WHERE question_id= ? ' . $rsql . ' AND choice_id != ? ' .
+                'GROUP BY choice_id';
+            return $DB->get_records_sql($sql, $params);
+        } else {
+            if (!empty($rids)) {
+                $rsql = implode(',', $rids);
+                $rsql = ' AND response_id ' . $rsql;
+            }
+            $sql_select = 'question_id= ' . $this->question->id . $rsql;
+            return get_remote_questionnaire_bool_count_choice($sql_select);
+        }
     }
 
     public function display_results($rids=false, $sort='') {

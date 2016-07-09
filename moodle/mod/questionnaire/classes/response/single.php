@@ -64,7 +64,7 @@ class single extends base {
                             $data['data[2][value]'] = $cid;
                             $data['data[3][name]'] = 'response';
                             $data['data[3][value]'] = $other;
-                            $resid = save_remote_response_by_mbl('questionnaire_response_other', $data);
+                            $resid = save_remote_response_by_tbl('questionnaire_response_other', $data);
                         }
                         $val = $cid;
                         break;
@@ -95,7 +95,7 @@ class single extends base {
                     $data['data[2][value]'] = $cid;
                     $data['data[3][name]'] = 'response';
                     $data['data[3][value]'] = $other;
-                    $resid = save_remote_response_by_mbl('questionnaire_response_other', $data);
+                    $resid = save_remote_response_by_tbl('questionnaire_response_other', $data);
                 }
                 $val = $cid;
             }
@@ -119,7 +119,7 @@ class single extends base {
             $data['data[2][name]'] = 'choice_id';
             $data['data[2][value]'] = isset($val) ? $val : 0;
             if ($data['data[2][value]']) {// If "no answer" then choice_id is empty (CONTRIB-846).
-                return save_remote_response_by_mbl($this->response_table(), $data);
+                return save_remote_response_by_tbl($this->response_table(), $data);
             } else {
                 return false;
             }
@@ -153,7 +153,11 @@ class single extends base {
 	        $sql_select = 'qc.question_id= '.$this->question->id.' AND ' .
 	                     'rt.question_id=qc.question_id AND qc.content NOT LIKE \'!other%\' AND rt.choice_id=qc.id' . $rsql;
 	        $sql_sort = "qc.id";
-	        $rows = get_remote_questionnaire_choice_single($sql_select, $sql_sort);
+            if($this->response_table() == 'questionnaire_resp_single'){
+                $rows = get_remote_questionnaire_choice_single($sql_select, $sql_sort);
+            } else {
+                $rows = get_remote_questionnaire_choice_multiple($sql_select, $sql_sort);
+            }
         }
 		// Handle 'other...'.
 		if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){

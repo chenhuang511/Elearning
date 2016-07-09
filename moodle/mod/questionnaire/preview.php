@@ -18,6 +18,7 @@
 
 require_once("../../config.php");
 require_once($CFG->dirroot.'/mod/questionnaire/questionnaire.class.php');
+require_once($CFG->dirroot.'/mod/questionnaire/remote/locallib.php');
 
 $id     = optional_param('id', 0, PARAM_INT);
 $sid    = optional_param('sid', 0, PARAM_INT);
@@ -26,19 +27,28 @@ $qid    = optional_param('qid', 0, PARAM_INT);
 $currentgroupid = optional_param('group', 0, PARAM_INT); // Groupid.
 
 if ($id) {
-    if (! $cm = get_coursemodule_from_id('questionnaire', $id)) {
-        print_error('invalidcoursemodule');
-    }
+    if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        if (! $cm = get_coursemodule_from_id('questionnaire', $id)) {
+            print_error('invalidcoursemodule');
+        }
 
-    if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
-        print_error('coursemisconf');
-    }
+        if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
+            print_error('coursemisconf');
+        }
 
-    if (! $questionnaire = $DB->get_record("questionnaire", array("id" => $cm->instance))) {
-        print_error('invalidcoursemodule');
+        if (! $questionnaire = $DB->get_record("questionnaire", array("id" => $cm->instance))) {
+            print_error('invalidcoursemodule');
+        }
+    } else {
+        list($cm, $course, $questionnaire) = questionnaire_get_standard_page_items($id);
     }
 } else {
-    if (! $survey = $DB->get_record("questionnaire_survey", array("id" => $sid))) {
+    if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        $survey = $DB->get_record("questionnaire_survey", array("id" => $sid));
+    } else {
+        $survey = get_remote_questionnaire_survey_by_id($sid);
+    }
+    if (! $survey) {
         print_error('surveynotexists', 'questionnaire');
     }
     if (! $course = $DB->get_record("course", array("id" => $survey->owner))) {
@@ -53,7 +63,11 @@ if ($id) {
     $questionnaire->resume = 0;
     // Dummy cm object.
     if (!empty($qid)) {
-        $cm = get_coursemodule_from_instance('questionnaire', $qid, $course->id);
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $cm = get_coursemodule_from_instance('questionnaire', $qid, $course->id);
+        } else {
+            $cm = get_remote_course_module_by_instance('questionnaire', $qid)->cm;
+        }
     } else {
         $cm = false;
     }
