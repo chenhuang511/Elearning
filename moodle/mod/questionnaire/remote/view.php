@@ -117,7 +117,7 @@ if (!$questionnaire->is_active()) {
         $resume = $DB->get_record_select('questionnaire_response', $select, null) !== false;
     } else {
         $sql_select = 'survey_id = '.$questionnaire->survey->id.' AND username = \''.$remoteuserid.'\' AND complete = \'n\'';
-        $resume = get_remote_questionnaire_response($sql_select) !== false;
+        $resume = !empty(get_remote_questionnaire_response($sql_select));
     }
     if (!$resume) {
         $complete = get_string('answerquestions', 'questionnaire');

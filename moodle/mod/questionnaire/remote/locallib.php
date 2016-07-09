@@ -203,7 +203,7 @@ function get_remote_questionnaire_response($condition, $sort='')
             'params' => array('condition' => $condition, 'sort' => $sort)
         ), false
     );
-    return (empty($res)) ? false : $res;
+    return $res;
 }
 /**
  * get questionnaire_response
@@ -221,7 +221,7 @@ function get_remote_questionnaire_response_group_username($condition, $sort='')
             'params' => array('condition' => $condition, 'sort' => $sort)
         )
     );
-    return (empty($res)) ? false : $res;
+    return $res;
 }
 
 /**
@@ -240,7 +240,7 @@ function get_remote_questionnaire_bool_question($condition, $sort='')
             'params' => array('condition' => $condition, 'sort' => $sort)
         )
     );
-    return (empty($res)) ? false : $res;
+    return $res;
 }
 
 /**
@@ -593,5 +593,5 @@ function get_remote_questionnaire_rank_count_response($condition, $sort='')
             'params' => array('condition' => $condition, 'sort' => $sort)
         )
     );
-    return (empty($res)) ? false : $res;
+    return $res;
 }
