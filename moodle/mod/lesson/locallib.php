@@ -358,8 +358,8 @@ function lesson_grade($lesson, $ntries, $userid = 0)
         $prs = array();
         $i = 0;
         foreach ($parameters as $key => $val) {
-            $prs["data[$i][name]"] = $key;
-            $prs["data[$i][value]"] = $val;
+            $prs["parameters[$i][name]"] = $key;
+            $prs["parameters[$i][value]"] = $val;
             $i++;
         }
         $pages = get_remote_list_lesson_pages_select($usql, $prs);
