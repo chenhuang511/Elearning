@@ -23,7 +23,6 @@ function get_remote_wiki_by($parameters, $sort = '', $mustexists = FALSE)
             'params' => array_merge(array('sort' => $sort, 'mustexists' => $mustexists), $parameters),
         )
     );
-
     return $result->wiki;
 }
 
