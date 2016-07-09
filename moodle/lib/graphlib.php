@@ -38,7 +38,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class graph {
   var $image;
-  var $debug             =   FALSE;        // be careful!!
+  var $debug             =   TRUE;        // be careful!!
   var $calculated        =   array();      // array of computed values for chart
   var $parameter         =   array(        // input parameters
     'width'              =>  320,          // default width of image

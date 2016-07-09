@@ -708,6 +708,7 @@ function quiz_grade_item_update($quiz, $grades = null) {
     global $CFG, $OUTPUT;
     require_once($CFG->dirroot . '/mod/quiz/locallib.php');
     require_once($CFG->libdir . '/gradelib.php');
+    $isremote = (MOODLE_RUN_MODE == MOODLE_MODE_HUB)?true:false;
 
     if (array_key_exists('cmidnumber', $quiz)) { // May not be always present.
         $params = array('itemname' => $quiz->name, 'idnumber' => $quiz->cmidnumber);
@@ -781,7 +782,7 @@ function quiz_grade_item_update($quiz, $grades = null) {
             if (!$confirm_regrade) {
                 if (!AJAX_SCRIPT) {
                     $message = get_string('gradeitemislocked', 'grades');
-                    $back_link = $CFG->wwwroot . '/mod/quiz/report.php?q=' . $quiz->id .
+                    $back_link = $CFG->wwwroot . $isremote?'/mod/quiz/remote/report.php?q=':'/mod/quiz/report.php?q=' . $quiz->id .
                             '&amp;mode=overview';
                     $regrade_link = qualified_me() . '&amp;confirm_regrade=1';
                     echo $OUTPUT->box_start('generalbox', 'notice');
@@ -1584,13 +1585,14 @@ function quiz_num_attempt_summary($quiz, $cm, $returnzero = false, $currentgroup
 function quiz_attempt_summary_link_to_reports($quiz, $cm, $context, $returnzero = false,
         $currentgroup = 0) {
     global $CFG;
+    $isremote = (MOODLE_RUN_MODE == MOODLE_MODE_HUB)?true:false;
     $summary = quiz_num_attempt_summary($quiz, $cm, $returnzero, $currentgroup);
     if (!$summary) {
         return '';
     }
 
     require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
-    $url = new moodle_url('/mod/quiz/report.php', array(
+    $url = new moodle_url($isremote?'/mod/quiz/remote/report.php':'/mod/quiz/report.php', array(
             'id' => $cm->id, 'mode' => quiz_report_default_report($context)));
     return html_writer::link($url, $summary);
 }
@@ -1644,6 +1646,7 @@ function quiz_extend_settings_navigation($settings, $quiznode) {
     // Require {@link questionlib.php}
     // Included here as we only ever want to include this file if we really need to.
     require_once($CFG->libdir . '/questionlib.php');
+    $isremote = (MOODLE_RUN_MODE == MOODLE_MODE_HUB)?true:false;
 
     // We want to add these new nodes after the Edit settings node, and before the
     // Locally assigned roles node. Of course, both of those are controlled by capabilities.
@@ -1657,7 +1660,7 @@ function quiz_extend_settings_navigation($settings, $quiznode) {
     }
 
     if (has_capability('mod/quiz:manageoverrides', $PAGE->cm->context)) {
-        $url = new moodle_url('/mod/quiz/overrides.php', array('cmid'=>$PAGE->cm->id));
+        $url = new moodle_url($isremote?'/mod/quiz/remote/report.php':'/mod/quiz/report.php', array('cmid'=>$PAGE->cm->id));
         $node = navigation_node::create(get_string('groupoverrides', 'quiz'),
                 new moodle_url($url, array('mode'=>'group')),
                 navigation_node::TYPE_SETTING, null, 'mod_quiz_groupoverrides');
@@ -1690,14 +1693,14 @@ function quiz_extend_settings_navigation($settings, $quiznode) {
         require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
         $reportlist = quiz_report_list($PAGE->cm->context);
 
-        $url = new moodle_url('/mod/quiz/report.php',
+        $url = new moodle_url($isremote?'/mod/quiz/remote/report.php':'/mod/quiz/report.php',
                 array('id' => $PAGE->cm->id, 'mode' => reset($reportlist)));
         $reportnode = $quiznode->add_node(navigation_node::create(get_string('results', 'quiz'), $url,
                 navigation_node::TYPE_SETTING,
                 null, null, new pix_icon('i/report', '')), $beforekey);
 
         foreach ($reportlist as $report) {
-            $url = new moodle_url('/mod/quiz/report.php',
+            $url = new moodle_url($isremote?'/mod/quiz/remote/report.php':'/mod/quiz/report.php',
                     array('id' => $PAGE->cm->id, 'mode' => $report));
             $reportnode->add_node(navigation_node::create(get_string($report, 'quiz_'.$report), $url,
                     navigation_node::TYPE_SETTING,

@@ -213,7 +213,8 @@ class quiz_grading_report extends quiz_default_report {
      * @return string the URL.
      */
     protected function base_url() {
-        return new moodle_url('/mod/quiz/report.php',
+        $isremote = (MOODLE_RUN_MODE == MOODLE_MODE_HUB)?true:false;
+        return new moodle_url($isremote?'/mod/quiz/remote/report.php':'/mod/quiz/report.php',
                 array('id' => $this->cm->id, 'mode' => 'grading'));
     }
 

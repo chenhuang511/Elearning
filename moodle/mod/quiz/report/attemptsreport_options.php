@@ -135,11 +135,7 @@ class mod_quiz_attempts_report_options {
      * @return moodle_url the URL.
      */
     public function get_url($isremote = false) {
-        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-            return new moodle_url('/mod/quiz/remote/report.php', $this->get_url_params());
-        }else{
-            return new moodle_url('/mod/quiz/report.php', $this->get_url_params());
-        }
+        return new moodle_url((MOODLE_RUN_MODE == MOODLE_MODE_HUB)?'/mod/quiz/remote/report.php':'/mod/quiz/report.php', $this->get_url_params());
     }
 
     /**

@@ -53,6 +53,7 @@ class quiz_statistics_report extends quiz_default_report {
      */
     public function display($quiz, $cm, $course) {
         global $OUTPUT;
+        $isremote = (MOODLE_RUN_MODE == MOODLE_MODE_HUB)?true:false;
 
         raise_memory_limit(MEMORY_HUGE);
 
@@ -79,7 +80,7 @@ class quiz_statistics_report extends quiz_default_report {
         $pageoptions['id'] = $cm->id;
         $pageoptions['mode'] = 'statistics';
 
-        $reporturl = new moodle_url('/mod/quiz/report.php', $pageoptions);
+        $reporturl = new moodle_url($isremote?'/mod/quiz/remote/report.php':'/mod/quiz/report.php', $pageoptions);
 
         $mform = new quiz_statistics_settings_form($reporturl, compact('quiz'));
 

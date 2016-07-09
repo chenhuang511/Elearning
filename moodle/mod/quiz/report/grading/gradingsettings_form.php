@@ -48,7 +48,8 @@ class quiz_grading_settings_form extends moodleform {
         $this->counts = $counts;
         $this->shownames = $shownames;
         $this->showidnumbers = $showidnumbers;
-        parent::__construct($CFG->wwwroot . '/mod/quiz/report.php', null, 'get');
+        $this->isremote = (MOODLE_RUN_MODE == MOODLE_MODE_HUB)?true:false;
+        parent::__construct($CFG->wwwroot . $this->isremote?'/mod/quiz/remote/report.php':'/mod/quiz/report.php', null, 'get');
     }
 
     protected function definition() {

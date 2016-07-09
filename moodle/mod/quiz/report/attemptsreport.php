@@ -94,7 +94,7 @@ abstract class quiz_attempts_report extends quiz_default_report {
      * @return moodle_url the URL.
      */
     protected function get_base_url() {
-        return new moodle_url('/mod/quiz/report.php',
+        return new moodle_url((MOODLE_RUN_MODE == MOODLE_MODE_HUB)?'/mod/quiz/remote/report.php':'/mod/quiz/report.php',
                 array('id' => $this->context->instanceid, 'mode' => $this->mode));
     }
 

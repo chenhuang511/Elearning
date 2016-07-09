@@ -88,10 +88,10 @@ class quiz_overview_table extends quiz_attempts_report_table {
         list($fields, $from, $where, $params) = $this->base_sql($users);
 
         if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-            $this->mapping_users($params);
+            $mapsqlparams = $this->mapping_users($params);
             $paramdata = array();
             $index = 0;
-            foreach ($params as $key => $val){
+            foreach ($mapsqlparams as $key => $val){
                 $paramdata["param[$index][name]"]=$key;
                 $paramdata["param[$index][value]"]=$val;
                 $index++;
