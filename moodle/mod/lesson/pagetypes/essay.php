@@ -28,23 +28,29 @@ defined('MOODLE_INTERNAL') || die();
 /** Essay question type */
 define("LESSON_PAGE_ESSAY", "10");
 
-class lesson_page_type_essay extends lesson_page {
+class lesson_page_type_essay extends lesson_page
+{
 
     protected $type = lesson_page::TYPE_QUESTION;
     protected $typeidstring = 'essay';
     protected $typeid = LESSON_PAGE_ESSAY;
     protected $string = null;
 
-    public function get_typeid() {
+    public function get_typeid()
+    {
         return $this->typeid;
     }
-    public function get_typestring() {
-        if ($this->string===null) {
+
+    public function get_typestring()
+    {
+        if ($this->string === null) {
             $this->string = get_string($this->typeidstring, 'lesson');
         }
         return $this->string;
     }
-    public function get_idstring() {
+
+    public function get_idstring()
+    {
         return $this->typeidstring;
     }
 
@@ -55,7 +61,8 @@ class lesson_page_type_essay extends lesson_page {
      * @param string $useranswer serialized object
      * @return object
      */
-    static public function extract_useranswer($useranswer) {
+    static public function extract_useranswer($useranswer)
+    {
         $essayinfo = unserialize($useranswer);
         if (!isset($essayinfo->responseformat)) {
             $essayinfo->response = text_to_html($essayinfo->response, false, false);
@@ -64,10 +71,11 @@ class lesson_page_type_essay extends lesson_page {
         return $essayinfo;
     }
 
-    public function display($renderer, $attempt) {
+    public function display($renderer, $attempt)
+    {
         global $PAGE, $CFG, $USER;
 
-        $mform = new lesson_display_answer_form_essay($CFG->wwwroot.'/mod/lesson/remote/continue.php', array('contents'=>$this->get_contents(), 'lessonid'=>$this->lesson->id));
+        $mform = new lesson_display_answer_form_essay($CFG->wwwroot . '/mod/lesson/remote/continue.php', array('contents' => $this->get_contents(), 'lessonid' => $this->lesson->id));
 
         $data = new stdClass;
         $data->id = $PAGE->cm->id;
@@ -83,44 +91,54 @@ class lesson_page_type_essay extends lesson_page {
             'context' => context_module::instance($PAGE->cm->id),
             'objectid' => $this->properties->id,
             'other' => array(
-                    'pagetype' => $this->get_typestring()
-                )
-            );
+                'pagetype' => $this->get_typestring()
+            )
+        );
 
         $event = \mod_lesson\event\question_viewed::create($eventparams);
         $event->trigger();
         return $mform->display();
     }
-    public function create_answers($properties) {
+
+    public function create_answers($properties)
+    {
         global $DB;
         // now add the answers
-        $newanswer = new stdClass;
-        $newanswer->lessonid = $this->lesson->id;
-        $newanswer->pageid = $this->properties->id;
-        $newanswer->timecreated = $this->properties->timecreated;
+        $newanswer = new stdClass();
+        $data = array();
+        $data['data[0][name]'] = "lessonid";
+        $data['data[0][value]'] = $this->lesson->id;
+        $data['data[1][name]'] = "pageid";
+        $data['data[1][value]'] = $this->properties->id;
+        $data['data[2][name]'] = "timecreated";
+        $data['data[2][value]'] = $this->properties->timecreated;
 
         if (isset($properties->jumpto[0])) {
-            $newanswer->jumpto = $properties->jumpto[0];
+            $data['data[3][name]'] = "jumpto";
+            $data['data[3][value]'] = $properties->jumpto[0];
         }
         if (isset($properties->score[0])) {
-            $newanswer->score = $properties->score[0];
+            $data['data[4][name]'] = "score";
+            $data['data[4][value]'] = $properties->score[0];
         }
-        $newanswer->id = $DB->insert_record("lesson_answers", $newanswer);
+        $newanswer->id = save_remote_mdl_lesson("lesson_answers", $data);
         $answers = array($newanswer->id => new lesson_page_answer($newanswer));
         $this->answers = $answers;
         return $answers;
     }
-    public function check_answer() {
+
+    public function check_answer()
+    {
         global $PAGE, $CFG;
         $result = parent::check_answer();
         $result->isessayquestion = true;
 
-        $mform = new lesson_display_answer_form_essay($CFG->wwwroot.'/mod/lesson/remote/continue.php', array('contents'=>$this->get_contents()));
+        $mform = new lesson_display_answer_form_essay($CFG->wwwroot . '/mod/lesson/remote/continue.php', array('contents' => $this->get_contents()));
         $data = $mform->get_data();
         require_sesskey();
 
         if (!$data) {
-            redirect(new moodle_url('/mod/lesson/remote/view.php', array('id'=>$PAGE->cm->id, 'pageid'=>$this->properties->id)));
+            redirect(new moodle_url('/mod/lesson/remote/view.php', array('id' => $PAGE->cm->id, 'pageid' => $this->properties->id)));
         }
 
         if (is_array($data->answer)) {
@@ -143,7 +161,7 @@ class lesson_page_type_essay extends lesson_page {
         }
 
         $userresponse = new stdClass;
-        $userresponse->sent=0;
+        $userresponse->sent = 0;
         $userresponse->graded = 0;
         $userresponse->score = 0;
         $userresponse->answer = $studentanswer;
@@ -155,40 +173,65 @@ class lesson_page_type_essay extends lesson_page {
         $result->studentanswer = $studentanswer;
         return $result;
     }
-    public function update($properties, $context = null, $maxbytes = null) {
+
+    public function update($properties, $context = null, $maxbytes = null)
+    {
         global $DB, $PAGE;
-        $answers  = $this->get_answers();
+        $answers = $this->get_answers();
+        $data = array();
+        $data["data[0][name]"] = "lessonid";
+        $data["data[0][value]"] = $this->lesson->id;
+        $data["data[1][name]"] = "timemodified";
+        $data["data[1][value]"] = time();
+
         $properties->id = $this->properties->id;
         $properties->lessonid = $this->lesson->id;
         $properties->timemodified = time();
-        $properties = file_postupdate_standard_editor($properties, 'contents', array('noclean'=>true, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$PAGE->course->maxbytes), context_module::instance($PAGE->cm->id), 'mod_lesson', 'page_contents', $properties->id);
-        $DB->update_record("lesson_pages", $properties);
+        $properties = file_postupdate_standard_editor($properties, 'contents', array('noclean' => true, 'maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes' => $PAGE->course->maxbytes), context_module::instance($PAGE->cm->id), 'mod_lesson', 'page_contents', $properties->id);
+
+        $prs = array();
+        $i = 0;
+        foreach($properties as $key => $val) {
+            $prs["data[$i][name]"] = $key;
+            $prs["data[$i][value]"] = $val;
+            $i++;
+        }
+        $result = update_remote_mdl_lesson("lesson_pages", $properties->id, $prs);
 
         // Trigger an event: page updated.
         \mod_lesson\event\page_updated::create_from_lesson_page($this, $context)->trigger();
 
         if (!array_key_exists(0, $this->answers)) {
             $this->answers[0] = new stdClass;
-            $this->answers[0]->lessonid = $this->lesson->id;
-            $this->answers[0]->pageid = $this->id;
-            $this->answers[0]->timecreated = $this->timecreated;
+
+            $data["data[0][name]"] = "lessonid";
+            $data["data[0][value]"] = $this->lesson->id;
+            $data["data[1][name]"] = "pageid";
+            $data["data[1][value]"] = $this->id;
+            $data["data[2][name]"] = "timecreated";
+            $data["data[2][value]"] = $this->timecreated;
         }
+
         if (isset($properties->jumpto[0])) {
-            $this->answers[0]->jumpto = $properties->jumpto[0];
+            $data["data[3][name]"] = "jumpto";
+            $data["data[3][value]"] = $properties->jumpto[0];
         }
         if (isset($properties->score[0])) {
-            $this->answers[0]->score = $properties->score[0];
+            $data["data[3][name]"] = "score";
+            $data["data[3][value]"] = $properties->score[0];
         }
         if (!isset($this->answers[0]->id)) {
-            $this->answers[0]->id =  $DB->insert_record("lesson_answers", $this->answers[0]);
+            $this->answers[0]->id = save_remote_mdl_lesson("lesson_answers", $data);
         } else {
-            $DB->update_record("lesson_answers", $this->answers[0]->properties());
+            $cid = update_remote_mdl_lesson("lesson_answers", $answers->id, $data);
         }
 
         return true;
     }
-    public function stats(array &$pagestats, $tries) {
-        if(count($tries) > $this->lesson->maxattempts) { // if there are more tries than the max that is allowed, grab the last "legal" attempt
+
+    public function stats(array &$pagestats, $tries)
+    {
+        if (count($tries) > $this->lesson->maxattempts) { // if there are more tries than the max that is allowed, grab the last "legal" attempt
             $temp = $tries[$this->lesson->maxattempts - 1];
         } else {
             // else, user attempted the question less than the max, so grab the last one
@@ -210,7 +253,9 @@ class lesson_page_type_essay extends lesson_page {
         }
         return true;
     }
-    public function report_answers($answerpage, $answerdata, $useranswer, $pagestats, &$i, &$n) {
+
+    public function report_answers($answerpage, $answerdata, $useranswer, $pagestats, &$i, &$n)
+    {
         $formattextdefoptions = new stdClass();
         $formattextdefoptions->noclean = true;
         $formattextdefoptions->para = false;
@@ -224,20 +269,20 @@ class lesson_page_type_essay extends lesson_page {
                     $answerdata->response = get_string("nocommentyet", "lesson");
                 } else {
                     $essayinfo->response = file_rewrite_pluginfile_urls($essayinfo->response, 'pluginfile.php',
-                            $answerpage->context->id, 'mod_lesson', 'essay_responses', $useranswer->id);
-                    $answerdata->response  = format_text($essayinfo->response, $essayinfo->responseformat, $formattextdefoptions);
+                        $answerpage->context->id, 'mod_lesson', 'essay_responses', $useranswer->id);
+                    $answerdata->response = format_text($essayinfo->response, $essayinfo->responseformat, $formattextdefoptions);
                 }
                 if (isset($pagestats[$this->properties->id])) {
                     $percent = $pagestats[$this->properties->id]->totalscore / $pagestats[$this->properties->id]->total * 100;
                     $percent = round($percent, 2);
-                    $percent = get_string("averagescore", "lesson").": ". $percent ."%";
+                    $percent = get_string("averagescore", "lesson") . ": " . $percent . "%";
                 } else {
                     // dont think this should ever be reached....
                     $percent = get_string("nooneansweredthisquestion", "lesson");
                 }
                 if ($essayinfo->graded) {
                     if ($this->lesson->custom) {
-                        $answerdata->score = get_string("pointsearned", "lesson").": ".$essayinfo->score;
+                        $answerdata->score = get_string("pointsearned", "lesson") . ": " . $essayinfo->score;
                     } elseif ($essayinfo->score) {
                         $answerdata->score = get_string("receivedcredit", "lesson");
                     } else {
@@ -255,40 +300,56 @@ class lesson_page_type_essay extends lesson_page {
             if (isset($pagestats[$this->properties->id])) {
                 $avescore = $pagestats[$this->properties->id]->totalscore / $pagestats[$this->properties->id]->total;
                 $avescore = round($avescore, 2);
-                $avescore = get_string("averagescore", "lesson").": ". $avescore ;
+                $avescore = get_string("averagescore", "lesson") . ": " . $avescore;
             } else {
                 // dont think this should ever be reached....
                 $avescore = get_string("nooneansweredthisquestion", "lesson");
             }
             // This is the student's answer so it should be cleaned.
             $answerdata->answers[] = array(format_text($essayinfo->answer, $essayinfo->answerformat,
-                    array('para' => true, 'context' => $answerpage->context)), $avescore);
+                array('para' => true, 'context' => $answerpage->context)), $avescore);
             $answerpage->answerdata = $answerdata;
         }
         return $answerpage;
     }
-    public function is_unanswered($nretakes) {
+
+    public function is_unanswered($nretakes)
+    {
         global $DB, $USER;
-        if (!$DB->count_records("lesson_attempts", array('pageid'=>$this->properties->id, 'userid'=>$USER->id, 'retry'=>$nretakes))) {
+        $params = array();
+        $params['parameters[0][name]'] = "pageid";
+        $params['parameters[0][value]'] = $this->properties->id;
+        $params['parameters[1][name]'] = "userid";
+        $params['parameters[1][value]'] = $USER->id;
+        $params['parameters[2][name]'] = "retry";
+        $params['parameters[2][value]'] = $nretakes;
+
+        if (!get_remote_count_by("lesson_attempts", $params)) {
             return true;
         }
         return false;
     }
-    public function requires_manual_grading() {
+
+    public function requires_manual_grading()
+    {
         return true;
     }
-    public function get_earnedscore($answers, $attempt) {
+
+    public function get_earnedscore($answers, $attempt)
+    {
         $essayinfo = self::extract_useranswer($attempt->useranswer);
         return $essayinfo->score;
     }
 }
 
-class lesson_add_page_form_essay extends lesson_add_page_form_base {
+class lesson_add_page_form_essay extends lesson_add_page_form_base
+{
 
     public $qtype = 'essay';
     public $qtypestring = 'essay';
 
-    public function custom_definition() {
+    public function custom_definition()
+    {
 
         $this->add_jumpto(0);
         $this->add_score(0, null, 1);
@@ -296,9 +357,11 @@ class lesson_add_page_form_essay extends lesson_add_page_form_base {
     }
 }
 
-class lesson_display_answer_form_essay extends moodleform {
+class lesson_display_answer_form_essay extends moodleform
+{
 
-    public function definition() {
+    public function definition()
+    {
         global $USER, $OUTPUT;
         $mform = $this->_form;
         $contents = $this->_customdata['contents'];

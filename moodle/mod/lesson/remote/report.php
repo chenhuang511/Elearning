@@ -182,8 +182,30 @@ if ($action === 'delete') {
         list($sort, $sortparams) = users_order_by_sql('u');
 
         $params['lessonid'] = $lesson->id;
+        $ufields = user_picture::fields('u');
+        $sql = "SELECT DISTINCT $ufields
+                FROM {user} u
+                JOIN (SELECT userid, lessonid FROM {lesson_attempts} a1 UNION
+                SELECT userid, lessonid FROM {lesson_branch} b1) a ON u.id = a.userid
+                JOIN ($esql) ue ON ue.id = a.userid
+                WHERE a.lessonid = :lessonid
+                ORDER BY $sort";
 
-        $students = get_remote_user_by_lessonid($params, $esql);
+        $params['lessonid'] = $lesson->id;
+        $localcourse = $DB->get_record("course", array("id" => $params['eu1_courseid']));
+        if ($localcourse) {
+            $params['eu1_courseid'] = $localcourse->remoteid;
+        }
+
+        $prs = array();
+        $i = 0;
+        foreach ($params as $key => $val) {
+            $prs["parameters[$i][name]"] = $key;
+            $prs["parameters[$i][value]"] = $val;
+            $i++;
+        }
+
+        $students = get_remote_user_by_lessonid($sql, $prs);
         if (!$students->valid()) {
             $students->close();
             $nothingtodisplay = true;
@@ -363,7 +385,7 @@ if ($action === 'delete') {
 
     // print out the $studentdata array
     // going through each student that has attempted the lesson, so, each student should have something to be displayed
-    foreach ($students as $student) {
+    foreach ($students-> as $student) {
         // check to see if the student has attempts to print out
         if (array_key_exists($student->id, $studentdata)) {
             // set/reset some variables
@@ -382,7 +404,7 @@ if ($action === 'delete') {
                     $temp = '';
                 }
 
-                $temp .= "<a href=\"report.php?id=$cm->id&amp;action=reportdetail&amp;userid=" . $try['userid']
+                $temp .= "<a href=\"remote\report.php?id=$cm->id&amp;action=reportdetail&amp;userid=" . $try['userid']
                     . '&amp;try=' . $try['try'] . '" class="lesson-attempt-link">';
                 if ($try["grade"] !== null) { // if null then not done yet
                     // this is what the link does when the user has completed the try
@@ -455,7 +477,7 @@ if ($action === 'delete') {
     $students->close();
     // Print it all out!
     if (has_capability('mod/lesson:edit', $context)) {
-        echo "<form id=\"theform\" method=\"post\" action=\"report.php\">\n
+        echo "<form id=\"theform\" method=\"post\" action=\"remote\report.php\">\n
                <input type=\"hidden\" name=\"sesskey\" value=\"" . sesskey() . "\" />\n
                <input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
     }

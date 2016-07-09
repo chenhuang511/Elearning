@@ -150,7 +150,14 @@ if ($move > 0 and confirm_sesskey()) {
     $DB->set_field('forum_read', 'forumid', $forumto->id, array('discussionid' => $discussion->id));
 
     // Delete the existing per-discussion subscriptions and replace them with the newly calculated ones.
-    $DB->delete_records('forum_discussion_subs', array('discussion' => $discussion->id));
+    $data = array();
+    $data['data[0][name]'] = 'userid';
+    $data['data[0][value]'] = $userid;
+    $data['data[1][name]'] = 'discussion';
+    $data['data[1][value]'] = $discussion->id;
+    $data['data[2][name]'] = 'retry';
+    $data['data[2][value]'] = $try;
+    $result = delete_remote_mdl_forum('forum_discussion_subs', $data);
     $newdiscussion = clone $discussion;
     $newdiscussion->forum = $forumto->id;
     foreach ($subscriptionchanges as $userid => $preference) {

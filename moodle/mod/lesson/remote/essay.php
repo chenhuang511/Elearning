@@ -126,10 +126,15 @@ switch ($mode) {
         $mform = new essay_grading_form(null, array('scoreoptions' => $scoreoptions, 'user' => $user));
         $mform->set_data($essayinfo);
         if ($mform->is_cancelled()) {
-            redirect("$CFG->wwwroot/mod/lesson/essay.php?id=$cm->id");
+            redirect("$CFG->wwwroot/mod/lesson/remote/essay.php?id=$cm->id");
         }
         if ($form = $mform->get_data()) {
-            if (!$grades = $DB->get_records('lesson_grades', array("lessonid" => $lesson->id, "userid" => $attempt->userid), 'completed', '*', $attempt->retry, 1)) {
+            $params = array();
+            $params['parameters[0][name]'] = "lessonid";
+            $params['parameters[0][value]'] = $lesson->id;
+            $params['parameters[1][name]'] = "userid";
+            $params['parameters[1][value]'] = $attempt->userid;
+            if (!$grades = get_remote_list_lesson_grades_by($params, "completed", $attempt->retry, 1)) {
                 print_error('cannotfindgrade', 'lesson');
             }
 
@@ -155,10 +160,10 @@ switch ($mode) {
             $gradeinfo = lesson_grade($lesson, $attempt->retry, $attempt->userid);
 
             // Set and update
-            $updategrade = new stdClass();
-            $updategrade->id = $grade->id;
-            $updategrade->grade = $gradeinfo->grade;
-            $DB->update_record('lesson_grades', $updategrade);
+            $data = array();
+            $data['data[0][name]'] = "grade";
+            $data['data[0][value]'] = $gradeinfo->grade;
+            $result = update_remote_mdl_lesson("lesson_grades", $grade->id, $data);
 
             $params = array(
                 'context' => $context,
@@ -305,7 +310,7 @@ switch ($mode) {
             }
         }
         $lesson->add_message(get_string('emailsuccess', 'lesson'), 'notifysuccess');
-        redirect(new moodle_url('/mod/lesson/essay.php', array('id' => $cm->id)));
+        redirect(new moodle_url('/mod/lesson/remote/essay.php', array('id' => $cm->id)));
         break;
     case 'display':  // Default view - get the necessary data
     default:
@@ -323,11 +328,20 @@ switch ($mode) {
             list($esql, $params) = get_enrolled_sql($context, '', $currentgroup, true);
             $parameters = array_merge($params, $parameters);
 
+            $params = array();
+            $i = 0;
+            foreach ($parameters as $key => $val) {
+                $params["parameters[$i][name]"] = $key;
+                $params["parameters[$i][value]"] = $val;
+                $i++;
+            }
+
             $sql = "SELECT a.*
                         FROM {lesson_attempts} a
                         JOIN ($esql) ue ON a.userid = ue.id
                         WHERE pageid $usql";
-            if ($essayattempts = $DB->get_records_sql($sql, $parameters)) {
+
+            if ($essayattempts = get_remote_list_lesson_attempts_sql($sql, $params)) {
                 $ufields = user_picture::fields('u');
                 // Get all the users who have taken this lesson.
                 list($sort, $sortparams) = users_order_by_sql('u');
@@ -394,7 +408,12 @@ switch ($mode) {
             $essaylinks = array();
 
             // Number of attempts on the lesson
-            $attempts = $DB->count_records('lesson_grades', array('userid' => $userid, 'lessonid' => $lesson->id));
+            $params = array();
+            $params['parameters[0][name]'] = "userid";
+            $params['parameters[0][value]'] = $userid;
+            $params['parameters[1][name]'] = "lessonid";
+            $params['parameters[1][value]'] = $lesson->id;
+            $attempts = get_remote_count_by("lesson_grades", $params);
 
             // Go through each essay page
             foreach ($studentessays[$userid] as $page => $tries) {

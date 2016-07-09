@@ -115,13 +115,16 @@ if (!isloggedin() or isguestuser()) {
     exit;
 }
 
-require_login($course, false, $cm);   // Script is useless unless they're logged in
+require_login(0, false);   // Script is useless unless they're logged in
 
 if (!empty($forum)) {      // User is starting a new discussion in a forum
-    if (! $cm = get_remote_course_module_by_cmid('forum', $id)) {
+    if (!$cm = get_remote_course_module_by_cmid('forum', $id)) {
         print_error("invalidcoursemodule");
     }
-    if (! $forum = get_remote_forum_by_id($cm->instance)) {
+    $prs = array();
+    $prs['parameters[0][name]'] = "id";
+    $prs['parameters[0][value]'] = $cm->instance;
+    if (!$forum = get_remote_forum_by($prs)) {
         print_error('invalidforumid', 'forum');
     }
     $param = array();
@@ -219,7 +222,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
                 $SESSION->wantsurl = qualified_me();
                 $SESSION->enrolcancel = get_local_referer(false);
                 redirect(new moodle_url('/enrol/index.php', array('id' => $course->id,
-                    'returnurl' => '/mod/forum/view.php?f=' . $forum->id)),
+                    'returnurl' => '/mod/forum/remote/view.php?f=' . $forum->id)),
                     get_string('youneedtoenrol'));
             }
         }
@@ -530,7 +533,22 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         $newpost->parent  = 0;
         $newpost->subject = $name;
 
-        $DB->update_record("forum_posts", $newpost);
+        $params = array();
+        $params['params[0][name]'] = 'userid';
+        $params['params[0][op]'] = '=';
+        $params['params[0][value]'] = $userid;
+        $params['params[1][name]'] = 'forum';
+        $params['params[1][op]'] = '=';
+        $params['params[1][value]'] = $forum->id;
+        $params['params[2][name]'] = 'retry';
+        $params['params[2][op]'] = '>';
+        $params['params[2][value]'] = $try;
+
+        $data = array();
+        $data['data[0][name]'] = 'retry';
+        $data['data[0][value]'] = 'retry - 1';
+
+        $result = update_remote_mdl_table('forum_posts', $params, $data);
 
         forum_change_discussionid($post->id, $newid);
 
@@ -810,7 +828,22 @@ if ($mform_post->is_cancelled()) {
         if (($forum->type == 'single') && ($updatepost->parent == '0')){ // updating first post of single discussion type -> updating forum intro
             $forum->intro = $updatepost->message;
             $forum->timemodified = time();
-            $DB->update_record("forum", $forum);
+            $params = array();
+            $params['params[0][name]'] = 'userid';
+            $params['params[0][op]'] = '=';
+            $params['params[0][value]'] = $userid;
+            $params['params[1][name]'] = 'forum';
+            $params['params[1][op]'] = '=';
+            $params['params[1][value]'] = $forum->id;
+            $params['params[2][name]'] = 'retry';
+            $params['params[2][op]'] = '>';
+            $params['params[2][value]'] = $try;
+
+            $data = array();
+            $data['data[0][name]'] = 'retry';
+            $data['data[0][value]'] = 'retry - 1';
+
+            $result = update_remote_mdl_table('forum', $params, $data);
         }
 
         if ($realpost->userid == $USER->id) {

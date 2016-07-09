@@ -311,7 +311,6 @@ function forum_rss_get_group_sql($cm, $groupmode, $currentgroup, $modcontext = n
 function forum_rss_feed_contents($forum, $sql, $params, $context)
 {
     global $CFG, $DB, $USER;
-    $db
 
     $status = true;
 
