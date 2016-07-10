@@ -112,7 +112,7 @@ function get_remote_course_module_by_instance($modulename, $instace, $options = 
         )
     ));
 
-    return $result->cm;
+    return $result;
 }
 
 function get_remote_course_module_by_cmid($modulename, $cmid, $options = array())
