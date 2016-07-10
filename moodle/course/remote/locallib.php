@@ -103,7 +103,7 @@ function get_remote_url_content($urlid, $options = [])
 
 function get_remote_course_module_by_instance($modulename, $instace, $options = array())
 {
-    return moodle_webservice_client(array_merge($options,
+    $result = moodle_webservice_client(array_merge($options,
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN_M,
@@ -111,6 +111,8 @@ function get_remote_course_module_by_instance($modulename, $instace, $options = 
             'params' => array('module' => $modulename, 'instance' => $instace)
         )
     ));
+
+    return $result->cm;
 }
 
 function get_remote_course_module_by_cmid($modulename, $cmid, $options = array())
