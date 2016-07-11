@@ -21,6 +21,8 @@ require_capability('mod/assign:view', $context);
 
 if (!has_capability('moodle/course:manageactivities', $context)) {
     $CFG->nonajax = false;
+} else {
+    $CFG->nonajax = true;
 }
 
 $assign = new assign($context, $cm, $course);

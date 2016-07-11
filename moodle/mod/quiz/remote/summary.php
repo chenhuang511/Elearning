@@ -61,6 +61,12 @@ if ($attemptobj->is_preview_user()) {
     navigation_node::override_active_url($attemptobj->start_attempt_url());
 }
 
+if (!has_capability('moodle/course:manageactivities', $context)) {
+    $CFG->nonajax = false;
+} else {
+    $CFG->nonajax = true;
+}
+
 // Check access.
 $accessmanager = $attemptobj->get_access_manager(time());
 $accessmanager->setup_attempt_page($PAGE);

@@ -18,7 +18,6 @@
 
 define('QUESTIONNAIRE_RESETFORM_RESET', 'questionnaire_reset_data_');
 define('QUESTIONNAIRE_RESETFORM_DROP', 'questionnaire_drop_questionnaire_');
-require_once($CFG->dirroot.'./mod/questionnaire/remote/locallib.php');
 
 function questionnaire_supports($feature) {
     switch($feature) {
@@ -516,11 +515,11 @@ function questionnaire_extend_settings_navigation(settings_navigation $settings,
     $currentgroupid = optional_param('group', 0, PARAM_INT); // Group id.
 
     require_once($CFG->dirroot.'/mod/questionnaire/questionnaire.class.php');
+    require_once($CFG->dirroot.'./mod/questionnaire/remote/locallib.php');
 
     $context = $PAGE->cm->context;
     $cmid = $PAGE->cm->id;
     $cm = $PAGE->cm;
-    var_dump($cm->instance);
     $course = $PAGE->course;
 
     if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){

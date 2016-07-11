@@ -160,6 +160,8 @@ if( $bigbluebuttonbn->newwindow == 1 ) {
 
 if (!has_capability('moodle/course:manageactivities', $context)) {
     $CFG->nonajax = false;
+} else {
+    $CFG->nonajax = true;
 }
 
 // Validate if the user is in a role allowed to join

@@ -43,6 +43,12 @@ $course = get_local_course_record($quiz->course);
 $cm = get_remote_course_module_by_instance("quiz", $quiz->id)->cm;
 $attemptobj = new quiz_attempt($attempt, $quiz, $cm, $course, false, true);
 
+if (!has_capability('moodle/course:manageactivities', $context)) {
+    $CFG->nonajax = false;
+} else {
+    $CFG->nonajax = true;
+}
+
 $page = $attemptobj->force_page_number_into_range($page);
 $PAGE->set_url($attemptobj->attempt_url(null, $page)); // @TODO: set lai
 

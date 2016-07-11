@@ -50,6 +50,8 @@ $canpreview = has_capability('mod/quiz:preview', $context);
 
 if (!has_capability('moodle/course:manageactivities', $context)) {
     $CFG->nonajax = false;
+} else {
+    $CFG->nonajax = true;
 }
 
 // Create an object to manage all the other (non-roles) access rules.
