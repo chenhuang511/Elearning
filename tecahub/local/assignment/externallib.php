@@ -711,6 +711,73 @@ class local_mod_assign_external extends external_api {
             ));
     }
 
+    /**
+     * Describes the parameters for create_onlinetext_submission_parameters
+     *
+     * @return external_external_function_parameters
+     */
+    public static function create_onlinetext_submission_parameters(){
+        return new external_function_parameters(
+            array(
+                'assignment' => new external_value(PARAM_INT, 'assignment id'),
+                'submission' => new external_value(PARAM_INT, 'submission id'),
+                'onlinetext' => new external_value(PARAM_RAW, 'online text'),
+                'onlineformat' => new external_value(PARAM_INT, 'online text format'),
+            )  
+        );
+    }
+
+    /**
+     * Returns id of new onlinetext just created.
+     *
+     * @param int $assignment   -   The id of asssignment
+     * @param int $submission   -   The id of submission
+     * @param string $onlinetext -    The content of onlinetext
+     * @param int $onlineformat -   The format of onlinetext
+     * 
+     * @return array of warnings and grades information
+     */
+    public static function create_onlinetext_submission($assignment, $submission, $onlinetext, $onlineformat){
+
+        global $DB;
+        
+        //build result
+        $result = array();
+        $warnings = array();
+        
+        //Validate param
+        $params = self::validate_parameters(self::create_onlinetext_submission_parameters(),
+            array(
+                'assignment' => $assignment,
+                'submission' => $submission,
+                'onlinetext' => $onlinetext,
+                'onlineformat' => $onlineformat
+            )
+        );
+
+        $onlinetextsubmission = (object)$params;
+        $result['oid'] = $DB->insert_record('assignsubmission_onlinetext', $onlinetextsubmission);
+        
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    /**
+     * Describes the create_onlinetext_submission_parameters return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function create_onlinetext_submission_returns(){
+        return new external_single_structure(
+            array(
+                'oid' =>  new external_value(PARAM_INT, 'The id of onlinetext'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+    
     // Get assignfeedback comment
     public static function get_assignfeedback_comments_parameters(){
         return new external_function_parameters(
@@ -1416,7 +1483,7 @@ class local_mod_assign_external extends external_api {
                 'userid' => $userid,
                 'plugindata' => $plugindata));
 
-        $USER->id = $params['userid'];
+        $USER->id = $userid;
 
         $cm = get_coursemodule_from_instance('assign', $params['assignmentid'], 0, false, MUST_EXIST);
 
@@ -2040,21 +2107,27 @@ class local_mod_assign_external extends external_api {
     public static function create_fakefile_on_hub_parameters(){
         return new external_function_parameters(
             array(
-                'contenthash' => new external_value(PARAM_RAW, 'content hash'),
-                'pathnamehash' => new external_value(PARAM_RAW, 'pathname hash'),
-                'instanceid' => new external_value(PARAM_INT, 'instance id'),
-                'component' => new external_value(PARAM_RAW, 'component'),
-                'filearea' => new external_value(PARAM_RAW, 'filearea'),
-                'itemid' => new external_value(PARAM_INT, 'item id'),
-                'filepath' => new external_value(PARAM_RAW, 'filepath'),
-                'filename' => new external_value(PARAM_RAW, 'filename'),
-                'userid' => new external_value(PARAM_INT, 'userid'),
-                'filesize' => new external_value(PARAM_INT, 'filesize '),
-                'mimetype' => new external_value(PARAM_RAW, 'mimetype'),
-                'author' => new external_value(PARAM_RAW, 'author'),
-                'license' => new external_value(PARAM_RAW, 'license'),
-                'timecreated' => new external_value(PARAM_INT, 'timecreated'),
-                'timemodified' => new external_value(PARAM_INT, 'timemodified'),
+                'fakefiles' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'contenthash' => new external_value(PARAM_RAW, 'content hash'),
+                            'pathnamehash' => new external_value(PARAM_RAW, 'pathname hash'),
+                            'instanceid' => new external_value(PARAM_INT, 'instance id'),
+                            'component' => new external_value(PARAM_RAW, 'component'),
+                            'filearea' => new external_value(PARAM_RAW, 'filearea'),
+                            'itemid' => new external_value(PARAM_INT, 'item id'),
+                            'filepath' => new external_value(PARAM_RAW, 'filepath'),
+                            'filename' => new external_value(PARAM_RAW, 'filename'),
+                            'userid' => new external_value(PARAM_INT, 'userid'),
+                            'filesize' => new external_value(PARAM_INT, 'filesize '),
+                            'mimetype' => new external_value(PARAM_RAW, 'mimetype'),
+                            'author' => new external_value(PARAM_RAW, 'author', VALUE_OPTIONAL),
+                            'license' => new external_value(PARAM_RAW, 'license', VALUE_OPTIONAL),
+                            'timecreated' => new external_value(PARAM_INT, 'timecreated'),
+                            'timemodified' => new external_value(PARAM_INT, 'timemodified'),
+                        )
+                    )
+                )
             )
         );
     }
@@ -2065,9 +2138,7 @@ class local_mod_assign_external extends external_api {
      * @param array params about information file
      * @return idnumber of file just created
      */
-    public static function create_fakefile_on_hub($contenthash, $pathnamehash, $instanceid, $component, 
-                                                  $filearea, $itemid, $filepath, $filename, $userid, 
-                                                  $filesize, $mimetype, $author, $license, $timecreated, $timemodified){
+    public static function create_fakefile_on_hub($fakefiles){
         global $DB;
 
         $warnings = array();
@@ -2076,44 +2147,20 @@ class local_mod_assign_external extends external_api {
 
         //Validate param
         $params = self::validate_parameters(self::create_fakefile_on_hub_parameters(), array(
-            'contenthash' => $contenthash,
-            'pathnamehash' => $pathnamehash,
-            'instanceid' => $instanceid,
-            'component' => $component,
-            'filearea' => $filearea,
-            'itemid' => $itemid,
-            'filepath' => $filepath,
-            'filename' => $filename,
-            'userid' => $userid,
-            'filesize' => $filesize,
-            'mimetype' => $mimetype,
-            'author' => $author,
-            'license' => $license,
-            'timecreated' => $timecreated,
-            'timemodified' => $timemodified,
+            'fakefiles' => $fakefiles
         ));
         
-        $context = context_module::instance($params['instanceid']);
-        
-        $fakefile = new stdClass();
-        $fakefile->contenthash = $params['contenthash'];
-        $fakefile->pathnamehash = $params['pathnamehash'];
-        $fakefile->contextid = $context->id;
-        $fakefile->component = $params['component'];
-        $fakefile->filearea = $params['filearea'];
-        $fakefile->itemid = $params['itemid'];
-        $fakefile->filepath = $params['filepath'];
-        $fakefile->filename = $params['filename'];
-        $fakefile->userid = $params['userid'];
-        $fakefile->filesize = $params['filesize'];
-        $fakefile->mimetype = $params['mimetype'];
-        $fakefile->author = $params['author'];
-        $fakefile->source = $params['source'];
-        $fakefile->license = $params['license'];
-        $fakefile->timecreated = $params['timecreated'];
-        $fakefile->timemodified = $params['timemodified'];
+        foreach ($params['fakefiles'] as $fakefile){
+            $fakefile = (object)$fakefile;
+            
+            $context = $DB->get_record('context', array('instanceid' => $fakefile->instanceid));
 
-        $result['fid'] = $DB->insert_record('files', $fakefile);
+            $fakefile->contextid = $context->id;
+            $fakefile->source = $fakefile->filename;
+            unset($fakefiles->instanceid);
+
+            $result['fakefile'][]['fid'] = $DB->insert_record('files', $fakefile);
+        }
 
         $result['warnings'] = $warnings;
 
@@ -2129,7 +2176,13 @@ class local_mod_assign_external extends external_api {
     public static function create_fakefile_on_hub_returns(){
         return new external_single_structure(
             array(
-                'fid' => new external_value(PARAM_INT, 'file ID'),
+                'fakefile' =>  new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'fid' => new external_value(PARAM_INT, 'file ID')
+                        )
+                    )
+                ), 
                 'warnings' => new external_warnings()
             )
         );
