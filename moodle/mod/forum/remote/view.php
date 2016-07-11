@@ -22,7 +22,7 @@
  */
 
 require_once(dirname(__FILE__) . '/../../../config.php');
-require_once('/../lib.php');
+require_once('../lib.php');
 require_once($CFG->dirroot . '/mod/forum/remote/locallib.php');
 require_once($CFG->dirroot . '/course/remote/locallib.php');
 require_once($CFG->libdir . '/completionlib.php');
@@ -75,7 +75,7 @@ if ($id) {
     $prs = array();
     $prs['parameters[0][name]'] = "id";
     $prs['parameters[0][value]'] = $f;
-    if (!$forum = get_remote_forum_by_id($prs)) {
+    if (!$forum = get_remote_forum_by($prs)) {
         print_error('invalidforumid', 'forum');
     }
     

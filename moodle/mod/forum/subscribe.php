@@ -189,7 +189,7 @@ if ($issubscribed) {
         $PAGE->set_heading($course->fullname);
         echo $OUTPUT->header();
 
-        $viewurl = new moodle_url('/mod/forum/view.php', array('f' => $id));
+        $viewurl = new moodle_url('/mod/forum/remote/view.php', array('f' => $id));
         if ($discussionid) {
             $a = new stdClass();
             $a->forum = format_string($forum->name);
