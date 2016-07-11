@@ -259,7 +259,7 @@ class local_questionnaire_external extends external_api {
         $params = self::validate_parameters(self::get_questionnaire_quest_choice_by_condition_parameters(),
             array('condition' => $condition, 'sort' => $sort));
 
-        return $DB->get_records_select('questionnaire_response', $params['condition'], null, $params['sort']);
+        return $DB->get_records_select('questionnaire_quest_choice', $params['condition'], null, $params['sort']);
     }
 
     public static function get_questionnaire_quest_choice_by_condition_returns()
@@ -573,7 +573,7 @@ class local_questionnaire_external extends external_api {
                     'id' => new external_value(PARAM_INT, 'question id'),
                     'q_type' => new external_value(PARAM_INT, 'question_type id'),
                     'content' => new external_value(PARAM_RAW, 'content'),
-                    'choice_id' => new external_value(PARAM_INT, 'choice id'),
+                    'choice_id' => new external_value(PARAM_TEXT, 'choice id'),
                 )
             )
         );
@@ -776,9 +776,9 @@ class local_questionnaire_external extends external_api {
                     'qid' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
                     'precise' => new external_value(PARAM_INT, 'question_id'),
                     'cid' => new external_value(PARAM_INT, 'question_id'),
-                    'arank' => new external_value(PARAM_INT, 'content'),
                     'content' => new external_value(PARAM_RAW, 'content'),
                     'ccontent' => new external_value(PARAM_RAW, 'value'),
+                    'arank' => new external_value(PARAM_INT, 'content'),
                 )
             )
         );
@@ -1150,7 +1150,7 @@ class local_questionnaire_external extends external_api {
         return new external_multiple_structure(
             new external_single_structure(
                 array(
-                    'choice_id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
+                    'choice_id' => new external_value(PARAM_TEXT, 'Standard Moodle primary key.'),
                     'num' => new external_value(PARAM_INT, 'question_id'),
                 )
             )

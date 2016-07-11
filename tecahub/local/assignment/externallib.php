@@ -2382,7 +2382,9 @@ class local_mod_assign_external extends external_api {
         return new external_warnings();
     }
 
-
+    /**
+     * @return external_function_parameters
+     */
     public static function get_raw_data_query_db_parameters() {
         return new external_function_parameters (
             array(
@@ -2401,6 +2403,15 @@ class local_mod_assign_external extends external_api {
         );
     }
 
+    /**
+     * Get raw data via ajax
+     * @param $sql
+     * @param $param
+     * @param $pagestart
+     * @param $pagesize
+     * @return array
+     * @throws invalid_parameter_exception
+     */
     public static function get_raw_data_query_db($sql, $param, $pagestart, $pagesize) {
         global $DB;
 
@@ -2417,6 +2428,9 @@ class local_mod_assign_external extends external_api {
         return $rawdata;
     }
 
+    /**
+     * @return external_multiple_structure
+     */
     public static function get_raw_data_query_db_returns() {
         return new external_multiple_structure(
             new external_single_structure(

@@ -452,16 +452,16 @@ function can_update_moduleinfo($cm) {
     $context = context_module::instance($cm->id);
     require_capability('moodle/course:manageactivities', $context);
 
-    // Check module exists.
-    $module = $DB->get_record('modules', array('id' => $cm->module), '*', MUST_EXIST);
-
     if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+        // Check module exists.
+        $module = $DB->get_record('modules', array('id' => $cm->module), '*', MUST_EXIST);
         // Check the moduleinfo exists.
         $data = $DB->get_record($module->name, array('id' => $cm->instance), '*', MUST_EXIST);
 
         // Check the course section exists.
         $cw = $DB->get_record('course_sections', array('id' => $cm->section), '*', MUST_EXIST);
     } else {
+        $module = get_remote_modules_by_id($cm->module);
         $data = get_remote_course_module_by_instance($module->name, $cm->instance)->cm;
         $cw = get_remote_course_section_nav_by_section($cm->section);
     }

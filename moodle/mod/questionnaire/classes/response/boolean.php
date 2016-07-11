@@ -85,7 +85,7 @@ class boolean extends base {
         } else {
             if (!empty($rids)) {
                 $rsql = implode(',', $rids);
-                $rsql = ' AND response_id ' . $rsql;
+                $rsql = ' AND response_id IN (' . $rsql . ')';
             }
             $sql_select = 'question_id= ' . $this->question->id . $rsql;
             return get_remote_questionnaire_bool_count_choice($sql_select);

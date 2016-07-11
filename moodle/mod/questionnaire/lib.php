@@ -18,6 +18,7 @@
 
 define('QUESTIONNAIRE_RESETFORM_RESET', 'questionnaire_reset_data_');
 define('QUESTIONNAIRE_RESETFORM_DROP', 'questionnaire_drop_questionnaire_');
+require_once($CFG->dirroot.'./mod/questionnaire/remote/locallib.php');
 
 function questionnaire_supports($feature) {
     switch($feature) {
@@ -519,6 +520,7 @@ function questionnaire_extend_settings_navigation(settings_navigation $settings,
     $context = $PAGE->cm->context;
     $cmid = $PAGE->cm->id;
     $cm = $PAGE->cm;
+    var_dump($cm->instance);
     $course = $PAGE->course;
 
     if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
@@ -533,7 +535,6 @@ function questionnaire_extend_settings_navigation(settings_navigation $settings,
 
     $courseid = $course->id;
     $questionnaire = new questionnaire(0, $questionnaire, $course, $cm);
-
     if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
         if ($owner = $DB->get_field('questionnaire_survey', 'owner', array('id' => $questionnaire->sid))) {
             $owner = (trim($owner) == trim($courseid));

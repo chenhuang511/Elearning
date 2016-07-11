@@ -98,6 +98,14 @@ $functions = array(
 		'type'		    => 'read',
 		'ajax'		    => true
 	),
+	'local_get_modules_by_id' => array(
+		'classname'     => 'local_course_external',
+		'methodname'    => 'get_modules_by_id',
+		'classpath'     => 'local/course/externallib.php',
+		'description'   => 'Get name of modules by id',
+		'type'		    => 'read',
+		'ajax'		    => true
+	),
 	'local_get_remote_course_section_nav' => array(
 		'classname'     => 'local_course_external',
 		'methodname'    => 'get_remote_course_section_nav',

@@ -659,6 +659,52 @@ class local_course_external extends external_api
     {
         return new external_value(PARAM_RAW, 'name');
     }
+    /**
+     * Get modules by id
+     *
+     * @param $id
+     * @return mixed
+     * @throws invalid_parameter_exception
+     */
+    public static function get_modules_by_id_parameters()
+    {
+        return new external_function_parameters(
+            array('id' => new external_value(PARAM_INT, 'module id')
+            )
+        );
+    }
+
+    public static function get_modules_by_id($id)
+    {
+        global $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::get_modules_by_id_parameters(),
+            array('id' => $id)
+        );
+
+        return $module = $DB->get_record('modules', array('id' => $params['id']), '*', MUST_EXIST);
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
+    public static function get_modules_by_id_returns()
+    {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'course id'),
+                'name' => new external_value(PARAM_TEXT, 'course short name'),
+                'cron' => new external_value(PARAM_INT, 'category id'),
+                'lastcron' => new external_value(PARAM_INT, 'full name'),
+                'search' => new external_value(PARAM_TEXT, 'short name'),
+                'visible' => new external_value(PARAM_INT, 'short name'),
+            )
+        );
+    }
 
     public static function get_remote_course_section_nav_parameters()
     {

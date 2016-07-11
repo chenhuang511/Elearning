@@ -133,7 +133,7 @@ if (!empty($add)) {
         // Check the course exists.
         $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
     } else {
-        $cm = get_remote_course_module_by_cmid($data->modulename, $update);
+        $cm = get_remote_course_module($update);
         $course = get_local_course_record($cm->course);
     }
 
@@ -143,9 +143,8 @@ if (!empty($add)) {
     require_login($course, false, $cm); // needed to setup proper $COURSE
 
     list($cm, $context, $module, $data, $cw) = can_update_moduleinfo($cm);
-
     $data->coursemodule       = $cm->id;
-    $data->section            = $cw->section;  // The section number itself - relative!!! (section column in course_sections)
+    $data->section            = $cw->sectionnumber;  // The section number itself - relative!!! (section column in course_sections)
     $data->visible            = $cm->visible; //??  $cw->visible ? $cm->visible : 0; // section hiding overrides
     $data->cmidnumber         = $cm->idnumber;          // The cm IDnumber
     $data->groupmode          = groups_get_activity_groupmode($cm); // locked later if forced
