@@ -226,5 +226,13 @@ $functions = array(
 		'type'		  => 'write',
 		'ajax'		  => true
 	),
+	'local_mod_assign_get_raw_data_query_db' => array(
+		'classname'	  => 'local_mod_assign_external',
+		'methodname'  => 'get_raw_data_query_db',
+		'classpath'	  => 'local/assignment/externallib.php',
+		'description' => 'Get raw data via ajax',
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 );
 
