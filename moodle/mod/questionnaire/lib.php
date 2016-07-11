@@ -520,7 +520,6 @@ function questionnaire_extend_settings_navigation(settings_navigation $settings,
     $context = $PAGE->cm->context;
     $cmid = $PAGE->cm->id;
     $cm = $PAGE->cm;
-    var_dump($cm->instance);
     $course = $PAGE->course;
 
     if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
