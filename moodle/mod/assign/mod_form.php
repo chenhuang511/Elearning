@@ -65,7 +65,11 @@ class mod_assign_mod_form extends moodleform_mod {
 
         $ctx = null;
         if ($this->current && $this->current->coursemodule) {
-            $cm = get_coursemodule_from_instance('assign', $this->current->id, 0, false, MUST_EXIST);
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+                $cm = get_coursemodule_from_instance('assign', $this->current->id, 0, false, MUST_EXIST);
+            } else {
+                $cm = get_remote_course_module_by_instance('assign', $this->current->id);
+            }
             $ctx = context_module::instance($cm->id);
         }
         $assignment = new assign($ctx, null, null);
@@ -277,7 +281,11 @@ class mod_assign_mod_form extends moodleform_mod {
 
         $ctx = null;
         if ($this->current && $this->current->coursemodule) {
-            $cm = get_coursemodule_from_instance('assign', $this->current->id, 0, false, MUST_EXIST);
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+                $cm = get_coursemodule_from_instance('assign', $this->current->id, 0, false, MUST_EXIST);
+            } else {
+                $cm = get_remote_course_module_by_instance('assign', $this->current->id);
+            }
             $ctx = context_module::instance($cm->id);
         }
         $assignment = new assign($ctx, null, null);
