@@ -462,7 +462,7 @@ function can_update_moduleinfo($cm) {
         // Check the course section exists.
         $cw = $DB->get_record('course_sections', array('id' => $cm->section), '*', MUST_EXIST);
     } else {
-        $data = get_remote_course_module_by_instance($module->modname, $cm->instance)->cm;
+        $data = get_remote_course_module_by_instance($module->name, $cm->instance)->cm;
         $cw = get_remote_course_section_nav_by_section($cm->section);
     }
     return array($cm, $context, $module, $data, $cw);
