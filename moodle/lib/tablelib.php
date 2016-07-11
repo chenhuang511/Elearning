@@ -23,6 +23,7 @@
  */
 
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+require_once($CFG->dirroot . '/mod/assign/remote/locallib.php');
 defined('MOODLE_INTERNAL') || die();
 
 /**#@+
@@ -1625,7 +1626,11 @@ class table_sql extends flexible_table {
                     $params["param[$index][value]"]=$val;
                     $index++;
                 }
-                $this->rawdata = get_remote_report_get_rowdata ($sql, $params, $this->get_page_start(), $this->get_page_size());
+                if ($modname === 'quiz') {
+                    $this->rawdata = get_remote_report_get_rowdata($sql, $params, $this->get_page_start(), $this->get_page_size());
+                } elseif ($modname === 'assign') {
+                    $this->rawdata = get_remote_assign_raw_data_query_db($sql, $params, $this->get_page_start(), $this->get_page_size());
+                }
 
                 $mapusers = array();
                 foreach ($oldparams as $k => $v) {
@@ -1636,9 +1641,7 @@ class table_sql extends flexible_table {
                 }
                 foreach ($this->rawdata as &$row) {
                     if(isset($mapusers[$row->userid])) {
-                        if (empty($row->id)) {
-                            $row->id = $mapusers[$row->userid];
-                        }
+                        $row->id = $mapusers[$row->userid];
                         $row->userid = $mapusers[$row->userid];
                     }
                 }
