@@ -416,41 +416,18 @@ function get_remote_submission_by_id($sid){
  * @return bool . check if success
  */
 function save_remote_submission($assignmentid, $userid, $data){
-
-    if ($data->onlinetext_editor){
-        $onlinetext_editor = $data->onlinetext_editor;
-        $resp = moodle_webservice_client(
-            array(
-                'domain' => HUB_URL,
-                'token' => HOST_TOKEN,
-                'function_name' => 'local_mod_assign_save_remote_submission',
-                'params' => array(
-                    'assignmentid'  =>  $assignmentid,
-                    'userid'        =>  $userid,
-                    'plugindata[onlinetext_editor][text]' => $onlinetext_editor[text],
-                    'plugindata[onlinetext_editor][format]' => (int)$onlinetext_editor[format],
-                    'plugindata[onlinetext_editor][itemid]' => $onlinetext_editor[itemid]
-                )
-            ), false
-        );
-    }
-    if ($data->files_filemanager){
-        $resp = moodle_webservice_client(
-            array(
-                'domain' => HUB_URL,
-                'token' => HOST_TOKEN,
-                'function_name' => 'local_mod_assign_save_remote_submission',
-                'params' => array(
-                    'assignmentid'  =>  $assignmentid,
-                    'userid'        =>  $userid,
-                    'plugindata[files_filemanager]' => $data->files_filemanager,
-                    'plugindata[id]' => $data->id,
-                    'plugindata[userid]' => $data->userid,
-                    'plugindata[files]' => $data->files
-                )
-            ), false
-        );
-    }
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_save_remote_submission',
+            'params' => array(
+                'assignmentid' => $assignmentid,
+                'userid' => $userid,
+                'plugindata' => $data,
+            )
+        ), false
+    );
 
     if (empty($resp))
         return true;
@@ -478,35 +455,38 @@ function save_remote_submission($assignmentid, $userid, $data){
  *
  * @return int $resp->fid . the new fakefile id just created
  */
-function create_fakefile_on_hub($fakefile){
-    $rparams = array(
-        'contenthash'       =>  $fakefile->contenthash,
-        'pathnamehash'      =>  $fakefile->pathnamehash,
-        'instanceid'        =>  $fakefile->instanceid,
-        'component'         =>  $fakefile->component,
-        'filearea'          =>  $fakefile->filearea,
-        'itemid'            =>  $fakefile->itemid,
-        'filepath'          =>  $fakefile->filepath,
-        'filename'          =>  $fakefile->filename,
-        'userid'            =>  $fakefile->userid,
-        'filesize'          =>  $fakefile->filesize,
-        'mimetype'          =>  $fakefile->mimetype,
-        'author'            =>  $fakefile->author,
-        'license'           =>  $fakefile->license,
-        'timecreated'       =>  $fakefile->timecreated,
-        'timemodified'      =>  $fakefile->timemodified,
-    );
+function create_fakefile_on_hub($fakefiles){
+    $rparams = array();
+
+    foreach ($fakefiles as $fakefile){
+        $rparams[] = array(
+            'contenthash'       =>  $fakefile->contenthash,
+            'pathnamehash'      =>  $fakefile->pathnamehash,
+            'instanceid'        =>  $fakefile->instanceid,
+            'component'         =>  $fakefile->component,
+            'filearea'          =>  $fakefile->filearea,
+            'itemid'            =>  $fakefile->itemid,
+            'filepath'          =>  $fakefile->filepath,
+            'filename'          =>  $fakefile->filename,
+            'userid'            =>  $fakefile->userid,
+            'filesize'          =>  $fakefile->filesize,
+            'mimetype'          =>  $fakefile->mimetype,
+            'author'            =>  $fakefile->author,
+            'license'           =>  $fakefile->license,
+            'timecreated'       =>  $fakefile->timecreated,
+            'timemodified'      =>  $fakefile->timemodified,
+        );
+    }
 
     $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_assign_create_fakefile_on_hub',
-            'params' => $rparams,
+            'params' => array('fakefiles' => $rparams),
         ), false
     );
-
-    return $resp->fid;
+    return $resp;
 }
 
 /**
@@ -645,6 +625,32 @@ function update_remote_user_flags($assignmentid, $userflags) {
             'params' => array(
                 'assignmentid' => $assignmentid,
                 'userflags' => $userflags,
+            ),
+        ), false
+    );
+    return $resp;
+}
+
+/**
+ * Copy the assignsubmission_onlinetext record
+ * @param int $onlinetextsubmission['assignment']   -   The id of assignment
+ * @param int $onlinetextsubmission['submission']   -   The id of submission
+ * @param string $onlinetextsubmission['onlinetext']-   The content of onlinetext
+ * @param int $onlinetextsubmission['onlineformat'] -   The onlinetext format
+ *
+ * @return false|mixed
+ */
+function create_onlinetext_submission($onlinetextsubmission){
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_create_onlinetext_submission',
+            'params' => array(
+                'assignment' => $onlinetextsubmission->assignment,
+                'submission' => $onlinetextsubmission->submission,
+                'onlinetext' => $onlinetextsubmission->onlinetext,
+                'onlineformat' => $onlinetextsubmission->onlineformat,
             ),
         ), false
     );
