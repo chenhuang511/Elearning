@@ -104,12 +104,21 @@ class api {
     protected static function validate_course_module($cmmixed, $throwexception = true) {
         $cm = $cmmixed;
         if (!is_object($cm)) {
-            $cmrecord = get_coursemodule_from_id(null, $cmmixed);
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+                $cmrecord = get_coursemodule_from_id(null, $cmmixed);
+            } else {
+                $cmrecord = get_remote_course_module_by_instance(null, $cmmixed);
+            }
             $modinfo = get_fast_modinfo($cmrecord->course);
             $cm = $modinfo->get_cm($cmmixed);
         } else if (!$cm instanceof cm_info) {
             // Assume we got a course module record.
-            $modinfo = get_fast_modinfo($cm->course);
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+                $modinfo = get_fast_modinfo($cm->course);
+            } else {
+                $course = get_local_course_record($cm->course);
+                $modinfo = get_fast_modinfo($course);
+            }
             $cm = $modinfo->get_cm($cm->id);
         }
 
@@ -995,7 +1004,11 @@ class api {
         static::require_enabled();
         $cm = $cmorid;
         if (!is_object($cmorid)) {
-            $cm = get_coursemodule_from_id('', $cmorid, 0, true, MUST_EXIST);
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+                $cm = get_coursemodule_from_id('', $cmorid, 0, true, MUST_EXIST);
+            } else {
+                $cm = get_remote_course_module_by_cmid('', $cmorid);
+            }
         }
 
         // Check the user have access to the course module.

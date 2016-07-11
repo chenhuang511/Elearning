@@ -422,6 +422,7 @@ function set_moduleinfo_defaults($moduleinfo) {
 function can_add_moduleinfo($course, $modulename, $section) {
     global $DB;
 
+
     $module = $DB->get_record('modules', array('name'=>$modulename), '*', MUST_EXIST);
 
     $context = context_course::instance($course->id);
@@ -452,14 +453,18 @@ function can_update_moduleinfo($cm) {
     require_capability('moodle/course:manageactivities', $context);
 
     // Check module exists.
-    $module = $DB->get_record('modules', array('id'=>$cm->module), '*', MUST_EXIST);
+    $module = $DB->get_record('modules', array('id' => $cm->module), '*', MUST_EXIST);
 
-    // Check the moduleinfo exists.
-    $data = $DB->get_record($module->name, array('id'=>$cm->instance), '*', MUST_EXIST);
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+        // Check the moduleinfo exists.
+        $data = $DB->get_record($module->name, array('id' => $cm->instance), '*', MUST_EXIST);
 
-    // Check the course section exists.
-    $cw = $DB->get_record('course_sections', array('id'=>$cm->section), '*', MUST_EXIST);
-
+        // Check the course section exists.
+        $cw = $DB->get_record('course_sections', array('id' => $cm->section), '*', MUST_EXIST);
+    } else {
+        $data = get_remote_course_module_by_instance($module->modname, $cm->instance)->cm;
+        $cw = get_remote_course_section_nav_by_section($cm->section);
+    }
     return array($cm, $context, $module, $data, $cw);
 }
 
