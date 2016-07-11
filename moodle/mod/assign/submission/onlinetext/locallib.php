@@ -223,6 +223,10 @@ class assign_submission_onlinetext extends assign_submission_plugin {
             return false;
         }
 
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            return true;
+        }
+
         $params = array(
             'context' => context_module::instance($this->assignment->get_course_module()->id),
             'courseid' => $this->assignment->get_course()->id,
@@ -608,7 +612,12 @@ class assign_submission_onlinetext extends assign_submission_plugin {
         if ($onlinetextsubmission) {
             unset($onlinetextsubmission->id);
             $onlinetextsubmission->submission = $destsubmission->id;
-            $DB->insert_record('assignsubmission_onlinetext', $onlinetextsubmission);
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $DB->insert_record('assignsubmission_onlinetext', $onlinetextsubmission);
+            }
+            else{
+                create_onlinetext_submission($onlinetextsubmission);
+            }
         }
         return true;
     }

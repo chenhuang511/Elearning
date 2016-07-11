@@ -219,6 +219,25 @@ class assign_submission_file extends assign_submission_plugin {
                                      false);
 
         $count = $this->count_files($submission->id, ASSIGNSUBMISSION_FILE_FILEAREA);
+        
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $condition = array('component' => 'assignsubmission_file', 'filearea'=> ASSIGNSUBMISSION_FILE_FILEAREA, 'itemid' => $submission->id);
+            $fakefiles = $DB->get_records('files', $condition);
+
+            $rusers = get_remote_mapping_user();
+            $condition['userid'] = $rusers[0]->id;
+
+            delete_fakefile_on_hub($condition);
+
+            foreach ($fakefiles as $fakefile) {
+                $context = $DB->get_record('context', array('id' => $fakefile->contextid));
+
+                $fakefile->userid = $rusers[0]->id;
+                $fakefile->instanceid = $context->instanceid;
+            }
+
+            create_fakefile_on_hub($fakefiles);
+        }
 
         $params = array(
             'context' => context_module::instance($this->assignment->get_course_module()->id),
@@ -257,31 +276,7 @@ class assign_submission_file extends assign_submission_plugin {
             'groupid' => $groupid,
             'groupname' => $groupname
         );
-
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-            $condition = array('component' => 'assignsubmission_file', 'filearea'=> ASSIGNSUBMISSION_FILE_FILEAREA, 'itemid' => $submission->id);
-            $fakefiles = $DB->get_records('files', $condition);
-
-            $rusers = get_remote_mapping_user();
-            $condition['userid'] = $rusers[0]->id;
-
-            delete_fakefile_on_hub($condition);
-
-            if ($fakefiles){
-                foreach ($fakefiles as $fakefile){
-                    if (!$fakefile->source){
-                        continue;
-                    }
-                    $context = $DB->get_record('context', array('id' => $fakefile->contextid));
-
-                    $fakefile->userid = $rusers[0]->id;
-                    $fakefile->instanceid = $context->instanceid;
-                    
-                    create_fakefile_on_hub($fakefile);
-                }
-            }
-        }
-
+        
         if ($filesubmission) {
             $filesubmission->numfiles = $this->count_files($submission->id,
                                                            ASSIGNSUBMISSION_FILE_FILEAREA);
@@ -531,12 +526,13 @@ class assign_submission_file extends assign_submission_plugin {
         foreach ($files as $file) {
             $fieldupdates = array('itemid' => $destsubmission->id);
             $fs->create_file_from_storedfile($fieldupdates, $file);
-        }
-
+        }                               
+        
         // Copy the assignsubmission_file record.
         if ($filesubmission = $this->get_file_submission($sourcesubmission->id)) {
             unset($filesubmission->id);
             $filesubmission->submission = $destsubmission->id;
+            var_dump($filesubmission);die;
             $DB->insert_record('assignsubmission_file', $filesubmission);
         }
         return true;

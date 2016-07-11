@@ -3254,7 +3254,7 @@ class assign {
         if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
             $flags = $DB->get_record('assign_user_flags', $params);
         }
-        else if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+        else{
             unset($params['userid']);
             $params['useremail'] = $this->get_email_from_userid($userid);
             
@@ -4220,7 +4220,9 @@ class assign {
             $o .= $this->get_renderer()->footer(true);
         }
 
-        \mod_assign\event\submission_form_viewed::create_from_user($this, $user)->trigger();
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            \mod_assign\event\submission_form_viewed::create_from_user($this, $user)->trigger();
+        }
 
         return $o;
     }
@@ -4565,7 +4567,7 @@ class assign {
             );
             $submissionstatement = format_text($adminconfig->submissionstatement, FORMAT_MOODLE, $options);
         }
-
+        
         if ($mform == null) {
             $mform = new mod_assign_confirm_submission_form(null, array($requiresubmissionstatement,
                                                                         $submissionstatement,
@@ -4652,7 +4654,7 @@ class assign {
             $remotesubmission = get_remote_get_submission_status($instance->id, $ruser['0']->id)->lastattempt;
             unset($remotesubmission->submission->plugins);
             $submissionplugins = $this->get_submission_plugins();
-            
+
             $submissionstatus = new assign_submission_status($instance->allowsubmissionsfromdate,
                 $instance->alwaysshowdescription,
                 $remotesubmission->submission,
@@ -6654,7 +6656,6 @@ class assign {
             // There was no previous submission so there is nothing else to do.
             return true;
         }
-
         $pluginerror = false;
         foreach ($this->get_submission_plugins() as $plugin) {
             if ($plugin->is_visible() && $plugin->is_enabled()) {
@@ -6668,28 +6669,30 @@ class assign {
             return false;
         }
 
-        \mod_assign\event\submission_duplicated::create_from_submission($this, $submission)->trigger();
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            \mod_assign\event\submission_duplicated::create_from_submission($this, $submission)->trigger();
 
-        $complete = COMPLETION_INCOMPLETE;
-        if ($submission->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
-            $complete = COMPLETION_COMPLETE;
-        }
-        $completion = new completion_info($this->get_course());
-        if ($completion->is_enabled($this->get_course_module()) && $instance->completionsubmit) {
-            $completion->update_state($this->get_course_module(), $complete, $USER->id);
-        }
+            $complete = COMPLETION_INCOMPLETE;
+            if ($submission->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
+                $complete = COMPLETION_COMPLETE;
+            }
+            $completion = new completion_info($this->get_course());
+            if ($completion->is_enabled($this->get_course_module()) && $instance->completionsubmit) {
+                $completion->update_state($this->get_course_module(), $complete, $USER->id);
+            }
 
-        if (!$instance->submissiondrafts) {
-            // There is a case for not notifying the student about the submission copy,
-            // but it provides a record of the event and if they then cancel editing it
-            // is clear that the submission was copied.
-            $this->notify_student_submission_copied($submission);
-            $this->notify_graders($submission);
+            if (!$instance->submissiondrafts) {
+                // There is a case for not notifying the student about the submission copy,
+                // but it provides a record of the event and if they then cancel editing it
+                // is clear that the submission was copied.
+                $this->notify_student_submission_copied($submission);
+                $this->notify_graders($submission);
 
-            // The same logic applies here - we could not notify teachers,
-            // but then they would wonder why there are submitted assignments
-            // and they haven't been notified.
-            \mod_assign\event\assessable_submitted::create_from_submission($this, $submission, true)->trigger();
+                // The same logic applies here - we could not notify teachers,
+                // but then they would wonder why there are submitted assignments
+                // and they haven't been notified.
+                \mod_assign\event\assessable_submitted::create_from_submission($this, $submission, true)->trigger();
+            }
         }
         return true;
     }
@@ -6846,14 +6849,24 @@ class assign {
             return true;
         }
         if ($data = $mform->get_data()) {
-            if(MOODLE_RUN_MODE === MOODLE_MODE_HOST)
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
                 return $this->save_submission($data, $notices);
+            }
             else{
-                if ($data->files_filemanager)
+                if ($data->files_filemanager){
                     $this->save_submission($data, $notices);
+                }
                 $userid = get_remote_mapping_user();
-                $data->userid = $userid[0]->id;
-                return save_remote_submission($this->get_instance()->id, $userid[0]->id, $data);
+
+                // Build data save submission in hub
+                $rdata = array();
+                if($data->onlinetext_editor){
+                    $rdata['onlinetext_editor'] = $data->onlinetext_editor;
+                }
+                if($data->files_filemanager){
+                    $rdata['files_filemanager'] = $data->files_filemanager;
+                }
+                return save_remote_submission($this->get_instance()->id, $userid[0]->id, $rdata);
             }
         }
         return false;
