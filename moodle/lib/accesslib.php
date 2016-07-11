@@ -1467,7 +1467,7 @@ function get_context_info_array($contextid)
         if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
             $cm = get_coursemodule_from_id('', $context->instanceid, 0, false, MUST_EXIST);
         } else {
-            $cm = get_remote_course_module_by_cmid('', $context->instanceid);
+            $cm = get_remote_course_module($context->instanceid);
         }
         $course = get_local_course_record($cm->course);
 
@@ -1480,7 +1480,7 @@ function get_context_info_array($contextid)
             if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
                 $cm = get_coursemodule_from_id('', $parent->instanceid, 0, false, MUST_EXIST);
             } else {
-                $cm = get_remote_course_module_by_cmid('', $parent->instanceid);
+                $cm = get_remote_course_module($parent->instanceid);
             }
             $course = get_local_course_record($cm->course);
         }

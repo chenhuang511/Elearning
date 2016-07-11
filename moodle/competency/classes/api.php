@@ -1007,7 +1007,7 @@ class api {
             if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
                 $cm = get_coursemodule_from_id('', $cmorid, 0, true, MUST_EXIST);
             } else {
-                $cm = get_remote_course_module_by_cmid('', $cmorid);
+                $cm = get_remote_course_module($cmorid);
             }
         }
 

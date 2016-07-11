@@ -155,6 +155,18 @@ function get_remote_name_modules_by_id($id)
     );
 }
 
+function get_remote_modules_by_id($id)
+{
+    return moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_get_modules_by_id',
+            'params' => array('id' => $id),
+        )
+    );
+}
+
 function get_remote_course_section_nav_by_section($sectionid)
 {
     return moodle_webservice_client(

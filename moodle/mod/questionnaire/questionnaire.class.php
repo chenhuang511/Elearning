@@ -1694,7 +1694,7 @@ class questionnaire {
 			$records = get_remote_questionnaire_bool_question($select);
 		}
         if ($records) {
-            foreach ($records as $key => $row) {
+            foreach ($records as $qid => $row) {
 				if(MOODLE_RUN_MODE !== MOODLE_MODE_HOST){
                 	$qid = $row->id;
 				}

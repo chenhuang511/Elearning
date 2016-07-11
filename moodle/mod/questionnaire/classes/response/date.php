@@ -62,7 +62,7 @@ class date extends base {
             $data['data[1][value]'] = $this->question->id;
             $data['data[2][name]'] = 'response';
             $data['data[2][value]'] = $checkdateresult;
-            return save_remote_response_by_mbl($this->response_table(), $data);
+            return save_remote_response_by_tbl($this->response_table(), $data);
         }
     }
 

@@ -137,7 +137,7 @@ class single extends base {
 			if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
 				$rsql = ' AND response_id ' . $rsql;
 			} else {
-            	$rsql = ' AND response_id IN (' . implode(',',$rids) . ')';
+            	$rsql = ' AND response_id IN (' . implode(',', $rids) . ')';
 			}
         }
         // Added qc.id to preserve original choices ordering.

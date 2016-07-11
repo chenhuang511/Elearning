@@ -109,7 +109,7 @@ class rank extends base {
                 list($rsql, $params) = $DB->get_in_or_equal($rids);
                 $rsql = ' AND response_id ' . $rsql;
             } else {
-                $rsql = implode(',', $rsql);
+                $rsql = implode(',', $rids);
                 $rsql = ' AND response_id IN (' . $rsql . ')';
             }
         }
