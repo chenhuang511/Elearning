@@ -22,6 +22,8 @@ if (is_remote_course($course)) {
     define(MOODLE_RUN_MODE, MOODLE_MODE_HOST);
 }
 
+$CFG->nonajax = false;
+
 $coursename = $course->fullname;
 $coursesummary = $course->summary;
 

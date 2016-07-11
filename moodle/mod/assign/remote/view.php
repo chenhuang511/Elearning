@@ -19,6 +19,10 @@ $context = context_module::instance($id);
 
 require_capability('mod/assign:view', $context);
 
+if (!has_capability('moodle/course:manageactivities', $context)) {
+    $CFG->nonajax = false;
+}
+
 $assign = new assign($context, $cm, $course);
 $urlparams = array('id' => $id,
     'action' => optional_param('action', '', PARAM_TEXT),

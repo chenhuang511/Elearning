@@ -1052,6 +1052,7 @@ class assign {
         }
 
         $result = $DB->update_record('assign', $update);
+        //update_remote_response_by_tbl('assign', $update, );
         $this->instance = $DB->get_record('assign', array('id'=>$update->id), '*', MUST_EXIST);
 
         $this->save_intro_draft_files($formdata);

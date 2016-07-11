@@ -158,6 +158,10 @@ if( $bigbluebuttonbn->newwindow == 1 ) {
     $PAGE->set_pagelayout('incourse');
 }
 
+if (!has_capability('moodle/course:manageactivities', $context)) {
+    $CFG->nonajax = false;
+}
+
 // Validate if the user is in a role allowed to join
 if ( !has_capability('moodle/category:manage', $context) && !has_capability('mod/bigbluebuttonbn:join', $context) ) {
     if ($CFG->nonajax) {

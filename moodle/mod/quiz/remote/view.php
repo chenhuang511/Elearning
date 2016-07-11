@@ -48,6 +48,10 @@ $canattempt = has_capability('mod/quiz:attempt', $context);
 $canreviewmine = has_capability('mod/quiz:reviewmyattempts', $context);
 $canpreview = has_capability('mod/quiz:preview', $context);
 
+if (!has_capability('moodle/course:manageactivities', $context)) {
+    $CFG->nonajax = false;
+}
+
 // Create an object to manage all the other (non-roles) access rules.
 $timenow = time();
 $rules= get_remote_quiz_access_information($cm->instance);
