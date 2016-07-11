@@ -40,6 +40,12 @@ if ($id) {
     }
 }
 
+if (!has_capability('moodle/course:manageactivities', $context)) {
+    $CFG->nonajax = false;
+} else {
+    $CFG->nonajax = true;
+}
+
 $url = new moodle_url('/mod/quiz/remote/report.php', array('id' => $cm->id));
 if ($mode !== '') {
     $url->param('mode', $mode);

@@ -38,7 +38,6 @@ if (!$course = get_local_course_record($cm->course)) {
 $quiz = get_remote_quiz_by_id($cm->instance);
 $quizobj = new quiz($quiz, $cm, $course);
 $preview = $quizobj->is_preview_user();
-//var_dump($preview);die;
 
 // This script should only ever be posted to, so set page URL to the view page.
 $PAGE->set_url($quizobj->view_remote_url());
