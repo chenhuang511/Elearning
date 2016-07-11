@@ -190,8 +190,11 @@ td.selected {
     float:right;
 }
 
+legend+div{
+    clear: none !important;
+}
 .qn-legend {
-     float: left;
+     float: left ;
      font-size:inherit;
      width: auto;
      height: 10px;

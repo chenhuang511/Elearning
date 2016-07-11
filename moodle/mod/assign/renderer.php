@@ -1446,7 +1446,7 @@ class mod_assign_renderer extends plugin_renderer_base {
 
         $o = '';
         ob_start();
-        $table->out($rowsperpage, $displaylinks);
+        $table->out($rowsperpage, $displaylinks, '', 'assign');
         $o = ob_get_contents();
         ob_end_clean();
 

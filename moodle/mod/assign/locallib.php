@@ -2441,7 +2441,15 @@ class assign {
 
         // Only return the row with the highest attemptnumber.
         $submission = null;
-        $submissions = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', '*', 0, 1);
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $submissions = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', '*', 0, 1);
+        } else {
+            $ruser = get_remote_mapping_user($userid);
+            $params['userid'] = $ruser[0]->id;
+            $params['mode'] = 'DESC';
+            $submissions = get_submission_by_assignid_userid_groupid($params);
+        }
+
         if ($submissions) {
             $submission = reset($submissions);
         }
@@ -3145,7 +3153,6 @@ class assign {
             $params['userid'] = $rruser[0]->id;
             $params['mode'] = 'DESC';
             $submissions = get_submission_by_assignid_userid_groupid($params);
-
         }
 
         if ($submissions) {
