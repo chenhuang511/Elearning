@@ -2383,4 +2383,71 @@ class local_mod_assign_external extends external_api {
     }
 
 
+    public static function get_raw_data_query_db_parameters() {
+        return new external_function_parameters (
+            array(
+                'sql' => new external_value(PARAM_RAW, 'sql'),
+                'param' => new  external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'name'),
+                            'value' => new external_value(PARAM_RAW, 'value'),
+                        )
+                    )
+                ),
+                'pagestart' => new external_value(PARAM_INT, 'page start'),
+                'pagesize' => new external_value(PARAM_INT, 'page size'),
+            )
+        );
+    }
+
+    public static function get_raw_data_query_db($sql, $param, $pagestart, $pagesize) {
+        global $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::get_raw_data_query_db_parameters(),
+            array('sql' => $sql, 'param' => $param, 'pagestart' => $pagestart, 'pagesize' => $pagesize));
+
+        $branch = array();
+        foreach ($params['param'] as $element) {
+            $branch[$element['name']] = $element['value'];
+        }
+
+        $rawdata = $DB->get_records_sql($params['sql'], $branch, $params['pagestart'], $params['pagesize']);
+        return $rawdata;
+    }
+
+    public static function get_raw_data_query_db_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'grand total', VALUE_OPTIONAL),
+                    'picture' => new external_value(PARAM_INT, 'picture', VALUE_OPTIONAL),
+                    'firstname' => new external_value(PARAM_RAW, 'first name', VALUE_OPTIONAL),
+                    'lastname' => new external_value(PARAM_RAW, 'last name', VALUE_OPTIONAL),
+                    'firstnamephonetic' => new external_value(PARAM_RAW, 'firstname phonetic', VALUE_OPTIONAL),
+                    'lastnamephonetic' => new external_value(PARAM_RAW, 'lastname phonetic', VALUE_OPTIONAL),
+                    'middlename' => new external_value(PARAM_RAW, 'middlename', VALUE_OPTIONAL),
+                    'alternatename' => new external_value(PARAM_RAW, 'alternate name', VALUE_OPTIONAL),
+                    'imagealt' => new external_value(PARAM_RAW, 'image alt', VALUE_OPTIONAL),
+                    'email' => new external_value(PARAM_RAW, 'email', VALUE_OPTIONAL),
+                    'userid' => new external_value(PARAM_INT, 'userid', VALUE_OPTIONAL),
+                    'status' => new external_value(PARAM_RAW, 'submission status', VALUE_OPTIONAL),
+                    'submissionid' => new external_value(PARAM_INT, 'submissionid', VALUE_OPTIONAL),
+                    'firstsubmission' => new external_value(PARAM_INT, 'firstsubmission', VALUE_OPTIONAL),
+                    'timesubmitted' => new external_value(PARAM_INT, 'timesubmitted', VALUE_OPTIONAL),
+                    'attemptnumber' => new external_value(PARAM_INT, 'attemptnumber', VALUE_OPTIONAL),
+                    'gradeid' => new external_value(PARAM_INT, 'gradeid', VALUE_OPTIONAL),
+                    'grade' => new external_value(PARAM_INT, 'grade', VALUE_OPTIONAL),
+                    'timemarked' => new external_value(PARAM_INT, 'timemarked', VALUE_OPTIONAL),
+                    'firstmarked' => new external_value(PARAM_INT, 'firstmarked', VALUE_OPTIONAL),
+                    'mailed' => new external_value(PARAM_INT, 'mailed', VALUE_OPTIONAL),
+                    'locked' => new external_value(PARAM_INT, 'locked', VALUE_OPTIONAL),
+                    'extensionduedate' => new external_value(PARAM_INT, 'extensionduedate', VALUE_OPTIONAL),
+                    'workflowstate' => new external_value(PARAM_RAW, 'workflowstate', VALUE_OPTIONAL),
+                    'allocatedmarker' => new external_value(PARAM_INT, 'allocatedmarker', VALUE_OPTIONAL),
+                )
+            )
+        );
+    }
 }
