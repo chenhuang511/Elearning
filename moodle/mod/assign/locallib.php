@@ -1570,7 +1570,7 @@ class assign {
      */
     public function list_participants_with_filter_status_and_group($currentgroup) {
         $participants = $this->list_participants($currentgroup, false);
-        
+
         if (empty($participants)) {
             return $participants;
         } else {
@@ -8195,8 +8195,12 @@ class assign {
      */
     public static function allocate_unique_ids($assignid) {
         global $DB;
-
-        $cm = get_coursemodule_from_instance('assign', $assignid, 0, false, MUST_EXIST);
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $cm = get_coursemodule_from_instance('assign', $assignid, 0, false, MUST_EXIST);
+        }
+        else{
+            $cm = get_remote_course_module_by_instance('assign', $assignid)->cm;
+        }
         $context = context_module::instance($cm->id);
 
         $currentgroup = groups_get_activity_group($cm, true);

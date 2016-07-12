@@ -263,8 +263,14 @@ switch ($action) {
 
     case 'delallresp': // Delete all responses? Ask for confirmation.
         require_capability('mod/questionnaire:deleteresponses', $context);
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $record = $DB->count_records('questionnaire_response', array('survey_id' => $sid, 'complete' => 'y'));
+        } else {
+            $sql_select = "survey_id = $sid AND complete = 'y'";
+            $record = get_remote_questionnaire_response($sql_select);
+        }
 
-        if ($DB->count_records('questionnaire_response', array('survey_id' => $sid, 'complete' => 'y'))) {
+        if ($record) {
 
             // Print the page header.
             $PAGE->set_title(get_string('deletingresp', 'questionnaire'));
