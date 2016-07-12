@@ -29,11 +29,14 @@ $id = optional_param('id', null, PARAM_INT);    // Course Module ID.
 $a = optional_param('a', null, PARAM_INT);      // Or questionnaire ID.
 
 $sid = optional_param('sid', null, PARAM_INT);  // Survey id.
+$nonajax = optional_param('nonajax', null, PARAM_INT);
 
 list($cm, $course, $questionnaire) = questionnaire_get_standard_page_items($id, $a);
 // Check login and get context.
 require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
+
+$CFG->nonajax = ($nonajax) ? true : false; // temp
 
 $url = new moodle_url($CFG->wwwroot.'/mod/questionnaire/view.php');
 if (isset($id)) {
@@ -50,8 +53,9 @@ $questionnaire = new questionnaire(0, $questionnaire, $course, $cm);
 $PAGE->set_title(format_string($questionnaire->name));
 
 $PAGE->set_heading(format_string($course->fullname));
-
-echo $OUTPUT->header();
+if($CFG->nonajax == true){
+    echo $OUTPUT->header();
+}
 
 echo $OUTPUT->heading(format_text($questionnaire->name));
 
@@ -184,5 +188,6 @@ if ($questionnaire->can_view_all_responses($usernumresp)) {
             $argstr).'">'.get_string('viewallresponses', 'questionnaire').'</a>';
     echo $OUTPUT->box_end();
 }
-
-echo $OUTPUT->footer();
+if($CFG->nonajax == true) {
+    echo $OUTPUT->footer();
+}
