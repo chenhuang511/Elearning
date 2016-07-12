@@ -271,7 +271,11 @@ function assign_extend_settings_navigation(settings_navigation $settings, naviga
 
     // Link to download all submissions.
     if (has_any_capability(array('mod/assign:grade', 'mod/assign:viewgrades'), $context)) {
-        $link = new moodle_url('/mod/assign/view.php', array('id' => $cm->id, 'action'=>'grading'));
+        if (MOODLE_MODE_HUB === MOODLE_MODE_HOST){
+            $link = new moodle_url('/mod/assign/view.php', array('id' => $cm->id, 'action'=>'grading'));
+        } else {
+            $link = new moodle_url('/mod/assign/remote/view.php', array('id' => $cm->id, 'action'=>'grading'));
+        }
         $node = $navref->add(get_string('viewgrading', 'assign'), $link, navigation_node::TYPE_SETTING);
 
         $link = new moodle_url('/mod/assign/view.php', array('id' => $cm->id, 'action'=>'downloadall'));
