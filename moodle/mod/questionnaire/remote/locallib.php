@@ -45,6 +45,23 @@ function get_remote_questionnaire_by_id($id) {
     return $resp;
 }
 
+/**
+ * func get user by id
+ * @param $id
+ * @return false|mixed
+ */
+function get_remote_user_by_id($id) {
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_questionnaire_get_user_by_id',
+            'params' => array('id' => $id)
+        )
+    );
+    return $resp;
+}
+
 function get_remote_field_owner_questionnaire_by_id($id) {
     $resp = moodle_webservice_client(
         array(
