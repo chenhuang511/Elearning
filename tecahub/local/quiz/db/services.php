@@ -154,4 +154,12 @@ $functions = array(
 	'type'		  => 'read',
 	'ajax'		  => true
 	),
+	'local_mod_quiz_load_questions_usages_question_state_summary' => array(
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'load_questions_usages_question_state_summary',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Load information about the number of attempts at various questions in each summarystate.",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 );

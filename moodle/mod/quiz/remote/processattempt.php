@@ -92,6 +92,7 @@ if ($attemptobj->is_finished()) {
             'attemptalreadyclosed', null, $attemptobj->review_url());
 }
 
+$context = context_module::instance($cm->id);
 if (!has_capability('moodle/course:manageactivities', $context)) {
     $CFG->nonajax = false;
 } else {

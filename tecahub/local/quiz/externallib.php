@@ -1405,4 +1405,81 @@ ORDER BY
             )
         );
     }
+
+    /**
+     * Hanv 11/07/2016
+     * Load information about the number of attempts at various questions in each summarystate.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     *
+     */
+    public static function load_questions_usages_question_state_summary_parameters() {
+        return new external_function_parameters(
+            array(
+                'questions' => new external_multiple_structure(new external_value(PARAM_INT, 'questions')),
+                'param' => new  external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'name'),
+                            'value' => new external_value(PARAM_RAW, 'value'),
+                        )
+                    )
+                ),
+                'where' => new external_value(PARAM_RAW, 'where'),
+            )
+        );
+    }
+
+    /**
+     * Load information about the latest state of each question from the database.
+     *
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function load_questions_usages_question_state_summary($questions, $params, $where) {
+        global $CFG, $DB;
+
+        $params = self::validate_parameters(self::load_questions_usages_question_state_summary_parameters(),
+            array('questions' => $questions, 'param' => $params, 'where' => $where));
+
+        $quesvalues = array();
+        foreach ($questions as $question) {
+            $quesvalues[$question] = $question;
+        }
+
+        $paramdata = array();
+        foreach ($params['param'] as $element) {
+            $paramdata[$element['name']] = $element['value'];
+        }
+
+        $qubaids = new qubaid_join('{quiz_attempts} quiza', 'quiza.uniqueid', $where, $paramdata);
+        $dm = new question_engine_data_mapper();
+        $statecounts = $dm->load_questions_usages_question_state_summary(
+            $qubaids, array_keys($quesvalues));
+        return $statecounts;
+    }
+
+    /**
+     * Describes a single attempt structure.
+     *
+     * @return external_multiple_structure
+     */
+    public static function load_questions_usages_question_state_summary_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'slot' => new external_value(PARAM_INT, 'slot.', VALUE_OPTIONAL),
+                    'questionid' => new external_value(PARAM_INT, 'question id.', VALUE_OPTIONAL),
+                    'name' => new external_value(PARAM_RAW, 'name.', VALUE_OPTIONAL),
+                    'inprogress' => new external_value(PARAM_BOOL, 'inprogress.', VALUE_OPTIONAL),
+                    'needsgrading' => new external_value(PARAM_RAW, 'needsgrading.', VALUE_OPTIONAL),
+                    'autograded' => new external_value(PARAM_RAW, 'autograded.', VALUE_OPTIONAL),
+                    'manuallygraded' => new external_value(PARAM_RAW, 'manuallygraded.', VALUE_OPTIONAL),
+                    'all' => new external_value(PARAM_RAW, 'all.', VALUE_OPTIONAL)
+                )
+            )
+        );
+    }
 }

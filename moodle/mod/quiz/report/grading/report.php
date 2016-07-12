@@ -54,6 +54,7 @@ class quiz_grading_report extends quiz_default_report {
         $this->quiz = $quiz;
         $this->cm = $cm;
         $this->course = $course;
+        $isremote = (MOODLE_RUN_MODE == MOODLE_MODE_HUB)?true:false;
 
         // Get the URL options.
         $slot = optional_param('slot', null, PARAM_INT);
@@ -101,7 +102,17 @@ class quiz_grading_report extends quiz_default_report {
         }
 
         // Get the list of questions in this quiz.
-        $this->questions = quiz_report_get_significant_questions($quiz);
+        if($isremote){
+            $r_questions = get_remote_significant_questions($quiz->id);
+            $questions = array();
+            foreach ($r_questions as $key => $value){
+                $questions[$value->slot] = $value;
+            }
+        }else{
+            $questions = quiz_report_get_significant_questions($quiz);
+        }
+
+        $this->questions = $questions;
         if ($slot && !array_key_exists($slot, $this->questions)) {
             throw new moodle_exception('unknownquestion', 'quiz_grading');
         }
@@ -123,7 +134,12 @@ class quiz_grading_report extends quiz_default_report {
                     $this->currentgroup, '', false);
         }
 
-        $hasquestions = quiz_has_questions($quiz->id);
+        if($isremote){
+            $r_questions = get_remote_get_slots_by_quizid($quiz->id);
+            $hasquestions = !empty($r_questions);
+        }else{
+            $hasquestions = quiz_has_questions($quiz->id);
+        }
         $counts = null;
         if ($slot && $hasquestions) {
             // Make sure there is something to do.
@@ -179,8 +195,11 @@ class quiz_grading_report extends quiz_default_report {
                 $params += $uparam;
             }
         }
-
-        return new qubaid_join('{quiz_attempts} quiza', 'quiza.uniqueid', $where, $params);
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            return array_merge(array("where"=>$where), array("param"=>$params));
+        }else{
+            return new qubaid_join('{quiz_attempts} quiza', 'quiza.uniqueid', $where, $params);
+        }
     }
 
     protected function load_attempts_by_usage_ids($qubaids) {
@@ -286,8 +305,28 @@ class quiz_grading_report extends quiz_default_report {
         echo html_writer::tag('p', html_writer::link($this->list_questions_url(!$includeauto),
                 $linktext), array('class' => 'toggleincludeauto'));
 
-        $statecounts = $this->get_question_state_summary(array_keys($this->questions));
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $qubaparam = $this->get_qubaids_condition();
 
+            $paramdata = array();
+            $index = 0;
+            foreach ($qubaparam['param'] as $key => $val){
+                $paramdata["param[$index][name]"]=$key;
+                $paramdata["param[$index][value]"]=$val;
+                $index++;
+            }
+
+            $questiondata = array();
+            $index1 = 0;
+            foreach ($this->questions as $question) {
+                $questiondata["questions[$index1]"] = $question->slot;
+                $index1++;
+            }
+            $statecounts = get_remote_load_questions_usages_question_state_summary($questiondata, $paramdata, $qubaparam['where']);
+        }else{
+            $statecounts = $this->get_question_state_summary(array_keys($this->questions));
+        }
+//var_dump($statecounts);die;
         $data = array();
         foreach ($statecounts as $counts) {
             if ($counts->all == 0) {
