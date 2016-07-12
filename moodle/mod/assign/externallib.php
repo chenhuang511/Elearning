@@ -1572,7 +1572,7 @@ class mod_assign_external extends external_api {
             // Data is injected into the form by the last param for the constructor.
             $mform = new mod_assign_grade_form(null, $formparams, 'post', '', null, true, $data);
             $validateddata = $mform->get_data();
-            
+
             if ($validateddata) {
                 $result = $assignment->save_grade($params['userid'], $validateddata);
             } else {
