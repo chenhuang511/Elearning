@@ -29,16 +29,14 @@ $id = optional_param('id', null, PARAM_INT);    // Course Module ID.
 $a = optional_param('a', null, PARAM_INT);      // Or questionnaire ID.
 
 $sid = optional_param('sid', null, PARAM_INT);  // Survey id.
+$nonajax = optional_param('nonajax', null, PARAM_INT);
 
 list($cm, $course, $questionnaire) = questionnaire_get_standard_page_items($id, $a);
 // Check login and get context.
 require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
-if (!has_capability('moodle/course:manageactivities', $context)) {
-    $CFG->nonajax = false;
-} else {
-    $CFG->nonajax = true;
-}
+
+$CFG->nonajax = ($nonajax) ? true : false; // temp
 
 $url = new moodle_url($CFG->wwwroot.'/mod/questionnaire/view.php');
 if (isset($id)) {
