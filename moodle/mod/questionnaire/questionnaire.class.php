@@ -2860,7 +2860,12 @@ class questionnaire {
             '0'     // 10: numeric -> number.
         );
 
-        if (!$survey = $DB->get_record('questionnaire_survey', array('id' => $this->survey->id))) {
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $survey = $DB->get_record('questionnaire_survey', array('id' => $this->survey->id));
+        } else {
+            $survey = get_remote_questionnaire_survey_by_id($this->survey->id);
+        }
+        if (!$survey) {
             print_error ('surveynotexists', 'questionnaire');
         }
 

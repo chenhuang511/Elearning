@@ -433,3 +433,15 @@ function get_remote_report_grade_bands($sql, $params) {
     );
     return $resp;
 }
+
+function get_remote_load_questions_usages_question_state_summary($questions, $params, $where) {
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_quiz_load_questions_usages_question_state_summary',
+            'params' => array_merge(array('where' => $where), $questions, $params)
+        ), false
+    );
+    return $resp;
+}

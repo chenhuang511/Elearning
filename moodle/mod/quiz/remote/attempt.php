@@ -42,7 +42,7 @@ $quiz = get_remote_quiz_by_id($attempt->quiz);
 $course = get_local_course_record($quiz->course);
 $cm = get_remote_course_module_by_instance("quiz", $quiz->id)->cm;
 $attemptobj = new quiz_attempt($attempt, $quiz, $cm, $course, false, true);
-
+$context = context_module::instance($cm->id);
 if (!has_capability('moodle/course:manageactivities', $context)) {
     $CFG->nonajax = false;
 } else {

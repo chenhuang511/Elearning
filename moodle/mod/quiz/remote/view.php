@@ -81,7 +81,7 @@ $unfinished = false;
 $unfinishedattemptid = null;
 $unfinishedattempt = get_remote_user_attemps($quiz->id, $user[0]->id, 'unfinished', true)->attempts;
 if(count($unfinishedattempt) > 0 && $unfinishedattempt[0]){
-    $attempts = $unfinishedattempt;
+    $attempts[] = $unfinishedattempt[0];
 
     // @TODO: If the attempt is now overdue, deal with that - and pass isonline = false. We want the student notified in this case.
     $unfinished = $unfinishedattempt[0]->state == quiz_attempt::IN_PROGRESS ||

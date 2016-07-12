@@ -443,8 +443,7 @@ if (!$nonrespondents) {
             $texteditor = html_writer::tag('div', html_writer::tag('textarea', $message,
                     array('id' => $id, 'name' => "message", 'rows' => '10', 'cols' => '60')));
             echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
-
-
+            echo '<div class="clearfix "></div>';
         // Print editor.
         $table = new html_table();
         $table->align = array('left', 'left');
