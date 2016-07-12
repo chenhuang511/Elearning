@@ -6858,25 +6858,7 @@ class assign {
             return true;
         }
         if ($data = $mform->get_data()) {
-            if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
                 return $this->save_submission($data, $notices);
-            }
-            else{
-                if ($data->files_filemanager){
-                    $this->save_submission($data, $notices);
-                }
-                $userid = get_remote_mapping_user();
-
-                // Build data save submission in hub
-                $rdata = array();
-                if($data->onlinetext_editor){
-                    $rdata['onlinetext_editor'] = $data->onlinetext_editor;
-                }
-                if($data->files_filemanager){
-                    $rdata['files_filemanager'] = $data->files_filemanager;
-                }
-                return save_remote_submission($this->get_instance()->id, $userid[0]->id, $rdata);
-            }
         }
         return false;
     }
