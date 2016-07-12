@@ -694,3 +694,15 @@ function get_remote_assign_raw_data_query_db($sql, $param, $pagestart, $pagesize
     );
     return $resp;
 }
+
+function get_remote_assign_grade_raw_data_infomation($sql, $param, $pagestart = 0, $pagesize = 0) {
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_get_grade_raw_data_infomation',
+            'params' => array_merge(array('sql' => $sql, 'pagestart' => $pagestart, 'pagesize' => $pagesize), $param)
+        ), false
+    );
+    return $resp;
+}

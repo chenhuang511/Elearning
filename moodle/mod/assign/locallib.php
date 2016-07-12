@@ -25,6 +25,7 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
+defined('ISREMOTE') || define('ISREMOTE', MOODLE_RUN_MODE === MOODLE_MODE_HUB);
 
 // Assignment submission statuses.
 define('ASSIGN_SUBMISSION_STATUS_NEW', 'new');
@@ -6224,7 +6225,7 @@ class assign {
             return get_string('nousersselected', 'assign');
         }
 
-        list($userids, $params) = $DB->get_in_or_equal(array_keys($users), SQL_PARAMS_NAMED);
+        list($userids, $params) = $DB->get_in_or_equal(array_keys($users), SQL_PARAMS_NAMED, 'user');
         $params['assignid1'] = $this->get_instance()->id;
         $params['assignid2'] = $this->get_instance()->id;
 
@@ -6243,7 +6244,21 @@ class assign {
                        g.attemptnumber = gmx.maxattempt
              LEFT JOIN {assign_user_flags} uf ON uf.assignment = g.assignment AND uf.userid = g.userid
                  WHERE u.id ' . $userids;
-        $currentgrades = $DB->get_recordset_sql($sql, $params);
+        if (ISREMOTE) {
+            // mapping user
+            $sqlmappingparams = $this->mapping_users($params);
+            $index = 0;
+            foreach ($sqlmappingparams as $key => $val){
+                $sqlparams["param[$index][name]"] = $key;
+                $sqlparams["param[$index][value]"] = $val;
+                $index++;
+            }
+            $gradesrawdata = get_remote_assign_grade_raw_data_infomation($sql, $sqlparams);
+            $this->mapping_local_users($params, $gradesrawdata);
+            $currentgrades = new json_moodle_recordset($gradesrawdata);
+        } else {
+            $currentgrades = $DB->get_recordset_sql($sql, $params);
+        }
 
         $modifiedusers = array();
         foreach ($currentgrades as $current) {
@@ -6358,8 +6373,10 @@ class assign {
             }
             if ($workflowstatemodified || $allocatedmarkermodified) {
                 if ($this->update_user_flags($flags) && $workflowstatemodified) {
-                    $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
-                    \mod_assign\event\workflow_state_updated::create_from_user($this, $user, $flags->workflowstate)->trigger();
+                    if (!ISREMOTE) {
+                        $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
+                        \mod_assign\event\workflow_state_updated::create_from_user($this, $user, $flags->workflowstate)->trigger();
+                    }
                 }
             }
             $this->update_grade($grade);
@@ -6395,6 +6412,41 @@ class assign {
         }
 
         return get_string('quickgradingchangessaved', 'assign');
+    }
+
+    /**
+     * mapping hosted users as hub users for query params
+     * @param array $hostusers
+     * @return array
+     */
+    function mapping_users(array $hostusers) {
+        $result = array();
+        foreach ($hostusers as $key => $val){
+            if(substr(trim($key),0,1) == 'u'){
+                $val = get_remote_mapping_user($val)[0]->id;
+            }
+            $result[trim($key)] = $val;
+        }
+        return $result;
+    }
+
+    function mapping_local_users($oldparams, &$rawdata) {
+        foreach ($oldparams as $k => $v) {
+            if (substr(trim($k),0,1) == 'u') {
+                $remoteuser = get_remote_mapping_user($v)[0]->id;
+                $mapusers[$remoteuser] = $v;
+            }
+        }
+        foreach ($rawdata as &$row) {
+            if(isset($mapusers[$row->userid])) {
+                if (isset($row->id)) {
+                    $row->id = $mapusers[$row->userid];
+                }
+                if (isset( $row->userid)) {
+                    $row->userid = $mapusers[$row->userid];
+                }
+            }
+        }
     }
 
     /**
