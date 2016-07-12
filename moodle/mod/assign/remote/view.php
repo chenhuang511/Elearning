@@ -20,7 +20,8 @@ $context = context_module::instance($id);
 require_capability('mod/assign:view', $context);
 
 if (!has_capability('moodle/course:manageactivities', $context)) {
-    $CFG->nonajax = false;
+    // non ajax
+    $CFG->nonajax = true;
 } else {
     $CFG->nonajax = true;
 }
