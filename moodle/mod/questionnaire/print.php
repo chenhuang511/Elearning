@@ -16,6 +16,7 @@
 
 require_once("../../config.php");
 require_once($CFG->dirroot.'/mod/questionnaire/questionnaire.class.php');
+require_once($CFG->dirroot.'/mod/questionnaire/remote/locallib.php');
 
 $qid = required_param('qid', PARAM_INT);
 $rid = required_param('rid', PARAM_INT);
@@ -24,15 +25,20 @@ $sec = required_param('sec', PARAM_INT);
 $null = null;
 $referer = $CFG->wwwroot.'/mod/questionnaire/report.php';
 
-if (! $questionnaire = $DB->get_record("questionnaire", array("id" => $qid))) {
-    print_error('invalidcoursemodule');
+if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+    if (! $questionnaire = $DB->get_record("questionnaire", array("id" => $qid))) {
+        print_error('invalidcoursemodule');
+    }
+    if (! $course = $DB->get_record("course", array("id" => $questionnaire->course))) {
+        print_error('coursemisconf');
+    }
+    if (! $cm = get_coursemodule_from_instance("questionnaire", $questionnaire->id, $course->id)) {
+        print_error('invalidcoursemodule');
+    }
+} else {
+    list($cm, $course, $questionnaire) = questionnaire_get_standard_page_items(null, $qid);
 }
-if (! $course = $DB->get_record("course", array("id" => $questionnaire->course))) {
-    print_error('coursemisconf');
-}
-if (! $cm = get_coursemodule_from_instance("questionnaire", $questionnaire->id, $course->id)) {
-    print_error('invalidcoursemodule');
-}
+
 
 // Check login and get context.
 require_login($courseid);
