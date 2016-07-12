@@ -3204,7 +3204,7 @@ class assign {
                 if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
                     $DB->set_field('assign_submission', 'latest', 0, $params);
                 }
-                else if(MOODLE_RUN_MODE ===MOODLE_MODE_HUB){
+                elseif(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
                     set_submission_lastest($params);
                 }
             }
@@ -3212,7 +3212,7 @@ class assign {
                 $sid = $DB->insert_record('assign_submission', $submission);
                 return $DB->get_record('assign_submission', array('id' => $sid));
             }
-            else if(MOODLE_RUN_MODE ===MOODLE_MODE_HUB){
+            elseif(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
                 $submission->useremail = $this->get_email_from_userid($userid);
                 $sid = create_remote_submission($submission);
                 return get_remote_submission_by_id($sid);
@@ -3228,10 +3228,15 @@ class assign {
      * @return stdClass The submission
      */
     protected function get_submission($submissionid) {
-        global $DB;
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+            global $DB;
 
-        $params = array('assignment'=>$this->get_instance()->id, 'id'=>$submissionid);
-        return $DB->get_record('assign_submission', $params, '*', MUST_EXIST);
+            $params = array('assignment'=>$this->get_instance()->id, 'id'=>$submissionid);
+            $submission = $DB->get_record('assign_submission', $params, '*', MUST_EXIST);
+        } elseif (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $submission = get_remote_submission_by_id($submissionid);
+        }
+        return $submission;
     }
 
     /**
@@ -3802,7 +3807,11 @@ class assign {
         $newparams = array('id' => $this->get_course_module()->id, 'action' => $returnaction);
         $params = array_merge($newparams, $params);
 
-        $url = new moodle_url('/mod/assign/view.php', $params);
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+            $url = new moodle_url('/mod/assign/view.php', $params);
+        } elseif (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $url = new moodle_url('/mod/assign/remote/view.php', $params);
+        }
         return $this->get_renderer()->single_button($url, get_string('back'), 'get');
     }
 
