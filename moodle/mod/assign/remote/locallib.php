@@ -632,7 +632,7 @@ function update_remote_user_flags($assignmentid, $userflags) {
 }
 
 /**
- * Copy the assignsubmission_onlinetext record
+ * Create the assignsubmission_onlinetext record
  * @param int $onlinetextsubmission['assignment']   -   The id of assignment
  * @param int $onlinetextsubmission['submission']   -   The id of submission
  * @param string $onlinetextsubmission['onlinetext']-   The content of onlinetext
@@ -657,12 +657,50 @@ function create_onlinetext_submission($onlinetextsubmission){
     return $resp;
 }
 
+/**
+ * Update the assignsubmission_onlinetext record
+ * @param int $onlinetextsubmission['assignment']   -   The id of assignment
+ * @param int $onlinetextsubmission['submission']   -   The id of submission
+ * @param string $onlinetextsubmission['onlinetext']-   The content of onlinetext
+ * @param int $onlinetextsubmission['onlineformat'] -   The onlinetext format
+ *
+ * @return false|mixed
+ */
+function update_onlinetext_submission($onlinetextsubmission){
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_update_onlinetext_submission',
+            'params' => array(
+                'assignment' => $onlinetextsubmission->assignment,
+                'submission' => $onlinetextsubmission->submission,
+                'onlinetext' => $onlinetextsubmission->onlinetext,
+                'onlineformat' => $onlinetextsubmission->onlineformat,
+            ),
+        ), false
+    );
+    return $resp;
+}
+
 function get_remote_assign_raw_data_query_db($sql, $param, $pagestart, $pagesize) {
     $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_assign_get_raw_data_query_db',
+            'params' => array_merge(array('sql' => $sql, 'pagestart' => $pagestart, 'pagesize' => $pagesize), $param)
+        ), false
+    );
+    return $resp;
+}
+
+function get_remote_assign_grade_raw_data_infomation($sql, $param, $pagestart = 0, $pagesize = 0) {
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_get_grade_raw_data_infomation',
             'params' => array_merge(array('sql' => $sql, 'pagestart' => $pagestart, 'pagesize' => $pagesize), $param)
         ), false
     );

@@ -756,8 +756,12 @@ class local_mod_assign_external extends external_api {
         );
 
         $onlinetextsubmission = (object)$params;
+        $transaction = $DB->start_delegated_transaction();
+
         $result['oid'] = $DB->insert_record('assignsubmission_onlinetext', $onlinetextsubmission);
-        
+
+        $transaction->allow_commit();
+
         $result['warnings'] = $warnings;
 
         return $result;
@@ -770,6 +774,79 @@ class local_mod_assign_external extends external_api {
      * @since Moodle 3.1
      */
     public static function create_onlinetext_submission_returns(){
+        return new external_single_structure(
+            array(
+                'oid' =>  new external_value(PARAM_INT, 'The id of onlinetext'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+    
+    /**
+     * Describes the parameters for update_onlinetext_submission_parameters
+     *
+     * @return external_external_function_parameters
+     */
+    public static function update_onlinetext_submission_parameters(){
+        return new external_function_parameters(
+            array(
+                'assignment' => new external_value(PARAM_INT, 'assignment id'),
+                'submission' => new external_value(PARAM_INT, 'submission id'),
+                'onlinetext' => new external_value(PARAM_RAW, 'online text'),
+                'onlineformat' => new external_value(PARAM_INT, 'online text format'),
+            )  
+        );
+    }
+
+    /**
+     * Returns id of new onlinetext just updated.
+     *
+     * @param int $assignment   -   The id of asssignment
+     * @param int $submission   -   The id of submission
+     * @param string $onlinetext -    The content of onlinetext
+     * @param int $onlineformat -   The format of onlinetext
+     * 
+     * @return array of warnings and grades information
+     */
+    public static function update_onlinetext_submission($assignment, $submission, $onlinetext, $onlineformat){
+
+        global $DB;
+        
+        //build result
+        $result = array();
+        $warnings = array();
+        
+        //Validate param
+        $params = self::validate_parameters(self::update_onlinetext_submission_parameters(),
+            array(
+                'assignment' => $assignment,
+                'submission' => $submission,
+                'onlinetext' => $onlinetext,
+                'onlineformat' => $onlineformat
+            )
+        );
+
+        $onlinetextsubmission = (object)$params;
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $result['oid'] = $DB->update_record('assignsubmission_onlinetext', $onlinetextsubmission);
+
+        $transaction->allow_commit();
+
+        $result['warnings'] = $warnings;
+        
+
+        return $result;
+    }
+
+    /**
+     * Describes the update_onlinetext_submission_parameters return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function update_onlinetext_submission_returns(){
         return new external_single_structure(
             array(
                 'oid' =>  new external_value(PARAM_INT, 'The id of onlinetext'),
@@ -1475,7 +1552,7 @@ class local_mod_assign_external extends external_api {
      * @return array of warnings to indicate any errors
      * @since Moodle 2.6
      */
-    public static function save_remote_submission($assignmentid,$userid, $plugindata) {
+    public static function save_remote_submission($assignmentid, $userid, $plugindata) {
         global $CFG, $USER;
 
         $params = self::validate_parameters(self::save_remote_submission_parameters(),
@@ -1533,6 +1610,7 @@ class local_mod_assign_external extends external_api {
                 'userid' => new external_value(PARAM_INT, 'The userid'),
                 'data' => new external_single_structure(
                     array(
+                        'submissionstatement' => new external_value(PARAM_INT, 'Accept the assignment submission statement', VALUE_OPTIONAL),
                         'id' => new external_value(PARAM_INT, 'The course module id to operate'),
                         'action' => new external_value(PARAM_RAW, 'The action to show'),
                         'submitbutton' => new external_value(PARAM_RAW, 'Name of submissbutton', VALUE_OPTIONAL),
@@ -2522,7 +2600,8 @@ class local_mod_assign_external extends external_api {
      * validation
      * @return external_function_parameters
      */
-    public static function get_grade_raw_data_infomation_parameters() {
+    public static function get_grade_raw_data_infomation_parameters()
+    {
         return new external_function_parameters (
             array(
                 'sql' => new external_value(PARAM_RAW, 'sql'),
@@ -2549,7 +2628,8 @@ class local_mod_assign_external extends external_api {
      * @return array
      * @throws invalid_parameter_exception
      */
-    public static function get_grade_raw_data_infomation($sql, $param, $pagestart, $pagesize) {
+    public static function get_grade_raw_data_infomation($sql, $param, $pagestart, $pagesize)
+    {
         global $DB;
 
         //validate parameter
@@ -2569,7 +2649,8 @@ class local_mod_assign_external extends external_api {
      * return value for get_grade_raw_data_infomation
      * @return external_multiple_structure
      */
-    public static function get_grade_raw_data_infomation_returns() {
+    public static function get_grade_raw_data_infomation_returns()
+    {
         return new external_multiple_structure(
             new external_single_structure(
                 array(
@@ -2583,5 +2664,4 @@ class local_mod_assign_external extends external_api {
             )
         );
     }
-
 }
