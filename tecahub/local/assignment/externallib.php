@@ -1554,7 +1554,7 @@ class local_mod_assign_external extends external_api {
     public static function submit_remote_for_grading($assignment, $userid, $data) {
         global $CFG, $USER;
 
-        $params = self::validate_parameters(self::save_remote_submission_parameters(),
+        $params = self::validate_parameters(self::submit_remote_for_grading_parameters(),
             array('assignment' => $assignment,
                 'userid' => $userid,
                 'data' => $data));
