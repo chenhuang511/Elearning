@@ -25,6 +25,8 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
+define('ISREMOTE', MOODLE_RUN_MODE === MOODLE_MODE_HUB);
+
 /**
  * Adds an assignment instance
  *
@@ -271,10 +273,10 @@ function assign_extend_settings_navigation(settings_navigation $settings, naviga
 
     // Link to download all submissions.
     if (has_any_capability(array('mod/assign:grade', 'mod/assign:viewgrades'), $context)) {
-        $link = new moodle_url('/mod/assign/view.php', array('id' => $cm->id, 'action'=>'grading'));
+        $link = new moodle_url('/mod/assign/' . (ISREMOTE ? 'remote/':'') . 'view.php', array('id' => $cm->id, 'action'=>'grading'));
         $node = $navref->add(get_string('viewgrading', 'assign'), $link, navigation_node::TYPE_SETTING);
 
-        $link = new moodle_url('/mod/assign/view.php', array('id' => $cm->id, 'action'=>'downloadall'));
+        $link = new moodle_url('/mod/assign/' . (ISREMOTE ? 'remote/':'') . 'view.php', array('id' => $cm->id, 'action'=>'downloadall'));
         $node = $navref->add(get_string('downloadall', 'assign'), $link, navigation_node::TYPE_SETTING);
     }
 
@@ -283,8 +285,8 @@ function assign_extend_settings_navigation(settings_navigation $settings, naviga
         $assignment = $DB->get_record('assign', $dbparams, 'blindmarking, revealidentities');
 
         if ($assignment && $assignment->blindmarking && !$assignment->revealidentities) {
-            $urlparams = array('id' => $cm->id, 'action'=>'revealidentities');
-            $url = new moodle_url('/mod/assign/view.php', $urlparams);
+            $urlparams = array('id' => $cm->id, 'action' => 'revealidentities');
+            $url = new moodle_url('/mod/assign/' . (ISREMOTE ? 'remote/':'') . 'view.php', $urlparams);
             $linkname = get_string('revealidentities', 'assign');
             $node = $navref->add($linkname, $url, navigation_node::TYPE_SETTING);
         }
@@ -441,7 +443,7 @@ function assign_print_overview($courses, &$htmlarray) {
         if (!$assignment->visible) {
             $dimmedclass = ' class="dimmed"';
         }
-        $href = $CFG->wwwroot . '/mod/assign/view.php?id=' . $assignment->coursemodule;
+        $href = $CFG->wwwroot . '/mod/assign/' . (ISREMOTE ? 'remote/':'') . 'view.php?id=' . $assignment->coursemodule;
         $basestr = '<div class="assign overview">' .
                '<div class="name">' .
                $strassignment . ': '.
@@ -628,7 +630,7 @@ function assign_get_grade_details_for_print_overview(&$unmarkedsubmissions, $sql
 
     if ($submissions) {
         $urlparams = array('id' => $assignment->coursemodule, 'action' => 'grading');
-        $url = new moodle_url('/mod/assign/view.php', $urlparams);
+        $url = new moodle_url('/mod/assign/' . (ISREMOTE ? 'remote/':'') . 'view.php', $urlparams);
         $gradedetails = '<div class="details">' .
                 '<a href="' . $url . '">' .
                 get_string('submissionsnotgraded', 'assign', $submissions) .
@@ -739,7 +741,7 @@ function assign_print_recent_activity($course, $viewfullnames, $timestart) {
         $cm = $modinfo->get_cm($submission->cmid);
         $context = context_module::instance($submission->cmid);
         $assign = new assign($context, $cm, $cm->course);
-        $link = $CFG->wwwroot.'/mod/assign/view.php?id='.$cm->id;
+        $link = $CFG->wwwroot.'/mod/assign/' . (ISREMOTE ? 'remote/':'') . 'view.php?id='.$cm->id;
         // Obscure first and last name if blind marking enabled.
         if ($assign->is_blind_marking()) {
             $submission->firstname = get_string('participant', 'mod_assign');
@@ -936,7 +938,7 @@ function assign_print_recent_mod_activity($activity, $courseid, $detail, $modnam
         echo '<div class="title">';
         echo '<img src="' . $OUTPUT->pix_url('icon', 'assign') . '" '.
              'class="icon" alt="' . $modname . '">';
-        echo '<a href="' . $CFG->wwwroot . '/mod/assign/view.php?id=' . $activity->cmid . '">';
+        echo '<a href="' . $CFG->wwwroot . '/mod/assign/' . (ISREMOTE ? 'remote/':'') . 'view.php?id=' . $activity->cmid . '">';
         echo $activity->name;
         echo '</a>';
         echo '</div>';
