@@ -46,6 +46,23 @@ function get_remote_questionnaire_by_id($id) {
 }
 
 /**
+ * func get questionnaire by id
+ * @param $id
+ * @return false|mixed
+ */
+function get_remote_questionnaire_attempts_course($id) {
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_qquestionnaire_get_attempts_course',
+            'params' => array('id' => $id)
+        )
+    );
+    return $resp;
+}
+
+/**
  * func get user by id
  * @param $id
  * @return false|mixed
@@ -55,7 +72,7 @@ function get_remote_user_by_id($id) {
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
-            'function_name' => 'local_questionnaire_get_user_by_id',
+            'function_name' => 'local_questionnaire_get_question_by_id',
             'params' => array('id' => $id)
         )
     );

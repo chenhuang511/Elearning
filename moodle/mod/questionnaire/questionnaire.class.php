@@ -915,7 +915,13 @@ class questionnaire {
                 $sql = 'SELECT q.id, q.course, c.fullname '.
                        'FROM {questionnaire} q, {questionnaire_attempts} qa, {course} c '.
                        'WHERE qa.rid = ? AND q.id = qa.qid AND c.id = q.course';
-                if ($record = $DB->get_record_sql($sql, array($rid))) {
+                $sql_select = " qa.rid = $rid AND q.id = qa.qid AND c.id = q.course";
+                if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                    $record = $DB->get_record_sql($sql, array($rid));
+                } else {
+                    $record = get_remote_questionnaire_attempts_course($sql_select);
+                }
+                if ($record) {
                     $coursename = $record->fullname;
                 }
                 echo (' '.get_string('course'). ': '.$coursename);

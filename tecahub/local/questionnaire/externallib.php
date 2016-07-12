@@ -1409,4 +1409,51 @@ class local_questionnaire_external extends external_api {
             )
         );
     }
+
+    public static function questionnaire_get_attempts_course_parameters() {
+        return self::get_questionnaire_attempts_parameters();
+    }
+
+    /**
+     * Get Question object
+     *
+     * @param int $id id
+     * @param array $options Options for filtering the results, used since Moodle 2.9
+     * @return array
+     * @since Moodle 2.9 Options available
+     * @since Moodle 2.2
+     */
+    public static function questionnaire_get_attempts_course($condition, $sort) {
+        global $CFG, $DB;
+        //validate parameter
+        $params = self::validate_parameters(self::questionnaire_get_attempts_course_parameters(),
+            array('condition' => $condition, 'sort' => $sort));
+
+        $sql = 'SELECT q.id, q.course, c.fullname '.
+            'FROM {questionnaire} q, {questionnaire_attempts} qa, {course} c '.
+            'WHERE ' . $params['condition'];
+        if(!empty($params['sort'])){
+            $sql .= ' ORDER BY '.$params['sort'];
+        }
+        $res = array();
+        $res = $DB->get_records_sql($sql);
+        return $res;
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.9 Options available
+     * @since Moodle 2.2
+     */
+    public static function questionnaire_get_attempts_course_returns() {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
+                'course' => new external_value(PARAM_INT, 'course'),
+                'fullname' => new external_value(PARAM_TEXT, 'Question name'),
+            )
+        );
+    }
 }

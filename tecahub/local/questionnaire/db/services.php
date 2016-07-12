@@ -42,6 +42,14 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_qquestionnaire_get_attempts_course' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'questionnaire_get_attempts_course',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get question by id",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 	'local_questionnaire_get_user_by_id' => array(
 		'classname'	  => 'local_questionnaire_external',
 		'methodname'  => 'questionnaire_get_user_by_id',
