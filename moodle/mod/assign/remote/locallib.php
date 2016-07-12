@@ -632,7 +632,7 @@ function update_remote_user_flags($assignmentid, $userflags) {
 }
 
 /**
- * Copy the assignsubmission_onlinetext record
+ * Create the assignsubmission_onlinetext record
  * @param int $onlinetextsubmission['assignment']   -   The id of assignment
  * @param int $onlinetextsubmission['submission']   -   The id of submission
  * @param string $onlinetextsubmission['onlinetext']-   The content of onlinetext
@@ -646,6 +646,32 @@ function create_onlinetext_submission($onlinetextsubmission){
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_assign_create_onlinetext_submission',
+            'params' => array(
+                'assignment' => $onlinetextsubmission->assignment,
+                'submission' => $onlinetextsubmission->submission,
+                'onlinetext' => $onlinetextsubmission->onlinetext,
+                'onlineformat' => $onlinetextsubmission->onlineformat,
+            ),
+        ), false
+    );
+    return $resp;
+}
+
+/**
+ * Update the assignsubmission_onlinetext record
+ * @param int $onlinetextsubmission['assignment']   -   The id of assignment
+ * @param int $onlinetextsubmission['submission']   -   The id of submission
+ * @param string $onlinetextsubmission['onlinetext']-   The content of onlinetext
+ * @param int $onlinetextsubmission['onlineformat'] -   The onlinetext format
+ *
+ * @return false|mixed
+ */
+function update_onlinetext_submission($onlinetextsubmission){
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_update_onlinetext_submission',
             'params' => array(
                 'assignment' => $onlinetextsubmission->assignment,
                 'submission' => $onlinetextsubmission->submission,

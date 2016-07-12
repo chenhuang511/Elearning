@@ -223,10 +223,6 @@ class assign_submission_onlinetext extends assign_submission_plugin {
             return false;
         }
 
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-            return true;
-        }
-
         $params = array(
             'context' => context_module::instance($this->assignment->get_course_module()->id),
             'courseid' => $this->assignment->get_course()->id,
@@ -268,11 +264,15 @@ class assign_submission_onlinetext extends assign_submission_plugin {
         );
 
         if ($onlinetextsubmission) {
-
             $onlinetextsubmission->onlinetext = $data->onlinetext;
             $onlinetextsubmission->onlineformat = $data->onlinetext_editor['format'];
             $params['objectid'] = $onlinetextsubmission->id;
-            $updatestatus = $DB->update_record('assignsubmission_onlinetext', $onlinetextsubmission);
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $updatestatus = $DB->update_record('assignsubmission_onlinetext', $onlinetextsubmission);
+            } else {
+                $updatestatus = update_onlinetext_submission($onlinetextsubmission);
+                var_dump($updatestatus);die;
+            }
             $event = \assignsubmission_onlinetext\event\submission_updated::create($params);
             $event->set_assign($this->assignment);
             $event->trigger();
@@ -285,7 +285,11 @@ class assign_submission_onlinetext extends assign_submission_plugin {
 
             $onlinetextsubmission->submission = $submission->id;
             $onlinetextsubmission->assignment = $this->assignment->get_instance()->id;
-            $onlinetextsubmission->id = $DB->insert_record('assignsubmission_onlinetext', $onlinetextsubmission);
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $onlinetextsubmission->id = $DB->insert_record('assignsubmission_onlinetext', $onlinetextsubmission);
+            } else{
+                $onlinetextsubmission = create_onlinetext_submission($onlinetextsubmission)->oid;
+            }
             $params['objectid'] = $onlinetextsubmission->id;
             $event = \assignsubmission_onlinetext\event\submission_created::create($params);
             $event->set_assign($this->assignment);
