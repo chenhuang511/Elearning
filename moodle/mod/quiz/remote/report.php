@@ -40,12 +40,6 @@ if ($id) {
     }
 }
 
-if (!has_capability('moodle/course:manageactivities', $context)) {
-    $CFG->nonajax = false;
-} else {
-    $CFG->nonajax = true;
-}
-
 $url = new moodle_url('/mod/quiz/remote/report.php', array('id' => $cm->id));
 if ($mode !== '') {
     $url->param('mode', $mode);
@@ -55,6 +49,12 @@ $PAGE->set_url($url);
 require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
 $PAGE->set_pagelayout('report');
+
+if (!has_capability('moodle/course:manageactivities', $context)) {
+    $CFG->nonajax = false;
+} else {
+    $CFG->nonajax = true;
+}
 
 $reportlist = quiz_report_list($context);
 if (empty($reportlist)) {
