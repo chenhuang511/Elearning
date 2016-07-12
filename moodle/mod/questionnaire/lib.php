@@ -515,7 +515,7 @@ function questionnaire_extend_settings_navigation(settings_navigation $settings,
     $currentgroupid = optional_param('group', 0, PARAM_INT); // Group id.
 
     require_once($CFG->dirroot.'/mod/questionnaire/questionnaire.class.php');
-    require_once($CFG->dirroot.'./mod/questionnaire/remote/locallib.php');
+    require_once($CFG->dirroot.'/mod/questionnaire/remote/locallib.php');
 
     $context = $PAGE->cm->context;
     $cmid = $PAGE->cm->id;
