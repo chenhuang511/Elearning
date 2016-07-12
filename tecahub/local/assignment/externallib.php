@@ -2613,8 +2613,8 @@ class local_mod_assign_external extends external_api {
                         )
                     )
                 ),
-                'pagestart' => new external_value(PARAM_INT, 'pagestart', VALUE_OPTIONAL, 0),
-                'pagesize' => new external_value(PARAM_INT, 'pagesize', VALUE_OPTIONAL, 0),
+                'pagestart' => new external_value(PARAM_INT, 'pagestart', VALUE_DEFAULT, 0),
+                'pagesize' => new external_value(PARAM_INT, 'pagesize', VALUE_DEFAULT, 0),
             )
         );
     }
