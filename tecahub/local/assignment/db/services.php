@@ -242,5 +242,13 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_assign_get_grade_raw_data_infomation' => array(
+		'classname'	  => 'local_mod_assign_external',
+		'methodname'  => 'get_grade_raw_data_infomation',
+		'classpath'	  => 'local/assignment/externallib.php',
+		'description' => 'Get grade raw data infomation via ajax',
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 );
 

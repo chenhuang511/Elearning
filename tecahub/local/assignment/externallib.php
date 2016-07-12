@@ -2517,4 +2517,71 @@ class local_mod_assign_external extends external_api {
             )
         );
     }
+
+    /**
+     * validation
+     * @return external_function_parameters
+     */
+    public static function get_grade_raw_data_infomation_parameters() {
+        return new external_function_parameters (
+            array(
+                'sql' => new external_value(PARAM_RAW, 'sql'),
+                'param' => new  external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'name'),
+                            'value' => new external_value(PARAM_RAW, 'value'),
+                        )
+                    )
+                ),
+                'pagestart' => external_value(PARAM_INT, 'pagestart', VALUE_OPTIONAL, 0),
+                'pagesize' => external_value(PARAM_INT, 'pagesize', VALUE_OPTIONAL, 0),
+            )
+        );
+    }
+
+    /**
+     * Get grade raw data infomation
+     * @param $sql
+     * @param $param
+     * @param $pagestart
+     * @param $pagesize
+     * @return array
+     * @throws invalid_parameter_exception
+     */
+    public static function get_grade_raw_data_infomation($sql, $param, $pagestart, $pagesize) {
+        global $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::get_grade_raw_data_infomation_parameters(),
+            array('sql' => $sql, 'param' => $param, 'pagestart' => $pagestart, 'pagesize' => $pagesize));
+
+        $branch = array();
+        foreach ($params['param'] as $element) {
+            $branch[$element['name']] = $element['value'];
+        }
+
+        $rawdata = $DB->get_records_sql($params['sql'], $branch, $params['pagestart'], $params['pagesize']);
+        return $rawdata;
+    }
+
+    /**
+     * return value for get_grade_raw_data_infomation
+     * @return external_multiple_structure
+     */
+    public static function get_grade_raw_data_infomation_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'userid' => new external_value(PARAM_INT, 'userid', VALUE_OPTIONAL),
+                    'grade' => new external_value(PARAM_INT, 'grade', VALUE_OPTIONAL),
+                    'lastmodified' => new external_value(PARAM_INT, 'lastmodified', VALUE_OPTIONAL),
+                    'workflowstate' => new external_value(PARAM_RAW, 'workflowstate', VALUE_OPTIONAL),
+                    'allocatedmarker' => new external_value(PARAM_INT, 'allocatedmarker', VALUE_OPTIONAL),
+                    'attemptnumber' => new external_value(PARAM_INT, 'attemptnumber', VALUE_OPTIONAL),
+                )
+            )
+        );
+    }
+
 }
