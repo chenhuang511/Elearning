@@ -104,6 +104,50 @@ class local_questionnaire_external extends external_api {
             )
         );
     }
+
+    public static function questionnaire_get_user_by_id_parameters() {
+        return new external_function_parameters(
+            array('id' => new external_value(PARAM_INT, 'id')
+            )
+        );
+    }
+
+    /**
+     * Get Question object
+     *
+     * @param int $id id
+     * @param array $options Options for filtering the results, used since Moodle 2.9
+     * @return array
+     * @since Moodle 2.9 Options available
+     * @since Moodle 2.2
+     */
+    public static function questionnaire_get_user_by_id($id) {
+        global $CFG, $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::questionnaire_get_user_by_id_parameters(),
+            array('id' => $id));
+        return $DB->get_record('user', array('id' => $params['id']), 'username, firstname, lastname, email', MUST_EXIST);
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.9 Options available
+     * @since Moodle 2.2
+     */
+    public static function questionnaire_get_user_by_id_returns() {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
+                'username' => new external_value(PARAM_TEXT, 'course'),
+                'firstname' => new external_value(PARAM_TEXT, 'Question name'),
+                'lastname' => new external_value(PARAM_TEXT, 'Question introduction text'),
+                'email' => new external_value(PARAM_TEXT, 'questiontext format'),
+            )
+        );
+    }
     /**
      * get field owner in questionnaire_survey
      */

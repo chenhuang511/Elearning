@@ -2372,7 +2372,12 @@ class questionnaire {
             $ruser = '';
             if ($reporttype == 'report') {
                 if ($this->respondenttype != 'anonymous') {
-                    if ($user = $DB->get_record('user', array('id' => $response->username))) {
+                    if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                        $user = $DB->get_record('user', array('id' => $response->username));
+                    } else {
+                        $user = get_remote_user_by_id($response->username);
+                    }
+                    if ($user) {
                         $ruser = ' | ' .fullname($user);
                     }
                 } else {

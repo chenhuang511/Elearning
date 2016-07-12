@@ -42,6 +42,14 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_questionnaire_get_user_by_id' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'questionnaire_get_user_by_id',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get user by id",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 	'local_questionnaire_get_field_owner_questionnaire_by_id' => array(
 		'classname'	  => 'local_questionnaire_external',
 		'methodname'  => 'questionnaire_get_field_owner_questionnaire_by_id',
