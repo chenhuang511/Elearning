@@ -266,16 +266,17 @@ class assign_submission_onlinetext extends assign_submission_plugin {
         if ($onlinetextsubmission) {
             $onlinetextsubmission->onlinetext = $data->onlinetext;
             $onlinetextsubmission->onlineformat = $data->onlinetext_editor['format'];
+
             $params['objectid'] = $onlinetextsubmission->id;
             if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
                 $updatestatus = $DB->update_record('assignsubmission_onlinetext', $onlinetextsubmission);
             } else {
-                $updatestatus = update_onlinetext_submission($onlinetextsubmission);
-                var_dump($updatestatus);die;
+                $updatestatus = update_onlinetext_submission($onlinetextsubmission)->bool;
             }
             $event = \assignsubmission_onlinetext\event\submission_updated::create($params);
             $event->set_assign($this->assignment);
             $event->trigger();
+            
             return $updatestatus;
         } else {
 

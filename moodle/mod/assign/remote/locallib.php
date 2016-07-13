@@ -343,6 +343,43 @@ function create_remote_submission($submission){
 }
 
 /**
+ * Update submission on hub.
+ *
+ * @param int $submission['id'] . the submission id
+ * @param int $submission['assignment'] . the assign id
+ * @param int $submission['userid'] . the user id
+ * @param int $submission['timecreated'] . the time created
+ * @param int $submission['timemodified'] . the time modified
+ * @param string $submission['status'] . the status
+ * @param int $submission['attemptnumber'] . the attempnumber
+ * @param int $submission['latest'] . the lastest
+ *
+ * @return int $resp->sid . the new submission id just created
+ */
+function update_remote_submission($submission){
+
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_update_submission',
+            'params' => array(
+                'id' => $submission->id,
+                'assignment' => $submission->assignment,
+                'userid' => $submission->userid,
+                'timecreated' => $submission->timecreated,
+                'timemodified' => $submission->timemodified,
+                'status' => $submission->status,
+                'attemptnumber' => $submission->attemptnumber,
+                'latest' => $submission->latest,
+            )
+        ), false
+    );
+    
+    return $resp->bool;
+}
+
+/**
  * Create grade on hub.
  *
  * @param int $grade['assignment'] . the assign id
@@ -673,6 +710,7 @@ function update_onlinetext_submission($onlinetextsubmission){
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_assign_update_onlinetext_submission',
             'params' => array(
+                'id' => $onlinetextsubmission->id,
                 'assignment' => $onlinetextsubmission->assignment,
                 'submission' => $onlinetextsubmission->submission,
                 'onlinetext' => $onlinetextsubmission->onlinetext,
