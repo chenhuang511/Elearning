@@ -2767,4 +2767,83 @@ class local_mod_assign_external extends external_api {
             )
         );
     }
+
+    /**
+     * validate data for get_grade_items_raw_data api
+     * @return external_function_parameters
+     */
+    public static function get_grade_items_raw_data_parameters() {
+        return new external_function_parameters (
+            array(
+                'sql' => new external_value(PARAM_RAW, 'sql'),
+                'param' => new  external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'name'),
+                            'value' => new external_value(PARAM_RAW, 'value'),
+                        )
+                    )
+                ),
+                'pagestart' => new external_value(PARAM_INT, 'pagestart', VALUE_DEFAULT, 0),
+                'pagesize' => new external_value(PARAM_INT, 'pagesize', VALUE_DEFAULT, 0),
+            )
+        );
+    }
+
+
+    public static function get_grade_items_raw_data($sql, $param, $pagestart, $pagesize) {
+        global $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::get_grade_items_raw_data_parameters(),
+            array('sql' => $sql, 'param' => $param, 'pagestart' => $pagestart, 'pagesize' => $pagesize));
+
+        $branch = array();
+        foreach ($params['param'] as $element) {
+            $branch[$element['name']] = $element['value'];
+        }
+
+        $rawdata = $DB->get_records_sql($params['sql'], $branch, $params['pagestart'], $params['pagesize']);
+        return $rawdata;
+    }
+
+    public static function get_grade_items_raw_data_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'grade items id', VALUE_OPTIONAL),
+                    'courseid' => new external_value(PARAM_INT, 'courseid', VALUE_OPTIONAL),
+                    'categoryid' => new external_value(PARAM_INT, 'categoryid', VALUE_OPTIONAL),
+                    'itemname' => new external_value(PARAM_RAW, 'itemname', VALUE_OPTIONAL),
+                    'itemtype' => new external_value(PARAM_RAW, 'itemtype', VALUE_OPTIONAL),
+                    'itemmodule' => new external_value(PARAM_RAW, 'itemmodule', VALUE_OPTIONAL),
+                    'iteminstance' => new external_value(PARAM_INT, 'iteminstance', VALUE_OPTIONAL),
+                    'itemnumber' => new external_value(PARAM_INT, 'itemnumber', VALUE_OPTIONAL),
+                    'iteminfo' => new external_value(PARAM_RAW, 'itemmodule', VALUE_OPTIONAL),
+                    'idnumber' => new external_value(PARAM_RAW, 'idnumber', VALUE_OPTIONAL),
+                    'calculation' => new external_value(PARAM_RAW, 'calculation', VALUE_OPTIONAL),
+                    'gradetype' => new external_value(PARAM_INT, 'gradetype', VALUE_OPTIONAL),
+                    'grademax' => new external_value(PARAM_FLOAT, 'grademax', VALUE_OPTIONAL),
+                    'grademin' => new external_value(PARAM_FLOAT, 'grademin', VALUE_OPTIONAL),
+                    'scaleid' => new external_value(PARAM_INT, 'scaleid', VALUE_OPTIONAL),
+                    'outcomeid' => new external_value(PARAM_INT, 'outcomeid', VALUE_OPTIONAL),
+                    'gradepass' => new external_value(PARAM_FLOAT, 'gradepass', VALUE_OPTIONAL),
+                    'multfactor' => new external_value(PARAM_FLOAT, 'multfactor', VALUE_OPTIONAL),
+                    'plusfactor' => new external_value(PARAM_FLOAT, 'plusfactor', VALUE_OPTIONAL),
+                    'aggregationcoef' => new external_value(PARAM_FLOAT, 'aggregationcoef', VALUE_OPTIONAL),
+                    'aggregationcoef2' => new external_value(PARAM_FLOAT, 'aggregationcoef2', VALUE_OPTIONAL),
+                    'sortorder' => new external_value(PARAM_INT, 'sortorder', VALUE_OPTIONAL),
+                    'display' => new external_value(PARAM_INT, 'display', VALUE_OPTIONAL),
+                    'decimals' => new external_value(PARAM_BOOL, 'decimals', VALUE_OPTIONAL),
+                    'hidden' => new external_value(PARAM_INT, 'hidden', VALUE_OPTIONAL),
+                    'locked' => new external_value(PARAM_INT, 'locked', VALUE_OPTIONAL),
+                    'locktime' => new external_value(PARAM_INT, 'locktime', VALUE_OPTIONAL),
+                    'needsupdate' => new external_value(PARAM_INT, 'needsupdate', VALUE_OPTIONAL),
+                    'weightoverride' => new external_value(PARAM_BOOL, 'weightoverride', VALUE_OPTIONAL),
+                    'timecreated' => new external_value(PARAM_INT, 'timecreated', VALUE_OPTIONAL),
+                    'timemodified' => new external_value(PARAM_INT, 'timemodified', VALUE_OPTIONAL),
+                )
+            )
+        );
+    }
 }
