@@ -50,4 +50,12 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_get_field_resource_by' => array(
+        'classname' => 'local_mod_resource_external',
+        'methodname' => 'get_field_resource_by',
+        'classpath' => 'local/lesson/externallib.php',
+        'description' => 'Getfield of resource object by',
+        'type' => 'read',
+        'ajax' => true
+    ),
 );
