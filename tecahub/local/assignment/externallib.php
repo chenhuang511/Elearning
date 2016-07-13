@@ -857,14 +857,24 @@ class local_mod_assign_external extends external_api {
             )
         );
     }
-    
-    // Get assignfeedback comment
+
+    /**
+     * Describes the parameters for get_assignfeedback_comments_parameters
+     *
+     * @return external_external_function_parameters
+     */
     public static function get_assignfeedback_comments_parameters(){
         return new external_function_parameters(
             array('gradeid' => new external_value(PARAM_INT, 'the grade id'))
         );
     }
 
+    /**
+     * @param int $gradeid  -  The id of grade   
+     * 
+     * @return array
+     * @throws invalid_parameter_exception
+     */
     public static function get_assignfeedback_comments($gradeid){
         global $DB;
         
@@ -880,18 +890,27 @@ class local_mod_assign_external extends external_api {
         );
 
         $result['feedbackcomments'] = $DB->get_record('assignfeedback_comments', array('grade'=>$params['gradeid']));
-        if (!$result['feedbackcomments'])
+        if (!$result['feedbackcomments']){
+            $result['feedbackcomments'] = array();
+        }
 
         $result['warnings'] = $warnings;
 
         return $result;
     }
 
+    /**
+     * Describes the get_assignfeedback_comments_returns value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
     public static function get_assignfeedback_comments_returns(){
         return new external_single_structure(
             array(
                 'feedbackcomments' => new external_single_structure(
                     array(
+                        'id' => new external_value(PARAM_INT, 'grade id'),
                         'assignment' => new external_value(PARAM_INT, 'assignment id'),
                         'grade' => new external_value(PARAM_FLOAT, 'grade id'),
                         'commenttext' => new external_value(PARAM_RAW, 'feedback comment text'),
@@ -899,6 +918,144 @@ class local_mod_assign_external extends external_api {
                     )
                 ),
                 'warnings' => new external_warnings(),
+            )
+        );
+    }
+    
+    /**
+     * Describes the parameters for update_assignfeedback_comments_parameters
+     *
+     * @return external_external_function_parameters
+     */
+    public static function update_assignfeedback_comments_parameters(){
+        return new external_function_parameters(
+            array(
+                'id' => new external_value(PARAM_INT, 'the grade id'),
+                'assignment' => new external_value(PARAM_INT, 'the assign id'),
+                'grade' => new external_value(PARAM_INT, 'the grade id'),
+                'commenttext' => new external_value(PARAM_RAW, 'the content of commenttext'),
+                'commentformat' => new external_value(PARAM_INT, 'the format of commenttext'),
+            )
+        );
+    }
+
+    /**
+     * @param int $id  -  The id of grade   
+     * @param int $assignment  -  The id of assignment   
+     * @param int $grade  -  The id of grade   
+     * @param int $commenttext  -  The content of commenttext   
+     * @param int $commentformat  -  The format of commenttext   
+     * 
+     * @return array
+     * @throws invalid_parameter_exception
+     */
+    public static function update_assignfeedback_comments($id, $assignment, $grade, $commenttext, $commentformat){
+        global $DB;
+        
+        $result = array();
+
+        $warnings = array();
+
+        // validate params
+        $params = self::validate_parameters(self::update_assignfeedback_comments_parameters(),
+            array(
+                'id' => $id,
+                'assignment' => $assignment,
+                'grade' => $grade,
+                'commenttext' => $commenttext,
+                'commentformat' => $commentformat
+            )
+        );
+        $feedbackcomment = (object)$params;
+        
+        $transaction = $DB->start_delegated_transaction();
+        $result['bool'] = $DB->update_record('assignfeedback_comments', $feedbackcomment);
+        $transaction->allow_commit();
+
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    /**
+     * Describes the update_assignfeedback_comments_returns value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function update_assignfeedback_comments_returns(){
+        return new external_single_structure(
+            array(
+                'bool' =>  new external_value(PARAM_INT, 'Check if success'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+    
+    /**
+     * Describes the parameters for create_assignfeedback_comments_parameters
+     *
+     * @return external_external_function_parameters
+     */
+    public static function create_assignfeedback_comments_parameters(){
+        return new external_function_parameters(
+            array(
+                'assignment' => new external_value(PARAM_INT, 'the assign id'),
+                'grade' => new external_value(PARAM_INT, 'the grade id'),
+                'commenttext' => new external_value(PARAM_RAW, 'the content of commenttext'),
+                'commentformat' => new external_value(PARAM_INT, 'the format of commenttext'),
+            )
+        );
+    }
+
+    /**
+     * @param int $assignment  -  The id of assignment   
+     * @param int $grade  -  The id of grade   
+     * @param int $commenttext  -  The content of commenttext   
+     * @param int $commentformat  -  The format of commenttext   
+     * 
+     * @return array
+     * @throws invalid_parameter_exception
+     */
+    public static function create_assignfeedback_comments($assignment, $grade, $commenttext, $commentformat){
+        global $DB;
+        
+        $result = array();
+
+        $warnings = array();
+
+        // validate params
+        $params = self::validate_parameters(self::create_assignfeedback_comments_parameters(),
+            array(
+                'assignment' => $assignment,
+                'grade' => $grade,
+                'commenttext' => $commenttext,
+                'commentformat' => $commentformat
+            )
+        );
+        
+        $feedbackcomment = (object)$params;
+        
+        $transaction = $DB->start_delegated_transaction();
+        $result['fcid'] = $DB->insert_record('assignfeedback_comments', $feedbackcomment);
+        $transaction->allow_commit();
+
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    /**
+     * Describes the create_assignfeedback_comments_returns value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function create_assignfeedback_comments_returns(){
+        return new external_single_structure(
+            array(
+                'fcid' =>  new external_value(PARAM_INT, 'The id of feedback commnent'),
+                'warnings' => new external_warnings()
             )
         );
     }
@@ -1257,13 +1414,13 @@ class local_mod_assign_external extends external_api {
         return new external_function_parameters(
             array(
                 'assignment' => new external_value(PARAM_INT, 'asssign ID'),
-                'useremail' => new external_value(PARAM_RAW, 'user email'),
+                'userid' => new external_value(PARAM_INT, 'user ID'),
                 'groupid' => new external_value(PARAM_INT, 'group ID'),
             )
         );
     }
 
-    public static function get_attemptnumber_by_assignid_userid_groupid($assignment, $useremail, $groupid){
+    public static function get_attemptnumber_by_assignid_userid_groupid($assignment, $userid, $groupid){
         global $DB;
 
         $warnings = array();
@@ -1274,16 +1431,10 @@ class local_mod_assign_external extends external_api {
         $params = self::validate_parameters(self::get_attemptnumber_by_assignid_userid_groupid_parameters(),
             array(
                 'assignment' => $assignment,
-                'useremail' => $useremail,
+                'userid' => $userid,
                 'groupid' => $groupid,
             )
         );
-        if (!$params["attemptnumber"]){
-            unset($params["attemptnumber"]);
-        }
-
-        $params['userid'] = self::get_userid_from_email($params['useremail']);
-        unset($params["useremail"]);
 
         $result['result'] = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', 'attemptnumber', 0, 1);
 
@@ -1367,13 +1518,13 @@ class local_mod_assign_external extends external_api {
         return new external_function_parameters(
             array(
                 'assignment' => new external_value(PARAM_INT, 'asssign ID'),
-                'useremail' => new external_value(PARAM_RAW, 'user email'),
+                'userid' => new external_value(PARAM_INT, 'user id'),
                 'groupid' => new external_value(PARAM_INT, 'group ID'),
             )
         );
     }
 
-    public static function set_submission_lastest($assignment, $useremail, $groupid){
+    public static function set_submission_lastest($assignment, $userid, $groupid){
         global $DB;
 
         $warnings = array();
@@ -1384,14 +1535,11 @@ class local_mod_assign_external extends external_api {
         $params = self::validate_parameters(self::set_submission_lastest_parameters(),
             array(
                 'assignment' => $assignment,
-                'useremail' => $useremail,
+                'userid' => $userid,
                 'groupid' => $groupid,
             )
         );
-
-        $params['userid'] = self::get_userid_from_email($params['useremail']);
-        unset($params["useremail"]);
-
+        
         $result['result'] = $DB->set_field('assign_submission', 'latest', 0, $params);
 
         $result['warnings'] = $warnings;
@@ -1417,7 +1565,7 @@ class local_mod_assign_external extends external_api {
         return new external_function_parameters(
             array(
                 'assignment' => new external_value(PARAM_INT, 'asssign ID'),
-                'useremail' => new external_value(PARAM_RAW, 'user email'),
+                'userid' => new external_value(PARAM_INT, 'userid'),
                 'timecreated' => new external_value(PARAM_INT, 'time created'),
                 'timemodified' => new external_value(PARAM_INT, 'time modified'),
                 'status' => new external_value(PARAM_RAW, 'status'),
@@ -1429,7 +1577,7 @@ class local_mod_assign_external extends external_api {
 
     /**
      * @param int $assignment - The id of assignment
-     * @param string $useremail - The email of user
+     * @param int $userid - The id of user
      * @param int $timecreated - Time created
      * @param int $timemodified - Time modified
      * @param string $status - Status
@@ -1438,7 +1586,7 @@ class local_mod_assign_external extends external_api {
      * @return array
      * @throws invalid_parameter_exception
      */
-    public static function create_submission($assignment, $useremail, $timecreated, $timemodified, $status, $attemptnumber, $latest){
+    public static function create_submission($assignment, $userid, $timecreated, $timemodified, $status, $attemptnumber, $latest){
         global $DB;
 
         $warnings = array();
@@ -1448,15 +1596,14 @@ class local_mod_assign_external extends external_api {
         //Validate param
         $params = self::validate_parameters(self::create_submission_parameters(),array(
             'assignment' => $assignment,
-            'useremail' => $useremail,
+            'userid' => $userid,
             'timecreated' => $timecreated,
             'timemodified' => $timemodified,
             'status' => $status,
             'attemptnumber' => $attemptnumber,
             'latest' => $latest,
         ));
-        $params['userid'] = self::get_userid_from_email($params['useremail']);
-
+        
         $submission = new stdClass();
         $submission->assignment   = $params['assignment'];
         $submission->userid       = $params['userid'];
@@ -2118,7 +2265,7 @@ class local_mod_assign_external extends external_api {
         return new external_function_parameters(
             array(
                 'assignment' => new external_value(PARAM_INT, 'The assignment id to operate on'),
-                'useremail' => new external_value(PARAM_RAW, 'The user email'),
+                'userid' => new external_value(PARAM_INT, 'The user ID'),
                 'attemptnumber' => new external_value(PARAM_INT, 'The attemptnumber')
             )
         );
@@ -2133,7 +2280,7 @@ class local_mod_assign_external extends external_api {
      * @return array of warnings and grades information
      * @throws required_capability_exception
      */
-    public static function get_grades_by_assignid_userid($assignmentid, $useremail, $attemptnumber){
+    public static function get_grades_by_assignid_userid($assignmentid, $userid, $attemptnumber){
         global $DB;
 
         $warnings = array();
@@ -2144,17 +2291,14 @@ class local_mod_assign_external extends external_api {
         $params = self::validate_parameters(self::get_grades_by_assignid_userid_parameters(),
             array(
                 'assignment' => $assignmentid,
-                'useremail' => $useremail,
+                'userid' => $userid,
                 'attemptnumber' => $attemptnumber,
             )
         );
         if ($params["attemptnumber"] < 0){
             unset($params["attemptnumber"]);
         }
-
-        $params['userid'] = self::get_userid_from_email($params['useremail']);
-        unset($params["useremail"]);
-
+        
         $result['grades'] = $DB->get_records('assign_grades', $params, 'attemptnumber DESC', '*', 0, 1);
         
         if ($result['grades']){
@@ -2207,7 +2351,7 @@ class local_mod_assign_external extends external_api {
         return new external_function_parameters(
             array(
                 'assignment' => new external_value(PARAM_INT, 'asssign ID'),
-                'useremail' => new external_value(PARAM_RAW, ' user email'),
+                'userid' => new external_value(PARAM_INT, ' userid'),
                 'timecreated' => new external_value(PARAM_INT, 'time created'),
                 'timemodified' => new external_value(PARAM_INT, 'time modified'),
                 'grader' => new external_value(PARAM_INT, 'grader id'),
@@ -2229,7 +2373,7 @@ class local_mod_assign_external extends external_api {
      * @param int $attemptnumber attemp number
      * @return idnumber of assign grade just created
      */
-    public static function create_grade($assignment, $useremail, $timecreated, $timemodified, $grader, $grade, $attemptnumber){
+    public static function create_grade($assignment, $userid, $timecreated, $timemodified, $grader, $grade, $attemptnumber){
         global $DB;
 
         $warnings = array();
@@ -2239,16 +2383,13 @@ class local_mod_assign_external extends external_api {
         //Validate param
         $params = self::validate_parameters(self::create_grade_parameters(),array(
             'assignment' => $assignment,
-            'useremail' => $useremail,
+            'userid' => $userid,
             'timecreated' => $timecreated,
             'timemodified' => $timemodified,
             'grader' => $grader,
             'grade' => $grade,
             'attemptnumber' => $attemptnumber,
         ));
-        $userid = $DB->get_record('user', array('email' => $params['studentuser']))->id;
-
-        $params['userid'] = self::get_userid_from_email($params['useremail']);
 
         $grade = new stdClass();
         $grade->assignment   = $params['assignment'];
@@ -2258,8 +2399,10 @@ class local_mod_assign_external extends external_api {
         $grade->grader = $params['grader'];
         $grade->grade = $params['grade'];
         $grade->attemptnumber = $params['attemptnumber'];
-
+        
+        $transaction = $DB->start_delegated_transaction();
         $result['gid'] = $DB->insert_record('assign_grades', $grade);
+        $transaction->allow_commit();
 
         $result['warnings'] = $warnings;
 
@@ -2267,7 +2410,7 @@ class local_mod_assign_external extends external_api {
     }
 
     /**
-     * Describes the get_grades_by_assignid_userid return value.
+     * Describes the create_gradereturn value.
      *
      * @return external_single_structure
      * @since Moodle 3.1
@@ -2276,6 +2419,85 @@ class local_mod_assign_external extends external_api {
         return new external_single_structure(
             array(
                 'gid' => new external_value(PARAM_INT, 'assign grade ID'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+    
+    /**
+     * Describes the parameters for update grade
+     * @return external_external_function_parameters
+     */
+    public static function update_grade_parameters(){
+        return new external_function_parameters(
+            array(
+                'id' => new external_value(PARAM_INT, 'grade ID'),
+                'assignment' => new external_value(PARAM_INT, 'asssign ID'),
+                'userid' => new external_value(PARAM_INT, ' user ID'),
+                'timecreated' => new external_value(PARAM_INT, 'time created'),
+                'timemodified' => new external_value(PARAM_INT, 'time modified'),
+                'grader' => new external_value(PARAM_INT, 'grader id'),
+                'grade' => new external_value(PARAM_FLOAT, 'grade score'),
+                'attemptnumber' => new external_value(PARAM_INT, 'attempnumber'),
+            )
+        );
+    }
+
+    /**
+     * Returns assign grade id.
+     *
+     * @param int $id grade id
+     * @param int $assignmentid assignment id
+     * @param int $userid the id of user
+     * @param int $timecreated time created
+     * @param int $timemodified time modified
+     * @param int $grader grader id
+     * @param int $grade number score
+     * @param int $attemptnumber attemp number
+     * @return idnumber of assign grade just created
+     */
+    public static function update_grade($id, $assignment, $userid, $timecreated, $timemodified, $grader, $grade, $attemptnumber){
+        global $DB;
+
+        $warnings = array();
+
+        $result = array();
+
+        //Validate param
+        $params = self::validate_parameters(self::update_grade_parameters(),array(
+            'id' => $id,
+            'assignment' => $assignment,
+            'userid' => $userid,
+            'timecreated' => $timecreated,
+            'timemodified' => $timemodified,
+            'grader' => $grader,
+            'grade' => $grade,
+            'attemptnumber' => $attemptnumber,
+        ));
+
+        $grade = (object)$params;
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $result['bool'] =  $DB->update_record('assign_grades', $grade);
+
+        $transaction->allow_commit();
+
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    /**
+     * Describes the update_grade return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function update_grade_returns(){
+        return new external_single_structure(
+            array(
+                'bool' => new external_value(PARAM_INT, 'check if success'),
                 'warnings' => new external_warnings()
             )
         );
@@ -2763,6 +2985,152 @@ class local_mod_assign_external extends external_api {
                     'workflowstate' => new external_value(PARAM_RAW, 'workflowstate', VALUE_OPTIONAL),
                     'allocatedmarker' => new external_value(PARAM_INT, 'allocatedmarker', VALUE_OPTIONAL),
                     'attemptnumber' => new external_value(PARAM_INT, 'attemptnumber', VALUE_OPTIONAL),
+                )
+            )
+        );
+    }
+
+    /**
+     * Describes the parameters for get_scale_by_id
+     *
+     * @return external_external_function_parameters
+     */
+    public static function get_scale_by_id_parameters(){
+        return new external_function_parameters(
+            array(
+                'sid' => new external_value(PARAM_INT, 'Scale ID'),
+            )
+        );
+    }
+
+    /**
+     * @param $sid  - The id of scale
+     * @return array
+     * @throws invalid_parameter_exception
+     */
+    public static function get_scale_by_id($sid){
+        global $DB;
+
+        $warnings = array();
+
+        $result = array();
+
+        //Validate param
+        $params = self::validate_parameters(self::get_scale_by_id_parameters(),array(
+            'sid' => $sid,
+        ));
+
+        $result['scale'] = $DB->get_record('scale', array('id' => $params['sid']));
+        if (!$result['scale']){
+            $result['scale'] = array();
+        }       
+        
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    /**
+     * Describes the update_submission_parameters return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function get_scale_by_id_returns(){
+        return new external_single_structure(
+            array(
+                'scale' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'scale ID'),
+                        'courseid' => new external_value(PARAM_INT, 'course ID'),
+                        'userid' => new external_value(PARAM_INT, 'user ID'),
+                        'name' => new external_value(PARAM_RAW, 'Name'),
+                        'scale' => new external_value(PARAM_RAW, 'Scale'),
+                        'description' => new external_value(PARAM_RAW, 'description'),
+                        'descriptionformat' => new external_value(PARAM_INT, 'description format'),
+                        'timemodified' => new external_value(PARAM_INT, 'Time modified'),
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+
+    /**
+     * validate data for get_grade_items_raw_data api
+     * @return external_function_parameters
+     */
+    public static function get_grade_items_raw_data_parameters() {
+        return new external_function_parameters (
+            array(
+                'sql' => new external_value(PARAM_RAW, 'sql'),
+                'param' => new  external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'name'),
+                            'value' => new external_value(PARAM_RAW, 'value'),
+                        )
+                    )
+                ),
+                'pagestart' => new external_value(PARAM_INT, 'pagestart', VALUE_DEFAULT, 0),
+                'pagesize' => new external_value(PARAM_INT, 'pagesize', VALUE_DEFAULT, 0),
+            )
+        );
+    }
+
+
+    public static function get_grade_items_raw_data($sql, $param, $pagestart, $pagesize) {
+        global $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::get_grade_items_raw_data_parameters(),
+            array('sql' => $sql, 'param' => $param, 'pagestart' => $pagestart, 'pagesize' => $pagesize));
+
+        $branch = array();
+        foreach ($params['param'] as $element) {
+            $branch[$element['name']] = $element['value'];
+        }
+
+        $rawdata = $DB->get_records_sql($params['sql'], $branch, $params['pagestart'], $params['pagesize']);
+        return $rawdata;
+    }
+
+    public static function get_grade_items_raw_data_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'grade items id', VALUE_OPTIONAL),
+                    'courseid' => new external_value(PARAM_INT, 'courseid', VALUE_OPTIONAL),
+                    'categoryid' => new external_value(PARAM_INT, 'categoryid', VALUE_OPTIONAL),
+                    'itemname' => new external_value(PARAM_RAW, 'itemname', VALUE_OPTIONAL),
+                    'itemtype' => new external_value(PARAM_RAW, 'itemtype', VALUE_OPTIONAL),
+                    'itemmodule' => new external_value(PARAM_RAW, 'itemmodule', VALUE_OPTIONAL),
+                    'iteminstance' => new external_value(PARAM_INT, 'iteminstance', VALUE_OPTIONAL),
+                    'itemnumber' => new external_value(PARAM_INT, 'itemnumber', VALUE_OPTIONAL),
+                    'iteminfo' => new external_value(PARAM_RAW, 'itemmodule', VALUE_OPTIONAL),
+                    'idnumber' => new external_value(PARAM_RAW, 'idnumber', VALUE_OPTIONAL),
+                    'calculation' => new external_value(PARAM_RAW, 'calculation', VALUE_OPTIONAL),
+                    'gradetype' => new external_value(PARAM_INT, 'gradetype', VALUE_OPTIONAL),
+                    'grademax' => new external_value(PARAM_FLOAT, 'grademax', VALUE_OPTIONAL),
+                    'grademin' => new external_value(PARAM_FLOAT, 'grademin', VALUE_OPTIONAL),
+                    'scaleid' => new external_value(PARAM_INT, 'scaleid', VALUE_OPTIONAL),
+                    'outcomeid' => new external_value(PARAM_INT, 'outcomeid', VALUE_OPTIONAL),
+                    'gradepass' => new external_value(PARAM_FLOAT, 'gradepass', VALUE_OPTIONAL),
+                    'multfactor' => new external_value(PARAM_FLOAT, 'multfactor', VALUE_OPTIONAL),
+                    'plusfactor' => new external_value(PARAM_FLOAT, 'plusfactor', VALUE_OPTIONAL),
+                    'aggregationcoef' => new external_value(PARAM_FLOAT, 'aggregationcoef', VALUE_OPTIONAL),
+                    'aggregationcoef2' => new external_value(PARAM_FLOAT, 'aggregationcoef2', VALUE_OPTIONAL),
+                    'sortorder' => new external_value(PARAM_INT, 'sortorder', VALUE_OPTIONAL),
+                    'display' => new external_value(PARAM_INT, 'display', VALUE_OPTIONAL),
+                    'decimals' => new external_value(PARAM_BOOL, 'decimals', VALUE_OPTIONAL),
+                    'hidden' => new external_value(PARAM_INT, 'hidden', VALUE_OPTIONAL),
+                    'locked' => new external_value(PARAM_INT, 'locked', VALUE_OPTIONAL),
+                    'locktime' => new external_value(PARAM_INT, 'locktime', VALUE_OPTIONAL),
+                    'needsupdate' => new external_value(PARAM_INT, 'needsupdate', VALUE_OPTIONAL),
+                    'weightoverride' => new external_value(PARAM_BOOL, 'weightoverride', VALUE_OPTIONAL),
+                    'timecreated' => new external_value(PARAM_INT, 'timecreated', VALUE_OPTIONAL),
+                    'timemodified' => new external_value(PARAM_INT, 'timemodified', VALUE_OPTIONAL),
                 )
             )
         );

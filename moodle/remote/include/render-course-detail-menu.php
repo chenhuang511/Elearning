@@ -15,14 +15,19 @@
              aria-labelledby="course-summary"
              aria-expanded="true">
             <div class="panel-body">
-                <a id="course-summary" class="sublink" href="#tongquan">
+                <a id="course-summary" class="sublink get-remote-content"
+                   data-module='<?php
+                   require_once($CFG->dirroot . '/lib/additionallib.php');
+                   $id = get_course_id_by_remote_id($course['courseid']);
+                   echo json_encode(array('url' => $CFG->wwwroot . '/course/view.php', 'params' => array('id' => $id, 'nonajax' => false), 'method' => 'get')); ?>'
+                   href="#">
                     <i class="fa fa-angle-double-right" aria-hidden="true"></i>
                     Khóa học
                 </a>
             </div>
         </div>
     </div>
-    <?php foreach ($course as $key => $section) {
+    <?php foreach ($course['content'] as $key => $section) {
         $heading = 'mod-' . $section->id;
         $collapse = 'collapseMod' . $section->id;
         ?>
@@ -56,8 +61,7 @@
                                     </a>
                                     <?php
                                 } else { ?>
-
-                                       <a class="sublink get-remote-content"
+                                    <a class="sublink get-remote-content"
                                        data-module='<?php echo json_encode(array('url' => $CFG->wwwroot . '/mod/' . $module->modname . '/remote/view.php', 'params' => array('id' => $module->id), 'method' => 'get')); ?>'
                                        href="#">
                                         <span class="icon-bxh icon-<?php echo $module->modname; ?>" ></span><?php echo $module->name; ?>

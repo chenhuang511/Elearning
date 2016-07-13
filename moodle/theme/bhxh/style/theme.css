@@ -10,9 +10,10 @@ h1, h2, h3, h4, h5, h6 {
     color: #333;
 }
 
-a{
+a {
     color: #333;
 }
+
 a:hover,
 a:active,
 a:focus {
@@ -33,70 +34,88 @@ a:focus {
     background: #dedede;
 }
 
-.icon-bxh{
+.icon-bxh {
     display: inline-block;
-    width: 24px;
-    height: 26px;
-    background-size: cover;
+    width: 16px;
+    height: 16px;
     margin-right: 7px;
+    background-size: 100% 100% !important;
 }
 
-.icon-bxh.icon-bigbluebuttonbn{
-     background: url([[pix:theme|img-menu/icon-bigbluebutton]]);
-}
-.icon-bxh.icon-questionnaire{
-     background: url([[pix:theme|img-menu/icon-questionnaire]]);
+.icon-bxh.icon-bigbluebuttonbn {
+    background: transparent url([[pix:theme|img-menu/icon-bigbluebutton]]) no-repeat center center;
 }
 
-.icon-bxh.icon-scheduler{
-    background: url([[pix:theme|img-menu/icon-scheduler]]);
-}
-.icon-bxh.icon-certificate{ 
-     background: url([[pix:theme|img-menu/icon-certificate]]);
-}
-.icon-bxh.icon-assign{ 
-
-    background: url([[pix:theme|img-menu/icon-assignment]]);
+.icon-bxh.icon-questionnaire {
+    background: transparent url([[pix:theme|img-menu/icon-questionnaire]]) no-repeat center center;
 }
 
-.icon-bxh.icon-chat{ 
-
-    background: url([[pix:theme|img-menu/icon-chat]]);
+.icon-bxh.icon-scheduler {
+    background: transparent url([[pix:theme|img-menu/icon-scheduler]]) no-repeat center center;
 }
 
-.icon-bxh.icon-data{ 
-
-    background: url([[pix:theme|img-menu/icon-data]]) ;
+.icon-bxh.icon-certificate {
+    background: transparent url([[pix:theme|img-menu/icon-certificate]]) no-repeat center center;
 }
 
-.icon-bxh.icon-forum{ 
-
-    background: url([[pix:theme|img-menu/icon-forum]]);
+.icon-bxh.icon-assign {
+    background: transparent url([[pix:theme|img-menu/icon-assignment]]) no-repeat center center;
 }
 
-.icon-bxh.icon-glossary{ 
-
-    background: url([[pix:theme|img-menu/icon-glossary]]);
+.icon-bxh.icon-chat {
+    background: transparent url([[pix:theme|img-menu/icon-chat]]) no-repeat center center;
 }
 
-.icon-bxh.icon-page{ 
-
-    background: url([[pix:theme|img-menu/icon-page]]);
+.icon-bxh.icon-data {
+    background: transparent url([[pix:theme|img-menu/icon-data]]) no-repeat center center;
 }
 
-.icon-bxh.icon-quiz{ 
- 
-    background: url([[pix:theme|img-menu/icon-quiz]]);
+.icon-bxh.icon-forum {
+    background: transparent url([[pix:theme|img-menu/icon-forum]]) no-repeat center center;
 }
 
-.icon-bxh.icon-resource{ 
-
-    background: url([[pix:theme|img-menu/icon-resource]]);
+.icon-bxh.icon-glossary {
+    background: transparent url([[pix:theme|img-menu/icon-glossary]]) no-repeat center center;
 }
 
-.icon-bxh.icon-url{ 
+.icon-bxh.icon-page {
+    background: transparent url([[pix:theme|img-menu/icon-page]]) no-repeat center center;
+}
 
-    background: url([[pix:theme|img-menu/icon-url]]);
+.icon-bxh.icon-quiz {
+    background: transparent url([[pix:theme|img-menu/icon-quiz]]) no-repeat center center;
+}
+
+.icon-bxh.icon-resource {
+    background: transparent url([[pix:theme|img-menu/icon-resource]]) no-repeat center center;
+}
+
+.icon-bxh.icon-lesson {
+    background: transparent url([[pix:theme|img-menu/icon-lesson]]) no-repeat center center;
+}
+
+.icon-bxh.icon-choice {
+    background: transparent url([[pix:theme|img-menu/icon-choice]]) no-repeat center center;
+}
+
+.icon-bxh.icon-scorm {
+    background: transparent url([[pix:theme|img-menu/icon-scorm]]) no-repeat center center;
+}
+
+.icon-bxh.icon-survey {
+    background: transparent url([[pix:theme|img-menu/icon-survey]]) no-repeat center center;
+}
+
+.icon-bxh.icon-workshop {
+    background: transparent url([[pix:theme|img-menu/icon-workshop]]) no-repeat center center;
+}
+
+.icon-bxh.icon-feedback {
+    background: transparent url([[pix:theme|img-menu/icon-feedback]]) no-repeat center center;
+}
+
+.icon-bxh.icon-url {
+    background: transparent url([[pix:theme|img-menu/icon-url]]) no-repeat center center;
 }
 
 #header {
@@ -482,7 +501,7 @@ a:focus {
 .loginpanel label {
     font-weight: 400;
     padding: 0;
-    
+
 }
 
 .loginpanel .chk-box {
@@ -566,6 +585,7 @@ section.container-course-info div.info-wrapper section.title h1 {
     font-style: normal;
     font-weight: bold;
 }
+
 /************************************/
 
 /************ course wiki ***********/
@@ -574,7 +594,7 @@ section.container-course-wiki {
     padding-left: 0px;
 }
 
-section.container-course-wiki div.wiki-wrapper{
+section.container-course-wiki div.wiki-wrapper {
     width: 100%;
     border-radius: 3px;
     border: 1px solid #ddd;
@@ -584,12 +604,12 @@ section.container-course-wiki div.wiki-wrapper{
 /************************************/
 
 /***********tab course forum*********/
-section#discussion-container.discussion.container{
+section#discussion-container.discussion.container {
     padding: 0px;
     padding-right: 15px;
 }
 
-section#discussion-container.discussion.container div.discussion-body{
+section#discussion-container.discussion.container div.discussion-body {
     display: block;
     border: none;
     background: transparent;
@@ -600,8 +620,9 @@ section#discussion-container.discussion.container div.discussion-body{
     border-radius: 3px;
 }
 
-section#discussion-container.discussion.container div.discussion-body div.forum-nav{
-    top: 0px; height: 550px;
+section#discussion-container.discussion.container div.discussion-body div.forum-nav {
+    top: 0px;
+    height: 550px;
     box-sizing: border-box;
     float: left;
     position: relative;
@@ -613,7 +634,7 @@ section#discussion-container.discussion.container div.discussion-body div.forum-
     margin-right: 15px;
 }
 
-section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header{
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header {
     box-sizing: border-box;
     display: table;
     border-bottom: 1px solid #acacac;
@@ -621,21 +642,22 @@ section#discussion-container.discussion.container div.discussion-body div.forum-
     background-color: #c8c8c8;
 }
 
-section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header div.btn-group{
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header div.btn-group {
     width: 100%;
     padding-top: 10px;
 }
 
-section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header div.btn-group button.btn.btn-default.dropdown-toggle{
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header div.btn-group button.btn.btn-default.dropdown-toggle {
     box-sizing: border-box;
     display: table-cell;
-    vertical-align: middle;border: none;
+    vertical-align: middle;
+    border: none;
     background-color: transparent;
     padding-top: 3px;
     padding-left: 15px;
 }
 
-section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header a.forum-nav-browse{
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header a.forum-nav-browse {
     box-sizing: border-box;
     display: table-cell;
     vertical-align: middle;
@@ -643,7 +665,7 @@ section#discussion-container.discussion.container div.discussion-body div.forum-
     padding: 5px;
 }
 
-section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header form.forum-nav-search{
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header form.forum-nav-search {
     box-sizing: border-box;
     display: table-cell;
     position: relative;
@@ -652,16 +674,16 @@ section#discussion-container.discussion.container div.discussion-body div.forum-
     padding: 5px;
 }
 
-section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header form.forum-nav-search div.forum-nav-search-ff-position-fix{
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header form.forum-nav-search div.forum-nav-search-ff-position-fix {
     position: relative;
 }
 
-section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header form.forum-nav-search div.forum-nav-search-ff-position-fix label{
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header form.forum-nav-search div.forum-nav-search-ff-position-fix label {
     margin-bottom: 0;
     padding-top: 5px;
 }
 
-section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header form.forum-nav-search div.forum-nav-search-ff-position-fix label input.forum-nav-search-input{
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header form.forum-nav-search div.forum-nav-search-ff-position-fix label input.forum-nav-search-input {
     box-shadow: none !important;
     border: 1px solid #acacac !important;
     border-radius: 3px !important;
@@ -671,7 +693,7 @@ section#discussion-container.discussion.container div.discussion-body div.forum-
     font-size: 12px !important;
 }
 
-section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header form.forum-nav-search div.forum-nav-search-ff-position-fix label input.forum-nav-search-input i.forum-nav-search .icon{
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header form.forum-nav-search div.forum-nav-search-ff-position-fix label input.forum-nav-search-input i.forum-nav-search .icon {
     font-size: 12px;
     position: absolute;
     margin-top: -6px;
@@ -679,7 +701,7 @@ section#discussion-container.discussion.container div.discussion-body div.forum-
     right: 11px;
 }
 
-section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-thread-list-wrapper div.forum-nav-refine-bar{
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-thread-list-wrapper div.forum-nav-refine-bar {
     font-size: 11px;
     border-bottom: 1px solid #c8c8c8;
     background-color: #f1f1f1;
@@ -687,7 +709,7 @@ section#discussion-container.discussion.container div.discussion-body div.forum-
     color: #000;
 }
 
-section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-thread-list-wrapper div.forum-nav-refine-bar label.forum-nav-filter-main{
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-thread-list-wrapper div.forum-nav-refine-bar label.forum-nav-filter-main {
     font: inherit;
     line-height: 1em;
     margin-bottom: 0;
@@ -698,7 +720,7 @@ section#discussion-container.discussion.container div.discussion-body div.forum-
     padding-top: 0px;
 }
 
-section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-thread-list-wrapper div.forum-nav-refine-bar label.forum-nav-filter-main select.forum-nav-filter-main-control{
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-thread-list-wrapper div.forum-nav-refine-bar label.forum-nav-filter-main select.forum-nav-filter-main-control {
     border: none;
     max-width: 100%;
     background-color: transparent;
@@ -711,10 +733,10 @@ section#discussion-container.discussion.container div.discussion-body div.forum-
     white-space: pre;
     min-height: 1.2em;
     padding: 0px 2px 1px;
-    font:inherit;
+    font: inherit;
 }
 
-section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-thread-list-wrapper div.forum-nav-refine-bar label.forum-nav-sort{
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-thread-list-wrapper div.forum-nav-refine-bar label.forum-nav-sort {
     font: inherit;
     line-height: 1em;
     margin-bottom: 0;
@@ -724,14 +746,14 @@ section#discussion-container.discussion.container div.discussion-body div.forum-
     padding-top: 0px;
 }
 
-section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-thread-list-wrapper div.forum-nav-refine-bar label.forum-nav-sort select.forum-nav-sort-control{
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-thread-list-wrapper div.forum-nav-refine-bar label.forum-nav-sort select.forum-nav-sort-control {
     border: none;
     max-width: 100%;
     background-color: transparent;
     font: inherit;
 }
 
-section#discussion-container.discussion.container div.discussion-body div#discussion-column.discussion-column{
+section#discussion-container.discussion.container div.discussion-body div#discussion-column.discussion-column {
     float: left;
     box-sizing: border-box;
     max-width: 800px;
@@ -741,11 +763,12 @@ section#discussion-container.discussion.container div.discussion-body div#discus
     height: 32px;
 }
 
-section#discussion-container.discussion.container div.discussion-body div#discussion-column.discussion-column div.forum-content div.discussion-article.view-discussion-home{
+section#discussion-container.discussion.container div.discussion-body div#discussion-column.discussion-column div.forum-content div.discussion-article.view-discussion-home {
     position: relative;
     min-height: 550px;
     padding: 40px 40px 10px;
 }
+
 /**************************************/
 
 .content-wrap.course-progress {
@@ -905,7 +928,7 @@ section#discussion-container.discussion.container div.discussion-body div#discus
     font-weight: normal;
 }
 
-#enrol-course-list .container-available-course .coursebox .sum-btn .btn-register .btn-reg-now a{
+#enrol-course-list .container-available-course .coursebox .sum-btn .btn-register .btn-reg-now a {
     color: #129ed9;
     text-align: center;
 }
@@ -921,7 +944,6 @@ section#discussion-container.discussion.container div.discussion-body div#discus
     font-weight: 600;
     font-size: 26px;
 }
-
 
 #enrol-course-list .container-available-course .coursebox .course-image {
     float: left;
@@ -959,7 +981,7 @@ section#discussion-container.discussion.container div.discussion-body div#discus
     border-bottom: solid 1px #ddd;
 }
 
-#enrol-course-list .right-block{
+#enrol-course-list .right-block {
     padding-right: 0px;
     padding-left: 0px;
 }
@@ -1096,11 +1118,13 @@ ul#coursetabs > li.active > a, ul#coursetabs > li > a:focus, ul#coursetabs > li 
     color: #126f9a;
     padding: 5px 5px 5px 10px;
 }
-.img-icon{
+
+.img-icon {
     display: block;
 }
+
 #section-menu .panel .panel-body a.sublink > a.fa {
-    
+
 }
 
 .courseware-block {
@@ -2002,7 +2026,7 @@ div.backup-section + form,
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none;
-    
+
 }
 
 .block .header {

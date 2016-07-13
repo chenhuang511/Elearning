@@ -75,7 +75,6 @@
                     }
 
                     content.hide();
-                    $(loading).show();
                     var sectionSummary = $(this).attr('data-summary');
                     changeContent(content, sectionSummary);
                     content.show();

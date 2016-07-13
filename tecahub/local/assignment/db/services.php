@@ -202,6 +202,22 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_assign_update_assignfeedback_comments' => array(
+		'classname'	  => 'local_mod_assign_external',
+		'methodname'  => 'update_assignfeedback_comments',
+		'classpath'	  => 'local/assignment/externallib.php',
+		'description' => "Update assignfeedback comment",
+		'type'		  => 'write',
+		'ajax'		  => true
+	),
+	'local_mod_assign_create_assignfeedback_comments' => array(
+		'classname'	  => 'local_mod_assign_external',
+		'methodname'  => 'create_assignfeedback_comments',
+		'classpath'	  => 'local/assignment/externallib.php',
+		'description' => "Create assignfeedback comment",
+		'type'		  => 'write',
+		'ajax'		  => true
+	),
 	'local_mod_assign_get_grades_by_assignid_userid' => array(
 		'classname'	  => 'local_mod_assign_external',
 		'methodname'  => 'get_grades_by_assignid_userid',
@@ -215,6 +231,14 @@ $functions = array(
 		'methodname'  => 'create_grade',
 		'classpath'	  => 'local/assignment/externallib.php',
 		'description' => "Create assign grade",
+		'type'		  => 'write',
+		'ajax'		  => true
+	),
+	'local_mod_assign_update_grade' => array(
+		'classname'	  => 'local_mod_assign_external',
+		'methodname'  => 'update_grade',
+		'classpath'	  => 'local/assignment/externallib.php',
+		'description' => "Update assign grade",
 		'type'		  => 'write',
 		'ajax'		  => true
 	),
@@ -263,6 +287,22 @@ $functions = array(
 		'methodname'  => 'get_grade_raw_data_infomation',
 		'classpath'	  => 'local/assignment/externallib.php',
 		'description' => 'Get grade raw data infomation via ajax',
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_assign_get_scale_by_id' => array(
+		'classname'	  => 'local_mod_assign_external',
+		'methodname'  => 'get_scale_by_id',
+		'classpath'	  => 'local/assignment/externallib.php',
+		'description' => 'Get scale by id',
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_assign_get_grade_items_raw_data' => array(
+		'classname'	  => 'local_mod_assign_external',
+		'methodname'  => 'get_grade_items_raw_data',
+		'classpath'	  => 'local/assignment/externallib.php',
+		'description' => 'Get grade items raw data infomation via ajax',
 		'type'		  => 'read',
 		'ajax'		  => true
 	),

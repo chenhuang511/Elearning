@@ -289,7 +289,7 @@ class assign_submission_onlinetext extends assign_submission_plugin {
             if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
                 $onlinetextsubmission->id = $DB->insert_record('assignsubmission_onlinetext', $onlinetextsubmission);
             } else{
-                $onlinetextsubmission = create_onlinetext_submission($onlinetextsubmission)->oid;
+                $onlinetextsubmission->id = create_onlinetext_submission($onlinetextsubmission);
             }
             $params['objectid'] = $onlinetextsubmission->id;
             $event = \assignsubmission_onlinetext\event\submission_created::create($params);

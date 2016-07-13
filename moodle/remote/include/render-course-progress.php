@@ -9,7 +9,7 @@
     </div>
     <div class="course-wrap clearfix">
         <?php
-        foreach ($course as $key => $section):
+        foreach ($course['content'] as $key => $section):
         ?>
             <div class="course-section">
                 <div class="row">
