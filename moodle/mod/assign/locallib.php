@@ -5384,10 +5384,18 @@ class assign {
         if ($updatetime) {
             $submission->timemodified = time();
         }
-        $result= $DB->update_record('assign_submission', $submission);
-        if ($result) {
-            $this->gradebook_item_update($submission);
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $result = $DB->update_record('assign_submission', $submission);
+        } else {
+            $result = update_remote_submission($submission);
         }
+        //@TODO: handle gradebook
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            if ($result) {
+                $this->gradebook_item_update($submission);
+            }
+        }
+
         return $result;
     }
 

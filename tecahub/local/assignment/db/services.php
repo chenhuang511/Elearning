@@ -154,6 +154,14 @@ $functions = array(
 		'type'		  => 'write',
 		'ajax'		  => true
 	),
+	'local_mod_assign_update_submission' => array(
+		'classname'	  => 'local_mod_assign_external',
+		'methodname'  => 'update_submission',
+		'classpath'	  => 'local/assignment/externallib.php',
+		'description' => "Update new submission",
+		'type'		  => 'write',
+		'ajax'		  => true
+	),
 	'local_mod_assign_get_submission_by_id' => array(
 		'classname'	  => 'local_mod_assign_external',
 		'methodname'  => 'get_submission_by_id',
