@@ -48,9 +48,10 @@ class mod_quiz_renderer extends plugin_renderer_base {
     public function review_page(quiz_attempt $attemptobj, $slots, $page, $showall,
                                 $lastpage, mod_quiz_display_options $displayoptions,
                                 $summarydata, $reviewobj = null) {
+        global $CFG;
 
         $output = '';
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+        if ($CFG->nonajax == false) {
             $output .= $this->header();
         }
         $output .= $this->review_summary_table($summarydata, $page);
@@ -59,7 +60,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
             $attemptobj);
 
         $output .= $this->review_next_navigation($attemptobj, $page, $lastpage, $showall);
-        if (MOODLE_RUN_MODE == MOODLE_MODE_HOST) {
+        if ($CFG->nonajax == false) {
             $output .= $this->footer();
         }
         return $output;
@@ -437,8 +438,10 @@ class mod_quiz_renderer extends plugin_renderer_base {
     }
 
     public function start_attempt_page(quiz $quizobj, mod_quiz_preflight_check_form $mform) {
+        global $CFG;
+
         $output = '';
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+        if ($CFG->nonajax == false) {
             $output .= $this->header();
         }
         $output .= $this->heading(format_string($quizobj->get_quiz_name(), true,
@@ -446,7 +449,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $output .= $this->quiz_intro($quizobj->get_quiz(), $quizobj->get_cm());
         $output .= $mform->render();
 
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+        if ($CFG->nonajax == false) {
             $output .= $this->footer();
         }
         return $output;
@@ -465,13 +468,15 @@ class mod_quiz_renderer extends plugin_renderer_base {
      */
     public function attempt_page($attemptobj, $page, $accessmanager, $messages, $slots, $id,
                                  $nextpage, $attemptremote=null) {
+        global $CFG;
+
         $output = '';
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+        if ($CFG->nonajax == false) {
             $output .= $this->header();
         }
         $output .= $this->quiz_notices($messages);
         $output .= $this->attempt_form($attemptobj, $page, $slots, $id, $nextpage, $attemptremote);
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+        if ($CFG->nonajax == false) {
             $output .= $this->footer();
         }
         return $output;
@@ -663,15 +668,17 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @param mod_quiz_display_options $displayoptions
      */
     public function summary_page($attemptobj, $displayoptions, $summaryremote = null) {
+        global $CFG;
+
         $output = '';
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+        if ($CFG->nonajax == false) {
             $output .= $this->header();
         }
         $output .= $this->heading(format_string($attemptobj->get_quiz_name()));
         $output .= $this->heading(get_string('summaryofattempt', 'quiz'), 3);
         $output .= $this->summary_table($attemptobj, $displayoptions, $summaryremote);
         $output .= $this->summary_page_controls($attemptobj);
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+        if ($CFG->nonajax == false) {
             $output .= $this->footer();
         }
         return $output;
