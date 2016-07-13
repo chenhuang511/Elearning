@@ -44,6 +44,13 @@ if (! $certificate = get_remote_certificate_by_id($cm->instance)) {
 }
 require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
+
+$nonajax = optional_param('nonajax', null, PARAM_INT);
+if (!has_capability('moodle/course:manageactivities', $context) && $nonajax != true) {
+    $CFG->nonajax = false;
+} else {
+    $CFG->nonajax = true;
+}
 require_capability('mod/certificate:view', $context);
 
 $event = \mod_certificate\event\course_module_viewed::create(array(
@@ -95,7 +102,9 @@ make_cache_directory('tcpdf');
 require("$CFG->dirroot/mod/certificate/type/$certificate->certificatetype/certificate.php");
 
 if (empty($action)) { // Not displaying PDF
-    echo $OUTPUT->header();
+    if($CFG->nonajax == true){
+        echo $OUTPUT->header();
+    }
 
     $viewurl = new moodle_url('/mod/certificate/view.php', array('id' => $cm->id));
     groups_print_activity_menu($cm, $viewurl);
@@ -133,7 +142,9 @@ if (empty($action)) { // Not displaying PDF
     }
 
     echo html_writer::tag('div', $OUTPUT->render($button), array('style' => 'text-align:center'));
-    echo $OUTPUT->footer($course);
+    if($CFG->nonajax == true){
+        echo $OUTPUT->footer($course);
+    }
     exit;
 } else { // Output to pdf
 

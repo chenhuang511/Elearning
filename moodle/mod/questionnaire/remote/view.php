@@ -29,14 +29,18 @@ $id = optional_param('id', null, PARAM_INT);    // Course Module ID.
 $a = optional_param('a', null, PARAM_INT);      // Or questionnaire ID.
 
 $sid = optional_param('sid', null, PARAM_INT);  // Survey id.
-$nonajax = optional_param('nonajax', null, PARAM_INT);
 
 list($cm, $course, $questionnaire) = questionnaire_get_standard_page_items($id, $a);
 // Check login and get context.
 require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 
-$CFG->nonajax = ($nonajax) ? true : false; // temp
+$nonajax = optional_param('nonajax', null, PARAM_INT);
+if (!has_capability('moodle/course:manageactivities', $context) && $nonajax != true) {
+    $CFG->nonajax = false;
+} else {
+    $CFG->nonajax = true;
+}
 
 $url = new moodle_url($CFG->wwwroot.'/mod/questionnaire/view.php');
 if (isset($id)) {
@@ -53,7 +57,7 @@ $questionnaire = new questionnaire(0, $questionnaire, $course, $cm);
 $PAGE->set_title(format_string($questionnaire->name));
 
 $PAGE->set_heading(format_string($course->fullname));
-if($CFG->nonajax == true){
+if($CFG->nonajax == true ){
     echo $OUTPUT->header();
 }
 
@@ -129,8 +133,15 @@ if (!$questionnaire->is_active()) {
         $complete = get_string('resumesurvey', 'questionnaire');
     }
     if ($questionnaire->questions) { // Sanity check.
-        echo '<a href="'.$CFG->wwwroot.htmlspecialchars('/mod/questionnaire/complete.php?'.
-        'id='.$questionnaire->cm->id.'&resume='.$resume).'">'.$complete.'</a>';
+        if($CFG->nonajax == true ){
+            echo '<a href="'.$CFG->wwwroot.htmlspecialchars('/mod/questionnaire/complete.php?'.
+                    'id='.$questionnaire->cm->id.'&resume='.$resume).'&nonajax=1">'.$complete.'</a>';
+        } else {
+            echo '<a class="sublink get-remote-content remote-link-action" data-module=\'';
+            echo json_encode(array('url' => $CFG->wwwroot . '/mod/questionnaire/complete.php?'.'id='.$questionnaire->cm->id.'&resume='.$resume, 'params' => array('id' => $questionnaire->cm->id), 'method' => 'get', 'resume' => $resume));
+            echo '\' href="#">'.$complete;
+            echo '</a>';
+        }
     }
 }
 if ($questionnaire->is_active() && !$questionnaire->questions) {
@@ -138,8 +149,15 @@ if ($questionnaire->is_active() && !$questionnaire->questions) {
 }
 
 if ($questionnaire->is_active() && $questionnaire->capabilities->editquestions && !$questionnaire->questions) { // Sanity check.
-    echo '<a href="'.$CFG->wwwroot.htmlspecialchars('/mod/questionnaire/questions.php?'.
-                'id='.$questionnaire->cm->id).'">'.'<strong>'.get_string('addquestions', 'questionnaire').'</strong></a>';
+    if($CFG->nonajax == true){
+        echo '<a href="'.$CFG->wwwroot.htmlspecialchars('/mod/questionnaire/questions.php?'.
+                'id='.$questionnaire->cm->id).'&nonajax=1">'.'<strong>'.get_string('addquestions', 'questionnaire').'</strong></a>';
+    } else {
+        echo '<a class="sublink get-remote-content remote-link-action" data-module=\'';
+        echo json_encode(array('url' => $CFG->wwwroot . '/mod/questionnaire/questions.php', 'params' => array('id' => $questionnaire->cm->id), 'method' => 'get', 'resume' => $resume));
+        echo '\' href="#">'.'<strong>'.get_string('addquestions', 'questionnaire').'</strong>';
+        echo '</a>';
+    }
 }
 echo $OUTPUT->box_end();
 
@@ -175,19 +193,34 @@ if ($questionnaire->capabilities->readownresponses && ($usernumresp > 0)) {
         $titletext = get_string('yourresponse', 'questionnaire');
         $argstr .= '&byresponse=1&action=vresp';
     }
-
-    echo '<a href="'.$CFG->wwwroot.htmlspecialchars('/mod/questionnaire/myreport.php?'.
-        $argstr).'">'.$titletext.'</a>';
+    if($CFG->nonajax == true){
+        echo '<a href="'.$CFG->wwwroot.htmlspecialchars('/mod/questionnaire/myreport.php?'.
+                $argstr).'&nonajax=1">'.$titletext.'</a>';
+    } else {
+        echo '<a class="sublink get-remote-content remote-link-action" data-module=\'';
+        echo json_encode(array('url' => $CFG->wwwroot . '/mod/questionnaire/myreport.php?'.
+                $argstr, 'params' => array('id' => $questionnaire->cm->id), 'method' => 'get', 'resume' => $resume));
+        echo '\' href="#">'.$titletext;
+        echo '</a>';
+    }
     echo $OUTPUT->box_end();
 }
 
 if ($questionnaire->can_view_all_responses($usernumresp)) {
     echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
     $argstr = 'instance='.$questionnaire->id.'&group='.$currentgroupid;
-    echo '<a href="'.$CFG->wwwroot.htmlspecialchars('/mod/questionnaire/report.php?'.
-            $argstr).'">'.get_string('viewallresponses', 'questionnaire').'</a>';
+    if($CFG->nonajax == true){
+        echo '<a href="'.$CFG->wwwroot.htmlspecialchars('/mod/questionnaire/report.php?'.
+                $argstr).'&nonajax=1">'.get_string('viewallresponses', 'questionnaire').'</a>';
+    } else {
+        echo '<a class="sublink get-remote-content remote-link-action" data-module=\'';
+        echo json_encode(array('url' => $CFG->wwwroot . '/mod/questionnaire/report.php?'.
+                $argstr, 'params' => array('id' => $questionnaire->cm->id), 'method' => 'get', 'resume' => $resume));
+        echo '\' href="#">'.get_string('viewallresponses', 'questionnaire');
+        echo '</a>';
+    }
     echo $OUTPUT->box_end();
 }
-if($CFG->nonajax == true) {
+if($CFG->nonajax == true ){
     echo $OUTPUT->footer();
 }

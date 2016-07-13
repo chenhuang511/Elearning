@@ -69,6 +69,14 @@ $questionnaire = new questionnaire(0, $questionnaire, $course, $cm);
 
 // If you can't view the questionnaire, or can't view a specified response, error out.
 $context = context_module::instance($cm->id);
+
+$nonajax = optional_param('nonajax', null, PARAM_INT);
+if (!has_capability('moodle/course:manageactivities', $context) && $nonajax != true) {
+    $CFG->nonajax = false;
+} else {
+    $CFG->nonajax = true;
+}
+
 if (!has_capability('mod/questionnaire:readallresponseanytime', $context) &&
   !($questionnaire->capabilities->view && $questionnaire->can_view_response($rid))) {
     // Should never happen, unless called directly by a snoop...

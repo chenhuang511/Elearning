@@ -40,6 +40,12 @@ require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/questionnaire:view', $context);
 
+$nonajax = optional_param('nonajax', null, PARAM_INT);
+if (!has_capability('moodle/course:manageactivities', $context) && $nonajax != true) {
+    $CFG->nonajax = false;
+} else {
+    $CFG->nonajax = true;
+}
 $url = new moodle_url($CFG->wwwroot.'/mod/questionnaire/complete.php');
 if (isset($id)) {
     $url->param('id', $id);

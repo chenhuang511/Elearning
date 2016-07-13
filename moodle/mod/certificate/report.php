@@ -72,6 +72,13 @@ require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/certificate:manage', $context);
 
+$nonajax = optional_param('nonajax', null, PARAM_INT);
+if (!has_capability('moodle/course:manageactivities', $context) && $nonajax != true) {
+    $CFG->nonajax = false;
+} else {
+    $CFG->nonajax = true;
+}
+var_dump($CFG->nonajax);
 // Declare some variables
 $strcertificates = get_string('modulenameplural', 'certificate');
 $strcertificate  = get_string('modulename', 'certificate');
@@ -97,10 +104,14 @@ if (!$download) {
 
 // Ensure there are issues to display, if not display notice
 if (!$users = certificate_get_issues($certificate->id, $DB->sql_fullname(), $groupmode, $cm, $page, $perpage)) {
-    echo $OUTPUT->header();
+    if($CFG->nonajax = true){
+        echo $OUTPUT->header();
+    }
     groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/certificate/report.php?id='.$id);
     echo $OUTPUT->notification(get_string('nocertificatesissued', 'certificate'));
-    echo $OUTPUT->footer($course);
+    if($CFG->nonajax = true){
+        echo $OUTPUT->footer($course);
+    }
     exit();
 }
 
@@ -297,11 +308,15 @@ $btndownloadxls = $OUTPUT->single_button(new moodle_url("report.php", array('id'
 $btndownloadtxt = $OUTPUT->single_button(new moodle_url("report.php", array('id'=>$cm->id, 'download'=>'txt')), get_string("downloadtext"));
 $tablebutton->data[] = array($btndownloadods, $btndownloadxls, $btndownloadtxt);
 
-echo $OUTPUT->header();
+if($CFG->nonajax = true){
+    echo $OUTPUT->header();
+}
 groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/certificate/report.php?id='.$id);
 echo $OUTPUT->heading(get_string('modulenameplural', 'certificate'));
 echo $OUTPUT->paging_bar($usercount, $page, $perpage, $url);
 echo '<br />';
 echo html_writer::table($table);
 echo html_writer::tag('div', html_writer::table($tablebutton), array('style' => 'margin:auto; width:50%'));
-echo $OUTPUT->footer($course);
+if($CFG->nonajax = true){
+    echo $OUTPUT->footer($course);
+}

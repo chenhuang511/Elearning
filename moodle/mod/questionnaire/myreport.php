@@ -35,6 +35,14 @@ require_login($course, true, $cm);
 
 $context = context_module::instance($cm->id);
 $questionnaire->canviewallgroups = has_capability('moodle/site:accessallgroups', $context);
+
+$nonajax = optional_param('nonajax', null, PARAM_INT);
+if (!has_capability('moodle/course:manageactivities', $context) && $nonajax != true) {
+    $CFG->nonajax = false;
+} else {
+    $CFG->nonajax = true;
+}
+
 // Should never happen, unless called directly by a snoop...
 if ( !has_capability('mod/questionnaire:readownresponses', $context)
     || $userid != $USER->id) {
@@ -97,7 +105,9 @@ switch ($action) {
         }
 
         // Print the page header.
-        echo $OUTPUT->header();
+        if($CFG->nonajax == true) {
+            echo $OUTPUT->header();
+        }
 
         // Print the tabs.
         include('tabs.php');
@@ -108,7 +118,9 @@ switch ($action) {
         echo '</div>';
 
         // Finish the page.
-        echo $OUTPUT->footer($course);
+        if($CFG->nonajax == true) {
+            echo $OUTPUT->footer($course);
+        }
         break;
 
     case 'vall':
@@ -130,7 +142,9 @@ switch ($action) {
         $titletext = get_string('myresponses', 'questionnaire');
 
         // Print the page header.
-        echo $OUTPUT->header();
+        if($CFG->nonajax == true) {
+            echo $OUTPUT->header();
+        }
 
         // Print the tabs.
         include('tabs.php');
@@ -139,7 +153,9 @@ switch ($action) {
         $questionnaire->view_all_responses($resps);
 
         // Finish the page.
-        echo $OUTPUT->footer($course);
+        if($CFG->nonajax == true) {
+            echo $OUTPUT->footer($course);
+        }
         break;
 
     case 'vresp':
@@ -286,7 +302,9 @@ switch ($action) {
 
         $compare = false;
         // Print the page header.
-        echo $OUTPUT->header();
+        if($CFG->nonajax == true) {
+            echo $OUTPUT->header();
+        }
 
         // Print the tabs.
         include('tabs.php');
@@ -326,7 +344,9 @@ switch ($action) {
         }
         echo $OUTPUT->box_end();
         // Finish the page.
-        echo $OUTPUT->footer($course);
+        if($CFG->nonajax == true) {
+            echo $OUTPUT->footer($course);
+        }
         break;
 
     case get_string('return', 'questionnaire'):

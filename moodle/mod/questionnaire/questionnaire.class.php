@@ -24,6 +24,7 @@ class questionnaire {
      * @var \mod_questionnaire\question\base[] $quesitons
      */
     public $questions = [];
+    private $nonajax;
 
     /**
      * The survey record.
@@ -38,8 +39,13 @@ class questionnaire {
      *
      */
     public function __construct($id = 0, $questionnaire = null, &$course, &$cm, $addquestions = true) {
-        global $DB;
+        global $DB, $CFG;
 
+        if($CFG->nonajax == true){
+            $this->nonajax = "&nonajax=1";
+        } else {
+            $this->nonajax = "";
+        }
         if ($id) {
             if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
                 $questionnaire = $DB->get_record('questionnaire', array('id' => $id));
@@ -164,7 +170,9 @@ class questionnaire {
         // Initialise the JavaScript.
         $PAGE->requires->js_init_call('M.mod_questionnaire.init_attempt_form', null, false, questionnaire_get_js_module());
 
-        echo $OUTPUT->header();
+        if($CFG->nonajax == true){
+            echo $OUTPUT->header();
+        }
 
         $questionnaire = $this;
 
@@ -287,7 +295,9 @@ class questionnaire {
         }
 
         // Finish the page.
-        echo $OUTPUT->footer($this->course);
+        if($CFG->nonajax == true){
+            echo $OUTPUT->footer($this->course);
+        }
     }
 
     /*
@@ -2142,7 +2152,7 @@ class questionnaire {
         }
         if ($this->capabilities->readownresponses) {
             echo('<a href="'.$CFG->wwwroot.'/mod/questionnaire/myreport.php?id='.
-            $this->cm->id.'&amp;instance='.$this->cm->instance.'&amp;user='.$USER->id.'&byresponse=0&action=vresp">'.
+            $this->cm->id.'&amp;instance='.$this->cm->instance.'&amp;user='.$USER->id.'&byresponse=0&action=vresp'.$this->nonajax.'">'.
             get_string("continue").'</a>');
         } else {
             echo('<a href="'.$CFG->wwwroot.'/course/view.php?id='.$this->course->id.'">'.
@@ -2283,7 +2293,7 @@ class questionnaire {
                                 title="'.$lastuserfullname .'">'.
                                 get_string('lastrespondent', 'questionnaire').'</a>&nbsp;<b>>></b>');
             }
-            $url = $CFG->wwwroot.'/mod/questionnaire/report.php?action=vresp&byresponse=1&group='.$currentgroupid;
+            $url = $CFG->wwwroot.'/mod/questionnaire/report.php?action=vresp&byresponse=1&group='.$currentgroupid.$this->nonajax;
             // Display navbar.
             echo $OUTPUT->box_start('respondentsnavbar');
             echo implode(' | ', $linkarr);
@@ -2292,7 +2302,7 @@ class questionnaire {
             // Display a "print this response" icon here in prevision of total removal of tabs in version 2.6.
             $linkname = '&nbsp;'.get_string('print', 'questionnaire');
             $url = '/mod/questionnaire/print.php?qid='.$this->id.'&amp;rid='.$currrid.
-            '&amp;courseid='.$this->course->id.'&amp;sec=1';
+            '&amp;courseid='.$this->course->id.'&amp;sec=1'.$this->nonajax;
             $title = get_string('printtooltip', 'questionnaire');
             $options = array('menubar' => true, 'location' => false, 'scrollbars' => true,
                             'resizable' => true, 'height' => 600, 'width' => 800);
@@ -2405,6 +2415,7 @@ class questionnaire {
         } else {
             $url = 'report.php?instance='.$instance.'&amp;user='.$userid.'&amp;action=vresp&amp;byresponse=1&amp;sid='.$sid;
         }
+        $url .= $this->nonajax;
         $linkarr = array();
         $displaypos = 1;
         if ($prevrid != null) {
