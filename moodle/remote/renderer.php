@@ -57,7 +57,7 @@ class core_remote_renderer extends plugin_renderer_base
         $coursecount = 0;
 
         $content .= html_writer::start_tag('div', array('class' => 'container-available-course col-sm-9'));
-        $content .= html_writer::tag('div', 'my coursers', array('class' => 'block-title'));
+        $content .= html_writer::tag('div', 'khóa học của tôi', array('class' => 'block-title'));
         foreach ($courses as $course) {
             $coursecount++;
             $classes = 'coursebox';
@@ -121,7 +121,7 @@ class core_remote_renderer extends plugin_renderer_base
 
         $content .= html_writer::start_tag('div', array('class' => 'container-block'));
 
-        $content .= html_writer::tag('div', 'suggested course', array('class' => 'block-title'));
+        $content .= html_writer::tag('div', 'khóa học đề xuất', array('class' => 'block-title'));
         $course3 = array_slice($courses,0,3);
         foreach ($course3 as $course) {
             $coursecount++;
@@ -156,7 +156,7 @@ class core_remote_renderer extends plugin_renderer_base
 
         $content .= html_writer::start_tag('div', array('class' => 'container-block'));
 
-        $content .= html_writer::tag('div', 'finished course', array('class' => 'block-title'));
+        $content .= html_writer::tag('div', 'khóa học hoàn thành', array('class' => 'block-title'));
         $course3 = array_slice($courses,0,3);
         foreach ($course3 as $course) {
             $coursecount++;

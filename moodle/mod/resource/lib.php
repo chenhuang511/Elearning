@@ -28,19 +28,30 @@ defined('MOODLE_INTERNAL') || die;
  * @param string $feature FEATURE_xx constant for requested feature
  * @return mixed True if module supports feature, false if not, null if doesn't know
  */
-function resource_supports($feature) {
-    switch($feature) {
-        case FEATURE_MOD_ARCHETYPE:           return MOD_ARCHETYPE_RESOURCE;
-        case FEATURE_GROUPS:                  return false;
-        case FEATURE_GROUPINGS:               return false;
-        case FEATURE_MOD_INTRO:               return true;
-        case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
-        case FEATURE_GRADE_HAS_GRADE:         return false;
-        case FEATURE_GRADE_OUTCOMES:          return false;
-        case FEATURE_BACKUP_MOODLE2:          return true;
-        case FEATURE_SHOW_DESCRIPTION:        return true;
+function resource_supports($feature)
+{
+    switch ($feature) {
+        case FEATURE_MOD_ARCHETYPE:
+            return MOD_ARCHETYPE_RESOURCE;
+        case FEATURE_GROUPS:
+            return false;
+        case FEATURE_GROUPINGS:
+            return false;
+        case FEATURE_MOD_INTRO:
+            return true;
+        case FEATURE_COMPLETION_TRACKS_VIEWS:
+            return true;
+        case FEATURE_GRADE_HAS_GRADE:
+            return false;
+        case FEATURE_GRADE_OUTCOMES:
+            return false;
+        case FEATURE_BACKUP_MOODLE2:
+            return true;
+        case FEATURE_SHOW_DESCRIPTION:
+            return true;
 
-        default: return null;
+        default:
+            return null;
     }
 }
 
@@ -48,7 +59,8 @@ function resource_supports($feature) {
  * Returns all other caps used in module
  * @return array
  */
-function resource_get_extra_capabilities() {
+function resource_get_extra_capabilities()
+{
     return array('moodle/site:accessallgroups');
 }
 
@@ -57,7 +69,8 @@ function resource_get_extra_capabilities() {
  * @param $data the data submitted from the reset course.
  * @return array status array
  */
-function resource_reset_userdata($data) {
+function resource_reset_userdata($data)
+{
     return array();
 }
 
@@ -71,8 +84,9 @@ function resource_reset_userdata($data) {
  *
  * @return array
  */
-function resource_get_view_actions() {
-    return array('view','view all');
+function resource_get_view_actions()
+{
+    return array('view', 'view all');
 }
 
 /**
@@ -85,7 +99,8 @@ function resource_get_view_actions() {
  *
  * @return array
  */
-function resource_get_post_actions() {
+function resource_get_post_actions()
+{
     return array('update', 'add');
 }
 
@@ -95,7 +110,8 @@ function resource_get_post_actions() {
  * @param object $mform
  * @return int new resource instance id
  */
-function resource_add_instance($data, $mform) {
+function resource_add_instance($data, $mform)
+{
     global $CFG, $DB;
     require_once("$CFG->libdir/resourcelib.php");
     require_once("$CFG->dirroot/mod/resource/locallib.php");
@@ -107,7 +123,7 @@ function resource_add_instance($data, $mform) {
     $data->id = $DB->insert_record('resource', $data);
 
     // we need to use context now, so we need to make sure all needed info is already in db
-    $DB->set_field('course_modules', 'instance', $data->id, array('id'=>$cmid));
+    $DB->set_field('course_modules', 'instance', $data->id, array('id' => $cmid));
     resource_set_mainfile($data);
     return $data->id;
 }
@@ -118,11 +134,12 @@ function resource_add_instance($data, $mform) {
  * @param object $mform
  * @return bool true
  */
-function resource_update_instance($data, $mform) {
+function resource_update_instance($data, $mform)
+{
     global $CFG, $DB;
     require_once("$CFG->libdir/resourcelib.php");
     $data->timemodified = time();
-    $data->id           = $data->instance;
+    $data->id = $data->instance;
     $data->revision++;
 
     resource_set_display_options($data);
@@ -139,14 +156,15 @@ function resource_update_instance($data, $mform) {
  *
  * @param object $data Data object
  */
-function resource_set_display_options($data) {
+function resource_set_display_options($data)
+{
     $displayoptions = array();
     if ($data->display == RESOURCELIB_DISPLAY_POPUP) {
-        $displayoptions['popupwidth']  = $data->popupwidth;
+        $displayoptions['popupwidth'] = $data->popupwidth;
         $displayoptions['popupheight'] = $data->popupheight;
     }
     if (in_array($data->display, array(RESOURCELIB_DISPLAY_AUTO, RESOURCELIB_DISPLAY_EMBED, RESOURCELIB_DISPLAY_FRAME))) {
-        $displayoptions['printintro']   = (int)!empty($data->printintro);
+        $displayoptions['printintro'] = (int)!empty($data->printintro);
     }
     if (!empty($data->showsize)) {
         $displayoptions['showsize'] = 1;
@@ -165,16 +183,19 @@ function resource_set_display_options($data) {
  * @param int $id
  * @return bool true
  */
-function resource_delete_instance($id) {
+function resource_delete_instance($id)
+{
     global $DB;
-
-    if (!$resource = $DB->get_record('resource', array('id'=>$id))) {
+    $params = array();
+    $params['parameters[0][name]'] = "id";
+    $params['parameters[0][value]'] = $id;
+    if (!$resource = get_remote_resource_by($params)) {
         return false;
     }
 
     // note: all context files are deleted automatically
 
-    $DB->delete_records('resource', array('id'=>$resource->id));
+    $DB->delete_records('resource', array('id' => $resource->id));
 
     return true;
 }
@@ -189,16 +210,19 @@ function resource_delete_instance($id) {
  * @param stdClass $coursemodule
  * @return cached_cm_info info
  */
-function resource_get_coursemodule_info($coursemodule) {
+function resource_get_coursemodule_info($coursemodule)
+{
     global $CFG, $DB;
     require_once("$CFG->libdir/filelib.php");
     require_once("$CFG->dirroot/mod/resource/locallib.php");
-    require_once($CFG->libdir.'/completionlib.php');
+    require_once($CFG->libdir . '/completionlib.php');
+    require_once($CFG->dirroot . '/mod/resource/remote/locallib.php');
 
     $context = context_module::instance($coursemodule->id);
-
-    if (!$resource = $DB->get_record('resource', array('id'=>$coursemodule->instance),
-            'id, name, display, displayoptions, tobemigrated, revision, intro, introformat')) {
+    $params = array();
+    $params['parameters[0][name]'] = "id";
+    $params['parameters[0][value]'] = $coursemodule->instance;
+    if (!$resource = get_remote_resource_by($params)) {
         return NULL;
     }
 
@@ -210,7 +234,7 @@ function resource_get_coursemodule_info($coursemodule) {
     }
 
     if ($resource->tobemigrated) {
-        $info->icon ='i/invalid';
+        $info->icon = 'i/invalid';
         return $info;
     }
     $fs = get_file_storage();
@@ -224,15 +248,15 @@ function resource_get_coursemodule_info($coursemodule) {
     $display = resource_get_final_display_type($resource);
 
     if ($display == RESOURCELIB_DISPLAY_POPUP) {
-        $fullurl = "$CFG->wwwroot/mod/resource/view.php?id=$coursemodule->id&amp;redirect=1";
+        $fullurl = "$CFG->wwwroot/mod/resource/remote/view.php?id=$coursemodule->id&amp;redirect=1";
         $options = empty($resource->displayoptions) ? array() : unserialize($resource->displayoptions);
-        $width  = empty($options['popupwidth'])  ? 620 : $options['popupwidth'];
+        $width = empty($options['popupwidth']) ? 620 : $options['popupwidth'];
         $height = empty($options['popupheight']) ? 450 : $options['popupheight'];
         $wh = "width=$width,height=$height,toolbar=no,location=no,menubar=no,copyhistory=no,status=no,directories=no,scrollbars=yes,resizable=yes";
         $info->onclick = "window.open('$fullurl', '', '$wh'); return false;";
 
     } else if ($display == RESOURCELIB_DISPLAY_NEW) {
-        $fullurl = "$CFG->wwwroot/mod/resource/view.php?id=$coursemodule->id&amp;redirect=1";
+        $fullurl = "$CFG->wwwroot/mod/resource/remote/view.php?id=$coursemodule->id&amp;redirect=1";
         $info->onclick = "window.open('$fullurl'); return false;";
 
     }
@@ -257,7 +281,8 @@ function resource_get_coursemodule_info($coursemodule) {
  *
  * @param cm_info $cm Course module information
  */
-function resource_cm_info_view(cm_info $cm) {
+function resource_cm_info_view(cm_info $cm)
+{
     global $CFG;
     require_once($CFG->dirroot . '/mod/resource/locallib.php');
 
@@ -279,7 +304,8 @@ function resource_cm_info_view(cm_info $cm) {
  * @param stdClass $context context object
  * @return array
  */
-function resource_get_file_areas($course, $cm, $context) {
+function resource_get_file_areas($course, $cm, $context)
+{
     $areas = array();
     $areas['content'] = get_string('resourcecontent', 'resource');
     return $areas;
@@ -301,7 +327,8 @@ function resource_get_file_areas($course, $cm, $context) {
  * @param string $filename file name
  * @return file_info instance or null if not found
  */
-function resource_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
+function resource_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename)
+{
     global $CFG;
 
     if (!has_capability('moodle/course:managefiles', $context)) {
@@ -315,7 +342,7 @@ function resource_get_file_info($browser, $areas, $course, $cm, $context, $filea
         $filepath = is_null($filepath) ? '/' : $filepath;
         $filename = is_null($filename) ? '.' : $filename;
 
-        $urlbase = $CFG->wwwroot.'/pluginfile.php';
+        $urlbase = $CFG->wwwroot . '/pluginfile.php';
         if (!$storedfile = $fs->get_file($context->id, 'mod_resource', 'content', 0, $filepath, $filename)) {
             if ($filepath === '/' and $filename === '.') {
                 $storedfile = new virtual_root_file($context->id, 'mod_resource', 'content', 0);
@@ -347,7 +374,8 @@ function resource_get_file_info($browser, $areas, $course, $cm, $context, $filea
  * @param array $options additional options affecting the file serving
  * @return bool false if file not found, does not return if found - just send the file
  */
-function resource_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
+function resource_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array())
+{
     global $CFG, $DB;
     require_once("$CFG->libdir/resourcelib.php");
 
@@ -383,11 +411,11 @@ function resource_pluginfile($course, $cm, $context, $filearea, $args, $forcedow
                     break;
                 }
             }
-            $resource = $DB->get_record('resource', array('id'=>$cm->instance), 'id, legacyfiles', MUST_EXIST);
+            $resource = $DB->get_record('resource', array('id' => $cm->instance), 'id, legacyfiles', MUST_EXIST);
             if ($resource->legacyfiles != RESOURCELIB_LEGACYFILES_ACTIVE) {
                 return false;
             }
-            if (!$file = resourcelib_try_file_migration('/'.$relativepath, $cm->id, $cm->course, 'mod_resource', 'content', 0)) {
+            if (!$file = resourcelib_try_file_migration('/' . $relativepath, $cm->id, $cm->course, 'mod_resource', 'content', 0)) {
                 return false;
             }
             // file migrate - update flag
@@ -399,7 +427,7 @@ function resource_pluginfile($course, $cm, $context, $filearea, $args, $forcedow
     // should we apply filters?
     $mimetype = $file->get_mimetype();
     if ($mimetype === 'text/html' or $mimetype === 'text/plain' or $mimetype === 'application/xhtml+xml') {
-        $filter = $DB->get_field('resource', 'filterfiles', array('id'=>$cm->instance));
+        $filter = $DB->get_field('resource', 'filterfiles', array('id' => $cm->instance));
         $CFG->embeddedsoforcelinktarget = true;
     } else {
         $filter = 0;
@@ -415,8 +443,9 @@ function resource_pluginfile($course, $cm, $context, $filearea, $args, $forcedow
  * @param stdClass $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block
  */
-function resource_page_type_list($pagetype, $parentcontext, $currentcontext) {
-    $module_pagetype = array('mod-resource-*'=>get_string('page-mod-resource-x', 'resource'));
+function resource_page_type_list($pagetype, $parentcontext, $currentcontext)
+{
+    $module_pagetype = array('mod-resource-*' => get_string('page-mod-resource-x', 'resource'));
     return $module_pagetype;
 }
 
@@ -425,11 +454,15 @@ function resource_page_type_list($pagetype, $parentcontext, $currentcontext) {
  *
  * @return array of file content
  */
-function resource_export_contents($cm, $baseurl) {
+function resource_export_contents($cm, $baseurl)
+{
     global $CFG, $DB;
     $contents = array();
     $context = context_module::instance($cm->id);
-    $resource = $DB->get_record('resource', array('id'=>$cm->instance), '*', MUST_EXIST);
+    $params = array();
+    $params['parameters[0][name]'] = "id";
+    $params['parameters[0][value]'] = $cm->instance;
+    $resource = get_remote_resource_by($params, '', true);
 
     $fs = get_file_storage();
     $files = $fs->get_area_files($context->id, 'mod_resource', 'content', 0, 'sortorder DESC, id ASC', false);
@@ -437,16 +470,16 @@ function resource_export_contents($cm, $baseurl) {
     foreach ($files as $fileinfo) {
         $file = array();
         $file['type'] = 'file';
-        $file['filename']     = $fileinfo->get_filename();
-        $file['filepath']     = $fileinfo->get_filepath();
-        $file['filesize']     = $fileinfo->get_filesize();
-        $file['fileurl']      = file_encode_url("$CFG->wwwroot/" . $baseurl, '/'.$context->id.'/mod_resource/content/'.$resource->revision.$fileinfo->get_filepath().$fileinfo->get_filename(), true);
-        $file['timecreated']  = $fileinfo->get_timecreated();
+        $file['filename'] = $fileinfo->get_filename();
+        $file['filepath'] = $fileinfo->get_filepath();
+        $file['filesize'] = $fileinfo->get_filesize();
+        $file['fileurl'] = file_encode_url("$CFG->wwwroot/" . $baseurl, '/' . $context->id . '/mod_resource/content/' . $resource->revision . $fileinfo->get_filepath() . $fileinfo->get_filename(), true);
+        $file['timecreated'] = $fileinfo->get_timecreated();
         $file['timemodified'] = $fileinfo->get_timemodified();
-        $file['sortorder']    = $fileinfo->get_sortorder();
-        $file['userid']       = $fileinfo->get_userid();
-        $file['author']       = $fileinfo->get_author();
-        $file['license']      = $fileinfo->get_license();
+        $file['sortorder'] = $fileinfo->get_sortorder();
+        $file['userid'] = $fileinfo->get_userid();
+        $file['author'] = $fileinfo->get_author();
+        $file['license'] = $fileinfo->get_license();
         $contents[] = $file;
     }
 
@@ -457,10 +490,11 @@ function resource_export_contents($cm, $baseurl) {
  * Register the ability to handle drag and drop file uploads
  * @return array containing details of the files / types the mod can handle
  */
-function resource_dndupload_register() {
+function resource_dndupload_register()
+{
     return array('files' => array(
-                     array('extension' => '*', 'message' => get_string('dnduploadresource', 'mod_resource'))
-                 ));
+        array('extension' => '*', 'message' => get_string('dnduploadresource', 'mod_resource'))
+    ));
 }
 
 /**
@@ -468,7 +502,8 @@ function resource_dndupload_register() {
  * @param object $uploadinfo details of the file / content that has been uploaded
  * @return int instance id of the newly created mod
  */
-function resource_dndupload_handle($uploadinfo) {
+function resource_dndupload_handle($uploadinfo)
+{
     // Gather the required info.
     $data = new stdClass();
     $data->course = $uploadinfo->course->id;
@@ -495,13 +530,14 @@ function resource_dndupload_handle($uploadinfo) {
 /**
  * Mark the activity completed (if required) and trigger the course_module_viewed event.
  *
- * @param  stdClass $resource   resource object
- * @param  stdClass $course     course object
- * @param  stdClass $cm         course module object
- * @param  stdClass $context    context object
+ * @param  stdClass $resource resource object
+ * @param  stdClass $course course object
+ * @param  stdClass $cm course module object
+ * @param  stdClass $context context object
  * @since Moodle 3.0
  */
-function resource_view($resource, $course, $cm, $context) {
+function resource_view($resource, $course, $cm, $context)
+{
 
     // Trigger course_module_viewed event.
     $params = array(
