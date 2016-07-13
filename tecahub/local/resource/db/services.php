@@ -37,7 +37,7 @@ $functions = array(
     'local_mod_get_resource_by' => array(
         'classname' => 'local_mod_resource_external',
         'methodname' => 'get_resource_by',
-        'classpath' => 'local/lesson/externallib.php',
+        'classpath' => 'local/resource/externallib.php',
         'description' => 'Get resource object by',
         'type' => 'read',
         'ajax' => true
@@ -45,8 +45,16 @@ $functions = array(
     'local_mod_get_resource_old_by' => array(
         'classname' => 'local_mod_resource_external',
         'methodname' => 'get_resource_old_by',
-        'classpath' => 'local/lesson/externallib.php',
+        'classpath' => 'local/resource/externallib.php',
         'description' => 'Get resource_old object by',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_field_resource_by' => array(
+        'classname' => 'local_mod_resource_external',
+        'methodname' => 'get_field_resource_by',
+        'classpath' => 'local/resource/externallib.php',
+        'description' => 'Getfield of resource object by',
         'type' => 'read',
         'ajax' => true
     ),
