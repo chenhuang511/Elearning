@@ -51,7 +51,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
         global $CFG;
 
         $output = '';
-        if ($CFG->nonajax == false) {
+        if ($CFG->nonajax == true) {
             $output .= $this->header();
         }
         $output .= $this->review_summary_table($summarydata, $page);
@@ -60,7 +60,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
             $attemptobj);
 
         $output .= $this->review_next_navigation($attemptobj, $page, $lastpage, $showall);
-        if ($CFG->nonajax == false) {
+        if ($CFG->nonajax == true) {
             $output .= $this->footer();
         }
         return $output;
@@ -441,7 +441,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
         global $CFG;
 
         $output = '';
-        if ($CFG->nonajax == false) {
+        if ($CFG->nonajax == true) {
             $output .= $this->header();
         }
         $output .= $this->heading(format_string($quizobj->get_quiz_name(), true,
@@ -449,7 +449,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $output .= $this->quiz_intro($quizobj->get_quiz(), $quizobj->get_cm());
         $output .= $mform->render();
 
-        if ($CFG->nonajax == false) {
+        if ($CFG->nonajax == true) {
             $output .= $this->footer();
         }
         return $output;
@@ -471,12 +471,12 @@ class mod_quiz_renderer extends plugin_renderer_base {
         global $CFG;
 
         $output = '';
-        if ($CFG->nonajax == false) {
+        if ($CFG->nonajax == true) {
             $output .= $this->header();
         }
         $output .= $this->quiz_notices($messages);
         $output .= $this->attempt_form($attemptobj, $page, $slots, $id, $nextpage, $attemptremote);
-        if ($CFG->nonajax == false) {
+        if ($CFG->nonajax == true) {
             $output .= $this->footer();
         }
         return $output;
@@ -671,14 +671,14 @@ class mod_quiz_renderer extends plugin_renderer_base {
         global $CFG;
 
         $output = '';
-        if ($CFG->nonajax == false) {
+        if ($CFG->nonajax == true) {
             $output .= $this->header();
         }
         $output .= $this->heading(format_string($attemptobj->get_quiz_name()));
         $output .= $this->heading(get_string('summaryofattempt', 'quiz'), 3);
         $output .= $this->summary_table($attemptobj, $displayoptions, $summaryremote);
         $output .= $this->summary_page_controls($attemptobj);
-        if ($CFG->nonajax == false) {
+        if ($CFG->nonajax == true) {
             $output .= $this->footer();
         }
         return $output;
