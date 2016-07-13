@@ -339,3 +339,24 @@ function certificate_get_view_actions() {
 function certificate_get_post_actions() {
     return array('received');
 }
+function certificate_get_coursemodule_info($coursemodule) {
+    global $CFG, $DB;
+
+    $certificate = new StdClass();
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        require_once($CFG->dirroot . '/mod/certificate/remote/locallib.php');
+        if (!$certificate = get_remote_certificate_by_id($coursemodule->instance)) {
+            return NULL;
+        }
+    }
+
+    $info = new cached_cm_info();
+    $info->name = $certificate->name;
+
+    if ($coursemodule->showdescription) {
+        // Convert intro to html. Do not filter cached version, filters run at display time.
+        $info->content = format_module_intro('certificate', $certificate, $coursemodule->id, false);
+    }
+
+    return $info;
+}

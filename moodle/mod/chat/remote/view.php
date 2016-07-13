@@ -59,14 +59,25 @@ require_course_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 $PAGE->set_context($context);
 
+if (!has_capability('moodle/course:manageactivities', $context)) {
+    $CFG->nonajax = false;
+} else {
+    $CFG->nonajax = true;
+}
+
 // Show some info for guests.
 if (isguestuser()) {
     $PAGE->set_title($chat->name);
-    echo $OUTPUT->header();
+    if ($CFG->nonajax == true) {
+        echo $OUTPUT->header();;
+    }
+
     echo $OUTPUT->confirm('<p>'.get_string('noguests', 'chat').'</p>'.get_string('liketologin'),
             get_login_url(), $CFG->wwwroot.'/course/view.php?id='.$course->id);
 
-    echo $OUTPUT->footer();
+    if ($CFG->nonajax == true) {
+        echo $OUTPUT->footer();
+    }
     exit;
 }
 
@@ -87,7 +98,9 @@ $PAGE->set_title($title);
 $PAGE->set_heading($course->fullname);
 
 // Print the page header.
-echo $OUTPUT->header();
+if ($CFG->nonajax == true) {
+    echo $OUTPUT->header();
+}
 
 // Check to see if groups are being used here.
 $groupmode = groups_get_activity_groupmode($cm);
@@ -180,4 +193,6 @@ if ($chatusers = chat_get_users($chat->id, $currentgroup, $cm->groupingid)) {
     echo $OUTPUT->box_end();
 }
 
-echo $OUTPUT->footer();
+if ($CFG->nonajax == true) {
+    echo $OUTPUT->footer();
+}

@@ -72,7 +72,7 @@ function get_remote_user_by_id($id) {
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
-            'function_name' => 'local_questionnaire_get_question_by_id',
+            'function_name' => 'local_questionnaire_get_user_by_id',
             'params' => array('id' => $id)
         )
     );

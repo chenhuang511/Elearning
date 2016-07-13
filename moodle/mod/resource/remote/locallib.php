@@ -32,3 +32,17 @@ function get_remote_resource_old_by($parameters, $sort = '', $mustexists = FALSE
 
     return $result->resource;
 }
+
+function get_remote_field_resource_by($modname, $parameters, $field = 'name')
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_field_resource_by',
+            'params' => array_merge(array('modname' => $modname, 'field' => $field), $parameters),
+        )
+    );
+
+    return $result->field;
+}
