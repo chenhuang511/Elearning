@@ -41,6 +41,19 @@ a:focus {
     margin-right: 7px;
 }
 
+.icon-bxh.icon-bigbluebuttonbn{
+     background: url([[pix:theme|img-menu/icon-bigbluebutton]]);
+}
+.icon-bxh.icon-questionnaire{
+     background: url([[pix:theme|img-menu/icon-questionnaire]]);
+}
+
+.icon-bxh.icon-scheduler{
+    background: url([[pix:theme|img-menu/icon-scheduler]]);
+}
+.icon-bxh.icon-certificate{ 
+     background: url([[pix:theme|img-menu/icon-certificate]]);
+}
 .icon-bxh.icon-assign{ 
 
     background: url([[pix:theme|img-menu/icon-assignment]]);

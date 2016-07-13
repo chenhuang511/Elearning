@@ -1,7 +1,3 @@
-
-
-
-
 /*!
  * Bootstrap v3.3.5 (http://getbootstrap.com)
  * Copyright 2011-2015 Twitter, Inc.
@@ -17264,6 +17260,7 @@ input.fp-btn-choose {
 #page-footer .purgecaches,
 #page-footer .performanceinfo {
   text-align: center;
+  
 }
 /**
  * This styles the H2 node the dock creates to test the width before making its title rotation.
