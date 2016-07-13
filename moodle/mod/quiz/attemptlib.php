@@ -394,7 +394,7 @@ class quiz {
         if ($page) {
             $params['page'] = $page;
         }
-        return new moodle_url('/mod/quiz/startattempt.php', $params);
+        return new moodle_url($this->isremote?'/mod/quiz/remote/startattempt.php':'/mod/quiz/startattempt.php', $params);
     }
 
     /**
@@ -619,26 +619,25 @@ class quiz_attempt {
         $this->attempt = $attempt;
         $this->quizobj = new quiz($quiz, $cm, $course);
 
+        if($this->isremote){
+            $this->slots = get_remote_get_slots_by_quizid($this->get_quizid());
+            $this->sections = get_remote_get_sections_by_quizid($this->get_quizid());
+        }else{
+            $this->slots = $DB->get_records('quiz_slots',
+                array('quizid' => $this->get_quizid()), 'slot',
+                'slot, requireprevious, questionid');
+            $this->sections = array_values($DB->get_records('quiz_sections',
+                array('quizid' => $this->get_quizid()), 'firstslot'));
+        }
+
+        $this->link_sections_and_slots();
+        $this->determine_layout();
+
         if (!$loadquestions) {
             return;
         }
 
         $this->quba = question_engine::load_questions_usage_by_activity($this->attempt->uniqueid);
-        $this->slots = $DB->get_records('quiz_slots',
-                array('quizid' => $this->get_quizid()), 'slot',
-                'slot, requireprevious, questionid');
-        if(!$this->slots){
-            $this->slots = get_remote_get_slots_by_quizid($this->get_quizid());
-        }
-
-        $this->sections = array_values($DB->get_records('quiz_sections',
-                array('quizid' => $this->get_quizid()), 'firstslot'));
-        if(!$this->sections){
-            $this->sections = get_remote_get_sections_by_quizid($this->get_quizid());
-        }
-
-        $this->link_sections_and_slots();
-        $this->determine_layout();
         $this->number_questions();
     }
 

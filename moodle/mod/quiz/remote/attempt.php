@@ -19,7 +19,6 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 require_once($CFG->dirroot.'/mod/quiz/remote/locallib.php');
 
 // Look for old-style URLs, such as may be in the logs, and redirect them to startattemtp.php.
-// @TODO check lại các trường hợp
 if ($id = optional_param('id', 0, PARAM_INT)) {
     redirect($CFG->wwwroot . '/mod/quiz/remote/startattempt.php?cmid=' . $id . '&sesskey=' . sesskey());
 } else if ($qid = optional_param('q', 0, PARAM_INT)) {
@@ -31,18 +30,18 @@ if ($id = optional_param('id', 0, PARAM_INT)) {
 }
 
 // Get submitted parameters.
+$isremote = (MOODLE_RUN_MODE == MOODLE_MODE_HUB)?true:false;
 $attemptid = required_param('attempt', PARAM_INT);
 $page = optional_param('page', 0, PARAM_INT);
 
 $attemptremote = get_remote_get_attempt_data($attemptid, $page);
-//var_dump($attemptremote);die;
-
 $attempt = get_remote_attempt_by_attemptid($attemptid);
 $quiz = get_remote_quiz_by_id($attempt->quiz);
 $course = get_local_course_record($quiz->course);
 $cm = get_remote_course_module_by_instance("quiz", $quiz->id)->cm;
 $attemptobj = new quiz_attempt($attempt, $quiz, $cm, $course, false, true);
 $context = context_module::instance($cm->id);
+
 if (!has_capability('moodle/course:manageactivities', $context)) {
     $CFG->nonajax = false;
 } else {
@@ -50,11 +49,30 @@ if (!has_capability('moodle/course:manageactivities', $context)) {
 }
 
 $page = $attemptobj->force_page_number_into_range($page);
-$PAGE->set_url($attemptobj->attempt_url(null, $page)); // @TODO: set lai
+$PAGE->set_url($attemptobj->attempt_url(null, $page));
 
-// @TODO: check login
-// @TODO: Check that this attempt belongs to this user.
+// Check login.
+require_login($attemptobj->get_course(), false, $attemptobj->get_cm());
+
+// Check that this attempt belongs to this user.
+$user = get_remote_mapping_user();
+if ($attemptobj->get_userid() != $user[0]->id) {
+    if ($attemptobj->has_capability('mod/quiz:viewreports')) {
+        redirect($attemptobj->review_url(null, $page));
+    } else {
+        throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'notyourattempt');
+    }
+}
+
 // Check capabilities and block settings.
+if (!$attemptobj->is_preview_user()) {
+    $attemptobj->require_capability('mod/quiz:attempt');
+    if (empty($attemptobj->get_quiz()->showblocks)) {
+        $PAGE->blocks->show_only_fake_blocks();
+    }
+} else {
+    navigation_node::override_active_url($attemptobj->start_attempt_url());
+}
 
 // If the attempt is already closed, send them to the review page.
 if ($attemptobj->is_finished()) {
@@ -63,7 +81,7 @@ if ($attemptobj->is_finished()) {
     redirect($attemptobj->summary_url());
 }
 
-// Check the access rules. @TODO: check lai
+// Check the access rules.
 $accessmanager = $attemptobj->get_access_manager(time());
 $accessmanager->setup_attempt_page($PAGE);
 $output = $PAGE->get_renderer('mod_quiz');
@@ -76,7 +94,7 @@ if ($accessmanager->is_preflight_check_required($attemptobj->get_attemptid())) {
     redirect($attemptobj->start_attempt_url(null, $page));
 }
 
-// Set up auto-save if required. @TODO: check lai
+// Set up auto-save if required.
 $autosaveperiod = get_config('quiz', 'autosaveperiod');
 if ($autosaveperiod) {
     $PAGE->requires->yui_module('moodle-mod_quiz-autosave',
@@ -84,21 +102,30 @@ if ($autosaveperiod) {
 }
 
 // Log this page view. Trigger the attempt viewed event.
-if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+if($isremote){
     $attemptobj->fire_attempt_viewed_event();
 }else{
     get_remote_view_attempt($attemptid, $page);
 }
 
 // Get the list of questions needed by this page.
-$slots = $attemptobj->get_slots($page);
-if(!$slots){
-    $r_slots = get_remote_get_slots_by_quizid($attemptremote->attempt->quiz);
+if($isremote){
     $slots = array();
-    foreach ($r_slots as $key => $value) {
-        $slots[$key] = (string)$r_slots[$key]->slot;
+    foreach ($attemptremote->questions as $question) {
+        $slots[] = $question->slot;
     }
+}else{
+    $slots = $attemptobj->get_slots($page);
 }
+
+//$slots = $attemptobj->get_slots($page);
+//if(!$slots){
+//    $r_slots = get_remote_get_slots_by_quizid($attemptremote->attempt->quiz);
+//    $slots = array();
+//    foreach ($r_slots as $key => $value) {
+//        $slots[$key] = (string)$r_slots[$key]->slot;
+//    }
+//}
 
 // Check.
 if (empty($slots)) {
@@ -111,16 +138,15 @@ if (!$attemptobj->set_currentpage($page)) {
 }
 
 // Initialise the JavaScript.
-$headtags = $attemptobj->get_html_head_contributions($page);
+//$headtags = $attemptobj->get_html_head_contributions($page);
 $PAGE->requires->js_init_call('M.mod_quiz.init_attempt_form', null, false, quiz_get_js_module());
 
 // Arrange for the navigation to be displayed in the first region on the page.
-$navbc = $attemptobj->get_navigation_panel($output, 'quiz_attempt_nav_panel', $page);
+//$navbc = $attemptobj->get_navigation_panel($output, 'quiz_attempt_nav_panel', $page);
 $regions = $PAGE->blocks->get_regions();
 $PAGE->blocks->add_fake_block($navbc, reset($regions));
-
 $title = get_string('attempt', 'quiz', $attemptobj->get_attempt_number());
-$headtags = $attemptobj->get_html_head_contributions($page);
+//$headtags = $attemptobj->get_html_head_contributions($page);
 $PAGE->set_title($attemptobj->get_quiz_name());
 $PAGE->set_heading($attemptobj->get_course()->fullname);
 
