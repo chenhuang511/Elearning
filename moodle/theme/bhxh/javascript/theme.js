@@ -137,6 +137,7 @@ function loadRemoteContent() {
     var linkDelegate = [
         '.remote-link-action',
     ];
+
     var submitDelegate = [
         '.remote-form-action',
         '.remote-submit-btn',

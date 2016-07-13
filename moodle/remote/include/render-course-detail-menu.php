@@ -15,14 +15,16 @@
              aria-labelledby="course-summary"
              aria-expanded="true">
             <div class="panel-body">
-                <a id="course-summary" class="sublink" href="#tongquan">
-                    <i class="fa fa-info-circle" aria-hidden="true"></i>
+                <a id="course-summary" class="sublink get-remote-content"
+                   data-module='<?php echo json_encode(array('url' => $CFG->wwwroot . '/course/view.php', 'params' => array('id' => $course['courseid']), 'method' => 'get')); ?>'
+                   href="#">
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
                     Khóa học
                 </a>
             </div>
         </div>
     </div>
-    <?php foreach ($course as $key => $section) {
+    <?php foreach ($course['content'] as $key => $section) {
         $heading = 'mod-' . $section->id;
         $collapse = 'collapseMod' . $section->id;
         ?>
@@ -51,13 +53,12 @@
                                     <a id="mlabel-<?php echo $module->id ?>" class="sublink"
                                        href="#mlabel-<?php echo $module->id ?>"
                                        data-description="<?php echo htmlspecialchars($module->description) ?>">
-                                        <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                        <i class="fa fa-angle-double-right" aria-hidden="true"></i>
                                         <?php echo $module->name ?>
                                     </a>
                                     <?php
                                 } else { ?>
-
-                                       <a class="sublink get-remote-content"
+                                    <a class="sublink get-remote-content"
                                        data-module='<?php echo json_encode(array('url' => $CFG->wwwroot . '/mod/' . $module->modname . '/remote/view.php', 'params' => array('id' => $module->id), 'method' => 'get')); ?>'
                                        href="#">
                                         <span class="icon-bxh icon-<?php echo $module->modname; ?>" ></span><?php echo $module->name; ?>

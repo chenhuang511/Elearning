@@ -282,8 +282,8 @@ class core_remote_renderer extends plugin_renderer_base
             'processtab' => 'Tiến độ học'
         );
         $courseinfo = $this->render_course_info($courseid);
-        $coursewaretab = $this->render_courseware($course['content']);
-        $courseprogress = $this->render_course_progress($course['content']);
+        $coursewaretab = $this->render_courseware($course);
+        $courseprogress = $this->render_course_progress($course);
         $courseforumtab = $this->render_course_forum();
         $coursewikitab = $this->render_course_wiki();
         $chattab = $this->render_course_chat();
@@ -351,6 +351,8 @@ class core_remote_renderer extends plugin_renderer_base
 
     private function render_courseware($course)
     {
+        global $CFG;
+        
         $html = html_writer::start_tag('div', array('class' => 'courseware-block'));
         $html .= html_writer::start_tag('div', array('class' => 'section-courseware'));
         $html .= html_writer::start_tag('div', array('class' => 'col-sm-3 courseware-menu'));

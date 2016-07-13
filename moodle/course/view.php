@@ -19,6 +19,7 @@
     $switchrole  = optional_param('switchrole',-1, PARAM_INT); // Deprecated, use course/switchrole.php instead.
     $modchooser  = optional_param('modchooser', -1, PARAM_BOOL);
     $return      = optional_param('return', 0, PARAM_LOCALURL);
+    $nonajax     = optional_param('nonajax', true, PARAM_BOOL);
 
     $params = array();
     if (!empty($name)) {
@@ -251,7 +252,10 @@
     }
 
     $PAGE->set_heading($course->fullname);
-    echo $OUTPUT->header();
+
+    if ($nonajax == true) {
+        echo $OUTPUT->header();
+    }
 
     if ($completion->is_enabled()) {
         // This value tracks whether there has been a dynamic change to the page.
@@ -306,4 +310,6 @@
     // Include course AJAX
     include_course_ajax($course, $modnamesused);
 
-    echo $OUTPUT->footer();
+    if ($nonajax == true) {
+        echo $OUTPUT->footer();
+    }
