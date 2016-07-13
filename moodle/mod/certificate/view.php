@@ -158,7 +158,6 @@ if (empty($action)) { // Not displaying PDF
     $filename = certificate_get_certificate_filename($certificate, $cm, $course) . '.pdf';
 
     // PDF contents are now in $file_contents as a string.
-    var_dump($filename, $pdf);
     $filecontents = $pdf->Output('', 'S');
 
     if ($certificate->savecert == 1) {

@@ -42,7 +42,6 @@ if (!$course = get_local_course_record($cm->course)) {
 if (! $certificate = get_remote_certificate_by_id($cm->instance)) {
     print_error('course module is incorrect');
 }
-var_dump($certificate);
 require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/certificate:view', $context);
