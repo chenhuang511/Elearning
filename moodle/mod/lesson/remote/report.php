@@ -385,7 +385,7 @@ if ($action === 'delete') {
 
     // print out the $studentdata array
     // going through each student that has attempted the lesson, so, each student should have something to be displayed
-    foreach ($students-> as $student) {
+    foreach ($students as $student) {
         // check to see if the student has attempts to print out
         if (array_key_exists($student->id, $studentdata)) {
             // set/reset some variables
