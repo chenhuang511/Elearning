@@ -326,7 +326,7 @@ class quiz_grading_report extends quiz_default_report {
         }else{
             $statecounts = $this->get_question_state_summary(array_keys($this->questions));
         }
-//var_dump($statecounts);die;
+        
         $data = array();
         foreach ($statecounts as $counts) {
             if ($counts->all == 0) {

@@ -704,6 +704,7 @@ class local_mod_assign_external extends external_api {
     public static function get_onlinetext_submission_returns(){
         return new external_single_structure(
             array(
+                'id' => new external_value(PARAM_INT, 'onlinetext id'),
                 'assignment' => new external_value(PARAM_INT, 'assignment id'),
                 'submission' => new external_value(PARAM_INT, 'submission id'),
                 'onlinetext' => new external_value(PARAM_RAW, 'online text'),
@@ -790,6 +791,7 @@ class local_mod_assign_external extends external_api {
     public static function update_onlinetext_submission_parameters(){
         return new external_function_parameters(
             array(
+                'id' => new external_value(PARAM_INT, 'onlinetext id'),
                 'assignment' => new external_value(PARAM_INT, 'assignment id'),
                 'submission' => new external_value(PARAM_INT, 'submission id'),
                 'onlinetext' => new external_value(PARAM_RAW, 'online text'),
@@ -808,7 +810,7 @@ class local_mod_assign_external extends external_api {
      * 
      * @return array of warnings and grades information
      */
-    public static function update_onlinetext_submission($assignment, $submission, $onlinetext, $onlineformat){
+    public static function update_onlinetext_submission($id, $assignment, $submission, $onlinetext, $onlineformat){
 
         global $DB;
         
@@ -819,6 +821,7 @@ class local_mod_assign_external extends external_api {
         //Validate param
         $params = self::validate_parameters(self::update_onlinetext_submission_parameters(),
             array(
+                'id' => $id,
                 'assignment' => $assignment,
                 'submission' => $submission,
                 'onlinetext' => $onlinetext,
@@ -830,7 +833,7 @@ class local_mod_assign_external extends external_api {
 
         $transaction = $DB->start_delegated_transaction();
 
-        $result['oid'] = $DB->update_record('assignsubmission_onlinetext', $onlinetextsubmission);
+        $result['bool'] = $DB->update_record('assignsubmission_onlinetext', $onlinetextsubmission);
 
         $transaction->allow_commit();
 
@@ -849,7 +852,7 @@ class local_mod_assign_external extends external_api {
     public static function update_onlinetext_submission_returns(){
         return new external_single_structure(
             array(
-                'oid' =>  new external_value(PARAM_INT, 'The id of onlinetext'),
+                'bool' =>  new external_value(PARAM_INT, 'Check if success'),
                 'warnings' => new external_warnings()
             )
         );
@@ -1405,7 +1408,11 @@ class local_mod_assign_external extends external_api {
         );
     }
 
-    //MinhND: create new assign submission
+    /**
+     * Describes the parameters for create_submission_parameters
+     *
+     * @return external_external_function_parameters
+     */
     public static function create_submission_parameters(){
         return new external_function_parameters(
             array(
@@ -1420,6 +1427,17 @@ class local_mod_assign_external extends external_api {
         );
     }
 
+    /**
+     * @param int $assignment - The id of assignment
+     * @param string $useremail - The email of user
+     * @param int $timecreated - Time created
+     * @param int $timemodified - Time modified
+     * @param string $status - Status
+     * @param int $attemptnumber - Attemptnumber
+     * @param int $latest - Lastest
+     * @return array
+     * @throws invalid_parameter_exception
+     */
     public static function create_submission($assignment, $useremail, $timecreated, $timemodified, $status, $attemptnumber, $latest){
         global $DB;
 
@@ -1448,17 +1466,102 @@ class local_mod_assign_external extends external_api {
         $submission->attemptnumber = $params['attemptnumber'];
         $submission->latest = $params['latest'];
 
+        $transaction = $DB->start_delegated_transaction();
         $result['sid'] = $DB->insert_record('assign_submission', $submission);
+        $transaction->allow_commit();
 
         $result['warnings'] = $warnings;
 
         return $result;
     }
 
+    /**
+     * Describes the create_submission_parameters return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
     public static function create_submission_returns(){
         return new external_single_structure(
             array(
                 'sid' => new external_value(PARAM_INT, 'submission ID'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+    
+    /**
+     * Describes the parameters for update_submission_parameters
+     *
+     * @return external_external_function_parameters
+     */
+    public static function update_submission_parameters(){
+        return new external_function_parameters(
+            array(
+                'id' => new external_value(PARAM_INT, 'submission ID'),
+                'assignment' => new external_value(PARAM_INT, 'asssign ID'),
+                'userid' => new external_value(PARAM_INT, 'user ID'),
+                'timecreated' => new external_value(PARAM_INT, 'time created'),
+                'timemodified' => new external_value(PARAM_INT, 'time modified'),
+                'status' => new external_value(PARAM_RAW, 'status'),
+                'attemptnumber' => new external_value(PARAM_INT, 'attemptnumber'),
+                'latest' => new external_value(PARAM_INT, 'latest'),
+            )
+        );
+    }
+
+    /**
+     * @param int $id - The id of submission
+     * @param int $assignment - The id of assignment
+     * @param int $userid - The id of user
+     * @param int $timecreated - Time created
+     * @param int $timemodified - Time modified
+     * @param string $status - Status
+     * @param int $attemptnumber - Attemptnumber
+     * @param int $latest - Lastest
+     * @return array
+     * @throws invalid_parameter_exception
+     */
+    public static function update_submission($id, $assignment, $userid, $timecreated, $timemodified, $status, $attemptnumber, $latest){
+        global $DB;
+
+        $warnings = array();
+
+        $result = array();
+
+        //Validate param
+        $params = self::validate_parameters(self::update_submission_parameters(),array(
+            'id' => $id,
+            'assignment' => $assignment,
+            'userid' => $userid,
+            'timecreated' => $timecreated,
+            'timemodified' => $timemodified,
+            'status' => $status,
+            'attemptnumber' => $attemptnumber,
+            'latest' => $latest,
+        ));
+
+        $submission = (object)$params;
+        
+        $transaction = $DB->start_delegated_transaction();
+        $result['bool'] = $DB->update_record('assign_submission', $submission);
+        $transaction->allow_commit();
+
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    /**
+     * Describes the update_submission_parameters return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function update_submission_returns(){
+        return new external_single_structure(
+            array(
+                'bool' => new external_value(PARAM_INT, 'check if success'),
                 'warnings' => new external_warnings()
             )
         );
@@ -2613,8 +2716,8 @@ class local_mod_assign_external extends external_api {
                         )
                     )
                 ),
-                'pagestart' => new external_value(PARAM_INT, 'pagestart', VALUE_OPTIONAL, 0),
-                'pagesize' => new external_value(PARAM_INT, 'pagesize', VALUE_OPTIONAL, 0),
+                'pagestart' => new external_value(PARAM_INT, 'pagestart', VALUE_DEFAULT, 0),
+                'pagesize' => new external_value(PARAM_INT, 'pagesize', VALUE_DEFAULT, 0),
             )
         );
     }
