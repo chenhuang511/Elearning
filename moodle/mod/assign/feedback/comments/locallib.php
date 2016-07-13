@@ -52,7 +52,7 @@ class assign_feedback_comments extends assign_feedback_plugin {
 
         global $DB;
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-            $resp = get_remote_assignfeedback_comments($gradeid);
+            $resp = get_assignfeedback_comments($gradeid);
             if ($resp->exception)
                 return 0;
             return $resp;
@@ -336,23 +336,26 @@ class assign_feedback_comments extends assign_feedback_plugin {
      */
     public function save(stdClass $grade, stdClass $data) {
         global $DB;
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-            $feedbackcomment = $this->get_feedback_comments($grade->id);
-            if ($feedbackcomment) {
-                $feedbackcomment->commenttext = $data->assignfeedbackcomments_editor['text'];
-                $feedbackcomment->commentformat = $data->assignfeedbackcomments_editor['format'];
+        $feedbackcomment = $this->get_feedback_comments($grade->id);
+        if ($feedbackcomment) {
+            $feedbackcomment->commenttext = $data->assignfeedbackcomments_editor['text'];
+            $feedbackcomment->commentformat = $data->assignfeedbackcomments_editor['format'];
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
                 return $DB->update_record('assignfeedback_comments', $feedbackcomment);
             } else {
-                $feedbackcomment = new stdClass();
-                $feedbackcomment->commenttext = $data->assignfeedbackcomments_editor['text'];
-                $feedbackcomment->commentformat = $data->assignfeedbackcomments_editor['format'];
-                $feedbackcomment->grade = $grade->id;
-                $feedbackcomment->assignment = $this->assignment->get_instance()->id;
-                return $DB->insert_record('assignfeedback_comments', $feedbackcomment) > 0;
+                return update_assignfeedback_comments($feedbackcomment);
             }
-        }
-        else{
-            return $this->is_enabled();
+        } else {
+            $feedbackcomment = new stdClass();
+            $feedbackcomment->commenttext = $data->assignfeedbackcomments_editor['text'];
+            $feedbackcomment->commentformat = $data->assignfeedbackcomments_editor['format'];
+            $feedbackcomment->grade = $grade->id;
+            $feedbackcomment->assignment = $this->assignment->get_instance()->id;
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                return $DB->insert_record('assignfeedback_comments', $feedbackcomment) > 0;
+            } else {
+                return create_assignfeedback_comments($feedbackcomment);
+            }
         }
     }
 

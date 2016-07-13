@@ -2218,10 +2218,19 @@ class assign {
                 }
             } else {
                 // This is a scale.
-                if ($scale = $DB->get_record('scale', array('id' => -($this->get_instance()->grade)))) {
-                    $scaleoptions = make_menu_from_list($scale->scale);
-                    if (!array_key_exists((int) $grade->grade, $scaleoptions)) {
-                        return false;
+                if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                    if ($scale = $DB->get_record('scale', array('id' => -($this->get_instance()->grade)))) {
+                        $scaleoptions = make_menu_from_list($scale->scale);
+                        if (!array_key_exists((int) $grade->grade, $scaleoptions)) {
+                            return false;
+                        }
+                    }
+                } else {
+                    if ($scale = get_scale_by_id(-($this->get_instance()->grade))) {
+                        $scaleoptions = make_menu_from_list($scale->scale);
+                        if (!array_key_exists((int) $grade->grade, $scaleoptions)) {
+                            return false;
+                        }
                     }
                 }
             }
@@ -2231,7 +2240,12 @@ class assign {
             // Set it to the default.
             $grade->attemptnumber = 0;
         }
-        $DB->update_record('assign_grades', $grade);
+
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $DB->update_record('assign_grades', $grade);
+        } else{
+            update_remote_grade($grade);
+        }
 
         $submission = null;
         if ($this->get_instance()->teamsubmission) {
@@ -2239,7 +2253,7 @@ class assign {
         } else {
             $submission = $this->get_user_submission($grade->userid, false);
         }
-
+        
         // Only push to gradebook if the update is for the latest attempt.
         // Not the latest attempt.
         if ($submission && $submission->attemptnumber != $grade->attemptnumber) {
@@ -2249,6 +2263,7 @@ class assign {
         if ($this->gradebook_item_update(null, $grade)) {
             \mod_assign\event\submission_graded::create_from_grade($this, $grade)->trigger();
         }
+
 
         // If the conditions are met, allow another attempt.
         if ($submission) {
@@ -3135,8 +3150,7 @@ class assign {
         }
 
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-            $user = $DB->get_record('user', array('id' => $userid));
-            $rruser = get_remote_mapping_user($user);
+            $ruser = get_remote_mapping_user($userid);
         }
         
         // If the userid is not null then use userid.
@@ -3152,7 +3166,7 @@ class assign {
             $submissions = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', '*', 0, 1);
         }
         else{
-            $params['userid'] = $rruser[0]->id;
+            $params['userid'] = $ruser[0]->id;
             $params['mode'] = 'DESC';
             $submissions = get_submission_by_assignid_userid_groupid($params);
         }
@@ -3167,7 +3181,11 @@ class assign {
         if ($create) {
             $submission = new stdClass();
             $submission->assignment   = $this->get_instance()->id;
-            $submission->userid       = $userid;
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $submission->userid = $userid;
+            } else {
+                $submission->userid = $ruser[0]->id;
+            }
             $submission->timecreated = time();
             $submission->timemodified = $submission->timecreated;
             $submission->status = ASSIGN_SUBMISSION_STATUS_NEW;
@@ -3187,9 +3205,8 @@ class assign {
                 if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
                     $result = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', 'attemptnumber', 0, 1);
                 }
-                else if(MOODLE_RUN_MODE ===MOODLE_MODE_HUB){
-                    unset($params['userid']);
-                    $params['useremail'] = $this->get_email_from_userid($userid);
+                else {
+                    $params['userid'] = $ruser[0]->id;
                     $result = get_attemptnumber_by_assignid_userid_groupid($params);
                 }
                 $latestsubmission = null;
@@ -3205,7 +3222,7 @@ class assign {
                 if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
                     $DB->set_field('assign_submission', 'latest', 0, $params);
                 }
-                elseif(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+                else{
                     set_submission_lastest($params);
                 }
             }
@@ -3213,8 +3230,7 @@ class assign {
                 $sid = $DB->insert_record('assign_submission', $submission);
                 return $DB->get_record('assign_submission', array('id' => $sid));
             }
-            elseif(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-                $submission->useremail = $this->get_email_from_userid($userid);
+            else{
                 $sid = create_remote_submission($submission);
                 return get_remote_submission_by_id($sid);
             }
@@ -3309,6 +3325,11 @@ class assign {
         if (!$userid) {
             $userid = $USER->id;
         }
+
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $ruser = get_remote_mapping_user($userid);
+        }
+
         $submission = null;
         
         $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid);
@@ -3330,15 +3351,14 @@ class assign {
         if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
             $grades = $DB->get_records('assign_grades', $params, 'attemptnumber DESC', '*', 0, 1);
         }
-        else if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-            unset($params['userid']);
-            $params['useremail'] = $this->get_email_from_userid($userid);
-            
+        else {
+            $params['userid'] = $ruser[0]->id;
             $grades = get_assign_grades_by_assignid_userid($params);
             $adminid = reset(explode(',', $CFG->siteadmins));
-
+                               
             if ($grades){
                 foreach ($grades as $grade) {
+                    $grade->userid = $userid;
                     if (isset($grade->grader)) {
                         $grader = $DB->get_record('user', array('email' => $grade->grader));
                         // Check if not found on host then return admin host
@@ -3355,6 +3375,7 @@ class assign {
             $grade = new stdClass();
             $grade->assignment   = $this->get_instance()->id;
             $grade->userid       = $userid;
+
             $grade->timecreated = time();
             // If we are "auto-creating" a grade - and there is a submission
             // the new grade should not have a more recent timemodified value
@@ -3371,16 +3392,8 @@ class assign {
             }
             if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
                 $gid = $DB->insert_record('assign_grades', $grade);
-            }
-            else if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-                $grade->useremail = $this->get_email_from_userid($userid);
-                $grade->grader = get_remote_mapping_user()[0]->id;
+            } else{
                 $gid = create_remote_grade($grade);
-                
-                // After create grade on hub return id for student and teacher
-                unset($grade->useremail);
-                $grade->userid = $userid;
-                $grade->grader = $USER->id;
             }
             
             $grade->id = $gid;
@@ -6940,11 +6953,22 @@ class assign {
                 return true;
             }
         }
-        $gradinginfo = grade_get_grades($this->get_course()->id,
-                                        'mod',
-                                        'assign',
-                                        $this->get_instance()->id,
-                                        array($userid));
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $gradinginfo = grade_get_grades($this->get_course()->id,
+                'mod',
+                'assign',
+                $this->get_instance()->id,
+                array($userid));
+        } else {
+            $ruser = get_remote_mapping_user($userid);
+
+            $gradinginfo = core_grades_get_grades($this->get_course()->remoteid, 'mod_assign' , $this->get_course_module()->id, array($ruser[0]->id));
+            foreach ($gradinginfo->items[0]->grades as $studentid => $studentgrade){
+                $gradinginfo->items[0]->grades[$studentgrade->userid] = $studentgrade;
+                unset($gradinginfo->items[0]->grades[$studentid]);
+            }
+        }
+
         if (!$gradinginfo) {
             return false;
         }
@@ -6952,8 +6976,13 @@ class assign {
         if (!isset($gradinginfo->items[0]->grades[$userid])) {
             return false;
         }
-        $gradingdisabled = $gradinginfo->items[0]->grades[$userid]->locked ||
-                           $gradinginfo->items[0]->grades[$userid]->overridden;
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $gradingdisabled = $gradinginfo->items[0]->grades[$userid]->locked ||
+                $gradinginfo->items[0]->grades[$userid]->overridden;
+        } else {
+            $gradingdisabled = $gradinginfo->items[0]->grades[$ruser[0]]->locked ||
+                $gradinginfo->items[0]->grades[$ruser[0]]->overridden;
+        }
         return $gradingdisabled;
     }
 
@@ -7098,11 +7127,9 @@ class assign {
                 $this->get_instance()->id,
                 $userid);
         } else{
-            global $DB;
-            $user = $DB->get_record('user', array('id' => $userid));
-            $ruser = get_remote_mapping_user($user);
+            $ruser = get_remote_mapping_user($userid);
 
-            $gradinginfo = core_grades_get_grades($this->get_course()->remoteid, 'mod_assign' , $this->get_course_module()->id, $ruser[0]->id );
+            $gradinginfo = core_grades_get_grades($this->get_course()->remoteid, 'mod_assign' , $this->get_course_module()->id, array($ruser[0]->id) );
             foreach ($gradinginfo->items[0]->grades as $studentid => $studentgrade){
                 $gradinginfo->items[0]->grades[$studentgrade->userid] = $studentgrade;
                 unset($gradinginfo->items[0]->grades[$studentid]);
@@ -7709,6 +7736,7 @@ class assign {
         global $USER, $CFG, $DB;
 
         $grade = $this->get_user_grade($userid, true, $attemptnumber);
+
         $originalgrade = $grade->grade;
         $gradingdisabled = $this->grading_disabled($userid);
         $gradinginstance = $this->get_grading_instance($userid, $grade, $gradingdisabled);
@@ -7722,22 +7750,21 @@ class assign {
                     $grade->grade = grade_floatval(unformat_float($formdata->grade));
                 }
             }
-            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-                if (isset($formdata->workflowstate) || isset($formdata->allocatedmarker)) {
-                    $flags = $this->get_user_flags($userid, true);
-                    $oldworkflowstate = $flags->workflowstate;
-                    $flags->workflowstate = isset($formdata->workflowstate) ? $formdata->workflowstate : $flags->workflowstate;
-                    $flags->allocatedmarker = isset($formdata->allocatedmarker) ? $formdata->allocatedmarker : $flags->allocatedmarker;
-                    if ($this->update_user_flags($flags) &&
-                        isset($formdata->workflowstate) &&
-                        $formdata->workflowstate !== $oldworkflowstate
-                    ) {
-                        $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
-                        \mod_assign\event\workflow_state_updated::create_from_user($this, $user, $formdata->workflowstate)->trigger();
-                    }
+            if (isset($formdata->workflowstate) || isset($formdata->allocatedmarker)) {
+                $flags = $this->get_user_flags($userid, true);
+                $oldworkflowstate = $flags->workflowstate;
+                $flags->workflowstate = isset($formdata->workflowstate) ? $formdata->workflowstate : $flags->workflowstate;
+                $flags->allocatedmarker = isset($formdata->allocatedmarker) ? $formdata->allocatedmarker : $flags->allocatedmarker;
+                if ($this->update_user_flags($flags) &&
+                    isset($formdata->workflowstate) &&
+                    $formdata->workflowstate !== $oldworkflowstate
+                ) {
+                    $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
+                    \mod_assign\event\workflow_state_updated::create_from_user($this, $user, $formdata->workflowstate)->trigger();
                 }
             }
         }
+        
         $grade->grader= $USER->id;
 
         $adminconfig = $this->get_admin_config();
@@ -7765,20 +7792,19 @@ class assign {
             }
         }
 
-        // @TODO: Change userid from hub to host
-        if (MOODLE_MODE_HUB == MOODLE_MODE_HOST){
-            // We do not want to update the timemodified if no grade was added.
-            if (!empty($formdata->addattempt) ||
-                    ($originalgrade !== null && $originalgrade != -1) ||
-                    ($grade->grade !== null && $grade->grade != -1) ||
-                    $feedbackmodified) {
-                $this->update_grade($grade, !empty($formdata->addattempt));
-            }
-            // Note the default if not provided for this option is true (e.g. webservices).
-            // This is for backwards compatibility.
-            if (!isset($formdata->sendstudentnotifications) || $formdata->sendstudentnotifications) {
-                $this->notify_grade_modified($grade, true);
-            }
+        // We do not want to update the timemodified if no grade was added.
+        if (!empty($formdata->addattempt) ||
+            ($originalgrade !== null && $originalgrade != -1) ||
+            ($grade->grade !== null && $grade->grade != -1) ||
+            $feedbackmodified
+        ) {
+            $this->update_grade($grade, !empty($formdata->addattempt));
+        }
+
+        // Note the default if not provided for this option is true (e.g. webservices).
+        // This is for backwards compatibility.
+        if (!isset($formdata->sendstudentnotifications) || $formdata->sendstudentnotifications) {
+            $this->notify_grade_modified($grade, true);
         }
     }
 
