@@ -109,23 +109,23 @@ if($isremote){
 }
 
 // Get the list of questions needed by this page.
-if($isremote){
-    $slots = array();
-    foreach ($attemptremote->questions as $question) {
-        $slots[] = $question->slot;
-    }
-}else{
-    $slots = $attemptobj->get_slots($page);
-}
-
-//$slots = $attemptobj->get_slots($page);
-//if(!$slots){
-//    $r_slots = get_remote_get_slots_by_quizid($attemptremote->attempt->quiz);
+//if($isremote){
 //    $slots = array();
-//    foreach ($r_slots as $key => $value) {
-//        $slots[$key] = (string)$r_slots[$key]->slot;
+//    foreach ($attemptremote->questions as $question) {
+//        $slots[] = $question->slot;
 //    }
+//}else{
+//    $slots = $attemptobj->get_slots($page);
 //}
+
+$slots = $attemptobj->get_slots($page);
+if(!$slots){
+    $r_slots = get_remote_get_slots_by_quizid($attemptremote->attempt->quiz);
+    $slots = array();
+    foreach ($r_slots as $key => $value) {
+        $slots[$key] = (string)$r_slots[$key]->slot;
+    }
+}
 
 // Check.
 if (empty($slots)) {
@@ -138,15 +138,15 @@ if (!$attemptobj->set_currentpage($page)) {
 }
 
 // Initialise the JavaScript.
-//$headtags = $attemptobj->get_html_head_contributions($page);
+$headtags = $attemptobj->get_html_head_contributions($page);
 $PAGE->requires->js_init_call('M.mod_quiz.init_attempt_form', null, false, quiz_get_js_module());
 
 // Arrange for the navigation to be displayed in the first region on the page.
-//$navbc = $attemptobj->get_navigation_panel($output, 'quiz_attempt_nav_panel', $page);
+$navbc = $attemptobj->get_navigation_panel($output, 'quiz_attempt_nav_panel', $page);
 $regions = $PAGE->blocks->get_regions();
 $PAGE->blocks->add_fake_block($navbc, reset($regions));
 $title = get_string('attempt', 'quiz', $attemptobj->get_attempt_number());
-//$headtags = $attemptobj->get_html_head_contributions($page);
+$headtags = $attemptobj->get_html_head_contributions($page);
 $PAGE->set_title($attemptobj->get_quiz_name());
 $PAGE->set_heading($attemptobj->get_course()->fullname);
 
