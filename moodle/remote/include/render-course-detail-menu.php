@@ -16,7 +16,10 @@
              aria-expanded="true">
             <div class="panel-body">
                 <a id="course-summary" class="sublink get-remote-content"
-                   data-module='<?php echo json_encode(array('url' => $CFG->wwwroot . '/course/view.php', 'params' => array('id' => $course['courseid']), 'method' => 'get')); ?>'
+                   data-module='<?php
+                   require_once($CFG->dirroot . '/lib/additionallib.php');
+                   $id = get_course_id_by_remote_id($course['courseid']);
+                   echo json_encode(array('url' => $CFG->wwwroot . '/course/view.php', 'params' => array('id' => $id, 'nonajax' => false), 'method' => 'get')); ?>'
                    href="#">
                     <i class="fa fa-angle-double-right" aria-hidden="true"></i>
                     Khóa học
