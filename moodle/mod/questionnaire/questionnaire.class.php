@@ -424,7 +424,7 @@ class questionnaire {
             $sql_sort = 'timemodified DESC';
             $attempts = get_remote_questionnaire_attempts($sql_select, $sql_sort);
         }
-        if (!($attempts = $DB->get_records_select('questionnaire_attempts', $select, null, 'timemodified DESC'))) {
+        if (!($attempts = $DB->get_records_select('questionnaire_attempts', $sql_select, null, 'timemodified DESC'))) {
             return true;
         }
 

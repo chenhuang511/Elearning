@@ -23,39 +23,25 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once("../../config.php");
+require_once("../../../config.php");
 require_once("$CFG->dirroot/mod/certificate/locallib.php");
-require_once("$CFG->dirroot/mod/certificate/remote/locallib.php");
 require_once("$CFG->dirroot/mod/certificate/deprecatedlib.php");
+require_once("$CFG->dirroot/mod/certificate/remote/locallib.php");
 require_once("$CFG->libdir/pdflib.php");
 
 $id = required_param('id', PARAM_INT);    // Course Module ID
 $action = optional_param('action', '', PARAM_ALPHA);
 $edit = optional_param('edit', -1, PARAM_BOOL);
-
-if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-    if (!$cm = get_coursemodule_from_id('certificate', $id)) {
-        print_error('Course Module ID was incorrect');
-    }
-    if (!$course = $DB->get_record('course', array('id'=> $cm->course))) {
-        print_error('course is misconfigured');
-    }
-    if (!$certificate = $DB->get_record('certificate', array('id'=> $cm->instance))) {
-        print_error('course module is incorrect');
-    }
-} else {
-    if (!$cm = get_remote_course_module_by_cmid('certificate', $id)) {
-        print_error('Course Module ID was incorrect');
-    }
-    if (!$course = get_local_course_record($cm->course)) {
-        print_error('course is misconfigured');
-    }
-
-    if (! $certificate = get_remote_certificate_by_id($cm->instance)) {
-        print_error('course module is incorrect');
-    }
+if (!$cm = get_remote_course_module_by_cmid('certificate', $id)) {
+    print_error('Course Module ID was incorrect');
+}
+if (!$course = get_local_course_record($cm->course)) {
+    print_error('course is misconfigured');
 }
 
+if (! $certificate = get_remote_certificate_by_id($cm->instance)) {
+    print_error('course module is incorrect');
+}
 require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/certificate:view', $context);
@@ -79,7 +65,7 @@ $PAGE->set_title(format_string($certificate->name));
 $PAGE->set_heading(format_string($course->fullname));
 
 if (($edit != -1) and $PAGE->user_allowed_editing()) {
-     $USER->editing = $edit;
+    $USER->editing = $edit;
 }
 
 // Add block editing button
@@ -150,6 +136,7 @@ if (empty($action)) { // Not displaying PDF
     echo $OUTPUT->footer($course);
     exit;
 } else { // Output to pdf
+
     // No debugging here, sorry.
     $CFG->debugdisplay = 0;
     @ini_set('display_errors', '0');
