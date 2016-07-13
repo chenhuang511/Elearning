@@ -411,7 +411,11 @@ function resource_pluginfile($course, $cm, $context, $filearea, $args, $forcedow
                     break;
                 }
             }
-            $resource = $DB->get_record('resource', array('id' => $cm->instance), 'id, legacyfiles', MUST_EXIST);
+
+            $params = array();
+            $params['parameters[0][name]'] = "id";
+            $params['parameters[0][value]'] = $cm->instance;
+            $resource = get_remote_resource_by($params, '', true);
             if ($resource->legacyfiles != RESOURCELIB_LEGACYFILES_ACTIVE) {
                 return false;
             }
@@ -427,7 +431,10 @@ function resource_pluginfile($course, $cm, $context, $filearea, $args, $forcedow
     // should we apply filters?
     $mimetype = $file->get_mimetype();
     if ($mimetype === 'text/html' or $mimetype === 'text/plain' or $mimetype === 'application/xhtml+xml') {
-        $filter = $DB->get_field('resource', 'filterfiles', array('id' => $cm->instance));
+        $params = array();
+        $params['parameters[0][name]'] = "id";
+        $params['parameters[0][value]'] = $cm->instance;
+        $filter = get_remote_field_resource_by('resource', $params, 'filterfiles');
         $CFG->embeddedsoforcelinktarget = true;
     } else {
         $filter = 0;
