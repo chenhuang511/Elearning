@@ -24,6 +24,8 @@
                     <i class="fa fa-info-circle" aria-hidden="true"></i>
                     Khóa học
                 </a>
+                <input type="hidden" id="courseurlhidden"
+                       value="<?php echo $CFG->wwwroot . '/course/view.php?id=' . $id . '&nonajax=false' ?>">
             </div>
         </div>
     </div>
@@ -64,7 +66,8 @@
                                     <a class="sublink get-remote-content"
                                        data-module='<?php echo json_encode(array('url' => $CFG->wwwroot . '/mod/' . $module->modname . '/remote/view.php', 'params' => array('id' => $module->id), 'method' => 'get')); ?>'
                                        href="#">
-                                        <span class="icon-bxh icon-<?php echo $module->modname; ?>" ></span><?php echo $module->name; ?>
+                                        <span
+                                            class="icon-bxh icon-<?php echo $module->modname; ?>"></span><?php echo $module->name; ?>
                                     </a>
                                 <?php } ?>
                             <?php }

@@ -58,9 +58,9 @@ function getHTMLContent(module, encode) {
     var getLink = (arguments.length === 3) ? arguments[2] : true;
     var url = module.url;
     if (getLink) {
-       url = module.url + '?';
+        url = module.url + '?';
     }
-    url += (encode)?arrayToUrlParmas(module.params):module.params;
+    url += (encode) ? arrayToUrlParmas(module.params) : module.params;
     var target = $('#module-content');
     var loading = $('#loading');
     if (window.sectionTimeout) {
