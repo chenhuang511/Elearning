@@ -254,6 +254,24 @@ class mod_assign_renderer extends plugin_renderer_base {
         if ($header->showintro) {
             $o .= $this->output->box_start('generalbox boxaligncenter', 'intro');
             $o .= format_module_intro('assign', $header->assign, $header->coursemoduleid);
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+                if ($header->assign->introattachments){
+                    $o .= '<div id="introattachments">';
+                    $o .= '<ul>';
+                    foreach ($header->assign->introattachments as $file) {
+                        $image = $this->output->pix_icon(file_file_icon($file),
+                            $file->mimetype,
+                            'moodle',
+                            array('class'=>'icon'));
+                        $fileurl = html_writer::link($file->fileurl, $file->filename);
+                        $o .= '<li>' .
+                            '<div>' . $image . ' ' . $fileurl . '</div> ' .
+                            '</li>';
+                    }
+                    $o .= '</ul>';
+                    $o .= '</div>';
+                }
+            }
             $o .= $header->postfix;
             $o .= $this->output->box_end();
         }
@@ -1376,7 +1394,6 @@ class mod_assign_renderer extends plugin_renderer_base {
 
         return $o;
     }
-
 
 
     /**

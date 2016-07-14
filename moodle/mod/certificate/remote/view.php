@@ -45,7 +45,7 @@ if (! $certificate = get_remote_certificate_by_id($cm->instance)) {
 require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
 
-$nonajax = optional_param('nonajax', null, PARAM_INT);
+$nonajax = optional_param('nonajax', false, PARAM_BOOL);
 if (!has_capability('moodle/course:manageactivities', $context) && $nonajax != true) {
     $CFG->nonajax = false;
 } else {
@@ -65,7 +65,7 @@ $completion=new completion_info($course);
 $completion->set_module_viewed($cm);
 
 // Initialize $PAGE, compute blocks
-$PAGE->set_url('/mod/certificate/view.php', array('id' => $cm->id));
+$PAGE->set_url('/mod/certificate/remote/view.php', array('id' => $cm->id));
 $PAGE->set_context($context);
 $PAGE->set_cm($cm);
 $PAGE->set_title(format_string($certificate->name));
@@ -79,7 +79,7 @@ if (($edit != -1) and $PAGE->user_allowed_editing()) {
 if ($PAGE->user_allowed_editing()) {
     $editvalue = $PAGE->user_is_editing() ? 'off' : 'on';
     $strsubmit = $PAGE->user_is_editing() ? get_string('blockseditoff') : get_string('blocksediton');
-    $url = new moodle_url($CFG->wwwroot . '/mod/certificate/view.php', array('id' => $cm->id, 'edit' => $editvalue));
+    $url = new moodle_url($CFG->wwwroot . '/mod/certificate/remote/view.php', array('id' => $cm->id, 'edit' => $editvalue));
     $PAGE->set_button($OUTPUT->single_button($url, $strsubmit));
 }
 
@@ -88,7 +88,7 @@ if ($certificate->requiredtime && !has_capability('mod/certificate:manage', $con
     if (certificate_get_course_time($course->id) < ($certificate->requiredtime * 60)) {
         $a = new stdClass;
         $a->requiredtime = $certificate->requiredtime;
-        notice(get_string('requiredtimenotmet', 'certificate', $a), "$CFG->wwwroot/course/view.php?id=$course->id");
+        notice(get_string('requiredtimenotmet', 'certificate', $a), "$CFG->wwwroot/course/remote/view.php?id=$course->id");
         die;
     }
 }
@@ -97,7 +97,6 @@ if ($certificate->requiredtime && !has_capability('mod/certificate:manage', $con
 $certrecord = certificate_get_issue($course, $USER, $certificate, $cm);
 
 make_cache_directory('tcpdf');
-
 // Load the specific certificate type.
 require("$CFG->dirroot/mod/certificate/type/$certificate->certificatetype/certificate.php");
 
@@ -106,7 +105,7 @@ if (empty($action)) { // Not displaying PDF
         echo $OUTPUT->header();
     }
 
-    $viewurl = new moodle_url('/mod/certificate/view.php', array('id' => $cm->id));
+    $viewurl = new moodle_url('/mod/certificate/remote/view.php', array('id' => $cm->id));
     groups_print_activity_menu($cm, $viewurl);
     $currentgroup = groups_get_activity_group($cm);
     $groupmode = groups_get_activity_groupmode($cm);
@@ -135,7 +134,7 @@ if (empty($action)) { // Not displaying PDF
     echo html_writer::tag('p', $str, array('style' => 'text-align:center'));
     $linkname = get_string('getcertificate', 'certificate');
 
-    $link = new moodle_url('/mod/certificate/view.php?id='.$cm->id.'&action=get');
+    $link = new moodle_url('/mod/certificate/remote/view.php?id='.$cm->id.'&action=get');
     $button = new single_button($link, $linkname);
     if ($certificate->delivery != 1) {
         $button->add_action(new popup_action('click', $link, 'view' . $cm->id, array('height' => 600, 'width' => 800)));
