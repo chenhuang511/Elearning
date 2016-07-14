@@ -284,8 +284,8 @@ class core_remote_renderer extends plugin_renderer_base
         $courseinfo = $this->render_course_info($courseid);
         $coursewaretab = $this->render_courseware($course);
         $courseprogress = $this->render_course_progress($course);
-        $courseforumtab = $this->render_course_forum();
-        $coursewikitab = $this->render_course_wiki();
+        $courseforumtab = $this->render_course_forum($course);
+        $coursewikitab = $this->render_course_wiki($course);
         $chattab = $this->render_course_chat();
         $tabcontens = array($coursewaretab, $courseinfo, $courseforumtab, $coursewikitab, $chattab, $courseprogress);
 

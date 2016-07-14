@@ -73,11 +73,6 @@
                             ico.addClass('fa-caret-right');
                         }
                     }
-
-                    content.hide();
-                    var sectionSummary = $(this).attr('data-summary');
-                    changeContent(content, sectionSummary);
-                    content.show();
                 });
             });
         }
