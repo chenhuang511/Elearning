@@ -1,5 +1,6 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+
+// This file is part of the Certificate module for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,15 +16,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
- *
- * @package    auth_webservice
- * @copyright  2011 Petr Skoda (http://skodak.org)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    mod_certificate
+ * @subpackage backup-moodle2
+ * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version = 2016052305;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires = 2016051900;        // Requires this Moodle version
-$plugin->component = 'local_resource';            // Full name of the plugin (used for diagnostics)
+ // This activity has no particular settings but the inherited from the generic
+ // backup_activity_task so here there isn't any class definition, like the ones
+ // existing in /backup/moodle2/backup_settingslib.php (activities section)

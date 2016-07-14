@@ -14,16 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Version information
- *
- * @package    auth_webservice
- * @copyright  2011 Petr Skoda (http://skodak.org)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+echo $OUTPUT->doctype() ?>
+<html <?php echo $OUTPUT->htmlattributes(); ?>>
+<head>
+    <title><?php echo $OUTPUT->page_title(); ?></title>
+    <link rel="shortcut icon" href="<?php echo $OUTPUT->favicon(); ?>" />
+    <?php echo $OUTPUT->standard_head_html() ?>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version = 2016052305;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires = 2016051900;        // Requires this Moodle version
-$plugin->component = 'local_resource';            // Full name of the plugin (used for diagnostics)
+<body <?php echo $OUTPUT->body_attributes(); ?>>
+<?php echo $OUTPUT->standard_top_of_body_html() ?>
+<div id="page">
+    <div id="page-content" class="clearfix">
+        <?php echo $OUTPUT->main_content(); ?>
+    </div>
+</div>
+<?php echo $OUTPUT->standard_end_of_body_html() ?>
+</body>
+</html>

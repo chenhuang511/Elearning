@@ -15,15 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
+ * Parent theme: Bootstrapbase by Bas Brands
+ * Built on: Essential by Julian Ridden
  *
- * @package    auth_webservice
- * @copyright  2011 Petr Skoda (http://skodak.org)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   theme_lambda
+ * @copyright 2014 redPIthemes
+ *
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version = 2016052305;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires = 2016051900;        // Requires this Moodle version
-$plugin->component = 'local_resource';            // Full name of the plugin (used for diagnostics)
+$plugins = array(
+	'jquery.easing.1.3'	=> array('files' => array('jquery.easing.1.3.js')),
+	'camera_slider' => array('files' => array('camera.min.1.11.js')),
+	'jquery.bxslider' => array('files' => array('jquery.bxslider.js'))		
+);

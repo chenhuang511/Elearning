@@ -1,5 +1,6 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+
+// This file is part of the Certificate module for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,15 +16,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
+ * Definition of log events
  *
- * @package    auth_webservice
- * @copyright  2011 Petr Skoda (http://skodak.org)
+ * @package    mod_certificate
+ * @copyright  2010 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2016052305;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires = 2016051900;        // Requires this Moodle version
-$plugin->component = 'local_resource';            // Full name of the plugin (used for diagnostics)
+$logs = array(
+    array('module'=>'certificate', 'action'=>'view', 'mtable'=>'certificate', 'field'=>'name'),
+    array('module'=>'certificate', 'action'=>'add', 'mtable'=>'certificate', 'field'=>'name'),
+     array('module'=>'certificate', 'action'=>'update', 'mtable'=>'certificate', 'field'=>'name'),
+    array('module'=>'certificate', 'action'=>'received', 'mtable'=>'certificate', 'field'=>'name'),
+);

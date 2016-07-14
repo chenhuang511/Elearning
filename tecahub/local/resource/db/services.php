@@ -58,4 +58,13 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+	'local_mod_resource_get_files_by_cm' => array(
+        'classname' => 'local_mod_resource_external',
+        'methodname' => 'get_resource_files_by_cm',
+        'classpath' => 'local/resource/externallib.php',
+        'description' => 'Get resource file object by course module id',
+        'type' => 'read',
+        'ajax' => true
+    ),	
+
 );
