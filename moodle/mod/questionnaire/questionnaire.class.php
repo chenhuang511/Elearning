@@ -183,8 +183,13 @@ class questionnaire {
         if (!$this->capabilities->view) {
             echo('<br/>');
             questionnaire_notify(get_string("noteligible", "questionnaire", $this->name));
-            echo('<div><a href="'.$CFG->wwwroot.'/course/view.php?id='.$this->course->id.'">'.
-                get_string("continue").'</a></div>');
+            if($this->nonajax == true){
+                echo('<div><a href="'.$CFG->wwwroot.'/course/view.php?id='.$this->course->id.$this->nonajax.'">'.
+                    get_string("continue").'</a></div>');
+            } else {
+                echo('<div><a class="sublink get-remote-content remote-link-action" href="'.$CFG->wwwroot.'/course/view.php?id='.$this->course->id.'">'.
+                    get_string("continue").'</a></div>');
+            }
             exit;
         }
 
@@ -764,7 +769,7 @@ class questionnaire {
         $formdatarid = isset($formdata->rid) ? $formdata->rid : '0';
         echo '<div class="generalbox">';
         echo '
-                <form id="phpesp_response" method="post" action="'.$action.'">
+                <form id="phpesp_response" method="post" action="'.$action.$this->nonajax.'">
                 <div>
                 <input type="hidden" name="referer" value="'.$formdatareferer.'" />
                 <input type="hidden" name="a" value="'.$this->id.'" />
@@ -788,8 +793,12 @@ class questionnaire {
 
             if ($formdata->sec == $numsections) {
                 echo '
-                    <div><input type="hidden" name="submittype" value="Submit Survey" />
-                    <input type="submit" name="submit" value="'.get_string('submitsurvey', 'questionnaire').'" /></div>';
+                    <div><input type="hidden" name="submittype" value="Submit Survey" />';
+                if($this->nonajax == true){
+                    echo '<input type="submit" name="submit" value="'.get_string('submitsurvey', 'questionnaire').'" /></div>';
+                } else {
+                    echo '<input id="id_submit" type="submit" name="submit" value="'.get_string('submitsurvey', 'questionnaire').'" /></div>';
+                }
             } else {
                 echo '&nbsp;<div><input type="submit" name="next" value="'.
                                 get_string('nextpage', 'questionnaire').'&nbsp;>>" /></div>';
@@ -2151,12 +2160,26 @@ class questionnaire {
             $currentgroupid = 0;
         }
         if ($this->capabilities->readownresponses) {
-            echo('<a href="'.$CFG->wwwroot.'/mod/questionnaire/myreport.php?id='.
-            $this->cm->id.'&amp;instance='.$this->cm->instance.'&amp;user='.$USER->id.'&byresponse=0&action=vresp'.$this->nonajax.'">'.
-            get_string("continue").'</a>');
+            if($this->nonajax){
+                echo('<a href="'.$CFG->wwwroot.'/mod/questionnaire/myreport.php?id='.
+                    $this->cm->id.'&amp;instance='.$this->cm->instance.'&amp;user='.$USER->id.'&byresponse=0&action=vresp'.$this->nonajax.'">'.
+                    get_string("continue").'</a>');
+            } else {
+                echo '<a class="sublink get-remote-content remote-link-action" data-module=\'';
+                echo json_encode(array('url' => $CFG->wwwroot.'/mod/questionnaire/myreport.php', 'params' => array('id' => $this->cm->id, 'instance' => $this->cm->instance, 'user' => $USER->id, 'byresponse' => 0, 'action' => 'vresp'  ), 'method' => 'get'));
+                echo '\' href="#">'.get_string("continue");
+                echo '</a>';
+            }
         } else {
-            echo('<a href="'.$CFG->wwwroot.'/course/view.php?id='.$this->course->id.'">'.
-            get_string("continue").'</a>');
+            if($this->nonajax){
+                echo('<a href="'.$CFG->wwwroot.'/course/view.php?id='.$this->course->id.'">'.
+                    get_string("continue").'</a>');
+            } else {
+                echo '<a class="sublink get-remote-content remote-link-action" data-module=\'';
+                echo json_encode(array('url' => $CFG->wwwroot.'/course/view.php', 'params' => array('id' => $this->course->id), 'method' => 'get'));
+                echo '\' href="#">'.get_string("continue");
+                echo '</a>';
+            }
         }
         return;
     }

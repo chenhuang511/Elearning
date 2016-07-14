@@ -240,7 +240,9 @@ switch ($action) {
         // Print the page header.
         $PAGE->set_title(get_string('deletingresp', 'questionnaire'));
         $PAGE->set_heading(format_string($course->fullname));
-        echo $OUTPUT->header();
+        if($CFG->nonajax == true){
+            echo $OUTPUT->header();
+        }
 
         // Print the tabs.
         $SESSION->questionnaire->current_tab = 'deleteresp';
@@ -266,7 +268,9 @@ switch ($action) {
         echo $OUTPUT->confirm($msg, $buttonyes, $buttonno);
 
         // Finish the page.
-        echo $OUTPUT->footer($course);
+        if($CFG->nonajax == true){
+            echo $OUTPUT->footer($course);
+        }
         break;
 
     case 'delallresp': // Delete all responses? Ask for confirmation.
@@ -283,7 +287,9 @@ switch ($action) {
             // Print the page header.
             $PAGE->set_title(get_string('deletingresp', 'questionnaire'));
             $PAGE->set_heading(format_string($course->fullname));
-            echo $OUTPUT->header();
+            if($CFG->nonajax == true){
+                echo $OUTPUT->header();
+            }
 
             // Print the tabs.
             $SESSION->questionnaire->current_tab = 'deleteall';
@@ -308,7 +314,9 @@ switch ($action) {
             echo $OUTPUT->confirm($msg, $buttonyes, $buttonno);
 
             // Finish the page.
-            echo $OUTPUT->footer($course);
+            if($CFG->nonajax == true){
+                echo $OUTPUT->footer($course);
+            }
         }
         break;
 
@@ -446,7 +454,9 @@ switch ($action) {
 
         $PAGE->set_title(get_string('questionnairereport', 'questionnaire'));
         $PAGE->set_heading(format_string($course->fullname));
-        echo $OUTPUT->header();
+        if($CFG->nonajax == true){
+            echo $OUTPUT->header();
+        }
 
         // Print the tabs.
         // Tab setup.
@@ -489,7 +499,9 @@ switch ($action) {
         echo "</form>\n";
         echo $OUTPUT->box_end();
 
-        echo $OUTPUT->footer('none');
+        if($CFG->nonajax == true){
+            echo $OUTPUT->footer($course);
+        }
 
         // Log saved as text action.
         $params = array('objectid' => $questionnaire->id,
@@ -533,14 +545,18 @@ switch ($action) {
 
         $PAGE->set_title(get_string('questionnairereport', 'questionnaire'));
         $PAGE->set_heading(format_string($course->fullname));
-        echo $OUTPUT->header();
-        if (!$questionnaire->capabilities->readallresponses && !$questionnaire->capabilities->readallresponseanytime) {
+	    if($CFG->nonajax == true){
+	        echo $OUTPUT->header();
+	    }
+	    if (!$questionnaire->capabilities->readallresponses && !$questionnaire->capabilities->readallresponseanytime) {
 
             // Should never happen, unless called directly by a snoop.
             print_error('nopermissions', '', '', get_string('viewallresponses', 'questionnaire'));
 
             // Finish the page.
-            echo $OUTPUT->footer($course);
+            if($CFG->nonajax == true){
+                echo $OUTPUT->footer($course);
+            }
             break;
         }
 
@@ -638,7 +654,9 @@ switch ($action) {
         echo '</div>';
 
         // Finish the page.
-        echo $OUTPUT->footer($course);
+        if($CFG->nonajax == true){
+            echo $OUTPUT->footer($course);
+        }
         break;
 
     case 'vresp': // View by response.
@@ -727,7 +745,9 @@ switch ($action) {
         // Print the page header.
         $PAGE->set_title(get_string('questionnairereport', 'questionnaire'));
         $PAGE->set_heading(format_string($course->fullname));
-        echo $OUTPUT->header();
+        if($CFG->nonajax == true){
+            echo $OUTPUT->header();
+        }
 
         // Print the tabs.
         if ($byresponse) {
@@ -766,6 +786,8 @@ switch ($action) {
         echo $OUTPUT->box_end();
 
         // Finish the page.
-        echo $OUTPUT->footer($course);
+        if($CFG->nonajax == true){
+            echo $OUTPUT->footer($course);
+        }
         break;
 }
