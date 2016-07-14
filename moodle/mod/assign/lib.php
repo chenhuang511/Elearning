@@ -25,7 +25,7 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
-define('ISREMOTE', MOODLE_RUN_MODE === MOODLE_MODE_HUB);
+defined('ISREMOTE') || define('ISREMOTE', MOODLE_RUN_MODE === MOODLE_MODE_HUB);
 
 /**
  * Adds an assignment instance
