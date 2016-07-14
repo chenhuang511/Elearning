@@ -22,7 +22,7 @@
  */
 
 require_once(dirname(__FILE__) . '/../../../config.php');
-require_once('../lib.php');
+require_once('/../lib.php');
 require_once($CFG->dirroot . '/mod/forum/remote/locallib.php');
 require_once($CFG->dirroot . '/course/remote/locallib.php');
 require_once($CFG->libdir . '/completionlib.php');
@@ -78,7 +78,7 @@ if ($id) {
     if (!$forum = get_remote_forum_by($prs)) {
         print_error('invalidforumid', 'forum');
     }
-    
+
     if (!$course = get_local_course_record($forum->course)) {
         print_error('coursemisconf');
     }
@@ -128,7 +128,9 @@ if (!has_capability('mod/forum:viewdiscussion', $context)) {
 // Mark viewed and trigger the course_module_viewed event.
 forum_view($forum, $course, $cm, $context);
 
-echo $OUTPUT->header();
+if ($CFG->nonajax) {
+    echo $OUTPUT->header();
+}
 
 echo $OUTPUT->heading(format_string($forum->name), 2);
 if (!empty($forum->intro) && $forum->type != 'single' && $forum->type != 'teacher') {
@@ -150,8 +152,9 @@ if ($forum->type == 'single') {
     $prs['parameters[0][name]'] = "forum";
     $prs['parameters[0][value]'] = $forum->id;
 
-    $discussions = get_remote_list_forum_discussions_by($prs, $sort);
-    
+    $discussion = NULL;
+    $discussions = get_remote_list_forum_discussions_by($prs, 'timemodified ASC');
+
     if (!empty($discussions)) {
         $discussion = array_pop($discussions);
     }
@@ -243,4 +246,6 @@ switch ($forum->type) {
 // Add the subscription toggle JS.
 $PAGE->requires->yui_module('moodle-mod_forum-subscriptiontoggle', 'Y.M.mod_forum.subscriptiontoggle.init');
 
-echo $OUTPUT->footer($course);
+if ($CFG->nonajax) {
+    echo $OUTPUT->footer($course);
+}

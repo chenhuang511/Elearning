@@ -97,7 +97,7 @@ if (!isloggedin() or isguestuser()) {
         print_error('invalidcourseid');
     }
 
-    if (!$cm = get_remote_course_module_by_instance('forum', $forum->id)) { // For the logs
+    if (!$cm = get_remote_course_module_by_instance('forum', $forum->id)->cm) { // For the logs
         print_error('invalidcoursemodule');
     } else {
         $modcontext = context_module::instance($cm->id);
@@ -144,7 +144,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
                     $SESSION->wantsurl = qualified_me();
                     $SESSION->enrolcancel = get_local_referer(false);
                     redirect(new moodle_url('/enrol/index.php', array('id' => $course->id,
-                        'returnurl' => '/mod/forum/view.php?f=' . $forum->id)),
+                        'returnurl' => '/mod/forum/remote/view.php?f=' . $forum->id)),
                         get_string('youneedtoenrol'));
                 }
             }
@@ -185,22 +185,19 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     if (!$parent = forum_get_post_full($reply)) {
         print_error('invalidparentpostid', 'forum');
     }
-    $param = array();
-    $param['parameteres[0][name]'] = 'id';
-    $param['parameteres[0][value]'] = $parent->discussion;
-    if (!$discussion = get_remote_forum_discussions_by($param)) {
+
+    $params = array();
+    $params['parameters[0][name]'] = "id";
+    $params['parameters[0][value]'] = $parent->discussion;
+
+    if (!$discussion = get_remote_forum_discussions_by($params)) {
         print_error('notpartofdiscussion', 'forum');
     }
-    $param = array();
-    $param['parameteres[0][name]'] = 'id';
-    $param['parameteres[0][value]'] = $discussion->forum;
-    if (!$forum = get_remote_forum_by($param)) {
+    $params['parameters[0][value]'] = $discussion->forum;
+    if (!$forum = get_remote_forum_by($params)) {
         print_error('invalidforumid', 'forum');
     }
-    $param = array();
-    $param['parameteres[0][name]'] = 'id';
-    $param['parameteres[0][value]'] = $discussion->course;
-    if (!$course = get_remote_forum_by($param)) {
+    if (!$course = get_local_course_record($discussion->course)) {
         print_error('invalidcourseid');
     }
     if (!$cm = get_remote_course_module_by_instance("forum", $forum->id)->cm) {
@@ -282,21 +279,14 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     $param['parameteres[0][name]'] = 'id';
     $param['parameteres[0][value]'] = $post->discussion;
 
-    if (!$discussion = get_remote_forum_discussions_by($param)) {
+    if (!$discussion = get_remote_forum_discussions_by($params)) {
         print_error('notpartofdiscussion', 'forum');
     }
-    $param = array();
-    $param['parameteres[0][name]'] = 'id';
     $param['parameteres[0][value]'] = $discussion->forum;
-
-    if (!$forum = get_remote_forum_by($param)) {
+    if (!$forum = get_remote_forum_by($params)) {
         print_error('invalidforumid', 'forum');
     }
-    $param = array();
-    $param['parameteres[0][name]'] = 'id';
-    $param['parameteres[0][value]'] = $discussion->course;
-
-    if (!$course = get_remote_forum_by($param)) {
+    if (!$course = get_local_course_record($discussion->course)) {
         print_error('invalidcourseid');
     }
     if (!$cm = get_remote_course_module_by_instance("forum", $forum->id)->cm) {
@@ -340,26 +330,17 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     $param = array();
     $param['parameteres[0][name]'] = 'id';
     $param['parameteres[0][value]'] = $post->discussion;
-
-    if (!$discussion = get_remote_forum_discussions_by($param)) {
+    if (!$discussion = get_remote_forum_discussions_by($params)) {
         print_error('notpartofdiscussion', 'forum');
     }
-    $param = array();
-    $param['parameteres[0][name]'] = 'id';
     $param['parameteres[0][value]'] = $discussion->forum;
-
-    if (!$forum = get_remote_forum_by($param)) {
+    if (!$forum = get_remote_forum_by($params)) {
         print_error('invalidforumid', 'forum');
     }
-    if (!$cm = get_remote_course_module_by_instance('forum', $forum->id)->cm) {
+    if (!$cm = get_remote_course_module_by_instance("forum", $forum->id)->cm) {
         print_error('invalidcoursemodule');
     }
-    $param = array();
-    $param['parameteres[0][name]'] = 'id';
-    $param['parameteres[0][value]'] = $forum->course;
-
-
-    if (!$course = get_remote_forum_by('course', $param)) {
+    if (!$course = get_local_course_record($forum->course)) {
         print_error('invalidcourseid');
     }
 
@@ -380,22 +361,22 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         $timepassed = time() - $post->created;
         if (($timepassed > $CFG->maxeditingtime) && !has_capability('mod/forum:deleteanypost', $modcontext)) {
             print_error("cannotdeletepost", "forum",
-                forum_go_back_to(new moodle_url("/mod/forum/discuss.php", array('d' => $post->discussion))));
+                forum_go_back_to(new moodle_url("/mod/forum/remote/discuss.php", array('d' => $post->discussion))));
         }
 
         if ($post->totalscore) {
             notice(get_string('couldnotdeleteratings', 'rating'),
-                forum_go_back_to(new moodle_url("/mod/forum/discuss.php", array('d' => $post->discussion))));
+                forum_go_back_to(new moodle_url("/mod/forum/remote/discuss.php", array('d' => $post->discussion))));
 
         } else if ($replycount && !has_capability('mod/forum:deleteanypost', $modcontext)) {
             print_error("couldnotdeletereplies", "forum",
-                forum_go_back_to(new moodle_url("/mod/forum/discuss.php", array('d' => $post->discussion))));
+                forum_go_back_to(new moodle_url("/mod/forum/remote/discuss.php", array('d' => $post->discussion))));
 
         } else {
             if (!$post->parent) {  // post is a discussion topic as well, so delete discussion
                 if ($forum->type == 'single') {
                     notice("Sorry, but you are not allowed to delete that discussion!",
-                        forum_go_back_to(new moodle_url("/mod/forum/discuss.php", array('d' => $post->discussion))));
+                        forum_go_back_to(new moodle_url("/mod/forum/remote/discuss.php", array('d' => $post->discussion))));
                 }
                 forum_delete_discussion($discussion, false, $course, $cm, $forum);
 
@@ -411,7 +392,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
                 $event->add_record_snapshot('forum_discussions', $discussion);
                 $event->trigger();
 
-                redirect("view.php?f=$discussion->forum");
+                redirect("/remote/view.php?f=$discussion->forum");
 
             } else if (forum_delete_post($post, has_capability('mod/forum:deleteanypost', $modcontext),
                 $course, $cm, $forum)) {
@@ -420,9 +401,9 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
                     // Single discussion forums are an exception. We show
                     // the forum itself since it only has one discussion
                     // thread.
-                    $discussionurl = new moodle_url("/mod/forum/view.php", array('f' => $forum->id));
+                    $discussionurl = new moodle_url("/mod/forum/remote/view.php", array('f' => $forum->id));
                 } else {
-                    $discussionurl = new moodle_url("/mod/forum/discuss.php", array('d' => $discussion->id));
+                    $discussionurl = new moodle_url("/mod/forum/remote/discuss.php", array('d' => $discussion->id));
                 }
 
                 redirect(forum_go_back_to($discussionurl));
@@ -442,13 +423,13 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         if ($replycount) {
             if (!has_capability('mod/forum:deleteanypost', $modcontext)) {
                 print_error("couldnotdeletereplies", "forum",
-                    forum_go_back_to(new moodle_url('/mod/forum/discuss.php', array('d' => $post->discussion), 'p' . $post->id)));
+                    forum_go_back_to(new moodle_url('/mod/forum/remote/discuss.php', array('d' => $post->discussion), 'p' . $post->id)));
             }
             echo $OUTPUT->header();
             echo $OUTPUT->heading(format_string($forum->name), 2);
             echo $OUTPUT->confirm(get_string("deletesureplural", "forum", $replycount + 1),
                 "post.php?delete=$delete&confirm=$delete",
-                $CFG->wwwroot . '/mod/forum/discuss.php?d=' . $post->discussion . '#p' . $post->id);
+                $CFG->wwwroot . '/mod/forum/remote/discuss.php?d=' . $post->discussion . '#p' . $post->id);
 
             forum_print_post($post, $discussion, $forum, $cm, $course, false, false, false);
 
@@ -462,7 +443,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
             echo $OUTPUT->heading(format_string($forum->name), 2);
             echo $OUTPUT->confirm(get_string("deletesure", "forum", $replycount),
                 "post.php?delete=$delete&confirm=$delete",
-                $CFG->wwwroot . '/mod/forum/discuss.php?d=' . $post->discussion . '#p' . $post->id);
+                $CFG->wwwroot . '/mod/forum/remote/discuss.php?d=' . $post->discussion . '#p' . $post->id);
             forum_print_post($post, $discussion, $forum, $cm, $course, false, false, false);
         }
 
@@ -479,14 +460,11 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     $param = array();
     $param['parameteres[0][name]'] = 'id';
     $param['parameteres[0][value]'] = $post->discussion;
-
-    if (!$discussion = get_remote_forum_discussions_by($param)) {
+    if (!$discussion = get_remote_forum_discussions_by($params)) {
         print_error('notpartofdiscussion', 'forum');
     }
-    $param = array();
-    $param['parameteres[0][name]'] = 'id';
     $param['parameteres[0][value]'] = $discussion->forum;
-    if (!$forum = get_remote_forum_by($param)) {
+    if (!$forum = get_remote_forum_by($params)) {
         print_error('invalidforumid', 'forum');
     }
     if ($forum->type == 'single') {
@@ -511,44 +489,46 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
 
 
     if ($prunemform->is_cancelled()) {
-        redirect(forum_go_back_to(new moodle_url("/mod/forum/discuss.php", array('d' => $post->discussion))));
+        redirect(forum_go_back_to(new moodle_url("/mod/forum/remote/discuss.php", array('d' => $post->discussion))));
     } else if ($fromform = $prunemform->get_data()) {
         // User submits the data.
-        $newdiscussion = new stdClass();
-        $newdiscussion->course = $discussion->course;
-        $newdiscussion->forum = $discussion->forum;
-        $newdiscussion->name = $name;
-        $newdiscussion->firstpost = $post->id;
-        $newdiscussion->userid = $discussion->userid;
-        $newdiscussion->groupid = $discussion->groupid;
-        $newdiscussion->assessed = $discussion->assessed;
-        $newdiscussion->usermodified = $post->userid;
-        $newdiscussion->timestart = $discussion->timestart;
-        $newdiscussion->timeend = $discussion->timeend;
 
-        $newid = $DB->insert_record('forum_discussions', $newdiscussion);
+        $data = array();
+        $data['data[0][name]'] = "course";
+        $data['data[0][value]'] = $discussion->course;
+        $data['data[1][name]'] = "forum";
+        $data['data[1][value]'] = $discussion->forum;
+        $data['data[2][name]'] = "name";
+        $data['data[2][value]'] = $name;
+        $data['data[3][name]'] = "firstpost";
+        $data['data[3][value]'] = $post->id;
+        $data['data[4][name]'] = "userid";
+        $data['data[4][value]'] = $discussion->userid;
+        $data['data[5][name]'] = "groupid";
+        $data['data[5][value]'] = $discussion->groupid;
+        $data['data[6][name]'] = "assessed";
+        $data['data[6][value]'] = $discussion->assessed;
+        $data['data[7][name]'] = "usermodified";
+        $data['data[7][value]'] = $post->userid;
+        $data['data[8][name]'] = "timestart";
+        $data['data[8][value]'] = $discussion->timestart;
+        $data['data[9][name]'] = "timeend";
+        $data['data[9][value]'] = $discussion->timeend;
+
+        $newid = save_remote_mdl_forum('forum_discussions', $data);
 
         $newpost = new stdClass();
         $newpost->id = $post->id;
         $newpost->parent = 0;
         $newpost->subject = $name;
 
-        $params = array();
-        $params['params[0][name]'] = 'userid';
-        $params['params[0][op]'] = '=';
-        $params['params[0][value]'] = $userid;
-        $params['params[1][name]'] = 'forum';
-        $params['params[1][op]'] = '=';
-        $params['params[1][value]'] = $forum->id;
-        $params['params[2][name]'] = 'retry';
-        $params['params[2][op]'] = '>';
-        $params['params[2][value]'] = $try;
-
         $data = array();
-        $data['data[0][name]'] = 'retry';
-        $data['data[0][value]'] = 'retry - 1';
+        $data['data[0][name]'] = "parent";
+        $data['data[0][value]'] = 0;
+        $data['data[1][name]'] = "subject";
+        $data['data[1][value]'] = $name;
 
-        $result = update_remote_mdl_table('forum_posts', $params, $data);
+        $result = update_remote_mdl_forum('forum_posts', $post->id, $data);
 
         forum_change_discussionid($post->id, $newid);
 
@@ -590,16 +570,12 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         $event->add_record_snapshot('forum_discussions', $discussion);
         $event->trigger();
 
-        redirect(forum_go_back_to(new moodle_url("/mod/forum/discuss.php", array('d' => $newid))));
+        redirect(forum_go_back_to(new moodle_url("/mod/forum/remote/discuss.php", array('d' => $newid))));
 
     } else {
         // Display the prune form.
-        $param = array();
-        $param['parameteres[0][name]'] = 'id';
-        $param['parameteres[0][value]'] = $forum->course;
-
-        $course = get_remote_forum_by($param);
-        $PAGE->navbar->add(format_string($post->subject, true), new moodle_url('/mod/forum/discuss.php', array('d' => $discussion->id)));
+        $course = get_local_course_record($forum->course);
+        $PAGE->navbar->add(format_string($post->subject, true), new moodle_url('/mod/forum/remote/discuss.php', array('d' => $discussion->id)));
         $PAGE->navbar->add(get_string("prune", "forum"));
         $PAGE->set_title(format_string($discussion->name) . ": " . format_string($post->subject));
         $PAGE->set_heading($course->fullname);
@@ -752,14 +728,14 @@ $mform_post->set_data(array('attachments' => $draftitemid,
 if ($mform_post->is_cancelled()) {
     if (!isset($discussion->id) || $forum->type === 'qanda') {
         // Q and A forums don't have a discussion page, so treat them like a new thread..
-        redirect(new moodle_url('/mod/forum/view.php', array('f' => $forum->id)));
+        redirect(new moodle_url('/mod/forum/remote/view.php', array('f' => $forum->id)));
     } else {
-        redirect(new moodle_url('/mod/forum/discuss.php', array('d' => $discussion->id)));
+        redirect(new moodle_url('/mod/forum/remote/discuss.php', array('d' => $discussion->id)));
     }
 } else if ($fromform = $mform_post->get_data()) {
 
     if (empty($SESSION->fromurl)) {
-        $errordestination = "$CFG->wwwroot/mod/forum/view.php?f=$forum->id";
+        $errordestination = "$CFG->wwwroot/mod/forum/remote/view.php?f=$forum->id";
     } else {
         $errordestination = $SESSION->fromurl;
     }
@@ -779,7 +755,6 @@ if ($mform_post->is_cancelled()) {
         $param = array();
         $param['parameteres[0][name]'] = 'id';
         $param['parameteres[0][value]'] = $fromform->id;
-
         if (!$realpost = get_remote_forum_posts_by($param)) {
             $realpost = new stdClass();
             $realpost->userid = -1;
@@ -829,33 +804,19 @@ if ($mform_post->is_cancelled()) {
         if (($forum->type == 'single') && ($updatepost->parent == '0')) { // updating first post of single discussion type -> updating forum intro
             $forum->intro = $updatepost->message;
             $forum->timemodified = time();
-            $params = array();
-            $params['params[0][name]'] = 'userid';
-            $params['params[0][op]'] = '=';
-            $params['params[0][value]'] = $userid;
-            $params['params[1][name]'] = 'forum';
-            $params['params[1][op]'] = '=';
-            $params['params[1][value]'] = $forum->id;
-            $params['params[2][name]'] = 'retry';
-            $params['params[2][op]'] = '>';
-            $params['params[2][value]'] = $try;
-
             $data = array();
-            $data['data[0][name]'] = 'retry';
-            $data['data[0][value]'] = 'retry - 1';
+            $data['data[0][name]'] = "intro";
+            $data['data[0][value]'] = $updatepost->message;
+            $data['data[1][name]'] = "timemodified";
+            $data['data[1][value]'] = time();
 
-            $result = update_remote_mdl_table('forum', $params, $data);
+            $result = update_remote_mdl_forum("forum", $forum->id, $data);
         }
 
         if ($realpost->userid == $USER->id) {
             $message .= '<br />' . get_string("postupdated", "forum");
         } else {
-
-            $param = array();
-            $param['parameteres[0][name]'] = 'id';
-            $param['parameteres[0][value]'] = $realpost->userid;
-
-            $realuser = get_remote_forum_posts_by($param);
+            $realuser = $DB->get_record('user', array('id' => $realpost->userid));
             $message .= '<br />' . get_string("editedpostupdated", "forum", fullname($realuser));
         }
 
@@ -864,9 +825,9 @@ if ($mform_post->is_cancelled()) {
             // Single discussion forums are an exception. We show
             // the forum itself since it only has one discussion
             // thread.
-            $discussionurl = new moodle_url("/mod/forum/view.php", array('f' => $forum->id));
+            $discussionurl = new moodle_url("/mod/forum/remote/view.php", array('f' => $forum->id));
         } else {
-            $discussionurl = new moodle_url("/mod/forum/discuss.php", array('d' => $discussion->id), 'p' . $fromform->id);
+            $discussionurl = new moodle_url("/mod/forum/remote/discuss.php", array('d' => $discussion->id), 'p' . $fromform->id);
         }
 
         $params = array(
@@ -916,9 +877,9 @@ if ($mform_post->is_cancelled()) {
                 // Single discussion forums are an exception. We show
                 // the forum itself since it only has one discussion
                 // thread.
-                $discussionurl = new moodle_url("/mod/forum/view.php", array('f' => $forum->id), 'p' . $fromform->id);
+                $discussionurl = new moodle_url("/mod/forum/remote/view.php", array('f' => $forum->id), 'p' . $fromform->id);
             } else {
-                $discussionurl = new moodle_url("/mod/forum/discuss.php", array('d' => $discussion->id), 'p' . $fromform->id);
+                $discussionurl = new moodle_url("/mod/forum/remote/discuss.php", array('d' => $discussion->id), 'p' . $fromform->id);
             }
 
             $params = array(
@@ -957,7 +918,7 @@ if ($mform_post->is_cancelled()) {
 
     } else { // Adding a new discussion.
         // The location to redirect to after successfully posting.
-        $redirectto = new moodle_url('view.php', array('f' => $fromform->forum));
+        $redirectto = new moodle_url('/remote/view.php', array('f' => $fromform->forum));
 
         $fromform->mailnow = empty($fromform->mailnow) ? 0 : 1;
 

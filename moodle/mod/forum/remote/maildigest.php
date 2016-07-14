@@ -25,6 +25,8 @@
 
 require_once(dirname(dirname(__DIR__)) . '/config.php');
 require_once($CFG->dirroot.'/mod/forum/lib.php');
+require_once($CFG->dirroot . '/mod/forum/remote/locallib.php');
+require_once($CFG->dirroot . '/course/remote/locallib.php');
 
 $id = required_param('id', PARAM_INT);
 $maildigest = required_param('maildigest', PARAM_INT);
@@ -32,24 +34,17 @@ $backtoindex = optional_param('backtoindex', 0, PARAM_INT);
 
 // We must have a valid session key.
 require_sesskey();
-
 $params = array();
-$params['parameteres[0][name]'] = 'id';
-$params['parameteres[0][value]'] = $id;
-
+$params['parameters[0][name]'] = "id";
+$params['parameters[0][value]'] = $id;
 $forum = get_remote_forum_by($params);
-
-$params = array();
-$params['parameteres[0][name]'] = 'id';
-$params['parameteres[0][value]'] = $forum->course;
-
-$course  = get_remote_forum_by($params,'',true);
-$cm      = get_coursemodule_from_instance('forum', $forum->id, $course->id, false, MUST_EXIST);
+$course  = get_local_course_record($forum->course);
+$cm      = get_remote_course_module_by_instance('forum', $forum->id);
 $context = context_module::instance($cm->id);
 
 require_login($course, false, $cm);
 
-$url = new moodle_url('/mod/forum/maildigest.php', array(
+$url = new moodle_url('/mod/forum/remote/maildigest.php', array(
     'id' => $id,
     'maildigest' => $maildigest,
 ));
@@ -79,9 +74,9 @@ if ($maildigest === -1) {
 }
 
 if ($backtoindex) {
-    $returnto = "index.php?id={$course->id}";
+    $returnto = "/mod/index.php?id={$course->id}";
 } else {
-    $returnto = "view.php?f={$id}";
+    $returnto = "/mod/view.php?f={$id}";
 }
 
 redirect($returnto, $updatemessage, null, \core\output\notification::NOTIFY_SUCCESS);
