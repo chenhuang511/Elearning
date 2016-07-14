@@ -27,6 +27,7 @@ require_once(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
 $attemptid = required_param('attempt', PARAM_INT); // The attempt to summarise.
+$nonajax = optional_param('nonajax', false, PARAM_BOOL);
 
 $PAGE->set_url('/mod/quiz/remote/summary.php', array('attempt' => $attemptid));
 
@@ -62,7 +63,7 @@ if ($attemptobj->is_preview_user()) {
     navigation_node::override_active_url($attemptobj->start_attempt_url());
 }
 
-if (!has_capability('moodle/course:manageactivities', $context)) {
+if (!has_capability('moodle/course:manageactivities', $context) && $nonajax == false) {
     $CFG->nonajax = false;
 } else {
     $CFG->nonajax = true;
