@@ -62,6 +62,13 @@ require_course_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/resource:view', $context);
 
+$nonajax = optional_param('nonajax', true, PARAM_BOOL);
+if (!has_capability('moodle/course:manageactivities', $context) && $nonajax != true) {
+    $CFG->nonajax = false;
+} else {
+    $CFG->nonajax = true;
+}
+
 // Completion and trigger events.
 resource_view($resource, $course, $cm, $context);
 
@@ -72,17 +79,9 @@ if ($resource->tobemigrated) {
     die;
 }
 
-$fs = get_file_storage();
-$files = $fs->get_area_files($context->id, 'mod_resource', 'content', 0, 'sortorder DESC, id ASC', false); // TODO: this is not very efficient!!
-if (count($files) < 1) {
-    resource_print_filenotfound($resource, $cm, $course);
-    die;
-} else {
-    $file = reset($files);
-    unset($files);
-}
+$file = get_remote_files_resource_by_cm($cm->id);
 
-$resource->mainfile = $file->get_filename();
+$resource->mainfile = $file->filename;
 $displaytype = resource_get_final_display_type($resource);
 if ($displaytype == RESOURCELIB_DISPLAY_OPEN || $displaytype == RESOURCELIB_DISPLAY_DOWNLOAD) {
     // For 'open' and 'download' links, we always redirect to the content - except
@@ -104,20 +103,7 @@ if ($redirect && !course_get_format($course)->has_view_page() &&
 if ($redirect) {
     // coming from course page or url index page
     // this redirect trick solves caching problems when tracking views ;-)
-    $path = '/' . $context->id . '/mod_resource/content/' . $resource->revision . $file->get_filepath() . $file->get_filename();
-    $fullurl = moodle_url::make_file_url('/pluginfile.php', $path, $displaytype == RESOURCELIB_DISPLAY_DOWNLOAD);
-    redirect($fullurl);
+    redirect($file->url);
 }
 
-switch ($displaytype) {
-    case RESOURCELIB_DISPLAY_EMBED:
-        resource_display_embed($resource, $cm, $course, $file, $CFG->nonajax);
-        break;
-    case RESOURCELIB_DISPLAY_FRAME:
-        resource_display_frame($resource, $cm, $course, $file, $CFG->nonajax);
-        break;
-    default:
-        resource_print_workaround($resource, $cm, $course, $file, $CFG->nonajax);
-        break;
-}
-
+remote_resource_print_workaround($resource, $cm, $course, $file);
