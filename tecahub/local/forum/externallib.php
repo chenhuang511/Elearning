@@ -16,9 +16,9 @@
 
 
 /**
- * External course API
+ * External forum API
  *
- * @package    core_course
+ * @package    local_mod_forum
  * @category   external
  * @copyright  2009 Petr Skodak
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -30,9 +30,9 @@ require_once("$CFG->libdir/externallib.php");
 
 
 /**
- * Course external functions
+ * Forum external functions
  *
- * @package    core_course
+ * @package    local_mod_forum
  * @category   external
  * @copyright  2011 Jerome Mouneyrac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -958,6 +958,57 @@ class local_mod_forum_external extends external_api
         return new external_function_parameters(
             array(
                 'count' => new external_value(PARAM_INT, 'count row'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function check_record_forum_exists_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'modname' => new external_value(PARAM_RAW, ' the mod name'),
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                )
+            )
+        );
+    }
+
+    public static function check_record_forum_exists($modname, $parameters)
+    {
+        global $DB;
+
+        $warnings = array();
+
+        $params = self::validate_parameters(self::check_record_forum_exists_parameters(), array(
+            'modname' => $modname,
+            'parameters' => $parameters,
+        ));
+
+        $result = array();
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result['status'] = $DB->record_exists($params['modname'], $arr);
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function check_record_forum_exists_returns()
+    {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status'),
                 'warnings' => new external_warnings()
             )
         );
