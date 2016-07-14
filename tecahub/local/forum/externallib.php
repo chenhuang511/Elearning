@@ -754,6 +754,9 @@ class local_mod_forum_external extends external_api
         $obj = new stdClass();
 
         foreach ($params['data'] as $element) {
+            if ($element['name'] == "attachments" && $element['value'] == "") {
+                $obj->$element['name'] = null;
+            }
             $obj->$element['name'] = $element['value'];
         }
 
@@ -814,7 +817,7 @@ class local_mod_forum_external extends external_api
 
         $obj = $DB->get_record($params['modname'], array("id" => $params['id']));
 
-        if(!$obj) {
+        if (!$obj) {
             $warnings['message'] = "Not found data record";
             $result['id'] = 0;
             $result['warnings'] = $warnings;

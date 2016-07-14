@@ -4764,7 +4764,7 @@ function forum_add_discussion($discussion, $mform = null, $unused = null, $useri
         $data['data[9][name]'] = "messagetrust";
         $data['data[9][value]'] = $discussion->messagetrust;
         $data['data[10][name]'] = "attachments";
-        $data['data[10][value]'] = isset($discussion->attachments) ? $discussion->attachments : null;
+        $data['data[10][value]'] = isset($discussion->attachments) ? $discussion->attachments : "";
         $data['data[11][name]'] = "forum";
         $data['data[11][value]'] = $forum->id;     // speedup
         $data['data[12][name]'] = "course";
