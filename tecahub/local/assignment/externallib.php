@@ -457,7 +457,133 @@ class local_mod_assign_external extends external_api {
         );
     }
 
-	/**
+    /**
+     * Returns description of method get_mod_assign_by_id_instanceid_parameters parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function get_mod_assign_by_id_instanceid_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'assignid' => new external_value(PARAM_INT, 'the assign id'),
+                'instanceid' => new external_value(PARAM_INT, 'the instance id'),
+            )
+        );
+    }
+
+    /**
+     * Return information about a assignment.
+     *
+     * @param int $assignid the assign id
+     * @param int $instanceid the instance id
+     * @return array of warnings and the assignment
+     * @since Moodle 3.0
+     * @throws moodle_exception
+     */
+    public static function get_mod_assign_by_id_instanceid($assignid, $instanceid)
+    {
+        global $DB;
+
+        // Build result
+        $warnings = array();
+
+        $result = array();
+
+        // validate params
+        $params = self::validate_parameters(self::get_mod_assign_by_id_instanceid_parameters(),
+            array(
+                'assignid' => $assignid,
+                'instanceid' => $instanceid
+            )
+        );
+
+        $result['assignment'] = $DB->get_record('assign', array('id' => $params['assignid']), '*', MUST_EXIST);
+        $result['warning'] = $warnings;
+
+        $context = context_module::instance($params['instanceid']);
+        self::validate_context($context);
+
+        $fs = get_file_storage();
+        if ($files = $fs->get_area_files($context->id, 'mod_assign', ASSIGN_INTROATTACHMENT_FILEAREA,
+            0, 'timemodified', false)
+        ) {
+
+            $assignment['introattachments'] = array();
+            foreach ($files as $file) {
+                $filename = $file->get_filename();
+
+                $assignment['introattachments'][] = array(
+                    'filename' => $filename,
+                    'mimetype' => $file->get_mimetype(),
+                    'fileurl' => moodle_url::make_webservice_pluginfile_url(
+                        $context->id, 'mod_assign', ASSIGN_INTROATTACHMENT_FILEAREA, 0, '/', $filename)->out(false)
+                );
+            }
+            $result['assignment']->introattachments = $assignment['introattachments'];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
+    public static function get_mod_assign_by_id_instanceid_returns()
+    {
+        return new external_single_structure(
+            array(
+                'assignment' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'assign id'),
+                        'course' => new external_value(PARAM_INT, 'course id'),
+                        'name' => new external_value(PARAM_RAW, 'assign name'),
+                        'intro' => new external_value(PARAM_RAW, 'assign intro'),
+                        'introformat' => new external_value(PARAM_INT, 'intro format', VALUE_DEFAULT),
+                        'alwaysshowdescription' => new external_value(PARAM_INT, 'always show description'),
+                        'nosubmissions' => new external_value(PARAM_INT, 'no submissions'),
+                        'submissiondrafts' => new external_value(PARAM_INT, 'submission drafts'),
+                        'sendnotifications' => new external_value(PARAM_INT, 'send notifications'),
+                        'sendlatenotifications' => new external_value(PARAM_INT, 'send late notifications'),
+                        'duedate' => new external_value(PARAM_INT, 'Due date'),
+                        'allowsubmissionsfromdate' => new external_value(PARAM_INT, 'allow submissions from date'),
+                        'grade' => new external_value(PARAM_FLOAT, 'grade'),
+                        'timemodified' => new external_value(PARAM_INT, 'time modified'),
+                        'requiresubmissionstatement' => new external_value(PARAM_INT, 'required submission statement'),
+                        'completionsubmit' => new external_value(PARAM_INT, 'completetion submit'),
+                        'cutoffdate' => new external_value(PARAM_INT, 'cut off date'),
+                        'teamsubmission' => new external_value(PARAM_INT, 'team submission'),
+                        'requireallteammemberssubmit' => new external_value(PARAM_INT, 'require all team members submits'),
+                        'teamsubmissiongroupingid' => new external_value(PARAM_INT, 'team submission grouping id'),
+                        'blindmarking' => new external_value(PARAM_INT, 'blind marking'),
+                        'revealidentities' => new external_value(PARAM_INT, 'reveal identities'),
+                        'attemptreopenmethod' => new external_value(PARAM_RAW, 'attempt reopen method'),
+                        'maxattempts' => new external_value(PARAM_INT, 'maxattempts'),
+                        'markingworkflow' => new external_value(PARAM_INT, 'marking workflow'),
+                        'markingallocation' => new external_value(PARAM_INT, 'marking all location'),
+                        'sendstudentnotifications' => new external_value(PARAM_INT, 'send student notifications'),
+                        'preventsubmissionnotingroup' => new external_value(PARAM_INT, 'prevent submission not in group'),
+                        'introattachments' => new external_multiple_structure(
+                            new external_single_structure(
+                                array (
+                                    'filename' => new external_value(PARAM_FILE, 'file name'),
+                                    'mimetype' => new external_value(PARAM_RAW, 'mime type'),
+                                    'fileurl'  => new external_value(PARAM_URL, 'file download url')
+                                )
+                            ), 'intro attachments files', VALUE_OPTIONAL
+                        )
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    /**
      * Returns description of method parameters
      *
      * @return external_function_parameters

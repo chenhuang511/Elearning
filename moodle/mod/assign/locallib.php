@@ -1249,7 +1249,7 @@ class assign {
             if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
                 $this->instance = $DB->get_record('assign', $params, '*', MUST_EXIST);
             } else {
-                $this->instance = get_remote_assign_by_id($params['id']);
+                $this->instance = get_remote_assign_by_id_instanceid($params['id'], $this->get_context()->instanceid);
                 $this->instance->course = get_local_course_record($this->instance->course)->id;
             }
         }
