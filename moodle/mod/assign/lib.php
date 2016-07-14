@@ -1121,7 +1121,6 @@ function assign_grade_item_update($assign, $grades=null) {
         $params['reset'] = true;
         $grades = null;
     }
-
     if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
         return grade_update('mod/assign',
             $assign->courseid,
@@ -1139,7 +1138,7 @@ function assign_grade_item_update($assign, $grades=null) {
         );
         return core_grades_update_grades(
             'mod/assign',
-            $assign->courseid,
+            $assign->remoteid,
             'mod_assign',
             $assign->cmid,
             0,

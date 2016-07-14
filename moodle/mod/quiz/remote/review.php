@@ -13,6 +13,7 @@ require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
 $attemptid = required_param('attempt', PARAM_INT);
 $page      = optional_param('page', 0, PARAM_INT);
 $showall   = optional_param('showall', null, PARAM_BOOL);
+$nonajax = optional_param('nonajax', true, PARAM_BOOL);
 
 $url = new moodle_url('/mod/quiz/remote/review.php', array('attempt'=>$attemptid));
 if ($page !== 0) {
@@ -32,7 +33,7 @@ $page = $attemptobj->force_page_number_into_range($page);
 $reviewobj = get_remote_get_attempt_review($attemptid);
 $context = context_module::instance($cm->id);
 
-if (!has_capability('moodle/course:manageactivities', $context)) {
+if (!has_capability('moodle/course:manageactivities', $context) && $nonajax == false) {
     $CFG->nonajax = false;
 } else {
     $CFG->nonajax = true;

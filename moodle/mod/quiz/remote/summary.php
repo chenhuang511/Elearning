@@ -27,7 +27,7 @@ require_once(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
 $attemptid = required_param('attempt', PARAM_INT); // The attempt to summarise.
-$nonajax = optional_param('nonajax', false, PARAM_BOOL);
+$nonajax = optional_param('nonajax', true, PARAM_BOOL);
 
 $PAGE->set_url('/mod/quiz/remote/summary.php', array('attempt' => $attemptid));
 
