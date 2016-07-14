@@ -426,15 +426,15 @@ class core_grades_external extends external_api {
                             'studentid' => new external_value(PARAM_INT, 'Student ID'),
                             'grade' => new external_value(PARAM_FLOAT, 'Student grade'),
                             'str_feedback' => new external_value(
-                                PARAM_TEXT, 'A string representation of the feedback from the grader', VALUE_OPTIONAL),
+                                PARAM_RAW, 'A string representation of the feedback from the grader', VALUE_OPTIONAL),
                         )
                 ), 'Any student grades to alter', VALUE_DEFAULT, array()),
                 'itemdetails' => new external_single_structure(
                     array(
                         'itemname' => new external_value(
-                            PARAM_ALPHANUMEXT, 'The grade item name', VALUE_OPTIONAL),
+                            PARAM_RAW, 'The grade item name', VALUE_OPTIONAL),
                         'idnumber' => new external_value(
-                            PARAM_INT, 'Arbitrary ID provided by the module responsible for the grade item', VALUE_OPTIONAL),
+                            PARAM_RAW, 'Arbitrary ID provided by the module responsible for the grade item', VALUE_OPTIONAL),
                         'gradetype' => new external_value(
                             PARAM_INT, 'The type of grade (0 = none, 1 = value, 2 = scale, 3 = text)', VALUE_OPTIONAL),
                         'grademax' => new external_value(
