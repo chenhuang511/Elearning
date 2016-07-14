@@ -18,6 +18,8 @@ require_once(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 require_once($CFG->dirroot.'/mod/quiz/remote/locallib.php');
 
+$nonajax = optional_param('nonajax', true, PARAM_BOOL);
+
 // Look for old-style URLs, such as may be in the logs, and redirect them to startattemtp.php.
 if ($id = optional_param('id', 0, PARAM_INT)) {
     redirect($CFG->wwwroot . '/mod/quiz/remote/startattempt.php?cmid=' . $id . '&sesskey=' . sesskey());
@@ -42,7 +44,7 @@ $cm = get_remote_course_module_by_instance("quiz", $quiz->id)->cm;
 $attemptobj = new quiz_attempt($attempt, $quiz, $cm, $course, false, true);
 $context = context_module::instance($cm->id);
 
-if (!has_capability('moodle/course:manageactivities', $context)) {
+if (!has_capability('moodle/course:manageactivities', $context) && $nonajax == false) {
     $CFG->nonajax = false;
 } else {
     $CFG->nonajax = true;
