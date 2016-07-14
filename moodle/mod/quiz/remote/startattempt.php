@@ -99,7 +99,7 @@ if ($currentattemptid) {
     if ($lastattempt->state == quiz_attempt::OVERDUE) {
         redirect($quizobj->summary_url($lastattempt->id));
     } else {
-        redirect($quizobj->attempt_remote_url($currentattemptid, $page));
+        redirect($quizobj->attempt_remote_url($currentattemptid, $page, $nonajax));
     }
 }
 
