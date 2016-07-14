@@ -642,6 +642,66 @@ section#discussion-container.discussion.container div.discussion-body div.forum-
     background-color: #c8c8c8;
 }
 
+/* Fixing//////////////////////////////*/
+
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header a.forum-nav-browse{
+    box-sizing: border-box;
+    display: table-cell;
+    vertical-align: middle;
+    width: 50%;
+    padding: 5px;
+    text-decoration: none;
+}
+
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header a.forum-nav-browse:hover{
+    background-color: #f1f1f1;
+}
+
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header a.forum-nav-browse i.icon{
+    font-size: 14px;
+    margin-right: 5px;
+}
+
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header a.forum-nav-browse span.forum-nav-browse-current{
+    font-size: 12px;
+}
+
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header a.forum-nav-browse span.forum-nav-browse-drop-arrow{
+    margin-left: 5px;
+}
+
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header form.forum-nav-search{
+    box-sizing: border-box;
+    display: table-cell;
+    position: relative;
+    vertical-align: middle;
+    width: 50%;
+    padding: 5px;
+}
+
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header form.forum-nav-search div.forum-nav-search-ff-position-fix{
+    position: relative;
+}
+
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header form.forum-nav-search div.forum-nav-search-ff-position-fix label{
+    margin-bottom: 0;
+}
+
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header form.forum-nav-search div.forum-nav-search-ff-position-fix label input.forum-nav-search-input{
+    background: #fbfbfb;
+    box-sizing: border-box;
+    font: normal 1em "Source Sans","FontAwesome",Verdana,Geneva,sans-serif,sans-serif;
+}
+
+section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header form.forum-nav-search div.forum-nav-search-ff-position-fix label i.icon.fa.fa-search{
+    font-size: 12px;
+    position: absolute;
+    margin-top: -6px;
+    top: 50%;
+    right: 11px;
+    font: normal normal normal 14px/1 FontAwesome;
+}
+/*end fixing*/
 section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header div.btn-group {
     width: 100%;
     padding-top: 10px;
@@ -655,23 +715,6 @@ section#discussion-container.discussion.container div.discussion-body div.forum-
     background-color: transparent;
     padding-top: 3px;
     padding-left: 15px;
-}
-
-section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header a.forum-nav-browse {
-    box-sizing: border-box;
-    display: table-cell;
-    vertical-align: middle;
-    width: 50%;
-    padding: 5px;
-}
-
-section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header form.forum-nav-search {
-    box-sizing: border-box;
-    display: table-cell;
-    position: relative;
-    vertical-align: middle;
-    width: 50%;
-    padding: 5px;
 }
 
 section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header form.forum-nav-search div.forum-nav-search-ff-position-fix {
@@ -691,6 +734,8 @@ section#discussion-container.discussion.container div.discussion-body div.forum-
     padding-left: 5px !important;
     padding-right: 22px !important;
     font-size: 12px !important;
+    width: 100%;
+    margin: 0px 0 5px 0px !important;
 }
 
 section#discussion-container.discussion.container div.discussion-body div.forum-nav div.forum-nav-header form.forum-nav-search div.forum-nav-search-ff-position-fix label input.forum-nav-search-input i.forum-nav-search .icon {
@@ -713,6 +758,7 @@ section#discussion-container.discussion.container div.discussion-body div.forum-
     font: inherit;
     line-height: 1em;
     margin-bottom: 0;
+    margin-left: 0;
     box-sizing: border-box;
     display: inline-block;
     width: 50%;
@@ -740,6 +786,7 @@ section#discussion-container.discussion.container div.discussion-body div.forum-
     font: inherit;
     line-height: 1em;
     margin-bottom: 0;
+    margin-left: 0;
     box-sizing: border-box;
     display: inline-block;
     text-align: right;
