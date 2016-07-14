@@ -756,22 +756,27 @@ function certificate_types() {
 function certificate_get_images($type) {
     global $CFG;
 
+    if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        $root = $CFG->dirroot;
+    } else {
+        $root = HUB_URL;
+    }
     switch($type) {
         case CERT_IMAGE_BORDER :
-            $path = "$CFG->dirroot/mod/certificate/pix/borders";
-            $uploadpath = "$CFG->dataroot/mod/certificate/pix/borders";
+            $path = "$root/mod/certificate/pix/borders";
+            $uploadpath = "$root/mod/certificate/pix/borders";
             break;
         case CERT_IMAGE_SEAL :
-            $path = "$CFG->dirroot/mod/certificate/pix/seals";
-            $uploadpath = "$CFG->dataroot/mod/certificate/pix/seals";
+            $path = "$root/mod/certificate/pix/seals";
+            $uploadpath = "$root/mod/certificate/pix/seals";
             break;
         case CERT_IMAGE_SIGNATURE :
-            $path = "$CFG->dirroot/mod/certificate/pix/signatures";
-            $uploadpath = "$CFG->dataroot/mod/certificate/pix/signatures";
+            $path = "$root/mod/certificate/pix/signatures";
+            $uploadpath = "$root/mod/certificate/pix/signatures";
             break;
         case CERT_IMAGE_WATERMARK :
-            $path = "$CFG->dirroot/mod/certificate/pix/watermarks";
-            $uploadpath = "$CFG->dataroot/mod/certificate/pix/watermarks";
+            $path = "$root/mod/certificate/pix/watermarks";
+            $uploadpath = "$root/mod/certificate/pix/watermarks";
             break;
     }
     // If valid path
@@ -1164,23 +1169,43 @@ function certificate_print_image($pdf, $certificate, $type, $x, $y, $w, $h) {
     switch($type) {
         case CERT_IMAGE_BORDER :
             $attr = 'borderstyle';
-            $path = "$CFG->dirroot/mod/certificate/pix/$type/$certificate->borderstyle";
-            $uploadpath = "$CFG->dataroot/mod/certificate/pix/$type/$certificate->borderstyle";
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $path = "$CFG->dirroot/mod/certificate/pix/$type/$certificate->borderstyle";
+                $uploadpath = "$CFG->dataroot/mod/certificate/pix/$type/$certificate->borderstyle";
+            } else {
+                $path = HUB_URL."/mod/certificate/pix/$type/$certificate->borderstyle";
+                $uploadpath = HUB_URL."/mod/certificate/pix/$type/$certificate->borderstyle";
+            }
             break;
         case CERT_IMAGE_SEAL :
             $attr = 'printseal';
-            $path = "$CFG->dirroot/mod/certificate/pix/$type/$certificate->printseal";
-            $uploadpath = "$CFG->dataroot/mod/certificate/pix/$type/$certificate->printseal";
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $path = "$CFG->dirroot/mod/certificate/pix/$type/$certificate->printseal";
+                $uploadpath = "$CFG->dataroot/mod/certificate/pix/$type/$certificate->printseal";
+            } else {
+                $path = HUB_URL."/mod/certificate/pix/$type/$certificate->printseal";
+                $uploadpath = HUB_URL."/mod/certificate/pix/$type/$certificate->printseal";
+            }
             break;
         case CERT_IMAGE_SIGNATURE :
             $attr = 'printsignature';
-            $path = "$CFG->dirroot/mod/certificate/pix/$type/$certificate->printsignature";
-            $uploadpath = "$CFG->dataroot/mod/certificate/pix/$type/$certificate->printsignature";
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $path = "$CFG->dirroot/mod/certificate/pix/$type/$certificate->printsignature";
+                $uploadpath = "$CFG->dataroot/mod/certificate/pix/$type/$certificate->printsignature";
+            } else {
+                $path = HUB_URL."/mod/certificate/pix/$type/$certificate->printsignature";
+                $uploadpath = HUB_URL."/mod/certificate/pix/$type/$certificate->printsignature";
+            }
             break;
         case CERT_IMAGE_WATERMARK :
             $attr = 'printwmark';
-            $path = "$CFG->dirroot/mod/certificate/pix/$type/$certificate->printwmark";
-            $uploadpath = "$CFG->dataroot/mod/certificate/pix/$type/$certificate->printwmark";
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $path = "$CFG->dirroot/mod/certificate/pix/$type/$certificate->printsignature";
+                $uploadpath = "$CFG->dirroot/mod/certificate/pix/$type/$certificate->printwmark";
+            } else {
+                $path = HUB_URL."/mod/certificate/pix/$type/$certificate->printwmark";
+                $uploadpath = HUB_URL."/mod/certificate/pix/$type/$certificate->printwmark";
+            }
             break;
     }
     // Has to be valid
@@ -1190,11 +1215,22 @@ function certificate_print_image($pdf, $certificate, $type, $x, $y, $w, $h) {
             case '' :
                 break;
             default :
-                if (file_exists($path)) {
-                    $pdf->Image($path, $x, $y, $w, $h);
-                }
-                if (file_exists($uploadpath)) {
-                    $pdf->Image($uploadpath, $x, $y, $w, $h);
+                if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                    if (file_exists($path)) {
+                        $pdf->Image($path, $x, $y, $w, $h);
+                    }
+                    if (file_exists($uploadpath)) {
+                        $pdf->Image($uploadpath, $x, $y, $w, $h);
+                    }
+                } else {
+                    $headers= get_headers($path, 1);
+                    if(strpos($headers[0], "200")!== false) {
+                        $pdf->Image($path, $x, $y, $w, $h);
+                    }
+                    $headers= get_headers($uploadpath, 1);
+                    if(strpos($headers[0], "200")!== false) {
+                        $pdf->Image($uploadpath, $x, $y, $w, $h);
+                    }
                 }
                 break;
         }
