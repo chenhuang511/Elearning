@@ -78,7 +78,6 @@ if (!has_capability('moodle/course:manageactivities', $context) && $nonajax != t
 } else {
     $CFG->nonajax = true;
 }
-var_dump($CFG->nonajax);
 // Declare some variables
 $strcertificates = get_string('modulenameplural', 'certificate');
 $strcertificate  = get_string('modulename', 'certificate');

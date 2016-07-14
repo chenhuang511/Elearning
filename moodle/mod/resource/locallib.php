@@ -68,7 +68,7 @@ function resource_redirect_if_migrated($oldid, $cmid)
  * @param stored_file $file main file
  * @return does not return
  */
-function resource_display_embed($resource, $cm, $course, $file)
+function resource_display_embed($resource, $cm, $course, $file, $nonajax)
 {
     global $CFG, $PAGE, $OUTPUT;
 
@@ -106,14 +106,17 @@ function resource_display_embed($resource, $cm, $course, $file)
         $code = resourcelib_embed_general($fullurl, $title, $clicktoopen, $mimetype);
     }
 
-    resource_print_header($resource, $cm, $course);
+    if ($nonajax) {
+        resource_print_header($resource, $cm, $course);
+    }
     resource_print_heading($resource, $cm, $course);
 
     echo $code;
 
     resource_print_intro($resource, $cm, $course);
-
-    echo $OUTPUT->footer();
+    if ($nonajax) {
+        echo $OUTPUT->footer();
+    }
     die;
 }
 
@@ -125,7 +128,7 @@ function resource_display_embed($resource, $cm, $course, $file)
  * @param stored_file $file main file
  * @return does not return
  */
-function resource_display_frame($resource, $cm, $course, $file)
+function resource_display_frame($resource, $cm, $course, $file, $nonajax)
 {
     global $PAGE, $OUTPUT, $CFG;
 
@@ -133,10 +136,14 @@ function resource_display_frame($resource, $cm, $course, $file)
 
     if ($frame === 'top') {
         $PAGE->set_pagelayout('frametop');
-        resource_print_header($resource, $cm, $course);
+        if ($nonajax) {
+            resource_print_header($resource, $cm, $course);
+        }
         resource_print_heading($resource, $cm, $course);
         resource_print_intro($resource, $cm, $course);
-        echo $OUTPUT->footer();
+        if ($nonajax) {
+            echo $OUTPUT->footer();
+        }
         die;
 
     } else {
@@ -144,7 +151,7 @@ function resource_display_frame($resource, $cm, $course, $file)
         $context = context_module::instance($cm->id);
         $path = '/' . $context->id . '/mod_resource/content/' . $resource->revision . $file->get_filepath() . $file->get_filename();
         $fileurl = file_encode_url($CFG->wwwroot . '/pluginfile.php', $path, false);
-        $navurl = "$CFG->wwwroot/mod/resource/view.php?id=$cm->id&amp;frameset=top";
+        $navurl = "$CFG->wwwroot/mod/resource/remote/view.php?id=$cm->id&amp;frameset=top";
         $title = strip_tags(format_string($course->shortname . ': ' . $resource->name));
         $framesize = $config->framesize;
         $contentframetitle = s(format_string($resource->name));
@@ -211,11 +218,13 @@ function resource_get_clicktodownload($file, $revision)
  * @param stored_file $file main file
  * @return does not return
  */
-function resource_print_workaround($resource, $cm, $course, $file)
+function resource_print_workaround($resource, $cm, $course, $file, $nonajax)
 {
     global $CFG, $OUTPUT;
 
-    resource_print_header($resource, $cm, $course);
+    if ($nonajax) {
+        resource_print_header($resource, $cm, $course);
+    }
     resource_print_heading($resource, $cm, $course, true);
     resource_print_intro($resource, $cm, $course, true);
 
@@ -248,8 +257,9 @@ function resource_print_workaround($resource, $cm, $course, $file)
             break;
     }
     echo '</div>';
-
-    echo $OUTPUT->footer();
+    if ($nonajax) {
+        echo $OUTPUT->footer();
+    }
     die;
 }
 

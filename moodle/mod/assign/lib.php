@@ -25,7 +25,7 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
-define('ISREMOTE', MOODLE_RUN_MODE === MOODLE_MODE_HUB);
+defined('ISREMOTE') || define('ISREMOTE', MOODLE_RUN_MODE === MOODLE_MODE_HUB);
 
 /**
  * Adds an assignment instance
@@ -1122,14 +1122,31 @@ function assign_grade_item_update($assign, $grades=null) {
         $grades = null;
     }
 
-    return grade_update('mod/assign',
-                        $assign->courseid,
-                        'mod',
-                        'assign',
-                        $assign->id,
-                        0,
-                        $grades,
-                        $params);
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        return grade_update('mod/assign',
+            $assign->courseid,
+            'mod',
+            'assign',
+            $assign->id,
+            0,
+            $grades,
+            $params);
+    } else{
+        $rgrades = array(
+            'studentid' => get_remote_mapping_user($grades['userid'])[0]->id,
+            'grade' => $grades['rawgrade'],
+            'str_feedback' => $grades['feedback']
+        );
+        return core_grades_update_grades(
+            'mod/assign',
+            $assign->courseid,
+            'mod_assign',
+            $assign->cmid,
+            0,
+            $rgrades,
+            $params
+        );
+    }
 }
 
 /**

@@ -1,19 +1,36 @@
 <div id="module-content">
 </div>
-
 <script>
     (function ($) {
         var summary = $('#hidden-summary'),
             coursename = $('#hidden-coursename'),
             content = $('#module-content'),
             summaryLink = $('#course-summary'),
-            loading = $('#loading');
-        newpost = $('#newpost');
+            loading = $('#loading'),
+            newpost = $('#newpost');
 
         var tabs = ['#coursewaretab', '#courseinfotab', '#forumtab', '#wikitab', '#processtab'];
 
         $(document).ready(function () {
             loading.hide();
+            var url = $('#courseurlhidden').val();
+            console.log('url: ' + url);
+
+            $.ajax({
+                url: url,
+                method: 'GET',
+                beforeSend: function () {
+                    content.hide();
+                    content.empty();
+                },
+                error: function (err) {
+                    content.html(err);
+                }
+            }).done(function (data) {
+                content.html(data).promise().done(function () {
+                    content.show();
+                });
+            });
         });
 
         $.each(tabs, function (index, element) {
@@ -73,11 +90,6 @@
                             ico.addClass('fa-caret-right');
                         }
                     }
-
-                    content.hide();
-                    var sectionSummary = $(this).attr('data-summary');
-                    changeContent(content, sectionSummary);
-                    content.show();
                 });
             });
         }

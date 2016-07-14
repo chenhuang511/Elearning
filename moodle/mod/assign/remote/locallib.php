@@ -632,6 +632,40 @@ function core_grades_get_grades($courseid, $component, $activityid, $userids){
 }
 
 /**
+ * Update a grade item and associated student grades.
+ *
+ * @param string $source - the name of source
+ * @param int $courseid - the id of course
+ * @param string $component - the name of component
+ * @param string $activityid - the id of activity
+ * @param array $grades - the array of grades
+ * @param array $itemdetails - the array of itemdetails   
+ * 
+ * @param array $userids - list array user
+ *
+ * @return stdClass $resp - Returns student course total grade and grades for activities
+ */
+function core_grades_update_grades($source, $courseid, $component, $activityid, $itemnumber, $rgrades, $itemdetails){
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'core_grades_update_grades',
+            'params' => array(
+                'source' => $source,
+                'courseid' => $courseid,
+                'component' => $component,
+                'activityid' => $activityid,
+                'itemnumber' => $itemnumber,
+                'grades' => array($rgrades),
+                'itemdetails' => $itemdetails,
+            ),
+        ), false
+    );
+    return $resp;
+}
+
+/**
  * Submit the grading form data via ajax
  *
  * @param int $args['assignmentid'] - The assignment id to operate on
