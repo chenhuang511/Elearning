@@ -138,4 +138,12 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_check_record_forum_exists_by' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'check_record_forum_exists',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'check record exists',
+        'type' => 'read',
+        'ajax' => true
+    ),
 );

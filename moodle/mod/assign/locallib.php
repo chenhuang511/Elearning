@@ -5306,6 +5306,7 @@ class assign {
         $assign->cmidnumber = $this->get_course_module()->idnumber;
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
             $assign->cmid = $this->get_course_module()->id;
+            $assign->remoteid = $this->get_course()->remoteid;
         }
         // Set assign gradebook feedback plugin status (enabled and visible).
         $assign->gradefeedbackenabled = $this->is_gradebook_feedback_enabled();
