@@ -244,4 +244,51 @@ class local_mod_resource_external extends external_api
             )
         );
     }
+	
+	
+	public static function get_resource_files_by_cm_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'cmid' => new external_value(PARAM_INT, 'course module id'),                
+            )
+        );
+    }
+
+    public static function get_resource_files_by_cm($cmid)
+    {
+        global $DB;
+
+        $params = self::validate_parameters(self::get_resource_files_by_cm_parameters(), array(
+            'cmid' => $cmid,
+        ));
+		
+		$context = context_module::instance($cm->id);
+		
+		$fs = get_file_storage();
+		$files = $fs->get_area_files($context->id, 'mod_resource', 'content', 0, 'sortorder DESC, id ASC', false); // TODO: this is not very efficient!!
+		
+		$file = reset($files);
+		unset($files);
+		
+		$result = array();
+		
+		foreach ($file as $key => $val) {
+			$result['pathnamehash'] => $key,
+			$result['fileinstance'] => serialize($val)
+			break;
+		);
+		
+		return $result;
+    }
+
+    public static function get_resource_files_by_cm_returns()
+    {
+        return new external_single_structure(
+            array(
+                'pathnamehash' => new external_value(PARAM_TEXT, 'path hash'),
+                'fileinstance' => new external_value(PARAM_RAW, 'file instance')
+            )
+        );
+    }
 }
