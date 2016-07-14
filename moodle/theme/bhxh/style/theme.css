@@ -3108,3 +3108,7 @@ table#permissions tbody tr:hover > th {
 .message .messagearea .messagesend .messagesendbox {
     box-sizing: border-box;
 }
+
+.introattachments{
+    list-style-type: none;
+}
