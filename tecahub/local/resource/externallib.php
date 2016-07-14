@@ -263,21 +263,26 @@ class local_mod_resource_external extends external_api
             'cmid' => $cmid,
         ));
 		
-		$context = context_module::instance($cm->id);
+		$context = context_module::instance($cmid);
 		
 		$fs = get_file_storage();
 		$files = $fs->get_area_files($context->id, 'mod_resource', 'content', 0, 'sortorder DESC, id ASC', false); // TODO: this is not very efficient!!
-		
+	
 		$file = reset($files);
-		unset($files);
+ 		$url = moodle_url::make_pluginfile_url(
+            		$file->get_contextid(),
+		        $file->get_component(),
+            		$file->get_filearea(),
+            		$file->get_itemid(),
+            		$file->get_filepath(),
+            		$file->get_filename(),
+            		true
+        	);
 		
-		$result = array();
-		
-		foreach ($file as $key => $val) {
-			$result['pathnamehash'] => $key,
-			$result['fileinstance'] => serialize($val)
-			break;
-		);
+		$result['filename'] = $file->get_filename();
+		$result['url']	    = $url->out();
+		$result['type']     = $file->get_filearea();
+		$result['size']     = $file->get_filesize();
 		
 		return $result;
     }
@@ -286,8 +291,10 @@ class local_mod_resource_external extends external_api
     {
         return new external_single_structure(
             array(
-                'pathnamehash' => new external_value(PARAM_TEXT, 'path hash'),
-                'fileinstance' => new external_value(PARAM_RAW, 'file instance')
+                'filename' => new external_value(PARAM_TEXT, 'file instance'),
+		'url' => new external_value(PARAM_TEXT, 'file instance'),
+		'type' => new external_value(PARAM_TEXT, 'file instance'),
+		'size' => new external_value(PARAM_INT, 'file instance'),
             )
         );
     }

@@ -111,13 +111,13 @@ if ($redirect) {
 
 switch ($displaytype) {
     case RESOURCELIB_DISPLAY_EMBED:
-        resource_display_embed($resource, $cm, $course, $file);
+        resource_display_embed($resource, $cm, $course, $file, $CFG->nonajax);
         break;
     case RESOURCELIB_DISPLAY_FRAME:
-        resource_display_frame($resource, $cm, $course, $file);
+        resource_display_frame($resource, $cm, $course, $file, $CFG->nonajax);
         break;
     default:
-        resource_print_workaround($resource, $cm, $course, $file);
+        resource_print_workaround($resource, $cm, $course, $file, $CFG->nonajax);
         break;
 }
 
