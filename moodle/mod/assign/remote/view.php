@@ -5,6 +5,7 @@ require_once($CFG->dirroot.'/mod/assign/locallib.php');
 require_once('locallib.php');
 
 $id = required_param('id', PARAM_INT);
+$nonajax = optional_param('nonajax', true, PARAM_BOOL);
 
 if (!$cm = get_remote_course_module_by_cmid("assign", $id)) {
     print_error('invalidcoursemodule');
@@ -19,8 +20,7 @@ $context = context_module::instance($id);
 
 require_capability('mod/assign:view', $context);
 
-if (!has_capability('moodle/course:manageactivities', $context)) {
-    // non ajax
+if (!has_capability('moodle/course:manageactivities', $context) && $nonajax == false) {
     $CFG->nonajax = false;
 } else {
     $CFG->nonajax = true;

@@ -70,7 +70,7 @@ function get_remote_onlinetext_submission($submissionid, $options = array()) {
  *
  * @return stdClass feedbackcomments
  */
-function get_remote_assignfeedback_comments($gradeid) {
+function get_assignfeedback_comments($gradeid) {
     $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
@@ -209,7 +209,7 @@ function get_submission_by_assignid_userid_groupid($params){
  * Get grades by assignid, userid.
  *
  * @param int $params['assignment'] . the assign id
- * @param string $params['useremail'] . the email user
+ * @param int $params['userid'] . the userid
  * @param int $params['attemptnumber'] . the attemptnumber
  *
  * @return stdClass $results . list grades
@@ -241,7 +241,7 @@ function get_assign_grades_by_assignid_userid($params){
  * Get attemptnumber by assignid, userid, groupid.
  *
  * @param int $params['assignment'] . the assign id
- * @param string $params['useremail'] . the email user
+ * @param int $params['userid'] . the userid
  * @param int $params['groupid'] . the group id
  *
  * @return stdClass $attemptnumbers->result . list attemptnumbers
@@ -264,7 +264,7 @@ function get_attemptnumber_by_assignid_userid_groupid($params){
  * Get user flags by assignid, userid.
  *
  * @param int $params['assignment'] . the assign id
- * @param string $params['useremail'] . the email user
+ * @param int $params['userid'] . the userid
  *
  * @return stdClass $flags->userflags .
  */
@@ -288,7 +288,7 @@ function get_user_flags_by_assignid_userid($params){
  * Set submission lastest.
  *
  * @param int $params['assignment'] . the assign id
- * @param string $params['useremail'] . the email user
+ * @param int $params['userid'] . the userid
  * @param int $params['groupid'] . the group id
  *
  * @return boolean $resp->result . check if success
@@ -311,7 +311,7 @@ function set_submission_lastest($params){
  * Create submission on hub.
  *
  * @param int $submission['assignment'] . the assign id
- * @param string $submission['useremail'] . the email user
+ * @param int $submission['userid'] . the id of user
  * @param int $submission['timecreated'] . the time created
  * @param int $submission['timemodified'] . the time modified
  * @param string $submission['status'] . the status
@@ -329,7 +329,7 @@ function create_remote_submission($submission){
             'function_name' => 'local_mod_assign_create_submission',
             'params' => array(
                 'assignment' => $submission->assignment,
-                'useremail' => $submission->useremail,
+                'userid' => $submission->userid,
                 'timecreated' => $submission->timecreated,
                 'timemodified' => $submission->timemodified,
                 'status' => $submission->status,
@@ -393,9 +393,9 @@ function update_remote_submission($submission){
  * @return int $resp->gid . the new grade id just created
  */
 function create_remote_grade($grade){
-    if(!isset($grade->attemptnumber))
-        $grade->attemptnumber = 0;
-
+    $suserid = get_remote_mapping_user($grade->userid)[0]->id;
+    $grader = get_remote_mapping_user($grade->grader)[0]->id;
+    
     $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
@@ -403,10 +403,10 @@ function create_remote_grade($grade){
             'function_name' => 'local_mod_assign_create_grade',
             'params' => array(
                 'assignment' => $grade->assignment,
-                'useremail' => $grade->useremail,
+                'userid' => $suserid,
                 'timecreated' => $grade->timecreated,
                 'timemodified' => $grade->timemodified,
-                'grader' => $grade->grader,
+                'grader' => $grader,
                 'grade' => $grade->grade,
                 'attemptnumber' => $grade->attemptnumber,
             )
@@ -624,7 +624,41 @@ function core_grades_get_grades($courseid, $component, $activityid, $userids){
                 'courseid' => $courseid,
                 'component' => $component,
                 'activityid' => $activityid,
-                'userids[0]' => $userids,
+                'userids' => $userids,
+            ),
+        ), false
+    );
+    return $resp;
+}
+
+/**
+ * Update a grade item and associated student grades.
+ *
+ * @param string $source - the name of source
+ * @param int $courseid - the id of course
+ * @param string $component - the name of component
+ * @param string $activityid - the id of activity
+ * @param array $grades - the array of grades
+ * @param array $itemdetails - the array of itemdetails   
+ * 
+ * @param array $userids - list array user
+ *
+ * @return stdClass $resp - Returns student course total grade and grades for activities
+ */
+function core_grades_update_grades($source, $courseid, $component, $activityid, $itemnumber, $rgrades, $itemdetails){
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'core_grades_update_grades',
+            'params' => array(
+                'source' => $source,
+                'courseid' => $courseid,
+                'component' => $component,
+                'activityid' => $activityid,
+                'itemnumber' => $itemnumber,
+                'grades' => array($rgrades),
+                'itemdetails' => $itemdetails,
             ),
         ), false
     );
@@ -776,3 +810,98 @@ function get_remote_assign_grade_items_raw_data($sql, $param, $pagestart = 0, $p
     );
     return $resp;
 }
+
+/**
+ * Update assign assignment feedback comment on hub
+ *
+ * @param int $id . the id of feedback comment
+ * @param int $assignment . the id of assignment
+ * @param int $grade . the id of grade
+ * @param string $commenttext . the content of commenttext
+ * @param int $commentformat . the format of commenttext
+ *
+ * @return bool $resp->bool . check if success
+ */
+ function update_assignfeedback_comments($feedbackcomment) {
+     $resp = moodle_webservice_client(
+         array(
+             'domain' => HUB_URL,
+             'token' => HOST_TOKEN,
+             'function_name' => 'local_mod_assign_update_assignfeedback_comments',
+             'params' => array(
+                 'id' => $feedbackcomment->id,
+                 'assignment' => $feedbackcomment->assignment,
+                 'grade' => $feedbackcomment->grade,
+                 'commenttext' => $feedbackcomment->commenttext,
+                 'commentformat' => $feedbackcomment->commentformat,
+             ),
+         ), false
+     );
+     return $resp->bool;
+ }
+ 
+ /**
+  * Create assign assignment feedback comment on hub
+  *
+  * @param int $assignment . the id of assignment
+  * @param int $grade . the id of grade
+  * @param string $commenttext . the content of commenttext
+  * @param int $commentformat . the format of commenttext
+  * 
+  *
+  * @return bool $resp->bool . check if success
+  */
+ function create_assignfeedback_comments($feedbackcomment) {
+     $resp = moodle_webservice_client(
+         array(
+             'domain' => HUB_URL,
+             'token' => HOST_TOKEN,
+             'function_name' => 'local_mod_assign_create_assignfeedback_comments',
+             'params' => array(
+                 'assignment' => $feedbackcomment->assignment,
+                 'grade' => $feedbackcomment->grade,
+                 'commenttext' => $feedbackcomment->commenttext,
+                 'commentformat' => $feedbackcomment->commentformat,
+             ),
+         ), false
+     );
+     return $resp->fcid;
+ }
+
+/**
+* Update grade on hub.
+*
+* @param int $grade['id'] . the grade id
+* @param int $grade['assignment'] . the assign id
+* @param string $grade['useremail'] . the email user
+* @param int $grade['timecreated'] . the time created
+* @param int $grade['timemodified'] . the time modified
+* @param int $grade['grader'] . the grader
+* @param int $grade['grade'] . the grade score
+* @param int $grade['attemptnumber'] . the attemptnumber
+* @return int $resp->gid . the new grade id just created 
+ */
+function update_remote_grade($grade){
+    $suserid = get_remote_mapping_user($grade->userid)[0]->id;
+    $grader = get_remote_mapping_user($grade->grader)[0]->id;
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_update_grade',
+            'params' => array(
+                    'id' => $grade->id,
+                    'assignment' => $grade->assignment,
+                    'userid' => $suserid,
+                    'timecreated' => $grade->timecreated,
+                    'timemodified' => $grade->timemodified,
+                    'grader' => $grader, 
+                    'grade' => $grade->grade,
+                    'attemptnumber' => $grade->attemptnumber,
+                )
+        ), false
+    );
+    return $resp->bool;
+ }
+
+ 

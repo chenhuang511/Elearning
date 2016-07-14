@@ -264,6 +264,68 @@ function resource_print_workaround($resource, $cm, $course, $file, $nonajax)
 }
 
 /**
+ * Print resource info and workaround link when JS not available.
+ * @param object $resource
+ * @param object $cm
+ * @param object $course
+ * @param stored_file $file main file
+ * @return does not return
+ */
+function remote_resource_print_workaround($resource, $cm, $course, $file)
+{
+    global $CFG, $OUTPUT;
+
+    if ($CFG->nonajax == true) {
+        resource_print_header($resource, $cm, $course);
+    }
+    resource_print_heading($resource, $cm, $course, true);
+    resource_print_intro($resource, $cm, $course, true);
+
+    $resource->mainfile = $file->filename;
+    echo '<div class="resourceworkaround">';
+    switch (resource_get_final_display_type($resource)) {
+        case RESOURCELIB_DISPLAY_POPUP:
+            $fullurl = $file->url;
+            $options = empty($resource->displayoptions) ? array() : unserialize($resource->displayoptions);
+            $width = empty($options['popupwidth']) ? 620 : $options['popupwidth'];
+            $height = empty($options['popupheight']) ? 450 : $options['popupheight'];
+            $wh = "width=$width,height=$height,toolbar=no,location=no,menubar=no,copyhistory=no,status=no,directories=no,scrollbars=yes,resizable=yes";
+            $extra = "onclick=\"window.open('$fullurl', '', '$wh'); return false;\"";
+
+            $string = get_string('clicktoopen2', 'resource', "<a href=\"$file->url\" $extra>$file->filename</a>");
+
+            echo $string;
+            break;
+
+        case RESOURCELIB_DISPLAY_NEW:
+            $extra = 'onclick="this.target=\'_blank\'"';
+            $filename = $file->filename;
+            $string = get_string('clicktoopen2', 'resource', "<a href=\"$file->url\" $extra>$filename</a>");
+            echo $string;
+            break;
+
+        case RESOURCELIB_DISPLAY_DOWNLOAD:
+            $filename = $file->filename;
+            $string = get_string('clicktodownload', 'resource', "<a href=\"$file->url\">$filename</a>");
+            echo $string;
+            break;
+
+        case RESOURCELIB_DISPLAY_OPEN:
+        default:
+            $filename = $file->filename;
+            $string = get_string('clicktoopen2', 'resource', "<a href=\"$file->url\">$filename</a>");
+            echo $string;
+            break;
+    }
+    echo '</div>';
+
+    if ($CFG->nonajax == true) {
+        echo $OUTPUT->footer();
+    }
+    die;
+}
+
+/**
  * Print resource header.
  * @param object $resource
  * @param object $cm
