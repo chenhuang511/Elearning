@@ -25,6 +25,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+defined('ISREMOTE') || define('ISREMOTE', MOODLE_RUN_MODE === MOODLE_MODE_HUB);
+
+require_once($CFG->libdir . '/additionallib.php');
+require_once($CFG->libdir . '/remote/lib.php');
+require_once($CFG->dirroot . '/mod/assign/remote/locallib.php');
+
 /**
  * An abstract object that holds methods and attributes common to all grade_* objects defined here.
  *
@@ -189,6 +195,7 @@ abstract class grade_object {
 
         $columns = $DB->get_columns($table); // Cached, no worries.
 
+        $index = 0;
         foreach ($params as $var=>$value) {
             if (!in_array($var, $instance->required_fields) and !array_key_exists($var, $instance->optional_fields)) {
                 continue;
@@ -199,14 +206,33 @@ abstract class grade_object {
             if (is_null($value)) {
                 $wheresql[] = " $var IS NULL ";
             } else {
-                if ($columns[$var]->meta_type === 'X') {
-                    // We have a text/clob column, use the cross-db method for its comparison.
-                    $wheresql[] = ' ' . $DB->sql_compare_text($var) . ' = ' . $DB->sql_compare_text('?') . ' ';
+                if (ISREMOTE && ($table === 'grade_items')) {
+                    $placeholder = 'param' . $index;
+                    if ($columns[$var]->meta_type === 'X') {
+                        // We have a text/clob column, use the cross-db method for its comparison.
+                        $wheresql[] = ' ' . $DB->sql_compare_text($var) . ' = ' . $DB->sql_compare_text(':' . $placeholder) . ' ';
+                    } else {
+                        // Other columns (varchar, integers...).
+                        $wheresql[$var] = " $var = :" . $placeholder ." ";
+                    }
+
+                    if (strpos($var, 'userid') !== false) {
+                        $value = get_remote_mapping_user($value)[0]->id;
+                    } elseif (strpos($var, 'courseid') !== false) {
+                        $value = get_local_course_record($value, true)->remoteid;
+                    }
+                    $newparams[$placeholder] = $value;
+                    ++$index;
                 } else {
-                    // Other columns (varchar, integers...).
-                    $wheresql[] = " $var = ? ";
+                    if ($columns[$var]->meta_type === 'X') {
+                        // We have a text/clob column, use the cross-db method for its comparison.
+                        $wheresql[] = ' ' . $DB->sql_compare_text($var) . ' = ' . $DB->sql_compare_text('?') . ' ';
+                    } else {
+                        // Other columns (varchar, integers...).
+                        $wheresql[] = " $var = ? ";
+                    }
+                    $newparams[] = $value;
                 }
-                $newparams[] = $value;
             }
         }
 
@@ -216,8 +242,26 @@ abstract class grade_object {
             $wheresql = implode("AND", $wheresql);
         }
 
-        global $DB;
-        $rs = $DB->get_recordset_select($table, $wheresql, $newparams);
+        if (ISREMOTE && ($table === 'grade_items')) {
+            $sql = "SELECT * FROM {".$table."}";
+            if ($wheresql) {
+                $sql .= " WHERE $wheresql";
+            }
+
+            $index = 0;
+            foreach ($newparams as $key => $val) {
+                $remoteparams['param['. $index .'][name]='] = $key;
+                $remoteparams['param['. $index .'][value]='] = $val;
+                ++$index;
+            }
+
+            $rsraw = get_remote_assign_grade_items_raw_data($sql, $remoteparams);
+            $rs = new json_moodle_recordset($rsraw);
+        } else {
+            global $DB;
+            $rs = $DB->get_recordset_select($table, $wheresql, $newparams);
+        }
+
         //returning false rather than empty array if nothing found
         if (!$rs->valid()) {
             $rs->close();
