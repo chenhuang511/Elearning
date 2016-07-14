@@ -79,6 +79,7 @@ require_once($CFG->libdir . '/eventslib.php');
 require_once($CFG->libdir . '/portfolio/caller.php');
 require_once($CFG->dirroot . '/mod/assign/remote/locallib.php');
 require_once($CFG->dirroot . '/mnet/lib.php');
+require_once($CFG->libdir . '/additionallib.php');
 
 use \mod_assign\output\grading_app;
 
@@ -1248,7 +1249,8 @@ class assign {
             if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
                 $this->instance = $DB->get_record('assign', $params, '*', MUST_EXIST);
             } else {
-                $this->instance = get_remote_assign_by_id($params['id']);
+                $this->instance = get_remote_assign_by_id_instanceid($params['id'], $this->get_context()->instanceid);
+                $this->instance->course = get_local_course_record($this->instance->course)->id;
             }
         }
         if (!$this->instance) {
@@ -5304,6 +5306,7 @@ class assign {
         $assign->cmidnumber = $this->get_course_module()->idnumber;
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
             $assign->cmid = $this->get_course_module()->id;
+            $assign->remoteid = $this->get_course()->remoteid;
         }
         // Set assign gradebook feedback plugin status (enabled and visible).
         $assign->gradefeedbackenabled = $this->is_gradebook_feedback_enabled();

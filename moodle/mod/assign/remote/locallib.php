@@ -25,6 +25,30 @@ function get_remote_assign_by_id($assignid, $options = array())
 }
 
 /**
+ * get assign by id
+ *
+ * @param int $assignid . the id of assign
+ * @param array $options . the options
+ *
+ * @return stdClass $asssign
+ */
+function get_remote_assign_by_id_instanceid($assignid, $instanceid, $options = array())
+{
+    $resp = moodle_webservice_client(array_merge($options,
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_get_assign_by_id_instanceid',
+            'params' => array(
+                'assignid' => $assignid,
+                'instanceid' => $instanceid
+            ),
+        )
+    ));
+    return $resp->assignment;
+}
+
+/**
  * get assign submission status
  *
  * @param int $assignid - the id of assign

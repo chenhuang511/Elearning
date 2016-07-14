@@ -256,6 +256,14 @@ abstract class grade_object {
             }
 
             $rsraw = get_remote_assign_grade_items_raw_data($sql, $remoteparams);
+            foreach ($rsraw as &$data) {
+                if (isset($data->userid) && isset($params['userid'])) {
+                    $data->userid = $params['userid'];
+                }
+                if (isset($data->courseid) && isset($params['courseid'])) {
+                    $data->courseid = $params['courseid'];
+                }
+            }
             $rs = new json_moodle_recordset($rsraw);
         } else {
             global $DB;

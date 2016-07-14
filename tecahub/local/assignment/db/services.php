@@ -38,7 +38,15 @@ $functions = array(
 		'classname'	  => 'local_mod_assign_external',
 		'methodname'  => 'get_mod_assign_by_id',
 		'classpath'	  => 'local/assignment/externallib.php',
-		'description' => "Get assign Submition status",
+		'description' => "Get assign Submission status",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+    'local_mod_assign_get_assign_by_id_instanceid' => array(
+		'classname'	  => 'local_mod_assign_external',
+		'methodname'  => 'get_mod_assign_by_id_instanceid',
+		'classpath'	  => 'local/assignment/externallib.php',
+		'description' => "Get assign by id and instanceid",
 		'type'		  => 'read',
 		'ajax'		  => true
 	),

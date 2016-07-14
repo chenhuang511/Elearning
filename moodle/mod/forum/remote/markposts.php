@@ -22,16 +22,17 @@
  * @copyright 2005 mchurch
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-require_once(dirname(__FILE__) . '/../../../config.php');
-require_once($CFG->dirroot . '/mod/forum/lib.php');
+require_once(dirname(dirname(__DIR__)) . '/config.php');
+require_once($CFG->dirroot.'/mod/forum/lib.php');
+require_once($CFG->dirroot . '/mod/forum/remote/locallib.php');
+require_once($CFG->dirroot . '/course/remote/locallib.php');
 
 $f          = required_param('f',PARAM_INT); // The forum to mark
 $mark       = required_param('mark',PARAM_ALPHA); // Read or unread?
 $d          = optional_param('d',0,PARAM_INT); // Discussion to mark.
 $returnpage = optional_param('returnpage', 'index.php', PARAM_FILE);    // Page to return to.
 
-$url = new moodle_url('/mod/forum/markposts.php', array('f'=>$f, 'mark'=>$mark));
+$url = new moodle_url('/mod/forum/remote/markposts.php', array('f'=>$f, 'mark'=>$mark));
 if ($d !== 0) {
     $url->param('d', $d);
 }
@@ -39,21 +40,19 @@ if ($returnpage !== 'index.php') {
     $url->param('returnpage', $returnpage);
 }
 $PAGE->set_url($url);
-$param = array();
-$param['parameters[0][name]'] = 'id';
-$param['parameters[0][value]']= $f;
-if (! $forum = get_remote_forum_by($param)) {
+
+$params = array();
+$params['parameters[0][name]'] = "id";
+$params['parameters[0][value]'] = $f;
+if (! $forum = get_remote_forum_by($params)) {
     print_error('invalidforumid', 'forum');
 }
-$param = array();
-$param['parameters[0][name]'] = 'id';
-$param['parameters[0][value]']= $forum->course;
 
-if (! $course = get_remote_forum_by( $param)) {
+if (! $course = get_local_course_record($forum->course)) {
     print_error('invalidcourseid');
 }
 
-if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
+if (!$cm = get_remote_course_module_by_instance("forum", $forum->id)) {
     print_error('invalidcoursemodule');
 }
 
@@ -63,9 +62,9 @@ require_login($course, false, $cm);
 require_sesskey();
 
 if ($returnpage == 'index.php') {
-    $returnto = new moodle_url("/mod/forum/$returnpage", array('id' => $course->id));
+    $returnto = new moodle_url("/mod/forum/remote/$returnpage", array('id' => $course->id));
 } else {
-    $returnto = new moodle_url("/mod/forum/$returnpage", array('f' => $forum->id));
+    $returnto = new moodle_url("/mod/forum/remote/$returnpage", array('f' => $forum->id));
 }
 
 if (isguestuser()) {   // Guests can't change forum
@@ -81,15 +80,14 @@ $info = new stdClass();
 $info->name  = fullname($user);
 $info->forum = format_string($forum->name);
 
-$params = array();
-$params['parameteres[0][name]']= 'id';
-$params['parameteres[0][value]']= $d;
-$params['parameteres[1][name]']= 'forum';
-$params['parameteres[1][value]']= $forum->id;
-
 if ($mark == 'read') {
     if (!empty($d)) {
-        if (! $discussion = get_remote_list_forum_discussions_by($params)) {
+        $params = array();
+        $params['parameters[0][name]'] = "id";
+        $params['parameters[0][value]'] = $d;
+        $params['parameters[1][name]'] = "forum";
+        $params['parameters[1][value]'] = $forum->id;
+        if (! $discussion = get_remote_forum_discussions_by($params)) {
             print_error('invaliddiscussionid', 'forum');
         }
 

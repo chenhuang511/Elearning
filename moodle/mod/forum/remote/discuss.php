@@ -44,7 +44,7 @@ $PAGE->set_url($url);
 
 $params = array();
 $params['parameters[0][name]'] = "id";
-$params['parameters[0][value]'] = $id;
+$params['parameters[0][value]'] = $d;
 
 $discussion = get_remote_forum_discussions_by($params, '', true);
 $course = get_local_course_record($discussion->course);
