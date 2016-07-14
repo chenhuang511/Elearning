@@ -4741,6 +4741,20 @@ function forum_add_discussion($discussion, $mform = null, $unused = null, $useri
         $cm = get_remote_course_module_by_instance('forum', $forum->id)->cm;
 
         $post = new stdClass();
+        $post->discussion = 0;
+        $post->parent = 0;
+        $post->userid = $userid;
+        $post->created = $timenow;
+        $post->modified = $timenow;
+        $post->mailed = FORUM_MAILED_PENDING;
+        $post->subject = $discussion->name;
+        $post->message = $discussion->message;
+        $post->messageformat = $discussion->messageformat;
+        $post->messagetrust = $discussion->messagetrust;
+        $post->attachments = isset($discussion->attachments) ? $discussion->attachments : null;
+        $post->forum = $forum->id;     // speedup
+        $post->course = $forum->course; // speedup
+        $post->mailnow = $discussion->mailnow;
 
         $data = array();
         $data['data[0][name]'] = "discussion";
