@@ -2253,7 +2253,7 @@ class assign {
         } else {
             $submission = $this->get_user_submission($grade->userid, false);
         }
-        
+
         // Only push to gradebook if the update is for the latest attempt.
         // Not the latest attempt.
         if ($submission && $submission->attemptnumber != $grade->attemptnumber) {
@@ -3120,17 +3120,17 @@ class assign {
     /**
      * Load email user for send to hub.
      * @param userid
-     * 
+     *
      * @return email for userid
      */
     public function get_email_from_userid($userid){
         global $DB;
-        
+
         $user = $DB->get_record('user', array('id' => $userid));
-        
+
         return $user->email;
     }
-    
+
     /**
      * Load the submission object for a particular user, optionally creating it if required.
      *
@@ -3152,7 +3152,7 @@ class assign {
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
             $ruser = get_remote_mapping_user($userid);
         }
-        
+
         // If the userid is not null then use userid.
         $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid, 'groupid'=>0);
         if ($attemptnumber >= 0) {
@@ -3279,7 +3279,7 @@ class assign {
         else{
             unset($params['userid']);
             $params['useremail'] = $this->get_email_from_userid($userid);
-            
+
             $flags = get_user_flags_by_assignid_userid($params);
         }
 
@@ -3331,7 +3331,7 @@ class assign {
         }
 
         $submission = null;
-        
+
         $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid);
         if ($attemptnumber < 0 || $create) {
             // Make sure this grade matches the latest submission attempt.
@@ -3355,7 +3355,7 @@ class assign {
             $params['userid'] = $ruser[0]->id;
             $grades = get_assign_grades_by_assignid_userid($params);
             $adminid = reset(explode(',', $CFG->siteadmins));
-                               
+
             if ($grades){
                 foreach ($grades as $grade) {
                     $grade->userid = $userid;
@@ -3395,7 +3395,7 @@ class assign {
             } else{
                 $gid = create_remote_grade($grade);
             }
-            
+
             $grade->id = $gid;
             return $grade;
         }
@@ -4590,7 +4590,7 @@ class assign {
             );
             $submissionstatement = format_text($adminconfig->submissionstatement, FORMAT_MOODLE, $options);
         }
-        
+
         if ($mform == null) {
             $mform = new mod_assign_confirm_submission_form(null, array($requiresubmissionstatement,
                                                                         $submissionstatement,
@@ -4609,7 +4609,7 @@ class assign {
 
         if(MOODLE_RUN_MODE === MOODLE_MODE_HOST || $CFG->nonajax){
             $o .= $this->view_footer();
-            
+
             \mod_assign\event\submission_confirmation_form_viewed::create_from_assign($this)->trigger();
         }
 
@@ -5088,10 +5088,10 @@ class assign {
             $submissions = $DB->get_records('assign_submission', $params, 'attemptnumber ASC');
         } else {
             $ruser = get_remote_mapping_user($userid);
-            
+
             $params['userid'] = $ruser[0]->id;
             $params['mode'] = 'ASC';
-            
+
             $submissions = get_submission_by_assignid_userid_groupid($params);
         }
 
@@ -5158,7 +5158,7 @@ class assign {
         $instance = $this->get_instance();
 
         $o = '';
-        
+
         $postfix = '';
         if ($this->has_visible_attachments()) {
             $postfix = $this->render_area_files('mod_assign', ASSIGN_INTROATTACHMENT_FILEAREA, 0);
@@ -5302,6 +5302,9 @@ class assign {
         }
         $assign = clone $this->get_instance();
         $assign->cmidnumber = $this->get_course_module()->idnumber;
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $assign->cmid = $this->get_course_module()->id;
+        }
         // Set assign gradebook feedback plugin status (enabled and visible).
         $assign->gradefeedbackenabled = $this->is_gradebook_feedback_enabled();
         return assign_grade_item_update($assign, $gradebookgrade) == GRADE_UPDATE_OK;
@@ -7159,7 +7162,7 @@ class assign {
                 }
             }
         }
-        
+
         $capabilitylist = array('gradereport/grader:view', 'moodle/grade:viewall');
         if (has_all_capabilities($capabilitylist, $this->get_course_context())) {
             $urlparams = array('id'=>$this->get_course()->id);
@@ -7226,7 +7229,7 @@ class assign {
 
         // Let feedback plugins add elements to the grading form.
         $this->add_plugin_grade_elements($grade, $mform, $data, $userid);
-        
+
         // Hidden params.
         $mform->addElement('hidden', 'id', $this->get_course_module()->id);
         $mform->setType('id', PARAM_INT);
@@ -7764,7 +7767,7 @@ class assign {
                 }
             }
         }
-        
+
         $grade->grader= $USER->id;
 
         $adminconfig = $this->get_admin_config();
