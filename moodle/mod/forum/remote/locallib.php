@@ -63,6 +63,20 @@ function get_remote_forum_discussions_by($parameters, $sort = '', $mustexists = 
     return $result->discussion;
 }
 
+function get_remote_forum_discussion_subs_by($parameters, $sort = '', $mustexists = FALSE)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_forum_discussion_subs_by',
+            'params' => array_merge(array('sort' => $sort, 'mustexists' => $mustexists), $parameters),
+        )
+    );
+
+    return $result->sub;
+}
+
 function get_remote_forum_posts_by($parameters, $sort = '', $mustexists = FALSE)
 {
     $result = moodle_webservice_client(
@@ -104,6 +118,55 @@ function get_remote_forum_track_prefs_by($parameters, $sort = '', $mustexists = 
 
     return $result->track;
 }
+
+function get_remote_forum_subscriptions_by($parameters, $sort = '', $mustexists = FALSE)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_forum_subscriptions_by',
+            'params' => array_merge(array('sort' => $sort, 'mustexists' => $mustexists), $parameters),
+        )
+    );
+
+    return $result->subscription;
+}
+
+function get_remote_scale_by($parameters, $sort = '', $mustexists = FALSE)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_scale_by',
+            'params' => array_merge(array('sort' => $sort, 'mustexists' => $mustexists), $parameters),
+        )
+    );
+
+    return $result->scale;
+}
+
+function get_remote_list_forum_by($parameters, $sort = '', $limitfrom = 0, $limitnum = 0)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_list_forum_by',
+            'params' => array_merge(array('sort' => $sort, 'limitfrom' => $limitfrom, 'limitnum' => $limitnum), $parameters)
+        )
+    );
+
+    $forums = array();
+
+    foreach ($result->forums as $forum) {
+        $forums[$forum->id] = $forum;
+    }
+
+    return $forums;
+}
+
 
 function get_remote_list_forum_discussions_by($parameters, $sort = '', $limitfrom = 0, $limitnum = 0)
 {

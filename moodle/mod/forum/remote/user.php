@@ -44,7 +44,7 @@ $discussionsonly = ($mode !== 'posts');
 $isspecificcourse = !is_null($courseid);
 $iscurrentuser = ($USER->id == $userid);
 
-$url = new moodle_url('/mod/forum/user.php', array('id' => $userid));
+$url = new moodle_url('/mod/forum/remote/user.php', array('id' => $userid));
 if ($isspecificcourse) {
     $url->param('course', $courseid);
 }
@@ -197,10 +197,10 @@ if (empty($result->posts)) {
             $newusernode->make_active();
             // Check to see if this is a discussion or a post.
             if ($mode == 'posts') {
-                $navbar = $PAGE->navbar->add(get_string('posts', 'forum'), new moodle_url('/mod/forum/user.php',
+                $navbar = $PAGE->navbar->add(get_string('posts', 'forum'), new moodle_url('/mod/forum/remote/user.php',
                     array('id' => $user->id, 'course' => $courseid)));
             } else {
-                $navbar = $PAGE->navbar->add(get_string('discussions', 'forum'), new moodle_url('/mod/forum/user.php',
+                $navbar = $PAGE->navbar->add(get_string('discussions', 'forum'), new moodle_url('/mod/forum/remote/user.php',
                     array('id' => $user->id, 'course' => $courseid, 'mode' => 'discussions')));
             }
         }
@@ -215,10 +215,10 @@ if (empty($result->posts)) {
             $usernode->make_active();
             // Check to see if this is a discussion or a post.
             if ($mode == 'posts') {
-                $navbar = $PAGE->navbar->add(get_string('posts', 'forum'), new moodle_url('/mod/forum/user.php',
+                $navbar = $PAGE->navbar->add(get_string('posts', 'forum'), new moodle_url('/mod/forum/remote/user.php',
                     array('id' => $user->id, 'course' => $courseid)));
             } else {
-                $navbar = $PAGE->navbar->add(get_string('discussions', 'forum'), new moodle_url('/mod/forum/user.php',
+                $navbar = $PAGE->navbar->add(get_string('discussions', 'forum'), new moodle_url('/mod/forum/remote/user.php',
                     array('id' => $user->id, 'course' => $courseid, 'mode' => 'discussions')));
             }
         }
@@ -338,7 +338,7 @@ foreach ($result->posts as $post) {
         if ($post->parent != 0) {
             $postname = format_string($post->subject, true, array('context' => $cm->context));
             if (!$isspecificcourse && !$hasparentaccess) {
-                $fullsubjects[] .= html_writer::link(new moodle_url('/mod/forum/discuss.php', array('d' => $post->discussion, 'parent' => $post->id)), $postname);
+                $fullsubjects[] .= html_writer::link(new moodle_url('/mod/forum/remote/discuss.php', array('d' => $post->discussion, 'parent' => $post->id)), $postname);
             } else {
                 $fullsubjects[] .= html_writer::tag('span', $postname);
             }
@@ -388,10 +388,10 @@ if (isset($courseid) && $courseid != SITEID) {
     $usernode->make_active();
     // Check to see if this is a discussion or a post.
     if ($mode == 'posts') {
-        $navbar = $PAGE->navbar->add(get_string('posts', 'forum'), new moodle_url('/mod/forum/user.php',
+        $navbar = $PAGE->navbar->add(get_string('posts', 'forum'), new moodle_url('/mod/forum/remote/user.php',
             array('id' => $user->id, 'course' => $courseid)));
     } else {
-        $navbar = $PAGE->navbar->add(get_string('discussions', 'forum'), new moodle_url('/mod/forum/user.php',
+        $navbar = $PAGE->navbar->add(get_string('discussions', 'forum'), new moodle_url('/mod/forum/remote/user.php',
             array('id' => $user->id, 'course' => $courseid, 'mode' => 'discussions')));
     }
 }

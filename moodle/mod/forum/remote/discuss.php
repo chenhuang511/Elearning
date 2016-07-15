@@ -186,7 +186,7 @@ if ($move > 0 and confirm_sesskey()) {
     $event->trigger();
 
     // Delete the RSS files for the 2 forums to force regeneration of the feeds
-    require_once($CFG->dirroot . '/mod/forum/rsslib.php');
+    require_once($CFG->dirroot . '/mod/forum/remote/rsslib.php');
     forum_rss_delete_file($forum);
     forum_rss_delete_file($forumto);
 
@@ -236,11 +236,11 @@ if ($parent) {
 }
 
 if (!$post = forum_get_post_full($parent)) {
-    print_error("notexists", 'forum', "$CFG->wwwroot/mod/forum/view.php?f=$forum->id");
+    print_error("notexists", 'forum', "$CFG->wwwroot/mod/forum/remote/view.php?f=$forum->id");
 }
 
 if (!forum_user_can_see_post($forum, $discussion, $post, null, $cm)) {
-    print_error('noviewdiscussionspermission', 'forum', "$CFG->wwwroot/mod/forum/view.php?id=$forum->id");
+    print_error('noviewdiscussionspermission', 'forum', "$CFG->wwwroot/mod/forum/remote/view.php?id=$forum->id");
 }
 
 if ($mark == 'read' or $mark == 'unread') {

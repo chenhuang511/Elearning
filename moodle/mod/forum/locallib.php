@@ -21,13 +21,15 @@
 
 require_once($CFG->dirroot . '/mod/forum/lib.php');
 require_once($CFG->libdir . '/portfolio/caller.php');
+require_once($CFG->dirroot . '/mod/forum//remote/locallib.php');
 
 /**
  * @package   mod_forum
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class forum_portfolio_caller extends portfolio_module_caller_base {
+class forum_portfolio_caller extends portfolio_module_caller_base
+{
 
     protected $postid;
     protected $discussionid;
@@ -42,30 +44,43 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
     /**
      * @return array
      */
-    public static function expected_callbackargs() {
+    public static function expected_callbackargs()
+    {
         return array(
-            'postid'       => false,
+            'postid' => false,
             'discussionid' => false,
-            'attachment'   => false,
+            'attachment' => false,
         );
     }
+
     /**
      * @param array $callbackargs
      */
-    function __construct($callbackargs) {
+    function __construct($callbackargs)
+    {
         parent::__construct($callbackargs);
         if (!$this->postid && !$this->discussionid) {
             throw new portfolio_caller_exception('mustprovidediscussionorpost', 'forum');
         }
     }
+
     /**
      * @global object
      */
-    public function load_data() {
+    public function load_data()
+    {
         global $DB;
 
         if ($this->postid) {
-            if (!$this->post = $DB->get_record('forum_posts', array('id' => $this->postid))) {
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+                $params = array();
+                $params['parameters[0][name]'] = "id";
+                $params['parameters[0][value]'] = $this->postid;
+                $this->post = get_remote_forum_posts_by($params);
+            } else {
+                $this->post = $DB->get_record('forum_posts', array('id' => $this->postid));
+            }
+            if (!$this->post) {
                 throw new portfolio_caller_exception('invalidpostid', 'forum');
             }
         }
@@ -79,16 +94,40 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
             throw new portfolio_caller_exception('mustprovidediscussionorpost', 'forum');
         }
 
-        if (!$this->discussion = $DB->get_record('forum_discussions', $dbparams)) {
-            throw new portfolio_caller_exception('invaliddiscussionid', 'forum');
-        }
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $params = array();
+            $i = 0;
+            foreach ($dbparams as $key => $val) {
+                $params["parameters[$i][name]"] = $key;
+                $params["parameters[$i][value]"] = $val;
+                $i++;
+            }
+            if (!$this->discussion = get_remote_forum_discussions_by($params)) {
+                throw new portfolio_caller_exception('invaliddiscussionid', 'forum');
+            }
 
-        if (!$this->forum = $DB->get_record('forum', array('id' => $this->discussion->forum))) {
-            throw new portfolio_caller_exception('invalidforumid', 'forum');
-        }
+            $params = array();
+            $params['parameters[0][name]'] = "id";
+            $params['parameters[0][value]'] = $this->discussion->forum;
+            if (!$this->forum = get_remote_forum_by($params)) {
+                throw new portfolio_caller_exception('invalidforumid', 'forum');
+            }
 
-        if (!$this->cm = get_coursemodule_from_instance('forum', $this->forum->id)) {
-            throw new portfolio_caller_exception('invalidcoursemodule');
+            if (!$this->cm = get_remote_course_module_by_instance('forum', $this->forum->id)) {
+                throw new portfolio_caller_exception('invalidcoursemodule');
+            }
+        } else {
+            if (!$this->discussion = $DB->get_record('forum_discussions', $dbparams)) {
+                throw new portfolio_caller_exception('invaliddiscussionid', 'forum');
+            }
+
+            if (!$this->forum = $DB->get_record('forum', array('id' => $this->discussion->forum))) {
+                throw new portfolio_caller_exception('invalidforumid', 'forum');
+            }
+
+            if (!$this->cm = get_coursemodule_from_instance('forum', $this->forum->id)) {
+                throw new portfolio_caller_exception('invalidcoursemodule');
+            }
         }
 
         $this->modcontext = context_module::instance($this->cm->id);
@@ -98,7 +137,7 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
                 $this->set_file_and_format_data($this->attachment);
             } else {
                 $attach = $fs->get_area_files($this->modcontext->id, 'mod_forum', 'attachment', $this->post->id, 'timemodified', false);
-                $embed  = $fs->get_area_files($this->modcontext->id, 'mod_forum', 'post', $this->post->id, 'timemodified', false);
+                $embed = $fs->get_area_files($this->modcontext->id, 'mod_forum', 'post', $this->post->id, 'timemodified', false);
                 $files = array_merge($attach, $embed);
                 $this->set_file_and_format_data($files);
             }
@@ -113,7 +152,7 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
             $this->multifiles = array();
             foreach ($this->posts as $post) {
                 $attach = $fs->get_area_files($this->modcontext->id, 'mod_forum', 'attachment', $post->id, 'timemodified', false);
-                $embed  = $fs->get_area_files($this->modcontext->id, 'mod_forum', 'post', $post->id, 'timemodified', false);
+                $embed = $fs->get_area_files($this->modcontext->id, 'mod_forum', 'post', $post->id, 'timemodified', false);
                 $files = array_merge($attach, $embed);
                 if ($files) {
                     $this->keyedfiles[$post->id] = $files;
@@ -140,25 +179,29 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
      * @global object
      * @return string
      */
-    function get_return_url() {
+    function get_return_url()
+    {
         global $CFG;
-        return $CFG->wwwroot . '/mod/forum/discuss.php?d=' . $this->discussion->id;
+        return $CFG->wwwroot . '/mod/forum/remote/discuss.php?d=' . $this->discussion->id;
     }
+
     /**
      * @global object
      * @return array
      */
-    function get_navigation() {
+    function get_navigation()
+    {
         global $CFG;
 
         $navlinks = array();
         $navlinks[] = array(
             'name' => format_string($this->discussion->name),
-            'link' => $CFG->wwwroot . '/mod/forum/discuss.php?d=' . $this->discussion->id,
+            'link' => $CFG->wwwroot . '/mod/forum/remote/discuss.php?d=' . $this->discussion->id,
             'type' => 'title'
         );
         return array($navlinks, $this->cm);
     }
+
     /**
      * either a whole discussion
      * a single post, with or without attachment
@@ -169,7 +212,8 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
      * @uses PORTFOLIO_FORMAT_RICH
      * @return mixed
      */
-    function prepare_package() {
+    function prepare_package()
+    {
         global $CFG;
 
         // set up the leap2a writer if we need it
@@ -190,7 +234,7 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
             $content = ''; // if we're just writing HTML, start a string to add each post to
             $ids = array(); // if we're writing leap2a, keep track of all entryids so we can add a selection element
             foreach ($this->posts as $post) {
-                $posthtml =  $this->prepare_post($post);
+                $posthtml = $this->prepare_post($post);
                 if ($writingleap) {
                     $ids[] = $this->prepare_post_leap2a($leapwriter, $post, $posthtml);
                 } else {
@@ -236,13 +280,14 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
      * the entry/ies are added directly to the leapwriter, which is passed by ref
      *
      * @param portfolio_format_leap2a_writer $leapwriter writer object to add entries to
-     * @param object $post                               the stdclass object representing the database record
-     * @param string $posthtml                           the content of the post (prepared by {@link prepare_post}
+     * @param object $post the stdclass object representing the database record
+     * @param string $posthtml the content of the post (prepared by {@link prepare_post}
      *
      * @return int id of new entry
      */
-    private function prepare_post_leap2a(portfolio_format_leap2a_writer $leapwriter, $post, $posthtml) {
-        $entry = new portfolio_format_leap2a_entry('forumpost' . $post->id,  $post->subject, 'resource', $posthtml);
+    private function prepare_post_leap2a(portfolio_format_leap2a_writer $leapwriter, $post, $posthtml)
+    {
+        $entry = new portfolio_format_leap2a_entry('forumpost' . $post->id, $post->subject, 'resource', $posthtml);
         $entry->published = $post->created;
         $entry->updated = $post->modified;
         $entry->author = $post->author;
@@ -259,7 +304,8 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
      * @param mixed $justone false of id of single file to copy
      * @return bool|void
      */
-    private function copy_files($files, $justone=false) {
+    private function copy_files($files, $justone = false)
+    {
         if (empty($files)) {
             return;
         }
@@ -273,6 +319,7 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
             }
         }
     }
+
     /**
      * this is a very cut down version of what is in forum_make_mail_post
      *
@@ -280,7 +327,8 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
      * @param int $post
      * @return string
      */
-    private function prepare_post($post, $fileoutputextras=null) {
+    private function prepare_post($post, $fileoutputextras = null)
+    {
         global $DB;
         static $users;
         if (empty($users)) {
@@ -308,13 +356,13 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
         } else {
             $output .= '<td class="topic starter">';
         }
-        $output .= '<div class="subject">'.format_string($post->subject).'</div>';
+        $output .= '<div class="subject">' . format_string($post->subject) . '</div>';
 
         $fullname = fullname($users[$post->userid], $viewfullnames);
         $by = new stdClass();
         $by->name = $fullname;
         $by->date = userdate($post->modified, '', core_date::get_user_timezone($this->user));
-        $output .= '<div class="author">'.get_string('bynameondate', 'forum', $by).'</div>';
+        $output .= '<div class="author">' . get_string('bynameondate', 'forum', $by) . '</div>';
 
         $output .= '</td></tr>';
 
@@ -326,25 +374,28 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
 
         if (is_array($this->keyedfiles) && array_key_exists($post->id, $this->keyedfiles) && is_array($this->keyedfiles[$post->id]) && count($this->keyedfiles[$post->id]) > 0) {
             $output .= '<div class="attachments">';
-            $output .= '<br /><b>' .  get_string('attachments', 'forum') . '</b>:<br /><br />';
+            $output .= '<br /><b>' . get_string('attachments', 'forum') . '</b>:<br /><br />';
             foreach ($this->keyedfiles[$post->id] as $file) {
-                $output .= $format->file_output($file)  . '<br/ >';
+                $output .= $format->file_output($file) . '<br/ >';
             }
             $output .= "</div>";
         }
 
-        $output .= '</td></tr></table>'."\n\n";
+        $output .= '</td></tr></table>' . "\n\n";
 
         return $output;
     }
+
     /**
      * @return string
      */
-    function get_sha1() {
+    function get_sha1()
+    {
         $filesha = '';
         try {
             $filesha = $this->get_sha1_file();
-        } catch (portfolio_caller_exception $e) { } // no files
+        } catch (portfolio_caller_exception $e) {
+        } // no files
 
         if ($this->post) {
             return sha1($filesha . ',' . $this->post->subject . ',' . $this->post->message);
@@ -357,7 +408,8 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
         }
     }
 
-    function expected_time() {
+    function expected_time()
+    {
         $filetime = $this->expected_time_file();
         if ($this->posts) {
             $posttime = portfolio_expected_time_db(count($this->posts));
@@ -367,11 +419,13 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
         }
         return $filetime;
     }
+
     /**
      * @uses CONTEXT_MODULE
      * @return bool
      */
-    function check_permissions() {
+    function check_permissions()
+    {
         $context = context_module::instance($this->cm->id);
         if ($this->post) {
             return (has_capability('mod/forum:exportpost', $context)
@@ -380,14 +434,17 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
         }
         return has_capability('mod/forum:exportdiscussion', $context);
     }
+
     /**
      * @return string
      */
-    public static function display_name() {
+    public static function display_name()
+    {
         return get_string('modulename', 'forum');
     }
 
-    public static function base_supported_formats() {
+    public static function base_supported_formats()
+    {
         return array(PORTFOLIO_FORMAT_FILE, PORTFOLIO_FORMAT_RICHHTML, PORTFOLIO_FORMAT_PLAINHTML, PORTFOLIO_FORMAT_LEAP2A);
     }
 }
@@ -400,7 +457,8 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
  * @copyright 2012 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class forum_file_info_container extends file_info {
+class forum_file_info_container extends file_info
+{
     /** @var file_browser */
     protected $browser;
     /** @var stdClass */
@@ -426,7 +484,8 @@ class forum_file_info_container extends file_info {
      * @param array $areas
      * @param string $filearea
      */
-    public function __construct($browser, $course, $cm, $context, $areas, $filearea) {
+    public function __construct($browser, $course, $cm, $context, $areas, $filearea)
+    {
         parent::__construct($browser, $context);
         $this->browser = $browser;
         $this->course = $course;
@@ -440,7 +499,8 @@ class forum_file_info_container extends file_info {
     /**
      * @return array with keys contextid, filearea, itemid, filepath and filename
      */
-    public function get_params() {
+    public function get_params()
+    {
         return array(
             'contextid' => $this->context->id,
             'component' => $this->component,
@@ -456,7 +516,8 @@ class forum_file_info_container extends file_info {
      *
      * @return bool
      */
-    public function is_writable() {
+    public function is_writable()
+    {
         return false;
     }
 
@@ -465,7 +526,8 @@ class forum_file_info_container extends file_info {
      *
      * @return bool
      */
-    public function is_directory() {
+    public function is_directory()
+    {
         return true;
     }
 
@@ -474,7 +536,8 @@ class forum_file_info_container extends file_info {
      *
      * @return string
      */
-    public function get_visible_name() {
+    public function get_visible_name()
+    {
         return $this->areas[$this->filearea];
     }
 
@@ -483,19 +546,22 @@ class forum_file_info_container extends file_info {
      *
      * @return array of file_info instances
      */
-    public function get_children() {
+    public function get_children()
+    {
         return $this->get_filtered_children('*', false, true);
     }
+
     /**
      * Help function to return files matching extensions or their count
      *
-     * @param string|array $extensions, either '*' or array of lowercase extensions, i.e. array('.gif','.jpg')
+     * @param string|array $extensions , either '*' or array of lowercase extensions, i.e. array('.gif','.jpg')
      * @param bool|int $countonly if false returns the children, if an int returns just the
      *    count of children but stops counting when $countonly number of children is reached
      * @param bool $returnemptyfolders if true returns items that don't have matching files inside
      * @return array|int array of file_info instances or the count
      */
-    private function get_filtered_children($extensions = '*', $countonly = false, $returnemptyfolders = false) {
+    private function get_filtered_children($extensions = '*', $countonly = false, $returnemptyfolders = false)
+    {
         global $DB;
         $params = array('contextid' => $this->context->id,
             'component' => $this->component,
@@ -510,7 +576,7 @@ class forum_file_info_container extends file_info {
             $params['emptyfilename'] = '.';
         }
         list($sql2, $params2) = $this->build_search_files_sql($extensions);
-        $sql .= ' '.$sql2;
+        $sql .= ' ' . $sql2;
         $params = array_merge($params, $params2);
         if ($countonly !== false) {
             $sql .= ' ORDER BY itemid DESC';
@@ -520,7 +586,8 @@ class forum_file_info_container extends file_info {
         $children = array();
         foreach ($rs as $record) {
             if (($child = $this->browser->get_file_info($this->context, 'mod_forum', $this->filearea, $record->itemid))
-                    && ($returnemptyfolders || $child->count_non_empty_children($extensions))) {
+                && ($returnemptyfolders || $child->count_non_empty_children($extensions))
+            ) {
                 $children[] = $child;
             }
             if ($countonly !== false && count($children) >= $countonly) {
@@ -538,10 +605,11 @@ class forum_file_info_container extends file_info {
      * Returns list of children which are either files matching the specified extensions
      * or folders that contain at least one such file.
      *
-     * @param string|array $extensions, either '*' or array of lowercase extensions, i.e. array('.gif','.jpg')
+     * @param string|array $extensions , either '*' or array of lowercase extensions, i.e. array('.gif','.jpg')
      * @return array of file_info instances
      */
-    public function get_non_empty_children($extensions = '*') {
+    public function get_non_empty_children($extensions = '*')
+    {
         return $this->get_filtered_children($extensions, false);
     }
 
@@ -549,11 +617,12 @@ class forum_file_info_container extends file_info {
      * Returns the number of children which are either files matching the specified extensions
      * or folders containing at least one such file.
      *
-     * @param string|array $extensions, for example '*' or array('.gif','.jpg')
+     * @param string|array $extensions , for example '*' or array('.gif','.jpg')
      * @param int $limit stop counting after at least $limit non-empty children are found
      * @return int
      */
-    public function count_non_empty_children($extensions = '*', $limit = 1) {
+    public function count_non_empty_children($extensions = '*', $limit = 1)
+    {
         return $this->get_filtered_children($extensions, $limit);
     }
 
@@ -562,7 +631,8 @@ class forum_file_info_container extends file_info {
      *
      * @return file_info or null for root
      */
-    public function get_parent() {
+    public function get_parent()
+    {
         return $this->browser->get_file_info($this->context);
     }
 }
