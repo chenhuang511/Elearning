@@ -125,6 +125,13 @@ if (!has_capability('mod/forum:viewdiscussion', $context)) {
     notice(get_string('noviewdiscussionspermission', 'forum'));
 }
 
+$nonajax = optional_param('nonajax', true, PARAM_BOOL);
+if (!has_capability('moodle/course:manageactivities', $context) && $nonajax == false) {
+    $CFG->nonajax = false;
+} else {
+    $CFG->nonajax = true;
+}
+
 // Mark viewed and trigger the course_module_viewed event.
 forum_view($forum, $course, $cm, $context);
 
