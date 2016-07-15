@@ -24,6 +24,7 @@ require_once($CFG->libdir . '/completionlib.php');
 $id   = optional_param('id', 0, PARAM_INT);
 $c    = optional_param('c', 0, PARAM_INT);
 $edit = optional_param('edit', -1, PARAM_BOOL);
+$nonajax = optional_param('nonajax', true, PARAM_BOOL);
 
 if ($id) {
     if (! $cm = get_remote_course_module_by_cmid('chat', $id)) {
@@ -59,7 +60,7 @@ require_course_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 $PAGE->set_context($context);
 
-if (!has_capability('moodle/course:manageactivities', $context)) {
+if (!has_capability('moodle/course:manageactivities', $context) && $nonajax == false) {
     $CFG->nonajax = false;
 } else {
     $CFG->nonajax = true;
