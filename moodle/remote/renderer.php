@@ -427,7 +427,7 @@ class core_remote_renderer extends plugin_renderer_base
         context_helper::preload_course($course->id);
         $context = context_course::instance($course->id, MUST_EXIST);
 
-        if (!has_capability('moodle/course:manageactivities', $context)) {
+        if (isset($CFG->nonajax) && !has_capability('moodle/course:manageactivities', $context)) {
             $CFG->nonajax = false;
             return new moodle_url($CFG->loginredir . '/?', array('id' => $course->id));
         }
