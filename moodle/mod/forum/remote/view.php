@@ -128,9 +128,9 @@ if (!has_capability('mod/forum:viewdiscussion', $context)) {
 // Mark viewed and trigger the course_module_viewed event.
 forum_view($forum, $course, $cm, $context);
 
-if ($CFG->nonajax) {
-    echo $OUTPUT->header();
-}
+
+echo $OUTPUT->header();
+
 
 echo $OUTPUT->heading(format_string($forum->name), 2);
 if (!empty($forum->intro) && $forum->type != 'single' && $forum->type != 'teacher') {
@@ -246,6 +246,5 @@ switch ($forum->type) {
 // Add the subscription toggle JS.
 $PAGE->requires->yui_module('moodle-mod_forum-subscriptiontoggle', 'Y.M.mod_forum.subscriptiontoggle.init');
 
-if ($CFG->nonajax) {
-    echo $OUTPUT->footer($course);
-}
+
+echo $OUTPUT->footer($course);
