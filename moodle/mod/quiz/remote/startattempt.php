@@ -26,6 +26,7 @@ require_once($CFG->dirroot.'/mod/quiz/remote/locallib.php');
 $id = required_param('cmid', PARAM_INT); // Course module id
 $forcenew = optional_param('forcenew', false, PARAM_BOOL); // Used to force a new preview
 $page = optional_param('page', -1, PARAM_INT); // Page to jump to in the attempt.
+$nonajax = optional_param('nonajax', true, PARAM_BOOL);
 
 if (!$cm = get_remote_course_module_by_cmid("quiz", $id)) {
     print_error('invalidcoursemodule');
@@ -98,7 +99,7 @@ if ($currentattemptid) {
     if ($lastattempt->state == quiz_attempt::OVERDUE) {
         redirect($quizobj->summary_url($lastattempt->id));
     } else {
-        redirect($quizobj->attempt_remote_url($currentattemptid, $page));
+        redirect($quizobj->attempt_remote_url($currentattemptid, $page, $nonajax));
     }
 }
 
@@ -109,4 +110,4 @@ if($attemptremote->errorcode == 'attemptstillinprogress'){
 }
 $attempt = $attemptremote->attempt;
 // Redirect to the attempt page.
-redirect($quizobj->attempt_remote_url($attempt->id, $page));
+redirect($quizobj->attempt_remote_url($attempt->id, $page, $nonajax));

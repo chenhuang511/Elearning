@@ -207,3 +207,17 @@ function update_remote_mdl_forum($modname, $id, $data)
     return $result->id;
 }
 
+function check_remote_record_forum_exists($modname, $parameters)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_check_record_forum_exists_by',
+            'params' => array_merge(array('modname' => $modname), $parameters)
+        )
+    );
+
+    return $result->status;
+}
+

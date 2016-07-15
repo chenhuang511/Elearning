@@ -49,7 +49,7 @@ $canreviewmine = has_capability('mod/quiz:reviewmyattempts', $context);
 $canpreview = has_capability('mod/quiz:preview', $context);
 
 $nonajax = optional_param('nonajax', true, PARAM_BOOL);
-if (!has_capability('moodle/course:manageactivities', $context) && $nonajax != true) {
+if (!has_capability('moodle/course:manageactivities', $context) && $nonajax == false) {
     $CFG->nonajax = false;
 } else {
     $CFG->nonajax = true;

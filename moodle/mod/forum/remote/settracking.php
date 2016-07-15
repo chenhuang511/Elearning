@@ -23,33 +23,32 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once("../../config.php");
-require_once("lib.php");
+require_once(dirname(dirname(__DIR__)) . '/config.php');
+require_once($CFG->dirroot.'/mod/forum/lib.php');
+require_once($CFG->dirroot . '/mod/forum/remote/locallib.php');
+require_once($CFG->dirroot . '/course/remote/locallib.php');
 
 $id         = required_param('id',PARAM_INT);                           // The forum to subscribe or unsubscribe to
 $returnpage = optional_param('returnpage', 'index.php', PARAM_FILE);    // Page to return to.
 
 require_sesskey();
-$params = array();
-$params['parameteres[0][name]'] = 'id';
-$params['parameteres[0][value]'] = $id;
 
-if (! $forum = get_remote_forum_by($params)){
+$params = array();
+$params['parameters[0][name]'] = "id";
+$params['parameters[0][value]'] = $id;
+if (! $forum = get_remote_forum_by($params)) {
     print_error('invalidforumid', 'forum');
 }
-$params = array();
-$params['parameteres[0][name]'] = 'id';
-$params['parameteres[0][value]'] = $forum->course;
 
-if (! $course = get_remote_forum_by($params)) {
+if (! $course = get_local_course_record($forum->course)) {
     print_error('invalidcoursemodule');
 }
 
-if (! $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
+if (! $cm = get_remote_course_module_by_instance("forum", $forum->id)) {
     print_error('invalidcoursemodule');
 }
 require_login($course, false, $cm);
-$returnpageurl = new moodle_url('/mod/forum/' . $returnpage, array('id' => $course->id, 'f' => $forum->id));
+$returnpageurl = new moodle_url('/mod/forum/remote/' . $returnpage, array('id' => $course->id, 'f' => $forum->id));
 $returnto = forum_go_back_to($returnpageurl);
 
 if (!forum_tp_can_track_forums($forum)) {

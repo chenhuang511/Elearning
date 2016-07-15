@@ -377,9 +377,9 @@ class quiz {
      * @param int $page optional page number to go to in the attempt.
      * @return string the URL of that attempt.
      */
-    public function attempt_remote_url($attemptid, $page = 0) {
+    public function attempt_remote_url($attemptid, $page = 0, $nonajax = true) {
         global $CFG;
-        $url = $CFG->wwwroot . '/mod/quiz/remote/attempt.php?attempt=' . $attemptid;
+        $url = $CFG->wwwroot . '/mod/quiz/remote/attempt.php?attempt=' . $attemptid . '&nonajax=' . $nonajax;
         if ($page) {
             $url .= '&page=' . $page;
         }

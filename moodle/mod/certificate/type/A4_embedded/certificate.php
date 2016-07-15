@@ -31,6 +31,7 @@ $pdf->SetTitle($certificate->name);
 $pdf->SetProtection(array('modify'));
 $pdf->setPrintHeader(false);
 $pdf->setPrintFooter(false);
+$pdf->setCellPaddings(30);
 $pdf->SetAutoPageBreak(false, 0);
 $pdf->AddPage();
 
@@ -75,7 +76,7 @@ if ($certificate->orientation == 'L') {
 }
 
 // Get font families.
-$fontsans = get_config('certificate', 'fontsans');
+$fontsans = get_config('certificate', 'fontserif');// set temp font fontsans
 $fontserif = get_config('certificate', 'fontserif');
 
 // Add images and lines

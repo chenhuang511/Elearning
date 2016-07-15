@@ -69,7 +69,7 @@ function getHTMLContent(module, encode) {
     $.ajax({
         url: url,
         method: module.method,
-        data: module.params,
+        data: module.params + '&nonajax=false',
         beforeSend: function () {
             target.hide();
             loading.show();
