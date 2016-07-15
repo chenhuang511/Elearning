@@ -334,19 +334,10 @@ class quiz {
     /**
      * @return string the URL of this quiz's view page.
      */
-    public function view_url($isremote = false) {
+    public function view_url() {
         global $CFG;
-        $path = ($isremote)?'/mod/quiz/remote/view.php?id=':'/mod/quiz/view.php?id=';
+        $path = ($this->isremote)?'/mod/quiz/remote/view.php?id=':'/mod/quiz/view.php?id=';
         return $CFG->wwwroot . $path . $this->cm->id;
-    }
-
-    // URLs related to this remote attempt ============================================
-    /**
-     * @return string the URL of this quiz's view page.
-     */
-    public function view_remote_url() {
-        global $CFG;
-        return $CFG->wwwroot . '/mod/quiz/remote/view.php?id=' . $this->cm->id;
     }
 
     /**

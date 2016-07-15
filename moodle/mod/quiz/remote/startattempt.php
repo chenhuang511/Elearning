@@ -35,13 +35,10 @@ if (!$course = get_local_course_record($cm->course)) {
     print_error("coursemisconf");
 }
 
-//$quizobj = quiz::create($cm->instance, $USER->id);
 $quiz = get_remote_quiz_by_id($cm->instance);
-$quizobj = new quiz($quiz, $cm, $course);
-$preview = $quizobj->is_preview_user();
-
+$quizobj = new quiz($quiz, $cm, $course, true, true);
 // This script should only ever be posted to, so set page URL to the view page.
-$PAGE->set_url($quizobj->view_remote_url());
+$PAGE->set_url($quizobj->view_url());
 
 // Check login and sesskey.
 require_login($quizobj->get_course(), false, $quizobj->get_cm());
@@ -71,7 +68,7 @@ if (!$quizobj->is_preview_user() && $messages) {
 if ($accessmanager->is_preflight_check_required($currentattemptid)) {
     // Need to do some checks before allowing the user to continue.
     $mform = $accessmanager->get_preflight_check_form(
-        $quizobj->start_remote_attempt_url($page), $currentattemptid);
+        $quizobj->start_attempt_url($page), $currentattemptid);
 
     if ($mform->is_cancelled()) {
         $accessmanager->back_to_view_page($PAGE->get_renderer('mod_quiz'));
@@ -79,7 +76,7 @@ if ($accessmanager->is_preflight_check_required($currentattemptid)) {
     } else if (!$mform->get_data()) {
 
         // Form not submitted successfully, re-display it and stop.
-        $PAGE->set_url($quizobj->start_remote_attempt_url($page));
+        $PAGE->set_url($quizobj->start_attempt_url($page));
         $PAGE->set_title($quizobj->get_quiz_name());
         $accessmanager->setup_attempt_page($PAGE);
         $output = $PAGE->get_renderer('mod_quiz');
@@ -104,6 +101,7 @@ if ($currentattemptid) {
 }
 
 $user = get_remote_mapping_user();
+$preview = $quizobj->is_preview_user();
 $attemptremote = get_remote_quiz_start_attempt($quiz->id, $user[0]->id, $preview);
 if($attemptremote->errorcode == 'attemptstillinprogress'){
     print_error('attemptstillinprogress', 'quiz', $quizobj->view_url());
