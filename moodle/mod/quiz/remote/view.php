@@ -60,10 +60,11 @@ $timenow = time();
 $rules= get_remote_quiz_access_information($cm->instance);
 $quiz = get_remote_quiz_by_id($cm->instance);
 $quizobj = new quiz($quiz, $cm, $course, true, true);
-$accessmanager = new quiz_access_manager($quizobj, $timenow, false); // set has_capability('mod/quiz:ignoretimelimits', $context, null, false) = false
+$accessmanager = new quiz_access_manager($quizobj, $timenow,
+    has_capability('mod/quiz:ignoretimelimits', $context, null, false));
 $quiz = $quizobj->get_quiz();
 
-// Trigger course_module_viewed event and completion.
+// Trigger course_module_viewed event and completion. @TODO chua test trigger.
 get_remote_quiz_view_quiz($quiz->id);
 
 // Initialize $PAGE, compute blocks.
@@ -84,7 +85,6 @@ $unfinishedattempt = get_remote_user_attemps($quiz->id, $user[0]->id, 'unfinishe
 if(count($unfinishedattempt) > 0 && $unfinishedattempt[0]){
     $attempts[] = $unfinishedattempt[0];
 
-    // @TODO: If the attempt is now overdue, deal with that - and pass isonline = false. We want the student notified in this case.
     $unfinished = $unfinishedattempt[0]->state == quiz_attempt::IN_PROGRESS ||
         $unfinishedattempt[0]->state == quiz_attempt::OVERDUE;
     if (!$unfinished) {
@@ -94,16 +94,15 @@ if(count($unfinishedattempt) > 0 && $unfinishedattempt[0]){
     $unfinishedattempt = null; // To make it clear we do not use this again.
 }
 $numattempts = count($attempts);
-
 $viewobj->attempts = $attempts;
 $viewobj->attemptobjs = array();
 foreach ($attempts as $attempt) {
-    $viewobj->attemptobjs[] = new quiz_attempt($attempt, $quiz, $cm, $course, false);
+    $viewobj->attemptobjs[] = new quiz_attempt($attempt, $quiz, $cm, $course, false, true);
 }
 
 // Work out the final grade, checking whether it was overridden in the gradebook.
 if (!$canpreview) {
-    $mygrade = get_remote_user_best_grade($quiz->id, $user[0]->id);
+    $mygrade = get_remote_user_best_grade($quiz->id, $user[0]->id)->grade;
 } else if ($lastfinishedattempt) {
     // Users who can preview the quiz don't get a proper grade, so work out a
     // plausible value to display instead, so the page looks right.
@@ -115,7 +114,6 @@ if (!$canpreview) {
 $mygradeoverridden = false;
 $gradebookfeedback = '';
 
-// @TODO: ????
 $grading_info = grade_get_grades($course->id, 'mod', 'quiz', $quiz->id, $user[0]->id);
 if (!empty($grading_info->items)) {
     $item = $grading_info->items[0];
@@ -163,7 +161,7 @@ $viewobj->lastfinishedattempt = $lastfinishedattempt;
 $viewobj->canedit = has_capability('mod/quiz:manage', $context);
 $viewobj->editurl = new moodle_url('/mod/quiz/edit.php', array('cmid' => $cm->id));
 $viewobj->backtocourseurl = new moodle_url('/course/view.php', array('id' => $course->id));
-$viewobj->startattempturl = $quizobj->start_remote_attempt_url();
+$viewobj->startattempturl = $quizobj->start_attempt_url();
 
 if ($accessmanager->is_preflight_check_required($unfinishedattemptid)) {
     $viewobj->preflightcheckform = $accessmanager->get_preflight_check_form(
@@ -222,12 +220,12 @@ if (!$viewobj->quizhasquestions) {
     }
 }
 
+$viewobj->showbacktocourse = ($viewobj->buttontext === '' &&
+    course_get_format($course)->has_view_page());
+
 if ($CFG->nonajax) {
     echo $OUTPUT->header();
 }
-
-// @TODO: $viewobj->showbacktocourse
-$viewobj->showbacktocourse = false;
 
 if (isguestuser()) {
     // Guests can't do a quiz, so offer them a choice of logging in or going back.
