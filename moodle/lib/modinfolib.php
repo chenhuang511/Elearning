@@ -560,7 +560,13 @@ class course_modinfo {
     protected static function build_course_section_cache($course) {
         global $DB;
         if (MOODLE_RUN_MODE == MOODLE_MODE_HUB) {
-            $sections = get_remote_course_sections($course->remoteid, true);
+            if (!isset($course->remoteid) || $course->remoteid == 0) {
+                $course = get_local_course_record($course->id, true);
+                $id = $course->remoteid;
+            } else {
+                $id = $course->remoteid;
+            }
+            $sections = get_remote_course_sections($id, 'section');
         } else {
             // Get section data
             $sections = $DB->get_records('course_sections', array('course' => $course->id), 'section',

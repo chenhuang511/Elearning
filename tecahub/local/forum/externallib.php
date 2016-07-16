@@ -1324,4 +1324,456 @@ class local_mod_forum_external extends external_api
             )
         );
     }
+
+    public static function forum_get_discussions_sql_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'sql' => new external_value(PARAM_RAW, 'the query sql'),
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'limitfrom' => new external_value(PARAM_INT, 'the limit from'),
+                'limitnum' => new external_value(PARAM_INT, 'the limit num')
+            )
+        );
+    }
+
+    public static function forum_get_discussions_sql($sql, $parameters, $limitfrom, $limitnum)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::forum_get_discussions_sql_parameters(), array(
+            'sql' => $sql,
+            'parameters' => $parameters,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+
+        if ($params['limitfrom'] == 0 && $params['limitnum'] == 0) {
+            $data = $DB->get_records_sql($params['sql'], $arr);
+        } else {
+            $data = $DB->get_records_sql($params['sql'], $arr, $params['limitfrom'], $params['limitnum']);
+        }
+
+        if (!$data) {
+            $data = array();
+        }
+
+        $result['data'] = $data;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function forum_get_discussions_sql_returns()
+    {
+        return new external_single_structure(
+            array(
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'the id of post'),
+                            'subject' => new external_value(PARAM_RAW, 'the subject of post'),
+                            'modified' => new external_value(PARAM_INT, 'the modified of post'),
+                            'discussion' => new external_value(PARAM_INT, 'the discussion of post'),
+                            'userid' => new external_value(PARAM_INT, 'the userid of post'),
+                            'name' => new external_value(PARAM_RAW, 'the name of discussion'),
+                            'timemodified' => new external_value(PARAM_INT, 'the time modified of discussion'),
+                            'usermodified' => new external_value(PARAM_INT, 'the user modified of discussion'),
+                            'groupid' => new external_value(PARAM_INT, 'the groupid of discussion'),
+                            'timestart' => new external_value(PARAM_INT, 'the time start of discussion'),
+                            'timeend' => new external_value(PARAM_INT, 'the time end of discussion'),
+                            'pinned' => new external_value(PARAM_INT, 'the pinned of discussion'),
+                            'firstnamephonetic' => new external_value(PARAM_RAW, 'the first name phonetic of user'),
+                            'lastnamephonetic' => new external_value(PARAM_RAW, 'the last name phonetic of user'),
+                            'middlename' => new external_value(PARAM_RAW, 'the middle name of user'),
+                            'alternatename' => new external_value(PARAM_RAW, 'the alternate name of user'),
+                            'firstname' => new external_value(PARAM_RAW, 'the first name of user'),
+                            'lastname' => new external_value(PARAM_RAW, 'the last name of user'),
+                            'email' => new external_value(PARAM_RAW, 'the email of user'),
+                            'picture' => new external_value(PARAM_RAW, 'the email of user'),
+                            'imagealt' => new external_value(PARAM_RAW, 'the email of user'),
+                            'umfirstnamephonetic' => new external_value(PARAM_RAW, 'the first name phonetic of user modified'),
+                            'umlastnamephonetic' => new external_value(PARAM_RAW, 'the last name phonetic of user modified'),
+                            'ummiddlename' => new external_value(PARAM_RAW, 'the middle name of user modified'),
+                            'umalternatename' => new external_value(PARAM_RAW, 'the alternate name of user modified'),
+                            'umfirstname' => new external_value(PARAM_RAW, 'the first name of user modified'),
+                            'umlastname' => new external_value(PARAM_RAW, 'the last name of user modified'),
+                            'umemail' => new external_value(PARAM_RAW, 'the email of user modified'),
+                            'umpicture' => new external_value(PARAM_RAW, 'the email of user modified'),
+                            'umimagealt' => new external_value(PARAM_RAW, 'the email of user modified'),
+                        )
+                    ), 'data'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_count_forum_sql_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'sql' => new external_value(PARAM_RAW, 'the query sql'),
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                )
+            )
+        );
+    }
+
+    public static function get_count_forum_sql($sql, $parameters)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_count_forum_sql_parameters(), array(
+            'sql' => $sql,
+            'parameters' => $parameters
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+
+        $count = $DB->get_field_sql($params['sql'], $arr);
+
+        $result['count'] = $count;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_count_forum_sql_returns()
+    {
+        return self::get_count_forum_by_returns();
+    }
+
+    public static function forum_count_discussion_replies_sql_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'sql' => new external_value(PARAM_RAW, 'the query sql'),
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'limitfrom' => new external_value(PARAM_INT, 'the limit from'),
+                'limitnum' => new external_value(PARAM_INT, 'the limit num')
+            )
+        );
+    }
+
+    public static function forum_count_discussion_replies_sql($sql, $parameters, $limitfrom, $limitnum)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::forum_count_discussion_replies_sql_parameters(), array(
+            'sql' => $sql,
+            'parameters' => $parameters,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['value']));
+        }
+
+        $result = array();
+
+        if ($params['limitfrom'] == 0 && $params['limitnum'] == 0) {
+            $replies = $DB->get_records_sql($params['sql'], $arr);
+        } else {
+            $replies = $DB->get_records_sql($params['sql'], $arr, $params['limitfrom'], $params['limitnum']);
+        }
+
+        if (!$replies) {
+            $replies = array();
+        }
+
+        $result['replies'] = $replies;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function forum_count_discussion_replies_sql_returns()
+    {
+        return new external_single_structure(
+            array(
+                'replies' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'discussion' => new external_value(PARAM_INT, 'the discussion id'),
+                            'replies' => new external_value(PARAM_INT, 'the count of reply'),
+                            'lastpostid' => new external_value(PARAM_INT, 'the last post id'),
+                        )
+                    ), 'reply data'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function forum_get_post_full_sql_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'sql' => new external_value(PARAM_RAW, 'the query sql'),
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                )
+            )
+        );
+    }
+
+    public static function forum_get_post_full_sql($sql, $parameters)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::forum_get_post_full_sql_parameters(), array(
+            'sql' => $sql,
+            'parameters' => $parameters
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['value']));
+        }
+
+        $result = array();
+
+        $post = $DB->get_record_sql($params['sql'], $arr);
+
+        if (!$post) {
+            $post = new stdClass();
+        }
+
+        $result['post'] = $post;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function forum_get_post_full_sql_returns()
+    {
+        return new external_single_structure(
+            array(
+                'post' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'the id'),
+                        'discussion' => new external_value(PARAM_INT, 'the discussion id'),
+                        'parent' => new external_value(PARAM_INT, 'the parent'),
+                        'userid' => new external_value(PARAM_INT, 'the user id'),
+                        'created' => new external_value(PARAM_INT, 'created'),
+                        'modified' => new external_value(PARAM_INT, 'modified'),
+                        'mailed' => new external_value(PARAM_INT, 'mailed'),
+                        'subject' => new external_value(PARAM_RAW, 'the subject'),
+                        'message' => new external_value(PARAM_RAW, 'the message'),
+                        'messageformat' => new external_value(PARAM_INT, 'message format'),
+                        'messagetrust' => new external_value(PARAM_INT, 'message trust'),
+                        'attachment' => new external_value(PARAM_RAW, 'attachment'),
+                        'totalscore' => new external_value(PARAM_INT, 'total score'),
+                        'mailnow' => new external_value(PARAM_INT, 'mail now'),
+                        'forum' => new external_value(PARAM_INT, 'the id of forum'),
+                        'firstnamephonetic' => new external_value(PARAM_RAW, 'the first name phonetic of user'),
+                        'lastnamephonetic' => new external_value(PARAM_RAW, 'the last name phonetic of user'),
+                        'middlename' => new external_value(PARAM_RAW, 'the middle name of user'),
+                        'alternatename' => new external_value(PARAM_RAW, 'the alternate name of user'),
+                        'firstname' => new external_value(PARAM_RAW, 'the first name of user'),
+                        'lastname' => new external_value(PARAM_RAW, 'the last name of user'),
+                        'email' => new external_value(PARAM_RAW, 'the email of user'),
+                        'picture' => new external_value(PARAM_RAW, 'the email of user'),
+                        'imagealt' => new external_value(PARAM_RAW, 'the email of user'),
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function forum_get_discussion_neighbours_sql_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'sql' => new external_value(PARAM_RAW, 'the query sql'),
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'strictness' => new external_value(PARAM_INT, 'the strictness')
+            )
+        );
+    }
+
+    public static function forum_get_discussion_neighbours_sql($sql, $parameters, $strictness)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::forum_get_discussion_neighbours_sql_parameters(), array(
+            'sql' => $sql,
+            'parameters' => $parameters,
+            'strictness' => $strictness
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+
+        $neighbour = $DB->get_record_sql($params['sql'], $arr, $params['strictness']);
+
+        if (!$neighbour) {
+            $neighbour = new stdClass();
+        }
+
+        $result['neighbour'] = $neighbour;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function forum_get_discussion_neighbours_sql_returns()
+    {
+        return new external_single_structure(
+            array(
+                'neighbour' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'the id of discussion'),
+                        'name' => new external_value(PARAM_RAW, 'the name of discussion'),
+                        'timemodified' => new external_value(PARAM_INT, 'the time modified'),
+                        'groupid' => new external_value(PARAM_INT, 'the group id'),
+                        'timestart' => new external_value(PARAM_INT, 'time start'),
+                        'timeend' => new external_value(PARAM_INT, 'time end')
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function forum_get_all_discussion_posts_sql_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'sql' => new external_value(PARAM_RAW, 'the query sql'),
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                )
+            )
+        );
+    }
+
+    public static function forum_get_all_discussion_posts_sql($sql, $parameters)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::forum_get_all_discussion_posts_sql_parameters(), array(
+            'sql' => $sql,
+            'parameters' => $parameters
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+
+        $posts = $DB->get_records_sql($params['sql'], $arr);
+
+        if (!$posts) {
+            $posts = array();
+        }
+
+        $result['posts'] = $posts;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function forum_get_all_discussion_posts_sql_returns()
+    {
+        return new external_single_structure(
+            array(
+                'posts' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'the id'),
+                            'discussion' => new external_value(PARAM_INT, 'the discussion id'),
+                            'parent' => new external_value(PARAM_INT, 'the parent'),
+                            'userid' => new external_value(PARAM_INT, 'the user id'),
+                            'created' => new external_value(PARAM_INT, 'created'),
+                            'modified' => new external_value(PARAM_INT, 'modified'),
+                            'mailed' => new external_value(PARAM_INT, 'mailed'),
+                            'subject' => new external_value(PARAM_RAW, 'the subject'),
+                            'message' => new external_value(PARAM_RAW, 'the message'),
+                            'messageformat' => new external_value(PARAM_INT, 'message format'),
+                            'messagetrust' => new external_value(PARAM_INT, 'message trust'),
+                            'attachment' => new external_value(PARAM_RAW, 'attachment'),
+                            'totalscore' => new external_value(PARAM_INT, 'total score'),
+                            'mailnow' => new external_value(PARAM_INT, 'mail now'),
+                            'firstnamephonetic' => new external_value(PARAM_RAW, 'the first name phonetic of user'),
+                            'lastnamephonetic' => new external_value(PARAM_RAW, 'the last name phonetic of user'),
+                            'middlename' => new external_value(PARAM_RAW, 'the middle name of user'),
+                            'alternatename' => new external_value(PARAM_RAW, 'the alternate name of user'),
+                            'firstname' => new external_value(PARAM_RAW, 'the first name of user'),
+                            'lastname' => new external_value(PARAM_RAW, 'the last name of user'),
+                            'email' => new external_value(PARAM_RAW, 'the email of user'),
+                            'picture' => new external_value(PARAM_RAW, 'the email of user'),
+                            'imagealt' => new external_value(PARAM_RAW, 'the email of user'),
+                        )
+                    ), 'data post'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

@@ -178,4 +178,52 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_forum_get_discussions_sql' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'forum_get_discussions_sql',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'get list obejct',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_count_forum_sql' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'get_count_forum_sql',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'Get count row of forum',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_forum_count_discussion_replies_sql' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'forum_count_discussion_replies_sql',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'Get list replies',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_forum_get_post_full_sql' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'forum_get_post_full_sql',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'Get full post',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_forum_get_discussion_neighbours_sql' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'forum_get_discussion_neighbours_sql',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'get discussion neighbours',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_forum_get_all_discussion_posts_sql' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'forum_get_all_discussion_posts_sql',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'get all discussion post',
+        'type' => 'read',
+        'ajax' => true
+    ),
 );
