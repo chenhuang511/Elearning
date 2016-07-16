@@ -186,4 +186,12 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_get_count_forum_sql' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'get_count_forum_sql',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'Get count row of forum',
+        'type' => 'read',
+        'ajax' => true
+    ),
 );
