@@ -210,4 +210,12 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_forum_get_discussion_neighbours_sql' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'forum_get_discussion_neighbours_sql',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'get discussion neighbours',
+        'type' => 'read',
+        'ajax' => true
+    ),
 );

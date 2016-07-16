@@ -1625,4 +1625,71 @@ class local_mod_forum_external extends external_api
             )
         );
     }
+
+    public static function forum_get_discussion_neighbours_sql_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'sql' => new external_value(PARAM_RAW, 'the query sql'),
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'strictness' => new external_value(PARAM_INT, 'the strictness')
+            )
+        );
+    }
+
+    public static function forum_get_discussion_neighbours_sql($sql, $parameters, $strictness)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::forum_get_discussion_neighbours_sql_parameters(), array(
+            'sql' => $sql,
+            'parameters' => $parameters,
+            'strictness' => $strictness
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+
+        $neighbour = $DB->get_record_sql($params['sql'], $arr, $params['strictness']);
+
+        if (!$neighbour) {
+            $neighbour = new stdClass();
+        }
+
+        $result['neighbour'] = $neighbour;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function forum_get_discussion_neighbours_sql_returns()
+    {
+        return new external_single_structure(
+            array(
+                'neighbour' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'the id of discussion'),
+                        'name' => new external_value(PARAM_RAW, 'the name of discussion'),
+                        'timemodified' => new external_value(PARAM_INT, 'the time modified'),
+                        'groupid' => new external_value(PARAM_INT, 'the group id'),
+                        'timestart' => new external_value(PARAM_INT, 'time start'),
+                        'timeend' => new external_value(PARAM_INT, 'time end')
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }
