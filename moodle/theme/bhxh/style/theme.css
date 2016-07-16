@@ -922,7 +922,8 @@ section#discussion-container.discussion.container div.discussion-body div#discus
     font-size: 16px;
 }
 
-#frontpage-course-list .coursebox .course-image .course-thumbnail > img {
+#frontpage-course-list .coursebox .course-image .course-thumbnail > img,
+#frontpage-course-list .coursebox .course-image a img {
     max-width: 100%;
     display: block;
 }

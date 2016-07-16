@@ -110,22 +110,23 @@ function get_assignfeedback_comments($gradeid) {
 /**
  * get value of assign plugin config
  *
- * @param int $dbparams['assignment'] . the assignment id
- * @param string $dbparams['plugin'] . plugin name
- * @param string $dbparams['subtype'] . subtype
- * @param string $dbparams['name'] . name
+ * @param int $assignment . the assignment id
  *
  * @return stdClass $value
  */
-function get_remote_assign_plugin_config($dbparams){
-    return moodle_webservice_client(
+function get_remote_assign_plugin_config($assignment){
+    $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_assign_get_plugin_config',
-            'params' => $dbparams
+            'params' => array(
+                'assignment' => $assignment
+            )
         ), false
     );
+
+    return $resp->pluginconfig;
 }
 
 /**

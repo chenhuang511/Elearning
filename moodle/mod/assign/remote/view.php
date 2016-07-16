@@ -4,6 +4,8 @@ require_once('../../../config.php');
 require_once($CFG->dirroot.'/mod/assign/locallib.php');
 require_once('locallib.php');
 
+global $DB;
+
 $id = required_param('id', PARAM_INT);
 $nonajax = optional_param('nonajax', true, PARAM_BOOL);
 
@@ -12,6 +14,26 @@ if (!$cm = get_remote_course_module_by_cmid("assign", $id)) {
 }
 if (!$course = get_local_course_record($cm->course)) {
     print_error('coursemisconf');
+}
+if (!$DB->get_record('assign', array('remoteid' => $cm->instance))){
+    // Get remote assign
+    $remoteassign = get_remote_assign_by_id($cm->instance);
+    // Check if not exist then insert local DB
+    unset($remoteassign->id);
+    $remoteassign->course = $course->id;
+    $remoteassign->remoteid = $cm->instance;
+    // From this point we make database changes, so start transaction.
+    $transaction = $DB->start_delegated_transaction();
+    // Insert assign config
+    $aid = $DB->insert_record('assign', $remoteassign);
+    // Insert plugin config
+    $pluginconfigs = get_remote_assign_plugin_config($cm->instance);
+    foreach ($pluginconfigs as $pluginconfig){
+        $pluginconfig->assignment = $aid;
+    }
+    $DB->insert_records('assign_plugin_config', $pluginconfigs);
+
+    $transaction->allow_commit();
 }
 
 require_login($course, false, $cm);

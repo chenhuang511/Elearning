@@ -322,9 +322,9 @@ abstract class assign_plugin {
         global $DB;
 
         $dbparams = array('assignment'=>$this->assignment->get_instance()->id,
-                          'subtype'=>$this->get_subtype(),
-                          'plugin'=>$this->get_type(),
-                          'name'=>$name);
+            'subtype'=>$this->get_subtype(),
+            'plugin'=>$this->get_type(),
+            'name'=>$name);
         $current = $DB->get_record('assign_plugin_config', $dbparams, '*', IGNORE_MISSING);
 
         if ($current) {
@@ -358,15 +358,9 @@ abstract class assign_plugin {
             $assignment = $this->assignment->get_instance();
             if ($assignment) {
                 $dbparams = array('assignment'=>$assignment->id,
-                                  'subtype'=>$this->get_subtype(),
-                                  'plugin'=>$this->get_type(),
-                                  'name'=>$setting);
-                if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-                    $result = get_remote_assign_plugin_config($dbparams);
-                    if ($result)
-                        return $result;
-                    return false;
-                }
+                    'subtype'=>$this->get_subtype(),
+                    'plugin'=>$this->get_type(),
+                    'name'=>$setting);
                 $result = $DB->get_record('assign_plugin_config', $dbparams, '*', IGNORE_MISSING);
                 if ($result) {
                     return $result->value;
@@ -375,8 +369,8 @@ abstract class assign_plugin {
             return false;
         }
         $dbparams = array('assignment'=>$this->assignment->get_instance()->id,
-                          'subtype'=>$this->get_subtype(),
-                           'plugin'=>$this->get_type());
+            'subtype'=>$this->get_subtype(),
+            'plugin'=>$this->get_type());
         $results = $DB->get_records('assign_plugin_config', $dbparams);
 
         $config = new stdClass();
@@ -598,22 +592,22 @@ abstract class assign_plugin {
         $filepath = is_null($filepath) ? '/' : $filepath;
         $filename = is_null($filename) ? '.' : $filename;
         if (!($storedfile = $fs->get_file($this->assignment->get_context()->id,
-                                          $this->get_subtype() . '_' . $this->get_type(),
-                                          $filearea,
-                                          $itemid,
-                                          $filepath,
-                                          $filename))) {
+            $this->get_subtype() . '_' . $this->get_type(),
+            $filearea,
+            $itemid,
+            $filepath,
+            $filename))) {
             return null;
         }
         return new file_info_stored($browser,
-                                    $this->assignment->get_context(),
-                                    $storedfile,
-                                    $urlbase,
-                                    $filearea,
-                                    $itemid,
-                                    true,
-                                    true,
-                                    false);
+            $this->assignment->get_context(),
+            $storedfile,
+            $urlbase,
+            $filearea,
+            $itemid,
+            true,
+            true,
+            false);
     }
 
     /**

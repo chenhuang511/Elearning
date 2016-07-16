@@ -1245,12 +1245,12 @@ class assign {
             return $this->instance;
         }
         if ($this->get_course_module()) {
-            $params = array('id' => $this->get_course_module()->instance);
-            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $params = array('id' => $this->get_course_module()->instance);
                 $this->instance = $DB->get_record('assign', $params, '*', MUST_EXIST);
+
             } else {
-                $this->instance = get_remote_assign_by_id_instanceid($params['id'], $this->get_context()->instanceid);
-                $this->instance->course = get_local_course_record($this->instance->course)->id;
+                $this->instance = get_local_assign_record($this->get_course_module()->instance);
             }
         }
         if (!$this->instance) {
@@ -5158,7 +5158,7 @@ class assign {
         global $CFG, $DB, $USER, $PAGE;
 
         $instance = $this->get_instance();
-
+             
         $o = '';
 
         $postfix = '';

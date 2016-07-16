@@ -250,22 +250,6 @@ $functions = array(
 		'type'		  => 'write',
 		'ajax'		  => true
 	),
-	'local_mod_assign_create_fakefile_on_hub' => array(
-		'classname'	  => 'local_mod_assign_external',
-		'methodname'  => 'create_fakefile_on_hub',
-		'classpath'	  => 'local/assignment/externallib.php',
-		'description' => "Create fakefile on hub",
-		'type'		  => 'write',
-		'ajax'		  => true
-	),
-	'local_mod_assign_delete_fakefile_on_hub' => array(
-		'classname'	  => 'local_mod_assign_external',
-		'methodname'  => 'delete_fakefile_on_hub',
-		'classpath'	  => 'local/assignment/externallib.php',
-		'description' => "Delete fakefile on hub",
-		'type'		  => 'write',
-		'ajax'		  => true
-	),
 	'local_mod_assign_get_remote_submission_info_for_participants' => array(
 		'classname'	  => 'local_mod_assign_external',
 		'methodname'  => 'get_remote_submission_info_for_participants',

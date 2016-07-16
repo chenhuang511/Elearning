@@ -457,12 +457,15 @@ function can_update_moduleinfo($cm) {
         $module = $DB->get_record('modules', array('id' => $cm->module), '*', MUST_EXIST);
         // Check the moduleinfo exists.
         $data = $DB->get_record($module->name, array('id' => $cm->instance), '*', MUST_EXIST);
-
         // Check the course section exists.
         $cw = $DB->get_record('course_sections', array('id' => $cm->section), '*', MUST_EXIST);
     } else {
         $module = get_remote_modules_by_id($cm->module);
-        $data = get_remote_course_module_by_instance($module->name, $cm->instance)->cm;
+        if ($module->name == 'assign'){
+            $data = get_local_assign_record($cm->instance);
+        } else{
+            $data = get_remote_course_module_by_instance($module->name, $cm->instance)->cm;
+        }
         $cw = get_remote_course_section_nav_by_section($cm->section);
     }
     return array($cm, $context, $module, $data, $cw);

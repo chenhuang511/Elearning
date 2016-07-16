@@ -1186,39 +1186,74 @@ class local_mod_assign_external extends external_api {
         );
     }
 
-    //MINHND 18/6/2016
+    /**
+     * Describes the parameters for create_assignfeedback_comments_parameters
+     *
+     * @return external_external_function_parameters
+     */
     public static function get_assign_plugin_config_parameters(){
         return new external_function_parameters(
             array(
                 'assignment' => new external_value(PARAM_INT, 'assignment id'),
-                'subtype' => new external_value(PARAM_RAW, 'sub type'),
-                'plugin' => new external_value(PARAM_RAW, 'plugin'),
-                'name' => new external_value(PARAM_RAW, 'name')
             )
         );
     }
-    
-    public static function get_assign_plugin_config($assignment, $subtype, $plugin, $name){
+
+    /**
+     * @param $assignment
+     * @return array
+     * @throws invalid_parameter_exception
+     */
+    public static function get_assign_plugin_config($assignment){
         global $DB;
+        
+        $result = array();
+        
+        $warnings = array();
         
         //Validate param
         $params = self::validate_parameters(self::get_assign_plugin_config_parameters(),
             array(
                 'assignment' => $assignment,
-                'subtype' => $subtype,
-                'plugin' => $plugin,
-                'name' => $name
             )
         );
         
-        $result = $DB->get_record('assign_plugin_config', $params, '*', IGNORE_MISSING);
-        if ($result->value)
-            return $result->value;
-        return 0;
+        $assignconfig = $DB->get_records('assign_plugin_config', array('assignment' => $params['assignment']));
+        
+        if ($assignconfig){
+            $result['pluginconfig'] = $assignconfig;
+        } else{
+            $result['pluginconfig'] = array();
+        }
+        
+        $result['warnings'] = $warnings;
+        
+        return $result;
     }
-    
+
+    /**
+     * Describes the get_assign_plugin_config_returns value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
     public static function get_assign_plugin_config_returns(){
-        return new external_value(PARAM_INT, 'value assign plugin');
+        return new external_single_structure(
+            array(
+                'pluginconfig' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'assignment' => new external_value(PARAM_INT, 'The id of assignment'),
+                            'plugin' => new external_value(PARAM_RAW, 'the type of plugin'),
+                            'subtype' => new external_value(PARAM_RAW, 'the subtype of plugin'),
+                            'name' => new external_value(PARAM_RAW, 'the name of plugin'),
+                            'value' => new external_value(PARAM_INT, 'the value of plugin'),
+                        )
+                    )
+                ),
+                'warnings'  => new external_warnings(),
+            )
+        );
     }
 
     // MINHND: Get comment status
@@ -2628,161 +2663,7 @@ class local_mod_assign_external extends external_api {
             )
         );
     }
-
-    /**
-     * Describes the parameters for create fakefile on hub
-     * @return external_external_function_parameters
-     */
-    public static function create_fakefile_on_hub_parameters(){
-        return new external_function_parameters(
-            array(
-                'fakefiles' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'contenthash' => new external_value(PARAM_RAW, 'content hash'),
-                            'pathnamehash' => new external_value(PARAM_RAW, 'pathname hash'),
-                            'instanceid' => new external_value(PARAM_INT, 'instance id'),
-                            'component' => new external_value(PARAM_RAW, 'component'),
-                            'filearea' => new external_value(PARAM_RAW, 'filearea'),
-                            'itemid' => new external_value(PARAM_INT, 'item id'),
-                            'filepath' => new external_value(PARAM_RAW, 'filepath'),
-                            'filename' => new external_value(PARAM_RAW, 'filename'),
-                            'userid' => new external_value(PARAM_INT, 'userid'),
-                            'filesize' => new external_value(PARAM_INT, 'filesize '),
-                            'mimetype' => new external_value(PARAM_RAW, 'mimetype'),
-                            'author' => new external_value(PARAM_RAW, 'author', VALUE_OPTIONAL),
-                            'license' => new external_value(PARAM_RAW, 'license', VALUE_OPTIONAL),
-                            'timecreated' => new external_value(PARAM_INT, 'timecreated'),
-                            'timemodified' => new external_value(PARAM_INT, 'timemodified'),
-                        )
-                    )
-                )
-            )
-        );
-    }
-
-    /**
-     * Returns file id.
-     *
-     * @param array params about information file
-     * @return idnumber of file just created
-     */
-    public static function create_fakefile_on_hub($fakefiles){
-        global $DB;
-
-        $warnings = array();
-
-        $result = array();
-
-        //Validate param
-        $params = self::validate_parameters(self::create_fakefile_on_hub_parameters(), array(
-            'fakefiles' => $fakefiles
-        ));
-        
-        foreach ($params['fakefiles'] as $fakefile){
-            $fakefile = (object)$fakefile;
-            
-            $context = $DB->get_record('context', array('instanceid' => $fakefile->instanceid));
-
-            $fakefile->contextid = $context->id;
-            $fakefile->source = $fakefile->filename;
-            unset($fakefiles->instanceid);
-
-            $result['fakefile'][]['fid'] = $DB->insert_record('files', $fakefile);
-        }
-
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    /**
-     * Describes the create_fakefile_on_hub return value.
-     *
-     * @return external_single_structure
-     * @since Moodle 3.1
-     */
-    public static function create_fakefile_on_hub_returns(){
-        return new external_single_structure(
-            array(
-                'fakefile' =>  new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'fid' => new external_value(PARAM_INT, 'file ID')
-                        )
-                    )
-                ), 
-                'warnings' => new external_warnings()
-            )
-        );
-    }
-
-    /**
-     * Describes the parameters for delete fakefile on hub
-     * @return external_external_function_parameters
-     */
-    public static function delete_fakefile_on_hub_parameters(){
-        return new external_function_parameters(
-            array(
-                'component' => new external_value(PARAM_RAW, 'component'),
-                'filearea' => new external_value(PARAM_RAW, 'filearea'),
-                'itemid' => new external_value(PARAM_INT, 'item id'),
-                'userid' => new external_value(PARAM_INT, 'userid'),
-            )
-        );
-    }
-
-    /**
-     * Delete fakefile on hub .
-     *
-     * @param $component component of file
-     * @param $filearea filearea of file
-     * @param $itemid item id
-     * @param $userid user id
-     * @return boolean $result
-     */
-    public static function delete_fakefile_on_hub($component, $filearea, $itemid, $userid){
-        global $DB;
-
-        $warnings = array();
-
-        $result = array();
-
-        //Validate param
-        $params = self::validate_parameters(self::delete_fakefile_on_hub_parameters(), array(
-            'component' => $component,
-            'filearea' => $filearea,
-            'itemid' => $itemid,
-            'userid' => $userid,
-        ));
-
-        $result['ret'] = $DB->delete_records('files', array(
-            'component' => $params['component'],
-            'filearea' => $params['filearea'],
-            'itemid' => $params['itemid'],
-            'userid' => $params['userid'],
-        ));
-
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    /**
-     * Describes the delele_fakefile_on_hub return value.
-     *
-     * @return external_single_structure
-     * @since Moodle 3.1
-     */
-    public static function delete_fakefile_on_hub_returns(){
-        return new external_single_structure(
-            array(
-                'ret' => new external_value(PARAM_BOOL, 'boolean'),
-                'warnings' => new external_warnings()
-            )
-        );
-    }
-
+    
     /**
      * Describes the parameters for get remote submission info for participant
      *
