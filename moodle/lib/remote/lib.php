@@ -2,6 +2,19 @@
 
 require_once($CFG->libdir . '/additionallib.php');
 
+
+/**
+ * func return array with changed key for multiple array[]=obj
+ * @param $id
+ * @return false|mixed
+ */
+function change_key_by_value($array = array(), $key = 'id') {
+    $keys = array_map(function ($ar) use ($key) {
+        return $ar->$key;
+    }, $array);
+    return array_combine($keys, $array);
+}
+
 function moodle_webservice_client($options, $usecache = true, $assoc = false)
 {
     global $CFG;
@@ -113,12 +126,7 @@ function get_remote_course_mods($courseid)
         )
     );
 
-    $retval = array();
-    foreach($resp as $val) {
-        $retval[$val->id] = $val;
-    }
-
-    return $retval;
+    return change_key_by_value($resp);
 }
 
 function get_remote_course_sections($courseid, $usesq = false)
@@ -145,11 +153,8 @@ function get_remote_course_sections($courseid, $usesq = false)
             break;
     }
 
-    if (!$usesq) {
-        $retval = array();
-        foreach ($sections as $val) {
-            $retval[$val->id] = $val;
-        }
+    if ($usesq) {
+        $retval = change_key_by_value($sections, $usesq);
     } else {
         $retval = $sections;
     }

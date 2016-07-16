@@ -13,22 +13,6 @@ require_once($CFG->dirroot . '/lib/remote/lib.php');
 require_once($CFG->dirroot . '/lib/additionallib.php');
 
 /**
- * func return array with changed key for multiple array[]=obj
- * @param $id
- * @return false|mixed
- */
-function change_key_by_value($array = array(), $key = ''){
-
-    if(empty($key)){
-       return $array;
-    }
-    $keys = array_map(function ($ar) use ($key) {
-       return $ar->$key;
-    }, $array);
-    return array_combine($keys, $array);
-}
-
-/**
  * func get questionnaire by id
  * @param $id
  * @return false|mixed
