@@ -1324,4 +1324,103 @@ class local_mod_forum_external extends external_api
             )
         );
     }
+
+    public static function forum_get_discussions_sql_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'sql' => new external_value(PARAM_RAW, 'the query sql'),
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'limitfrom' => new external_value(PARAM_INT, 'the limit from'),
+                'limitnum' => new external_value(PARAM_INT, 'the limit num')
+            )
+        );
+    }
+
+    public static function forum_get_discussions_sql($sql, $parameters, $limitfrom, $limitnum)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::forum_get_discussions_sql_parameters(), array(
+            'sql' => $sql,
+            'parameters' => $parameters,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+
+        if ($params['limitfrom'] == 0 && $params['limitnum'] == 0) {
+            $data = $DB->get_records_sql($params['sql'], $arr);
+        } else {
+            $data = $DB->get_records_sql($params['sql'], $arr, $params['limitfrom'], $params['limitnum']);
+        }
+
+        if (!$data) {
+            $data = array();
+        }
+
+        $result['data'] = $data;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function forum_get_discussions_sql_returns()
+    {
+        return new external_single_structure(
+            array(
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'the id of post'),
+                            'subject' => new external_value(PARAM_RAW, 'the subject of post'),
+                            'modified' => new external_value(PARAM_INT, 'the modified of post'),
+                            'discussion' => new external_value(PARAM_INT, 'the discussion of post'),
+                            'userid' => new external_value(PARAM_INT, 'the userid of post'),
+                            'name' => new external_value(PARAM_RAW, 'the name of discussion'),
+                            'timemodified' => new external_value(PARAM_INT, 'the time modified of discussion'),
+                            'usermodified' => new external_value(PARAM_INT, 'the user modified of discussion'),
+                            'groupid' => new external_value(PARAM_INT, 'the groupid of discussion'),
+                            'timestart' => new external_value(PARAM_INT, 'the time start of discussion'),
+                            'timeend' => new external_value(PARAM_INT, 'the time end of discussion'),
+                            'pinned' => new external_value(PARAM_INT, 'the pinned of discussion'),
+                            'firstnamephonetic' => new external_value(PARAM_RAW, 'the first name phonetic of user'),
+                            'lastnamephonetic' => new external_value(PARAM_RAW, 'the last name phonetic of user'),
+                            'middlename' => new external_value(PARAM_RAW, 'the middle name of user'),
+                            'alternatename' => new external_value(PARAM_RAW, 'the alternate name of user'),
+                            'firstname' => new external_value(PARAM_RAW, 'the first name of user'),
+                            'lastname' => new external_value(PARAM_RAW, 'the last name of user'),
+                            'email' => new external_value(PARAM_RAW, 'the email of user'),
+                            'picture' => new external_value(PARAM_RAW, 'the email of user'),
+                            'imagealt' => new external_value(PARAM_RAW, 'the email of user'),
+                            'umfirstnamephonetic' => new external_value(PARAM_RAW, 'the first name phonetic of user modified'),
+                            'umlastnamephonetic' => new external_value(PARAM_RAW, 'the last name phonetic of user modified'),
+                            'ummiddlename' => new external_value(PARAM_RAW, 'the middle name of user modified'),
+                            'umalternatename' => new external_value(PARAM_RAW, 'the alternate name of user modified'),
+                            'umfirstname' => new external_value(PARAM_RAW, 'the first name of user modified'),
+                            'umlastname' => new external_value(PARAM_RAW, 'the last name of user modified'),
+                            'umemail' => new external_value(PARAM_RAW, 'the email of user modified'),
+                            'umpicture' => new external_value(PARAM_RAW, 'the email of user modified'),
+                            'umimagealt' => new external_value(PARAM_RAW, 'the email of user modified'),
+                        )
+                    ), 'data'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

@@ -178,4 +178,12 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_forum_get_discussions_sql' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'forum_get_discussions_sql',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'get list obejct',
+        'type' => 'read',
+        'ajax' => true
+    ),
 );
