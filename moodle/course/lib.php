@@ -1000,7 +1000,14 @@ function get_array_of_activities($course) {
     global $CFG, $DB;
 
     if (MOODLE_RUN_MODE == MOODLE_MODE_HUB) {
-        $course = get_local_course_record($course->remoteid);
+        if (!isset($course->remoteid)) {
+            $id = $course->id;
+            $useid = true;
+        } else {
+            $id = $course->remoteid;
+            $useid = false;
+        }
+        $course = get_local_course_record($id, $useid);
     } else {
         $course = $DB->get_record('course', array('id'=>$course->id), "*", MUST_EXIST);
     }
@@ -1016,13 +1023,13 @@ function get_array_of_activities($course) {
         return $mod; // always return array
     }
 
-    $sections = get_remote_course_sections($course->remoteid);
+    $sections = get_remote_course_sections($course->remoteid, 'id');
     if ($sections) {
         // First check and correct obvious mismatches between course_sections.sequence and course_modules.section.
         if ($errormessages = course_integrity_check($course->id, $rawmods, $sections)) {
             debugging(join('<br>', $errormessages));
             $rawmods = get_course_mods($courseid);
-            $sections = get_remote_course_sections($courseid);
+            $sections = get_remote_course_sections($courseid, 'id');
         }
         // Build array of activities.
        foreach ($sections as $section) {

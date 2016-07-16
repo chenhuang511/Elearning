@@ -628,7 +628,7 @@ abstract class format_base {
                         ), '', 'id,name,value');
                 } else {
                     require_once($CFG->dirroot . '/course/remote/locallib.php');
-                    $records = get_remote_course_format_options($this->courseid, $this->format, $sectionid);
+                    $records = get_remote_course_format_options($this->courseid, $this->format, $sectionid, 'id');
                 }
                 foreach ($records as $record) {
                     if (array_key_exists($record->name, $this->formatoptions[$sectionid])) {
@@ -740,7 +740,7 @@ abstract class format_base {
                 ), '', 'name,id,value');
         } else {
             require_once($CFG->dirroot . '/course/remote/locallib.php');
-            $records = get_remote_course_format_options($this->courseid, $this->format, $sectionid);
+            $records = get_remote_course_format_options($this->courseid, $this->format, $sectionid, 'name');
         }
         $changed = $needrebuild = false;
         $data = (array)$data;
