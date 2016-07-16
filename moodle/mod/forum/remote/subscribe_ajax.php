@@ -46,7 +46,7 @@ $params['parameters[1][value]'] = $forumid;
 if (!$discussion = get_remote_forum_discussions_by($params)) {
     print_error('invaliddiscussionid', 'forum');
 }
-$cm = get_remote_course_module_by_instance('forum', $forum->id);
+$cm = get_remote_course_module_by_instance('forum', $forum->id)->cm;
 $context = context_module::instance($cm->id);
 
 require_sesskey();

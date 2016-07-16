@@ -167,7 +167,6 @@ function get_remote_list_forum_by($parameters, $sort = '', $limitfrom = 0, $limi
     return $forums;
 }
 
-
 function get_remote_list_forum_discussions_by($parameters, $sort = '', $limitfrom = 0, $limitnum = 0)
 {
     $result = moodle_webservice_client(
@@ -282,5 +281,107 @@ function check_remote_record_forum_exists($modname, $parameters)
     );
 
     return $result->status;
+}
+
+function get_remote_forum_get_discussions_sql($sql, $parameters, $limitfrom = 0, $limitnum = 0)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_forum_get_discussions_sql',
+            'params' => array_merge(array('sql' => $sql, 'limitfrom' => $limitfrom, 'limitnum' => $limitnum), $parameters)
+        )
+    );
+
+    $data = array();
+
+    foreach ($result->data as $d) {
+        $data[$d->id] = $d;
+    }
+
+    return $data;
+}
+
+function get_remote_count_forum_sql($sql, $parameters)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_count_forum_sql',
+            'params' => array_merge(array('sql' => $sql), $parameters)
+        )
+    );
+
+    return $result->count;
+}
+
+function get_remote_forum_count_discussion_replies_sql($sql, $parameters, $limitfrom = 0, $limitnum = 0)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_forum_count_discussion_replies_sql',
+            'params' => array_merge(array('sql' => $sql, 'limitfrom' => $limitfrom, 'limitnum' => $limitnum), $parameters)
+        )
+    );
+
+    $replies = array();
+
+    foreach ($result->replies as $reply) {
+        $replies[$reply->id] = $reply;
+    }
+
+    return $replies;
+}
+
+function get_remote_forum_get_post_full_sql($sql, $parameters)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_forum_get_post_full_sql',
+            'params' => array_merge(array('sql' => $sql), $parameters)
+        )
+    );
+
+    return $result->post;
+}
+
+function get_remote_forum_get_discussion_neighbours_sql($sql, $parameters, $strictness = IGNORE_MISSING)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_forum_get_discussion_neighbours_sql',
+            'params' => array_merge(array('sql' => $sql, 'strictness' => $strictness), $parameters)
+        )
+    );
+
+    return $result->neighbour;
+}
+
+function get_remote_forum_get_all_discussion_posts_sql($sql, $parameters)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_forum_get_all_discussion_posts_sql',
+            'params' => array_merge(array('sql' => $sql), $parameters)
+        )
+    );
+
+    $posts = array();
+
+    foreach ($result->posts as $post) {
+        $posts[$post->id] = $post;
+    }
+
+    return $posts;
 }
 

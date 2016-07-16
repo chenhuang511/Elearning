@@ -52,7 +52,7 @@ $course = get_local_course_record($discussion->course);
 $params['parameters[0][value]'] = $discussion->forum;
 
 $forum = get_remote_forum_by($params, '', true);
-$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id, false, MUST_EXIST);
+$cm = get_remote_course_module_by_instance('forum', $forum->id)->cm;
 
 require_course_login($course, true, $cm);
 

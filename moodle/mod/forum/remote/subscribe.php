@@ -71,7 +71,7 @@ $params['parameters[0][name]'] = "id";
 $params['parameters[0][value]'] = $id;
 $forum = get_remote_forum_by($params, '', true);
 $course = get_local_course_record($forum->course);
-$cm = get_remote_course_module_by_instance('forum', $forum->id);
+$cm = get_remote_course_module_by_instance('forum', $forum->id)->cm;
 $context = context_module::instance($cm->id);
 
 if ($user) {

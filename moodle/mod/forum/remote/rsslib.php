@@ -48,7 +48,7 @@ function forum_rss_get_feed($context, $args)
     }
 
     $forumid = clean_param($args[3], PARAM_INT);
-    $cm = get_remote_course_module_by_instance('forum', $forumid);
+    $cm = get_remote_course_module_by_instance('forum', $forumid)->cm;
     $modcontext = context_module::instance($cm->id);
 
     //context id from db should match the submitted one
@@ -324,7 +324,7 @@ function forum_rss_feed_contents($forum, $sql, $params, $context)
         $isdiscussion = false;
     }
 
-    if (!$cm = get_remote_course_module_by_instance('forum', $forum->id)) {
+    if (!$cm = get_remote_course_module_by_instance('forum', $forum->id)->cm) {
         print_error('invalidcoursemodule');
     }
 

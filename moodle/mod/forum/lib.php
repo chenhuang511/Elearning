@@ -1983,13 +1983,23 @@ function forum_get_post_full($postid)
     global $CFG, $DB;
 
     $allnames = get_all_user_name_fields(true, 'u');
-    $result = $DB->get_record_sql("SELECT p.*, d.forum, $allnames, u.email, u.picture, u.imagealt
+    $sql = "SELECT p.*, d.forum, $allnames, u.email, u.picture, u.imagealt
                              FROM {forum_posts} p
                                   JOIN {forum_discussions} d ON p.discussion = d.id
                                   LEFT JOIN {user} u ON p.userid = u.id
-                            WHERE p.id = ?", array($postid));
+                            WHERE p.id = ?";
 
-    return $result;
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $params = array();
+        $params['parameters[0][name]'] = "postid";
+        $params['parameters[0][value]'] = $postid;
+        $result = get_remote_forum_get_post_full_sql($sql, $params);
+        return $result;
+    } else {
+        $result = $DB->get_record_sql($sql, array($postid));
+        return $result;
+    }
+
 }
 
 /**
@@ -2019,14 +2029,28 @@ function forum_get_all_discussion_posts($discussionid, $sort, $tracking = false)
 
     $allnames = get_all_user_name_fields(true, 'u');
     $params[] = $discussionid;
-    if (!$posts = $DB->get_records_sql("SELECT p.*, $allnames, u.email, u.picture, u.imagealt $tr_sel
+    $sql = "SELECT p.*, $allnames, u.email, u.picture, u.imagealt $tr_sel
                                      FROM {forum_posts} p
                                           LEFT JOIN {user} u ON p.userid = u.id
                                           $tr_join
                                     WHERE p.discussion = ?
-                                 ORDER BY $sort", $params)
-    ) {
-        return array();
+                                 ORDER BY $sort";
+
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $prs = array();
+        $i = 0;
+        foreach ($params as $key => $val) {
+            $prs["parameters[$i][name]"] = $key;
+            $prs["parameters[$i][value]"] = $val;
+            $i++;
+        }
+        if (!$posts = get_remote_forum_get_all_discussion_posts_sql($sql, $prs)) {
+            return array();
+        }
+    } else {
+        if (!$posts = $DB->get_records_sql($sql, $params)) {
+            return array();
+        }
     }
 
     foreach ($posts as $pid => $p) {
@@ -2613,7 +2637,17 @@ function forum_count_discussion_replies($forumid, $forumsort = "", $limit = -1, 
                        JOIN {forum_discussions} d ON p.discussion = d.id
                  WHERE p.parent > 0 AND d.forum = ?
               GROUP BY p.discussion";
-        return $DB->get_records_sql($sql, array($forumid));
+
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $prs = array();
+            $prs['parameters[0][name]'] = "forum";
+            $prs['parameters[0][value]'] = $forumid;
+
+            $replies = get_remote_forum_count_discussion_replies_sql(sql, $prs);
+            return $replies;
+        } else {
+            return $DB->get_records_sql($sql, array($forumid));
+        }
 
     } else {
         $sql = "SELECT p.discussion, (COUNT(p.id) - 1) AS replies, MAX(p.id) AS lastpostid
@@ -2621,7 +2655,17 @@ function forum_count_discussion_replies($forumid, $forumsort = "", $limit = -1, 
                        JOIN {forum_discussions} d ON p.discussion = d.id
                  WHERE d.forum = ?
               GROUP BY p.discussion $groupby $orderby";
-        return $DB->get_records_sql($sql, array($forumid), $limitfrom, $limitnum);
+
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $prs = array();
+            $prs['parameters[0][name]'] = "forum";
+            $prs['parameters[0][value]'] = $forumid;
+
+            $replies = get_remote_forum_count_discussion_replies_sql(sql, $prs, $limitfrom, $limitnum);
+            return $replies;
+        } else {
+            return $DB->get_records_sql($sql, array($forumid), $limitfrom, $limitnum);
+        }
     }
 }
 
@@ -2856,7 +2900,21 @@ function forum_get_discussions($cm, $forumsort = "", $fullpost = true, $unused =
              WHERE d.forum = ? AND p.parent = 0
                    $timelimit $groupselect
           ORDER BY $forumsort, d.id DESC";
-    return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
+
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $prs = array();
+        $i = 0;
+        foreach ($params as $key => $val) {
+            $prs["parameters[$i][name]"] = $key;
+            $prs["parameters[$i][value]"] = $val;
+            $i++;
+        }
+
+        $data = get_remote_forum_get_discussions_sql($sql, $prs, $limitfrom, $limitnum);
+        return $data;
+    } else {
+        return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
+    }
 }
 
 /**
@@ -3002,8 +3060,20 @@ function forum_get_discussion_neighbours($cm, $discussion, $forum)
                          OR (d.pinned = 1 AND d.pinned <> :pinnedstate2))
                    ORDER BY CASE WHEN d.pinned = :pinnedstate3 THEN 1 ELSE 0 END DESC, $orderbyasc, d.id ASC";
 
-    $neighbours['prev'] = $DB->get_record_sql($prevsql, $params, IGNORE_MULTIPLE);
-    $neighbours['next'] = $DB->get_record_sql($nextsql, $params, IGNORE_MULTIPLE);
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $prs = array();
+        $i = 0;
+        foreach ($params as $key => $val) {
+            $prs["parameters[$i][name]"] = $key;
+            $prs["parameters[$i][value]"] = $val;
+            $i++;
+        }
+        $neighbours['prev'] = get_remote_forum_get_discussion_neighbours_sql($prevsql, $prs, IGNORE_MULTIPLE);
+        $neighbours['next'] = get_remote_forum_get_discussion_neighbours_sql($nextsql, $prs, IGNORE_MULTIPLE);
+    } else {
+        $neighbours['prev'] = $DB->get_record_sql($prevsql, $params, IGNORE_MULTIPLE);
+        $neighbours['next'] = $DB->get_record_sql($nextsql, $params, IGNORE_MULTIPLE);
+    }
     return $neighbours;
 }
 
@@ -3184,7 +3254,21 @@ function forum_get_discussions_count($cm)
              WHERE d.forum = ? AND p.parent = 0
                    $groupselect $timelimit";
 
-    return $DB->get_field_sql($sql, $params);
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $prs = array();
+        $i = 0;
+
+        foreach ($params as $key => $val) {
+            $prs["parameters[$i][name]"] = $key;
+            $prs["parameters[$i][value]"] = $val;
+            $i++;
+        }
+
+        $count = get_remote_count_forum_sql($sql, $prs);
+        return $count;
+    } else {
+        return $DB->get_field_sql($sql, $params);
+    }
 }
 
 
