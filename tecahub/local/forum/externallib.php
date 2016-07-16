@@ -99,30 +99,30 @@ class local_mod_forum_external extends external_api
             array(
                 'forum' => new external_single_structure(
                     array(
-                        'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
-                        'type' => new external_value(PARAM_TEXT, 'Page title'),
-                        'course' => new external_value(PARAM_INT, 'Foreign key reference to the course this page is part of.', VALUE_OPTIONAL),
-                        'name' => new external_value(PARAM_TEXT, 'Page name.'),
+                        'id' => new external_value(PARAM_INT, 'the forum id'),
+                        'course' => new external_value(PARAM_INT, 'the course id'),
+                        'type' => new external_value(PARAM_RAW, 'type'),
+                        'name' => new external_value(PARAM_RAW, 'forum name'),
                         'intro' => new external_value(PARAM_RAW, 'Page introduction text.'),
-                        'introformat' => new external_format_value(PARAM_INT, 'intro', VALUE_OPTIONAL),
-                        'assessed' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
-                        'assesstimestart' => new external_value(PARAM_INT, 'Foreign key reference to the course this quiz is part of.'),
-                        'assesstimefinish' => new external_value(PARAM_INT, 'Page introduction text.'),
-                        'scale' => new external_format_value(PARAM_INT, 'Display or Not', VALUE_OPTIONAL),
-                        'maxbytes' => new external_value(PARAM_INT, 'Page name.'),
-                        'maxattachments' => new external_value(PARAM_INT, 'Page name.'),
-                        'forcesubscribe' => new external_value(PARAM_INT, 'Page name.'),
-                        'trackingtype' => new external_value(PARAM_INT, 'Page name.'),
-                        'rsstype' => new external_value(PARAM_INT, 'Page name.'),
-                        'rssarticles' => new external_value(PARAM_INT, 'Page name.'),
-                        'warnafter' => new external_value(PARAM_INT, 'Page name.'),
-                        'blockafter' => new external_value(PARAM_INT, 'Page name.'),
-                        'blockperiod' => new external_value(PARAM_INT, 'Page name.'),
-                        'completiondiscussions' => new external_value(PARAM_INT, 'Page name.'),
-                        'completionreplies' => new external_value(PARAM_INT, 'Page name.'),
-                        'completionposts' => new external_value(PARAM_INT, 'Page name.'),
-                        'displaywordcount' => new external_value(PARAM_INT, 'Page name.'),
-                        'timemodified' => new external_format_value(PARAM_INT, 'intro', VALUE_OPTIONAL)
+                        'introformat' => new external_format_value(PARAM_INT, 'intro format', VALUE_OPTIONAL),
+                        'assessed' => new external_value(PARAM_INT, 'assessed'),
+                        'assesstimestart' => new external_value(PARAM_INT, 'assess time start'),
+                        'assesstimefinish' => new external_value(PARAM_INT, 'assess time finish'),
+                        'scale' => new external_format_value(PARAM_INT, 'scale'),
+                        'maxbytes' => new external_value(PARAM_INT, 'max bytes'),
+                        'maxattachments' => new external_value(PARAM_INT, 'max attachments'),
+                        'forcesubscribe' => new external_value(PARAM_INT, 'force subscribe'),
+                        'trackingtype' => new external_value(PARAM_INT, 'tracking type'),
+                        'rsstype' => new external_value(PARAM_INT, 'rss type'),
+                        'rssarticles' => new external_value(PARAM_INT, 'rss articles'),
+                        'timemodified' => new external_format_value(PARAM_INT, 'time modified'),
+                        'warnafter' => new external_value(PARAM_INT, 'warn after'),
+                        'blockafter' => new external_value(PARAM_INT, 'block after'),
+                        'blockperiod' => new external_value(PARAM_INT, 'block period'),
+                        'completiondiscussions' => new external_value(PARAM_INT, 'completion discussions'),
+                        'completionreplies' => new external_value(PARAM_INT, 'completion replies'),
+                        'completionposts' => new external_value(PARAM_INT, 'completion posts'),
+                        'displaywordcount' => new external_value(PARAM_INT, 'display word count')
                     )
                 ),
                 'warnings' => new external_warnings()
@@ -202,6 +202,77 @@ class local_mod_forum_external extends external_api
                         'timestart' => new external_value(PARAM_INT, 'time start'),
                         'timeend' => new external_value(PARAM_INT, 'time end'),
                         'pinned' => new external_value(PARAM_INT, 'pinned')
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_forum_discussion_subs_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'sort' => new external_value(PARAM_RAW, 'sort'),
+                'mustexists' => new external_value(PARAM_BOOL, 'must exists')
+            )
+        );
+    }
+
+    public static function get_forum_discussion_subs_by($parameters, $sort, $mustexists)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_forum_discussion_subs_by_parameters(), array(
+            'parameters' => $parameters,
+            'sort' => $sort,
+            'mustexists' => $mustexists
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+
+        if ($params['mustexists'] === FALSE) {
+            $sub = $DB->get_record("forum_discussion_subs", $arr);
+        } else if ($params['mustexists'] === FALSE && $params['sort'] != '') {
+            $sub = $DB->get_record("forum_discussion_subs", $arr, $params['sort']);
+        } else {
+            $sub = $DB->get_record("forum_discussion_subs", $arr, '*', MUST_EXIST);
+        }
+
+        if (!$sub) {
+            $sub = new stdClass();
+        }
+
+        $result['sub'] = $sub;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    public static function get_forum_discussion_subs_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'sub' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'the id'),
+                        'forum' => new external_value(PARAM_INT, 'the forum id'),
+                        'userid' => new external_value(PARAM_INT, 'the user id'),
+                        'discussion' => new external_value(PARAM_INT, 'the discussion id'),
+                        'preference' => new external_value(PARAM_INT, 'the preference')
                     )
                 ),
                 'warnings' => new external_warnings()
@@ -422,6 +493,243 @@ class local_mod_forum_external extends external_api
                         'userid' => new external_value(PARAM_INT, 'the user id'),
                         'forumid' => new external_value(PARAM_INT, 'created')
                     )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_forum_subscriptions_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'sort' => new external_value(PARAM_RAW, 'sort'),
+                'mustexists' => new external_value(PARAM_BOOL, 'must exists')
+            )
+        );
+    }
+
+    public static function get_forum_subscriptions_by($parameters, $sort, $mustexists)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_forum_subscriptions_by_parameters(), array(
+            'parameters' => $parameters,
+            'sort' => $sort,
+            'mustexists' => $mustexists
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+
+        if ($params['mustexists'] === FALSE) {
+            $subscription = $DB->get_record("forum_subscriptions", $arr);
+        } else if ($params['mustexists'] === FALSE && $params['sort'] != '') {
+            $subscription = $DB->get_record("forum_subscriptions", $arr, $params['sort']);
+        } else {
+            $subscription = $DB->get_record("forum_subscriptions", $arr, '*', MUST_EXIST);
+        }
+
+        if (!$subscription) {
+            $subscription = new stdClass();
+        }
+
+        $result['subscription'] = $subscription;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    public static function get_forum_subscriptions_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'subscription' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'the id'),
+                        'userid' => new external_value(PARAM_INT, 'the user id'),
+                        'forum' => new external_value(PARAM_INT, 'the forum')
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_scale_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'sort' => new external_value(PARAM_RAW, 'sort'),
+                'mustexists' => new external_value(PARAM_BOOL, 'must exists')
+            )
+        );
+    }
+
+    public static function get_scale_by($parameters, $sort, $mustexists)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_scale_by_parameters(), array(
+            'parameters' => $parameters,
+            'sort' => $sort,
+            'mustexists' => $mustexists
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+
+        if ($params['mustexists'] === FALSE) {
+            $scale = $DB->get_record("scale", $arr);
+        } else if ($params['mustexists'] === FALSE && $params['sort'] != '') {
+            $scale = $DB->get_record("scale", $arr, $params['sort']);
+        } else {
+            $scale = $DB->get_record("scale", $arr, '*', MUST_EXIST);
+        }
+
+        if (!$scale) {
+            $scale = new stdClass();
+        }
+
+        $result['scale'] = $scale;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    public static function get_scale_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'scale' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'the id'),
+                        'courseid' => new external_value(PARAM_INT, 'the course id'),
+                        'userid' => new external_value(PARAM_INT, 'the user id'),
+                        'name' => new external_value(PARAM_RAW, 'the name'),
+                        'scale' => new external_value(PARAM_RAW, 'the scale'),
+                        'description' => new external_value(PARAM_RAW, 'the description'),
+                        'descriptionformat' => new external_value(PARAM_INT, 'description format'),
+                        'timemodified' => new external_value(PARAM_INT, 'time modified')
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_list_forum_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'sort' => new external_value(PARAM_RAW, 'sort'),
+                'limitfrom' => new external_value(PARAM_INT, 'limit from'),
+                'limitnum' => new external_value(PARAM_INT, 'limit num')
+            )
+        );
+    }
+
+    public static function get_list_forum_by($parameters, $sort, $limitfrom, $limitnum)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_list_forum_by_parameters(), array(
+            'parameters' => $parameters,
+            'sort' => $sort,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+        if (($params['limitfrom'] == 0 && $params['limitnum'] == 0) && $params['sort'] == '') {
+            $forums = $DB->get_records("forum", $arr);
+        } else if (($params['limitfrom'] == 0 && $params['limitnum'] == 0) && $params['sort'] != '') {
+            $forums = $DB->get_records("forum", $arr, $params['sort']);
+        } else {
+            $forums = $DB->get_records("forum", $arr, $params['sort'], '*', $params['limitfrom'], $params['limitnum']);
+        }
+
+        if (!$forums) {
+            $forums = array();
+        }
+
+        $result['forums'] = $forums;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_list_forum_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'forums' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'the forum id'),
+                            'course' => new external_value(PARAM_INT, 'the course id'),
+                            'type' => new external_value(PARAM_RAW, 'type'),
+                            'name' => new external_value(PARAM_RAW, 'forum name'),
+                            'intro' => new external_value(PARAM_RAW, 'Page introduction text.'),
+                            'introformat' => new external_format_value(PARAM_INT, 'intro format', VALUE_OPTIONAL),
+                            'assessed' => new external_value(PARAM_INT, 'assessed'),
+                            'assesstimestart' => new external_value(PARAM_INT, 'assess time start'),
+                            'assesstimefinish' => new external_value(PARAM_INT, 'assess time finish'),
+                            'scale' => new external_format_value(PARAM_INT, 'scale'),
+                            'maxbytes' => new external_value(PARAM_INT, 'max bytes'),
+                            'maxattachments' => new external_value(PARAM_INT, 'max attachments'),
+                            'forcesubscribe' => new external_value(PARAM_INT, 'force subscribe'),
+                            'trackingtype' => new external_value(PARAM_INT, 'tracking type'),
+                            'rsstype' => new external_value(PARAM_INT, 'rss type'),
+                            'rssarticles' => new external_value(PARAM_INT, 'rss articles'),
+                            'timemodified' => new external_format_value(PARAM_INT, 'time modified'),
+                            'warnafter' => new external_value(PARAM_INT, 'warn after'),
+                            'blockafter' => new external_value(PARAM_INT, 'block after'),
+                            'blockperiod' => new external_value(PARAM_INT, 'block period'),
+                            'completiondiscussions' => new external_value(PARAM_INT, 'completion discussions'),
+                            'completionreplies' => new external_value(PARAM_INT, 'completion replies'),
+                            'completionposts' => new external_value(PARAM_INT, 'completion posts'),
+                            'displaywordcount' => new external_value(PARAM_INT, 'display word count')
+                        )
+                    ), 'forum discussions'
                 ),
                 'warnings' => new external_warnings()
             )

@@ -130,15 +130,6 @@ function quiz_remote_validate_new_attempt(quiz $quizobj, quiz_access_manager $ac
         $quizobj->require_capability('mod/quiz:attempt');
     }
 
-    // Check to see if a new preview was requested.
-    if ($quizobj->is_preview_user() && $forcenew) {
-        // To force the creation of a new preview, we mark the current attempt (if any)
-        // as finished. It will then automatically be deleted below.
-        //@ TODO ????
-//        $DB->set_field('quiz_attempts', 'state', quiz_attempt::FINISHED,
-//            array('quiz' => $quizobj->get_quizid(), 'userid' => $USER->id));
-    }
-
     // Look for an existing attempt.
     //get user mapping
     $user = get_remote_mapping_user();
@@ -152,12 +143,8 @@ function quiz_remote_validate_new_attempt(quiz $quizobj, quiz_access_manager $ac
         $currentattemptid = $lastattempt->id;
         $messages = $accessmanager->prevent_access();
 
-        // If the attempt is now overdue, deal with that.
-        // @TODO $quizobj->create_attempt_object($lastattempt)->handle_if_time_expired($timenow, true);
-
         // And, if the attempt is now no longer in progress, redirect to the appropriate place.
         if ($lastattempt->state == quiz_attempt::ABANDONED || $lastattempt->state == quiz_attempt::FINISHED) {
-            // ???
             if ($redirect) {
                 redirect($quizobj->review_url($lastattempt->id));
             } else {
