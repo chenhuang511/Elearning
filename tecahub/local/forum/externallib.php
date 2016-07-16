@@ -1577,7 +1577,7 @@ class local_mod_forum_external extends external_api
 
         $result = array();
 
-        $post = $DB->get_records_sql($params['sql'], $arr);
+        $post = $DB->get_record_sql($params['sql'], $arr);
 
         if (!$post) {
             $post = new stdClass();
