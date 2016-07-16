@@ -194,4 +194,12 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_forum_count_discussion_replies_sql' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'forum_count_discussion_replies_sql',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'Get list replies',
+        'type' => 'read',
+        'ajax' => true
+    ),
 );

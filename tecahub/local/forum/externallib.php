@@ -1470,4 +1470,76 @@ class local_mod_forum_external extends external_api
     {
         return self::get_count_forum_by_returns();
     }
+
+    public static function forum_count_discussion_replies_sql_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'sql' => new external_value(PARAM_RAW, 'the query sql'),
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'limitfrom' => new external_value(PARAM_INT, 'the limit from'),
+                'limitnum' => new external_value(PARAM_INT, 'the limit num')
+            )
+        );
+    }
+
+    public static function forum_count_discussion_replies_sql($sql, $parameters, $limitfrom, $limitnum)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::forum_count_discussion_replies_sql_parameters(), array(
+            'sql' => $sql,
+            'parameters' => $parameters,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['value']));
+        }
+
+        $result = array();
+
+        if ($params['limitfrom'] == 0 && $params['limitnum'] == 0) {
+            $replies = $DB->get_records_sql($params['sql'], $arr);
+        } else {
+            $replies = $DB->get_records_sql($params['sql'], $arr, $params['limitfrom'], $params['limitnum']);
+        }
+
+        if(!$replies) {
+            $replies = array();
+        }
+
+        $result['replies'] = $replies;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function forum_count_discussion_replies_sql_returns()
+    {
+        return new external_single_structure(
+            array(
+                'replies' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'discussion' => new external_value(PARAM_INT, 'the discussion id'),
+                            'replies' => new external_value(PARAM_INT, 'the count of reply'),
+                            'lastpostid' => new external_value(PARAM_INT, 'the last post id'),
+                        )
+                    ), 'reply data'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }
