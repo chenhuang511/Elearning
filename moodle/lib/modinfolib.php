@@ -561,7 +561,8 @@ class course_modinfo {
         global $DB;
         if (MOODLE_RUN_MODE == MOODLE_MODE_HUB) {
             if (!isset($course->remoteid) || $course->remoteid == 0) {
-                $id = $course->id;
+                $course = get_local_course_record($course->id, true);
+                $id = $course->remoteid;
             } else {
                 $id = $course->remoteid;
             }
