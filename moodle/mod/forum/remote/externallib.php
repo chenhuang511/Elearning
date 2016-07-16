@@ -226,7 +226,7 @@ class mod_forum_external extends external_api {
         $modcontext = context_module::instance($cm->id);
         self::validate_context($modcontext);
 
-        // This require must be here, see mod/forum/discuss.php.
+        // This require must be here, see mod/forum/remote/discuss.php.
         require_once($CFG->dirroot . "/mod/forum/lib.php");
 
         // Check they have the view forum capability.

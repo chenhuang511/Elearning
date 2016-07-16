@@ -25,6 +25,8 @@
 namespace mod_forum;
 
 defined('MOODLE_INTERNAL') || die();
+require_once($CFG->dirroot . '/mod/forum/remote/locallib.php');
+require_once($CFG->dirroot . '/course/remote/locallib.php');
 
 /**
  * Forum subscription manager.
@@ -32,7 +34,8 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2014 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class subscriptions {
+class subscriptions
+{
 
     /**
      * The status value for an unsubscribed discussion.
@@ -100,7 +103,8 @@ class subscriptions {
      * @param $cm The coursemodule record. If not supplied, this will be calculated using get_fast_modinfo instead.
      * @return boolean
      */
-    public static function is_subscribed($userid, $forum, $discussionid = null, $cm = null) {
+    public static function is_subscribed($userid, $forum, $discussionid = null, $cm = null)
+    {
         // If forum is force subscribed and has allowforcesubscribe, then user is subscribed.
         if (self::is_forcesubscribed($forum)) {
             if (!$cm) {
@@ -132,7 +136,8 @@ class subscriptions {
      * @param \stdClass $forum The record of the forum to test
      * @return boolean
      */
-    protected static function is_subscribed_to_forum($userid, $forum) {
+    protected static function is_subscribed_to_forum($userid, $forum)
+    {
         return self::fetch_subscription_cache($forum->id, $userid);
     }
 
@@ -143,7 +148,8 @@ class subscriptions {
      * @param \stdClass $forum The record of the forum to test
      * @return bool
      */
-    public static function is_forcesubscribed($forum) {
+    public static function is_forcesubscribed($forum)
+    {
         return ($forum->forcesubscribe == FORUM_FORCESUBSCRIBE);
     }
 
@@ -153,7 +159,8 @@ class subscriptions {
      * @param \stdClass $forum The record of the forum to test
      * @return bool
      */
-    public static function subscription_disabled($forum) {
+    public static function subscription_disabled($forum)
+    {
         return ($forum->forcesubscribe == FORUM_DISALLOWSUBSCRIBE);
     }
 
@@ -163,9 +170,10 @@ class subscriptions {
      * @param \stdClass $forum The record of the forum to test
      * @return bool
      */
-    public static function is_subscribable($forum) {
+    public static function is_subscribable($forum)
+    {
         return (!\mod_forum\subscriptions::is_forcesubscribed($forum) &&
-                !\mod_forum\subscriptions::subscription_disabled($forum));
+            !\mod_forum\subscriptions::subscription_disabled($forum));
     }
 
     /**
@@ -177,9 +185,17 @@ class subscriptions {
      * @param int $status The new subscription state
      * @return bool
      */
-    public static function set_subscription_mode($forumid, $status = 1) {
+    public static function set_subscription_mode($forumid, $status = 1)
+    {
         global $DB;
-        return $DB->set_field("forum", "forcesubscribe", $status, array("id" => $forumid));
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $params = array();
+            $params['parameters[0][name]'] = "id";
+            $params['parameters[0][value]'] = $forumid;
+            return get_remote_field_forum_by("forum", $params, "forcesubscribe");
+        } else {
+            return $DB->set_field("forum", "forcesubscribe", $status, array("id" => $forumid));
+        }
     }
 
     /**
@@ -188,7 +204,8 @@ class subscriptions {
      * @param \stdClass $forum The record of the forum to set
      * @return int The forum subscription mode
      */
-    public static function get_subscription_mode($forum) {
+    public static function get_subscription_mode($forum)
+    {
         return $forum->forcesubscribe;
     }
 
@@ -197,7 +214,8 @@ class subscriptions {
      *
      * @return array An array of unsubscribable forums
      */
-    public static function get_unsubscribable_forums() {
+    public static function get_unsubscribable_forums()
+    {
         global $USER, $DB;
 
         // Get courses that $USER is enrolled in and can see.
@@ -207,7 +225,7 @@ class subscriptions {
         }
 
         $courseids = array();
-        foreach($courses as $course) {
+        foreach ($courses as $course) {
             $courseids[] = $course->id;
         }
         list($coursesql, $courseparams) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED, 'c');
@@ -225,14 +243,14 @@ class subscriptions {
                 AND cm.course
                 $coursesql";
         $params = array_merge($courseparams, array(
-            'modulename'=>'forum',
+            'modulename' => 'forum',
             'userid' => $USER->id,
             'forcesubscribe' => FORUM_FORCESUBSCRIBE,
         ));
         $forums = $DB->get_recordset_sql($sql, $params);
 
         $unsubscribableforums = array();
-        foreach($forums as $forum) {
+        foreach ($forums as $forum) {
             if (empty($forum->visible)) {
                 // The forum is hidden - check if the user can view the forum.
                 $context = \context_module::instance($forum->cm);
@@ -258,7 +276,8 @@ class subscriptions {
      * @param string $sort sort order. As for get_users_by_capability.
      * @return array list of users.
      */
-    public static function get_potential_subscribers($context, $groupid, $fields, $sort = '') {
+    public static function get_potential_subscribers($context, $groupid, $fields, $sort = '')
+    {
         global $DB;
 
         // Only active enrolled users or everybody on the frontpage.
@@ -283,7 +302,8 @@ class subscriptions {
      * @param int $userid The user ID
      * @return boolean
      */
-    public static function fetch_subscription_cache($forumid, $userid) {
+    public static function fetch_subscription_cache($forumid, $userid)
+    {
         if (isset(self::$forumcache[$userid]) && isset(self::$forumcache[$userid][$forumid])) {
             return self::$forumcache[$userid][$forumid];
         }
@@ -306,7 +326,8 @@ class subscriptions {
      * @param int $userid The user ID
      * @return void
      */
-    public static function fill_subscription_cache($forumid, $userid = null) {
+    public static function fill_subscription_cache($forumid, $userid = null)
+    {
         global $DB;
 
         if (!isset(self::$fetchedforums[$forumid])) {
@@ -317,10 +338,20 @@ class subscriptions {
                 }
 
                 if (!isset(self::$forumcache[$userid][$forumid])) {
-                    if ($DB->record_exists('forum_subscriptions', array(
-                        'userid' => $userid,
-                        'forum' => $forumid,
-                    ))) {
+                    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+                        $params = array();
+                        $params['parameters[0][name]'] = "userid";
+                        $params['parameters[0][value]'] = $userid;
+                        $params['parameters[1][name]'] = "forum";
+                        $params['parameters[1][value]'] = $forumid;
+                        $isexists = check_remote_record_forum_exists("forum_subscriptions", $params);
+                    } else {
+                        $isexists = $DB->record_exists('forum_subscriptions', array(
+                            'userid' => $userid,
+                            'forum' => $forumid,
+                        ));
+                    }
+                    if ($isexists) {
                         self::$forumcache[$userid][$forumid] = true;
                     } else {
                         self::$forumcache[$userid][$forumid] = false;
@@ -349,7 +380,8 @@ class subscriptions {
      * @param int $userid The user ID
      * @return void
      */
-    public static function fill_subscription_cache_for_course($courseid, $userid) {
+    public static function fill_subscription_cache_for_course($courseid, $userid)
+    {
         global $DB;
 
         if (!isset(self::$forumcache[$userid])) {
@@ -387,12 +419,13 @@ class subscriptions {
      * @return array list of users.
      */
     public static function fetch_subscribed_users($forum, $groupid = 0, $context = null, $fields = null,
-            $includediscussionsubscriptions = false) {
+                                                  $includediscussionsubscriptions = false)
+    {
         global $CFG, $DB;
 
         if (empty($fields)) {
             $allnames = get_all_user_name_fields(true, 'u');
-            $fields ="u.id,
+            $fields = "u.id,
                       u.username,
                       $allnames,
                       u.maildisplay,
@@ -476,7 +509,8 @@ class subscriptions {
      * @param int $userid The user ID
      * @return array of stdClass objects with one per discussion in the forum.
      */
-    public static function fetch_discussion_subscription($forumid, $userid = null) {
+    public static function fetch_discussion_subscription($forumid, $userid = null)
+    {
         self::fill_discussion_subscription_cache($forumid, $userid);
 
         if (!isset(self::$forumdiscussioncache[$userid]) || !isset(self::$forumdiscussioncache[$userid][$forumid])) {
@@ -496,7 +530,8 @@ class subscriptions {
      * @param int $userid The user ID
      * @return void
      */
-    public static function fill_discussion_subscription_cache($forumid, $userid = null) {
+    public static function fill_discussion_subscription_cache($forumid, $userid = null)
+    {
         global $DB;
 
         if (!isset(self::$discussionfetchedforums[$forumid])) {
@@ -538,7 +573,8 @@ class subscriptions {
      * @param int $discussion The ID of the discussion that this preference relates to
      * @param int $preference The preference to store
      */
-    protected static function add_to_discussion_cache($forumid, $userid, $discussion, $preference) {
+    protected static function add_to_discussion_cache($forumid, $userid, $discussion, $preference)
+    {
         if (!isset(self::$forumdiscussioncache[$userid])) {
             self::$forumdiscussioncache[$userid] = array();
         }
@@ -556,7 +592,8 @@ class subscriptions {
      * This cache is used to reduce the number of database queries when
      * checking forum discussion subscription states.
      */
-    public static function reset_discussion_cache() {
+    public static function reset_discussion_cache()
+    {
         self::$forumdiscussioncache = array();
         self::$discussionfetchedforums = array();
     }
@@ -567,7 +604,8 @@ class subscriptions {
      * This cache is used to reduce the number of database queries when
      * checking forum subscription states.
      */
-    public static function reset_forum_cache() {
+    public static function reset_forum_cache()
+    {
         self::$forumcache = array();
         self::$fetchedforums = array();
     }
@@ -584,7 +622,8 @@ class subscriptions {
      * @return bool|int Returns true if the user is already subscribed, or the forum_subscriptions ID if the user was
      *     successfully subscribed.
      */
-    public static function subscribe_user($userid, $forum, $context = null, $userrequest = false) {
+    public static function subscribe_user($userid, $forum, $context = null, $userrequest = false)
+    {
         global $DB;
 
         if (self::is_subscribed($userid, $forum)) {
@@ -592,19 +631,28 @@ class subscriptions {
         }
 
         $sub = new \stdClass();
-        $sub->userid  = $userid;
+        $sub->userid = $userid;
         $sub->forum = $forum->id;
 
-        $result = $DB->insert_record("forum_subscriptions", $sub);
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $data = array();
+            $data['data[0][name]'] = "userid";
+            $data['data[0][value]'] = $userid;
+            $data['data[1][name]'] = "forum";
+            $data['data[1][value]'] = $forum->id;
+            $result = save_remote_mdl_forum("forum_subscriptions", $data);
+        } else {
+            $result = $DB->insert_record("forum_subscriptions", $sub);
+        }
 
         if ($userrequest) {
             $discussionsubscriptions = $DB->get_recordset('forum_discussion_subs', array('userid' => $userid, 'forum' => $forum->id));
             $DB->delete_records_select('forum_discussion_subs',
-                    'userid = :userid AND forum = :forumid AND preference <> :preference', array(
-                        'userid' => $userid,
-                        'forumid' => $forum->id,
-                        'preference' => self::FORUM_DISCUSSION_UNSUBSCRIBED,
-                    ));
+                'userid = :userid AND forum = :forumid AND preference <> :preference', array(
+                    'userid' => $userid,
+                    'forumid' => $forum->id,
+                    'preference' => self::FORUM_DISCUSSION_UNSUBSCRIBED,
+                ));
 
             // Reset the subscription caches for this forum.
             // We know that the there were previously entries and there aren't any more.
@@ -628,7 +676,7 @@ class subscriptions {
             'other' => array('forumid' => $forum->id),
 
         );
-        $event  = event\subscription_created::create($params);
+        $event = event\subscription_created::create($params);
         if ($userrequest && $discussionsubscriptions) {
             foreach ($discussionsubscriptions as $subscription) {
                 $event->add_record_snapshot('forum_discussion_subs', $subscription);
@@ -651,22 +699,57 @@ class subscriptions {
      *     discussion subscriptions are removed too.
      * @return boolean Always returns true.
      */
-    public static function unsubscribe_user($userid, $forum, $context = null, $userrequest = false) {
+    public static function unsubscribe_user($userid, $forum, $context = null, $userrequest = false)
+    {
         global $DB;
 
         $sqlparams = array(
             'userid' => $userid,
             'forum' => $forum->id,
         );
-        $DB->delete_records('forum_digests', $sqlparams);
 
-        if ($forumsubscription = $DB->get_record('forum_subscriptions', $sqlparams)) {
-            $DB->delete_records('forum_subscriptions', array('id' => $forumsubscription->id));
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $params = array();
+            $i = 0;
+            foreach ($sqlparams as $key => $val) {
+                $params["parameters[$i][name]"] = $key;
+                $params["parameters[$i][value]"] = $val;
+                $i++;
+            }
+            $result = delete_remote_mdl_forum("forum_digests", $params);
+            $forumsubscription = get_remote_forum_subscriptions_by($params);
+        } else {
+            $DB->delete_records('forum_digests', $sqlparams);
+            $forumsubscription = $DB->get_record('forum_subscriptions', $sqlparams);
+        }
+
+        if ($forumsubscription) {
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+                $params = array();
+                $params['parameters[0][name]'] = "id";
+                $params['parameters[0][value]'] = $forumsubscription->id;
+                $result = delete_remote_mdl_forum("forum_subscriptions", $params);
+            } else {
+                $DB->delete_records('forum_subscriptions', array('id' => $forumsubscription->id));
+            }
 
             if ($userrequest) {
-                $discussionsubscriptions = $DB->get_recordset('forum_discussion_subs', $sqlparams);
-                $DB->delete_records('forum_discussion_subs',
+                if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+                    $discussionsubscriptions = $DB->get_recordset('forum_discussion_subs', $sqlparams);
+
+                    $params = array();
+                    $params['parameters[0][name]'] = "userid";
+                    $params['parameters[0][value]'] = $userid;
+                    $params['parameters[1][name]'] = "forum";
+                    $params['parameters[1][value]'] = $forum->id;
+                    $params['parameters[2][name]'] = "preference";
+                    $params['parameters[2][value]'] = self::FORUM_DISCUSSION_UNSUBSCRIBED;
+                    $result = delete_remote_mdl_forum("forum_discussion_subs", $params);
+                } else {
+                    $discussionsubscriptions = $DB->get_recordset('forum_discussion_subs', $sqlparams);
+                    $DB->delete_records('forum_discussion_subs',
                         array('userid' => $userid, 'forum' => $forum->id, 'preference' => self::FORUM_DISCUSSION_UNSUBSCRIBED));
+                }
 
                 // We know that the there were previously entries and there aren't any more.
                 if (isset(self::$forumdiscussioncache[$userid]) && isset(self::$forumdiscussioncache[$userid][$forum->id])) {
@@ -708,11 +791,21 @@ class subscriptions {
      *     module set in page.
      * @return boolean Whether a change was made
      */
-    public static function subscribe_user_to_discussion($userid, $discussion, $context = null) {
+    public static function subscribe_user_to_discussion($userid, $discussion, $context = null)
+    {
         global $DB;
 
         // First check whether the user is subscribed to the discussion already.
-        $subscription = $DB->get_record('forum_discussion_subs', array('userid' => $userid, 'discussion' => $discussion->id));
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $params = array();
+            $params['parameters[0][name]'] = "userid";
+            $params['parameters[0][value]'] = $userid;
+            $params['parameters[1][name]'] = "discussion";
+            $params['parameters[1][value]'] = $discussion->id;
+            $subscription = get_remote_forum_discussion_subs_by($params);
+        } else {
+            $subscription = $DB->get_record('forum_discussion_subs', array('userid' => $userid, 'discussion' => $discussion->id));
+        }
         if ($subscription) {
             if ($subscription->preference != self::FORUM_DISCUSSION_UNSUBSCRIBED) {
                 // The user is already subscribed to the discussion. Ignore.
@@ -720,10 +813,27 @@ class subscriptions {
             }
         }
         // No discussion-level subscription. Check for a forum level subscription.
-        if ($DB->record_exists('forum_subscriptions', array('userid' => $userid, 'forum' => $discussion->forum))) {
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $params = array();
+            $params['parameters[0][name]'] = "userid";
+            $params['parameters[0][value]'] = $userid;
+            $params['parameters[1][name]'] = "forum";
+            $params['parameters[1][value]'] = $discussion->forum;
+            $isexists = check_remote_record_forum_exists("forum_subscriptions", $params);
+        } else {
+            $isexists = $DB->record_exists('forum_subscriptions', array('userid' => $userid, 'forum' => $discussion->forum));
+        }
+        if ($isexists) {
             if ($subscription && $subscription->preference == self::FORUM_DISCUSSION_UNSUBSCRIBED) {
                 // The user is subscribed to the forum, but unsubscribed from the discussion, delete the discussion preference.
-                $DB->delete_records('forum_discussion_subs', array('id' => $subscription->id));
+                if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+                    $params = array();
+                    $params['parameters[0][name]'] = "id";
+                    $params['parameters[0][value]'] = $subscription->id;
+                    $result = delete_remote_mdl_forum("forum_discussion_subs", $params);
+                } else {
+                    $DB->delete_records('forum_discussion_subs', array('id' => $subscription->id));
+                }
                 unset(self::$forumdiscussioncache[$userid][$discussion->forum][$discussion->id]);
             } else {
                 // The user is already subscribed to the forum. Ignore.
@@ -732,15 +842,35 @@ class subscriptions {
         } else {
             if ($subscription) {
                 $subscription->preference = time();
-                $DB->update_record('forum_discussion_subs', $subscription);
+                if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+                    $data = array();
+                    $data['data[0][name]'] = "preference";
+                    $data['data[0][value]'] = time();
+                    update_remote_mdl_forum("forum_discussion_subs", $subscription->id, $data);
+                } else {
+                    $DB->update_record('forum_discussion_subs', $subscription);
+                }
             } else {
                 $subscription = new \stdClass();
-                $subscription->userid  = $userid;
+                $subscription->userid = $userid;
                 $subscription->forum = $discussion->forum;
                 $subscription->discussion = $discussion->id;
                 $subscription->preference = time();
 
-                $subscription->id = $DB->insert_record('forum_discussion_subs', $subscription);
+                if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+                    $data = array();
+                    $data['data[0][name]'] = "userid";
+                    $data['data[0][value]'] = $userid;
+                    $data['data[1][name]'] = "forum";
+                    $data['data[1][value]'] = $discussion->forum;
+                    $data['data[2][name]'] = "discussion";
+                    $data['data[2][value]'] = $discussion->id;
+                    $data['data[3][name]'] = "preference";
+                    $data['data[3][value]'] = time();
+                    $subscription->id = save_remote_mdl_forum("forum_discussion_subs", $data);
+                } else {
+                    $subscription->id = $DB->insert_record('forum_discussion_subs', $subscription);
+                }
                 self::$forumdiscussioncache[$userid][$discussion->forum][$discussion->id] = $subscription->preference;
             }
         }
@@ -756,11 +886,12 @@ class subscriptions {
             ),
 
         );
-        $event  = event\discussion_subscription_created::create($params);
+        $event = event\discussion_subscription_created::create($params);
         $event->trigger();
 
         return true;
     }
+
     /**
      * Unsubscribes the user from the specified discussion.
      *
@@ -770,11 +901,21 @@ class subscriptions {
      *     module set in page.
      * @return boolean Whether a change was made
      */
-    public static function unsubscribe_user_from_discussion($userid, $discussion, $context = null) {
+    public static function unsubscribe_user_from_discussion($userid, $discussion, $context = null)
+    {
         global $DB;
 
         // First check whether the user's subscription preference for this discussion.
-        $subscription = $DB->get_record('forum_discussion_subs', array('userid' => $userid, 'discussion' => $discussion->id));
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $params = array();
+            $params['parameters[0][name]'] = "userid";
+            $params['parameters[0][value]'] = $userid;
+            $params['parameters[1][name]'] = "discussion";
+            $params['parameters[1][value]'] = $discussion->id;
+            $subscription = get_remote_forum_discussion_subs_by($params);
+        } else {
+            $subscription = $DB->get_record('forum_discussion_subs', array('userid' => $userid, 'discussion' => $discussion->id));
+        }
         if ($subscription) {
             if ($subscription->preference == self::FORUM_DISCUSSION_UNSUBSCRIBED) {
                 // The user is already unsubscribed from the discussion. Ignore.
@@ -782,10 +923,27 @@ class subscriptions {
             }
         }
         // No discussion-level preference. Check for a forum level subscription.
-        if (!$DB->record_exists('forum_subscriptions', array('userid' => $userid, 'forum' => $discussion->forum))) {
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $params = array();
+            $params['parameters[0][name]'] = "userid";
+            $params['parameters[0][value]'] = $userid;
+            $params['parameters[1][name]'] = "forum";
+            $params['parameters[1][value]'] = $discussion->forum;
+            $isexists = check_remote_record_forum_exists("forum_subscriptions", $params);
+        } else {
+            $isexists = $DB->record_exists('forum_subscriptions', array('userid' => $userid, 'forum' => $discussion->forum));
+        }
+        if (!$isexists) {
             if ($subscription && $subscription->preference != self::FORUM_DISCUSSION_UNSUBSCRIBED) {
                 // The user is not subscribed to the forum, but subscribed from the discussion, delete the discussion subscription.
-                $DB->delete_records('forum_discussion_subs', array('id' => $subscription->id));
+                if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+                    $params = array();
+                    $params['parameters[0][name]'] = "id";
+                    $params['parameters[0][value]'] = $subscription->id;
+                    $result = delete_remote_mdl_forum("forum_discussion_subs", $params);
+                } else {
+                    $DB->delete_records('forum_discussion_subs', array('id' => $subscription->id));
+                }
                 unset(self::$forumdiscussioncache[$userid][$discussion->forum][$discussion->id]);
             } else {
                 // The user is not subscribed from the forum. Ignore.
@@ -794,15 +952,35 @@ class subscriptions {
         } else {
             if ($subscription) {
                 $subscription->preference = self::FORUM_DISCUSSION_UNSUBSCRIBED;
-                $DB->update_record('forum_discussion_subs', $subscription);
+                if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+                    $data = array();
+                    $data['data[0][name]'] = "preference";
+                    $data['data[0][value]'] = self::FORUM_DISCUSSION_UNSUBSCRIBED;
+                    $result = update_remote_mdl_forum("", $subscription->id, $data);
+                } else {
+                    $DB->update_record('forum_discussion_subs', $subscription);
+                }
             } else {
                 $subscription = new \stdClass();
-                $subscription->userid  = $userid;
+                $subscription->userid = $userid;
                 $subscription->forum = $discussion->forum;
                 $subscription->discussion = $discussion->id;
                 $subscription->preference = self::FORUM_DISCUSSION_UNSUBSCRIBED;
 
-                $subscription->id = $DB->insert_record('forum_discussion_subs', $subscription);
+                if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+                    $data = array();
+                    $data['data[0][name]'] = "userid";
+                    $data['data[0][value]'] = $userid;
+                    $data['data[1][name]'] = "forum";
+                    $data['data[1][value]'] = $discussion->forum;
+                    $data['data[2][name]'] = "discussion";
+                    $data['data[2][value]'] = $discussion->id;
+                    $data['data[3][name]'] = "preference";
+                    $data['data[3][value]'] = self::FORUM_DISCUSSION_UNSUBSCRIBED;
+                    $subscription->id = save_remote_mdl_forum("forum_discussion_subs", $data);
+                } else {
+                    $subscription->id = $DB->insert_record('forum_discussion_subs', $subscription);
+                }
             }
             self::$forumdiscussioncache[$userid][$discussion->forum][$discussion->id] = $subscription->preference;
         }
@@ -818,7 +996,7 @@ class subscriptions {
             ),
 
         );
-        $event  = event\discussion_subscription_deleted::create($params);
+        $event = event\discussion_subscription_deleted::create($params);
         $event->trigger();
 
         return true;

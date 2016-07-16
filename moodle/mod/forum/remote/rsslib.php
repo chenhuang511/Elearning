@@ -26,6 +26,8 @@
 
 /* Include the core RSS lib */
 require_once($CFG->libdir . '/rsslib.php');
+require_once($CFG->dirroot . '/mod/forum/remote/locallib.php');
+require_once($CFG->dirroot . '/course/remote/locallib.php');
 
 /**
  * Returns the path to the cached rss feed contents. Creates/updates the cache if necessary.
@@ -46,17 +48,17 @@ function forum_rss_get_feed($context, $args)
     }
 
     $forumid = clean_param($args[3], PARAM_INT);
-    $cm = get_coursemodule_from_instance('forum', $forumid, 0, false, MUST_EXIST);
+    $cm = get_remote_course_module_by_instance('forum', $forumid);
     $modcontext = context_module::instance($cm->id);
 
     //context id from db should match the submitted one
     if ($context->id != $modcontext->id || !has_capability('mod/forum:viewdiscussion', $modcontext)) {
         return null;
     }
+
     $params = array();
     $params['parameters[0][name]'] = "id";
     $params['parameters[0][value]'] = $forumid;
-
     $forum = get_remote_forum_by($params, '', true);
     if (!rss_enabled_for_mod('forum', $forum)) {
         return null;
@@ -322,7 +324,7 @@ function forum_rss_feed_contents($forum, $sql, $params, $context)
         $isdiscussion = false;
     }
 
-    if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
+    if (!$cm = get_remote_course_module_by_instance('forum', $forum->id)) {
         print_error('invalidcoursemodule');
     }
 
@@ -372,9 +374,9 @@ function forum_rss_feed_contents($forum, $sql, $params, $context)
         }
 
         if ($isdiscussion) {
-            $item->link = $CFG->wwwroot . "/mod/forum/discuss.php?d=" . $rec->discussionid;
+            $item->link = $CFG->wwwroot . "/mod/forum/remote/discuss.php?d=" . $rec->discussionid;
         } else {
-            $item->link = $CFG->wwwroot . "/mod/forum/discuss.php?d=" . $rec->discussionid . "&parent=" . $rec->postid;
+            $item->link = $CFG->wwwroot . "/mod/forum/remote/discuss.php?d=" . $rec->discussionid . "&parent=" . $rec->postid;
         }
 
         $formatoptions->trusted = $rec->posttrust;
@@ -397,7 +399,7 @@ function forum_rss_feed_contents($forum, $sql, $params, $context)
 
     // Create the RSS header.
     $header = rss_standard_header(strip_tags(format_string($forum->name, true)),
-        $CFG->wwwroot . "/mod/forum/view.php?f=" . $forum->id,
+        $CFG->wwwroot . "/mod/forum/remote/view.php?f=" . $forum->id,
         format_string($forum->intro, true)); // TODO: fix format
     // Now all the RSS items, if there are any.
     $articles = '';

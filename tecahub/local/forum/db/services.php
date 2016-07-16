@@ -50,6 +50,14 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_get_forum_discussion_subs_by' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'get_forum_discussion_subs_by',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'Get forum discussion subs by',
+        'type' => 'read',
+        'ajax' => true
+    ),
     'local_mod_get_forum_posts_by' => array(
         'classname' => 'local_mod_forum_external',
         'methodname' => 'get_forum_posts_by',
@@ -71,6 +79,30 @@ $functions = array(
         'methodname' => 'get_forum_track_prefs_by',
         'classpath' => 'local/forum/externallib.php',
         'description' => 'Get forum track prefs by',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_forum_subscriptions_by' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'get_forum_subscriptions_by',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'Get forum subscriptions by',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_scale_by' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'get_scale_by',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'Get scale by',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_list_forum_by' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'get_list_forum_by',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'Get list forum by',
         'type' => 'read',
         'ajax' => true
     ),
@@ -143,6 +175,22 @@ $functions = array(
         'methodname' => 'check_record_forum_exists',
         'classpath' => 'local/forum/externallib.php',
         'description' => 'check record exists',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_forum_get_discussions_sql' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'forum_get_discussions_sql',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'get list obejct',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_count_forum_sql' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'get_count_forum_sql',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'Get count row of forum',
         'type' => 'read',
         'ajax' => true
     ),
