@@ -1705,8 +1705,7 @@ class local_mod_forum_external extends external_api
                             'value' => new external_value(PARAM_RAW, 'param value'),
                         )
                     ), 'the params'
-                ),
-                'strictness' => new external_value(PARAM_INT, 'the strictness')
+                )
             )
         );
     }
