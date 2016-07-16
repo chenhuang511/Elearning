@@ -218,4 +218,12 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_forum_get_all_discussion_posts_sql' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'forum_get_all_discussion_posts_sql',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'get all discussion post',
+        'type' => 'read',
+        'ajax' => true
+    ),
 );
