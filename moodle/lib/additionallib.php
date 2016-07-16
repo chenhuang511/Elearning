@@ -88,6 +88,12 @@ function convert_remote_course_record(&$course, $userid = false) {
         $course->id       = $course->remoteid;
 }
 
+function convert_remote_assign_record(&$assign, $userid = false) {
+    if (!$userid)  {
+        $assign->id       = $assign->remoteid;
+    }
+}
+
 function get_local_course_record($courseid, $useid = false) {
     global $DB;
     if (is_object($courseid)) {
@@ -98,6 +104,18 @@ function get_local_course_record($courseid, $useid = false) {
     $course = $DB->get_record("course", array($idfield => $courseid), "*", MUST_EXIST);
     //convert_remote_course_record($course, $useid);
     return $course;
+}
+
+function get_local_assign_record($assignid, $useid = false) {
+    global $DB;
+    if (is_object($assignid)) {
+        convert_remote_assign_record($assignid);
+        return $assignid;
+    }
+    $idfield = ((int)$assignid === 1 || $useid) ? "id" : "remoteid";
+    $assign = $DB->get_record("assign", array($idfield => $assignid), "*", MUST_EXIST);
+    //convert_remote_course_record($course, $useid);
+    return $assign;
 }
 
 function get_local_courses_record() {
