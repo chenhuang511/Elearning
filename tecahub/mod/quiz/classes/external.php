@@ -835,18 +835,22 @@ class mod_quiz_external extends external_api {
         }
 
         if (isset($params['page'])) {
-            // Check if the page is out of range.
-            if ($params['page'] != $attemptobj->force_page_number_into_range($params['page'])) {
-                throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'Invalid page number');
-            }
+            if($params['page'] == -1){
+                $slots = $attemptobj->get_slots();
+            }else{
+                // Check if the page is out of range.
+                if ($params['page'] != $attemptobj->force_page_number_into_range($params['page'])) {
+                    throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'Invalid page number');
+                }
 
-            // Prevent out of sequence access.
-            if (!$attemptobj->check_page_access($params['page'])) {
-                throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'Out of sequence access');
-            }
+                // Prevent out of sequence access.
+                if (!$attemptobj->check_page_access($params['page'])) {
+                    throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'Out of sequence access');
+                }
 
-            // Check slots.
-            $slots = $attemptobj->get_slots($params['page']);
+                // Check slots.
+                $slots = $attemptobj->get_slots($params['page']);
+            }
 
             if (empty($slots)) {
                 throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'noquestionsfound');
@@ -932,7 +936,7 @@ class mod_quiz_external extends external_api {
         return new external_function_parameters (
             array(
                 'attemptid' => new external_value(PARAM_INT, 'attempt id'),
-                'page' => new external_value(PARAM_INT, 'page number'),
+                'page' => new external_value(PARAM_INT, 'page number', VALUE_DEFAULT, -1),
                 'preflightdata' => new external_multiple_structure(
                     new external_single_structure(
                         array(
@@ -955,7 +959,7 @@ class mod_quiz_external extends external_api {
      * @since Moodle 3.1
      * @throws moodle_quiz_exceptions
      */
-    public static function get_attempt_data($attemptid, $page, $preflightdata = array()) {
+    public static function get_attempt_data($attemptid, $page = -1, $preflightdata = array()) {
 
         $warnings = array();
 
@@ -968,6 +972,12 @@ class mod_quiz_external extends external_api {
 
         list($attemptobj, $messages) = self::validate_attempt($params);
 
+        if ($params['page'] !== -1) {
+            $page = $attemptobj->force_page_number_into_range($params['page']);
+        } else {
+            $page = 'all';
+        }
+
         if ($attemptobj->is_last_page($params['page'])) {
             $nextpage = -1;
         } else {
@@ -979,7 +989,7 @@ class mod_quiz_external extends external_api {
         $result['messages'] = $messages;
         $result['nextpage'] = $nextpage;
         $result['warnings'] = $warnings;
-        $result['questions'] = self::get_attempt_questions_data($attemptobj, false, $params['page']);
+        $result['questions'] = self::get_attempt_questions_data($attemptobj, false, $page);
 
         return $result;
     }
