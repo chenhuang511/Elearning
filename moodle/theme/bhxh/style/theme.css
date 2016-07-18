@@ -1158,6 +1158,7 @@ ul#coursetabs > li.active > a, ul#coursetabs > li > a:focus, ul#coursetabs > li 
     font-size: 15px;
 }
 
+
 #section-menu .panel .panel-heading .panel-title > a:focus,
 #section-menu .panel .panel-heading .panel-title > a:hover,
 #section-menu .panel .panel-heading .panel-title > a[aria-expanded='true'] {
@@ -2274,6 +2275,9 @@ div.backup-section + form,
 .courses.frontpage-course-list-all .coursebox .info .coursename {
     margin: 0;
 }
+.courses.frontpage-course-list-all .coursebox .info .courseName1 {
+    margin-left: -30px;
+}
 
 .courses.frontpage-course-list-all .coursebox .info .coursename a {
     color: #0e73e6;
@@ -2700,7 +2704,9 @@ div.backup-section + form,
     background-position: left 7px;
     padding-left: 30px;
 }
-
+.coursebox .info  .coursename1 {
+    margin-left: -46px;
+}
 .dir-rtl .coursebox > .info > .coursename a {
     padding-right: 30px;
     background-position: right 7px;
@@ -2821,7 +2827,12 @@ div.backup-section + form,
     color: #525252;
     padding-top: 7px;
 }
+#coursesearch .searchCourse1{
+    margin-left: -20px;
+    width: 300px;
+    height: 50px;
 
+}
 .dir-ltr #coursesearch .coursesearchbox label {
     margin-right: 7px;
 }
@@ -2851,6 +2862,7 @@ div.backup-section + form,
         width: 60%;
     }
 }
+
 
 .course-content .topics h3 {
     font-size: 21px;

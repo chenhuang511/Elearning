@@ -57,7 +57,7 @@ class theme_bootstrap_core_course_renderer extends core_course_renderer {
         // Course name.
         $coursename = $chelper->get_course_formatted_name($course);
         $coursenamelink = html_writer::link(new moodle_url('/course/view.php', array('id' => $course->id)),
-                                            $coursename, array('class' => $course->visible ? '' : 'dimmed'));
+                                            $coursename, array('class' => $course->visible ? 'coursename1' : 'coursename1 dimmed'));
         $content .= html_writer::tag('span', $coursenamelink, array('class' => 'coursename'));
         // If we display course in collapsed form but the course has summary or course contacts, display the link to the info page.
         $content .= html_writer::start_tag('span', array('class' => 'moreinfo'));
@@ -182,6 +182,7 @@ class theme_bootstrap_core_course_renderer extends core_course_renderer {
 
         $form = array('id' => $formid, 'action' => $searchurl, 'method' => 'get', 'class' => "form-inline", 'role' => 'form');
         $output = html_writer::start_tag('form', $form);
+        $output .=html_writer::start_tag('div', array('class'=>'searchCourse1')) ;
         $output .= html_writer::start_div('input-group');
         $output .= html_writer::tag('label', $strsearchcourses, array('for' => $inputid, 'class' => 'sr-only'));
         $search = array('type' => 'text', 'id' => $inputid, 'size' => $inputsize, 'name' => 'search',
@@ -192,6 +193,8 @@ class theme_bootstrap_core_course_renderer extends core_course_renderer {
         $output .= html_writer::tag('button', get_string('go'), $button);
         $output .= html_writer::end_span();
         $output .= html_writer::end_div(); // Close form-group.
+        $output .= html_writer::end_tag('div');
+
         $output .= html_writer::end_tag('form');
 
         return $output;
