@@ -325,6 +325,7 @@ abstract class assign_plugin {
             'subtype'=>$this->get_subtype(),
             'plugin'=>$this->get_type(),
             'name'=>$name);
+
         $current = $DB->get_record('assign_plugin_config', $dbparams, '*', IGNORE_MISSING);
 
         if ($current) {

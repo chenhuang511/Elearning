@@ -359,7 +359,6 @@ function edit_module_post_actions($moduleinfo, $course) {
  * @return object the completed module info
  */
 function set_moduleinfo_defaults($moduleinfo) {
-
     if (empty($moduleinfo->coursemodule)) {
         // Add.
         $cm = null;
@@ -367,7 +366,11 @@ function set_moduleinfo_defaults($moduleinfo) {
         $moduleinfo->coursemodule = '';
     } else {
         // Update.
-        $cm = get_coursemodule_from_id('', $moduleinfo->coursemodule, 0, false, MUST_EXIST);
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $cm = get_coursemodule_from_id('', $moduleinfo->coursemodule, 0, false, MUST_EXIST);
+        } else {
+            $cm = get_remote_course_module($moduleinfo->coursemodule);
+        }
         $moduleinfo->instance     = $cm->instance;
         $moduleinfo->coursemodule = $cm->id;
     }
@@ -446,7 +449,7 @@ function can_add_moduleinfo($course, $modulename, $section) {
  * @throws moodle_exception if user is not allowed to perform the action
  */
 function can_update_moduleinfo($cm) {
-    global $DB;
+    global $DB, $CFG;
 
     // Check the $USER has the right capability.
     $context = context_module::instance($cm->id);
@@ -461,10 +464,12 @@ function can_update_moduleinfo($cm) {
         $cw = $DB->get_record('course_sections', array('id' => $cm->section), '*', MUST_EXIST);
     } else {
         $module = get_remote_modules_by_id($cm->module);
-        if ($module->name == 'assign'){
-            $data = get_local_assign_record($cm->instance);
-        } else{
-            $data = get_remote_course_module_by_instance($module->name, $cm->instance)->cm;
+        $func_get_module = $module->name.'_get_local_settings_info';
+        $data = array();
+        if (function_exists($func_get_module)) {
+            $data = $func_get_module($cm);
+        } else {
+            trigger_error("Not found function $func_get_module.");
         }
         $cw = get_remote_course_section_nav_by_section($cm->section);
     }
@@ -520,6 +525,7 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
         // so it is safe to update it regardless of the lock status.
         $cm->completionexpected = $moduleinfo->completionexpected;
     }
+
     if (!empty($CFG->enableavailability)) {
         // This code is used both when submitting the form, which uses a long
         // name to avoid clashes, and by unit test code which uses the real
@@ -549,8 +555,9 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
         $cm->showdescription = 0;
     }
 
-    $DB->update_record('course_modules', $cm);
-
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        $DB->update_record('course_modules', $cm);
+    }
     $modcontext = context_module::instance($moduleinfo->coursemodule);
 
     // Update embedded links and save files.
@@ -561,6 +568,7 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
         $moduleinfo->introformat = $moduleinfo->introeditor['format'];
         unset($moduleinfo->introeditor);
     }
+
     // Get the a copy of the grade_item before it is modified incase we need to scale the grades.
     $oldgradeitem = null;
     $newgradeitem = null;
@@ -606,9 +614,11 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
         set_coursemodule_visible($moduleinfo->coursemodule, $moduleinfo->visible);
     }
 
-    if (isset($moduleinfo->cmidnumber)) { // Label.
-        // Set cm idnumber - uniqueness is already verified by form validation.
-        set_coursemodule_idnumber($moduleinfo->coursemodule, $moduleinfo->cmidnumber);
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        if (isset($moduleinfo->cmidnumber)) { // Label.
+            // Set cm idnumber - uniqueness is already verified by form validation.
+            set_coursemodule_idnumber($moduleinfo->coursemodule, $moduleinfo->cmidnumber);
+        }
     }
 
     // Update module tags.
@@ -622,7 +632,9 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
         $completion->reset_all_state($cm);
     }
     $cm->name = $moduleinfo->name;
-    \core\event\course_module_updated::create_from_cm($cm, $modcontext)->trigger();
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        \core\event\course_module_updated::create_from_cm($cm, $modcontext)->trigger();
+    }
 
     $moduleinfo = edit_module_post_actions($moduleinfo, $course);
 
