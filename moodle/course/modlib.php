@@ -366,7 +366,7 @@ function set_moduleinfo_defaults($moduleinfo) {
         $moduleinfo->coursemodule = '';
     } else {
         // Update.
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
             $cm = get_coursemodule_from_id('', $moduleinfo->coursemodule, 0, false, MUST_EXIST);
         } else {
             $cm = get_remote_course_module($moduleinfo->coursemodule);
@@ -449,7 +449,7 @@ function can_add_moduleinfo($course, $modulename, $section) {
  * @throws moodle_exception if user is not allowed to perform the action
  */
 function can_update_moduleinfo($cm) {
-    global $DB;
+    global $DB, $CFG;
 
     // Check the $USER has the right capability.
     $context = context_module::instance($cm->id);
@@ -464,10 +464,12 @@ function can_update_moduleinfo($cm) {
         $cw = $DB->get_record('course_sections', array('id' => $cm->section), '*', MUST_EXIST);
     } else {
         $module = get_remote_modules_by_id($cm->module);
-        if ($module->name == 'assign'){
-            $data = get_local_assign_record($cm->instance);
-        } else{
-            $data = get_remote_course_module_by_instance($module->name, $cm->instance)->cm;
+        $func_get_module = $module->name.'_get_local_settings_info';
+        $data = array();
+        if (function_exists($func_get_module)) {
+            $data = $func_get_module($cm);
+        } else {
+            trigger_error("Not found function $func_get_module.");
         }
         $cw = get_remote_course_section_nav_by_section($cm->section);
     }

@@ -40,7 +40,7 @@ class questionnaire {
      */
     public function __construct($id = 0, $questionnaire = null, &$course, &$cm, $addquestions = true) {
         global $DB, $CFG;
-
+        require_once($CFG->dirroot . '/mod/questionnaire/remote/locallib.php');
         if($CFG->nonajax == true){
             $this->nonajax = "&nonajax=1";
         } else {
