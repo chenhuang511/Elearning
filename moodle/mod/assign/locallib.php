@@ -6243,10 +6243,12 @@ class assign {
             }
             $record->attemptnumber = $attemptnumber;
             $record->lastmodified = $modified;
+            $iteminstanceid = ISREMOTE ? $this->get_instance()->remoteid : $this->get_instance()->id;
+
             $record->gradinginfo = grade_get_grades($this->get_course()->id,
                                                     'mod',
                                                     'assign',
-                                                    $this->get_instance()->id,
+                                                    $iteminstanceid,
                                                     array($userid));
             $users[$userid] = $record;
         }
