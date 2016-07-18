@@ -359,7 +359,6 @@ function edit_module_post_actions($moduleinfo, $course) {
  * @return object the completed module info
  */
 function set_moduleinfo_defaults($moduleinfo) {
-
     if (empty($moduleinfo->coursemodule)) {
         // Add.
         $cm = null;
@@ -367,7 +366,11 @@ function set_moduleinfo_defaults($moduleinfo) {
         $moduleinfo->coursemodule = '';
     } else {
         // Update.
-        $cm = get_coursemodule_from_id('', $moduleinfo->coursemodule, 0, false, MUST_EXIST);
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $cm = get_coursemodule_from_id('', $moduleinfo->coursemodule, 0, false, MUST_EXIST);
+        } else {
+            $cm = get_remote_course_module($moduleinfo->coursemodule);
+        }
         $moduleinfo->instance     = $cm->instance;
         $moduleinfo->coursemodule = $cm->id;
     }
@@ -520,6 +523,7 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
         // so it is safe to update it regardless of the lock status.
         $cm->completionexpected = $moduleinfo->completionexpected;
     }
+
     if (!empty($CFG->enableavailability)) {
         // This code is used both when submitting the form, which uses a long
         // name to avoid clashes, and by unit test code which uses the real
@@ -549,8 +553,9 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
         $cm->showdescription = 0;
     }
 
-    $DB->update_record('course_modules', $cm);
-
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        $DB->update_record('course_modules', $cm);
+    }
     $modcontext = context_module::instance($moduleinfo->coursemodule);
 
     // Update embedded links and save files.
@@ -561,6 +566,7 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
         $moduleinfo->introformat = $moduleinfo->introeditor['format'];
         unset($moduleinfo->introeditor);
     }
+
     // Get the a copy of the grade_item before it is modified incase we need to scale the grades.
     $oldgradeitem = null;
     $newgradeitem = null;
@@ -606,9 +612,11 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
         set_coursemodule_visible($moduleinfo->coursemodule, $moduleinfo->visible);
     }
 
-    if (isset($moduleinfo->cmidnumber)) { // Label.
-        // Set cm idnumber - uniqueness is already verified by form validation.
-        set_coursemodule_idnumber($moduleinfo->coursemodule, $moduleinfo->cmidnumber);
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        if (isset($moduleinfo->cmidnumber)) { // Label.
+            // Set cm idnumber - uniqueness is already verified by form validation.
+            set_coursemodule_idnumber($moduleinfo->coursemodule, $moduleinfo->cmidnumber);
+        }
     }
 
     // Update module tags.
@@ -622,7 +630,9 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
         $completion->reset_all_state($cm);
     }
     $cm->name = $moduleinfo->name;
-    \core\event\course_module_updated::create_from_cm($cm, $modcontext)->trigger();
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        \core\event\course_module_updated::create_from_cm($cm, $modcontext)->trigger();
+    }
 
     $moduleinfo = edit_module_post_actions($moduleinfo, $course);
 
