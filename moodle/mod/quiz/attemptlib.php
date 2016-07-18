@@ -336,7 +336,7 @@ class quiz {
      */
     public function view_url() {
         global $CFG;
-        $path = ($this->isremote)?'/mod/quiz/remote/view.php?id=':'/mod/quiz/view.php?id=';
+        $path = (MOODLE_RUN_MODE == MOODLE_MODE_HUB)?'/mod/quiz/remote/view.php?id=':'/mod/quiz/view.php?id=';
         return $CFG->wwwroot . $path . $this->cm->id;
     }
 
@@ -598,26 +598,29 @@ class quiz_attempt {
         $this->attempt = $attempt;
         $this->quizobj = new quiz($quiz, $cm, $course);
 
+        if($this->isremote){
+            $remoteslots = get_remote_get_slots_by_quizid($this->get_quizid());
+            $slots = array();
+            foreach ($remoteslots as $remoteslot){
+                $slots[$remoteslot->slot] = $remoteslot;
+            }
+            $this->slots = $slots;
+            $this->sections = get_remote_get_sections_by_quizid($this->get_quizid());
+        }else{
+            $this->slots = $DB->get_records('quiz_slots',
+                array('quizid' => $this->get_quizid()), 'slot',
+                'slot, requireprevious, questionid');
+            $this->sections = array_values($DB->get_records('quiz_sections',
+                array('quizid' => $this->get_quizid()), 'firstslot'));
+        }
+
+        $this->link_sections_and_slots();
+        $this->determine_layout();
         if (!$loadquestions) {
             return;
         }
 
         $this->quba = question_engine::load_questions_usage_by_activity($this->attempt->uniqueid);
-        $this->slots = $DB->get_records('quiz_slots',
-                array('quizid' => $this->get_quizid()), 'slot',
-                'slot, requireprevious, questionid');
-        if(!$this->slots){
-            $this->slots = get_remote_get_slots_by_quizid($this->get_quizid());
-        }
-
-        $this->sections = array_values($DB->get_records('quiz_sections',
-                array('quizid' => $this->get_quizid()), 'firstslot'));
-        if(!$this->sections){
-            $this->sections = get_remote_get_sections_by_quizid($this->get_quizid());
-        }
-
-        $this->link_sections_and_slots();
-        $this->determine_layout();
         $this->number_questions();
     }
 
@@ -1104,6 +1107,9 @@ class quiz_attempt {
      * @return bool true if this is the last page of the quiz.
      */
     public function is_last_page($page) {
+        if (end($this->pagelayout) == '') {
+            array_pop($this->pagelayout);
+        }
         return $page == count($this->pagelayout) - 1;
     }
 
@@ -1135,9 +1141,6 @@ class quiz_attempt {
      */
     public function get_active_slots($page = 'all', $slots = null) {
         $activeslots = array();
-        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-            $activeslots = $slots;
-        }
         foreach ($this->get_slots($page) as $slot) {
             if (!$this->is_blocked_by_previous_question($slot)) {
                 $activeslots[] = $slot;
@@ -1431,8 +1434,8 @@ class quiz_attempt {
      * this page to be output as only a fragment.
      * @return string the URL to continue this attempt.
      */
-    public function attempt_url($slot = null, $page = -1, $thispage = -1) {
-        return $this->page_and_question_url('attempt', $slot, $page, false, $thispage);
+    public function attempt_url($slot = null, $page = -1, $thispage = -1, $pageslot = null) {
+        return $this->page_and_question_url('attempt', $slot, $page, false, $thispage, $pageslot);
     }
 
     /**
@@ -1461,8 +1464,8 @@ class quiz_attempt {
      * this page to be output as only a fragment.
      * @return string the URL to review this attempt.
      */
-    public function review_url($slot = null, $page = -1, $showall = null, $thispage = -1) {
-        return $this->page_and_question_url('review', $slot, $page, $showall, $thispage);
+    public function review_url($slot = null, $page = -1, $showall = null, $thispage = -1, $pageslot = null) {
+        return $this->page_and_question_url('review', $slot, $page, $showall, $thispage, $pageslot);
     }
 
     /**
@@ -1497,8 +1500,10 @@ class quiz_attempt {
             $page = 'all';
         }
         $result = '';
-        foreach ($this->get_slots($page) as $slot) {
-            $result .= $this->quba->render_question_head_html($slot);
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            foreach ($this->get_slots($page) as $slot) {
+                $result .= $this->quba->render_question_head_html($slot);
+            }
         }
         $result .= question_engine::initialise_js();
         return $result;
@@ -1703,7 +1708,7 @@ class quiz_attempt {
      * @return quiz_nav_panel_base the requested object.
      */
     public function get_navigation_panel(mod_quiz_renderer $output,
-             $panelclass, $page, $showall = false) {
+                                         $panelclass, $page, $showall = false, $attemptall = null) {
         $panel = new $panelclass($this, $this->get_display_options(true), $page, $showall);
 
         $bc = new block_contents();
@@ -1711,7 +1716,7 @@ class quiz_attempt {
         $bc->attributes['role'] = 'navigation';
         $bc->attributes['aria-labelledby'] = 'mod_quiz_navblock_title';
         $bc->title = html_writer::span(get_string('quiznavigation', 'quiz'), '', array('id' => 'mod_quiz_navblock_title'));
-        $bc->content = $output->navigation_panel($panel);
+        $bc->content = $output->navigation_panel($panel, $attemptall);
         return $bc;
     }
 
@@ -2106,7 +2111,7 @@ class quiz_attempt {
      *      page will just be a fragment #q123. -1 to disable this.
      * @return The requested URL.
      */
-    protected function page_and_question_url($script, $slot, $page, $showall, $thispage) {
+    protected function page_and_question_url($script, $slot, $page, $showall, $thispage, $pageslot = null) {
 
         $defaultshowall = $this->get_default_show_all($script);
         if ($showall === null && ($page == 0 || $page == -1)) {
@@ -2116,7 +2121,11 @@ class quiz_attempt {
         // Fix up $page.
         if ($page == -1) {
             if ($slot !== null && !$showall) {
-                $page = $this->get_question_page($slot);
+                if($pageslot){
+                    $page = $pageslot;
+                }else{
+                    $page = $this->get_question_page($slot);
+                }
             } else {
                 $page = 0;
             }
@@ -2457,30 +2466,45 @@ abstract class quiz_nav_panel_base {
      * Get the buttons and section headings to go in the quiz navigation block.
      * @return renderable[] the buttons, possibly interleaved with section headings.
      */
-    public function get_question_buttons() {
+    public function get_question_buttons($attemptall = null) {
+        $isremote = (MOODLE_RUN_MODE == MOODLE_MODE_HUB)?true:false;
         $buttons = array();
         foreach ($this->attemptobj->get_slots() as $slot) {
             if ($heading = $this->attemptobj->get_heading_before_slot($slot)) {
                 $buttons[] = new quiz_nav_section_heading(format_string($heading));
             }
 
-            $qa = $this->attemptobj->get_question_attempt($slot);
-            $showcorrectness = $this->options->correctness && $qa->has_marks();
-
+            if($isremote){
+                $qaremote = $attemptall->questions[$slot-1];
+            }else{
+                $qa = $this->attemptobj->get_question_attempt($slot);
+            }
+            $showcorrectness = $this->options->correctness && ($isremote?$qaremote->maxmark:$qa->has_marks());
             $button = new quiz_nav_question_button();
             $button->id          = 'quiznavbutton' . $slot;
-            $button->number      = $this->attemptobj->get_question_number($slot);
-            $button->stateclass  = $qa->get_state_class($showcorrectness);
+            $number = $qaremote->number?$qaremote->number:get_string('infoshort', 'quiz');
+            $button->number      = $isremote?$number:$this->attemptobj->get_question_number($slot);
+            if($isremote && $qaremote->state){
+                question_state::init();
+                $button->stateclass  = question_state::get($qaremote->state)->get_state_class($showcorrectness);
+            }else{
+                $button->stateclass  = $isremote?'notyetanswered':$qa->get_state_class($showcorrectness);
+            }
             $button->navmethod   = $this->attemptobj->get_navigation_method();
             if (!$showcorrectness && $button->stateclass == 'notanswered') {
                 $button->stateclass = 'complete';
             }
-            $button->statestring = $this->get_state_string($qa, $showcorrectness);
-            $button->page        = $this->attemptobj->get_question_page($slot);
+            $button->statestring = $isremote?$qaremote->status:$this->get_state_string($qa, $showcorrectness);
+            $button->page        = $isremote?$qaremote->page:$this->attemptobj->get_question_page($slot);
             $button->currentpage = $this->showall || $button->page == $this->page;
-            $button->flagged     = $qa->is_flagged();
-            $button->url         = $this->get_question_url($slot);
-            if ($this->attemptobj->is_blocked_by_previous_question($slot)) {
+            $button->flagged     = $isremote?$qaremote->flagged:$qa->is_flagged();
+            if($isremote){
+                $pageslot = $qaremote->page;
+                $button->url         = $this->get_question_url($slot, $pageslot);
+            }else{
+                $button->url         = $this->get_question_url($slot);
+            }
+            if ($this->attemptobj->is_blocked_by_previous_question($slot)) {//TODO: not run here
                 $button->url = null;
                 $button->stateclass = 'blocked';
                 $button->statestring = get_string('questiondependsonprevious', 'quiz');
@@ -2518,11 +2542,11 @@ abstract class quiz_nav_panel_base {
                 $this->attemptobj->start_attempt_url(), array('forcenew' => true)));
     }
 
-    protected abstract function get_question_url($slot);
+    protected abstract function get_question_url($slot, $pageslot);
 
     public function user_picture() {
         global $USER, $DB;
-        if ($this->attemptobj->get_quiz()->showuserpicture == QUIZ_SHOWIMAGE_NONE) {
+        if ($this->attemptobj->get_quiz()->showuserpicture == QUIZ_SHOWIMAGE_NONE && MOODLE_RUN_MODE == MOODLE_MODE_HOST) {
             return null;
         }
         $user = $DB->get_record('user', array('id' => $this->attemptobj->get_userid()));
@@ -2561,9 +2585,9 @@ abstract class quiz_nav_panel_base {
  * @since      Moodle 2.0
  */
 class quiz_attempt_nav_panel extends quiz_nav_panel_base {
-    public function get_question_url($slot) {
+    public function get_question_url($slot, $pageslot = null) {
         if ($this->attemptobj->can_navigate_to($slot)) {
-            return $this->attemptobj->attempt_url($slot, -1, $this->page);
+            return $this->attemptobj->attempt_url($slot, -1, $this->page, $pageslot);
         } else {
             return null;
         }
@@ -2591,8 +2615,8 @@ class quiz_attempt_nav_panel extends quiz_nav_panel_base {
  * @since      Moodle 2.0
  */
 class quiz_review_nav_panel extends quiz_nav_panel_base {
-    public function get_question_url($slot) {
-        return $this->attemptobj->review_url($slot, -1, $this->showall, $this->page);
+    public function get_question_url($slot, $pageslot = null) {
+        return $this->attemptobj->review_url($slot, -1, $this->showall, $this->page, $pageslot);
     }
 
     public function render_end_bits(mod_quiz_renderer $output) {

@@ -1273,9 +1273,10 @@ class assign {
             return $this->gradeitem;
         }
         $instance = $this->get_instance();
+        $iteminstance = ISREMOTE ? $instance->remoteid : $instance->id;
         $params = array('itemtype' => 'mod',
                         'itemmodule' => 'assign',
-                        'iteminstance' => $instance->id,
+                        'iteminstance' => $iteminstance,
                         'courseid' => $instance->course,
                         'itemnumber' => 0);
         $this->gradeitem = grade_item::fetch($params);
@@ -6243,10 +6244,12 @@ class assign {
             }
             $record->attemptnumber = $attemptnumber;
             $record->lastmodified = $modified;
+            $iteminstanceid = ISREMOTE ? $this->get_instance()->remoteid : $this->get_instance()->id;
+
             $record->gradinginfo = grade_get_grades($this->get_course()->id,
                                                     'mod',
                                                     'assign',
-                                                    $this->get_instance()->id,
+                                                    $iteminstanceid,
                                                     array($userid));
             $users[$userid] = $record;
         }
