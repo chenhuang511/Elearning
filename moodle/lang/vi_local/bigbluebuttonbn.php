@@ -25,12 +25,16 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['email_body_notification_meeting_description'] = 'Mô tả';
 $string['index_heading_recording'] = 'Ghi lại';
+$string['mod_form_field_intro'] = 'Mô tả';
 $string['mod_form_field_name'] = 'Tên lớp học ảo';
 $string['view_conference_action_join'] = 'Tham gia buổi học';
 $string['view_message_conference_room_ready'] = 'Phòng học đã sẵn sàng. Bạn có thể tham gia buổi học bây giờ';
 $string['view_message_norecordings'] = 'Không có ghi âm cho cuộc họp này';
 $string['view_recording'] = 'ghi lại';
+$string['view_recording_description'] = 'Mô tả';
+$string['view_recording_list_description'] = 'Mô tả';
 $string['view_recording_list_recording'] = 'Ghi lại';
 $string['view_recording_modal_button'] = 'Nộp';
 $string['view_recording_modal_title'] = 'Thiết lập giá trị cho bản ghi';
