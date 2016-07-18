@@ -183,7 +183,7 @@ abstract class grade_object {
      * @return array|bool Array of object instances or false if not found
      */
     public static function fetch_all_helper($table, $classname, $params) {
-        global $DB; // Need to introspect DB here.
+        global $DB, $CFG; // Need to introspect DB here.
 
         $instance = new $classname();
 
@@ -264,6 +264,7 @@ abstract class grade_object {
                     $data->courseid = $params['courseid'];
                 }
             }
+            require_once($CFG->libdir . '/dml/json_moodle_recordset.php');
             $rs = new json_moodle_recordset($rsraw);
         } else {
             global $DB;

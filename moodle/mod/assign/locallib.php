@@ -1007,9 +1007,12 @@ class assign {
     public function update_instance($formdata) {
         global $DB;
         $adminconfig = $this->get_admin_config();
-
         $update = new stdClass();
-        $update->id = $formdata->instance;
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $update->id = $formdata->instance;
+        } else {
+            $update->id = get_local_assign_record($formdata->instance)->id;
+        }
         $update->name = $formdata->name;
         $update->timemodified = time();
         $update->course = $formdata->course;
@@ -1052,7 +1055,6 @@ class assign {
         if (empty($update->markingworkflow)) { // If marking workflow is disabled, make sure allocation is disabled.
             $update->markingallocation = 0;
         }
-
         $result = $DB->update_record('assign', $update);
         //update_remote_response_by_tbl('assign', $update, );
         $this->instance = $DB->get_record('assign', array('id'=>$update->id), '*', MUST_EXIST);
@@ -1074,9 +1076,10 @@ class assign {
                 return false;
             }
         }
-
-        $this->update_calendar($this->get_course_module()->id);
-        $this->update_gradebook(false, $this->get_course_module()->id);
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $this->update_calendar($this->get_course_module()->id);
+            $this->update_gradebook(false, $this->get_course_module()->id);
+        }
 
         $update = new stdClass();
         $update->id = $this->get_instance()->id;
@@ -1270,9 +1273,10 @@ class assign {
             return $this->gradeitem;
         }
         $instance = $this->get_instance();
+        $iteminstance = ISREMOTE ? $instance->remoteid : $instance->id;
         $params = array('itemtype' => 'mod',
                         'itemmodule' => 'assign',
-                        'iteminstance' => $instance->id,
+                        'iteminstance' => $iteminstance,
                         'courseid' => $instance->course,
                         'itemnumber' => 0);
         $this->gradeitem = grade_item::fetch($params);
@@ -6240,10 +6244,12 @@ class assign {
             }
             $record->attemptnumber = $attemptnumber;
             $record->lastmodified = $modified;
+            $iteminstanceid = ISREMOTE ? $this->get_instance()->remoteid : $this->get_instance()->id;
+
             $record->gradinginfo = grade_get_grades($this->get_course()->id,
                                                     'mod',
                                                     'assign',
-                                                    $this->get_instance()->id,
+                                                    $iteminstanceid,
                                                     array($userid));
             $users[$userid] = $record;
         }

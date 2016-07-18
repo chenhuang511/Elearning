@@ -27,20 +27,25 @@ require_once(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
 $attemptid = required_param('attempt', PARAM_INT); // The attempt to summarise.
-$nonajax = optional_param('nonajax', true, PARAM_BOOL);
 
 $PAGE->set_url('/mod/quiz/remote/summary.php', array('attempt' => $attemptid));
-
 
 $attempt = get_remote_attempt_by_attemptid($attemptid);
 $quiz = get_remote_quiz_by_id($attempt->quiz);
 $course = get_local_course_record($quiz->course);
 $cm = get_remote_course_module_by_instance("quiz", $quiz->id)->cm;
 $attemptobj = new quiz_attempt($attempt, $quiz, $cm, $course, false, true);
-$context = context_module::instance($cm->id);
-
 $summaryremote = get_remote_get_attempt_summary($attemptid);
 //var_dump($summaryremote);die;
+
+$nonajax = optional_param('nonajax', true, PARAM_BOOL);
+$context = context_module::instance($cm->id);
+if (!has_capability('moodle/course:manageactivities', $context) && $nonajax == false) {
+    $CFG->nonajax = false;
+} else {
+    $CFG->nonajax = true;
+}
+
 // Check login.
 require_login($attemptobj->get_course(), false, $attemptobj->get_cm());
 
@@ -61,12 +66,6 @@ if (!$attemptobj->is_preview_user()) {
 
 if ($attemptobj->is_preview_user()) {
     navigation_node::override_active_url($attemptobj->start_attempt_url());
-}
-
-if (!has_capability('moodle/course:manageactivities', $context) && $nonajax == false) {
-    $CFG->nonajax = false;
-} else {
-    $CFG->nonajax = true;
 }
 
 // Check access.
@@ -97,7 +96,7 @@ if (empty($attemptobj->get_quiz()->showblocks)) {
     $PAGE->blocks->show_only_fake_blocks();
 }
 
-$navbc = $attemptobj->get_navigation_panel($output, 'quiz_attempt_nav_panel', -1);
+$navbc = $attemptobj->get_navigation_panel($output, 'quiz_attempt_nav_panel', -1, false, $summaryremote);
 $regions = $PAGE->blocks->get_regions();
 $PAGE->blocks->add_fake_block($navbc, reset($regions));
 
