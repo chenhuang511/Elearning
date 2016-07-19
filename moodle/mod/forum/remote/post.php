@@ -24,7 +24,8 @@
  */
 
 require_once(dirname(__FILE__) . '/../../../config.php');
-require_once('/../lib.php');
+require_once(dirname(__FILE__) . '/../lib.php');
+//require_once('/../lib.php');
 require_once($CFG->dirroot . '/lib/remote/lib.php');
 require_once($CFG->dirroot . '/course/remote/locallib.php');
 require_once($CFG->dirroot . '/mod/forum/locallib.php');
