@@ -62,10 +62,6 @@ function get_remote_chat_by_id($id)
     );
 }
 
-var_dump($ufields);
-var_dump($groupingjoin);
-var_dump($groupselect);
-var_dump($params);
 function get_remote_chat_user($groupingjoin, $groupselect, $data)
 {
     $user = moodle_webservice_client(array(
