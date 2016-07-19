@@ -203,10 +203,11 @@ abstract class grade_object {
             if (!array_key_exists($var, $columns)) {
                 continue;
             }
+            $courseremoteid = get_local_course_record($value, true)->remoteid;
             if (is_null($value)) {
                 $wheresql[] = " $var IS NULL ";
             } else {
-                if (ISREMOTE && ($table === 'grade_items')) {
+                if (ISREMOTE && ($table === 'grade_items') && $courseremoteid !== 0) {
                     $placeholder = 'param' . $index;
                     if ($columns[$var]->meta_type === 'X') {
                         // We have a text/clob column, use the cross-db method for its comparison.
@@ -219,7 +220,7 @@ abstract class grade_object {
                     if (strpos($var, 'userid') !== false) {
                         $value = get_remote_mapping_user($value)[0]->id;
                     } elseif (strpos($var, 'courseid') !== false) {
-                        $value = get_local_course_record($value, true)->remoteid;
+                        $value = $courseremote;
                     }
                     $newparams[$placeholder] = $value;
                     ++$index;
@@ -242,7 +243,7 @@ abstract class grade_object {
             $wheresql = implode("AND", $wheresql);
         }
 
-        if (ISREMOTE && ($table === 'grade_items')) {
+        if (ISREMOTE && ($table === 'grade_items') && $courseremoteid !== 0) {
             $sql = "SELECT * FROM {".$table."}";
             if ($wheresql) {
                 $sql .= " WHERE $wheresql";
