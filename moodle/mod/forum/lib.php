@@ -6204,7 +6204,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions = -1, $
                     echo '<a title="' . get_string('markallread', 'forum') .
                         '" href="' . $CFG->wwwroot . '/mod/forum/remote/markposts.php?f=' .
                         $forum->id . '&amp;mark=read&amp;returnpage=view.php&amp;sesskey=' . sesskey() . '">' .
-                        '<img src="' . $OUTPUT->pix_url('t/markasread') . '" class="iconsmall" alt="' . get_string('markallread', 'forum') . '" /></a>';
+                        '<img src="' . $OUTPUT->pix_url('t/markasread') . '" class="iconsmall"   alt="' . get_string('markallread', 'forum') . '" /></a>';
                 }
                 echo '</th>';
             }

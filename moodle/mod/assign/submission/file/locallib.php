@@ -532,7 +532,6 @@ class assign_submission_file extends assign_submission_plugin {
         if ($filesubmission = $this->get_file_submission($sourcesubmission->id)) {
             unset($filesubmission->id);
             $filesubmission->submission = $destsubmission->id;
-            var_dump($filesubmission);die;
             $DB->insert_record('assignsubmission_file', $filesubmission);
         }
         return true;

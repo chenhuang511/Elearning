@@ -47,7 +47,11 @@ if ($courseid) {
     $PAGE->set_url(new moodle_url('/course/togglecompletion.php', array('course' => $courseid)));
 
     // Check user is logged in
-    $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $course = get_local_course_record($courseid, true);
+    } else {
+        $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+    }
     $context = context_course::instance($course->id);
     require_login($course);
 
@@ -135,7 +139,7 @@ switch ($targetstate) {
 
 // Get course-modules entry
 if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-    $cm = get_remote_course_module_by_cmid(null, $cmid);
+    $cm = get_remote_core_course_get_course_module($cmid);
     $course = get_local_course_record($cm->course);
 } else {
     $cm = get_coursemodule_from_id(null, $cmid, null, true, MUST_EXIST);

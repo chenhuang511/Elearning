@@ -3560,7 +3560,7 @@ class assign {
 
         // Warning if required.
         $allsubmissions = $this->get_all_submissions($userid);
-
+        
         if ($attemptnumber != -1 && ($attemptnumber + 1) != count($allsubmissions)) {
             $params = array('attemptnumber' => $attemptnumber + 1,
                             'totalattempts' => count($allsubmissions));
@@ -5078,7 +5078,7 @@ class assign {
             }
             else {
                 $ruser = get_remote_mapping_user($userid);
-                $params = array('assignment'=>$this->get_instance()->remoteid, 'user' => $ruser[0]);
+                $params = array('assignment'=>$this->get_instance()->remoteid, 'userid' => $ruser[0]->id);
             }
         }
         if (MOODLE_RUN_MODE === MOODLE_RUN_HOST){
@@ -5086,7 +5086,7 @@ class assign {
             $submissions = $DB->get_records('assign_submission', $params, 'attemptnumber ASC');
         } else {
             $params['mode'] = 'ASC';
-
+            
             $submissions = get_submission_by_assignid_userid_groupid($params);
         }
 
@@ -6981,8 +6981,8 @@ class assign {
             $gradingdisabled = $gradinginfo->items[0]->grades[$userid]->locked ||
                 $gradinginfo->items[0]->grades[$userid]->overridden;
         } else {
-            $gradingdisabled = $gradinginfo->items[0]->grades[$ruser[0]]->locked ||
-                $gradinginfo->items[0]->grades[$ruser[0]]->overridden;
+            $gradingdisabled = $gradinginfo->items[0]->grades[$ruser[0]->id]->locked ||
+                $gradinginfo->items[0]->grades[$ruser[0]->id]->overridden;
         }
         return $gradingdisabled;
     }
@@ -8161,7 +8161,7 @@ class assign {
 
         // Set the status of the new attempt to reopened.
         $newsubmission->status = ASSIGN_SUBMISSION_STATUS_REOPENED;
-
+        
         // Give each submission plugin a chance to process the add_attempt.
         $plugins = $this->get_submission_plugins();
         foreach ($plugins as $plugin) {
