@@ -69,4 +69,50 @@ class local_mod_chat_external extends external_api {
 			)
 		);
     }
+
+    public static function local_mod_get_chat_users_parameters() {
+        return new external_function_parameters(
+            array(
+                'groupingjoin' => new external_value(PARAM_RAW, ' the groupingjoin'),
+                'groupselect' => new external_value(PARAM_RAW, ' the groupselect'),
+                'data' => new external_value(PARAM_RAW, ' the params')
+            )
+        );
+    }
+
+    public static function local_mod_get_chat_users($groupingjoin, $groupselect, $data) {
+        global $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::local_mod_get_chat_users_parameters(),
+            array(
+                'groupingjoin' => $groupingjoin,
+                'groupselect' => $groupselect,
+                'data' => $data,
+            )
+        );
+
+        return $DB->get_records_sql("SELECT DISTINCT u.picture, c.lastmessageping, c.firstping
+                               FROM {chat_users} c
+                               JOIN {user} u ON u.id = c.userid". $params['groupingjoin']."
+                              WHERE c.chatid = :chatid " .$params['groupselect'] . "
+                           ORDER BY c.firstping ASC", $params['data']);
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.9 Options available
+     * @since Moodle 2.2
+     */
+    public static function local_mod_get_chat_users_returns() {
+        return new external_single_structure(
+            array(
+                'u.picture' => new external_value(PARAM_INT, 'user picture'),
+                'c.lastmessageping'  => new external_value(PARAM_INT, 'last message ping'),
+                'c.firstping' => new external_value(PARAM_INT, 'first ping')
+            )
+        );
+    }
 }

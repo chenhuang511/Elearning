@@ -465,7 +465,7 @@ function chat_get_users($chatid, $groupid=0, $groupingid=0, $chatsid = null) {
 
     if (!empty($groupingid)) {
         $groupingjoin = "JOIN {groups_members} gm ON u.id = gm.userid
-                         JOIN {groupings_groups} gg ON gm.groupid = gg.groupid AND gg.groupingid = :groupingid ";
+                     JOIN {groupings_groups} gg ON gm.groupid = gg.groupid AND gg.groupingid = :groupingid ";
 
     } else {
         $groupingjoin = '';
@@ -473,10 +473,10 @@ function chat_get_users($chatid, $groupid=0, $groupingid=0, $chatsid = null) {
 
     $ufields = user_picture::fields('u');
     return $DB->get_records_sql("SELECT DISTINCT $ufields, c.lastmessageping, c.firstping
-                                   FROM {chat_users} c
-                                   JOIN {user} u ON u.id = c.userid $groupingjoin
-                                  WHERE c.chatid = :chatid $groupselect
-                               ORDER BY c.firstping ASC", $params);
+                               FROM {chat_users} c
+                               JOIN {user} u ON u.id = c.userid $groupingjoin
+                              WHERE c.chatid = :chatid $groupselect
+                           ORDER BY c.firstping ASC", $params);
 }
 
 /**
