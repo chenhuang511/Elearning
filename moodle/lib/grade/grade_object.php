@@ -195,18 +195,20 @@ abstract class grade_object {
 
         $columns = $DB->get_columns($table); // Cached, no worries.
         $useremote = ISREMOTE; // check if course is from local or remote
-        foreach ($params as $var=>$value) {
-            if (!in_array($var, $instance->required_fields) and !array_key_exists($var, $instance->optional_fields)) {
-                continue;
-            }
-            if (!array_key_exists($var, $columns)) {
-                continue;
-            }
-            if (strpos($var, 'courseid') !== false) {
-                $remoteid = get_local_course_record($value, true)->remoteid;
-                if ($remoteid === 0) {
-                    $useremote = false;
-                    break;
+        if ($useremote) {
+            foreach ($params as $var=>$value) {
+                if (!in_array($var, $instance->required_fields) and !array_key_exists($var, $instance->optional_fields)) {
+                    continue;
+                }
+                if (!array_key_exists($var, $columns)) {
+                    continue;
+                }
+                if (strpos($var, 'courseid') !== false) {
+                    $remoteid = get_local_course_record($value, true)->remoteid;
+                    if ($remoteid === 0) {
+                        $useremote = false;
+                        break;
+                    }
                 }
             }
         }
@@ -228,7 +230,7 @@ abstract class grade_object {
                         $wheresql[] = ' ' . $DB->sql_compare_text($var) . ' = ' . $DB->sql_compare_text(':' . $placeholder) . ' ';
                     } else {
                         // Other columns (varchar, integers...).
-                        $wheresql[$var] = " $var = :" . $placeholder ." ";
+                        $wheresql[] = " $var = :" . $placeholder ." ";
                     }
 
                     if (strpos($var, 'userid') !== false) {
