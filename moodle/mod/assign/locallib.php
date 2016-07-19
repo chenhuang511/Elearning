@@ -1248,12 +1248,20 @@ class assign {
             return $this->instance;
         }
         if ($this->get_course_module()) {
+            $params = array('id' => $this->get_course_module()->instance);
             if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-                $params = array('id' => $this->get_course_module()->instance);
                 $this->instance = $DB->get_record('assign', $params, '*', MUST_EXIST);
-
             } else {
+                // Get instance remote
+                $instanceremote = get_remote_assign_by_id_instanceid($params['id'], $this->get_context()->instanceid);
+                // Get instance host
                 $this->instance = get_local_assign_record($this->get_course_module()->instance);
+                // Merge 2 instance
+                $this->instance->name = $instanceremote->name;
+                $this->instance->intro = $instanceremote->intro;
+                $this->instance->introformat = $instanceremote->introformat;
+                $this->instance->alwaysshowdescription = $instanceremote->alwaysshowdescription;
+                $this->instance->introattachments = $instanceremote->introattachments;
             }
         }
         if (!$this->instance) {
@@ -1488,7 +1496,12 @@ class assign {
 
         list($insql, $params) = $DB->get_in_or_equal(array_keys($participants), SQL_PARAMS_NAMED);
 
-        $assignid = $this->get_instance()->id;
+        if (MOODLE_RUN_MODE === MOODLE_RUN_HOST){
+            $assignid = $this->get_instance()->id;
+        } else {
+            $assignid = $this->get_instance()->remoteid;
+        }
+
         $params['assignmentid1'] = $assignid;
         $params['assignmentid2'] = $assignid;
 
@@ -2267,9 +2280,10 @@ class assign {
         }
 
         if ($this->gradebook_item_update(null, $grade)) {
-            \mod_assign\event\submission_graded::create_from_grade($this, $grade)->trigger();
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                \mod_assign\event\submission_graded::create_from_grade($this, $grade)->trigger();
+            }
         }
-
 
         // If the conditions are met, allow another attempt.
         if ($submission) {
@@ -3151,16 +3165,18 @@ class assign {
      */
     public function get_user_submission($userid, $create, $attemptnumber=-1) {
         global $DB, $USER;
+        // If the userid is not null then use userid.
         if (!$userid) {
             $userid = $USER->id;
         }
 
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid, 'groupid'=>0);
+        } else {
             $ruser = get_remote_mapping_user($userid);
+            $params = array('assignment'=>$this->get_instance()->remoteid, 'userid'=>$ruser[0]->id, 'groupid'=>0);
         }
 
-        // If the userid is not null then use userid.
-        $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid, 'groupid'=>0);
         if ($attemptnumber >= 0) {
             $params['attemptnumber'] = $attemptnumber;
         }
@@ -3172,7 +3188,6 @@ class assign {
             $submissions = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', '*', 0, 1);
         }
         else{
-            $params['userid'] = $ruser[0]->id;
             $params['mode'] = 'DESC';
             $submissions = get_submission_by_assignid_userid_groupid($params);
         }
@@ -3186,11 +3201,14 @@ class assign {
         }
         if ($create) {
             $submission = new stdClass();
-            $submission->assignment   = $this->get_instance()->id;
             if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $submission->assignment   = $this->get_instance()->id;
                 $submission->userid = $userid;
+                $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid, 'groupid'=>0);
             } else {
+                $submission->assignment   = $this->get_instance()->remoteid;
                 $submission->userid = $ruser[0]->id;
+                $params = array('assignment'=>$this->get_instance()->remoteid, 'userid'=>$ruser[0]->id, 'groupid'=>0);
             }
             $submission->timecreated = time();
             $submission->timemodified = $submission->timecreated;
@@ -3202,7 +3220,6 @@ class assign {
             }
             // Work out if this is the latest submission.
             $submission->latest = 0;
-            $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid, 'groupid'=>0);
             if ($attemptnumber == -1) {
                 // This is a new submission so it must be the latest.
                 $submission->latest = 1;
@@ -3212,7 +3229,6 @@ class assign {
                     $result = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', 'attemptnumber', 0, 1);
                 }
                 else {
-                    $params['userid'] = $ruser[0]->id;
                     $result = get_attemptnumber_by_assignid_userid_groupid($params);
                 }
                 $latestsubmission = null;
@@ -3253,10 +3269,9 @@ class assign {
     protected function get_submission($submissionid) {
         if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
             global $DB;
-
             $params = array('assignment'=>$this->get_instance()->id, 'id'=>$submissionid);
             $submission = $DB->get_record('assign_submission', $params, '*', MUST_EXIST);
-        } elseif (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        } else {
             $submission = get_remote_submission_by_id($submissionid);
         }
         return $submission;
@@ -3278,14 +3293,13 @@ class assign {
             $userid = $USER->id;
         }
 
-        $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid);
         if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid);
             $flags = $DB->get_record('assign_user_flags', $params);
         }
         else{
-            unset($params['userid']);
-            $params['useremail'] = $this->get_email_from_userid($userid);
-
+            $ruser = get_remote_mapping_user($userid);
+            $params = array('assignment'=>$this->get_instance()->remoteid, 'userid'=>$ruser[0]->id);
             $flags = get_user_flags_by_assignid_userid($params);
         }
 
@@ -3298,8 +3312,13 @@ class assign {
 
         if ($create) {
             $flags = new stdClass();
-            $flags->assignment = $this->get_instance()->id;
-            $flags->userid = $userid;
+            if (MOODLE_RUN_MODE === MOODLE_RUN_HOST) {
+                $flags->assignment = $this->get_instance()->id;
+                $flags->userid = $userid;
+            } else {
+                $flags->assignment = $this->get_instance()->remoteid;
+                $flags->userid = $ruser[0]->id;
+            }
             $flags->locked = 0;
             $flags->extensionduedate = 0;
             $flags->workflowstate = '';
@@ -3338,7 +3357,11 @@ class assign {
 
         $submission = null;
 
-        $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid);
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid);
+        } else {
+            $params = array('assignment'=>$this->get_instance()->remoteid, 'userid'=>$ruser[0]->id);
+        }
         if ($attemptnumber < 0 || $create) {
             // Make sure this grade matches the latest submission attempt.
             if ($this->get_instance()->teamsubmission) {
@@ -3358,7 +3381,6 @@ class assign {
             $grades = $DB->get_records('assign_grades', $params, 'attemptnumber DESC', '*', 0, 1);
         }
         else {
-            $params['userid'] = $ruser[0]->id;
             $grades = get_assign_grades_by_assignid_userid($params);
             $adminid = reset(explode(',', $CFG->siteadmins));
 
@@ -3379,7 +3401,11 @@ class assign {
         }
         if ($create) {
             $grade = new stdClass();
-            $grade->assignment   = $this->get_instance()->id;
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $grade->assignment   = $this->get_instance()->id;
+            } else {
+                $grade->assignment   = $this->get_instance()->remoteid;
+            }
             $grade->userid       = $userid;
 
             $grade->timecreated = time();
@@ -4676,47 +4702,7 @@ class assign {
 
         $gradingstatus = $this->get_grading_status($user->id);
         $usergroups = $this->get_all_groups($user->id);
-
-        // Check remote course
-        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            $ruser = get_remote_mapping_user();
-            $remotesubmission = get_remote_get_submission_status($instance->id, $ruser['0']->id)->lastattempt;
-            unset($remotesubmission->submission->plugins);
-            $submissionplugins = $this->get_submission_plugins();
-
-            $submissionstatus = new assign_submission_status($instance->allowsubmissionsfromdate,
-                $instance->alwaysshowdescription,
-                $remotesubmission->submission,
-                $instance->teamsubmission,
-                '',
-                '',
-                '',
-                $this->is_any_submission_plugin_enabled(),
-                $remotesubmission->locked,
-                $remotesubmission->graded,
-                $instance->duedate,
-                $instance->cutoffdate,
-                $submissionplugins,
-                $this->get_return_action(),
-                $this->get_return_params(),
-                $this->get_course_module()->id,
-                $this->get_course()->id,
-                assign_submission_status::STUDENT_VIEW,
-                $remotesubmission->canedit,
-                $remotesubmission->cansubmit,
-                $viewfullnames,
-                $remotesubmission->extensionduedate,
-                $this->get_context(),
-                $remotesubmission->blindmarking,
-                $remotesubmission->gradingcontrollerpreview,
-                $instance->attemptreopenmethod,
-                $instance->maxattempts,
-                $remotesubmission->gradingstatus,
-                $instance->preventsubmissionnotingroup,
-                $remotesubmission->usergroups);
-            return $submissionstatus;
-        }
-
+        
         $submissionstatus = new assign_submission_status($instance->allowsubmissionsfromdate,
                                                           $instance->alwaysshowdescription,
                                                           $submission,
@@ -4777,7 +4763,8 @@ class assign {
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
             $grader = null;
             $ruser = get_remote_mapping_user();
-            $feedback = get_remote_get_submission_status($instance->id, $ruser['0']->id)->feedback;
+            $feedback = get_remote_get_submission_status($instance->remoteid, $ruser['0']->id)->feedback;
+
             if (!$feedback){
                 return;
             }
@@ -4898,7 +4885,7 @@ class assign {
         $ruser = get_remote_mapping_user();
 
         return $rparams = array(
-            'assignid' => $this->get_instance()->id,
+            'assignid' => $this->get_instance()->remoteid,
             'userid' => $ruser[0]->id
         );
     }
@@ -4995,9 +4982,8 @@ class assign {
 
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
             $grades = array();
-            $user = $DB->get_record('user', array('id' => $userid));
-            $ruser = get_remote_mapping_user($user);
-            $submissionstatus = get_remote_get_submission_status($this->get_instance()->id, $ruser[0]->id );
+            $ruser = get_remote_mapping_user($userid);
+            $submissionstatus = get_remote_get_submission_status($this->get_instance()->remoteid, $ruser[0]->id );
 
             foreach($submissionstatus->previousattempts as $previousattemp){
                 // Switch grader on hub to host
@@ -5086,16 +5072,19 @@ class assign {
             // Params to get the group submissions.
             $params = array('assignment'=>$this->get_instance()->id, 'groupid'=>$groupid, 'userid'=>0);
         } else {
-            // Params to get the user submissions.
-            $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid);
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                // Params to get the user submissions.
+                $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid);
+            }
+            else {
+                $ruser = get_remote_mapping_user($userid);
+                $params = array('assignment'=>$this->get_instance()->remoteid, 'user' => $ruser[0]);
+            }
         }
         if (MOODLE_RUN_MODE === MOODLE_RUN_HOST){
             // Return the submissions ordered by attempt.
             $submissions = $DB->get_records('assign_submission', $params, 'attemptnumber ASC');
         } else {
-            $ruser = get_remote_mapping_user($userid);
-
-            $params['userid'] = $ruser[0]->id;
             $params['mode'] = 'ASC';
 
             $submissions = get_submission_by_assignid_userid_groupid($params);
@@ -5310,7 +5299,7 @@ class assign {
         $assign->cmidnumber = $this->get_course_module()->idnumber;
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
             $assign->cmid = $this->get_course_module()->id;
-            $assign->remoteid = $this->get_course()->remoteid;
+            $assign->courseremoteid = $this->get_course()->remoteid;
         }
         // Set assign gradebook feedback plugin status (enabled and visible).
         $assign->gradefeedbackenabled = $this->is_gradebook_feedback_enabled();
@@ -6110,7 +6099,7 @@ class assign {
                 return $this->submit_for_grading($data, $notices);
             } else{
                 $userid = get_remote_mapping_user();
-                return submit_remote_for_grading($this->get_instance()->id, $userid[0]->id, $data);
+                return submit_remote_for_grading($this->get_instance()->remoteid, $userid[0]->id, $data);
             }
         }
         return true;
@@ -7752,6 +7741,7 @@ class assign {
         $originalgrade = $grade->grade;
         $gradingdisabled = $this->grading_disabled($userid);
         $gradinginstance = $this->get_grading_instance($userid, $grade, $gradingdisabled);
+
         if (!$gradingdisabled) {
             if ($gradinginstance) {
                 $grade->grade = $gradinginstance->submit_and_get_grade($formdata->advancedgrading,
@@ -7815,8 +7805,10 @@ class assign {
 
         // Note the default if not provided for this option is true (e.g. webservices).
         // This is for backwards compatibility.
-        if (!isset($formdata->sendstudentnotifications) || $formdata->sendstudentnotifications) {
-            $this->notify_grade_modified($grade, true);
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            if (!isset($formdata->sendstudentnotifications) || $formdata->sendstudentnotifications) {
+                $this->notify_grade_modified($grade, true);
+            }
         }
     }
 
@@ -7989,7 +7981,7 @@ class assign {
         if ($rownum == count($useridlist) - 1) {
             $last = true;
         }
-
+                     echo 123;die;
         $data = new stdClass();
 
         $gradeformparams = array('rownum' => $rownum,

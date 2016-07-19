@@ -84,7 +84,11 @@ class grading_app implements templatable, renderable {
 
         $export = new stdClass();
         $export->userid = $this->userid;
-        $export->assignmentid = $this->assignment->get_instance()->id;
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $export->assignmentid = $this->assignment->get_instance()->id;
+        } else {
+            $export->assignmentid = $this->assignment->get_instance()->remoteid;
+        }
         $export->cmid = $this->assignment->get_course_module()->id;
         $export->contextid = $this->assignment->get_context()->id;
         $export->groupid = $this->groupid;

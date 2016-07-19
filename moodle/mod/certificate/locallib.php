@@ -498,7 +498,7 @@ function certificate_print_attempts($course, $certificate, $attempts) {
     $table->class = 'generaltable';
     $table->head = array(get_string('issued', 'certificate'));
     $table->align = array('left');
-    $table->attributes = array("style" => "width:20%; margin:auto");
+    // $table->attributes = array("style" => "width:20%; margin:auto");
     $gradecolumn = $certificate->printgrade;
     if ($gradecolumn) {
         $table->head[] = get_string('grade');

@@ -1624,12 +1624,12 @@ class local_mod_assign_external extends external_api {
         return new external_function_parameters(
             array(
                 'assignment' => new external_value(PARAM_INT, 'asssign ID'),
-                'useremail' => new external_value(PARAM_RAW, 'user ID'),
+                'userid' => new external_value(PARAM_INT, 'user ID'),
             )
         );
     }
     
-    public static function get_user_flags_by_assignid_userid($assignment, $useremail){
+    public static function get_user_flags_by_assignid_userid($assignment, $userid){
         global $DB;
 
         $warnings = array();
@@ -1641,13 +1641,10 @@ class local_mod_assign_external extends external_api {
         $params = self::validate_parameters(self::get_user_flags_by_assignid_userid_parameters(),
             array(
                 'assignment' => $assignment,
-                'useremail' => $useremail,
+                'userid' => $userid,
             )
         );
-
-        $params['userid'] = self::get_userid_from_email($params['useremail']);
-        unset($params["useremail"]);
-
+        
         $result['userflags'] = $DB->get_record('assign_user_flags', $params);
         $result['warnings'] = $warnings;
 
