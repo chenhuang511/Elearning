@@ -220,7 +220,7 @@ abstract class grade_object {
                     if (strpos($var, 'userid') !== false) {
                         $value = get_remote_mapping_user($value)[0]->id;
                     } elseif (strpos($var, 'courseid') !== false) {
-                        $value = $courseremote;
+                        $value = $courseremoteid;
                     }
                     $newparams[$placeholder] = $value;
                     ++$index;
