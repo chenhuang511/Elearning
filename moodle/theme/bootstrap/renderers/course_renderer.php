@@ -47,7 +47,7 @@ class theme_bootstrap_core_course_renderer extends core_course_renderer
         if ($chelper->get_show_courses() < self::COURSECAT_SHOW_COURSES_EXPANDED) {
             $classes .= ' collapsed';
         }
-
+        $classes .= ' bhxh-content';
         // Start .coursebox div.
         $content .= html_writer::start_tag('div', array(
             'class' => $classes,
@@ -91,7 +91,7 @@ class theme_bootstrap_core_course_renderer extends core_course_renderer
 
         $content .= html_writer::end_tag('div'); // End .info div.
         // NOI DUNG COURSE
-        $content .= html_writer::start_tag('div', array('class' => 'content panel-body'));
+        $content .= html_writer::start_tag('div', array('class' => 'content panel-body content2'));
         require_once($CFG->libdir . '/remote/lib.php');
 
         $thumbobj = get_remote_course_thumb($course->remoteid);
@@ -102,11 +102,11 @@ class theme_bootstrap_core_course_renderer extends core_course_renderer
 
             if ($thumbnail) {
 
-                $imgthumb = html_writer::empty_tag('img', array('class' => 'course-img', 'src' => $thumbobj[0]->thumbnail_image));
+                $imgthumb = html_writer::empty_tag('img', array('class' => 'course-img course-img2', 'src' => $thumbobj[0]->thumbnail_image));
                 $thumblink = html_writer::link(new moodle_url($CFG->wwwroot . '/course/view.php', array('id' => $course->id)),
                     $imgthumb, array('class' => $course->visible ? '' : 'course-thumbnail'));
 
-                $content .= html_writer::tag('div', $thumblink, array('class' => 'course-image'));
+                $content .= html_writer::tag('div', $thumblink, array('class' => 'course-image course-image2'));
             }
         }
         $content .= $this->coursecat_coursebox_content($chelper, $course);
