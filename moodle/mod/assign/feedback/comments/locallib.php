@@ -350,10 +350,11 @@ class assign_feedback_comments extends assign_feedback_plugin {
             $feedbackcomment->commenttext = $data->assignfeedbackcomments_editor['text'];
             $feedbackcomment->commentformat = $data->assignfeedbackcomments_editor['format'];
             $feedbackcomment->grade = $grade->id;
-            $feedbackcomment->assignment = $this->assignment->get_instance()->id;
             if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $feedbackcomment->assignment = $this->assignment->get_instance()->id;
                 return $DB->insert_record('assignfeedback_comments', $feedbackcomment) > 0;
             } else {
+                $feedbackcomment->assignment = $this->assignment->get_instance()->remoteid;
                 return create_assignfeedback_comments($feedbackcomment);
             }
         }

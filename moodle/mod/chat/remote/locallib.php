@@ -28,17 +28,17 @@ function remote_chat_send_chat_message($chatsid, $messagetext)
     return $messageid->messageid;
 }
 
-function get_remote_chat_user($chatsid)
-{
-    $user = moodle_webservice_client(array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN_M,
-            'function_name' => 'mod_chat_get_chat_users',
-            'params' => array('chatsid' => $chatsid)
-        )
-    );
-    return $user->users[0];
-}
+//function get_remote_chat_user($chatsid)
+//{
+//    $user = moodle_webservice_client(array(
+//            'domain' => HUB_URL,
+//            'token' => HOST_TOKEN_M,
+//            'function_name' => 'mod_chat_get_chat_users',
+//            'params' => array('chatsid' => $chatsid)
+//        )
+//    );
+//    return $user->users[0];
+//}
 
 function get_remote_chat_login_user($userid, $chatid, $groupid = 0)
 {
@@ -58,6 +58,17 @@ function get_remote_chat_by_id($id)
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_chat_get_chat_by_id',
             'params' => array('id' => $id)
+        )
+    );
+}
+
+function get_remote_chat_user($groupingjoin, $groupselect, $data)
+{
+    return moodle_webservice_client(array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_chat_get_chat_users',
+            'params' => array('groupingjoin' => $groupingjoin, 'groupselect' => $groupselect, 'data' => $data)
         )
     );
 }

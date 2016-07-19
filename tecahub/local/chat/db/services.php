@@ -42,4 +42,13 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+
+    'local_mod_chat_get_chat_users' => array(
+        'classname'	  => 'local_mod_chat_external',
+        'methodname'  => 'local_mod_get_chat_users',
+        'classpath'	  => 'local/chat/externallib.php',
+        'description' => "Get chat users",
+        'type'		  => 'read',
+        'ajax'		  => true
+    ),
 );
