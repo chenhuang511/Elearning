@@ -1579,4 +1579,88 @@ ORDER BY
             )
         );
     }
+
+    /**
+     * Hanv 19/07/2016
+     * Get grading attempts data by select fields, where asql, params.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     *
+     */
+    public static function grading_get_remote_attempts_byid_parameters() {
+        return new external_function_parameters(
+            array(
+                'param' => new external_multiple_structure(new external_value(PARAM_RAW, 'param')),
+                'asql' => new external_value(PARAM_RAW, 'asql'),
+                'fields' => new external_value(PARAM_RAW, 'fields'),
+            )
+        );
+    }
+
+    /**
+     * Get grading attempts data by select fields, where asql, params.
+     *
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function grading_get_remote_attempts_byid($r_params, $asql, $fields) {
+        global $CFG, $DB;
+
+        $params = self::validate_parameters(self::grading_get_remote_attempts_byid_parameters(),
+            array('param' => $r_params, 'fields' => $fields, 'asql' => $asql));
+
+        $paramdata = array();
+        foreach ($r_params as $element) {
+            $paramdata[] = $element;
+        }
+        $attemptsbyid = $DB->get_records_sql("
+                SELECT $fields
+                FROM {quiz_attempts} quiza
+                JOIN {user} u ON u.id = quiza.userid
+                WHERE quiza.uniqueid $asql AND quiza.state = ? AND quiza.quiz = ?",
+            $paramdata);
+        return $attemptsbyid;
+    }
+
+    /**
+     * Describes a single attempt structure.
+     *
+     * @return external_multiple_structure
+     */
+    public static function grading_get_remote_attempts_byid_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'Attempt id.', VALUE_OPTIONAL),
+                    'quiz' => new external_value(PARAM_INT, 'Foreign key reference to the quiz that was attempted.', VALUE_OPTIONAL),
+                    'userid' => new external_value(PARAM_INT, 'Foreign key reference to the user whose attempt this is.', VALUE_OPTIONAL),
+                    'attempt' => new external_value(PARAM_INT, 'Sequentially numbers this students attempts at this quiz.', VALUE_OPTIONAL),
+                    'uniqueid' => new external_value(PARAM_INT, 'Foreign key reference to the question_usage that holds the
+                                                    details of the the question_attempts that make up this quiz
+                                                    attempt.', VALUE_OPTIONAL),
+                    'layout' => new external_value(PARAM_RAW, 'Attempt layout.', VALUE_OPTIONAL),
+                    'currentpage' => new external_value(PARAM_INT, 'Attempt current page.', VALUE_OPTIONAL),
+                    'preview' => new external_value(PARAM_INT, 'Whether is a preview attempt or not.', VALUE_OPTIONAL),
+                    'state' => new external_value(PARAM_ALPHA, 'The current state of the attempts. \'inprogress\',
+                                                \'overdue\', \'finished\' or \'abandoned\'.', VALUE_OPTIONAL),
+                    'timestart' => new external_value(PARAM_INT, 'Time when the attempt was started.', VALUE_OPTIONAL),
+                    'timefinish' => new external_value(PARAM_INT, 'Time when the attempt was submitted.
+                                                    0 if the attempt has not been submitted yet.', VALUE_OPTIONAL),
+                    'timemodified' => new external_value(PARAM_INT, 'Last modified time.', VALUE_OPTIONAL),
+                    'timecheckstate' => new external_value(PARAM_INT, 'Next time quiz cron should check attempt for
+                                                        state changes.  NULL means never check.', VALUE_OPTIONAL),
+                    'sumgrades' => new external_value(PARAM_FLOAT, 'Total marks for this attempt.', VALUE_OPTIONAL),
+                    'idnumber' => new external_value(PARAM_RAW, 'idnumber', VALUE_OPTIONAL),
+                    'firstnamephonetic' => new external_value(PARAM_RAW, 'firstname phonetic', VALUE_OPTIONAL),
+                    'lastnamephonetic' => new external_value(PARAM_RAW, 'lastname phonetic', VALUE_OPTIONAL),
+                    'middlename' => new external_value(PARAM_RAW, 'middlename', VALUE_OPTIONAL),
+                    'alternatename' => new external_value(PARAM_RAW, 'alternate name', VALUE_OPTIONAL),
+                    'firstname' => new external_value(PARAM_RAW, 'first name', VALUE_OPTIONAL),
+                    'lastname' => new external_value(PARAM_RAW, 'last name', VALUE_OPTIONAL),
+                )
+            )
+        );
+    }
 }

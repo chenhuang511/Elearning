@@ -170,4 +170,12 @@ $functions = array(
 	'type'		  => 'read',
 	'ajax'		  => true
 	),
+	'local_mod_quiz_get_remote_attempts_byid' => array(
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'grading_get_remote_attempts_byid',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Get grading attempts data by select fields, where asql, params.",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 );

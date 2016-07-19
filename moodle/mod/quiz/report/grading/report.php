@@ -140,7 +140,7 @@ class quiz_grading_report extends quiz_default_report {
             $hasquestions = quiz_has_questions($quiz->id);
         }
         $counts = null;
-        if ($slot && $hasquestions) {//@TODO: bug here
+        if ($slot && $hasquestions) {
             // Make sure there is something to do.
             if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
                 $qubaobj = $this->get_qubaids_condition();
@@ -242,12 +242,22 @@ class quiz_grading_report extends quiz_default_report {
 
         $fields = 'quiza.*, u.idnumber, ';
         $fields .= get_all_user_name_fields(true, 'u');
-        $attemptsbyid = $DB->get_records_sql("
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $paramdata = array();
+            $index = 0;
+            foreach ($params as $param){
+                $paramdata["param[$index]"]=$param;
+                $index++;
+            }
+            $attemptsbyid = get_remote_attempts_byid($paramdata, $asql, $fields);
+        }else{
+            $attemptsbyid = $DB->get_records_sql("
                 SELECT $fields
                 FROM {quiz_attempts} quiza
                 JOIN {user} u ON u.id = quiza.userid
                 WHERE quiza.uniqueid $asql AND quiza.state = ? AND quiza.quiz = ?",
                 $params);
+        }
 
         $attempts = array();
         foreach ($attemptsbyid as $attempt) {
@@ -475,7 +485,9 @@ class quiz_grading_report extends quiz_default_report {
 
         foreach ($qubaids as $qubaid) {
             $attempt = $attempts[$qubaid];
+//            var_dump($attempt);die;
             $quba = question_engine::load_questions_usage_by_activity($qubaid);
+            $reviewobj = get_remote_get_attempt_review($attemptid);
             $displayoptions = quiz_get_review_options($this->quiz, $attempt, $this->context);
             $displayoptions->hide_all_feedback();
             $displayoptions->rightanswer = question_display_options::VISIBLE;

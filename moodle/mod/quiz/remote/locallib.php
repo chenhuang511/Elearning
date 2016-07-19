@@ -431,3 +431,14 @@ function get_remote_load_questions_usages_where_question_in_state($qubaparam, $q
         ), false
     );
 }
+
+function get_remote_attempts_byid($paramdata, $asql, $fields) {
+    return moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_quiz_get_remote_attempts_byid',
+            'params' => array_merge(array('fields' => $fields, 'asql' => $asql), $paramdata)
+        ), false
+    );
+}
