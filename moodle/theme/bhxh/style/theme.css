@@ -909,6 +909,7 @@ section#discussion-container.discussion.container div.discussion-body div#discus
     min-height: 145px;
     max-height: 145px;
     overflow: hidden;
+
 }
 
 #frontpage-course-list .coursebox .coursename,
@@ -1003,6 +1004,19 @@ section#discussion-container.discussion.container div.discussion-body div#discus
     height: 160px;
     margin: 0px;
     padding: 0px;
+}
+.content .coursebox .course-image2 {
+    width: 250px;
+    height: 200px;
+    float: left;
+}
+.content .coursebox .course-image2 .course-img2{
+    width: 220px;
+    height: 150px;
+    float:  left;
+}
+.content2 {
+    height: 170px;
 }
 
 #enrol-course-list .container-available-course .coursebox .course-image .course-thumbnail > img {
@@ -1149,7 +1163,9 @@ ul#coursetabs > li.active > a, ul#coursetabs > li > a:focus, ul#coursetabs > li 
     box-shadow: none;
     border-bottom: solid 1px #ddd;
 }
-
+#section-menu .bhxh-content{
+    height: 250px;
+}
 #section-menu .panel .panel-heading {
     background-color: transparent;
 }
@@ -1157,6 +1173,7 @@ ul#coursetabs > li.active > a, ul#coursetabs > li > a:focus, ul#coursetabs > li 
 #section-menu .panel .panel-heading .panel-title {
     font-size: 15px;
 }
+
 
 #section-menu .panel .panel-heading .panel-title > a:focus,
 #section-menu .panel .panel-heading .panel-title > a:hover,
@@ -1178,6 +1195,7 @@ ul#coursetabs > li.active > a, ul#coursetabs > li > a:focus, ul#coursetabs > li 
 #section-menu .panel .panel-body a.sublink > a.fa {
 
 }
+
 
 .courseware-block {
     border: solid 1px #ddd;
@@ -2274,6 +2292,9 @@ div.backup-section + form,
 .courses.frontpage-course-list-all .coursebox .info .coursename {
     margin: 0;
 }
+.courses.frontpage-course-list-all .coursebox .info .courseName1 {
+    margin-left: -30px;
+}
 
 .courses.frontpage-course-list-all .coursebox .info .coursename a {
     color: #0e73e6;
@@ -2700,7 +2721,9 @@ div.backup-section + form,
     background-position: left 7px;
     padding-left: 30px;
 }
-
+.coursebox .info  .coursename1 {
+    margin-left: -23px;
+}
 .dir-rtl .coursebox > .info > .coursename a {
     padding-right: 30px;
     background-position: right 7px;
@@ -2821,7 +2844,12 @@ div.backup-section + form,
     color: #525252;
     padding-top: 7px;
 }
+#coursesearch .searchCourse1{
+    margin-left: -20px;
+    width: 300px;
+    height: 50px;
 
+}
 .dir-ltr #coursesearch .coursesearchbox label {
     margin-right: 7px;
 }
@@ -2851,6 +2879,7 @@ div.backup-section + form,
         width: 60%;
     }
 }
+
 
 .course-content .topics h3 {
     font-size: 21px;

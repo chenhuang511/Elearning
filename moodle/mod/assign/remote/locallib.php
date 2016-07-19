@@ -303,9 +303,10 @@ function get_user_flags_by_assignid_userid($params){
         ), false
     );
 
-    if($flags->exception)
+    if($flags->exception)  {
         return 0;
-
+    }
+    
     return $flags->userflags;
 }
 

@@ -1138,7 +1138,7 @@ function assign_grade_item_update($assign, $grades=null) {
         );
         return core_grades_update_grades(
             'mod/assign',
-            $assign->remoteid,
+            $assign->courseremoteid,
             'mod_assign',
             $assign->cmid,
             0,
@@ -1533,4 +1533,24 @@ function mod_assign_output_fragment_gradingpanel($args) {
     );
 
     return $assign->view('gradingpanel', $viewargs);
+}
+
+/**
+ * Get data for show view edit setting assignment
+ *
+ * @param stdClass $coursemodule  - The info of course module
+ * @return stdClass $assign   - The info of assignment
+ */
+function assign_get_local_settings_info($coursemodule){
+    // Get assign from host
+    $assign = get_local_assign_record($coursemodule->instance);
+    // Get assign from hub
+    $assignremote = get_remote_assign_by_id($coursemodule->instance);
+    // Merge neccessary information
+    $assign->name = $assignremote->name;
+    $assign->intro = $assignremote->intro;
+    $assign->introformat = $assignremote->introformat;
+    $assign->alwaysshowdescription = $assignremote->alwaysshowdescription;
+
+    return $assign;
 }

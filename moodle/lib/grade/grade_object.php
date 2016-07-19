@@ -194,7 +194,24 @@ abstract class grade_object {
         $newparams = array();
 
         $columns = $DB->get_columns($table); // Cached, no worries.
-
+        $useremote = ISREMOTE; // check if course is from local or remote
+        if ($useremote) {
+            foreach ($params as $var=>$value) {
+                if (!in_array($var, $instance->required_fields) and !array_key_exists($var, $instance->optional_fields)) {
+                    continue;
+                }
+                if (!array_key_exists($var, $columns)) {
+                    continue;
+                }
+                if (strpos($var, 'courseid') !== false) {
+                    $remoteid = get_local_course_record($value, true)->remoteid;
+                    if ($remoteid === 0) {
+                        $useremote = false;
+                        break;
+                    }
+                }
+            }
+        }
         $index = 0;
         foreach ($params as $var=>$value) {
             if (!in_array($var, $instance->required_fields) and !array_key_exists($var, $instance->optional_fields)) {
@@ -206,14 +223,14 @@ abstract class grade_object {
             if (is_null($value)) {
                 $wheresql[] = " $var IS NULL ";
             } else {
-                if (ISREMOTE && ($table === 'grade_items')) {
+                if ($useremote && ($table === 'grade_items')) {
                     $placeholder = 'param' . $index;
                     if ($columns[$var]->meta_type === 'X') {
                         // We have a text/clob column, use the cross-db method for its comparison.
                         $wheresql[] = ' ' . $DB->sql_compare_text($var) . ' = ' . $DB->sql_compare_text(':' . $placeholder) . ' ';
                     } else {
                         // Other columns (varchar, integers...).
-                        $wheresql[$var] = " $var = :" . $placeholder ." ";
+                        $wheresql[] = " $var = :" . $placeholder ." ";
                     }
 
                     if (strpos($var, 'userid') !== false) {
@@ -242,7 +259,7 @@ abstract class grade_object {
             $wheresql = implode("AND", $wheresql);
         }
 
-        if (ISREMOTE && ($table === 'grade_items')) {
+        if ($useremote && ($table === 'grade_items')) {
             $sql = "SELECT * FROM {".$table."}";
             if ($wheresql) {
                 $sql .= " WHERE $wheresql";

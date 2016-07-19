@@ -2643,7 +2643,7 @@ function forum_count_discussion_replies($forumid, $forumsort = "", $limit = -1, 
             $prs['parameters[0][name]'] = "forum";
             $prs['parameters[0][value]'] = $forumid;
 
-            $replies = get_remote_forum_count_discussion_replies_sql(sql, $prs);
+            $replies = get_remote_forum_count_discussion_replies_sql($sql, $prs);
             return $replies;
         } else {
             return $DB->get_records_sql($sql, array($forumid));
@@ -2661,7 +2661,7 @@ function forum_count_discussion_replies($forumid, $forumsort = "", $limit = -1, 
             $prs['parameters[0][name]'] = "forum";
             $prs['parameters[0][value]'] = $forumid;
 
-            $replies = get_remote_forum_count_discussion_replies_sql(sql, $prs, $limitfrom, $limitnum);
+            $replies = get_remote_forum_count_discussion_replies_sql($sql, $prs, $limitfrom, $limitnum);
             return $replies;
         } else {
             return $DB->get_records_sql($sql, array($forumid), $limitfrom, $limitnum);

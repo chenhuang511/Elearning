@@ -47,7 +47,7 @@ class theme_bootstrap_core_course_renderer extends core_course_renderer
         if ($chelper->get_show_courses() < self::COURSECAT_SHOW_COURSES_EXPANDED) {
             $classes .= ' collapsed';
         }
-
+        $classes .= ' bhxh-content';
         // Start .coursebox div.
         $content .= html_writer::start_tag('div', array(
             'class' => $classes,
@@ -62,7 +62,9 @@ class theme_bootstrap_core_course_renderer extends core_course_renderer
         $coursename = $chelper->get_course_formatted_name($course);
 
         $coursenamelink = html_writer::link(new moodle_url('/course/view.php', array('id' => $course->id)),
-            $coursename, array('class' => $course->visible ? '' : 'dimmed'));
+
+                                            $coursename, array('class' => $course->visible ? 'coursename1' : 'coursename1 dimmed'));
+
         $content .= html_writer::tag('span', $coursenamelink, array('class' => 'coursename'));
         // If we display course in collapsed form but the course has summary or course contacts, display the link to the info page.
         $content .= html_writer::start_tag('span', array('class' => 'moreinfo'));
@@ -89,7 +91,7 @@ class theme_bootstrap_core_course_renderer extends core_course_renderer
 
         $content .= html_writer::end_tag('div'); // End .info div.
         // NOI DUNG COURSE
-        $content .= html_writer::start_tag('div', array('class' => 'content panel-body'));
+        $content .= html_writer::start_tag('div', array('class' => 'content panel-body content2'));
         require_once($CFG->libdir . '/remote/lib.php');
 
         $thumbobj = get_remote_course_thumb($course->remoteid);
@@ -100,11 +102,11 @@ class theme_bootstrap_core_course_renderer extends core_course_renderer
 
             if ($thumbnail) {
 
-                $imgthumb = html_writer::empty_tag('img', array('class' => 'course-img', 'src' => $thumbobj[0]->thumbnail_image));
+                $imgthumb = html_writer::empty_tag('img', array('class' => 'course-img course-img2', 'src' => $thumbobj[0]->thumbnail_image));
                 $thumblink = html_writer::link(new moodle_url($CFG->wwwroot . '/course/view.php', array('id' => $course->id)),
                     $imgthumb, array('class' => $course->visible ? '' : 'course-thumbnail'));
 
-                $content .= html_writer::tag('div', $thumblink, array('class' => 'course-image'));
+                $content .= html_writer::tag('div', $thumblink, array('class' => 'course-image course-image2'));
             }
         }
         $content .= $this->coursecat_coursebox_content($chelper, $course);
@@ -206,6 +208,7 @@ class theme_bootstrap_core_course_renderer extends core_course_renderer
 
         $form = array('id' => $formid, 'action' => $searchurl, 'method' => 'get', 'class' => "form-inline", 'role' => 'form');
         $output = html_writer::start_tag('form', $form);
+        $output .=html_writer::start_tag('div', array('class'=>'searchCourse1')) ;
         $output .= html_writer::start_div('input-group');
         $output .= html_writer::tag('label', $strsearchcourses, array('for' => $inputid, 'class' => 'sr-only'));
         $search = array('type' => 'text', 'id' => $inputid, 'size' => $inputsize, 'name' => 'search',
@@ -216,6 +219,8 @@ class theme_bootstrap_core_course_renderer extends core_course_renderer
         $output .= html_writer::tag('button', get_string('go'), $button);
         $output .= html_writer::end_span();
         $output .= html_writer::end_div(); // Close form-group.
+        $output .= html_writer::end_tag('div');
+
         $output .= html_writer::end_tag('form');
 
         return $output;
