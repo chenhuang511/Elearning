@@ -15086,7 +15086,7 @@ select {
   vertical-align: top;
 }
 .path-mod-forum .forumheaderlist thead .header.lastpost {
-  text-align: right;
+  text-align: left;
 }
 .path-mod-forum .forumheaderlist .discussion .author,
 .path-mod-forum .forumheaderlist .discussion .replies,

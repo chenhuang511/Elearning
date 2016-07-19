@@ -18436,7 +18436,7 @@ select {
 }
 
 .path-mod-forum .forumheaderlist .discussion .replies {
-  text-align: center;
+  text-align: left;
 }
 
 .path-mod-forum .forumheaderlist .discussion .topic,
