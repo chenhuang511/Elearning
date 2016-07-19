@@ -125,10 +125,6 @@ function quiz_update_instance($quiz, $mform) {
 
     // We need two values from the existing DB record that are not in the form,
     // in some of the function calls below.
-    if(MOODLE_RUN_MODE != MOODLE_MODE_HOST){
-        $quiz->name = $oldquiz->name;
-        $quiz->intro     = $oldquiz->intro;
-    }
     $quiz->sumgrades = $oldquiz->sumgrades;
     $quiz->grade     = $oldquiz->grade;
 
@@ -1934,36 +1930,10 @@ function quiz_get_local_settings_info($coursemodule){
                 timelimit,
                 overduehandling,
                 graceperiod,
-                preferredbehaviour,
-                canredoquestions,
                 attempts,
-                attemptonlast,
                 grademethod,
-                decimalpoints,
-                questiondecimalpoints,
-                reviewattempt,
-                reviewcorrectness,
-                reviewmarks,
-                reviewspecificfeedback,
-                reviewgeneralfeedback,
-                reviewrightanswer,
-                reviewoverallfeedback,
-                questionsperpage,
-                navmethod,
-                shuffleanswers,
-                sumgrades,
-                grade,
                 timecreated,
-                timemodified,
-                password,
-                subnet,
-                browsersecurity,
-                delay1,
-                delay2,
-                showuserpicture,
-                showblocks,
-                completionattemptsexhausted,
-                completionpass';
+                timemodified';
     $local_quiz_data = $DB->get_record('quiz', array('remoteid' => $coursemodule->instance), $fields);
     if(empty($local_quiz_data)){ // check data quiz in local db
         $quiz->remoteid = $quiz->id;

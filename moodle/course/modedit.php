@@ -284,7 +284,7 @@ if ($mform->is_cancelled()) {
 
     if (isset($fromform->submitbutton)) {
         if (empty($fromform->showgradingmanagement)) {
-            redirect("$CFG->wwwroot/mod/$module->name/view.php?id=$fromform->coursemodule");
+            redirect("$CFG->wwwroot/mod/$module->name/remote/view.php?id=$fromform->coursemodule");
         } else {
             $returnurl = new moodle_url("/mod/$module->name/view.php", array('id' => $fromform->coursemodule));
             redirect($fromform->gradingman->get_management_url($returnurl));

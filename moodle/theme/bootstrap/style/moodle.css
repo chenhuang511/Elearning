@@ -15876,7 +15876,7 @@ table.flexible .emptyrow {
 }
 .singlebutton div {
   display: inline-block;
-  margin-left: 5px;
+  margin-left: -5px;
   margin-right: 5px;
   margin-bottom: 5px;
 }

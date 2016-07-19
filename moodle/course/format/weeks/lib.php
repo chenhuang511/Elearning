@@ -24,7 +24,7 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-require_once($CFG->dirroot. '/course/format/lib.php');
+require_once($CFG->dirroot . '/course/format/lib.php');
 
 /**
  * Main class for the Weeks course format
@@ -33,14 +33,16 @@ require_once($CFG->dirroot. '/course/format/lib.php');
  * @copyright  2012 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class format_weeks extends format_base {
+class format_weeks extends format_base
+{
 
     /**
      * Returns true if this course format uses sections
      *
      * @return bool
      */
-    public function uses_sections() {
+    public function uses_sections()
+    {
         return true;
     }
 
@@ -50,7 +52,8 @@ class format_weeks extends format_base {
      * @param int|stdClass $section Section object from database or just field section.section
      * @return string Display name that the course format prefers, e.g. "Topic 2"
      */
-    public function get_section_name($section) {
+    public function get_section_name($section)
+    {
         $section = $this->get_section($section);
         if ((string)$section->name !== '') {
             // Return the name the user set.
@@ -69,7 +72,8 @@ class format_weeks extends format_base {
      * @param stdClass $section Section object from database or just field course_sections section
      * @return string The default value for the section name.
      */
-    public function get_default_section_name($section) {
+    public function get_default_section_name($section)
+    {
         if ($section->section == 0) {
             // Return the general section.
             return get_string('section0name', 'format_weeks');
@@ -82,7 +86,7 @@ class format_weeks extends format_base {
             $dateformat = get_string('strftimedateshort');
             $weekday = userdate($dates->start, $dateformat);
             $endweekday = userdate($dates->end, $dateformat);
-            return $weekday.' - '.$endweekday;
+            return $weekday . ' - ' . $endweekday;
         }
     }
 
@@ -96,7 +100,8 @@ class format_weeks extends format_base {
      *     'sr' (int) used by multipage formats to specify to which section to return
      * @return null|moodle_url
      */
-    public function get_view_url($section, $options = array()) {
+    public function get_view_url($section, $options = array())
+    {
         global $CFG;
         $course = $this->get_course();
         $url = new moodle_url('/course/view.php', array('id' => $course->id));
@@ -127,7 +132,7 @@ class format_weeks extends format_base {
                 if (empty($CFG->linkcoursesections) && !empty($options['navigation'])) {
                     return null;
                 }
-                $url->set_anchor('section-'.$sectionno);
+                $url->set_anchor('section-' . $sectionno);
             }
         }
         return $url;
@@ -141,7 +146,8 @@ class format_weeks extends format_base {
      *
      * @return stdClass
      */
-    public function supports_ajax() {
+    public function supports_ajax()
+    {
         $ajaxsupport = new stdClass();
         $ajaxsupport->capable = true;
         return $ajaxsupport;
@@ -153,13 +159,15 @@ class format_weeks extends format_base {
      * @param global_navigation $navigation
      * @param navigation_node $node The course node within the navigation
      */
-    public function extend_course_navigation($navigation, navigation_node $node) {
+    public function extend_course_navigation($navigation, navigation_node $node)
+    {
         global $PAGE;
         // if section is specified in course/view.php, make sure it is expanded in navigation
         if ($navigation->includesectionnum === false) {
             $selectedsection = optional_param('section', null, PARAM_INT);
             if ($selectedsection !== null && (!defined('AJAX_SCRIPT') || AJAX_SCRIPT == '0') &&
-                    $PAGE->url->compare(new moodle_url('/course/view.php'), URL_MATCH_BASE)) {
+                $PAGE->url->compare(new moodle_url('/course/view.php'), URL_MATCH_BASE)
+            ) {
                 $navigation->includesectionnum = $selectedsection;
             }
         }
@@ -186,7 +194,8 @@ class format_weeks extends format_base {
      *
      * @return array This will be passed in ajax respose
      */
-    function ajax_section_move() {
+    function ajax_section_move()
+    {
         global $PAGE;
         $titles = array();
         $current = -1;
@@ -210,7 +219,8 @@ class format_weeks extends format_base {
      * @return array of default blocks, must contain two keys BLOCK_POS_LEFT and BLOCK_POS_RIGHT
      *     each of values is an array of block names (for left and right side columns)
      */
-    public function get_default_blocks() {
+    public function get_default_blocks()
+    {
         return array(
             BLOCK_POS_LEFT => array(),
             BLOCK_POS_RIGHT => array('search_forums', 'news_items', 'calendar_upcoming', 'recent_activity')
@@ -228,7 +238,8 @@ class format_weeks extends format_base {
      * @param bool $foreditform
      * @return array of options
      */
-    public function course_format_options($foreditform = false) {
+    public function course_format_options($foreditform = false)
+    {
         static $courseformatoptions = false;
         if ($courseformatoptions === false) {
             $courseconfig = get_config('moodlecourse');
@@ -261,7 +272,7 @@ class format_weeks extends format_base {
                 'numsections' => array(
                     'label' => new lang_string('numberweeks'),
                     'element_type' => 'select',
-                    'element_attributes' => array($sectionmenu),
+                    'element_attributes' => array($sectionmenu, 'readonly'),
                 ),
                 'hiddensections' => array(
                     'label' => new lang_string('hiddensections'),
@@ -272,7 +283,7 @@ class format_weeks extends format_base {
                         array(
                             0 => new lang_string('hiddensectionscollapsed'),
                             1 => new lang_string('hiddensectionsinvisible')
-                        )
+                        ), 'readonly'
                     ),
                 ),
                 'coursedisplay' => array(
@@ -282,7 +293,7 @@ class format_weeks extends format_base {
                         array(
                             COURSE_DISPLAY_SINGLEPAGE => new lang_string('coursedisplay_single'),
                             COURSE_DISPLAY_MULTIPAGE => new lang_string('coursedisplay_multi')
-                        )
+                        ), 'readonly'
                     ),
                     'help' => 'coursedisplay',
                     'help_component' => 'moodle',
@@ -302,7 +313,8 @@ class format_weeks extends format_base {
      * @param bool $forsection 'true' if this is a section edit form, 'false' if this is course edit form.
      * @return array array of references to the added form elements.
      */
-    public function create_edit_form_elements(&$mform, $forsection = false) {
+    public function create_edit_form_elements(&$mform, $forsection = false)
+    {
         $elements = parent::create_edit_form_elements($mform, $forsection);
 
         // Increase the number of sections combo box values if the user has increased the number of sections
@@ -316,7 +328,7 @@ class format_weeks extends format_base {
             $numsections = $numsections[0];
             if ($numsections > $maxsections) {
                 $element = $mform->getElement('numsections');
-                for ($i = $maxsections+1; $i <= $numsections; $i++) {
+                for ($i = $maxsections + 1; $i <= $numsections; $i++) {
                     $element->addOption("$i", $i);
                 }
             }
@@ -337,7 +349,8 @@ class format_weeks extends format_base {
      *     this object contains information about the course before update
      * @return bool whether there were any changes to the options values
      */
-    public function update_course_format_options($data, $oldcourse = null) {
+    public function update_course_format_options($data, $oldcourse = null)
+    {
         global $DB;
         $data = (array)$data;
         if ($oldcourse !== null) {
@@ -382,7 +395,8 @@ class format_weeks extends format_base {
      * @param int|stdClass|section_info $section section to get the dates for
      * @return stdClass property start for startdate, property end for enddate
      */
-    public function get_section_dates($section) {
+    public function get_section_dates($section)
+    {
         $course = $this->get_course();
         if (is_object($section)) {
             $sectionnum = $section->section;
@@ -407,7 +421,8 @@ class format_weeks extends format_base {
      * @param int|stdClass|section_info $section
      * @return bool
      */
-    public function is_section_current($section) {
+    public function is_section_current($section)
+    {
         if (is_object($section)) {
             $sectionnum = $section->section;
         } else {
@@ -429,7 +444,8 @@ class format_weeks extends format_base {
      * @param int|stdClass|section_info $section
      * @return bool
      */
-    public function can_delete_section($section) {
+    public function can_delete_section($section)
+    {
         return true;
     }
 
@@ -444,7 +460,8 @@ class format_weeks extends format_base {
      * @return \core\output\inplace_editable
      */
     public function inplace_editable_render_section_name($section, $linkifneeded = true,
-                                                         $editable = null, $edithint = null, $editlabel = null) {
+                                                         $editable = null, $edithint = null, $editlabel = null)
+    {
         if (empty($edithint)) {
             $edithint = new lang_string('editsectionname', 'format_weeks');
         }
@@ -464,7 +481,8 @@ class format_weeks extends format_base {
  * @param mixed $newvalue
  * @return \core\output\inplace_editable
  */
-function format_weeks_inplace_editable($itemtype, $itemid, $newvalue) {
+function format_weeks_inplace_editable($itemtype, $itemid, $newvalue)
+{
     global $DB, $CFG;
     require_once($CFG->dirroot . '/course/lib.php');
     if ($itemtype === 'sectionname' || $itemtype === 'sectionnamenl') {
