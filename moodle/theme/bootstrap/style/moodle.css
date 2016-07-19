@@ -7662,7 +7662,8 @@ form.popupform div {
   box-sizing: initial;
 }
 .no-overflow {
-  margin-bottom: 1px;
+  clear: both;
+  padding-top: 25px;
   overflow-y: hidden;
   overflow-x: auto;
   -ms-overflow-style: -ms-autohiding-scrollbar;
