@@ -117,7 +117,11 @@ function quiz_update_instance($quiz, $mform) {
     }
 
     // Get the current value, so we can see what changed.
-    $oldquiz = $DB->get_record('quiz', array('id' => $quiz->instance));
+    if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        $oldquiz = $DB->get_record('quiz', array('id' => $quiz->instance));
+    } else {
+        $oldquiz = $DB->get_record('quiz', array('remoteid' => $quiz->instance));
+    }
 
     // We need two values from the existing DB record that are not in the form,
     // in some of the function calls below.
@@ -125,7 +129,8 @@ function quiz_update_instance($quiz, $mform) {
     $quiz->grade     = $oldquiz->grade;
 
     // Update the database.
-    $quiz->id = $quiz->instance;
+    $quiz->id = $oldquiz->id;
+
     $DB->update_record('quiz', $quiz);
 
     // Do the processing required after an add or an update.
@@ -1912,4 +1917,32 @@ function quiz_get_coursemodule_info($coursemodule) {
     $result->content = format_module_intro('quiz', $quiz, $coursemodule->id, false);
 
     return $result;
+}
+
+function quiz_get_local_settings_info($coursemodule){
+    global $CFG, $DB;
+    require_once($CFG->dirroot . '/mod/quiz/remote/locallib.php');
+    $quiz = get_remote_quiz_by_id($coursemodule->instance);
+    $fields = ' remoteid,
+                id,
+                timeopen,
+                timeclose,
+                timelimit,
+                overduehandling,
+                graceperiod,
+                attempts,
+                grademethod,
+                timecreated,
+                timemodified';
+    $local_quiz_data = $DB->get_record('quiz', array('remoteid' => $coursemodule->instance), $fields);
+    if(empty($local_quiz_data)){ // check data quiz in local db
+        $quiz->remoteid = $quiz->id;
+        $quiz->id = $DB->insert_record('quiz', $quiz, true);
+    } else {
+        foreach ($local_quiz_data as $key => $value){
+            $quiz->$key = $value;
+        }
+    }
+
+    return $quiz;
 }

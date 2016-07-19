@@ -18,8 +18,6 @@ require_once(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 require_once($CFG->dirroot.'/mod/quiz/remote/locallib.php');
 
-$nonajax = optional_param('nonajax', false, PARAM_BOOL);
-
 // Look for old-style URLs, such as may be in the logs, and redirect them to startattemtp.php.
 if ($id = optional_param('id', 0, PARAM_INT)) {
     redirect($CFG->wwwroot . '/mod/quiz/remote/startattempt.php?cmid=' . $id . '&sesskey=' . sesskey());
@@ -36,7 +34,8 @@ $isremote = (MOODLE_RUN_MODE == MOODLE_MODE_HUB)?true:false;
 $attemptid = required_param('attempt', PARAM_INT);
 $page = optional_param('page', 0, PARAM_INT);
 
-$attemptremote = get_remote_get_attempt_data($attemptid, $page);
+$attemptremote = get_remote_get_attempt_data($attemptid);
+
 $attempt = get_remote_attempt_by_attemptid($attemptid);
 $quiz = get_remote_quiz_by_id($attempt->quiz);
 $course = get_local_course_record($quiz->course);
@@ -44,6 +43,7 @@ $cm = get_remote_course_module_by_instance("quiz", $quiz->id)->cm;
 $attemptobj = new quiz_attempt($attempt, $quiz, $cm, $course, false, true);
 $context = context_module::instance($cm->id);
 
+$nonajax = optional_param('nonajax', true, PARAM_BOOL);
 if (!has_capability('moodle/course:manageactivities', $context) && $nonajax == false) {
     $CFG->nonajax = false;
 } else {
@@ -110,24 +110,7 @@ if($isremote){
     get_remote_view_attempt($attemptid, $page);
 }
 
-// Get the list of questions needed by this page.
-//if($isremote){
-//    $slots = array();
-//    foreach ($attemptremote->questions as $question) {
-//        $slots[] = $question->slot;
-//    }
-//}else{
-//    $slots = $attemptobj->get_slots($page);
-//}
-
 $slots = $attemptobj->get_slots($page);
-if(!$slots){
-    $r_slots = get_remote_get_slots_by_quizid($attemptremote->attempt->quiz);
-    $slots = array();
-    foreach ($r_slots as $key => $value) {
-        $slots[$key] = (string)$r_slots[$key]->slot;
-    }
-}
 
 // Check.
 if (empty($slots)) {
@@ -144,9 +127,10 @@ $headtags = $attemptobj->get_html_head_contributions($page);
 $PAGE->requires->js_init_call('M.mod_quiz.init_attempt_form', null, false, quiz_get_js_module());
 
 // Arrange for the navigation to be displayed in the first region on the page.
-$navbc = $attemptobj->get_navigation_panel($output, 'quiz_attempt_nav_panel', $page);
+$navbc = $attemptobj->get_navigation_panel($output, 'quiz_attempt_nav_panel', $page, false, $attemptremote);
 $regions = $PAGE->blocks->get_regions();
 $PAGE->blocks->add_fake_block($navbc, reset($regions));
+
 $title = get_string('attempt', 'quiz', $attemptobj->get_attempt_number());
 $headtags = $attemptobj->get_html_head_contributions($page);
 $PAGE->set_title($attemptobj->get_quiz_name());

@@ -13,7 +13,6 @@ require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
 $attemptid = required_param('attempt', PARAM_INT);
 $page      = optional_param('page', 0, PARAM_INT);
 $showall   = optional_param('showall', null, PARAM_BOOL);
-$nonajax = optional_param('nonajax', true, PARAM_BOOL);
 
 $url = new moodle_url('/mod/quiz/remote/review.php', array('attempt'=>$attemptid));
 if ($page !== 0) {
@@ -31,8 +30,9 @@ $attemptobj = new quiz_attempt($attempt, $quiz, $cm, $course, false, true);
 $page = $attemptobj->force_page_number_into_range($page);
 
 $reviewobj = get_remote_get_attempt_review($attemptid);
-$context = context_module::instance($cm->id);
 
+$nonajax = optional_param('nonajax', true, PARAM_BOOL);
+$context = context_module::instance($cm->id);
 if (!has_capability('moodle/course:manageactivities', $context) && $nonajax == false) {
     $CFG->nonajax = false;
 } else {
@@ -41,11 +41,7 @@ if (!has_capability('moodle/course:manageactivities', $context) && $nonajax == f
 
 // Now we can validate the params better, re-genrate the page URL.
 if ($showall === null) {
-    if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-        $showall = isset($reviewobj->questions);
-    }else{
-        $showall = $page == 0 && $attemptobj->get_default_show_all('review');
-    }
+    $showall = $page == 0 && $attemptobj->get_default_show_all('review');
 }
 $PAGE->set_url($attemptobj->review_url(null, $page, $showall));
 
@@ -77,10 +73,7 @@ if ($attemptobj->is_own_attempt()) {
 // Load the questions and states needed by this page.
 if ($showall) {
     $questionids = $attemptobj->get_slots();
-    if(!$questionids){
-        $questionids = get_remote_get_slots_by_quizid($quiz->id);
-    }
-} else {//TODO: chua chay vao day, chua test
+} else {
     $questionids = $attemptobj->get_slots($page);
 }
 
@@ -130,7 +123,7 @@ if ($attempt->state == quiz_attempt::FINISHED) {
     $timetaken = get_string('unfinished', 'quiz');
 }
 
-//@TODO: Prepare summary informat about the whole attempt.
+// @TODO: Prepare summary informat about the whole attempt.
 
 if ($attemptobj->has_capability('mod/quiz:viewreports')) {
     $attemptlist = $attemptobj->links_to_other_attempts($attemptobj->review_url(null, $page,
@@ -232,26 +225,16 @@ if ($options->overallfeedback && $feedback) {
 
 if ($showall) {
     $slots = $attemptobj->get_slots();
-    if(!$slots){
-        $r_slots = get_remote_get_slots_by_quizid($quiz->id);
-        $slots = array();
-        foreach ($r_slots as $key => $value) {
-            $slots[$key] = (string)$r_slots[$key]->slot;
-        }
-    }
     $lastpage = true;
 } else {
     $slots = $attemptobj->get_slots($page);
-    if(!$slots){
-        $slots = get_remote_get_slots_by_quizid($quiz->id);
-    }
     $lastpage = $attemptobj->is_last_page($page);
 }
 
 $output = $PAGE->get_renderer('mod_quiz');
 
 // Arrange for the navigation to be displayed.
-$navbc = $attemptobj->get_navigation_panel($output, 'quiz_review_nav_panel', $page, $showall);
+$navbc = $attemptobj->get_navigation_panel($output, 'quiz_review_nav_panel', $page, $showall, $reviewobj);
 $regions = $PAGE->blocks->get_regions();
 $PAGE->blocks->add_fake_block($navbc, reset($regions));
 echo $output->review_page($attemptobj, $slots, $page, $showall, $lastpage, $options, $summarydata,$reviewobj);
