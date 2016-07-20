@@ -98,7 +98,7 @@ class local_mod_chat_external extends external_api {
             )
         );
 
-        return $DB->get_records_sql("SELECT DISTINCT u.picture as picture, c.lastmessageping as lastmessageping, c.firstping as firstping
+        return $DB->get_records_sql("SELECT DISTINCT u.id,u.picture,u.firstname,u.lastname,u.firstnamephonetic,u.lastnamephonetic,u.middlename,u.alternatename,u.imagealt,u.email, c.lastmessageping as lastmessageping, c.firstping as firstping
                                FROM {chat_users} c
                                JOIN {user} u ON u.id = c.userid". $params['groupingjoin']."
                               WHERE c.chatid = :chatid " .$params['groupselect'] . "
@@ -116,7 +116,16 @@ class local_mod_chat_external extends external_api {
         return new external_multiple_structure(
              new external_single_structure(
                 array(
+                    'id' => new external_value(PARAM_INT, 'id'),
                     'picture' => new external_value(PARAM_INT, 'user picture'),
+                    'firstname' => new external_value(PARAM_TEXT, 'user picture'),
+                    'lastname' => new external_value(PARAM_TEXT, 'user picture'),
+                    'firstnamephonetic' => new external_value(PARAM_TEXT, 'user picture'),
+                    'lastnamephonetic' => new external_value(PARAM_TEXT, 'user picture'),
+                    'middlename' => new external_value(PARAM_TEXT, 'user picture'),
+                    'alternatename' => new external_value(PARAM_TEXT, 'user picture'),
+                    'imagealt' => new external_value(PARAM_TEXT, 'user picture'),
+                    'email' => new external_value(PARAM_TEXT, 'user picture'),
                     'lastmessageping'  => new external_value(PARAM_INT, 'last message ping'),
                     'firstping' => new external_value(PARAM_INT, 'first ping')
                 )
