@@ -50,7 +50,7 @@ abstract class grade_object {
      * Array of required table fields, must start with 'id'.
      * @var array $required_fields
      */
-    public $required_fields = array('id', 'timecreated', 'timemodified', 'hidden');
+    public $required_fields = array('id', 'remoteid', 'timecreated', 'timemodified', 'hidden');
 
     /**
      * Array of optional fields with default values - usually long text information that is not always needed.
@@ -64,6 +64,12 @@ abstract class grade_object {
      * @var int $id
      */
     public $id;
+
+    /**
+     * The id in hub - nccsoft.
+     * @var int $remoteid
+     */
+    public $remoteid;
 
     /**
      * The first time this grade_object was created.
@@ -262,6 +268,13 @@ abstract class grade_object {
                 }
                 if (isset($data->courseid) && isset($params['courseid'])) {
                     $data->courseid = $params['courseid'];
+                }
+                $data->remoteid = $data->id; //create remoteid
+                $data->id = $DB->get_field('grade_items', 'id', array('remoteid' => $data->remoteid));
+                if(empty($data->id) && !empty($data->remoteid)){
+                    $data->id = $DB->insert_record('grade_items', $data);
+                } else {
+                    $data->gradepass = $DB->get_field('grade_items', 'gradepass', array('remoteid' => $data->remoteid));
                 }
             }
             $rs = new json_moodle_recordset($rsraw);
