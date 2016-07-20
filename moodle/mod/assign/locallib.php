@@ -3173,8 +3173,7 @@ class assign {
         if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
             $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid, 'groupid'=>0);
         } else {
-            $ruser = get_remote_mapping_user($userid);
-            $params = array('assignment'=>$this->get_instance()->remoteid, 'userid'=>$ruser[0]->id, 'groupid'=>0);
+            $params = array('assignment'=>$this->get_instance()->remoteid, 'userid'=>$userid, 'groupid'=>0);
         }
 
         if ($attemptnumber >= 0) {
@@ -3201,14 +3200,13 @@ class assign {
         }
         if ($create) {
             $submission = new stdClass();
+            $submission->userid = $userid;
             if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
                 $submission->assignment   = $this->get_instance()->id;
-                $submission->userid = $userid;
                 $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid, 'groupid'=>0);
             } else {
                 $submission->assignment   = $this->get_instance()->remoteid;
-                $submission->userid = $ruser[0]->id;
-                $params = array('assignment'=>$this->get_instance()->remoteid, 'userid'=>$ruser[0]->id, 'groupid'=>0);
+                $params = array('assignment'=>$this->get_instance()->remoteid, 'userid'=>$userid, 'groupid'=>0);
             }
             $submission->timecreated = time();
             $submission->timemodified = $submission->timecreated;
@@ -3298,26 +3296,21 @@ class assign {
             $flags = $DB->get_record('assign_user_flags', $params);
         }
         else{
-            $ruser = get_remote_mapping_user($userid);
-            $params = array('assignment'=>$this->get_instance()->remoteid, 'userid'=>$ruser[0]->id);
+            $params = array('assignment'=>$this->get_instance()->remoteid, 'userid'=>$userid);
             $flags = get_user_flags_by_assignid_userid($params);
         }
 
         if ($flags) {
-            if(MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-                $flags->userid = $userid;
-            }
             return $flags;
         }
 
         if ($create) {
             $flags = new stdClass();
+            $flags->userid = $userid;
             if (MOODLE_RUN_MODE === MOODLE_RUN_HOST) {
                 $flags->assignment = $this->get_instance()->id;
-                $flags->userid = $userid;
             } else {
                 $flags->assignment = $this->get_instance()->remoteid;
-                $flags->userid = $ruser[0]->id;
             }
             $flags->locked = 0;
             $flags->extensionduedate = 0;
@@ -3351,16 +3344,12 @@ class assign {
             $userid = $USER->id;
         }
 
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-            $ruser = get_remote_mapping_user($userid);
-        }
-
         $submission = null;
 
         if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
             $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid);
         } else {
-            $params = array('assignment'=>$this->get_instance()->remoteid, 'userid'=>$ruser[0]->id);
+            $params = array('assignment'=>$this->get_instance()->remoteid, 'userid'=>$userid);
         }
         if ($attemptnumber < 0 || $create) {
             // Make sure this grade matches the latest submission attempt.
@@ -4758,12 +4747,11 @@ class assign {
                                     'assign',
                                     $instance->id,
                                     $user->id);
-
+                 
         // Check on hub
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
             $grader = null;
-            $ruser = get_remote_mapping_user();
-            $feedback = get_remote_get_submission_status($instance->remoteid, $ruser['0']->id)->feedback;
+            $feedback = get_remote_get_submission_status($instance->remoteid, $user->id)->feedback;
 
             if (!$feedback){
                 return;
@@ -4982,8 +4970,7 @@ class assign {
 
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
             $grades = array();
-            $ruser = get_remote_mapping_user($userid);
-            $submissionstatus = get_remote_get_submission_status($this->get_instance()->remoteid, $ruser[0]->id );
+            $submissionstatus = get_remote_get_submission_status($this->get_instance()->remoteid, $userid);
 
             foreach($submissionstatus->previousattempts as $previousattemp){
                 // Switch grader on hub to host
@@ -5077,8 +5064,7 @@ class assign {
                 $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid);
             }
             else {
-                $ruser = get_remote_mapping_user($userid);
-                $params = array('assignment'=>$this->get_instance()->remoteid, 'userid' => $ruser[0]->id);
+                $params = array('assignment'=>$this->get_instance()->remoteid, 'userid' => $userid);
             }
         }
         if (MOODLE_RUN_MODE === MOODLE_RUN_HOST){
@@ -5086,7 +5072,6 @@ class assign {
             $submissions = $DB->get_records('assign_submission', $params, 'attemptnumber ASC');
         } else {
             $params['mode'] = 'ASC';
-            
             $submissions = get_submission_by_assignid_userid_groupid($params);
         }
 

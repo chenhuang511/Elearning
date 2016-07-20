@@ -289,9 +289,9 @@ class assign_submission_onlinetext extends assign_submission_plugin {
                 $onlinetextsubmission->assignment = $this->assignment->get_instance()->id;
                 $onlinetextsubmission->id = $DB->insert_record('assignsubmission_onlinetext', $onlinetextsubmission);
             } else{
-                $onlinetextsubmission->assignment = $this->assignment->get_instance()->id;
+                $onlinetextsubmission->assignment = $this->assignment->get_instance()->remoteid;
 
-                $onlinetextsubmission->id = create_onlinetext_submission($onlinetextsubmission);
+                $onlinetextsubmission->id = create_onlinetext_submission($onlinetextsubmission)->oid;
             }
             $params['objectid'] = $onlinetextsubmission->id;
             $event = \assignsubmission_onlinetext\event\submission_created::create($params);
