@@ -521,7 +521,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
 
         $dt = array();
         $i = 0;
-        foreach($newpost as $key => $val) {
+        foreach ($newpost as $key => $val) {
             $dt["data[$i][name]"] = "$key";
             $dt["data[$i][value]"] = $val;
         }
@@ -781,6 +781,13 @@ if ($mform_post->is_cancelled()) {
             }
 
             $DB->set_field('forum_discussions', 'groupid', $fromform->groupinfo, array('firstpost' => $fromform->id));
+            $prs = array();
+            $prs['parameters[0][name]'] = "firstpost";
+            $prs['parameters[0][value]'] = $fromform->id;
+            $updatedata = array();
+            $updatedata['data[0][name]'] = "groupid";
+            $updatedata['data[0][value]'] = $fromform->groupinfo;
+            $result = update_remote_mdl_forum_by("forum_discussions", $prs, $updatedata);
         }
         // When editing first post/discussion.
         if (!$fromform->parent) {

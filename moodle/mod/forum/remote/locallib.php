@@ -269,6 +269,20 @@ function update_remote_mdl_forum($modname, $id, $data)
     return $result->id;
 }
 
+function update_remote_mdl_forum_by($modname, $parameters, $data)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_update_mdl_forum',
+            'params' => array_merge(array_merge(array('modname' => $modname), $parameters), $data),
+        )
+    );
+
+    return $result->id;
+}
+
 function check_remote_record_forum_exists($modname, $parameters)
 {
     $result = moodle_webservice_client(
@@ -329,7 +343,7 @@ function get_remote_forum_count_discussion_replies_sql($sql, $parameters, $limit
     );
 
     $replies = array();
-    foreach ($result->replies as $reply){
+    foreach ($result->replies as $reply) {
         $replies[$reply->discussion] = $reply;
     }
 

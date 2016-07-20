@@ -1158,6 +1158,79 @@ class local_mod_forum_external extends external_api
         );
     }
 
+    public static function update_mdl_forum_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'modname' => new external_value(PARAM_RAW, 'the mod name'),
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the data saved'
+                )
+            )
+        );
+    }
+
+    public static function update_mdl_forum_by($modname, $parameters, $data)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::update_mdl_forum_by_parameters(), array(
+            'modname' => $modname,
+            'parameters' => $parameters,
+            'data' => $data
+        ));
+
+        $result = array();
+
+        $prs = array();
+        foreach ($params['parameters'] as $param) {
+            $prs = array_merge($prs, array($param['name'] => $param['value']));
+        }
+
+        $obj = $DB->get_record($params['modname'], $prs);
+
+        if (!$obj) {
+            $warnings['message'] = "Not found data record";
+            $result['id'] = 0;
+            $result['warnings'] = $warnings;
+            return $result;
+        }
+
+        foreach ($params['data'] as $element) {
+            $obj->$element['name'] = $element['value'];
+        }
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $cid = $DB->update_record($params['modname'], $obj);
+
+        $transaction->allow_commit();
+
+        $result['id'] = $cid;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function update_mdl_forum_by_returns()
+    {
+        return self::update_mdl_forum_returns();
+    }
+
     public static function get_field_forum_by_parameters()
     {
         return new external_function_parameters(

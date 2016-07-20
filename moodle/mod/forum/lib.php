@@ -149,6 +149,12 @@ function forum_add_instance($forum, $mform = null)
             $options = array('subdirs' => true); // Use the same options as intro field!
             $post->message = file_save_draft_area_files($draftid, $modcontext->id, 'mod_forum', 'post', $post->id, $options, $post->message);
             $DB->set_field('forum_posts', 'message', $post->message, array('id' => $post->id));
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+                $updatedata = array();
+                $updatedata['data[0][name]'] = "message";
+                $updatedata['data[0][value]'] = $post->message;
+                $result = update_remote_mdl_forum("forum_posts", $post->id, $updatedata);
+            }
         }
     }
 
@@ -1089,6 +1095,12 @@ function forum_cron()
             mtrace($mailcount[$post->id] . " users were sent post $post->id, '$post->subject'");
             if ($errorcount[$post->id]) {
                 $DB->set_field('forum_posts', 'mailed', FORUM_MAILED_ERROR, array('id' => $post->id));
+                if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+                    $updatedata = array();
+                    $updatedata['data[0][name]'] = "mailed";
+                    $updatedata['data[0][value]'] = FORUM_MAILED_ERROR;
+                    $result = update_remote_mdl_forum("forum_posts", $post->id, $updatedata);
+                }
             }
         }
     }
@@ -4870,6 +4882,12 @@ function forum_add_attachment($post, $forum, $cm, $mform = null, $unused = null)
         mod_forum_post_form::attachment_options($forum));
 
     $DB->set_field('forum_posts', 'attachment', $present, array('id' => $post->id));
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $updatedata = array();
+        $updatedata['data[0][name]'] = "attachment";
+        $updatedata['data[0][value]'] = $present;
+        $result = update_remote_mdl_forum("forum_posts", $post->id, $updatedata);
+    }
 
     return true;
 }
@@ -4932,11 +4950,25 @@ function forum_add_new_post($post, $mform, $unused = null)
     $post->message = file_save_draft_area_files($post->itemid, $context->id, 'mod_forum', 'post', $post->id,
         mod_forum_post_form::editor_options($context, null), $post->message);
     $DB->set_field('forum_posts', 'message', $post->message, array('id' => $post->id));
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $updatedata = array();
+        $updatedata['data[0][name]'] = "message";
+        $updatedata['data[0][value]'] = $post->message;
+        $result = update_remote_mdl_forum("forum_posts", $post->id, $updatedata);
+    }
     forum_add_attachment($post, $forum, $cm, $mform);
 
     // Update discussion modified date
     $DB->set_field("forum_discussions", "timemodified", $post->modified, array("id" => $post->discussion));
     $DB->set_field("forum_discussions", "usermodified", $post->userid, array("id" => $post->discussion));
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $updata = array();
+        $updata['data[0][name]'] = "timemodified";
+        $updata['data[0][value]'] = $post->modified;
+        $updata['data[1][name]'] = "usermodified";
+        $updata['data[1][value]'] = $post->userid;
+        $result = update_remote_mdl_forum("forum_discussions", $post->id, $updata);
+    }
 
     if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {
         forum_tp_mark_post_read($post->userid, $post, $post->forum);
@@ -5013,6 +5045,12 @@ function forum_update_post($post, $mform, &$message)
     $post->message = file_save_draft_area_files($post->itemid, $context->id, 'mod_forum', 'post', $post->id,
         mod_forum_post_form::editor_options($context, $post->id), $post->message);
     $DB->set_field('forum_posts', 'message', $post->message, array('id' => $post->id));
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $updatedata = array();
+        $updatedata['data[0][name]'] = "message";
+        $updatedata['data[0][value]'] = $post->message;
+        $result = update_remote_mdl_forum("forum_posts", $post->id, $updatedata);
+    }
 
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
         $discussiondata = array();
@@ -5110,6 +5148,12 @@ function forum_add_discussion($discussion, $mform = null, $unused = null, $useri
         $text = file_save_draft_area_files($discussion->itemid, $context->id, 'mod_forum', 'post', $post->id,
             mod_forum_post_form::editor_options($context, null), $post->message);
         $DB->set_field('forum_posts', 'message', $text, array('id' => $post->id));
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $updatedata = array();
+            $updatedata['data[0][name]'] = "message";
+            $updatedata['data[0][value]'] = $post->message;
+            $result = update_remote_mdl_forum("forum_posts", $post->id, $updatedata);
+        }
     }
 
     // Now do the main entry for the discussion, linking to this first post
@@ -6152,7 +6196,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions = -1, $
                 $buttonadd = get_string('addanewdiscussion', 'forum');
                 break;
         }
-        echo '<input type="submit" value="' . $buttonadd . '" style="border-radius: 3px;"/>';
+        echo '<input type="submit" value="' . $buttonadd . '" />';
         echo '</div>';
         echo '</form>';
         echo "</div>\n";
@@ -6787,7 +6831,14 @@ function forum_print_recent_mod_activity($activity, $courseid, $detail, $modname
 function forum_change_discussionid($postid, $discussionid)
 {
     global $DB;
+
     $DB->set_field('forum_posts', 'discussion', $discussionid, array('id' => $postid));
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $updatedata = array();
+        $updatedata['data[0][name]'] = "discussion";
+        $updatedata['data[0][value]'] = $discussionid;
+        $result = update_remote_mdl_forum("forum_posts", $postid, $updatedata);
+    }
 
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
         $params = array();
@@ -8856,6 +8907,12 @@ function forum_discussion_pin($modcontext, $forum, $discussion)
     global $DB;
 
     $DB->set_field('forum_discussions', 'pinned', FORUM_DISCUSSION_PINNED, array('id' => $discussion->id));
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $updatedata = array();
+        $updatedata['data[0][name]'] = "pinned";
+        $updatedata['data[0][value]'] = FORUM_DISCUSSION_PINNED;
+        $result = update_remote_mdl_forum("forum_discussions", $discussion->id, $updatedata);
+    }
 
     $params = array(
         'context' => $modcontext,
@@ -8881,6 +8938,12 @@ function forum_discussion_unpin($modcontext, $forum, $discussion)
     global $DB;
 
     $DB->set_field('forum_discussions', 'pinned', FORUM_DISCUSSION_UNPINNED, array('id' => $discussion->id));
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $updatedata = array();
+        $updatedata['data[0][name]'] = "pinned";
+        $updatedata['data[0][value]'] = FORUM_DISCUSSION_PINNED;
+        $result = update_remote_mdl_forum("forum_discussions", $discussion->id, $updatedata);
+    }
 
     $params = array(
         'context' => $modcontext,

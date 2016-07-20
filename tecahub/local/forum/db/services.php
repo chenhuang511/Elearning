@@ -154,6 +154,14 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_update_mdl_forum_by' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'update_mdl_forum_by',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'update forum object',
+        'type' => 'read',
+        'ajax' => true
+    ),
     'local_mod_get_field_forum_by' => array(
         'classname' => 'local_mod_forum_external',
         'methodname' => 'get_field_forum_by',
