@@ -23,11 +23,11 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once($CFG->dirroot.'/mod/forum/lib.php');
-require_once($CFG->dirroot.'/rating/lib.php');
+require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
+require_once($CFG->dirroot . '/mod/forum/lib.php');
+require_once($CFG->dirroot . '/rating/lib.php');
 
-$courseid  = optional_param('course', null, PARAM_INT); // Limit the posts to just this course
+$courseid = optional_param('course', null, PARAM_INT); // Limit the posts to just this course
 $userid = optional_param('id', $USER->id, PARAM_INT);        // User id whose posts we want to view
 $mode = optional_param('mode', 'posts', PARAM_ALPHA);   // The mode to use. Either posts or discussions
 $page = optional_param('page', 0, PARAM_INT);           // The page number to display
@@ -44,7 +44,7 @@ $discussionsonly = ($mode !== 'posts');
 $isspecificcourse = !is_null($courseid);
 $iscurrentuser = ($USER->id == $userid);
 
-$url = new moodle_url('/mod/forum/remote/user.php', array('id' => $userid));
+$url = new moodle_url('/mod/forum/user.php', array('id' => $userid));
 if ($isspecificcourse) {
     $url->param('course', $courseid);
 }
@@ -61,11 +61,8 @@ if ($page != 0) {
 if ($perpage != 5) {
     $url->param('perpage', $perpage);
 }
-$params = array();
-$params['parameteres[0][name]'] = 'id';
-$params['parameteres[0][value]'] = $userid;
 
-$user = get_remote_forum_discussions_by($params,'',true);
+$user = $DB->get_record("user", array("id" => $userid), '*', MUST_EXIST);
 $usercontext = context_user::instance($user->id, MUST_EXIST);
 // Check if the requested user is the guest user
 if (isguestuser($user)) {
@@ -85,18 +82,13 @@ if ($user->deleted) {
 
 $isloggedin = isloggedin();
 $isguestuser = $isloggedin && isguestuser();
-$isparent = !$iscurrentuser && $DB->record_exists('role_assignments', array('userid'=>$USER->id, 'contextid'=>$usercontext->id));
+$isparent = !$iscurrentuser && $DB->record_exists('role_assignments', array('userid' => $USER->id, 'contextid' => $usercontext->id));
 $hasparentaccess = $isparent && has_all_capabilities(array('moodle/user:viewdetails', 'moodle/user:readuserposts'), $usercontext);
 
 // Check whether a specific course has been requested
 if ($isspecificcourse) {
     // Get the requested course and its context
-    $params = array();
-    $params['parameteres[0][name]'] = 'id';
-    $params['parameteres[0][value]'] = $courseid;
-
-
-    $course = get_remote_forum_by($params,'',true);
+    $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
     $coursecontext = context_course::instance($courseid, MUST_EXIST);
     // We have a specific course to search, which we will also assume we are within.
     if ($hasparentaccess) {
@@ -197,10 +189,10 @@ if (empty($result->posts)) {
             $newusernode->make_active();
             // Check to see if this is a discussion or a post.
             if ($mode == 'posts') {
-                $navbar = $PAGE->navbar->add(get_string('posts', 'forum'), new moodle_url('/mod/forum/remote/user.php',
+                $navbar = $PAGE->navbar->add(get_string('posts', 'forum'), new moodle_url('/mod/forum/user.php',
                     array('id' => $user->id, 'course' => $courseid)));
             } else {
-                $navbar = $PAGE->navbar->add(get_string('discussions', 'forum'), new moodle_url('/mod/forum/remote/user.php',
+                $navbar = $PAGE->navbar->add(get_string('discussions', 'forum'), new moodle_url('/mod/forum/user.php',
                     array('id' => $user->id, 'course' => $courseid, 'mode' => 'discussions')));
             }
         }
@@ -215,10 +207,10 @@ if (empty($result->posts)) {
             $usernode->make_active();
             // Check to see if this is a discussion or a post.
             if ($mode == 'posts') {
-                $navbar = $PAGE->navbar->add(get_string('posts', 'forum'), new moodle_url('/mod/forum/remote/user.php',
+                $navbar = $PAGE->navbar->add(get_string('posts', 'forum'), new moodle_url('/mod/forum/user.php',
                     array('id' => $user->id, 'course' => $courseid)));
             } else {
-                $navbar = $PAGE->navbar->add(get_string('discussions', 'forum'), new moodle_url('/mod/forum/remote/user.php',
+                $navbar = $PAGE->navbar->add(get_string('discussions', 'forum'), new moodle_url('/mod/forum/user.php',
                     array('id' => $user->id, 'course' => $courseid, 'mode' => 'discussions')));
             }
         }
@@ -275,7 +267,7 @@ $discussions = array();
 foreach ($result->posts as $post) {
     $discussions[] = $post->discussion;
 }
-$discussions = get_remote_list_forum_discussions_by('forum_discussions',$params);
+$discussions = $DB->get_records_list('forum_discussions', 'id', array_unique($discussions));
 
 //todo Rather than retrieving the ratings for each post individually it would be nice to do them in groups
 //however this requires creating arrays of posts with each array containing all of the posts from a particular forum,
@@ -294,8 +286,8 @@ foreach ($result->posts as $post) {
     $discussion = $discussions[$post->discussion];
     $course = $result->courses[$discussion->course];
 
-    $forumurl = new moodle_url('/mod/forum/remote/view.php', array('id' => $cm->id));
-    $discussionurl = new moodle_url('/mod/forum/remote/discuss.php', array('d' => $post->discussion));
+    $forumurl = new moodle_url('/mod/forum/view.php', array('id' => $cm->id));
+    $discussionurl = new moodle_url('/mod/forum/discuss.php', array('d' => $post->discussion));
 
     // load ratings
     if ($forum->assessed != RATING_AGGREGATE_NONE) {
@@ -338,7 +330,7 @@ foreach ($result->posts as $post) {
         if ($post->parent != 0) {
             $postname = format_string($post->subject, true, array('context' => $cm->context));
             if (!$isspecificcourse && !$hasparentaccess) {
-                $fullsubjects[] .= html_writer::link(new moodle_url('/mod/forum/remote/discuss.php', array('d' => $post->discussion, 'parent' => $post->id)), $postname);
+                $fullsubjects[] .= html_writer::link(new moodle_url('/mod/forum/discuss.php', array('d' => $post->discussion, 'parent' => $post->id)), $postname);
             } else {
                 $fullsubjects[] .= html_writer::tag('span', $postname);
             }
@@ -348,7 +340,7 @@ foreach ($result->posts as $post) {
     // This is really important, if the strings are formatted again all the links
     // we've added will be lost.
     $post->subjectnoformat = true;
-    $discussionurl->set_anchor('p'.$post->id);
+    $discussionurl->set_anchor('p' . $post->id);
     $fulllink = html_writer::link($discussionurl, get_string("postincontext", "forum"));
 
     $postoutput[] = forum_print_post($post, $discussion, $forum, $cm, $course, false, false, false, $fulllink, '', null, true, null, true);
@@ -384,14 +376,14 @@ $PAGE->navigation->set_userid_for_parent_checks($user->id); // see MDL-25805 for
 
 // Edit navbar.
 if (isset($courseid) && $courseid != SITEID) {
-    $usernode = $PAGE->navigation->find('user' . $user->id , null);
+    $usernode = $PAGE->navigation->find('user' . $user->id, null);
     $usernode->make_active();
     // Check to see if this is a discussion or a post.
     if ($mode == 'posts') {
-        $navbar = $PAGE->navbar->add(get_string('posts', 'forum'), new moodle_url('/mod/forum/remote/user.php',
+        $navbar = $PAGE->navbar->add(get_string('posts', 'forum'), new moodle_url('/mod/forum/user.php',
             array('id' => $user->id, 'course' => $courseid)));
     } else {
-        $navbar = $PAGE->navbar->add(get_string('discussions', 'forum'), new moodle_url('/mod/forum/remote/user.php',
+        $navbar = $PAGE->navbar->add(get_string('discussions', 'forum'), new moodle_url('/mod/forum/user.php',
             array('id' => $user->id, 'course' => $courseid, 'mode' => 'discussions')));
     }
 }

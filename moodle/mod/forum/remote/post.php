@@ -67,8 +67,8 @@ if (!isloggedin() or isguestuser()) {
 
         // User is starting a new discussion in a forum
         $param = array();
-        $param['parameteres[0][name]'] = 'id';
-        $param['parameteres[0][value]'] = $forum;
+        $param['parameters[0][name]'] = 'id';
+        $param['parameters[0][value]'] = $forum;
         if (!$forum = get_remote_forum_by($param)) {
             print_error('invalidforumid', 'forum');
         }
@@ -77,23 +77,23 @@ if (!isloggedin() or isguestuser()) {
             print_error('invalidparentpostid', 'forum');
         }
         $param = array();
-        $param['parameteres[0][name]'] = 'id';
-        $param['parameteres[0][value]'] = $parent->discussion;
+        $param['parameters[0][name]'] = 'id';
+        $param['parameters[0][value]'] = $parent->discussion;
 
         if (!$discussion = get_remote_forum_discussions_by($param)) {
             print_error('notpartofdiscussion', 'forum');
         }
         $param = array();
-        $param['parameteres[0][name]'] = 'id';
-        $param['parameteres[0][value]'] = $discussion->forum;
+        $param['parameters[0][name]'] = 'id';
+        $param['parameters[0][value]'] = $discussion->forum;
 
         if (!$forum = get_remote_forum_by($param)) {
             print_error('invalidforumid');
         }
     }
     $param = array();
-    $param['parameteres[0][name]'] = 'id';
-    $param['parameteres[0][value]'] = $forum->course;
+    $param['parameters[0][name]'] = 'id';
+    $param['parameters[0][value]'] = $forum->course;
     if (!$course = get_remote_forum_by($param)) {
         print_error('invalidcourseid');
     }
@@ -277,13 +277,13 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         }
     }
     $param = array();
-    $param['parameteres[0][name]'] = 'id';
-    $param['parameteres[0][value]'] = $post->discussion;
+    $param['parameters[0][name]'] = 'id';
+    $param['parameters[0][value]'] = $post->discussion;
 
     if (!$discussion = get_remote_forum_discussions_by($params)) {
         print_error('notpartofdiscussion', 'forum');
     }
-    $param['parameteres[0][value]'] = $discussion->forum;
+    $param['parameters[0][value]'] = $discussion->forum;
     if (!$forum = get_remote_forum_by($params)) {
         print_error('invalidforumid', 'forum');
     }
@@ -329,12 +329,12 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         print_error('invalidpostid', 'forum');
     }
     $param = array();
-    $param['parameteres[0][name]'] = 'id';
-    $param['parameteres[0][value]'] = $post->discussion;
+    $param['parameters[0][name]'] = 'id';
+    $param['parameters[0][value]'] = $post->discussion;
     if (!$discussion = get_remote_forum_discussions_by($params)) {
         print_error('notpartofdiscussion', 'forum');
     }
-    $param['parameteres[0][value]'] = $discussion->forum;
+    $param['parameters[0][value]'] = $discussion->forum;
     if (!$forum = get_remote_forum_by($params)) {
         print_error('invalidforumid', 'forum');
     }
@@ -459,12 +459,12 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         print_error('invalidpostid', 'forum');
     }
     $param = array();
-    $param['parameteres[0][name]'] = 'id';
-    $param['parameteres[0][value]'] = $post->discussion;
+    $param['parameters[0][name]'] = 'id';
+    $param['parameters[0][value]'] = $post->discussion;
     if (!$discussion = get_remote_forum_discussions_by($params)) {
         print_error('notpartofdiscussion', 'forum');
     }
-    $param['parameteres[0][value]'] = $discussion->forum;
+    $param['parameters[0][value]'] = $discussion->forum;
     if (!$forum = get_remote_forum_by($params)) {
         print_error('invalidforumid', 'forum');
     }
@@ -751,8 +751,8 @@ if ($mform_post->is_cancelled()) {
 
         //fix for bug #4314
         $param = array();
-        $param['parameteres[0][name]'] = 'id';
-        $param['parameteres[0][value]'] = $fromform->id;
+        $param['parameters[0][name]'] = 'id';
+        $param['parameters[0][value]'] = $fromform->id;
         if (!$realpost = get_remote_forum_posts_by($param)) {
             $realpost = new stdClass();
             $realpost->userid = -1;
@@ -1035,10 +1035,10 @@ if ($mform_post->is_cancelled()) {
 
 if ($post->discussion) {
     $param = array();
-    $param['parameteres[0][name]'] = 'discussion';
-    $param['parameteres[0][value]'] = $post->discussion;
-    $param['parameteres[0][name]'] = 'parent';
-    $param['parameteres[1][value]'] = 0;
+    $param['parameters[0][name]'] = 'discussion';
+    $param['parameters[0][value]'] = $post->discussion;
+    $param['parameters[0][name]'] = 'parent';
+    $param['parameters[1][value]'] = 0;
 
     if (!$toppost = get_remote_forum_posts_by($param)) {
         print_error('cannotfindparentpost', 'forum', '', $post->id);
@@ -1113,8 +1113,8 @@ if (!empty($thresholdwarning) && !$edit) {
 
 if (!empty($parent)) {
     $param = array();
-    $param['parameteres[0][name]'] = 'id';
-    $param['parameteres[0][value]'] = $parent->discussion;
+    $param['parameters[0][name]'] = 'id';
+    $param['parameters[0][value]'] = $parent->discussion;
     if (!$discussion = get_remote_forum_discussions_by($param)) {
         print_error('notpartofdiscussion', 'forum');
     }
