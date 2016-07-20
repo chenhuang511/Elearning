@@ -2481,8 +2481,7 @@ class assign {
         if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
             $submissions = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', '*', 0, 1);
         } else {
-            $ruser = get_remote_mapping_user($userid);
-            $params['userid'] = $ruser[0]->id;
+            $params['userid'] = $userid;
             $params['mode'] = 'DESC';
             $submissions = get_submission_by_assignid_userid_groupid($params);
         }
