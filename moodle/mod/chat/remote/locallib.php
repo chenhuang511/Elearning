@@ -68,7 +68,13 @@ function get_remote_chat_user($groupingjoin, $groupselect, $data)
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_chat_get_chat_users',
-            'params' => array('groupingjoin' => $groupingjoin, 'groupselect' => $groupselect, 'data' => $data)
+            'params' => array(
+                'groupingjoin' => $groupingjoin,
+                'groupselect' => $groupselect,
+                'data[chatid]' => $data['chatid'],
+                'data[groupid]' => $data['groupid'],
+                'data[groupingid]' => $data['groupingid'],
+            )
         )
     );
     return $res;
