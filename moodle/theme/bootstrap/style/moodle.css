@@ -7662,12 +7662,15 @@ form.popupform div {
   box-sizing: initial;
 }
 .no-overflow {
-  margin-bottom: 1px;
   overflow-y: hidden;
   overflow-x: auto;
   -ms-overflow-style: -ms-autohiding-scrollbar;
   -webkit-overflow-scrolling: touch;
 }
+.bhxh-managetemplates > .no-overflow {
+  clear: both;
+}
+
 .no-overflow > .generaltable {
   margin-bottom: 0;
 }
@@ -13318,6 +13321,26 @@ body.path-question-type .mform fieldset.hidden {
   -moz-column-gap: 30px;
   column-gap: 30px;
 }
+.userprofile .bhxh-profile{
+  margin-left: 50px;
+  margin-right: 200px;
+}
+.userprofile .bhxh-category{
+  border: 1px solid #ddd;
+  padding-left: 20px;
+  height: 236px;
+  border-bottom: 0;
+}
+.userprofile .bhxh-category:nth-child(3n){
+  border: 1px solid #ddd;
+}
+.userprofile .bhxh-category:nth-child(1) .node a{
+  color: #00A8B3;
+}
+.userprofile .bhxh-category:nth-child(4), .bhxh-category:nth-child(5), .bhxh-category:nth-child(6){
+    margin-left: 30px;
+}
+
 .userprofile .profile_tree section {
   display: inline-block;
   width: 100%;
@@ -13422,10 +13445,15 @@ fieldset[disabled] .userprofile .header-button-group .btn.active {
 .path-user .node_category li {
   list-style-type: none;
 }
+#page-user-profile .bhxh-category li {
+  list-style-type: disc;
+  margin-left: 20px;
+}
 #page-user-profile .node_category li.contentnode,
 .path-user .node_category li.contentnode {
   list-style-type: none;
 }
+
 .path-user .node_category:first-child li span {
   margin-bottom: 10px;
   display: block;
@@ -15359,9 +15387,10 @@ div#dock {
   line-height: 24px;
 }
 .path-mod-assign a.btn {
-  color: #333333;
-  background-color: #ffffff;
+  color: #ffffff;
+  background-color: #097eaf;
   border-color: #cccccc;
+  font-weight: bold;
 }
 .path-mod-assign a.btn:focus,
 .path-mod-assign a.btn.focus {
@@ -15369,9 +15398,12 @@ div#dock {
   background-color: #e6e6e6;
   border-color: #8c8c8c;
 }
+.path-mod-assign a.btn-primary{
+  background-color: #F53434;
+}
 .path-mod-assign a.btn:hover {
-  color: #333333;
-  background-color: #e6e6e6;
+  color: #ffffff;
+  background-color: #6E6C6C;
   border-color: #adadad;
 }
 .path-mod-assign a.btn:active,

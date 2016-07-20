@@ -493,28 +493,24 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         redirect(forum_go_back_to(new moodle_url("/mod/forum/remote/discuss.php", array('d' => $post->discussion))));
     } else if ($fromform = $prunemform->get_data()) {
         // User submits the data.
+        $newdiscussion = new stdClass();
+        $newdiscussion->course = $discussion->course;
+        $newdiscussion->forum = $discussion->forum;
+        $newdiscussion->name = $name;
+        $newdiscussion->firstpost = $post->id;
+        $newdiscussion->userid = $discussion->userid;
+        $newdiscussion->groupid = $discussion->groupid;
+        $newdiscussion->assessed = $discussion->assessed;
+        $newdiscussion->usermodified = $post->userid;
+        $newdiscussion->timestart = $discussion->timestart;
+        $newdiscussion->timeend = $discussion->timeend;
 
         $data = array();
-        $data['data[0][name]'] = "course";
-        $data['data[0][value]'] = $discussion->course;
-        $data['data[1][name]'] = "forum";
-        $data['data[1][value]'] = $discussion->forum;
-        $data['data[2][name]'] = "name";
-        $data['data[2][value]'] = $name;
-        $data['data[3][name]'] = "firstpost";
-        $data['data[3][value]'] = $post->id;
-        $data['data[4][name]'] = "userid";
-        $data['data[4][value]'] = $discussion->userid;
-        $data['data[5][name]'] = "groupid";
-        $data['data[5][value]'] = $discussion->groupid;
-        $data['data[6][name]'] = "assessed";
-        $data['data[6][value]'] = $discussion->assessed;
-        $data['data[7][name]'] = "usermodified";
-        $data['data[7][value]'] = $post->userid;
-        $data['data[8][name]'] = "timestart";
-        $data['data[8][value]'] = $discussion->timestart;
-        $data['data[9][name]'] = "timeend";
-        $data['data[9][value]'] = $discussion->timeend;
+        $icount = 0;
+        foreach ($newdiscussion as $key => $val) {
+            $data["data[$icount][name]"] = "$key";
+            $data["data[$icount][value]"] = $val;
+        }
 
         $newid = save_remote_mdl_forum('forum_discussions', $data);
 
@@ -523,13 +519,14 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         $newpost->parent = 0;
         $newpost->subject = $name;
 
-        $data = array();
-        $data['data[0][name]'] = "parent";
-        $data['data[0][value]'] = 0;
-        $data['data[1][name]'] = "subject";
-        $data['data[1][value]'] = $name;
+        $dt = array();
+        $i = 0;
+        foreach ($newpost as $key => $val) {
+            $dt["data[$i][name]"] = "$key";
+            $dt["data[$i][value]"] = $val;
+        }
 
-        $result = update_remote_mdl_forum('forum_posts', $post->id, $data);
+        $result = update_remote_mdl_forum('forum_posts', $newpost->id, $dt);
 
         forum_change_discussionid($post->id, $newid);
 
@@ -784,6 +781,13 @@ if ($mform_post->is_cancelled()) {
             }
 
             $DB->set_field('forum_discussions', 'groupid', $fromform->groupinfo, array('firstpost' => $fromform->id));
+            $prs = array();
+            $prs['parameters[0][name]'] = "firstpost";
+            $prs['parameters[0][value]'] = $fromform->id;
+            $updatedata = array();
+            $updatedata['data[0][name]'] = "groupid";
+            $updatedata['data[0][value]'] = $fromform->groupinfo;
+            $result = update_remote_mdl_forum_by("forum_discussions", $prs, $updatedata);
         }
         // When editing first post/discussion.
         if (!$fromform->parent) {

@@ -54,6 +54,7 @@ class assign_submission_comments extends assign_submission_plugin {
      */
     public function view_summary(stdClass $submission, & $showviewlink) {
         // Never show a link to view full submission.
+
         $showviewlink = false;
         // Need to used this init() otherwise it does not have the javascript includes.
         comment::init();
