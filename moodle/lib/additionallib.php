@@ -118,6 +118,24 @@ function get_local_assign_record($assignid, $useid = false) {
     return $assign;
 }
 
+function convert_remote_grade_items_record(&$grade, $userid = false) {
+    if (!$userid)  {
+        $grade->id = $grade->remoteid;
+    }
+}
+
+function get_local_grade_items_record($gradeid, $useid = false) {
+    global $DB;
+    if (is_object($gradeid)) {
+        convert_remote_grade_items_record($gradeid);
+        return $gradeid;
+    }
+    $idfield = ((int)$gradeid === 1 || $useid) ? "id" : "remoteid";
+    $grade = $DB->get_record("grade_items", array($idfield => $gradeid), "*", MUST_EXIST);
+    //convert_remote_course_record($course, $useid);
+    return $grade;
+}
+
 function get_local_courses_record() {
     global $CFG, $DB;
 

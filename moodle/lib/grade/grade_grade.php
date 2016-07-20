@@ -25,7 +25,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+defined('ISREMOTE') || define('ISREMOTE', MOODLE_RUN_MODE === MOODLE_MODE_HUB);
+
 require_once('grade_object.php');
+require_once($CFG->dirroot . '/mod/assign/remote/locallib.php');
 
 /**
  * grade_grades is an object mapped to DB table {prefix}grade_grades
@@ -197,7 +200,30 @@ class grade_grade extends grade_object {
         list($user_ids_cvs, $params) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'uid0');
         $params['giid'] = $grade_item->id;
         $result = array();
-        if ($grade_records = $DB->get_records_select('grade_grades', "itemid=:giid AND userid $user_ids_cvs", $params)) {
+        if (ISREMOTE) {
+            // TODO: get remote value
+            $sql = 'SELECT * FROM {grade_grades} WHERE itemid=:giid AND userid ' . $user_ids_cvs;
+
+            $remoteparams = array();
+            $index = 0;
+            foreach ($params as $key => $value) {
+                $remoteparamvalue = $value;
+                if (strpos($key, 'uid') !== false) {
+                    $remoteparamvalue = get_remote_mapping_user($value)[0]->id;
+                } elseif (strpos($key, 'giid') !== false) {
+                    $remoteparamvalue = get_local_grade_items_record($value, true)->remoteid;
+                }
+                $remoteparams['param['. $index .'][name]='] = $key;
+                $remoteparams['param['. $index .'][value]='] = $remoteparamvalue;
+                $index++;
+            }
+
+            $grade_records = get_remote_assign_grade_grades_raw_data($sql, $remoteparams);
+            //TODO mapping local id for grade grades
+        } else {
+            $grade_records = $DB->get_records_select('grade_grades', "itemid=:giid AND userid $user_ids_cvs", $params);
+        }
+        if ($grade_records) {
             foreach ($grade_records as $record) {
                 $result[$record->userid] = new grade_grade($record, false);
             }
