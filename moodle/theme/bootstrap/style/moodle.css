@@ -7662,7 +7662,8 @@ form.popupform div {
   box-sizing: initial;
 }
 .no-overflow {
-  margin-bottom: 1px;
+  clear: both;
+  padding-top: 25px;
   overflow-y: hidden;
   overflow-x: auto;
   -ms-overflow-style: -ms-autohiding-scrollbar;
@@ -15086,7 +15087,7 @@ select {
   vertical-align: top;
 }
 .path-mod-forum .forumheaderlist thead .header.lastpost {
-  text-align: right;
+  text-align: left;
 }
 .path-mod-forum .forumheaderlist .discussion .author,
 .path-mod-forum .forumheaderlist .discussion .replies,
@@ -15876,7 +15877,7 @@ table.flexible .emptyrow {
 }
 .singlebutton div {
   display: inline-block;
-  margin-left: 5px;
+  margin-left: -5px;
   margin-right: 5px;
   margin-bottom: 5px;
 }

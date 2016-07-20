@@ -129,6 +129,20 @@ function get_remote_course_module_by_cmid($modulename, $cmid, $options = array()
     return $resp->cm;
 }
 
+function get_remote_core_course_get_course_module($cmid)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN_M,
+            'function_name' => 'core_course_get_course_module',
+            'params' => array('cmid' => $cmid)
+        )
+    );
+
+    return $result->cm;
+}
+
 function get_remote_course_info($courseid, $options = array())
 {
     $courseinfo = moodle_webservice_client(array_merge($options,

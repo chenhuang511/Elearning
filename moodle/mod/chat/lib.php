@@ -448,14 +448,10 @@ function chat_refresh_events($courseid = 0) {
  * @param int $groupingid
  * @return array
  */
-function chat_get_users($chatid, $groupid=0, $groupingid=0, $chatsid = null) {
+function chat_get_users($chatid, $groupid=0, $groupingid=0, $chatsid) {
     global $DB;
 
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        return get_remote_chat_user($chatsid);
-    }
-
-    $params = array('chatid' => $chatid, 'groupid' => $groupid, 'groupingid' => $groupingid);
+    $data = array('chatid' => $chatid, 'groupid' => $groupid, 'groupingid' => $groupingid);
 
     if ($groupid) {
         $groupselect = " AND (c.groupid=:groupid OR c.groupid='0')";
@@ -465,18 +461,22 @@ function chat_get_users($chatid, $groupid=0, $groupingid=0, $chatsid = null) {
 
     if (!empty($groupingid)) {
         $groupingjoin = "JOIN {groups_members} gm ON u.id = gm.userid
-                         JOIN {groupings_groups} gg ON gm.groupid = gg.groupid AND gg.groupingid = :groupingid ";
+                     JOIN {groupings_groups} gg ON gm.groupid = gg.groupid AND gg.groupingid = :groupingid ";
 
     } else {
         $groupingjoin = '';
     }
 
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        return get_remote_chat_user($groupingjoin, $groupselect, $data);
+    }
+
     $ufields = user_picture::fields('u');
     return $DB->get_records_sql("SELECT DISTINCT $ufields, c.lastmessageping, c.firstping
-                                   FROM {chat_users} c
-                                   JOIN {user} u ON u.id = c.userid $groupingjoin
-                                  WHERE c.chatid = :chatid $groupselect
-                               ORDER BY c.firstping ASC", $params);
+                               FROM {chat_users} c
+                               JOIN {user} u ON u.id = c.userid $groupingjoin
+                              WHERE c.chatid = :chatid $groupselect
+                           ORDER BY c.firstping ASC", $params);
 }
 
 /**

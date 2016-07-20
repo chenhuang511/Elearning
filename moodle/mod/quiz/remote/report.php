@@ -86,7 +86,7 @@ if (!class_exists($reportclassname)) {
 $report = new $reportclassname();
 $report->display($quiz, $cm, $course);
 // Print footer.
-    echo $OUTPUT->footer();
+echo $OUTPUT->footer();
 
 // Log that this report was viewed.
 $params = array(

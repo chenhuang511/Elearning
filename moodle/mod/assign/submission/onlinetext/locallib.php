@@ -285,10 +285,12 @@ class assign_submission_onlinetext extends assign_submission_plugin {
             $onlinetextsubmission->onlineformat = $data->onlinetext_editor['format'];
 
             $onlinetextsubmission->submission = $submission->id;
-            $onlinetextsubmission->assignment = $this->assignment->get_instance()->id;
             if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $onlinetextsubmission->assignment = $this->assignment->get_instance()->id;
                 $onlinetextsubmission->id = $DB->insert_record('assignsubmission_onlinetext', $onlinetextsubmission);
             } else{
+                $onlinetextsubmission->assignment = $this->assignment->get_instance()->id;
+
                 $onlinetextsubmission->id = create_onlinetext_submission($onlinetextsubmission);
             }
             $params['objectid'] = $onlinetextsubmission->id;

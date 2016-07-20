@@ -2643,7 +2643,7 @@ function forum_count_discussion_replies($forumid, $forumsort = "", $limit = -1, 
             $prs['parameters[0][name]'] = "forum";
             $prs['parameters[0][value]'] = $forumid;
 
-            $replies = get_remote_forum_count_discussion_replies_sql(sql, $prs);
+            $replies = get_remote_forum_count_discussion_replies_sql($sql, $prs);
             return $replies;
         } else {
             return $DB->get_records_sql($sql, array($forumid));
@@ -2661,7 +2661,7 @@ function forum_count_discussion_replies($forumid, $forumsort = "", $limit = -1, 
             $prs['parameters[0][name]'] = "forum";
             $prs['parameters[0][value]'] = $forumid;
 
-            $replies = get_remote_forum_count_discussion_replies_sql(sql, $prs, $limitfrom, $limitnum);
+            $replies = get_remote_forum_count_discussion_replies_sql($sql, $prs, $limitfrom, $limitnum);
             return $replies;
         } else {
             return $DB->get_records_sql($sql, array($forumid), $limitfrom, $limitnum);
@@ -6204,7 +6204,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions = -1, $
                     echo '<a title="' . get_string('markallread', 'forum') .
                         '" href="' . $CFG->wwwroot . '/mod/forum/remote/markposts.php?f=' .
                         $forum->id . '&amp;mark=read&amp;returnpage=view.php&amp;sesskey=' . sesskey() . '">' .
-                        '<img src="' . $OUTPUT->pix_url('t/markasread') . '" class="iconsmall" alt="' . get_string('markallread', 'forum') . '" /></a>';
+                        '<img src="' . $OUTPUT->pix_url('t/markasread') . '" class="iconsmall"   alt="' . get_string('markallread', 'forum') . '" /></a>';
                 }
                 echo '</th>';
             }

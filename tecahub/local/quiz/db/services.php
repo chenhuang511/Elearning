@@ -162,4 +162,20 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_quiz_load_questions_usages_where_question_in_state' => array(
+	'classname'	  => 'local_mod_quiz_external',
+	'methodname'  => 'load_questions_usages_where_question_in_state',
+	'classpath'	  => 'local/quiz/externallib.php',
+	'description' => "Get a list of usage ids where the question with slot. Also return the total count of such states.",
+	'type'		  => 'read',
+	'ajax'		  => true
+	),
+	'local_mod_quiz_get_remote_attempts_byid' => array(
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'grading_get_remote_attempts_byid',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Get grading attempts data by select fields, where asql, params.",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 );

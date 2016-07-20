@@ -47,7 +47,7 @@ if ($id) {
     if (! $chat = get_remote_chat_by_id($c)) {
         print_error('coursemisconf');
     }
-    if (! $course = $DB->get_record('course', array('id' => $chat->course))) {
+    if (! $course = get_local_course_record($cm->course)) {
         print_error('coursemisconf');
     }
     if (! $cm = get_remote_course_module_by_instance('chat', $chat->id)->cm) {
@@ -94,7 +94,7 @@ $courseshortname = format_string($course->shortname, true, array('context' => co
 $title = $courseshortname . ': ' . format_string($chat->name);
 
 // Initialize $PAGE.
-$PAGE->set_url('/mod/chat/view.php', array('id' => $cm->id));
+$PAGE->set_url('/mod/chat/remote/view.php', array('id' => $cm->id));
 $PAGE->set_title($title);
 $PAGE->set_heading($course->fullname);
 
@@ -124,7 +124,7 @@ if ($chat->intro) {
     echo $OUTPUT->box(format_module_intro('chat', $chat, $cm->id), 'generalbox', 'intro');
 }
 
-groups_print_activity_menu($cm, $CFG->wwwroot . "/mod/chat/view.php?id=$cm->id");
+groups_print_activity_menu($cm, $CFG->wwwroot . "/mod/chat/remote/view.php?id=$cm->id");
 
 if (has_capability('mod/chat:chat', $context)) {
     // Print the main part of the page.
@@ -159,7 +159,7 @@ if (has_capability('mod/chat:chat', $context)) {
     if ($chat->studentlogs or has_capability('mod/chat:readlog', $context)) {
         if ($msg = $DB->get_records_select('chat_messages', "chatid = ? $groupselect", array($chat->id))) {
             echo '<p>';
-            echo html_writer::link(new moodle_url('/mod/chat/report.php', array('id' => $cm->id)),
+            echo html_writer::link(new moodle_url('/mod/chat/remote/report.php', array('id' => $cm->id)),
                                    get_string('viewreport', 'chat'));
             echo '</p>';
         }
@@ -174,8 +174,10 @@ if (has_capability('mod/chat:chat', $context)) {
 }
 
 chat_delete_old_users();
-
-if ($chatusers = chat_get_users($chat->id, $currentgroup, $cm->groupingid)) {
+global $USER;
+$userid = get_remote_mapping_user($USER->id)[0]->id;
+$chatsid = get_remote_chat_login_user($userid, $chat->id, $groupid = 0);
+if ($chatusers = chat_get_users($chat->id, $currentgroup, $cm->groupingid, $chatsid)) {
     $timenow = time();
     echo $OUTPUT->box_start('generalbox', 'chatcurrentusers');
     echo $OUTPUT->heading($strcurrentusers, 3);

@@ -27,7 +27,7 @@
  */
 
 require_once('../config.php');
-require_once($CFG->libdir.'/completionlib.php');
+require_once($CFG->libdir . '/completionlib.php');
 
 // Parameters
 $cmid = optional_param('id', 0, PARAM_INT);
@@ -44,10 +44,14 @@ if (!$cmid && !$courseid) {
 
 // Process self completion
 if ($courseid) {
-    $PAGE->set_url(new moodle_url('/course/togglecompletion.php', array('course'=>$courseid)));
+    $PAGE->set_url(new moodle_url('/course/togglecompletion.php', array('course' => $courseid)));
 
     // Check user is logged in
-    $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $course = get_local_course_record($courseid, true);
+    } else {
+        $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+    }
     $context = context_course::instance($course->id);
     require_login($course);
 
@@ -63,8 +67,8 @@ if ($courseid) {
     if ($user && $rolec) {
         require_sesskey();
 
-        completion_criteria::factory(array('id'=>$rolec, 'criteriatype'=>COMPLETION_CRITERIA_TYPE_ROLE)); //TODO: this is dumb, because it does not fetch the data?!?!
-        $criteria = completion_criteria_role::fetch(array('id'=>$rolec));
+        completion_criteria::factory(array('id' => $rolec, 'criteriatype' => COMPLETION_CRITERIA_TYPE_ROLE)); //TODO: this is dumb, because it does not fetch the data?!?!
+        $criteria = completion_criteria_role::fetch(array('id' => $rolec));
 
         if ($criteria and user_has_role_assignment($USER->id, $criteria->role, $context->id)) {
             $criteria_completions = $completion->get_completions($user, COMPLETION_CRITERIA_TYPE_ROLE);
@@ -82,7 +86,7 @@ if ($courseid) {
         if (!empty($referer)) {
             redirect($referer);
         } else {
-            redirect('view.php?id='.$course->id);
+            redirect('view.php?id=' . $course->id);
         }
 
     } else {
@@ -102,7 +106,7 @@ if ($courseid) {
 
             $completion->mark_complete();
 
-            redirect($CFG->wwwroot.'/course/view.php?id='.$courseid);
+            redirect($CFG->wwwroot . '/course/view.php?id=' . $courseid);
             return;
         }
 
@@ -111,8 +115,8 @@ if ($courseid) {
         $PAGE->set_heading($course->fullname);
         $PAGE->navbar->add($strconfirm);
         echo $OUTPUT->header();
-        $buttoncontinue = new single_button(new moodle_url('/course/togglecompletion.php', array('course'=>$courseid, 'confirm'=>1, 'sesskey'=>sesskey())), get_string('yes'), 'post');
-        $buttoncancel   = new single_button(new moodle_url('/course/view.php', array('id'=>$courseid)), get_string('no'), 'get');
+        $buttoncontinue = new single_button(new moodle_url('/course/togglecompletion.php', array('course' => $courseid, 'confirm' => 1, 'sesskey' => sesskey())), get_string('yes'), 'post');
+        $buttoncancel = new single_button(new moodle_url('/course/view.php', array('id' => $courseid)), get_string('no'), 'get');
         echo $OUTPUT->confirm($strconfirm, $buttoncontinue, $buttoncancel);
         echo $OUTPUT->footer();
         exit;
@@ -121,11 +125,11 @@ if ($courseid) {
 
 
 $targetstate = required_param('completionstate', PARAM_INT);
-$fromajax    = optional_param('fromajax', 0, PARAM_INT);
+$fromajax = optional_param('fromajax', 0, PARAM_INT);
 
-$PAGE->set_url('/course/togglecompletion.php', array('id'=>$cmid, 'completionstate'=>$targetstate));
+$PAGE->set_url('/course/togglecompletion.php', array('id' => $cmid, 'completionstate' => $targetstate));
 
-switch($targetstate) {
+switch ($targetstate) {
     case COMPLETION_COMPLETE:
     case COMPLETION_INCOMPLETE:
         break;
@@ -134,8 +138,13 @@ switch($targetstate) {
 }
 
 // Get course-modules entry
-$cm = get_coursemodule_from_id(null, $cmid, null, true, MUST_EXIST);
-$course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+    $cm = get_remote_core_course_get_course_module($cmid);
+    $course = get_local_course_record($cm->course);
+} else {
+    $cm = get_coursemodule_from_id(null, $cmid, null, true, MUST_EXIST);
+    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+}
 
 // Check user is logged in
 require_login($course, false, $cm);
@@ -156,7 +165,7 @@ if (!$completion->is_enabled()) {
 // your own completion state. You just don't appear on the reports.)
 
 // Check completion state is manual
-if($cm->completion != COMPLETION_TRACKING_MANUAL) {
+if ($cm->completion != COMPLETION_TRACKING_MANUAL) {
     error_or_ajax('cannotmanualctrack', $fromajax);
 }
 
@@ -178,7 +187,8 @@ if ($fromajax) {
 
 // utility functions
 
-function error_or_ajax($message, $fromajax) {
+function error_or_ajax($message, $fromajax)
+{
     if ($fromajax) {
         print get_string($message, 'error');
         exit;

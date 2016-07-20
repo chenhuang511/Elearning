@@ -1482,4 +1482,185 @@ ORDER BY
             )
         );
     }
+
+    /**
+     * Hanv 19/07/2016
+     * Get a list of usage ids where the question with slot. Also return the total count of such states.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     *
+     */
+    public static function load_questions_usages_where_question_in_state_parameters() {
+        return new external_function_parameters(
+            array(
+                'param' => new  external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'name'),
+                            'value' => new external_value(PARAM_RAW, 'value'),
+                        )
+                    )
+                ),
+                'where' => new external_value(PARAM_RAW, 'where'),
+                'summarystate' => new external_value(PARAM_RAW, 'summarystate'),
+                'slot' => new external_value(PARAM_RAW, 'slot'),
+                'questionid' => new external_value(PARAM_RAW, 'questionid'),
+                'orderby' => new external_value(PARAM_RAW, 'orderby'),
+                'limitfrom' => new external_value(PARAM_RAW, 'limitfrom'),
+                'pagesize' => new external_value(PARAM_RAW, 'pagesize'),
+            )
+        );
+    }
+
+    /**
+     * Get a list of usage ids where the question with slot. Also return the total count of such states.
+     *
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function load_questions_usages_where_question_in_state($qubaparam, $qubawhere, $summarystate,
+                                                                         $slot, $questionid, $orderby, $limitfrom, $pagesize) {
+        global $CFG, $DB;
+
+        $params = self::validate_parameters(self::load_questions_usages_where_question_in_state_parameters(),
+            array('param' => $qubaparam, 'where' => $qubawhere, 'summarystate' => $summarystate, 'slot' => $slot, 'questionid' => $questionid,
+                'orderby' => $orderby, 'limitfrom' => $limitfrom, 'pagesize' => $pagesize));
+
+        $paramdata = array();
+        foreach ($qubaparam as $element) {
+            $paramdata[$element['name']] = $element['value'];
+        }
+        
+        $qubaids = new qubaid_join('{quiz_attempts} quiza', 'quiza.uniqueid', $qubawhere, $paramdata);
+        $dm = new question_engine_data_mapper();
+        $params = array();
+        if ($orderby == 'date') {
+            list($statetest, $params) = $dm->in_summary_state_test(
+                'manuallygraded', false, 'mangrstate');
+            $orderby = "(
+                    SELECT MAX(sortqas.timecreated)
+                    FROM {question_attempt_steps} sortqas
+                    WHERE sortqas.questionattemptid = qa.id
+                        AND sortqas.state $statetest
+                    )";
+        } else if ($orderby == 'studentfirstname' || $orderby == 'studentlastname' || $orderby == 'idnumber') {
+            $qubaids->from .= " JOIN {user} u ON quiza.userid = u.id ";
+            // For name sorting, map orderby form value to
+            // actual column names; 'idnumber' maps naturally
+            switch ($orderby) {
+                case "studentlastname":
+                    $orderby = "u.lastname, u.firstname";
+                    break;
+                case "studentfirstname":
+                    $orderby = "u.firstname, u.lastname";
+                    break;
+            }
+        }
+        $result = $dm->load_questions_usages_where_question_in_state($qubaids, $summarystate,
+            $slot, $questionid, $orderby, $params, $limitfrom, $pagesize);
+        $res = array();
+        $res['qubaids'] = $result[0];
+        $res['count'] = $result[1];
+        return $res;
+    }
+
+    /**
+     * Describes a single attempt structure.
+     *
+     * @return external_multiple_structure
+     */
+    public static function load_questions_usages_where_question_in_state_returns() {
+        return new external_single_structure(
+            array(
+                'qubaids' => new external_multiple_structure(new external_value(PARAM_INT, 'qubaids')),
+                'count' =>  new external_value(PARAM_INT, 'count')
+            )
+        );
+    }
+
+    /**
+     * Hanv 19/07/2016
+     * Get grading attempts data by select fields, where asql, params.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     *
+     */
+    public static function grading_get_remote_attempts_byid_parameters() {
+        return new external_function_parameters(
+            array(
+                'param' => new external_multiple_structure(new external_value(PARAM_RAW, 'param')),
+                'asql' => new external_value(PARAM_RAW, 'asql'),
+                'fields' => new external_value(PARAM_RAW, 'fields'),
+            )
+        );
+    }
+
+    /**
+     * Get grading attempts data by select fields, where asql, params.
+     *
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function grading_get_remote_attempts_byid($r_params, $asql, $fields) {
+        global $CFG, $DB;
+
+        $params = self::validate_parameters(self::grading_get_remote_attempts_byid_parameters(),
+            array('param' => $r_params, 'fields' => $fields, 'asql' => $asql));
+
+        $paramdata = array();
+        foreach ($r_params as $element) {
+            $paramdata[] = $element;
+        }
+        $attemptsbyid = $DB->get_records_sql("
+                SELECT $fields
+                FROM {quiz_attempts} quiza
+                JOIN {user} u ON u.id = quiza.userid
+                WHERE quiza.uniqueid $asql AND quiza.state = ? AND quiza.quiz = ?",
+            $paramdata);
+        return $attemptsbyid;
+    }
+
+    /**
+     * Describes a single attempt structure.
+     *
+     * @return external_multiple_structure
+     */
+    public static function grading_get_remote_attempts_byid_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'Attempt id.', VALUE_OPTIONAL),
+                    'quiz' => new external_value(PARAM_INT, 'Foreign key reference to the quiz that was attempted.', VALUE_OPTIONAL),
+                    'userid' => new external_value(PARAM_INT, 'Foreign key reference to the user whose attempt this is.', VALUE_OPTIONAL),
+                    'attempt' => new external_value(PARAM_INT, 'Sequentially numbers this students attempts at this quiz.', VALUE_OPTIONAL),
+                    'uniqueid' => new external_value(PARAM_INT, 'Foreign key reference to the question_usage that holds the
+                                                    details of the the question_attempts that make up this quiz
+                                                    attempt.', VALUE_OPTIONAL),
+                    'layout' => new external_value(PARAM_RAW, 'Attempt layout.', VALUE_OPTIONAL),
+                    'currentpage' => new external_value(PARAM_INT, 'Attempt current page.', VALUE_OPTIONAL),
+                    'preview' => new external_value(PARAM_INT, 'Whether is a preview attempt or not.', VALUE_OPTIONAL),
+                    'state' => new external_value(PARAM_ALPHA, 'The current state of the attempts. \'inprogress\',
+                                                \'overdue\', \'finished\' or \'abandoned\'.', VALUE_OPTIONAL),
+                    'timestart' => new external_value(PARAM_INT, 'Time when the attempt was started.', VALUE_OPTIONAL),
+                    'timefinish' => new external_value(PARAM_INT, 'Time when the attempt was submitted.
+                                                    0 if the attempt has not been submitted yet.', VALUE_OPTIONAL),
+                    'timemodified' => new external_value(PARAM_INT, 'Last modified time.', VALUE_OPTIONAL),
+                    'timecheckstate' => new external_value(PARAM_INT, 'Next time quiz cron should check attempt for
+                                                        state changes.  NULL means never check.', VALUE_OPTIONAL),
+                    'sumgrades' => new external_value(PARAM_FLOAT, 'Total marks for this attempt.', VALUE_OPTIONAL),
+                    'idnumber' => new external_value(PARAM_RAW, 'idnumber', VALUE_OPTIONAL),
+                    'firstnamephonetic' => new external_value(PARAM_RAW, 'firstname phonetic', VALUE_OPTIONAL),
+                    'lastnamephonetic' => new external_value(PARAM_RAW, 'lastname phonetic', VALUE_OPTIONAL),
+                    'middlename' => new external_value(PARAM_RAW, 'middlename', VALUE_OPTIONAL),
+                    'alternatename' => new external_value(PARAM_RAW, 'alternate name', VALUE_OPTIONAL),
+                    'firstname' => new external_value(PARAM_RAW, 'first name', VALUE_OPTIONAL),
+                    'lastname' => new external_value(PARAM_RAW, 'last name', VALUE_OPTIONAL),
+                )
+            )
+        );
+    }
 }

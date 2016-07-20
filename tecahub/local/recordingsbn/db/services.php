@@ -34,21 +34,12 @@
  */
 
 $functions = array(
-	'local_mod_chat_get_chat_by_id' => array(
-		'classname'	  => 'local_mod_chat_external',
-		'methodname'  => 'get_chat_by_id',
-		'classpath'	  => 'local/chat/externallib.php',
-		'description' => "Get chat by id",
+	'local_mod_recordingsbn_get_recordingsbn_by_id' => array(
+		'classname'	  => 'local_mod_recordingsbn_external',
+		'methodname'  => 'get_mod_recordingsbn_by_id',
+		'classpath'	  => 'local/recordingsbn/externallib.php',
+		'description' => "Get recordingsbn by recordingsbn id or by coursemodul instance",
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
-
-    'local_mod_chat_get_chat_users' => array(
-        'classname'	  => 'local_mod_chat_external',
-        'methodname'  => 'local_mod_get_chat_users',
-        'classpath'	  => 'local/chat/externallib.php',
-        'description' => "Get chat users",
-        'type'		  => 'read',
-        'ajax'		  => true
-    ),
 );

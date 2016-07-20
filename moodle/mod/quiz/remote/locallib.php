@@ -240,7 +240,7 @@ function get_remote_get_sections_by_quizid($quizid) {
 }
 
 function get_remote_get_attempt_data($attemptid, $page = null) {
-    $resp = moodle_webservice_client(
+    return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN_M,
@@ -248,11 +248,10 @@ function get_remote_get_attempt_data($attemptid, $page = null) {
             'params' => array('attemptid' => $attemptid, 'page' => $page)
         ), false
     );
-    return $resp;
 }
 
 function get_remote_get_attempt_review($attemptid, $page = null) {
-    $resp = moodle_webservice_client(
+    return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN_M,
@@ -260,11 +259,10 @@ function get_remote_get_attempt_review($attemptid, $page = null) {
             'params' => array('attemptid' => $attemptid, 'page' => $page)
         ), false
     );
-    return $resp;
 }
 
 function get_remote_view_attempt_review($attemptid) {
-    $resp = moodle_webservice_client(
+    return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN_M,
@@ -272,7 +270,6 @@ function get_remote_view_attempt_review($attemptid) {
             'params' => array('attemptid' => $attemptid)
         ), false
     );
-    return $resp;
 }
 
 function get_mod_quiz_process_attempt($attemptid, $data, $finishattempt, $timeup) {
@@ -287,7 +284,7 @@ function get_mod_quiz_process_attempt($attemptid, $data, $finishattempt, $timeup
 }
 
 function get_remote_get_attempt_summary($attemptid, $preflightdata = null) {
-    $resp = moodle_webservice_client(
+    return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN_M,
@@ -295,11 +292,10 @@ function get_remote_get_attempt_summary($attemptid, $preflightdata = null) {
             'params' => array('attemptid' => $attemptid, 'preflightdata' => array())
         ), false
     );
-    return $resp;
 }
 
 function get_remote_quiz_view_attempt_summary($attemptid, $preflightdata = null) {
-    $resp = moodle_webservice_client(
+    return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN_M,
@@ -307,11 +303,10 @@ function get_remote_quiz_view_attempt_summary($attemptid, $preflightdata = null)
             'params' => array('attemptid' => $attemptid, 'preflightdata' => array())
         ), false
     );
-    return $resp;
 }
 
 function get_remote_view_attempt($attemptid, $page = null, $preflightdata = null) {
-    $resp = moodle_webservice_client(
+    return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN_M,
@@ -319,14 +314,13 @@ function get_remote_view_attempt($attemptid, $page = null, $preflightdata = null
             'params' => array('attemptid' => $attemptid, 'page' => $page, 'preflightdata' => array())
         ), false
     );
-    return $resp;
 }
 
 function get_remote_count_attempts($quizid) {
     global $CFG;
     $hostname = mnet_get_hostname_from_uri($CFG->wwwroot);
     $hostip = gethostbyname($hostname);
-    $resp = moodle_webservice_client(
+    return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
@@ -334,11 +328,10 @@ function get_remote_count_attempts($quizid) {
             'params' => array('quizid' => $quizid, 'ipaddress' => $hostip)
         ), false
     );
-    return $resp;
 }
 
 function get_remote_significant_questions($quizid) {
-    $resp = moodle_webservice_client(
+    return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
@@ -346,11 +339,10 @@ function get_remote_significant_questions($quizid) {
             'params' => array('quizid' => $quizid)
         ), false
     );
-    return $resp;
 }
 
 function get_remote_report_get_grand_total($countsql, $countparam) {
-    $resp = moodle_webservice_client(
+    return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
@@ -358,11 +350,11 @@ function get_remote_report_get_grand_total($countsql, $countparam) {
             'params' => array_merge(array('countsql' => $countsql), $countparam)
         ), false
     );
-    return $resp;
+    
 }
 
 function get_remote_report_get_rowdata($sql, $param, $pagestart, $pagesize) {
-    $resp = moodle_webservice_client(
+    return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
@@ -370,11 +362,10 @@ function get_remote_report_get_rowdata($sql, $param, $pagestart, $pagesize) {
             'params' => array_merge(array('sql' => $sql, 'pagestart' => $pagestart, 'pagesize' => $pagesize), $param)
         ), false
     );
-    return $resp;
 }
 
 function get_remote_report_questions_usages($data, $fields = null) {
-    $resp = moodle_webservice_client(
+    return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
@@ -382,11 +373,10 @@ function get_remote_report_questions_usages($data, $fields = null) {
             'params' => $data
         ), false
     );
-    return $resp;
 }
 
 function get_remote_report_avg_record($from, $where, $question, $params) {
-    $resp = moodle_webservice_client(
+    return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
@@ -394,11 +384,10 @@ function get_remote_report_avg_record($from, $where, $question, $params) {
             'params' => array_merge(array('from' => $from, 'where' => $where), $question, $params)
         ), false
     );
-    return $resp;
 }
 
 function get_remote_check_quiz_grade_by_quizid($quizid) {
-    $resp = moodle_webservice_client(
+    return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
@@ -406,11 +395,10 @@ function get_remote_check_quiz_grade_by_quizid($quizid) {
             'params' => array('quizid' => $quizid)
         ), false
     );
-    return $resp;
 }
 
 function get_remote_report_grade_bands($sql, $params) {
-    $resp = moodle_webservice_client(
+    return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
@@ -418,11 +406,10 @@ function get_remote_report_grade_bands($sql, $params) {
             'params' => array_merge(array('sql' => $sql), $params)
         ), false
     );
-    return $resp;
 }
 
 function get_remote_load_questions_usages_question_state_summary($questions, $params, $where) {
-    $resp = moodle_webservice_client(
+    return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
@@ -430,5 +417,28 @@ function get_remote_load_questions_usages_question_state_summary($questions, $pa
             'params' => array_merge(array('where' => $where), $questions, $params)
         ), false
     );
-    return $resp;
+}
+
+function get_remote_load_questions_usages_where_question_in_state($qubaparam, $qubawhere, $summarystate,
+                                                                  $slot, $questionid, $orderby, $limitfrom, $pagesize) {
+    return moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_quiz_load_questions_usages_where_question_in_state',
+            'params' => array_merge(array('summarystate' => $summarystate, 'slot' => $slot, 'questionid' => $questionid,
+                'orderby' => $orderby, 'limitfrom' => $limitfrom, 'pagesize' => $pagesize, "where" => $qubawhere), $qubaparam)
+        ), false
+    );
+}
+
+function get_remote_attempts_byid($paramdata, $asql, $fields) {
+    return moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_quiz_get_remote_attempts_byid',
+            'params' => array_merge(array('fields' => $fields, 'asql' => $asql), $paramdata)
+        ), false
+    );
 }

@@ -1555,6 +1555,17 @@ class table_sql extends flexible_table {
         return $result;
     }
 
+    function mapping_assign(array $hostassign) {
+        $result = array();
+        foreach ($hostassign as $key => $value) {
+            if (strpos(trim($key), 'assignment') !== false) {
+                $value = get_local_assign_record($value, true)->remoteid;
+            }
+            $result[trim($key)] = $value;
+        }
+        return $result;
+    }
+
     /**
      * Query the db. Store results in the table object for use by build_table.
      *
@@ -1572,6 +1583,7 @@ class table_sql extends flexible_table {
 
             if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
                 $mapcountparams = $this->mapping_users($this->countparams);
+                $mapcountparams = $this->mapping_assign($mapcountparams);
                 $countparams = array();
                 $index = 0;
                 foreach ($mapcountparams as $key => $val){
@@ -1619,6 +1631,7 @@ class table_sql extends flexible_table {
             if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
                 $oldparams = $this->sql->params;
                 $mapsqlparams = $this->mapping_users($this->sql->params);
+                $mapsqlparams = $this->mapping_assign($mapsqlparams);
                 $params = array();
                 $index = 0;
                 foreach ($mapsqlparams as $key => $val){
@@ -1633,16 +1646,25 @@ class table_sql extends flexible_table {
                 }
 
                 $mapusers = array();
+                $mappingassign = array();
                 foreach ($oldparams as $k => $v) {
                     if (substr(trim($k),0,1) == 'u') {
                         $remoteuser = get_remote_mapping_user($v)[0]->id;
                         $mapusers[$remoteuser] = $v;
                     }
+                    if (strpos(trim($k), 'assignment') !== false) {
+                        $remoteassignid = get_local_assign_record($v, true)->remoteid;
+                        $mappingassign[$remoteassignid] = $v;
+                    }
                 }
+
                 foreach ($this->rawdata as &$row) {
-                    if(isset($mapusers[$row->userid])) {
+                    if (isset($mapusers[$row->userid])) {
                         $row->id = $mapusers[$row->userid];
                         $row->userid = $mapusers[$row->userid];
+                    }
+                    if (isset($mappingassign[$row->assignment])) {
+                        $row->assignment = $mappingassign[$row->assignment];
                     }
                 }
             }else{

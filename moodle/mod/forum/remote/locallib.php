@@ -329,9 +329,8 @@ function get_remote_forum_count_discussion_replies_sql($sql, $parameters, $limit
     );
 
     $replies = array();
-
-    foreach ($result->replies as $reply) {
-        $replies[$reply->id] = $reply;
+    foreach ($result->replies as $reply){
+        $replies[$reply->discussion] = $reply;
     }
 
     return $replies;
