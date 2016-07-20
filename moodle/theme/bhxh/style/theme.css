@@ -10,6 +10,10 @@ h1, h2, h3, h4, h5, h6 {
     color: #333;
 }
 
+.activityinstance a{
+    color: #097eaf;
+    font-weight: bold;
+}
 a {
     color: #333;
 }
@@ -20,6 +24,7 @@ a:focus {
     color: #333;
     outline: none;
 }
+
 
 .dropdown-menu {
     border-color: #e8e3e3;
@@ -3192,4 +3197,10 @@ table#permissions tbody tr:hover > th {
 
 .introattachments{
     list-style-type: none;
+    padding: 5px;
+    margin: 10px;
+}
+.introattachments-image{
+    padding:5px;
+    margin: 5px;
 }
