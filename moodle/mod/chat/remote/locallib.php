@@ -77,5 +77,6 @@ function get_remote_chat_user($groupingjoin, $groupselect, $data)
             )
         )
     );
+    //var_dump($res);
     return $res;
 }
