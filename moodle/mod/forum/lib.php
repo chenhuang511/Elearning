@@ -6145,7 +6145,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions = -1, $
                 $buttonadd = get_string('addanewdiscussion', 'forum');
                 break;
         }
-        echo '<input type="submit" value="' . $buttonadd . '" />';
+        echo '<input type="submit" value="' . $buttonadd . '" style="border-radius: 3px;"/>';
         echo '</div>';
         echo '</form>';
         echo "</div>\n";
