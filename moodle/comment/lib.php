@@ -212,7 +212,6 @@ class comment {
         if (!empty($options->showcount)) {
             $this->set_displaytotalcount($options->showcount);
         }
-
         // setting post and view permissions
         $this->check_permissions();
 
@@ -313,12 +312,11 @@ class comment {
     private function check_permissions() {
         $this->postcap = has_capability('moodle/comment:post', $this->context);
         $this->viewcap = has_capability('moodle/comment:view', $this->context);
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST)
-            if (!empty($this->plugintype)) {
-                $permissions = plugin_callback($this->plugintype, $this->pluginname, 'comment', 'permissions', array($this->comment_param), array('post'=>false, 'view'=>false));
-                $this->postcap = $this->postcap && $permissions['post'];
-                $this->viewcap = $this->viewcap && $permissions['view'];
-            }
+        if (!empty($this->plugintype)) {
+            $permissions = plugin_callback($this->plugintype, $this->pluginname, 'comment', 'permissions', array($this->comment_param), array('post' => false, 'view' => false));
+            $this->postcap = $this->postcap && $permissions['post'];
+            $this->viewcap = $this->viewcap && $permissions['view'];
+        }
     }
 
     /**
@@ -565,7 +563,9 @@ class comment {
 
         $comments = array();
         $formatoptions = array('overflowdiv' => true);
+
         $rs = $DB->get_recordset_sql($sql, $params, $start, $perpage);
+
         foreach ($rs as $u) {
             $c = new stdClass();
             $c->id          = $u->cid;
@@ -635,14 +635,7 @@ class comment {
             if ($component) {
                 $params['component'] = $component;
             }
-            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
-                $this->totalcommentcount = $DB->count_records_select('comments', $where, $params);
-            }
-            else if(MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-                $rparams = $this->get_remote_params();
-                $rparams['component'] = $component;
-                $this->totalcommentcount = get_remote_assign_comment_status($rparams)->countcomment;
-            }
+            $this->totalcommentcount = $DB->count_records_select('comments', $where, $params);
         }
         return $this->totalcommentcount;
     }
@@ -863,25 +856,8 @@ class comment {
         )) {
             $page = 0;
         }
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-            $comments = $this->get_comments($page);
-        }
-        else if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-            global $USER, $OUTPUT;
-
-            $rparams = $this->get_remote_params();
-            $rparams['component'] = $this->component;
-
-            $comments = get_remote_assign_comment_status($rparams)->getcomment;
-
-            $url = new moodle_url('/user/view.php', array('id'=>$USER->id));
-
-            foreach ($comments as $cmt){
-                $cmt->profileurl = $url->out(false); // URL should not be escaped just yet.
-                $cmt->avatar = $OUTPUT->user_picture($USER, array('size'=>18));
-                $cmt->userid = $USER->id;
-            }
-        }
+        
+        $comments = $this->get_comments($page);
 
         $html = '';
         if ($nonjs) {
@@ -959,7 +935,7 @@ class comment {
         $replacements[] = html_writer::link($cmt->profileurl, $cmt->fullname);
         $replacements[] = $cmt->content;
         $replacements[] = $cmt->time;
-
+               var_dump($patterns);die;
         // use html template to format a single comment.
         return str_replace($patterns, $replacements, $this->template);
     }
@@ -984,8 +960,7 @@ class comment {
      * @return bool
      */
     public function can_view() {
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST)
-            $this->validate();
+        $this->validate();
         return !empty($this->viewcap);
     }
 
@@ -994,8 +969,7 @@ class comment {
      * @return bool
      */
     public function can_post() {
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST)
-            $this->validate();
+        $this->validate();
         return isloggedin() && !empty($this->postcap);
     }
 

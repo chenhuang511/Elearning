@@ -7415,7 +7415,6 @@ function plugin_callback($type, $name, $feature, $action, $params = null, $defau
  * @return mixed
  */
 function component_callback($component, $function, array $params = array(), $default = null) {
-
     $functionname = component_callback_exists($component, $function);
 
     if ($functionname) {
@@ -7471,7 +7470,7 @@ function component_callback_exists($component, $function) {
         }
         $function = $oldfunction;
     }
-
+    
     if (function_exists($function)) {
         return $function;
     }

@@ -58,12 +58,13 @@ function get_remote_assign_by_id_instanceid($assignid, $instanceid, $options = a
  */
 function get_remote_get_submission_status($assignid, $userid = null)
 {
+    $ruser = get_remote_mapping_user($userid);
     return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_assign_get_remote_submission_status',
-            'params' => array('assignid' => $assignid,'userid' => $userid),
+            'params' => array('assignid' => $assignid,'userid' => $ruser[0]->id),
         ), false
     );
 }
@@ -212,6 +213,9 @@ function get_submission_by_assignid_userid_groupid($params){
         $params['groupid'] = 0;
     }
 
+    $userid = $params['userid'];
+    $params['userid'] = get_remote_mapping_user($params['userid'])[0]->id;
+
     $results = array();
 
     $submissions =  moodle_webservice_client(
@@ -224,6 +228,7 @@ function get_submission_by_assignid_userid_groupid($params){
     );
 
     foreach ($submissions->submissions as $submission){
+        $submission->userid = $userid;
         $results[$submission->id] = $submission;
     }
 
@@ -272,7 +277,8 @@ function get_assign_grades_by_assignid_userid($params){
  * @return stdClass $attemptnumbers->result . list attemptnumbers
  */
 function get_attemptnumber_by_assignid_userid_groupid($params){
-    
+    $params['userid'] = get_remote_mapping_user($params['userid'])[0]->id;
+
     $attemptnumbers = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
@@ -294,6 +300,9 @@ function get_attemptnumber_by_assignid_userid_groupid($params){
  * @return stdClass $flags->userflags .
  */
 function get_user_flags_by_assignid_userid($params){
+    $userid = $params['userid'];
+    $params['userid'] = get_remote_mapping_user($params['userid'])[0]->id;
+
     $flags =  moodle_webservice_client(
         array(
             'domain' => HUB_URL,
@@ -306,7 +315,8 @@ function get_user_flags_by_assignid_userid($params){
     if($flags->exception)  {
         return 0;
     }
-    
+    $flags->userflags->userid = $userid;
+
     return $flags->userflags;
 }
 
@@ -320,6 +330,7 @@ function get_user_flags_by_assignid_userid($params){
  * @return boolean $resp->result . check if success
  */
 function set_submission_lastest($params){
+    $params['userid'] = get_remote_mapping_user($params['userid'])[0]->id;
 
     $resp = moodle_webservice_client(
         array(
@@ -347,7 +358,7 @@ function set_submission_lastest($params){
  * @return int $resp->sid . the new submission id just created
  */
 function create_remote_submission($submission){
-
+    $ruser = get_remote_mapping_user($submission->userid);
     $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
@@ -355,7 +366,7 @@ function create_remote_submission($submission){
             'function_name' => 'local_mod_assign_create_submission',
             'params' => array(
                 'assignment' => $submission->assignment,
-                'userid' => $submission->userid,
+                'userid' => $ruser[0]->id,
                 'timecreated' => $submission->timecreated,
                 'timemodified' => $submission->timemodified,
                 'status' => $submission->status,
@@ -383,7 +394,7 @@ function create_remote_submission($submission){
  * @return int $resp->sid . the new submission id just created
  */
 function update_remote_submission($submission){
-
+    $ruser = get_remote_mapping_user($submission->userid)[0]->id;
     $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
@@ -392,7 +403,7 @@ function update_remote_submission($submission){
             'params' => array(
                 'id' => $submission->id,
                 'assignment' => $submission->assignment,
-                'userid' => $submission->userid,
+                'userid' => $ruser,
                 'timecreated' => $submission->timecreated,
                 'timemodified' => $submission->timemodified,
                 'status' => $submission->status,
@@ -450,7 +461,7 @@ function create_remote_grade($grade){
  * @return stdClass $resp->assignsubmisison . the assign submission
  */
 function get_remote_submission_by_id($sid){
-
+    global $DB;
     $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
@@ -459,6 +470,9 @@ function get_remote_submission_by_id($sid){
             'params' => array('id' => $sid)
         ), false
     );
+    $user = $DB->get_record('user', array('email' => $resp->assignsubmisison->useremail));
+    $resp->assignsubmisison->userid = $user->id;
+    unset($resp->assignsubmisison->useremail);
 
     return $resp->assignsubmisison;
 }
@@ -495,84 +509,6 @@ function save_remote_submission($assignmentid, $userid, $data){
     if (empty($resp))
         return true;
     return false;
-}
-
-/**
- * Create fakefile on hub.
- *
- * @param string $fakefile['contenthash'] . the contenthash
- * @param string $fakefile['pathnamehash'] . the pathnamehash
- * @param int $fakefile['instanceid'] . the instance id
- * @param string $fakefile['component'] . the component of file
- * @param string $fakefile['filearea'] . the filearea of file
- * @param int $fakefile['itemid'] . the assign id
- * @param string $fakefile['filepath'] . the filepath of file
- * @param string $fakefile['filename'] . the filename of file
- * @param int $fakefile['userid'] . the id of user on hub
- * @param int $fakefile['filesize'] . the filesize of file
- * @param string $fakefile['mimetype'] . the type of file
- * @param string $fakefile['author'] . the author of file
- * @param string $fakefile['license'] . the license of file
- * @param int $fakefile['timecreated'] . the time created
- * @param int $fakefile['timemodified'] . the time modified
- *
- * @return int $resp->fid . the new fakefile id just created
- */
-function create_fakefile_on_hub($fakefiles){
-    $rparams = array();
-
-    foreach ($fakefiles as $fakefile){
-        $rparams[] = array(
-            'contenthash'       =>  $fakefile->contenthash,
-            'pathnamehash'      =>  $fakefile->pathnamehash,
-            'instanceid'        =>  $fakefile->instanceid,
-            'component'         =>  $fakefile->component,
-            'filearea'          =>  $fakefile->filearea,
-            'itemid'            =>  $fakefile->itemid,
-            'filepath'          =>  $fakefile->filepath,
-            'filename'          =>  $fakefile->filename,
-            'userid'            =>  $fakefile->userid,
-            'filesize'          =>  $fakefile->filesize,
-            'mimetype'          =>  $fakefile->mimetype,
-            'author'            =>  $fakefile->author,
-            'license'           =>  $fakefile->license,
-            'timecreated'       =>  $fakefile->timecreated,
-            'timemodified'      =>  $fakefile->timemodified,
-        );
-    }
-
-    $resp = moodle_webservice_client(
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_assign_create_fakefile_on_hub',
-            'params' => array('fakefiles' => $rparams),
-        ), false
-    );
-    return $resp;
-}
-
-/**
- * Delete fakefile on hub.
- *
- * @param string $rparams['component'] . the component of file
- * @param string $rparams['filearea'] . the filearea of file
- * @param int $rparams['itemid'] . the id of assgin
- * @param int $rparams['userid'] . the id of user on hub
- *
- * @return bool $resp->ret . check if success
- */
-function delete_fakefile_on_hub($rparams){
-    $resp = moodle_webservice_client(
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_assign_delete_fakefile_on_hub',
-            'params' => $rparams,
-        ), false
-    );
-
-    return $resp->ret;
 }
 
 /**
@@ -930,4 +866,76 @@ function update_remote_grade($grade){
     return $resp->bool;
  }
 
- 
+/**
+ * Get remote files submission by submissionid.
+ * 
+ * @param int $submissionid  -  The id of submission  
+ * 
+ * @return stdClass return object files submission
+ */
+function get_remote_files_submission($submissionid){
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_get_files_submission',
+            'params' => array(
+                'submissionid' => $submissionid
+            ),
+        ), false
+    );
+
+    return $resp->filesubmission;
+}
+
+/**
+ * Create the file_submission record  
+ * 
+ * @param int $filesubmission['assignment']   -   The id of assignment
+ * @param int $filesubmission['submission']   -   The id of submission
+ * @param int $filesubmission['numfiles']-   The number of file uploaded
+ *
+ * @return false|mixed
+ */
+function create_remote_files_submission($filesubmission){
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_create_files_submission',
+            'params' => array(
+                'assignment' => $filesubmission->assignment,
+                'submission' => $filesubmission->submission,
+                'numfiles' => $filesubmission->numfiles,
+            ),
+        ), false
+    );
+    return $resp;
+}
+
+/**
+ * Update the file_submission record   
+ * 
+ * @param int $filesubmission['id']   -   The id of assignment
+ * @param int $filesubmission['assignment']   -   The id of assignment
+ * @param int $filesubmission['submission']  -  The id of submission
+ * @param int $filesubmission['numfiles']  -  The onlinetext format
+ *                        
+ * @return false|mixed   -- Check if success
+ */
+function update_remote_files_submission($filesubmission){
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_update_files_submission',
+            'params' => array(
+                'id' => $filesubmission->id,
+                'assignment' => $filesubmission->assignment,
+                'submission' => $filesubmission->submission,
+                'numfiles' => $filesubmission->numfiles,
+            ),
+        ), false
+    );
+    return $resp;
+}

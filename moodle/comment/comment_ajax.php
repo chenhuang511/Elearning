@@ -73,6 +73,7 @@ $args->area      = $area;
 $args->itemid    = $itemid;
 $args->client_id = $client_id;
 $args->component = $component;
+
 $manager = new comment($args);
 
 echo $OUTPUT->header(); // send headers

@@ -69,7 +69,7 @@ abstract class grade_object {
      * The id in hub - nccsoft.
      * @var int $remoteid
      */
-    public $remoteid;
+    public $remoteid = 0;
 
     /**
      * The first time this grade_object was created.
