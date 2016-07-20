@@ -802,9 +802,11 @@ function quiz_grade_item_update($quiz, $grades = null) {
             }
         }
     }
-
-    $idcourse = get_local_course_record($quiz->course)->remoteid;
-    return grade_update('mod/quiz', $idcourse, 'mod', 'quiz', $quiz->instance, 0, $grades, $params);
+    if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        return grade_update('mod/quiz', $quiz->course, 'mod', 'quiz', $quiz->id, 0, $grades, $params);
+    } else {
+        return grade_update('mod/quiz',  $quiz->course, 'mod', 'quiz', $quiz->instance, 0, $grades, $params);
+    }
 }
 
 /**
