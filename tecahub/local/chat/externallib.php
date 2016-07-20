@@ -98,7 +98,7 @@ class local_mod_chat_external extends external_api {
             )
         );
 
-        return $DB->get_records_sql("SELECT DISTINCT u.picture, c.lastmessageping, c.firstping
+        return $DB->get_records_sql("SELECT DISTINCT u.picture as picture, c.lastmessageping as lastmessageping, c.firstping as firstping
                                FROM {chat_users} c
                                JOIN {user} u ON u.id = c.userid". $params['groupingjoin']."
                               WHERE c.chatid = :chatid " .$params['groupselect'] . "
