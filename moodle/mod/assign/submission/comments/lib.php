@@ -23,6 +23,8 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/mod/assign/remote/locallib.php');
+
 /**
  *
  * Callback method for data validation---- required method for AJAXmoodle based comment API
@@ -37,16 +39,28 @@ function assignsubmission_comments_comment_validate(stdClass $options) {
             $options->commentarea != 'submission_comments_upgrade') {
         throw new comment_exception('invalidcommentarea');
     }
-    if (!$submission = $DB->get_record('assign_submission', array('id'=>$options->itemid))) {
-        throw new comment_exception('invalidcommentitemid');
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        if (!$submission = $DB->get_record('assign_submission', array('id'=>$options->itemid))) {
+            throw new comment_exception('invalidcommentitemid');
+        }
+    } else {
+        if (!$submission = get_remote_submission_by_id($options->itemid)) 
+        {
+            throw new comment_exception('invalidcommentitemid');
+        }
     }
     $context = $options->context;
 
     require_once($CFG->dirroot . '/mod/assign/locallib.php');
     $assignment = new assign($context, null, null);
-
-    if ($assignment->get_instance()->id != $submission->assignment) {
-        throw new comment_exception('invalidcontext');
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        if ($assignment->get_instance()->id != $submission->assignment) {
+            throw new comment_exception('invalidcontext');
+        }
+    } else {
+        if ($assignment->get_instance()->remoteid != $submission->assignment) {
+            throw new comment_exception('invalidcontext');
+        }
     }
     $canview = false;
     if ($submission->userid) {
@@ -69,21 +83,34 @@ function assignsubmission_comments_comment_validate(stdClass $options) {
  */
 function assignsubmission_comments_comment_permissions(stdClass $options) {
     global $USER, $CFG, $DB;
-
     if ($options->commentarea != 'submission_comments' &&
             $options->commentarea != 'submission_comments_upgrade') {
         throw new comment_exception('invalidcommentarea');
     }
-    if (!$submission = $DB->get_record('assign_submission', array('id'=>$options->itemid))) {
-        throw new comment_exception('invalidcommentitemid');
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        if (!$submission = $DB->get_record('assign_submission', array('id'=>$options->itemid))) {
+            throw new comment_exception('invalidcommentitemid');
+        }
+    } else {
+        if (!$submission = get_remote_submission_by_id($options->itemid))
+        {
+            throw new comment_exception('invalidcommentitemid');
+        }
     }
+
     $context = $options->context;
 
     require_once($CFG->dirroot . '/mod/assign/locallib.php');
     $assignment = new assign($context, null, null);
 
-    if ($assignment->get_instance()->id != $submission->assignment) {
-        throw new comment_exception('invalidcontext');
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        if ($assignment->get_instance()->id != $submission->assignment) {
+            throw new comment_exception('invalidcontext');
+        }
+    } else {
+        if ($assignment->get_instance()->remoteid != $submission->assignment) {
+            throw new comment_exception('invalidcontext');
+        }
     }
 
     if ($assignment->get_instance()->teamsubmission &&
@@ -114,8 +141,15 @@ function assignsubmission_comments_comment_display($comments, $options) {
         $options->commentarea != 'submission_comments_upgrade') {
         throw new comment_exception('invalidcommentarea');
     }
-    if (!$submission = $DB->get_record('assign_submission', array('id'=>$options->itemid))) {
-        throw new comment_exception('invalidcommentitemid');
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        if (!$submission = $DB->get_record('assign_submission', array('id'=>$options->itemid))) {
+            throw new comment_exception('invalidcommentitemid');
+        }
+    } else {
+        if (!$submission = get_remote_submission_by_id($options->itemid))
+        {
+            throw new comment_exception('invalidcommentitemid');
+        }
     }
     $context = $options->context;
     $cm = $options->cm;
@@ -124,8 +158,14 @@ function assignsubmission_comments_comment_display($comments, $options) {
     require_once($CFG->dirroot . '/mod/assign/locallib.php');
     $assignment = new assign($context, $cm, $course);
 
-    if ($assignment->get_instance()->id != $submission->assignment) {
-        throw new comment_exception('invalidcontext');
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        if ($assignment->get_instance()->id != $submission->assignment) {
+            throw new comment_exception('invalidcontext');
+        }
+    } else {
+        if ($assignment->get_instance()->remoteid != $submission->assignment) {
+            throw new comment_exception('invalidcontext');
+        }
     }
 
     if ($assignment->is_blind_marking() && !empty($comments)) {
@@ -175,8 +215,11 @@ function assignsubmission_comments_comment_add(stdClass $comment, stdClass $para
     global $DB;
     if ($comment->commentarea == 'submission_comments_upgrade') {
         $submissionid = $comment->itemid;
-        $submission = $DB->get_record('assign_submission', array('id' => $submissionid));
-
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $submission = $DB->get_record('assign_submission', array('id' => $submissionid));
+        } else {
+            $submission = get_remote_submission_by_id($submissionid);
+        }
         $comment->userid = $submission->userid;
         $comment->commentarea = 'submission_comments';
     }

@@ -807,14 +807,24 @@ class local_mod_assign_external extends external_api {
         return mod_assign_external::get_submissions_returns();
     }
 
-    // MINHND
-    // Get Onlinetext submission 
+    /**
+     * Describes the parameters for get_onlinetext_submission_parameters
+     *
+     * @return external_external_function_parameters
+     */
     public static function get_onlinetext_submission_parameters(){
         return new external_function_parameters(
             array('submissionid' => new external_value(PARAM_INT, 'the submission id'))
         );
     }
-
+    
+    /**
+     * Returns Object onlinetext submission.
+     *
+     * @param int $submissionid   -   The id of submission
+     *
+     * @return array of warnings and onlinetext information
+     */
     public static function get_onlinetext_submission($submissionid){
         global $DB;
 
@@ -827,6 +837,12 @@ class local_mod_assign_external extends external_api {
         return $DB->get_record('assignsubmission_onlinetext', array('submission'=>$params['submissionid']));
     }
 
+    /**
+     * Describes the get_onlinetext_submission return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
     public static function get_onlinetext_submission_returns(){
         return new external_single_structure(
             array(
@@ -862,7 +878,7 @@ class local_mod_assign_external extends external_api {
      * @param string $onlinetext -    The content of onlinetext
      * @param int $onlineformat -   The format of onlinetext
      * 
-     * @return array of warnings and grades information
+     * @return array of warnings and onlinetext information
      */
     public static function create_onlinetext_submission($assignment, $submission, $onlinetext, $onlineformat){
 
@@ -965,7 +981,6 @@ class local_mod_assign_external extends external_api {
 
         $result['warnings'] = $warnings;
         
-
         return $result;
     }
 
@@ -1555,21 +1570,6 @@ class local_mod_assign_external extends external_api {
         );
     }
 
-    /**
-     * Load userid from email.
-     * @param $useremail email user
-     *
-     * @return userid
-     */
-    private static function get_userid_from_email($useremail){
-        global $DB;
-
-        $user = $DB->get_record('user', array('email' => $useremail));
-
-        return $user->id;
-    }
-
-
     //MinhND: get attemptnumber in DB assign_submission
     public static function get_attemptnumber_by_assignid_userid_groupid_parameters(){
         return new external_function_parameters(
@@ -1893,7 +1893,12 @@ class local_mod_assign_external extends external_api {
             "id" => $id
         ));
 
-        $result['assignsubmisison'] = $DB->get_record('assign_submission', array('id' => $params['id']));
+        $assignsubmisison = $DB->get_record('assign_submission', array('id' => $params['id']));
+        
+        $user = $DB->get_record('user', array('id' => $assignsubmisison->userid));
+        $assignsubmisison->useremail = $user->email;
+        
+        $result['assignsubmisison'] = $assignsubmisison;
 
         $result['warnings'] = $warnings;
 
@@ -1908,6 +1913,7 @@ class local_mod_assign_external extends external_api {
                         'id' => new external_value(PARAM_INT, 'submission ID'),
                         'assignment' => new external_value(PARAM_INT, 'assignment'),
                         'userid' => new external_value(PARAM_INT, 'user ID'),
+                        'useremail' => new external_value(PARAM_RAW, 'user email'),
                         'timecreated' => new external_value(PARAM_INT, 'time created'),
                         'timemodified' => new external_value(PARAM_INT, 'time modified'),
                         'status' => new external_value(PARAM_RAW, 'status'),
@@ -2523,7 +2529,7 @@ class local_mod_assign_external extends external_api {
      * Returns assign grade id.
      *
      * @param int $assignmentid assignment id
-     * @param int $studentuser email user
+     * @param int $userid userid
      * @param int $timecreated time created
      * @param int $timemodified time modified
      * @param int $grader grader id
@@ -3139,4 +3145,208 @@ class local_mod_assign_external extends external_api {
             )
         );
     }
+
+    /**
+     * Describes the parameters for get_files_submission
+     *
+     * @return external_external_function_parameters
+     */
+    public static function get_files_submission_parameters(){
+        return new external_function_parameters(
+            array('submissionid' => new external_value(PARAM_INT, 'the submission id'))
+        );
+    }
+
+    /**
+     * Returns Object file submission.
+     *
+     * @param int $submissionid   -   The id of submission
+     *
+     * @return array of warnings and file submission information
+     */
+    public static function get_files_submission($submissionid){
+        global $DB;
+
+        $result = array();
+        $warnings = array();
+        
+        // validate params
+        $params = self::validate_parameters(self::get_files_submission_parameters(),
+            array(
+                'submissionid' => $submissionid
+            )
+        );
+
+        $result['filesubmission'] = $DB->get_record('assignsubmission_file', array('submission'=>$params['submissionid']));
+        if (!$result['filesubmission']){
+            $result['filesubmission'] = array(); 
+        }
+        
+        $result['warnings'] = $warnings;
+        
+        return $result;
+    }
+
+    /**
+     * Describes the get_files_submission return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function get_files_submission_returns(){
+        return new external_single_structure(
+            array(
+                'filesubmission' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'onlinetext id', VALUE_OPTIONAL),
+                        'assignment' => new external_value(PARAM_INT, 'assignment id', VALUE_OPTIONAL),
+                        'submission' => new external_value(PARAM_INT, 'submission id', VALUE_OPTIONAL),
+                        'numfiles' => new external_value(PARAM_INT, 'the number of file', VALUE_OPTIONAL)
+                    )
+                ),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
+    /**
+     * Describes the parameters for create_files_submission_parameters
+     *
+     * @return external_external_function_parameters
+     */
+    public static function create_files_submission_parameters(){
+        return new external_function_parameters(
+            array(
+                'assignment' => new external_value(PARAM_INT, 'assignment id'),
+                'submission' => new external_value(PARAM_INT, 'submission id'),
+                'numfiles' => new external_value(PARAM_INT, 'the number of file'),
+            )
+        );
+    }
+
+    /**
+     * Returns id of new file submisison just created.
+     *
+     * @param int $assignment   -   The id of asssignment
+     * @param int $submission   -   The id of submission
+     * @param int $numfiles -    The number of files
+     *
+     * @return array of warnings and id of file submission 
+     */
+    public static function create_files_submission($assignment, $submission, $numfiles){
+
+        global $DB;
+
+        //build result
+        $result = array();
+        $warnings = array();
+
+        //Validate param
+        $params = self::validate_parameters(self::create_files_submission_parameters(),
+            array(
+                'assignment' => $assignment,
+                'submission' => $submission,
+                'numfiles' => $numfiles
+            )
+        );
+
+        $filesubmission = (object)$params;
+        $transaction = $DB->start_delegated_transaction();
+
+        $result['fsid'] = $DB->insert_record('assignsubmission_file', $filesubmission);
+
+        $transaction->allow_commit();
+
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    /**
+     * Describes the create_files_submission return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function create_files_submission_returns(){
+        return new external_single_structure(
+            array(
+                'fsid' =>  new external_value(PARAM_INT, 'The id of file submission'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    /**
+     * Describes the parameters for update_files_submission
+     *
+     * @return external_external_function_parameters
+     */
+    public static function update_files_submission_parameters(){
+        return new external_function_parameters(
+            array(
+                'id' => new external_value(PARAM_INT, 'The id of file submission'),
+                'assignment' => new external_value(PARAM_INT, 'The id of assignment'),
+                'submission' => new external_value(PARAM_INT, 'The id of submission'),
+                'numfiles' => new external_value(PARAM_INT, 'the number of file'),
+            )
+        );
+    }
+
+    /**
+     * Returns true if success and false if fails.
+     *
+     * @param int $id   -   The id of file submission
+     * @param int $assignment   -   The id of asssignment
+     * @param int $submission   -   The id of submission
+     * @param int $numfiles -   The number of files
+     *
+     * @return array of warnings and bool for update
+     */
+    public static function update_files_submission($id, $assignment, $submission, $numfiles){
+
+        global $DB;
+
+        //build result
+        $result = array();
+        $warnings = array();
+
+        //Validate param
+        $params = self::validate_parameters(self::update_files_submission_parameters(),
+            array(
+                'id' => $id,
+                'assignment' => $assignment,
+                'submission' => $submission,
+                'numfiles' => $numfiles
+            )
+        );
+
+        $filesubmission = (object)$params;
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $result['bool'] = $DB->update_record('assignsubmission_file', $filesubmission);
+
+        $transaction->allow_commit();
+
+        $result['warnings'] = $warnings;
+        
+        return $result;
+    }
+
+    /**
+     * Describes the update_files_submission return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function update_files_submission_returns(){
+        return new external_single_structure(
+            array(
+                'bool' =>  new external_value(PARAM_INT, 'Check if success'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
 }

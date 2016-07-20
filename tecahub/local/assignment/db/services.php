@@ -298,5 +298,29 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_assign_get_files_submission' => array(
+		'classname'	  => 'local_mod_assign_external',
+		'methodname'  => 'get_files_submission',
+		'classpath'	  => 'local/assignment/externallib.php',
+		'description' => "Get file assign submission",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_assign_create_files_submission' => array(
+		'classname'	  => 'local_mod_assign_external',
+		'methodname'  => 'create_files_submission',
+		'classpath'	  => 'local/assignment/externallib.php',
+		'description' => "Create file assign submission",
+		'type'		  => 'write',
+		'ajax'		  => true
+	),
+	'local_mod_assign_update_files_submission' => array(
+		'classname'	  => 'local_mod_assign_external',
+		'methodname'  => 'update_files_submission',
+		'classpath'	  => 'local/assignment/externallib.php',
+		'description' => "Update file assign submission",
+		'type'		  => 'write',
+		'ajax'		  => true
+	),
 );
 

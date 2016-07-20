@@ -57,7 +57,11 @@ class assign_submission_file extends assign_submission_plugin {
      */
     private function get_file_submission($submissionid) {
         global $DB;
-        return $DB->get_record('assignsubmission_file', array('submission'=>$submissionid));
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            return $DB->get_record('assignsubmission_file', array('submission'=>$submissionid));
+        } else {
+            return get_remote_files_submission($submissionid);
+        }
     }
 
     /**
@@ -219,26 +223,7 @@ class assign_submission_file extends assign_submission_plugin {
                                      false);
 
         $count = $this->count_files($submission->id, ASSIGNSUBMISSION_FILE_FILEAREA);
-        
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-            $condition = array('component' => 'assignsubmission_file', 'filearea'=> ASSIGNSUBMISSION_FILE_FILEAREA, 'itemid' => $submission->id);
-            $fakefiles = $DB->get_records('files', $condition);
-
-            $rusers = get_remote_mapping_user();
-            $condition['userid'] = $rusers[0]->id;
-
-            delete_fakefile_on_hub($condition);
-
-            foreach ($fakefiles as $fakefile) {
-                $context = $DB->get_record('context', array('id' => $fakefile->contextid));
-
-                $fakefile->userid = $rusers[0]->id;
-                $fakefile->instanceid = $context->instanceid;
-            }
-
-            create_fakefile_on_hub($fakefiles);
-        }
-
+          
         $params = array(
             'context' => context_module::instance($this->assignment->get_course_module()->id),
             'courseid' => $this->assignment->get_course()->id,
@@ -276,11 +261,15 @@ class assign_submission_file extends assign_submission_plugin {
             'groupid' => $groupid,
             'groupname' => $groupname
         );
-        
+
         if ($filesubmission) {
             $filesubmission->numfiles = $this->count_files($submission->id,
                                                            ASSIGNSUBMISSION_FILE_FILEAREA);
-            $updatestatus = $DB->update_record('assignsubmission_file', $filesubmission);
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $updatestatus = $DB->update_record('assignsubmission_file', $filesubmission);
+            } else {
+                $updatestatus = update_remote_files_submission($filesubmission)->bool;
+            }
             $params['objectid'] = $filesubmission->id;
 
             $event = \assignsubmission_file\event\submission_updated::create($params);
@@ -292,8 +281,13 @@ class assign_submission_file extends assign_submission_plugin {
             $filesubmission->numfiles = $this->count_files($submission->id,
                                                            ASSIGNSUBMISSION_FILE_FILEAREA);
             $filesubmission->submission = $submission->id;
-            $filesubmission->assignment = $this->assignment->get_instance()->id;
-            $filesubmission->id = $DB->insert_record('assignsubmission_file', $filesubmission);
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $filesubmission->assignment = $this->assignment->get_instance()->id;
+                $filesubmission->id = $DB->insert_record('assignsubmission_file', $filesubmission);
+            } else {
+                $filesubmission->assignment = $this->assignment->get_instance()->remoteid;
+                $filesubmission->id = create_remote_files_submission($filesubmission)->fsid;
+            }
             $params['objectid'] = $filesubmission->id;
 
             $event = \assignsubmission_file\event\submission_created::create($params);
