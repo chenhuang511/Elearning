@@ -5134,7 +5134,14 @@ function forum_add_discussion($discussion, $mform = null, $unused = null, $useri
     }
 
     // Finally, set the pointer on the post.
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $updatedata = array();
+        $updatedata['data[0][name]'] = "discussion";
+        $updatedata['data[0][value]'] = $post->discussion;
+        $result = update_remote_mdl_forum("forum_posts", $post->id, $updatedata);
+    }
     $DB->set_field("forum_posts", "discussion", $post->discussion, array("id" => $post->id));
+
 
     if (!empty($cm->id)) {
         forum_add_attachment($post, $forum, $cm, $mform, $unused);
