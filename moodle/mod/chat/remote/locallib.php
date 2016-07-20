@@ -64,11 +64,12 @@ function get_remote_chat_by_id($id)
 
 function get_remote_chat_user($groupingjoin, $groupselect, $data)
 {
-    return moodle_webservice_client(array(
+    $res = moodle_webservice_client(array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_chat_get_chat_users',
             'params' => array('groupingjoin' => $groupingjoin, 'groupselect' => $groupselect, 'data' => $data)
         )
     );
+    return $res;
 }

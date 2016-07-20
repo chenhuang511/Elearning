@@ -77,8 +77,9 @@ class local_mod_chat_external extends external_api {
                 'groupselect' => new external_value(PARAM_RAW, ' the groupselect'),
                 'data' => new external_single_structure(
                     array(
-                        'name' => new external_value(PARAM_RAW, 'data name'),
-                        'value' => new external_value(PARAM_RAW, 'data value'),
+                        'chatid' => new external_value(PARAM_INT, 'chat'),
+                        'groupid' => new external_value(PARAM_BOOL, 'group id'),
+                        'groupingid' => new external_value(PARAM_INT, 'grouping id'),
                     )
                 )
             )
