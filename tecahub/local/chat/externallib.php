@@ -75,7 +75,13 @@ class local_mod_chat_external extends external_api {
             array(
                 'groupingjoin' => new external_value(PARAM_RAW, ' the groupingjoin'),
                 'groupselect' => new external_value(PARAM_RAW, ' the groupselect'),
-                'data' => new external_value(PARAM_RAW, ' the params')
+                'data' => new external_single_structure(
+                    array(
+                        'chatid' => new external_value(PARAM_INT, 'chat'),
+                        'groupid' => new external_value(PARAM_BOOL, 'group id'),
+                        'groupingid' => new external_value(PARAM_INT, 'grouping id'),
+                    )
+                )
             )
         );
     }
@@ -92,7 +98,7 @@ class local_mod_chat_external extends external_api {
             )
         );
 
-        return $DB->get_records_sql("SELECT DISTINCT u.picture, c.lastmessageping, c.firstping
+        return $DB->get_records_sql("SELECT DISTINCT u.id,u.picture,u.firstname,u.lastname,u.firstnamephonetic,u.lastnamephonetic,u.middlename,u.alternatename,u.imagealt,u.email, c.lastmessageping as lastmessageping, c.firstping as firstping
                                FROM {chat_users} c
                                JOIN {user} u ON u.id = c.userid". $params['groupingjoin']."
                               WHERE c.chatid = :chatid " .$params['groupselect'] . "
@@ -107,12 +113,23 @@ class local_mod_chat_external extends external_api {
      * @since Moodle 2.2
      */
     public static function local_mod_get_chat_users_returns() {
-        return new external_single_structure(
-            array(
-                'u.picture' => new external_value(PARAM_INT, 'user picture'),
-                'c.lastmessageping'  => new external_value(PARAM_INT, 'last message ping'),
-                'c.firstping' => new external_value(PARAM_INT, 'first ping')
-            )
+        return new external_multiple_structure(
+             new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'id'),
+                    'picture' => new external_value(PARAM_INT, 'user picture'),
+                    'firstname' => new external_value(PARAM_TEXT, 'user picture'),
+                    'lastname' => new external_value(PARAM_TEXT, 'user picture'),
+                    'firstnamephonetic' => new external_value(PARAM_TEXT, 'user picture'),
+                    'lastnamephonetic' => new external_value(PARAM_TEXT, 'user picture'),
+                    'middlename' => new external_value(PARAM_TEXT, 'user picture'),
+                    'alternatename' => new external_value(PARAM_TEXT, 'user picture'),
+                    'imagealt' => new external_value(PARAM_TEXT, 'user picture'),
+                    'email' => new external_value(PARAM_TEXT, 'user picture'),
+                    'lastmessageping'  => new external_value(PARAM_INT, 'last message ping'),
+                    'firstping' => new external_value(PARAM_INT, 'first ping')
+                )
+             )
         );
     }
 }

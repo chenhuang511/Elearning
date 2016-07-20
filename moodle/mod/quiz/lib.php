@@ -803,7 +803,8 @@ function quiz_grade_item_update($quiz, $grades = null) {
         }
     }
 
-    return grade_update('mod/quiz', $quiz->course, 'mod', 'quiz', $quiz->id, 0, $grades, $params);
+    $idcourse = get_local_course_record($quiz->course)->remoteid;
+    return grade_update('mod/quiz', $idcourse, 'mod', 'quiz', $quiz->instance, 0, $grades, $params);
 }
 
 /**

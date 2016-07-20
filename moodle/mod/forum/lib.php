@@ -6745,10 +6745,16 @@ function forum_change_discussionid($postid, $discussionid)
 {
     global $DB;
     $DB->set_field('forum_posts', 'discussion', $discussionid, array('id' => $postid));
-    $params = array();
-    $params['parameters[0][name]'] = "parent";
-    $params['parameters[0][value]'] = $postid;
-    if ($posts = get_remote_forum_posts_by($params)) {
+
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $params = array();
+        $params['parameters[0][name]'] = "parent";
+        $params['parameters[0][value]'] = $postid;
+        $posts = get_remote_list_forum_posts_by($params);
+    } else {
+        $posts = $DB->get_records('forum_posts', array('parent' => $postid));
+    }
+    if ($posts) {
         foreach ($posts as $post) {
             forum_change_discussionid($post->id, $discussionid);
         }
