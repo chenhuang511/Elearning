@@ -237,6 +237,12 @@ input[type="checkbox"].tool_lp_scale_proficient {
 .dir-rtl.path-admin-tool-lp .pull-left {
     float: right;
 }
+.bhxh-pull-left .remote-form-action {
+    border-radius: 3px;
+}
+.bhxh-managetemplates > .no-overflow {
+    clear: both;
+}
 .dir-rtl.path-admin-tool-lp .pull-right {
     float: left;
 }

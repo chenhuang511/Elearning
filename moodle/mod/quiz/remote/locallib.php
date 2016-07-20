@@ -40,7 +40,8 @@ require_once($CFG->dirroot . '/mnet/service/enrol/locallib.php');
 require_once($CFG->dirroot . '/mnet/lib.php');
 
 function get_remote_quiz_by_id($id) {
-    return moodle_webservice_client(
+    global $DB;
+    $res = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
@@ -48,6 +49,25 @@ function get_remote_quiz_by_id($id) {
             'params' => array('id'=>$id)
         ), false
     );
+    $fields = ' remoteid,
+                timeopen,
+                timeclose,
+                timelimit,
+                overduehandling,
+                graceperiod,
+                attempts,
+                grademethod,
+                timecreated,
+                timemodified';
+    $local_quiz_data = $DB->get_record('quiz', array('remoteid' => $res->id), $fields);
+    if(empty($local_quiz_data)){ // check data quiz in local db
+        $res->remoteid = $res->id;
+    } else {
+        foreach ($local_quiz_data as $key => $value){
+            $res->$key = $value;
+        }
+    }
+    return $res;
 }
 
 function get_remote_user_attemps($quizid, $userid, $status, $includepreviews) {

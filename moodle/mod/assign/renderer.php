@@ -264,7 +264,7 @@ class mod_assign_renderer extends plugin_renderer_base {
                             'moodle',
                             array('class'=>'icon'));
                         $fileurl = html_writer::link($file->fileurl, $file->filename);
-                        $o .= '<li>' .
+                        $o .= '<li class="introattachments-image">' .
                             '<div>' . $image . ' ' . $fileurl . '</div> ' .
                             '</li>';
                     }

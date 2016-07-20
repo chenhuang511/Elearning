@@ -47,7 +47,7 @@ class grade_item extends grade_object {
      * Array of required table fields, must start with 'id'.
      * @var array $required_fields
      */
-    public $required_fields = array('id', 'courseid', 'categoryid', 'itemname', 'itemtype', 'itemmodule', 'iteminstance',
+    public $required_fields = array('id', 'remoteid', 'courseid', 'categoryid', 'itemname', 'itemtype', 'itemmodule', 'iteminstance',
                                  'itemnumber', 'iteminfo', 'idnumber', 'calculation', 'gradetype', 'grademax', 'grademin',
                                  'scaleid', 'outcomeid', 'gradepass', 'multfactor', 'plusfactor', 'aggregationcoef',
                                  'aggregationcoef2', 'sortorder', 'display', 'decimals', 'hidden', 'locked', 'locktime',
