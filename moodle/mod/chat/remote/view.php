@@ -177,8 +177,8 @@ chat_delete_old_users();
 global $USER;
 $userid = get_remote_mapping_user($USER->id)[0]->id;
 $chatsid = get_remote_chat_login_user($userid, $chat->id, $groupid = 0);
-
-if ($chatusers = chat_get_users($chat->id, $currentgroup, $cm->groupingid, $chatsid->chatsid)) {
+if ($chatusers = chat_get_users($chat->id, $currentgroup, $cm->groupingid, $chatsid)) {
+    var_dump($chatusers);
     $timenow = time();
     echo $OUTPUT->box_start('generalbox', 'chatcurrentusers');
     echo $OUTPUT->heading($strcurrentusers, 3);

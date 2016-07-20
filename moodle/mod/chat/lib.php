@@ -448,12 +448,10 @@ function chat_refresh_events($courseid = 0) {
  * @param int $groupingid
  * @return array
  */
-function chat_get_users($chatid, $groupid=0, $groupingid=0, $chatsid = null) {
+function chat_get_users($chatid, $groupid=0, $groupingid=0, $chatsid) {
     global $DB;
 
-
-
-    $params = array('chatid' => $chatid, 'groupid' => $groupid, 'groupingid' => $groupingid);
+    $data = array('chatid' => $chatid, 'groupid' => $groupid, 'groupingid' => $groupingid);
 
     if ($groupid) {
         $groupselect = " AND (c.groupid=:groupid OR c.groupid='0')";
