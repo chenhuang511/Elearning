@@ -13321,6 +13321,26 @@ body.path-question-type .mform fieldset.hidden {
   -moz-column-gap: 30px;
   column-gap: 30px;
 }
+.userprofile .bhxh-profile{
+  margin-left: 50px;
+  margin-right: 200px;
+}
+.userprofile .bhxh-category{
+  border: 1px solid #ddd;
+  padding-left: 20px;
+  height: 236px;
+  border-bottom: 0;
+}
+.userprofile .bhxh-category:nth-child(3n){
+  border: 1px solid #ddd;
+}
+.userprofile .bhxh-category:nth-child(1) .node a{
+  color: #00A8B3;
+}
+.userprofile .bhxh-category:nth-child(4), .bhxh-category:nth-child(5), .bhxh-category:nth-child(6){
+    margin-left: 30px;
+}
+
 .userprofile .profile_tree section {
   display: inline-block;
   width: 100%;
@@ -13425,10 +13445,15 @@ fieldset[disabled] .userprofile .header-button-group .btn.active {
 .path-user .node_category li {
   list-style-type: none;
 }
+#page-user-profile .bhxh-category li {
+  list-style-type: disc;
+  margin-left: 20px;
+}
 #page-user-profile .node_category li.contentnode,
 .path-user .node_category li.contentnode {
   list-style-type: none;
 }
+
 .path-user .node_category:first-child li span {
   margin-bottom: 10px;
   display: block;
