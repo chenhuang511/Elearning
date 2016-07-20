@@ -7662,13 +7662,15 @@ form.popupform div {
   box-sizing: initial;
 }
 .no-overflow {
-  clear: both;
-  padding-top: 25px;
   overflow-y: hidden;
   overflow-x: auto;
   -ms-overflow-style: -ms-autohiding-scrollbar;
   -webkit-overflow-scrolling: touch;
 }
+.bhxh-managetemplates > .no-overflow {
+  clear: both;
+}
+
 .no-overflow > .generaltable {
   margin-bottom: 0;
 }
