@@ -468,7 +468,7 @@ function chat_get_users($chatid, $groupid=0, $groupingid=0, $chatsid) {
     }
 
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        return get_remote_chat_user($groupingjoin, $groupselect, $data);
+        return local_get_remote_chat_user($groupingjoin, $groupselect, $data);
     }
 
     $ufields = user_picture::fields('u');
