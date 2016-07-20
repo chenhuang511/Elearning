@@ -333,7 +333,14 @@
 .path-mod-assign [data-region="user-selector"] .alignment .form-autocomplete-downarrow {
     top: 0;
 }
-
+/* add fix downarrow */
+.form-autocomplete-downarrow {
+    color: #333;
+    position: relative;
+    top: -0.3em;
+    left: -1.5em;
+    cursor: pointer;
+}
 .path-mod-assign [data-region="user-selector"] .form-autocomplete-selection {
     display: none;
 }

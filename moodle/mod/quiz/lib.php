@@ -1924,26 +1924,9 @@ function quiz_get_local_settings_info($coursemodule){
     global $CFG, $DB;
     require_once($CFG->dirroot . '/mod/quiz/remote/locallib.php');
     $quiz = get_remote_quiz_by_id($coursemodule->instance);
-    $fields = ' remoteid,
-                id,
-                timeopen,
-                timeclose,
-                timelimit,
-                overduehandling,
-                graceperiod,
-                attempts,
-                grademethod,
-                timecreated,
-                timemodified';
-    $local_quiz_data = $DB->get_record('quiz', array('remoteid' => $coursemodule->instance), $fields);
+    $local_quiz_data = $DB->get_record('quiz', array('remoteid' => $coursemodule->instance), 'id');
     if(empty($local_quiz_data)){ // check data quiz in local db
-        $quiz->remoteid = $quiz->id;
         $quiz->id = $DB->insert_record('quiz', $quiz, true);
-    } else {
-        foreach ($local_quiz_data as $key => $value){
-            $quiz->$key = $value;
-        }
     }
-
     return $quiz;
 }

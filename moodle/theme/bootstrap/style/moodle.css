@@ -15362,9 +15362,10 @@ div#dock {
   line-height: 24px;
 }
 .path-mod-assign a.btn {
-  color: #333333;
-  background-color: #ffffff;
+  color: #ffffff;
+  background-color: #097eaf;
   border-color: #cccccc;
+  font-weight: bold;
 }
 .path-mod-assign a.btn:focus,
 .path-mod-assign a.btn.focus {
@@ -15372,9 +15373,12 @@ div#dock {
   background-color: #e6e6e6;
   border-color: #8c8c8c;
 }
+.path-mod-assign a.btn-primary{
+  background-color: #F53434;
+}
 .path-mod-assign a.btn:hover {
-  color: #333333;
-  background-color: #e6e6e6;
+  color: #ffffff;
+  background-color: #6E6C6C;
   border-color: #adadad;
 }
 .path-mod-assign a.btn:active,
