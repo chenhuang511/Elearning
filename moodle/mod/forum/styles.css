@@ -60,7 +60,7 @@
 }
 .path-mod-forum .forumheaderlist .header {height: 40px; font-size: 15px;line-height: 39px; padding-left: 15px;}
 .path-mod-forum .forumheaderlist {width: 98%;border-width:1px;border-style:solid;border-collapse:separate;margin-top: 27px; }
-.path-mod-forum .forumheaderlist td {border-width:1px 0px 0px 1px;border-style:solid; padding-left: 15px;}
+.path-mod-forum .forumheaderlist td {border-width:1px 0px 0px 1px;border-style:solid; padding-left: 15px;hight: 49px;}
 .path-mod-forum .forumheaderlist th.header.replies .iconsmall { margin: 0 .3em; header topic }
 .path-mod-forum .forumheaderlist .picture {width: 20px !important;}
 .path-mod-forum .forumheaderlist .discussion .starter {vertical-align: middle; width: 165px;}
@@ -84,7 +84,8 @@
 .path-mod-forum .forumheaderlist img{width: 20px;height: 20px}
 .path-mod-forum .forumheaderlist .discussion .starter a{padding-right: 100px; padding-top: 10px; padding-bottom: 10px; }
 .path-mod-forum .forumheaderlist .discussion .author a{padding-right: 33px; padding-top: 10px; padding-bottom: 10px; }
-.path-mod-forum .forumheaderlist .discussion .replies a{padding-right: 100px; padding-top: 10px; padding-bottom: 10px; }
+.path-mod-forum .forumheaderlist .discussion .replies a{padding-right: 100px; padding-top: 10px; padding-bottom: 10px; line-height: 46px;
+}}
 .path-mod-forum .forumheaderlist .discussion .lastpost a{padding-right: 100px; padding-top: 10px; padding-bottom: 10px; }
 
 /** Styles for subscribers.php */
