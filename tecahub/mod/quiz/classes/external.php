@@ -891,7 +891,7 @@ class mod_quiz_external extends external_api {
      * @param  mixed  $page  string 'all' or integer page number
      * @return array array of questions including data
      */
-    private static function get_attempt_questions_data(quiz_attempt $attemptobj, $review, $page = 'all') {
+    private static function get_attempt_questions_data(quiz_attempt $attemptobj, $review, $page = 'all', $grading = null) {
         global $PAGE;
 
         $questions = array();
@@ -906,7 +906,7 @@ class mod_quiz_external extends external_api {
                 'type' => $attemptobj->get_question_type_name($slot),
                 'page' => $attemptobj->get_question_page($slot),
                 'flagged' => $attemptobj->is_question_flagged($slot),
-                'html' => $attemptobj->render_question($slot, $review, $renderer)/* . $PAGE->requires->get_end_code()*/ //remove js for ajax view
+                'html' => $attemptobj->render_question($slot, $review, $renderer, null, $grading)/* . $PAGE->requires->get_end_code()*/ //remove js for ajax view
             );
 
             if ($attemptobj->is_real_question($slot)) {
@@ -1295,6 +1295,7 @@ class mod_quiz_external extends external_api {
                 'attemptid' => new external_value(PARAM_INT, 'attempt id'),
                 'page' => new external_value(PARAM_INT, 'page number, empty for all the questions in all the pages',
                                                 VALUE_DEFAULT, -1),
+                'grading' => new external_value(PARAM_BOOL, 'grading', VALUE_DEFAULT, false),
             )
         );
     }
@@ -1309,7 +1310,7 @@ class mod_quiz_external extends external_api {
      * @throws  moodle_exception
      * @throws  moodle_quiz_exception
      */
-    public static function get_attempt_review($attemptid, $page = -1) {
+    public static function get_attempt_review($attemptid, $page = -1, $grading = false) {
         global $PAGE;
 
         $warnings = array();
@@ -1331,7 +1332,7 @@ class mod_quiz_external extends external_api {
         // Prepare the output.
         $result = array();
         $result['attempt'] = $attemptobj->get_attempt();
-        $result['questions'] = self::get_attempt_questions_data($attemptobj, true, $page, true);
+        $result['questions'] = self::get_attempt_questions_data($attemptobj, true, $page, $grading);
 
         $result['additionaldata'] = array();
         // Summary data (from behaviours).

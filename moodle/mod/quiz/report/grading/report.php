@@ -117,7 +117,7 @@ class quiz_grading_report extends quiz_default_report {
             throw new moodle_exception('unknownquestion', 'quiz_grading');
         }
 
-        // @TODO : Process any submitted data. xử lý save and submit điểm và bình luận của gv
+        // @TODO here : Process any submitted data. xử lý save and submit điểm và bình luận của gv
         if ($data = data_submitted() && confirm_sesskey() && $this->validate_submitted_marks()) {
             $this->process_submitted_data();
 
@@ -485,20 +485,22 @@ class quiz_grading_report extends quiz_default_report {
 
         foreach ($qubaids as $qubaid) {
             $attempt = $attempts[$qubaid];
-//            var_dump($attempt);die;
-            $quba = question_engine::load_questions_usage_by_activity($qubaid);
-            $reviewobj = get_remote_get_attempt_review($attemptid);
-            $displayoptions = quiz_get_review_options($this->quiz, $attempt, $this->context);
-            $displayoptions->hide_all_feedback();
-            $displayoptions->rightanswer = question_display_options::VISIBLE;
-            $displayoptions->history = question_display_options::HIDDEN;
-            $displayoptions->manualcomment = question_display_options::EDITABLE;
-
             $heading = $this->get_question_heading($attempt, $shownames, $showidnumbers);
             if ($heading) {
                 echo $OUTPUT->heading($heading, 4);
             }
-            echo $quba->render_question($slot, $displayoptions, $this->questions[$slot]->number);
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+                $reviewobj = get_remote_get_attempt_review($attempt->id, null, true);
+                echo $reviewobj->questions[$slot-1]->html;
+            }else{
+                $quba = question_engine::load_questions_usage_by_activity($qubaid);
+                $displayoptions = quiz_get_review_options($this->quiz, $attempt, $this->context);
+                $displayoptions->hide_all_feedback();
+                $displayoptions->rightanswer = question_display_options::VISIBLE;
+                $displayoptions->history = question_display_options::HIDDEN;
+                $displayoptions->manualcomment = question_display_options::EDITABLE;
+                echo $quba->render_question($slot, $displayoptions, $this->questions[$slot]->number);
+            }
         }
 
         echo html_writer::tag('div', html_writer::empty_tag('input', array(

@@ -250,13 +250,13 @@ function get_remote_get_attempt_data($attemptid, $page = null) {
     );
 }
 
-function get_remote_get_attempt_review($attemptid, $page = null) {
+function get_remote_get_attempt_review($attemptid, $page = null, $grading = null) {
     return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN_M,
             'function_name' => 'mod_quiz_get_attempt_review',
-            'params' => array('attemptid' => $attemptid, 'page' => $page)
+            'params' => array('attemptid' => $attemptid, 'page' => $page, 'grading' => $grading)
         ), false
     );
 }
