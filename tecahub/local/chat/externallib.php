@@ -113,12 +113,14 @@ class local_mod_chat_external extends external_api {
      * @since Moodle 2.2
      */
     public static function local_mod_get_chat_users_returns() {
-        return new external_single_structure(
-            array(
-                'picture' => new external_value(PARAM_INT, 'user picture'),
-                'lastmessageping'  => new external_value(PARAM_INT, 'last message ping'),
-                'firstping' => new external_value(PARAM_INT, 'first ping')
-            )
+        return new external_multiple_structure(
+             new external_single_structure(
+                array(
+                    'picture' => new external_value(PARAM_INT, 'user picture'),
+                    'lastmessageping'  => new external_value(PARAM_INT, 'last message ping'),
+                    'firstping' => new external_value(PARAM_INT, 'first ping')
+                )
+             )
         );
     }
 }
