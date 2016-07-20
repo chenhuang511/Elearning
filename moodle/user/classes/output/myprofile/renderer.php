@@ -41,7 +41,7 @@ class renderer extends \plugin_renderer_base {
      * @return string
      */
     public function render_tree(tree $tree) {
-        $return = \html_writer::start_tag('div', array('class' => 'profile_tree'));
+        $return = \html_writer::start_tag('div', array('class' => 'profile_tree bhxh-profile'));
         $categories = $tree->categories;
         foreach ($categories as $category) {
             $return .= $this->render($category);
@@ -60,9 +60,9 @@ class renderer extends \plugin_renderer_base {
     public function render_category(category $category) {
         $classes = $category->classes;
         if (empty($classes)) {
-            $return = \html_writer::start_tag('section', array('class' => 'node_category'));
+            $return = \html_writer::start_tag('section', array('class' => 'node_category bhxh-category'));
         } else {
-            $return = \html_writer::start_tag('section', array('class' => 'node_category ' . $classes));
+            $return = \html_writer::start_tag('section', array('class' => 'node_category bhxh-category' . $classes));
         }
         $return .= \html_writer::tag('h3', $category->title);
         $nodes = $category->nodes;
@@ -106,9 +106,9 @@ class renderer extends \plugin_renderer_base {
 
             $return = \html_writer::tag('dl', $return);
             if ($classes) {
-                $return = \html_writer::tag('li', $return, array('class' => 'contentnode ' . $classes));
+                $return = \html_writer::tag('li', $return, array('class' => 'contentnode node' . $classes));
             } else {
-                $return = \html_writer::tag('li', $return, array('class' => 'contentnode'));
+                $return = \html_writer::tag('li', $return, array('class' => 'contentnode node'));
             }
         } else {
             $return = \html_writer::span($header);
