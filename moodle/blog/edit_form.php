@@ -18,15 +18,17 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    //  It must be included from a Moodle page.
 }
 
-require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir . '/formslib.php');
 
-class blog_edit_form extends moodleform {
+class blog_edit_form extends moodleform
+{
     public $modnames = array();
 
     /**
      * Blog form definition.
      */
-    public function definition() {
+    public function definition()
+    {
         global $CFG, $DB;
 
         $mform =& $this->_form;
@@ -69,7 +71,7 @@ class blog_edit_form extends moodleform {
             $mform->addElement('header', 'tagshdr', get_string('tags', 'tag'));
         }
         $mform->addElement('tags', 'tags', get_string('tags'),
-                array('itemtype' => 'post', 'component' => 'core'));
+            array('itemtype' => 'post', 'component' => 'core'));
 
         $allmodnames = array();
 
@@ -91,11 +93,11 @@ class blog_edit_form extends moodleform {
 
                 $mform->addElement('header', 'assochdr', get_string('associations', 'blog'));
                 $mform->addElement('advcheckbox',
-                                   'courseassoc',
-                                   get_string('associatewithcourse', 'blog', $a),
-                                   null,
-                                   null,
-                                   array(0, $contextid));
+                    'courseassoc',
+                    get_string('associatewithcourse', 'blog', $a),
+                    null,
+                    null,
+                    array(0, $contextid));
                 $mform->setDefault('courseassoc', $contextid);
 
             } else if ((!empty($entry->modassoc) || !empty($modid))) {
@@ -116,11 +118,11 @@ class blog_edit_form extends moodleform {
 
                 $mform->addElement('header', 'assochdr', get_string('associations', 'blog'));
                 $mform->addElement('advcheckbox',
-                                   'modassoc',
-                                   get_string('associatewithmodule', 'blog', $a),
-                                   null,
-                                   null,
-                                   array(0, $context->id));
+                    'modassoc',
+                    get_string('associatewithmodule', 'blog', $a),
+                    null,
+                    null,
+                    array(0, $context->id));
                 $mform->setDefault('modassoc', $context->id);
             }
         }
@@ -149,7 +151,8 @@ class blog_edit_form extends moodleform {
      * @param array $files unused
      * @return array|bool
      */
-    public function validation($data, $files) {
+    public function validation($data, $files)
+    {
         global $CFG, $DB, $USER;
 
         $errors = parent::validation($data, $files);
