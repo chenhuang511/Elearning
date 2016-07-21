@@ -277,7 +277,7 @@ class navigation_node implements renderable {
      * @return navigation_node
      */
     public static function create($text, $action=null, $type=self::TYPE_CUSTOM,
-            $shorttext=null, $key=null, pix_icon $icon=null) {
+                                  $shorttext=null, $key=null, pix_icon $icon=null) {
         // Properties array used when creating the new navigation node
         $itemarray = array(
             'text' => $text,
