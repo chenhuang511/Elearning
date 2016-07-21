@@ -735,8 +735,7 @@ ORDER BY
         $params = self::validate_parameters(self::start_remote_attempt_parameters(), $params);
         $forcenew = $params['forcenew'];
         list($quiz, $course, $cm, $context) = mod_quiz_external::validate_quiz($params['quizid']);
-        $quizobj = quiz::create($cm->instance, $remoteuserid);
-        
+        $quizobj = quiz::create($cm->instance, $remoteuserid, true); // edit to reset time close quiz
         // Check questions.
         if (!$quizobj->has_questions()) {
             throw new moodle_quiz_exception($quizobj, 'noquestionsfound');
