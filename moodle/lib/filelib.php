@@ -142,6 +142,9 @@ function file_prepare_standard_editor($data, $field, array $options, $context=nu
     if (!isset($options['noclean'])) {
         $options['noclean'] = false;
     }
+    if (!isset($options['disabled'])) {
+        $options['disabled'] = false;
+    }
 
     //sanity check for passed context. This function doesn't expect $option['context'] to be set
     //But this function is called before creating editor hence, this is one of the best places to check
@@ -236,6 +239,9 @@ function file_postupdate_standard_editor($data, $field, array $options, $context
     }
     if (!isset($options['maxbytes'])) {
         $options['maxbytes'] = 0; // unlimited
+    }
+    if (!isset($options['disabled'])) {
+        $options['disabled'] = false; // unlimited
     }
 
     if ($options['trusttext']) {

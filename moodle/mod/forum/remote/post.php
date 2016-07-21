@@ -280,11 +280,11 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     $param['parameters[0][name]'] = 'id';
     $param['parameters[0][value]'] = $post->discussion;
 
-    if (!$discussion = get_remote_forum_discussions_by($params)) {
+    if (!$discussion = get_remote_forum_discussions_by($param)) {
         print_error('notpartofdiscussion', 'forum');
     }
     $param['parameters[0][value]'] = $discussion->forum;
-    if (!$forum = get_remote_forum_by($params)) {
+    if (!$forum = get_remote_forum_by($param)) {
         print_error('invalidforumid', 'forum');
     }
     if (!$course = get_local_course_record($discussion->course)) {
@@ -332,11 +332,11 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     $param = array();
     $param['parameters[0][name]'] = 'id';
     $param['parameters[0][value]'] = $post->discussion;
-    if (!$discussion = get_remote_forum_discussions_by($params)) {
+    if (!$discussion = get_remote_forum_discussions_by($param)) {
         print_error('notpartofdiscussion', 'forum');
     }
     $param['parameters[0][value]'] = $discussion->forum;
-    if (!$forum = get_remote_forum_by($params)) {
+    if (!$forum = get_remote_forum_by($param)) {
         print_error('invalidforumid', 'forum');
     }
     if (!$cm = get_remote_course_module_by_instance("forum", $forum->id)->cm) {
@@ -1038,7 +1038,7 @@ if ($post->discussion) {
     $param = array();
     $param['parameters[0][name]'] = 'discussion';
     $param['parameters[0][value]'] = $post->discussion;
-    $param['parameters[0][name]'] = 'parent';
+    $param['parameters[1][name]'] = 'parent';
     $param['parameters[1][value]'] = 0;
 
     if (!$toppost = get_remote_forum_posts_by($param)) {

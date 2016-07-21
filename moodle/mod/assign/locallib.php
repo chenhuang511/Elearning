@@ -3290,13 +3290,15 @@ class assign {
             $userid = $USER->id;
         }
 
+        $localassignmentid = $this->get_instance()->id;
         if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-            $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid);
+            $params = array('assignment'=>$localassignmentid, 'userid'=>$userid);
             $flags = $DB->get_record('assign_user_flags', $params);
         }
         else{
             $params = array('assignment'=>$this->get_instance()->remoteid, 'userid'=>$userid);
             $flags = get_user_flags_by_assignid_userid($params);
+            $flags->assignment = $localassignmentid;
         }
 
         if ($flags) {
@@ -3345,8 +3347,9 @@ class assign {
 
         $submission = null;
 
+        $localassignmentid = $this->get_instance()->id;
         if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-            $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid);
+            $params = array('assignment'=>$localassignmentid, 'userid'=>$userid);
         } else {
             $params = array('assignment'=>$this->get_instance()->remoteid, 'userid'=>$userid);
         }
@@ -3373,8 +3376,9 @@ class assign {
             $adminid = reset(explode(',', $CFG->siteadmins));
 
             if ($grades){
-                foreach ($grades as $grade) {
+                foreach ($grades as &$grade) {
                     $grade->userid = $userid;
+                    $grade->assignment = $localassignmentid;
                     if (isset($grade->grader)) {
                         $grader = $DB->get_record('user', array('email' => $grade->grader));
                         // Check if not found on host then return admin host
@@ -6253,6 +6257,7 @@ class assign {
         if (ISREMOTE) {
             // mapping user
             $sqlmappingparams = $this->mapping_users($params);
+            $sqlmappingparams = $this->mapping_assign_remote_params($sqlmappingparams);
             $index = 0;
             foreach ($sqlmappingparams as $key => $val){
                 $sqlparams["param[$index][name]"] = $key;
@@ -6260,7 +6265,7 @@ class assign {
                 $index++;
             }
             $gradesrawdata = get_remote_assign_grade_raw_data_infomation($sql, $sqlparams);
-            $this->mapping_local_users($params, $gradesrawdata);
+            $this->mapping_local_users_assign($params, $gradesrawdata);
             $currentgrades = new json_moodle_recordset($gradesrawdata);
         } else {
             $currentgrades = $DB->get_recordset_sql($sql, $params);
@@ -6436,7 +6441,19 @@ class assign {
         return $result;
     }
 
-    function mapping_local_users($oldparams, &$rawdata) {
+    function mapping_assign_remote_params(array $hostparams) {
+        $result = array();
+        foreach ($hostparams as $key => $val){
+            if(strpos(trim($key), 'assignid')!== false){
+                $val = get_local_assign_record($val, true)->remoteid;
+            }
+            $result[trim($key)] = $val;
+        }
+        return $result;
+    }
+
+    function mapping_local_users_assign($oldparams, &$rawdata) {
+        $mapusers = array();
         foreach ($oldparams as $k => $v) {
             if (substr(trim($k),0,1) == 'u') {
                 $remoteuser = get_remote_mapping_user($v)[0]->id;
