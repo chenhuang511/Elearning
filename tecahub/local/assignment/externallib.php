@@ -3089,7 +3089,13 @@ class local_mod_assign_external extends external_api {
         );
     }
 
-
+    /**
+     * @param $sql
+     * @param $param
+     * @param $pagestart
+     * @param $pagesize
+     * @return array
+     */
     public static function get_grade_items_raw_data($sql, $param, $pagestart, $pagesize) {
         global $DB;
 
@@ -3106,6 +3112,9 @@ class local_mod_assign_external extends external_api {
         return $rawdata;
     }
 
+    /**
+     * @return external_multiple_structure
+     */
     public static function get_grade_items_raw_data_returns() {
         return new external_multiple_structure(
             new external_single_structure(
@@ -3349,4 +3358,82 @@ class local_mod_assign_external extends external_api {
         );
     }
 
+    /**
+     * @return external_function_parameters
+     */
+    public static function get_grade_grades_raw_data_parameters() {
+        return new external_function_parameters (
+            array(
+                'sql' => new external_value(PARAM_RAW, 'sql'),
+                'param' => new  external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'name'),
+                            'value' => new external_value(PARAM_RAW, 'value'),
+                        )
+                    )
+                ),
+                'pagestart' => new external_value(PARAM_INT, 'pagestart', VALUE_DEFAULT, 0),
+                'pagesize' => new external_value(PARAM_INT, 'pagesize', VALUE_DEFAULT, 0),
+            )
+        );
+    }
+
+    /**
+     * @param $sql
+     * @param $param
+     * @param $pagestart
+     * @param $pagesize
+     * @return array
+     */
+    public static function get_grade_grades_raw_data($sql, $param, $pagestart, $pagesize) {
+        global $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::get_grade_grades_raw_data_parameters(),
+            array('sql' => $sql, 'param' => $param, 'pagestart' => $pagestart, 'pagesize' => $pagesize));
+
+        $branch = array();
+        foreach ($params['param'] as $element) {
+            $branch[$element['name']] = $element['value'];
+        }
+
+        $rawdata = $DB->get_records_sql($params['sql'], $branch, $params['pagestart'], $params['pagesize']);
+        return $rawdata;
+    }
+
+    /**
+     * @return external_multiple_structure
+     */
+    public static function get_grade_grades_raw_data_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'grade grades id', VALUE_OPTIONAL),
+                    'itemid' => new external_value(PARAM_INT, 'itemid', VALUE_OPTIONAL),
+                    'userid' => new external_value(PARAM_INT, 'userid', VALUE_OPTIONAL),
+                    'rawgrade' => new external_value(PARAM_FLOAT, 'rawgrade', VALUE_OPTIONAL),
+                    'rawgrademax' => new external_value(PARAM_FLOAT, 'rawgrademax', VALUE_OPTIONAL),
+                    'rawgrademin' => new external_value(PARAM_FLOAT, 'rawgrademin', VALUE_OPTIONAL),
+                    'rawscaleid' => new external_value(PARAM_INT, 'rawscaleid', VALUE_OPTIONAL),
+                    'usermodified' => new external_value(PARAM_INT, 'usermodified', VALUE_OPTIONAL),
+                    'finalgrade' => new external_value(PARAM_FLOAT, 'finalgrade', VALUE_OPTIONAL),
+                    'hidden' => new external_value(PARAM_INT, 'hidden', VALUE_OPTIONAL),
+                    'locked' => new external_value(PARAM_INT, 'locked', VALUE_OPTIONAL),
+                    'locktime' => new external_value(PARAM_INT, 'locktime', VALUE_OPTIONAL),
+                    'exported' => new external_value(PARAM_INT, 'exported', VALUE_OPTIONAL),
+                    'overridden' => new external_value(PARAM_INT, 'overridden', VALUE_OPTIONAL),
+                    'excluded' => new external_value(PARAM_INT, 'excluded', VALUE_OPTIONAL),
+                    'feedback' => new external_value(PARAM_RAW, 'feedback', VALUE_OPTIONAL),
+                    'feedbackformat' => new external_value(PARAM_INT, 'feedbackformat', VALUE_OPTIONAL),
+                    'information' => new external_value(PARAM_RAW, 'information', VALUE_OPTIONAL),
+                    'informationformat' => new external_value(PARAM_INT, 'informationformat', VALUE_OPTIONAL),
+                    'timecreated' => new external_value(PARAM_INT, 'timecreated', VALUE_OPTIONAL),
+                    'timemodified' => new external_value(PARAM_INT, 'timemodified', VALUE_OPTIONAL),
+                    'aggregationstatus' => new external_value(PARAM_RAW, 'gradepaggregationstatusass', VALUE_OPTIONAL),
+                    'aggregationweight' => new external_value(PARAM_FLOAT, 'aggregationweight', VALUE_OPTIONAL),
+                )
+            )
+        );
+    }
 }

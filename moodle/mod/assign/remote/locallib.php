@@ -939,3 +939,15 @@ function update_remote_files_submission($filesubmission){
     );
     return $resp;
 }
+
+function get_remote_assign_grade_grades_raw_data($sql, $param, $pagestart = 0, $pagesize = 0) {
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_get_grade_grades_raw_data',
+            'params' => array_merge(array('sql' => $sql, 'pagestart' => $pagestart, 'pagesize' => $pagesize), $param)
+        ), false
+    );
+    return $resp;
+}

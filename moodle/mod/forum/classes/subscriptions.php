@@ -492,7 +492,11 @@ class subscriptions
         unset($results[$CFG->siteguest]);
 
         // Apply the activity module availability resetrictions.
-        $cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course);
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $cm = get_remote_course_module_by_instance('forum', $forum->id)->cm;
+        } else {
+            $cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course);
+        }
         $modinfo = get_fast_modinfo($forum->course);
         $info = new \core_availability\info_module($modinfo->get_cm($cm->id));
         $results = $info->filter_user_list($results);
@@ -635,12 +639,15 @@ class subscriptions
         $sub->forum = $forum->id;
 
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            $data = array();
-            $data['data[0][name]'] = "userid";
-            $data['data[0][value]'] = $userid;
-            $data['data[1][name]'] = "forum";
-            $data['data[1][value]'] = $forum->id;
-            $result = save_remote_mdl_forum("forum_subscriptions", $data);
+            $subdata = array();
+            $i = 0;
+            foreach ($sub as $key => $val) {
+                $subdata["data[$i][name]"] = "$key";
+                $subdata["data[$i][value]"] = $val;
+                $i++;
+            }
+
+            $result = save_remote_mdl_forum("forum_subscriptions", $subdata);
         } else {
             $result = $DB->insert_record("forum_subscriptions", $sub);
         }

@@ -2008,10 +2008,10 @@ function forum_scale_used($forumid, $scaleid)
     $return = false;
 
     $params = array();
-    $params['parameteres[0][name]'] = "id";
-    $params['parameteres[0][value]'] = $forumid;
-    $params['parameteres[1][name]'] = "scale";
-    $params['parameteres[1][value]'] = $scaleid;
+    $params['parameters[0][name]'] = "id";
+    $params['parameters[0][value]'] = $forumid;
+    $params['parameters[1][name]'] = "scale";
+    $params['parameters[1][value]'] = $scaleid;
     $rec = get_remote_forum_by($params);
 
     if (!empty($rec) && !empty($scaleid)) {
@@ -4447,11 +4447,16 @@ function forum_move_attachments($discussion, $forumfrom, $forumto)
     $oldcontext = context_module::instance($oldcm->id);
 
     // loop through all posts, better not use attachment flag ;-)
-    $params = array();
-    $params['parameters[0][name]'] = "discussion";
-    $params['parameters[0][value]'] = $discussion->id;
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $params = array();
+        $params['parameters[0][name]'] = "discussion";
+        $params['parameters[0][value]'] = $discussion->id;
+        $posts = get_remote_list_forum_posts_by($params);
+    } else {
+        $posts = $DB->get_records('forum_posts', array('discussion' => $discussion->id), '', 'id, attachment');
+    }
 
-    if ($posts = get_remote_list_forum_posts_by($params, "id, attachment")) {
+    if ($posts) {
         foreach ($posts as $post) {
             $fs->move_area_files_to_new_context($oldcontext->id,
                 $newcontext->id, 'mod_forum', 'post', $post->id);
