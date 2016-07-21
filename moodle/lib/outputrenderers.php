@@ -1814,7 +1814,9 @@ class core_renderer extends renderer_base {
         $attributes = array('type'     => 'submit',
                             'value'    => $button->label,
                             'disabled' => $button->disabled ? 'disabled' : null,
-                            'title'    => $button->tooltip);
+                            'title'    => $button->tooltip,
+                            'class' => 'stop-reset-form'
+            );
 
         // params for hidden fields
         $params = $button->url->params();
@@ -1823,7 +1825,7 @@ class core_renderer extends renderer_base {
         }
 
         if (!isset($button->params['useajax'])) {
-            $attributes['class'] .= ' remote-form-action ';
+            $attributes['class'] .= ' remote-form-action';
         }
 
         if ($button->actions) {
@@ -1860,7 +1862,7 @@ class core_renderer extends renderer_base {
         $output = html_writer::tag('form', $output, $attributes);
 
         // and finally one more wrapper with class
-        return html_writer::tag('div', $output, array('class' => $button->class));
+        return html_writer::tag('div', $output, array('class' => $button->class.' action-form'));
     }
 
     /**
