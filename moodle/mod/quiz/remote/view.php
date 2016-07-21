@@ -114,11 +114,12 @@ if (!$canpreview) {
 $mygradeoverridden = false;
 $gradebookfeedback = '';
 
-$grading_info = grade_get_grades($course->id, 'mod', 'quiz', $quiz->id, $user[0]->id);
+//@TODO: hadle here.
+$grading_info = grade_get_grades($course->id, 'mod', 'quiz', $quiz->id, $USER->id);
 if (!empty($grading_info->items)) {
     $item = $grading_info->items[0];
-    if (isset($item->grades[$user[0]->id])) {
-        $grade = $item->grades[$user[0]->id];
+    if (isset($item->grades[$USER->id])) {
+        $grade = $item->grades[$USER->id];
 
         if ($grade->overridden) {
             $mygrade = $grade->grade + 0; // Convert to number.
