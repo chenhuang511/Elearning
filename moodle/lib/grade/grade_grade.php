@@ -206,10 +206,12 @@ class grade_grade extends grade_object {
 
             $remoteparams = array();
             $index = 0;
+            $oldmappinguser = array();
             foreach ($params as $key => $value) {
                 $remoteparamvalue = $value;
                 if (strpos($key, 'uid') !== false) {
                     $remoteparamvalue = get_remote_mapping_user($value)[0]->id;
+                    $oldmappinguser[$remoteparamvalue] = $value;
                 } elseif (strpos($key, 'giid') !== false) {
                     $remoteparamvalue = get_local_grade_items_record($value, true)->remoteid;
                 }
@@ -220,6 +222,12 @@ class grade_grade extends grade_object {
 
             $grade_records = get_remote_assign_grade_grades_raw_data($sql, $remoteparams);
             //TODO mapping local id for grade grades
+            foreach ($grade_records as &$grades) {
+                $grades->itemid = $params['giid'];
+                if (isset($grades->userid) && isset($oldmappinguser[$grades->userid])) {
+                    $grades->userid = $oldmappinguser[$grades->userid];
+                }
+            }
         } else {
             $grade_records = $DB->get_records_select('grade_grades', "itemid=:giid AND userid $user_ids_cvs", $params);
         }
