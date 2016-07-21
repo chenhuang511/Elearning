@@ -53,15 +53,11 @@ function assignsubmission_comments_comment_validate(stdClass $options) {
 
     require_once($CFG->dirroot . '/mod/assign/locallib.php');
     $assignment = new assign($context, null, null);
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-        if ($assignment->get_instance()->id != $submission->assignment) {
-            throw new comment_exception('invalidcontext');
-        }
-    } else {
-        if ($assignment->get_instance()->remoteid != $submission->assignment) {
-            throw new comment_exception('invalidcontext');
-        }
+
+    if ($assignment->get_instance()->id != $submission->assignment) {
+        throw new comment_exception('invalidcontext');
     }
+
     $canview = false;
     if ($submission->userid) {
         $canview = $assignment->can_view_submission($submission->userid);
@@ -103,14 +99,8 @@ function assignsubmission_comments_comment_permissions(stdClass $options) {
     require_once($CFG->dirroot . '/mod/assign/locallib.php');
     $assignment = new assign($context, null, null);
 
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-        if ($assignment->get_instance()->id != $submission->assignment) {
-            throw new comment_exception('invalidcontext');
-        }
-    } else {
-        if ($assignment->get_instance()->remoteid != $submission->assignment) {
-            throw new comment_exception('invalidcontext');
-        }
+    if ($assignment->get_instance()->id != $submission->assignment) {
+        throw new comment_exception('invalidcontext');
     }
 
     if ($assignment->get_instance()->teamsubmission &&
@@ -158,14 +148,8 @@ function assignsubmission_comments_comment_display($comments, $options) {
     require_once($CFG->dirroot . '/mod/assign/locallib.php');
     $assignment = new assign($context, $cm, $course);
 
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-        if ($assignment->get_instance()->id != $submission->assignment) {
-            throw new comment_exception('invalidcontext');
-        }
-    } else {
-        if ($assignment->get_instance()->remoteid != $submission->assignment) {
-            throw new comment_exception('invalidcontext');
-        }
+    if ($assignment->get_instance()->id != $submission->assignment) {
+        throw new comment_exception('invalidcontext');
     }
 
     if ($assignment->is_blind_marking() && !empty($comments)) {
