@@ -304,6 +304,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         ) {
             print_error('maxtimehaspassed', 'forum', '', format_time($CFG->maxeditingtime));
         }
+
     }
     if (($post->userid <> $USER->id) and
         !has_capability('mod/forum:editanypost', $modcontext)
