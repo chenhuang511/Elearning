@@ -114,6 +114,14 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_get_list_forum_discussions_sql' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'get_list_forum_discussions_sql',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'Get list forum discussions',
+        'type' => 'read',
+        'ajax' => true
+    ),
     'local_mod_get_list_forum_posts_by' => array(
         'classname' => 'local_mod_forum_external',
         'methodname' => 'get_list_forum_posts_by',
