@@ -1731,7 +1731,7 @@ class assign {
      */
     public function count_submissions_need_grading() {
         if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-            $hostip = $this->gethostip();
+            $hostip = gethostip();
 
             //Load remote params
             $rparams['assignid'] = $this->get_instance()->remoteid;
@@ -1858,7 +1858,7 @@ class assign {
      */
     public function count_submissions_with_status($status) {
         if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-            $hostip = $this->gethostip();
+            $hostip = gethostip();
 
             $rparams['assignid'] = $this->get_instance()->remoteid;
             $rparams['hostip'] = $hostip;
