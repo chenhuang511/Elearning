@@ -3255,5 +3255,12 @@ table#permissions tbody tr:hover > th {
 .bhxh-chat-spansss {margin-top: 29px;}
 .bhxh-chat-spansss .no-overflow {margin-left: -6px; }
 .bhxh-link-chat {margin-top: 16px;}
+.bhxh-link-chat .btn{
+    color: #ffffff;
+    font-weight: bold;
+}
+.bhxh-link-chat .btn-primary:hover{
+    background: #1D2939;
+}
 
 
