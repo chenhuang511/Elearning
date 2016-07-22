@@ -38,6 +38,122 @@ a:focus {
     color: #111;
     background: #dedede;
 }
+#region-bs-main-and-pre .forum-mode{
+    margin-left: 0;
+}
+.userprofile .bhxh-category {
+    border: 1px solid #ddd;
+    padding-left: 20px;
+    height: 210px;
+
+}
+
+.userprofile .bhxh-category:nth-child(3n) {
+    border: 1px solid #ddd;
+}
+
+.userprofile .bhxh-category:nth-child(1) .node a {
+    color: #337ab7;
+}
+.userprofile .bhxh-category {
+    margin-bottom: 30px;
+}
+.userprofile .bhxh-category ul li a {
+    margin-left: 5px;
+    color: #337ab7;
+}
+.userprofile .bhxh-category ul li a:hover{
+    text-decoration: underline;
+}
+.userprofile .bhxh-category ul li:nth-last-child(1) {
+    height: 20px;
+
+}
+.noti-content-main h2{
+
+    border-bottom: solid 1px #337ab7;
+    padding-bottom: 9px;
+
+}
+#page-user-profile .bhxh-category li {
+    margin-left: 10px;
+}
+#page-user-profile .bhxh-category li:not(.node)::before {
+    content: '';
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #337ab7;
+    margin-left: 10px;
+}
+#page-user-profile .bhxh-category li:not(.node)::before {
+    content: '';
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #0e73e6;
+    margin-left: 10px;
+}
+@media only screen and (min-width: 320px) {
+    .loginbox .loginform .form-input input[type="text"],
+    .loginbox .loginform .form-input input[type="password"] {
+        font-size: 10px;
+
+    }
+
+    .bhxh-category h3 {
+        font-size: 18px;
+    }
+
+    .userprofile .profile_tree {
+        column-count: 1;
+    }
+    .breadcrumb-button .action-form .stop-reset-form{
+        /* margin-left: 20px;*/
+    }
+}
+@media (min-width: 768px) {
+    .loginbox.onecolumn {
+        left: 25%;
+    }
+
+    .userprofile .profile_tree {
+        column-count: 2;
+    }
+    .breadcrumb-button .action-form .stop-reset-form{
+        /* margin-left: 0px;  */
+    }
+
+}
+.noti-content-main .discussioncontrols .controlscontainer #mode-form{
+    margin-left: -10px;
+}
+
+.forumpost .subject-single{
+    margin-left: 20px;
+    color: #337ab7;
+
+}
+.forumpost .author-forum{
+    margin-left: 20px;
+    color: #ddd;
+    font-style: italic;
+}
+.forumpost .author-forum a{
+
+    color: #ddd;
+}
+.forumpost .content-no-overflow{
+    margin-left: 37px;
+}
+.noti-content-main  .box{
+    margin-bottom: 10px;
+}
+.noti-content-main .commands a{
+    color: #337ab7;
+}
 
 .icon-bxh {
     display: inline-block;

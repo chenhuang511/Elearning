@@ -674,7 +674,7 @@ class core_renderer extends renderer_base {
         // This is an unfortunate hack. DO NO EVER add anything more here.
         // DO NOT add classes.
         // DO NOT add an id.
-        return '<div class="noti-content" role="main">'.$this->unique_main_content_token.'</div>';
+        return '<div class="noti-content noti-content-main" role="main">'.$this->unique_main_content_token.'</div>';
     }
 
     /**
@@ -3124,7 +3124,7 @@ EOD;
     public function box_start($classes = 'generalbox', $id = null, $attributes = array()) {
         $this->opencontainers->push('box', html_writer::end_tag('div'));
         $attributes['id'] = $id;
-        $attributes['class'] = 'box ' . renderer_base::prepare_classes($classes);
+        $attributes['class'] = 'box box-response ' . renderer_base::prepare_classes($classes);
         return html_writer::start_tag('div', $attributes);
     }
 

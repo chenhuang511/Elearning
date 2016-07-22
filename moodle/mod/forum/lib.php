@@ -3745,14 +3745,14 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost = 
     if (empty($post->subjectnoformat)) {
         $postsubject = format_string($postsubject);
     }
-    $output .= html_writer::tag('div', $postsubject, array('class' => 'subject',
+    $output .= html_writer::tag('div', $postsubject, array('class' => 'subject subject-single',
         'role' => 'heading',
         'aria-level' => '2'));
 
     $by = new stdClass();
     $by->name = html_writer::link($postuser->profilelink, $postuser->fullname);
     $by->date = userdate($post->modified);
-    $output .= html_writer::tag('div', get_string('bynameondate', 'forum', $by), array('class' => 'author',
+    $output .= html_writer::tag('div', get_string('bynameondate', 'forum', $by), array('class' => 'author author-forum',
         'role' => 'heading',
         'aria-level' => '2'));
 
@@ -3773,7 +3773,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost = 
 
     $output .= html_writer::end_tag('div'); //left side
     $output .= html_writer::start_tag('div', array('class' => 'no-overflow'));
-    $output .= html_writer::start_tag('div', array('class' => 'content'));
+    $output .= html_writer::start_tag('div', array('class' => 'content content-no-overflow'));
 
     $options = new stdClass;
     $options->para = false;
@@ -4344,11 +4344,11 @@ function forum_print_mode_form($id, $mode, $forumtype = '')
 {
     global $OUTPUT;
     if ($forumtype == 'single') {
-        $select = new single_select(new moodle_url("/mod/forum/remote/view.php", array('f' => $id)), 'mode', forum_get_layout_modes(), $mode, null, "mode");
+        $select = new single_select(new moodle_url("/mod/forum/remote/view.php", array('f' => $id,  'class' => 'mode-form')), 'mode', forum_get_layout_modes(), $mode, null, "mode");
         $select->set_label(get_string('displaymode', 'forum'), array('class' => 'accesshide'));
-        $select->class = "forummode";
+        $select->class = "forummode forum-mode";
     } else {
-        $select = new single_select(new moodle_url("/mod/forum/remote/discuss.php", array('d' => $id)), 'mode', forum_get_layout_modes(), $mode, null, "mode");
+        $select = new single_select(new moodle_url("/mod/forum/remote/discuss.php", array('d' => $id,  'class' => 'mode-form')), 'mode', forum_get_layout_modes(), $mode, null, "mode");
         $select->set_label(get_string('displaymode', 'forum'), array('class' => 'accesshide'));
     }
     echo $OUTPUT->render($select);
