@@ -1851,19 +1851,6 @@ class assign {
     }
 
     /**
-     * Load hostip.
-     *
-     * @return hostip
-     */
-    public function gethostip(){
-        global $CFG;
-        $my_hostname = mnet_get_hostname_from_uri($CFG->wwwroot);
-        $my_ip       = gethostbyname($my_hostname);
-
-        return $my_ip;
-    }
-
-    /**
      * Load a count of submissions with a specified status.
      *
      * @param string $status The submission status - should match one of the constants
