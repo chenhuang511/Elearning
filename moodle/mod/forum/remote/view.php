@@ -160,7 +160,7 @@ if ($forum->type == 'single') {
     $prs['parameters[0][value]'] = $forum->id;
 
     $discussion = NULL;
-    $discussions = get_remote_list_forum_discussions_by($prs, 'timemodified ASC');
+    $discussions = get_remote_list_forum_discussions_sql($prs, 'timemodified ASC');
 
     if (!empty($discussions)) {
         $discussion = array_pop($discussions);
