@@ -106,4 +106,12 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_count_mdl_grade_sql' => array(
+        'classname' => 'local_grade_external',
+        'methodname' => 'get_count_mdl_grade_sql',
+        'classpath' => 'local/grade/externallib.php',
+        'description' => 'get count',
+        'type' => 'read',
+        'ajax' => true
+    ),
 );

@@ -630,4 +630,56 @@ class local_grade_external extends external_api
             )
         );
     }
+
+    public static function get_count_mdl_grade_sql_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'sql' => new external_value(PARAM_RAW, 'the query sql'),
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                )
+            )
+        );
+    }
+
+    public static function get_count_mdl_grade_sql($sql, $parameters)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_count_mdl_grade_sql_parameters(), array(
+            'sql' => $sql,
+            'parameters' => $parameters
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['value']));
+        }
+
+        $result = array();
+
+        $count = $DB->count_records_sql($params['sql'], $arr);
+
+        $result['count'] = $count;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_count_mdl_grade_sql_returns()
+    {
+        return new external_single_structure(
+            array(
+                'count' => new external_value(PARAM_INT, 'count'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }
