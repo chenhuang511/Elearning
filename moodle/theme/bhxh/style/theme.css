@@ -1624,7 +1624,9 @@ ul#coursetabs > li.active > a, ul#coursetabs > li > a:focus, ul#coursetabs > li 
     padding: 18px;
     display: inline-block;
 }
-
+.resourceworkaround a{
+    color: #00ACED;
+}
 @media (max-width: 767px) {
     .carousel-control {
         display: none;

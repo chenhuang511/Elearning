@@ -292,7 +292,7 @@ function remote_resource_print_workaround($resource, $cm, $course, $file)
             $wh = "width=$width,height=$height,toolbar=no,location=no,menubar=no,copyhistory=no,status=no,directories=no,scrollbars=yes,resizable=yes";
             $extra = "onclick=\"window.open('$fullurl', '', '$wh'); return false;\"";
 
-            $string = get_string('clicktoopen2', 'resource', "<a style=\"color: #00ACED\" href=\"$file->url\" $extra>$file->filename</a>");
+            $string = get_string('clicktoopen2', 'resource', "<a href=\"$file->url\" $extra>$file->filename</a>");
 
             echo $string;
             break;
@@ -300,20 +300,20 @@ function remote_resource_print_workaround($resource, $cm, $course, $file)
         case RESOURCELIB_DISPLAY_NEW:
             $extra = 'onclick="this.target=\'_blank\'"';
             $filename = $file->filename;
-            $string = get_string('clicktoopen2', 'resource', "<a style=\"color: #00ACED\" href=\"$file->url\" $extra>$filename</a>");
+            $string = get_string('clicktoopen2', 'resource', "<a href=\"$file->url\" $extra>$filename</a>");
             echo $string;
             break;
 
         case RESOURCELIB_DISPLAY_DOWNLOAD:
             $filename = $file->filename;
-            $string = get_string('clicktodownload', 'resource', "<a style=\"color:#00ACED\" href=\"$file->url\">$filename</a>");
+            $string = get_string('clicktodownload', 'resource', "<a href=\"$file->url\">$filename</a>");
             echo $string;
             break;
 
         case RESOURCELIB_DISPLAY_OPEN:
         default:
             $filename = $file->filename;
-            $string = get_string('clicktoopen2', 'resource', "<a style=\"color:#00ACED\" href=\"$file->url\">$filename</a>");
+            $string = get_string('clicktoopen2', 'resource', "<a href=\"$file->url\">$filename</a>");
             echo $string;
             break;
     }
