@@ -56,8 +56,6 @@ class assign_submission_onlinetext extends assign_submission_plugin {
         global $DB;
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
             $resp = get_remote_onlinetext_submission($submissionid);
-            if ($resp->exception)
-                return 0;
             return $resp;
         }
         return $DB->get_record('assignsubmission_onlinetext', array('submission'=>$submissionid));

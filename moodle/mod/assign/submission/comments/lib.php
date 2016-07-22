@@ -44,9 +44,15 @@ function assignsubmission_comments_comment_validate(stdClass $options) {
             throw new comment_exception('invalidcommentitemid');
         }
     } else {
-        if (!$submission = get_remote_submission_by_id($options->itemid)) 
-        {
-            throw new comment_exception('invalidcommentitemid');
+        if ($options->teamsubmission){
+            if (!$submission = $DB->get_record('assign_submission', array('id'=>$options->itemid))) {
+                throw new comment_exception('invalidcommentitemid');
+            }
+        } else {
+            if (!$submission = get_remote_submission_by_id($options->itemid))
+            {
+                throw new comment_exception('invalidcommentitemid');
+            }
         }
     }
     $context = $options->context;
@@ -88,9 +94,15 @@ function assignsubmission_comments_comment_permissions(stdClass $options) {
             throw new comment_exception('invalidcommentitemid');
         }
     } else {
-        if (!$submission = get_remote_submission_by_id($options->itemid))
-        {
-            throw new comment_exception('invalidcommentitemid');
+        if ($options->teamsubmission){
+            if (!$submission = $DB->get_record('assign_submission', array('id'=>$options->itemid))) {
+                throw new comment_exception('invalidcommentitemid');
+            }
+        } else {
+            if (!$submission = get_remote_submission_by_id($options->itemid))
+            {
+                throw new comment_exception('invalidcommentitemid');
+            }
         }
     }
 
@@ -136,9 +148,15 @@ function assignsubmission_comments_comment_display($comments, $options) {
             throw new comment_exception('invalidcommentitemid');
         }
     } else {
-        if (!$submission = get_remote_submission_by_id($options->itemid))
-        {
-            throw new comment_exception('invalidcommentitemid');
+        if ($options->teamsubmission){
+            if (!$submission = $DB->get_record('assign_submission', array('id'=>$options->itemid))) {
+                throw new comment_exception('invalidcommentitemid');
+            }
+        } else {
+            if (!$submission = get_remote_submission_by_id($options->itemid))
+            {
+                throw new comment_exception('invalidcommentitemid');
+            }
         }
     }
     $context = $options->context;

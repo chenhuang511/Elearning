@@ -255,7 +255,7 @@ class mod_assign_renderer extends plugin_renderer_base {
             $o .= $this->output->box_start('generalbox boxaligncenter', 'intro');
             $o .= format_module_intro('assign', $header->assign, $header->coursemoduleid);
             if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-                if ($header->assign->introattachments){
+                if (isset($header->assign->introattachments)){
                     $o .= '<div>';
                     $o .= '<ul class="introattachments">';
                     foreach ($header->assign->introattachments as $file) {

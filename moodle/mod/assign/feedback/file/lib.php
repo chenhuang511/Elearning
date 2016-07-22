@@ -22,6 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
+require_once($CFG->dirroot . '/mod/assign/remote/locallib.php');
 
 /**
  * Serves assignment feedback and other files.
@@ -48,11 +49,21 @@ function assignfeedback_file_pluginfile($course,
 
     require_login($course, false, $cm);
     $itemid = (int)array_shift($args);
-    $record = $DB->get_record('assign_grades', array('id'=>$itemid), 'userid,assignment', MUST_EXIST);
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        $record = $DB->get_record('assign_grades', array('id'=>$itemid), 'userid,assignment', MUST_EXIST);
+    } else {
+        $record = get_remote_assign_grades_by_id($itemid);
+    }
     $userid = $record->userid;
 
-    if (!$assign = $DB->get_record('assign', array('id'=>$cm->instance))) {
-        return false;
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        if (!$assign = $DB->get_record('assign', array('id'=>$cm->instance))) {
+            return false;
+        }
+    } else {
+        if (!$assign = get_remote_assign_by_id($cm->instance)) {
+            return false;
+        }
     }
 
     if ($assign->id != $record->assignment) {

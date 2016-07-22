@@ -13,9 +13,8 @@ require_once($CFG->dirroot . '/lib/additionallib.php');
  *
  * @return stdClass $asssign
  */
-function get_remote_assign_by_id($assignid, $options = array())
-{
-    return moodle_webservice_client(array_merge($options,
+function get_remote_assign_by_id($assignid, $options = array()){
+    $resp = moodle_webservice_client(array_merge($options,
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
@@ -23,6 +22,12 @@ function get_remote_assign_by_id($assignid, $options = array())
             'params' => array('assignid' => $assignid),
         )
     ));
+
+    if ($resp){
+        $resp->id = (int)get_local_assign_record($resp->id)->id;
+    }
+
+    return $resp;
 }
 
 /**
@@ -46,6 +51,11 @@ function get_remote_assign_by_id_instanceid($assignid, $instanceid, $options = a
             ),
         )
     ));
+
+    if ($resp->assignment){
+        $resp->assignment->id = (int)get_local_assign_record($resp->assignment->id)->id;
+    }
+
     return $resp->assignment;
 }
 
@@ -84,7 +94,7 @@ function get_remote_get_submission_status($assignid, $userid = null)
  * @return stdClass $onlinetextsubmission
  */
 function get_remote_onlinetext_submission($submissionid, $options = array()) {
-    return moodle_webservice_client(array_merge($options,
+    $resp = moodle_webservice_client(array_merge($options,
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
@@ -92,6 +102,11 @@ function get_remote_onlinetext_submission($submissionid, $options = array()) {
             'params' => array('submissionid' => $submissionid),
         )
     ), false);
+    if (isset($resp->onlinetext)){
+        return 0;
+    }
+
+    return $resp->onlinetext;
 }
 
 /**
@@ -245,6 +260,35 @@ function get_submission_by_assignid_userid_groupid($params){
 }
 
 /**
+ * Get grades by id.
+ *
+ * @param int $id . the id of grade assign.
+ *
+ * @return stdClass $results . list grades
+ */
+function get_remote_assign_grades_by_id($id){
+    global $USER;
+    $resp =  moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_get_grades_by_id',
+            'params' => array(
+                'id' => $id
+            )
+        ), false
+    );
+    
+    $resp->grades->assignment =  get_local_assign_record($resp->grades->assignment)->id;
+    $ruser = get_remote_mapping_user();
+
+    if ($resp->grades->userid == $ruser[0]->id){
+        $resp->grades->userid = $USER->id;
+    }
+    return $resp->grades;
+}
+
+/**
  * Get grades by assignid, userid.
  *
  * @param int $params['assignment'] . the assign id
@@ -253,7 +297,7 @@ function get_submission_by_assignid_userid_groupid($params){
  *
  * @return stdClass $results . list grades
  */
-function get_assign_grades_by_assignid_userid($params){
+function get_remote_assign_grades_by_assignid_userid($params){
     
     if(!isset($params['attemptnumber'])){
         $params['attemptnumber'] = -1;

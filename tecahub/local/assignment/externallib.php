@@ -828,13 +828,24 @@ class local_mod_assign_external extends external_api {
     public static function get_onlinetext_submission($submissionid){
         global $DB;
 
+        $warnings = array();
+
+        $result = array();
+
         // validate params
         $params = self::validate_parameters(self::get_onlinetext_submission_parameters(),
             array(
                 'submissionid' => $submissionid
             )
         );
-        return $DB->get_record('assignsubmission_onlinetext', array('submission'=>$params['submissionid']));
+        
+        $result['onlinetext'] = $DB->get_record('assignsubmission_onlinetext', array('submission'=>$params['submissionid']));
+        if (!$result['onlinetext']){
+            $result['onlinetext'] = array();
+        }
+
+        $result['warnings'] = $warnings;
+        return $result;
     }
 
     /**
@@ -846,12 +857,18 @@ class local_mod_assign_external extends external_api {
     public static function get_onlinetext_submission_returns(){
         return new external_single_structure(
             array(
-                'id' => new external_value(PARAM_INT, 'onlinetext id'),
-                'assignment' => new external_value(PARAM_INT, 'assignment id'),
-                'submission' => new external_value(PARAM_INT, 'submission id'),
-                'onlinetext' => new external_value(PARAM_RAW, 'online text'),
-                'onlineformat' => new external_value(PARAM_INT, 'online text format'),
-            ));
+                'onlinetext' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'onlinetext id', VALUE_OPTIONAL),
+                        'assignment' => new external_value(PARAM_INT, 'assignment id', VALUE_OPTIONAL),
+                        'submission' => new external_value(PARAM_INT, 'submission id', VALUE_OPTIONAL),
+                        'onlinetext' => new external_value(PARAM_RAW, 'online text', VALUE_OPTIONAL),
+                        'onlineformat' => new external_value(PARAM_INT, 'online text format', VALUE_OPTIONAL),
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
     }
 
     /**
@@ -1051,11 +1068,11 @@ class local_mod_assign_external extends external_api {
             array(
                 'feedbackcomments' => new external_single_structure(
                     array(
-                        'id' => new external_value(PARAM_INT, 'grade id'),
-                        'assignment' => new external_value(PARAM_INT, 'assignment id'),
-                        'grade' => new external_value(PARAM_FLOAT, 'grade id'),
-                        'commenttext' => new external_value(PARAM_RAW, 'feedback comment text'),
-                        'commentformat' => new external_value(PARAM_INT, 'feedbackcomment format'),
+                        'id' => new external_value(PARAM_INT, 'grade id', VALUE_OPTIONAL),
+                        'assignment' => new external_value(PARAM_INT, 'assignment id', VALUE_OPTIONAL),
+                        'grade' => new external_value(PARAM_FLOAT, 'grade id', VALUE_OPTIONAL),
+                        'commenttext' => new external_value(PARAM_RAW, 'feedback comment text', VALUE_OPTIONAL),
+                        'commentformat' => new external_value(PARAM_INT, 'feedback comment format', VALUE_OPTIONAL),
                     )
                 ),
                 'warnings' => new external_warnings(),
@@ -2506,6 +2523,69 @@ class local_mod_assign_external extends external_api {
             )
         );
     }
+    
+    /**
+     * Describes the parameters for get grades by id
+     * @return external_external_function_parameters
+     */
+    public static function get_grades_by_id_parameters(){
+        return new external_function_parameters(
+            array(
+                'id' => new external_value(PARAM_INT, 'The id of grade'),
+            )
+        );
+    }
+
+    /**
+     * Returns information about a list array assign grades.
+     *
+     * @param int $id the id of assign grade
+     * @return array of warnings and assign grades information
+     * @throws required_capability_exception
+     */
+    public static function get_grades_by_id($id){
+        global $DB;
+
+        $warnings = array();
+
+        $result = array();
+
+        //Validate param
+        $params = self::validate_parameters(self::get_grades_by_id_parameters(),
+            array(
+                'id' => $id,
+            )
+        );
+        
+        $result['grades'] = $DB->get_record('assign_grades', array('id' => $params['id']), 'userid,assignment', MUST_EXIST);
+        if (!$result['grades']){
+            $result['grades'] = array();
+        }
+        
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    /**
+     * Describes the get_grades_by_id return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function get_grades_by_id_returns(){
+        return new external_single_structure(
+            array(
+                'grades' => new external_single_structure(
+                    array(
+                        'userid' => new external_value(PARAM_INT, 'user ID'),
+                        'assignment' => new external_value(PARAM_INT, 'assignment ID'),
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 
     /**
      * Describes the parameters for create grade
@@ -3207,7 +3287,7 @@ class local_mod_assign_external extends external_api {
             array(
                 'filesubmission' => new external_single_structure(
                     array(
-                        'id' => new external_value(PARAM_INT, 'onlinetext id', VALUE_OPTIONAL),
+                        'id' => new external_value(PARAM_INT, 'file submisison id', VALUE_OPTIONAL),
                         'assignment' => new external_value(PARAM_INT, 'assignment id', VALUE_OPTIONAL),
                         'submission' => new external_value(PARAM_INT, 'submission id', VALUE_OPTIONAL),
                         'numfiles' => new external_value(PARAM_INT, 'the number of file', VALUE_OPTIONAL)

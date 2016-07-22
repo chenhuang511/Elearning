@@ -54,8 +54,6 @@ class assign_feedback_comments extends assign_feedback_plugin {
         global $DB;
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
             $resp = get_assignfeedback_comments($gradeid);
-            if ($resp->exception)
-                return 0;
             return $resp;
         }
         return $DB->get_record('assignfeedback_comments', array('grade'=>$gradeid));

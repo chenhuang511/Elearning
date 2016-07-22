@@ -79,6 +79,8 @@ class comment {
     protected $displaycancel = false;
     /** @var int The number of comments associated with this comments params */
     protected $totalcommentcount = null;
+    /** @var bool Set true if team submission */
+    protected $teamsubmission = false;
 
     /**
      * Set to true to remove the col attribute from the textarea making it full width.
@@ -185,6 +187,12 @@ class comment {
             $this->linktext = get_string('comments');
         }
 
+        if (!empty($options->teamsubmission)) {
+            $this->teamsubmission = $options->teamsubmission;
+        } else {
+            $this->teamsubmission = false;
+        }
+        
         // setup options for callback functions
         $this->comment_param = new stdClass();
         $this->comment_param->context     = $this->context;
@@ -192,6 +200,9 @@ class comment {
         $this->comment_param->cm          = $this->cm;
         $this->comment_param->commentarea = $this->commentarea;
         $this->comment_param->itemid      = $this->itemid;
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $this->comment_param->teamsubmission = $this->teamsubmission;
+        }
 
         // setup notoggle
         if (!empty($options->notoggle)) {

@@ -234,6 +234,14 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_assign_get_grades_by_id' => array(
+		'classname'	  => 'local_mod_assign_external',
+		'methodname'  => 'get_grades_by_id',
+		'classpath'	  => 'local/assignment/externallib.php',
+		'description' => "Get assign grade by id",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 	'local_mod_assign_create_grade' => array(
 		'classname'	  => 'local_mod_assign_external',
 		'methodname'  => 'create_grade',

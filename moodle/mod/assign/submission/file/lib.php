@@ -22,6 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
+require_once($CFG->dirroot . '/mod/assign/remote/locallib.php');
 
 /**
  * Serves assignment submissions and other files.
@@ -48,10 +49,14 @@ function assignsubmission_file_pluginfile($course,
 
     require_login($course, false, $cm);
     $itemid = (int)array_shift($args);
-    $record = $DB->get_record('assign_submission',
-                              array('id'=>$itemid),
-                              'userid, assignment, groupid',
-                              MUST_EXIST);
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        $record = $DB->get_record('assign_submission',
+            array('id'=>$itemid),
+            'userid, assignment, groupid',
+            MUST_EXIST);
+    } else{
+        $record = get_remote_submission_by_id($itemid);
+    }
     $userid = $record->userid;
     $groupid = $record->groupid;
 

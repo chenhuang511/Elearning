@@ -67,6 +67,9 @@ class assign_submission_comments extends assign_submission_plugin {
         $options->component = 'assignsubmission_comments';
         $options->showcount = true;
         $options->displaycancel = true;
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $options->teamsubmission = $this->assignment->get_instance()->teamsubmission;
+        }
 
         $comment = new comment($options);
         $comment->set_view_permission(true);

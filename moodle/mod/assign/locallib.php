@@ -1261,7 +1261,9 @@ class assign {
                 $this->instance->intro = $instanceremote->intro;
                 $this->instance->introformat = $instanceremote->introformat;
                 $this->instance->alwaysshowdescription = $instanceremote->alwaysshowdescription;
-                $this->instance->introattachments = $instanceremote->introattachments;
+                if (isset($this->instance->introattachments)){
+                    $this->instance->introattachments = $instanceremote->introattachments;
+                }
             }
         }
         if (!$this->instance) {
@@ -1609,6 +1611,7 @@ class assign {
         }
 
         $key = $this->context->id . '-' . $currentgroup . '-' . $this->show_only_active_users();
+
         if (!isset($this->participants[$key])) {
             $order = 'u.lastname, u.firstname, u.id';
             if ($this->is_blind_marking()) {
@@ -1857,18 +1860,6 @@ class assign {
      * @return int number of matching submissions
      */
     public function count_submissions_with_status($status) {
-        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-            $hostip = gethostip();
-
-            $rparams['assignid'] = $this->get_instance()->remoteid;
-            $rparams['hostip'] = $hostip;
-            $rparams['status'] = $status;
-
-            $result = get_remote_count_submissions_with_status_by_host_id($rparams);
-
-            return $result;
-        }
-
         global $DB;
 
         $currentgroup = groups_get_activity_group($this->get_course_module(), true);
@@ -1879,7 +1870,6 @@ class assign {
         $params['submissionstatus'] = $status;
 
         if ($this->get_instance()->teamsubmission) {
-
             $groupsstr = '';
             if ($currentgroup != 0) {
                 // If there is an active group we should only display the current group users groups.
@@ -1903,7 +1893,8 @@ class assign {
                             s.status = :submissionstatus';
             $params['groupuserid'] = 0;
         } else {
-            $sql = 'SELECT COUNT(s.userid)
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $sql = 'SELECT COUNT(s.userid)
                         FROM {assign_submission} s
                         JOIN(' . $esql . ') e ON e.id = s.userid
                         WHERE
@@ -1911,6 +1902,17 @@ class assign {
                             s.assignment = :assignid AND
                             s.timemodified IS NOT NULL AND
                             s.status = :submissionstatus';
+            } else {
+                $hostip = $this->gethostip();
+
+                $rparams['assignid'] = $this->get_instance()->remoteid;
+                $rparams['hostip'] = $hostip;
+                $rparams['status'] = $status;
+
+                $result = get_remote_count_submissions_with_status_by_host_id($rparams);
+
+                return $result;
+            }
         }
 
         return $DB->count_records_sql($sql, $params);
@@ -2458,13 +2460,7 @@ class assign {
 
         // Only return the row with the highest attemptnumber.
         $submission = null;
-        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-            $submissions = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', '*', 0, 1);
-        } else {
-            $params['userid'] = $userid;
-            $params['mode'] = 'DESC';
-            $submissions = get_submission_by_assignid_userid_groupid($params);
-        }
+        $submissions = $DB->get_records('assign_submission', $params, 'attemptnumber DESC', '*', 0, 1);
 
         if ($submissions) {
             $submission = reset($submissions);
@@ -2506,6 +2502,7 @@ class assign {
                 $DB->set_field('assign_submission', 'latest', 0, $params);
             }
             $submission->status = ASSIGN_SUBMISSION_STATUS_NEW;
+
             $sid = $DB->insert_record('assign_submission', $submission);
             return $DB->get_record('assign_submission', array('id' => $sid));
         }
@@ -2633,6 +2630,7 @@ class assign {
         }
 
         $groups = $this->get_all_groups($userid);
+
         if (count($groups) != 1) {
             $return = false;
         } else {
@@ -3335,16 +3333,17 @@ class assign {
             $grades = $DB->get_records('assign_grades', $params, 'attemptnumber DESC', '*', 0, 1);
         }
         else {
-            $grades = get_assign_grades_by_assignid_userid($params);
-            $adminid = reset(explode(',', $CFG->siteadmins));
+            $grades = get_remote_assign_grades_by_assignid_userid($params);
+//            $adminid = reset(explode(',', $CFG->siteadmins));
 
             if ($grades){
                 foreach ($grades as $grade) {
                     $grade->userid = $userid;
                     if (isset($grade->grader)) {
                         $grader = $DB->get_record('user', array('email' => $grade->grader));
+                        $grade->grader = $grader->id;
                         // Check if not found on host then return admin host
-                        !$grader ? $grade->grader = (int)$adminid : $grade->grader = $grader->id;
+//                        !$grader ? $grade->grader = (int)$adminid : $grade->grader = $grader->id;
                     }
                 }
             }
@@ -4843,16 +4842,16 @@ class assign {
                 $o .= $this->get_renderer()->render($submissionstatus);
             }
             // If there is a visible grade, show the feedback.
-            $feedbackstatus = $this->get_assign_feedback_status_renderable($user);
-            if ($feedbackstatus) {
-                $o .= $this->get_renderer()->render($feedbackstatus);
-            }
-
-            // If there is more than one submission, show the history.
-            $history = $this->get_assign_attempt_history_renderable($user);
-            if (count($history->submissions) > 1) {
-                $o .= $this->get_renderer()->render($history);
-            }
+//            $feedbackstatus = $this->get_assign_feedback_status_renderable($user);
+//            if ($feedbackstatus) {
+//                $o .= $this->get_renderer()->render($feedbackstatus);
+//            }
+//
+//            // If there is more than one submission, show the history.
+//            $history = $this->get_assign_attempt_history_renderable($user);
+//            if (count($history->submissions) > 1) {
+//                $o .= $this->get_renderer()->render($history);
+//            }
         }
         return $o;
     }
@@ -5008,7 +5007,7 @@ class assign {
                 // Params to get the user submissions.
             $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid);
         }
-        if (MOODLE_RUN_MODE === MOODLE_RUN_HOST){
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
             // Return the submissions ordered by attempt.
             $submissions = $DB->get_records('assign_submission', $params, 'attemptnumber ASC');
         } else {
