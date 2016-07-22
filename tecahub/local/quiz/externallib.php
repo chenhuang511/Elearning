@@ -1662,4 +1662,98 @@ ORDER BY
             )
         );
     }
+
+    /**
+     * Hanv 21/07/2016
+     * Process any submitted data.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function grading_process_submitted_data_parameters() {
+        return new external_function_parameters (
+            array(
+                'attemptids' => new external_multiple_structure(new external_value(PARAM_RAW, 'attemptids')),
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'data name'),
+                            'value' => new external_value(PARAM_RAW, 'data value'),
+                        )
+                    ),
+                    'the data to be saved', VALUE_DEFAULT, array()
+                ),
+            )
+        );
+    }
+
+    /**
+     * Process any submitted data.
+     *
+     * @param array $attemptids attempt id
+     * @param array $data the data to be saved
+     * @since Moodle 3.1
+     */
+    public static function grading_process_submitted_data($attemptids, $data) {
+        global $CFG, $DB;
+        $warnings = array();
+
+        $params = array(
+            'attemptids' => $attemptids,
+            'data' => $data,
+        );
+        $params = self::validate_parameters(self::grading_process_submitted_data_parameters(), $params);
+
+        // Create the $_POST object required by the question engine.
+        $_POST = array();
+        foreach ($params['data'] as $element) {
+            $_POST[$element['name']] = $element['value'];
+        }
+
+        $qubaids = optional_param('qubaids', null, PARAM_SEQUENCE);
+        $assumedslotforevents = optional_param('slot', null, PARAM_INT);
+
+//        $events = array();
+
+        $transaction = $DB->start_delegated_transaction();
+
+        foreach ($attemptids as $element) {
+            $attemptobj = quiz_attempt::create($element);
+            $attemptobj->process_submitted_actions(time());
+
+//            // Add the event we will trigger later.
+//            $params = array(
+//                'objectid' => $attemptobj->get_question_attempt($assumedslotforevents)->get_question()->id,
+//                'courseid' => $attemptobj->get_courseid(),
+//                'context' => context_module::instance($attemptobj->get_cmid()),
+//                'other' => array(
+//                    'quizid' => $attemptobj->get_quizid(),
+//                    'attemptid' => $attemptobj->get_attemptid(),
+//                    'slot' => $assumedslotforevents
+//                )
+//            );
+//            var_dump($params);die;
+//            $events[] = \mod_quiz\event\question_manually_graded::create($params);
+        }
+        $transaction->allow_commit();
+
+
+        $result = array();
+        $result['state'] = 'success';
+        return $result;
+    }
+
+    /**
+     * Describes the process_attempt return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function grading_process_submitted_data_returns() {
+        return new external_single_structure(
+            array(
+                'state' => new external_value(PARAM_ALPHANUMEXT, 'success or unsuccess'),
+            )
+        );
+    }
 }

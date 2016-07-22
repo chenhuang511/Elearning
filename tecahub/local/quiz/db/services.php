@@ -178,4 +178,12 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_quiz_grading_process_submitted_data' => array(
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'grading_process_submitted_data',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Process any submitted data.",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 );
