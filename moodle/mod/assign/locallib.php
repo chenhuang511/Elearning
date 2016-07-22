@@ -1731,7 +1731,7 @@ class assign {
      */
     public function count_submissions_need_grading() {
         if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-            $hostip = $this->gethostip();
+            $hostip = gethostip();
 
             //Load remote params
             $rparams['assignid'] = $this->get_instance()->remoteid;
@@ -1851,19 +1851,6 @@ class assign {
     }
 
     /**
-     * Load hostip.
-     *
-     * @return hostip
-     */
-    public function gethostip(){
-        global $CFG;
-        $my_hostname = mnet_get_hostname_from_uri($CFG->wwwroot);
-        $my_ip       = gethostbyname($my_hostname);
-
-        return $my_ip;
-    }
-
-    /**
      * Load a count of submissions with a specified status.
      *
      * @param string $status The submission status - should match one of the constants
@@ -1871,7 +1858,7 @@ class assign {
      */
     public function count_submissions_with_status($status) {
         if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-            $hostip = $this->gethostip();
+            $hostip = gethostip();
 
             $rparams['assignid'] = $this->get_instance()->remoteid;
             $rparams['hostip'] = $hostip;

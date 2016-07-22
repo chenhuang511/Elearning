@@ -23,23 +23,30 @@
  */
 
 require_once '../../../config.php';
-require_once $CFG->dirroot.'/grade/lib.php';
-require_once $CFG->dirroot.'/grade/report/lib.php';
+require_once $CFG->dirroot . '/grade/lib.php';
+require_once $CFG->dirroot . '/grade/report/lib.php';
 require_once 'category_form.php';
+require_once $CFG->dirroot.'/course/remote/locallib.php';
+require_once($CFG->dirroot . '/grade/remote/locallib.php');
 
 $courseid = required_param('courseid', PARAM_INT);
-$id       = optional_param('id', 0, PARAM_INT); // grade_category->id
+$id = optional_param('id', 0, PARAM_INT); // grade_category->id
 
-$url = new moodle_url('/grade/edit/tree/category.php', array('courseid'=>$courseid));
+$url = new moodle_url('/grade/edit/tree/category.php', array('courseid' => $courseid));
 if ($id !== 0) {
     $url->param('id', $id);
 }
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
 navigation_node::override_active_url(new moodle_url('/grade/edit/tree/index.php',
-    array('id'=>$courseid)));
+    array('id' => $courseid)));
 
-if (!$course = $DB->get_record('course', array('id' => $courseid))) {
+if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+    $course = get_local_course_record($courseid, true);
+} else {
+    $course = $DB->get_record('course', array('id' => $courseid));
+}
+if (!$course) {
     print_error('nocourseid');
 }
 
@@ -49,13 +56,13 @@ require_capability('moodle/grade:manage', $context);
 
 // default return url
 $gpr = new grade_plugin_return();
-$returnurl = $gpr->get_return_url('index.php?id='.$course->id);
+$returnurl = $gpr->get_return_url('index.php?id=' . $course->id);
 
 
 $heading = get_string('categoryedit', 'grades');
 
 if ($id) {
-    if (!$grade_category = grade_category::fetch(array('id'=>$id, 'courseid'=>$course->id))) {
+    if (!$grade_category = grade_category::fetch(array('id' => $id, 'courseid' => $course->id))) {
         print_error('invalidcategory');
     }
     $grade_category->apply_forced_settings();
@@ -72,9 +79,9 @@ if ($id) {
 
     $decimalpoints = $grade_item->get_decimals();
 
-    $category->grade_item_grademax   = format_float($category->grade_item_grademax, $decimalpoints);
-    $category->grade_item_grademin   = format_float($category->grade_item_grademin, $decimalpoints);
-    $category->grade_item_gradepass  = format_float($category->grade_item_gradepass, $decimalpoints);
+    $category->grade_item_grademax = format_float($category->grade_item_grademax, $decimalpoints);
+    $category->grade_item_grademin = format_float($category->grade_item_grademin, $decimalpoints);
+    $category->grade_item_gradepass = format_float($category->grade_item_gradepass, $decimalpoints);
     $category->grade_item_multfactor = format_float($category->grade_item_multfactor, 4);
     $category->grade_item_plusfactor = format_float($category->grade_item_plusfactor, 4);
     $category->grade_item_aggregationcoef2 = format_float($category->grade_item_aggregationcoef2 * 100.0, 4);
@@ -115,19 +122,19 @@ if ($id) {
 
 } else {
     $heading = get_string('newcategory', 'grades');
-    $grade_category = new grade_category(array('courseid'=>$courseid), false);
+    $grade_category = new grade_category(array('courseid' => $courseid), false);
     $grade_category->apply_default_settings();
     $grade_category->apply_forced_settings();
 
     $category = $grade_category->get_record_data();
 
-    $grade_item = new grade_item(array('courseid'=>$courseid, 'itemtype'=>'manual'), false);
+    $grade_item = new grade_item(array('courseid' => $courseid, 'itemtype' => 'manual'), false);
     foreach ($grade_item->get_record_data() as $key => $value) {
         $category->{"grade_item_$key"} = $value;
     }
 }
 
-$mform = new edit_category_form(null, array('current'=>$category, 'gpr'=>$gpr));
+$mform = new edit_category_form(null, array('current' => $category, 'gpr' => $gpr));
 
 if ($mform->is_cancelled()) {
     redirect($returnurl);
@@ -179,13 +186,13 @@ if ($mform->is_cancelled()) {
         $itemdata->grademin = 0;
     }
 
-    $hidden      = empty($itemdata->hidden) ? 0: $itemdata->hidden;
-    $hiddenuntil = empty($itemdata->hiddenuntil) ? 0: $itemdata->hiddenuntil;
+    $hidden = empty($itemdata->hidden) ? 0 : $itemdata->hidden;
+    $hiddenuntil = empty($itemdata->hiddenuntil) ? 0 : $itemdata->hiddenuntil;
     unset($itemdata->hidden);
     unset($itemdata->hiddenuntil);
 
-    $locked   = empty($itemdata->locked) ? 0: $itemdata->locked;
-    $locktime = empty($itemdata->locktime) ? 0: $itemdata->locktime;
+    $locked = empty($itemdata->locked) ? 0 : $itemdata->locked;
+    $locktime = empty($itemdata->locktime) ? 0 : $itemdata->locktime;
     unset($itemdata->locked);
     unset($itemdata->locktime);
 
@@ -239,7 +246,7 @@ if ($mform->is_cancelled()) {
 
     if (!empty($data->grade_item_rescalegrades) && $data->grade_item_rescalegrades == 'yes') {
         $grade_item->rescale_grades_keep_percentage($grade_item_copy->grademin, $grade_item_copy->grademax, $grade_item->grademin,
-                $grade_item->grademax, 'gradebook');
+            $grade_item->grademax, 'gradebook');
     }
 
     // update hiding flag

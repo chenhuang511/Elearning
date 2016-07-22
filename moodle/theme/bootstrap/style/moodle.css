@@ -17501,14 +17501,16 @@ textarea.searchform input[type="text"] {
         float: left;
         width: 75%;
     }
+} 
+.felement select {
+    float: left;
 }
-
 .mform .fitem .felement select,
 .mform .fitem .felement input[type="text"],
 .mform .fitem .felement input[type="password"],
 .mform .fitem .felement textarea {
     display: block;
-    width: 100%;
+   /*  width: 100%; */
     height: 34px;
     padding: 6px 12px;
     font-size: 14px;
@@ -17524,7 +17526,9 @@ textarea.searchform input[type="text"] {
     -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
     transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
 }
-
+.fitemtitle label, .felement select {
+    margin:0px;
+}
 .mform .fitem .felement select:focus,
 .mform .fitem .felement input[type="text"]:focus,
 .mform .fitem .felement input[type="password"]:focus,

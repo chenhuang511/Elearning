@@ -651,10 +651,27 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @return string HTML to output.
      */
     public function access_messages($messages) {
+
         $output = '';
+        $output .= html_writer::start_tag('table', array(
+            'class' => 'generaltable quizinfo'));
+        $output .= html_writer::start_tag('tbody');
+        //foreach ($messages as $message) {
+           // $output .= html_writer::tag('p', $message) . "\n";
+       // }
         foreach ($messages as $message) {
-            $output .= html_writer::tag('p', $message) . "\n";
+            if ($message instanceof renderable) {
+                $content = $this->render($message);
+            } else {
+                $content = $message;
+            }
+            $output .= html_writer::tag('tr',
+                html_writer::tag('td', $content, array('class' => 'cell'))
+            );
         }
+        $output .= html_writer::end_tag('tbody');
+        $output .= html_writer::end_tag('table');
+
         return $output;
     }
 

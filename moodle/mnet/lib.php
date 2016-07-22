@@ -915,3 +915,14 @@ function mnet_strip_user($user, $fields) {
     }
     return $user;
 }
+
+/**
+ * get host ip address
+ * @return string
+ */
+function gethostip(){
+    global $CFG;
+    $my_hostname = mnet_get_hostname_from_uri($CFG->wwwroot);
+    $my_ip       = gethostbyname($my_hostname);
+    return $my_ip;
+}

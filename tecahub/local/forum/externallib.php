@@ -819,6 +819,79 @@ class local_mod_forum_external extends external_api
         );
     }
 
+    public static function get_list_forum_discussions_sql_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'hostip' => new external_value(PARAM_RAW, 'host ip'),
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'sort' => new external_value(PARAM_RAW, 'sort')
+            )
+        );
+    }
+
+    public static function get_list_forum_discussions_sql($hostip, $parameters, $sort)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_list_forum_discussions_sql_parameters(), array(
+            'hostip' => $hostip,
+            'parameters' => $parameters,
+            'sort' => $sort
+        ));
+
+        $sql = "SELECT fd.* FROM {forum_discussions} fd 
+                LEFT JOIN {user} u ON u.id = fd.userid ";
+
+        $host = $DB->get_record('mnet_host', array('ip_address' => $params['hostip']), '*', MUST_EXIST);
+
+        if (!$host) {
+            $warnings['message'] = "not found host";
+        }
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $columnname = "fd." . $p['name'];
+            $sql .= "WHERE $columnname = ? AND ";
+            $arr = array_merge($arr, array($p['value']));
+        }
+
+        $arr = array_merge($arr, array($host->id));
+
+        $sql .= " fd.userid IN (SELECT id FROM {user} WHERE mnethostid = ?)";
+
+        if ($params['sort'] != '') {
+            $orderby = $params['sort'];
+            $sql .= " ORDER BY $orderby";
+        }
+
+
+        $result = array();
+        $discussions = $DB->get_records_sql($sql, $arr);
+
+        if (!$discussions) {
+            $discussions = array();
+        }
+
+        $result['discussions'] = $discussions;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_list_forum_discussions_sql_returns()
+    {
+        return self::get_list_forum_discussions_by_returns();
+    }
+
     public static function get_list_forum_posts_by_parameters()
     {
         return new external_function_parameters(
