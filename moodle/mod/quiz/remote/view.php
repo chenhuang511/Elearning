@@ -154,6 +154,44 @@ if ($attempts) {
 $viewobj->timenow = $timenow;
 $viewobj->numattempts = $numattempts;
 $viewobj->mygrade = $mygrade;
+
+/**
+ * override mygrade follow local setting
+ */
+$gradearray = array();
+foreach ($viewobj->attemptobjs as $attemptobj) {
+    $temp = quiz_rescale_grade($attemptobj->get_sum_marks(), $quiz, false);
+    if($attemptobj->get_state() == quiz_attempt::FINISHED && ! is_null($temp)){
+        $gradearray[] = quiz_rescale_grade($attemptobj->get_sum_marks(), $quiz, false);
+    }
+}
+
+if($gradearray){
+    switch ($quiz->grademethod) {
+        case QUIZ_ATTEMPTFIRST:
+            $viewobj->mygrade = $viewobj->mygrade = ($gradearray[0]) ? $gradearray[0] : null;
+            break;
+
+        case QUIZ_ATTEMPTLAST:
+            $viewobj->mygrade = end($gradearray);
+            break;
+
+        case QUIZ_GRADEAVERAGE:
+            $viewobj->mygrade = array_sum($gradearray)/count($gradearray);
+            break;
+
+        default:
+        case QUIZ_GRADEHIGHEST:
+            $viewobj->mygrade = max($gradearray);
+            break;
+    }
+} else {
+    $viewobj->mygrade = null;
+}
+/**
+ *  end override
+ */
+
 $viewobj->moreattempts = $unfinished ||
     !$accessmanager->is_finished($numattempts, $lastfinishedattempt);
 $viewobj->mygradeoverridden = $mygradeoverridden;
