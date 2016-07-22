@@ -58,6 +58,14 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_get_list_grade_categories_by' => array(
+        'classname' => 'local_grade_external',
+        'methodname' => 'get_list_grade_categories_by',
+        'classpath' => 'local/grade/externallib.php',
+        'description' => 'Get list grade categories by',
+        'type' => 'read',
+        'ajax' => true
+    ),
     'local_save_mdl_grade' => array(
         'classname' => 'local_grade_external',
         'methodname' => 'save_mdl_grade',
@@ -69,6 +77,14 @@ $functions = array(
     'local_update_mdl_grade' => array(
         'classname' => 'local_grade_external',
         'methodname' => 'update_mdl_grade',
+        'classpath' => 'local/grade/externallib.php',
+        'description' => 'update grade object',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_update_mdl_grade_sql' => array(
+        'classname' => 'local_grade_external',
+        'methodname' => 'update_mdl_grade_sql',
         'classpath' => 'local/grade/externallib.php',
         'description' => 'update grade object',
         'type' => 'read',
