@@ -2,6 +2,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+require_once($CFG->dirroot . '/mnet/lib.php');
 require_once($CFG->dirroot . '/lib/remote/lib.php');
 require_once($CFG->dirroot . '/lib/additionallib.php');
 require_once($CFG->dirroot . '/mnet/service/enrol/locallib.php');
@@ -187,6 +188,26 @@ function get_remote_list_forum_discussions_by($parameters, $sort = '', $limitfro
     return $discussions;
 }
 
+function get_remote_list_forum_discussions_sql($parameters, $sort = '')
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_list_forum_discussions_sql',
+            'params' => array_merge(array('hostip' => gethostip(), 'sort' => $sort), $parameters)
+        )
+    );
+
+    $discussions = array();
+
+    foreach ($result->discussions as $discussion) {
+        $discussions[$discussion->id] = $discussion;
+    }
+
+    return $discussions;
+}
+
 function get_remote_list_forum_posts_by($parameters, $sort = '', $limitfrom = 0, $limitnum = 0)
 {
     $result = moodle_webservice_client(
@@ -238,7 +259,7 @@ function delete_remote_mdl_forum($modname, $parameters)
         )
     );
 
-    return $result->status;
+    return $result->post;
 }
 
 function save_remote_mdl_forum($modname, $data)

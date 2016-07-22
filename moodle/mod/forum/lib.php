@@ -227,7 +227,7 @@ function forum_update_instance($forum, $mform)
             $params = array();
             $params['parameters[0][name]'] = "forum";
             $params['parameters[0][value]'] = $forum->id;
-            $discussions = get_remote_list_forum_discussions_by($params, "timemodified ASC");
+            $discussions = get_remote_list_forum_discussions_sql($params, "timemodified ASC");
         } else {
             $discussions = $DB->get_records('forum_discussions', array('forum' => $forum->id), 'timemodified ASC');
         }
