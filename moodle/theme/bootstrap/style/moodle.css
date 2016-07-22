@@ -16242,9 +16242,7 @@ fieldset[disabled] .userprofile .header-button-group .btn.active {
     height: 20px;
 
 }
-.userprofile .bhxh-category .editprofile span{
 
-}
 
 @media (min-width: 768px) {
     .userprofile dl.list dt {
@@ -17085,6 +17083,7 @@ ol {
     padding-left: 0px;
 }
 
+#region-bs-main-and-pre .
 /* Enrolment page */
 .userenrolment .col_role {
     width: auto;
