@@ -848,7 +848,7 @@ class local_mod_forum_external extends external_api
             'sort' => $sort
         ));
 
-        $sql = "SELECT fd.* FROM {forum_discussion} fd 
+        $sql = "SELECT fd.* FROM {forum_discussions} fd 
                 LEFT JOIN {user} u ON u.id = fd.userid ";
 
         $host = $DB->get_record('mnet_host', array('ip_address' => $params['hostip']), '*', MUST_EXIST);
