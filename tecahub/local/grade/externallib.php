@@ -387,6 +387,63 @@ class local_grade_external extends external_api
         );
     }
 
+    public static function update_mdl_grade_sql_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'sql' => new external_value(PARAM_RAW, 'the mod name'),
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the data saved'
+                )
+            )
+        );
+    }
+
+    public static function update_mdl_grade_sql($sql, $data)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::update_mdl_grade_sql_parameters(), array(
+            'sql' => $sql,
+            'data' => $data
+        ));
+
+        $result = array();
+        $arr = array();
+        foreach ($params['data'] as $element) {
+            $arr = array_merge($arr, array($element['value']));
+        }
+
+        $result['status'] = false;
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $DB->execute($params['sql'], $arr);
+
+        $transaction->allow_commit();
+
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function update_mdl_grade_sql_returns()
+    {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'the status. true is successfull'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
     public static function delete_mdl_grade_parameters()
     {
         return new external_function_parameters(

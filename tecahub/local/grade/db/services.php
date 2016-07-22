@@ -74,6 +74,14 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_update_mdl_grade_sql' => array(
+        'classname' => 'local_grade_external',
+        'methodname' => 'update_mdl_grade_sql',
+        'classpath' => 'local/grade/externallib.php',
+        'description' => 'update grade object',
+        'type' => 'read',
+        'ajax' => true
+    ),
     'local_delete_mdl_grade' => array(
         'classname' => 'local_grade_external',
         'methodname' => 'delete_mdl_grade',
