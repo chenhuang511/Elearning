@@ -117,9 +117,9 @@ class quiz_grading_report extends quiz_default_report {
             throw new moodle_exception('unknownquestion', 'quiz_grading');
         }
 
-        // @TODO here : Process any submitted data. xử lý save and submit điểm và bình luận của gv
+        // Process any submitted data.
         if ($data = data_submitted() && confirm_sesskey() && $this->validate_submitted_marks()) {
-            $this->process_submitted_data();
+            $this->process_submitted_data($questionid);
 
             redirect($this->grade_question_url($slot, $questionid, $grade, $page + 1));
         }
@@ -555,7 +555,7 @@ class quiz_grading_report extends quiz_default_report {
         return true;
     }
 
-    protected function process_submitted_data() {
+    protected function process_submitted_data($questionid = null) {
         global $DB;
 
         $qubaids = optional_param('qubaids', null, PARAM_SEQUENCE);
@@ -567,32 +567,49 @@ class quiz_grading_report extends quiz_default_report {
 
         $qubaids = clean_param_array(explode(',', $qubaids), PARAM_INT);
         $attempts = $this->load_attempts_by_usage_ids($qubaids);
-        $events = array();
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $attemptids = array();
+            $index = 0;
+            foreach ($attempts as $attempt){
+                $attemptids["attemptids[$index]"] = $attempt->id;
+                $index++;
+            }
 
-        $transaction = $DB->start_delegated_transaction();
-        foreach ($qubaids as $qubaid) {
-            $attempt = $attempts[$qubaid];
-            $attemptobj = new quiz_attempt($attempt, $this->quiz, $this->cm, $this->course);
-            $attemptobj->process_submitted_actions(time());
+            $data = array();
+            $i = 0;
+            foreach ($_POST as $key => $value) {
+                $data["data[$i][name]"]=$key;
+                $data["data[$i][value]"]=$value;
+                $i++;
+            }
+            remote_process_submitted_data($attemptids, $data);
+        }else{
+            $events = array();
 
-            // Add the event we will trigger later.
-            $params = array(
-                'objectid' => $attemptobj->get_question_attempt($assumedslotforevents)->get_question()->id,
-                'courseid' => $attemptobj->get_courseid(),
-                'context' => context_module::instance($attemptobj->get_cmid()),
-                'other' => array(
-                    'quizid' => $attemptobj->get_quizid(),
-                    'attemptid' => $attemptobj->get_attemptid(),
-                    'slot' => $assumedslotforevents
-                )
-            );
-            $events[] = \mod_quiz\event\question_manually_graded::create($params);
-        }
-        $transaction->allow_commit();
+            $transaction = $DB->start_delegated_transaction();
+            foreach ($qubaids as $qubaid) {
+                $attempt = $attempts[$qubaid];
+                $attemptobj = new quiz_attempt($attempt, $this->quiz, $this->cm, $this->course, false, true);
 
-        // Trigger events for all the questions we manually marked.
-        foreach ($events as $event) {
-            $event->trigger();
+                // Add the event we will trigger later.
+                $params = array(
+                    'objectid' => (MOODLE_RUN_MODE === MOODLE_MODE_HUB && $questionid)?$questionid:$attemptobj->get_question_attempt($assumedslotforevents)->get_question()->id,
+                    'courseid' => $attemptobj->get_courseid(),
+                    'context' => context_module::instance($attemptobj->get_cmid()),
+                    'other' => array(
+                        'quizid' => $attemptobj->get_quizid(),
+                        'attemptid' => $attemptobj->get_attemptid(),
+                        'slot' => $assumedslotforevents
+                    )
+                );
+                $events[] = \mod_quiz\event\question_manually_graded::create($params);
+            }
+            $transaction->allow_commit();
+
+            // Trigger events for all the questions we manually marked.
+            foreach ($events as $event) {
+                $event->trigger();
+            }
         }
     }
 

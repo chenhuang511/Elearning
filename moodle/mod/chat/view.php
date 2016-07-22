@@ -167,8 +167,7 @@ if ($chatusers = chat_get_users($chat->id, $currentgroup, $cm->groupingid)) {
     echo '<table>';
     foreach ($chatusers as $chatuser) {
         $lastping = $timenow - $chatuser->lastmessageping;
-        echo '<tr><td class="chatuserimage">';
-        $url = new moodle_url('/user/view.php', array('id' => $chatuser->id, 'course' => $chat->course));
+          $url = new moodle_url('/user/view.php', array('id' => $chatuser->id, 'course' => $chat->course));
         echo html_writer::link($url, $OUTPUT->user_picture($chatuser));
         echo '</td><td class="chatuserdetails">';
         echo '<p>'.fullname($chatuser).'</p>';

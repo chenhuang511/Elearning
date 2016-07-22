@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/grade_object.php');
 require_once($CFG->dirroot . '/mod/assign/remote/locallib.php');
+require_once($CFG->dirroot . '/grade/remote/locallib.php');
 
 /**
  * grade_category is an object mapped to DB table {prefix}grade_categories
@@ -179,7 +180,14 @@ class grade_category extends grade_object
             return '/' . $grade_category->id . '/';
 
         } else {
-            $parent = $DB->get_record('grade_categories', array('id' => $grade_category->parent));
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+                $params = array();
+                $params['parameters[0][name]'] = "id";
+                $params['parameters[0][value]'] = $grade_category->parent;
+                $parent = get_remote_grade_categories_by($params);
+            } else {
+                $parent = $DB->get_record('grade_categories', array('id' => $grade_category->parent));
+            }
             return grade_category::build_path($parent) . $grade_category->id . '/';
         }
     }
@@ -2116,14 +2124,22 @@ class grade_category extends grade_object
         // fetch all course grade items and categories into memory - we do not expect hundreds of these in course
         // we have to limit the number of queries though, because it will be used often in grade reports
 
-        $cats = $DB->get_records('grade_categories', array('courseid' => $this->courseid));
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $localcourse = get_local_course_record($this->courseid, true);
+            $params = array();
+            $params['parameters[0][name]'] = "courseid";
+            $params['parameters[0][value]'] = $localcourse->remoteid;
 
-        $localcourse = $DB->get_record('course', array('id' => $this->courseid), '*', MUST_EXIST);
+            $cats = get_remote_list_grade_categories_by($params);
 
-        $params = array();
-        $params['param[0][name]='] = "courseid";
-        $params['param[0][value]='] = $localcourse->remoteid;
-        $items = get_remote_assign_grade_items_raw_data("SELECT * FROM {grade_items} WHERE courseid = ?", $params);
+            $prs = array();
+            $prs['param[0][name]='] = "courseid";
+            $prs['param[0][value]='] = $localcourse->remoteid;
+            $items = get_remote_assign_grade_items_raw_data("SELECT * FROM {grade_items} WHERE courseid = ?", $prs);
+        } else {
+            $cats = $DB->get_records('grade_categories', array('courseid' => $this->courseid));
+            $items = $DB->get_records('grade_items', array('courseid' => $this->courseid));
+        }
 
         // init children array first
         foreach ($cats as $catid => $cat) {
@@ -2354,7 +2370,11 @@ class grade_category extends grade_object
         global $DB;
         // For a course category, we return the course name if the fullname is set to '?' in the DB (empty in the category edit form)
         if (empty($this->parent) && $this->fullname == '?') {
-            $course = $DB->get_record('course', array('id' => $this->courseid));
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+                $course = get_local_course_record($this->courseid, true);
+            } else {
+                $course = $DB->get_record('course', array('id' => $this->courseid));
+            }
             return format_string($course->fullname);
 
         } else {
@@ -2743,7 +2763,19 @@ class grade_category extends grade_object
         global $CFG, $DB;
         $params = array(1, 'course', 'category');
         $sql = "UPDATE {grade_items} SET needsupdate=? WHERE itemtype=? or itemtype=?";
-        $DB->execute($sql, $params);
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $updatedata = array();
+            $updatedata['data[0][name]'] = "needsupdate";
+            $updatedata['data[0][value]'] = 1;
+            $updatedata['data[1][name]'] = "itemtype";
+            $updatedata['data[1][value]'] = "course";
+            $updatedata['data[2][name]'] = "itemtype";
+            $updatedata['data[2][value]'] = "category";
+
+            $result = update_remote_mdl_grade_sql($sql, $updatedata);
+        } else {
+            $DB->execute($sql, $params);
+        }
     }
 
     /**

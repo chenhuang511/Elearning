@@ -462,3 +462,14 @@ function get_remote_attempts_byid($paramdata, $asql, $fields) {
         ), false
     );
 }
+
+function remote_process_submitted_data($attemptids, $data) {
+    return moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_quiz_grading_process_submitted_data',
+            'params' => array_merge($attemptids, $data)
+        ), false
+    );
+}

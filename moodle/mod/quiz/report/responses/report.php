@@ -54,6 +54,7 @@ class quiz_responses_report extends quiz_attempts_report {
         list($currentgroup, $students, $groupstudents, $allowed) =
                 $this->init('responses', 'quiz_responses_settings_form', $quiz, $cm, $course);
         $options = new quiz_responses_options('responses', $quiz, $cm, $course);
+        $isremote = (MOODLE_RUN_MODE == MOODLE_MODE_HUB)?true:false;
 
         if ($fromform = $this->form->get_data()) {
             $options->process_settings_from_form($fromform);
@@ -72,7 +73,15 @@ class quiz_responses_report extends quiz_attempts_report {
         }
 
         // Load the required questions.
-        $questions = quiz_report_get_significant_questions($quiz);
+        if($isremote){
+            $r_questions = get_remote_significant_questions($quiz->id);
+            $questions = array();
+            foreach ($r_questions as $key => $value){
+                $questions[$value->slot] = $value;
+            }
+        }else{
+            $questions = quiz_report_get_significant_questions($quiz);
+        }
 
         // Prepare for downloading, if applicable.
         $courseshortname = format_string($course->shortname, true,
@@ -115,7 +124,11 @@ class quiz_responses_report extends quiz_attempts_report {
             }
         }
 
-        $hasquestions = quiz_has_questions($quiz->id);
+        if($isremote){
+            $hasquestions = !empty($r_questions);
+        }else{
+            $hasquestions = quiz_has_questions($quiz->id);
+        }
         if (!$table->is_downloading()) {
             if (!$hasquestions) {
                 echo quiz_no_questions_message($quiz, $cm, $this->context);
@@ -195,7 +208,7 @@ class quiz_responses_report extends quiz_attempts_report {
 
             $table->collapsible(true);
 
-            $table->out($options->pagesize, true);
+            $table->out($options->pagesize, true, '', 'quiz');
         }
         return true;
     }

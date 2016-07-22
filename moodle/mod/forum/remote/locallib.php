@@ -238,7 +238,7 @@ function delete_remote_mdl_forum($modname, $parameters)
         )
     );
 
-    return $result->post;
+    return $result->status;
 }
 
 function save_remote_mdl_forum($modname, $data)

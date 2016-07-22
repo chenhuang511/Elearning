@@ -26,6 +26,7 @@ require_once '../../../config.php';
 require_once $CFG->dirroot.'/grade/lib.php';
 require_once $CFG->dirroot.'/grade/report/lib.php'; // for preferences
 require_once $CFG->dirroot.'/grade/edit/tree/lib.php';
+require_once $CFG->dirroot.'/course/remote/locallib.php';
 
 $courseid        = required_param('id', PARAM_INT);
 $action          = optional_param('action', 0, PARAM_ALPHA);
@@ -37,7 +38,7 @@ $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
 
 /// Make sure they can even access this course
-if (!$course = $DB->get_record('course', array('id' => $courseid))) {
+if (!$course = get_local_course_record($courseid, true)) {
     print_error('nocourseid');
 }
 

@@ -121,14 +121,14 @@ if ($currentgroup) {
 echo $OUTPUT->heading(format_string($chat->name), 2);
 
 if ($chat->intro) {
-    echo $OUTPUT->box(format_module_intro('chat', $chat, $cm->id), 'generalbox', 'intro');
+    echo $OUTPUT->box(format_module_intro('chat', $chat, $cm->id), 'generalbox  bhxh-chat-span', 'intro');
 }
 
 groups_print_activity_menu($cm, $CFG->wwwroot . "/mod/chat/remote/view.php?id=$cm->id");
 
 if (has_capability('mod/chat:chat', $context)) {
     // Print the main part of the page.
-    echo $OUTPUT->box_start('generalbox', 'enterlink');
+    echo $OUTPUT->box_start('generalbox  bhxh-link-chat', 'enterlink');
 
     $now = time();
     $span = $chat->chattime - $now;
@@ -144,14 +144,14 @@ if (has_capability('mod/chat:chat', $context)) {
     echo $OUTPUT->action_link($chattarget,
                               $strenterchat,
                               new popup_action('click', $chattarget, "chat{$course->id}_{$chat->id}{$groupparam}",
-                                               array('height' => 500, 'width' => 700)));
+                                               array('height' => 500, 'width' => 700)), array("class" => "btn btn-primary"));
     echo '</p>';
 
     $params['id'] = $chat->id;
     $link = new moodle_url('/mod/chat/gui_basic/index.php', $params);
     $action = new popup_action('click', $link, "chat{$course->id}_{$chat->id}{$groupparam}",
                                array('height' => 500, 'width' => 700));
-    echo '<p>';
+    echo '<p class="link-basic">';
     echo $OUTPUT->action_link($link, get_string('noframesjs', 'message'), $action,
                               array('title' => get_string('modulename', 'chat')));
     echo '</p>';
@@ -181,10 +181,10 @@ if ($chatusers = chat_get_users($chat->id, $currentgroup, $cm->groupingid, $chat
     $timenow = time();
     echo $OUTPUT->box_start('generalbox', 'chatcurrentusers');
     echo $OUTPUT->heading($strcurrentusers, 3);
-    echo '<table>';
+    echo '<table class="table table-striped table-user">';
     foreach ($chatusers as $chatuser) {
         $lastping = $timenow - $chatuser->lastmessageping;
-        echo '<tr><td class="chatuserimage">';
+        echo '<tr><td class="chatuserimage col-sm-1" >';
         $url = new moodle_url('/user/view.php', array('id' => $chatuser->id, 'course' => $chat->course));
         echo html_writer::link($url, $OUTPUT->user_picture($chatuser));
         echo '</td><td class="chatuserdetails">';

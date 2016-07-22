@@ -9,10 +9,15 @@ h1, h2, h3, h4, h5, h6 {
     font-family: 'Open Sans', Arial, Helvetica, sans-serif;
     color: #333;
 }
-
+#page-mod-assign-grader{
+    overflow:auto;
+}
 .activityinstance a{
     color: #097eaf;
     font-weight: bold;
+}
+.remote-link-action, .quizattemptcounts a, .resourceworkaround a, .introattachments-image div a, .box a, .assignment-info-fix a{
+    color: #337ab7;
 }
 a {
     color: #333;
@@ -1624,7 +1629,9 @@ ul#coursetabs > li.active > a, ul#coursetabs > li > a:focus, ul#coursetabs > li 
     padding: 18px;
     display: inline-block;
 }
-
+.resourceworkaround a{
+    color: #00ACED;
+}
 @media (max-width: 767px) {
     .carousel-control {
         display: none;
@@ -3052,6 +3059,36 @@ table#permissions tbody tr:hover > th {
     vertical-align: middle;
 }
 
+.path-mod-forum .forumheaderlist .header {height: 40px; font-size: 15px;line-height: 39px; padding-left: 15px;}
+.path-mod-forum .forumheaderlist {width: 98%;border-width:1px;border-collapse:separate;margin-top: 27px; }
+.path-mod-forum .forumheaderlist td {border-width:1px 0px 0px 1px; padding-left: 15px;hight: 49px;}
+.path-mod-forum .forumheaderlist th.header.replies .iconsmall { margin: 0 .3em; header topic }
+.path-mod-forum .forumheaderlist .picture {width: 20px !important;}
+.path-mod-forum .forumheaderlist .discussion .starter {vertical-align: middle; width: 165px;}
+.path-mod-forum .forumheaderlist .discussion .pinned img {padding: 5px;}
+.path-mod-forum .forumheaderlist .discussion .lastpost {white-space: nowrap;text-align: left;padding-left: 15px;}
+.path-mod-forum .forumheaderlist .replies,
+.path-mod-forum .forumheaderlist .discussion .author {white-space: nowrap; width: 125px;}
+.path-mod-forum .forumheaderlist thead .discussionsubscription {
+    text-align: center;
+}
+.path-mod-forum .forumheaderlist .discussion .replies{
+    float: left;
+}
+.path-mod-forum .forumheaderlist thead .header.lastpost{
+    text-align: left;
+}
+.path-mod-forum .forumheaderlist thead{
+    text-align: center;
+    height: 41px;
+}
+.path-mod-forum .forumheaderlist img{width: 20px;height: 20px}
+.path-mod-forum .forumheaderlist .discussion .starter a{padding-right: 100px; padding-top: 10px; padding-bottom: 10px; }
+.path-mod-forum .forumheaderlist .discussion .author a{padding-right: 33px; padding-top: 10px; padding-bottom: 10px; }
+.path-mod-forum .forumheaderlist .discussion .replies a{padding-right: 100px; padding-top: 10px; padding-bottom: 10px; line-height: 46px;
+}}
+.path-mod-forum .forumheaderlist .discussion .lastpost a{padding-right: 100px; padding-top: 10px; padding-bottom: 10px; }
+
 .path-grade-report-singleview div.groupselector,
 .path-grade-report-singleview div.reporttable form div.singleview_buttons,
 .path-grade-report-singleview div.selectitems {
@@ -3205,3 +3242,18 @@ table#permissions tbody tr:hover > th {
     padding:5px;
     margin: 5px;
 }
+.bhxh-chat-span{
+    margin-left: -6px;
+    margin-bottom: 15px;
+}
+.link-basic a{
+    color: #286090;
+}
+#page-mod-chat-view .chatcurrentusers .chatuserdetails {vertical-align: middle;}
+.table-user p{font-weight: bold; color: rgb(24, 124, 178);}
+.table-user  span{color: rgb(204, 204, 204); font-style: italic;}
+.bhxh-chat-spansss {margin-top: 29px;}
+.bhxh-chat-spansss .no-overflow {margin-left: -6px; }
+.bhxh-link-chat {margin-top: 16px;}
+
+

@@ -39,7 +39,8 @@ require_once($CFG->dirroot . '/mod/assign/remote/locallib.php');
  * @copyright 2006 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class grade_object {
+abstract class grade_object
+{
     /**
      * The database table this grade object is stored in
      * @var string $table
@@ -96,7 +97,8 @@ abstract class grade_object {
      * @param bool $fetch Whether to fetch corresponding row from the database or not,
      *        optional fields might not be defined if false used
      */
-    public function __construct($params=NULL, $fetch=true) {
+    public function __construct($params = NULL, $fetch = true)
+    {
         if (!empty($params) and (is_array($params) or is_object($params))) {
             if ($fetch) {
                 if ($data = $this->fetch($params)) {
@@ -121,9 +123,10 @@ abstract class grade_object {
      * If id present, meaning the instance exists in the database, then data will be fetched from the database.
      * Defaults are used for new instances.
      */
-    public function load_optional_fields() {
+    public function load_optional_fields()
+    {
         global $DB;
-        foreach ($this->optional_fields as $field=>$default) {
+        foreach ($this->optional_fields as $field => $default) {
             if (property_exists($this, $field)) {
                 continue;
             }
@@ -143,7 +146,8 @@ abstract class grade_object {
      * @param array $params associative arrays varname=>value
      * @return object grade_object instance or false if none found.
      */
-    public static function fetch($params) {
+    public static function fetch($params)
+    {
         throw new coding_exception('fetch() method needs to be overridden in each subclass of grade_object');
     }
 
@@ -156,7 +160,8 @@ abstract class grade_object {
      * @param array $params Associative arrays varname=>value
      * @return array|bool Array of grade_object instances or false if none found.
      */
-    public static function fetch_all($params) {
+    public static function fetch_all($params)
+    {
         throw new coding_exception('fetch_all() method needs to be overridden in each subclass of grade_object');
     }
 
@@ -168,11 +173,12 @@ abstract class grade_object {
      * @param array $params An array of conditions like $fieldname => $fieldvalue
      * @return mixed An object instance or false if not found
      */
-    protected static function fetch_helper($table, $classname, $params) {
+    protected static function fetch_helper($table, $classname, $params)
+    {
         if ($instances = grade_object::fetch_all_helper($table, $classname, $params)) {
             if (count($instances) > 1) {
                 // we should not tolerate any errors here - problems might appear later
-                print_error('morethanonerecordinfetch','debug');
+                print_error('morethanonerecordinfetch', 'debug');
             }
             return reset($instances);
         } else {
@@ -188,13 +194,14 @@ abstract class grade_object {
      * @param array $params An array of conditions like $fieldname => $fieldvalue
      * @return array|bool Array of object instances or false if not found
      */
-    public static function fetch_all_helper($table, $classname, $params) {
+    public static function fetch_all_helper($table, $classname, $params)
+    {
         global $DB, $CFG; // Need to introspect DB here.
 
         $instance = new $classname();
 
         $classvars = (array)$instance;
-        $params    = (array)$params;
+        $params = (array)$params;
 
         $wheresql = array();
         $newparams = array();
@@ -202,7 +209,7 @@ abstract class grade_object {
         $columns = $DB->get_columns($table); // Cached, no worries.
         $useremote = ISREMOTE; // check if course is from local or remote
         if ($useremote) {
-            foreach ($params as $var=>$value) {
+            foreach ($params as $var => $value) {
                 if (!in_array($var, $instance->required_fields) and !array_key_exists($var, $instance->optional_fields)) {
                     continue;
                 }
@@ -210,16 +217,18 @@ abstract class grade_object {
                     continue;
                 }
                 if (strpos($var, 'courseid') !== false) {
-                    $remoteid = get_local_course_record($value, true)->remoteid;
-                    if ($remoteid === 0) {
-                        $useremote = false;
-                        break;
+                    if ($value) {
+                        $remoteid = get_local_course_record($value, true)->remoteid;
+                        if ($remoteid === 0) {
+                            $useremote = false;
+                            break;
+                        }
                     }
                 }
             }
         }
         $index = 0;
-        foreach ($params as $var=>$value) {
+        foreach ($params as $var => $value) {
             if (!in_array($var, $instance->required_fields) and !array_key_exists($var, $instance->optional_fields)) {
                 continue;
             }
@@ -236,7 +245,7 @@ abstract class grade_object {
                         $wheresql[] = ' ' . $DB->sql_compare_text($var) . ' = ' . $DB->sql_compare_text(':' . $placeholder) . ' ';
                     } else {
                         // Other columns (varchar, integers...).
-                        $wheresql[] = " $var = :" . $placeholder ." ";
+                        $wheresql[] = " $var = :" . $placeholder . " ";
                     }
 
                     if (strpos($var, 'userid') !== false) {
@@ -266,15 +275,15 @@ abstract class grade_object {
         }
 
         if ($useremote && ($table === 'grade_items')) {
-            $sql = "SELECT * FROM {".$table."}";
+            $sql = "SELECT * FROM {" . $table . "}";
             if ($wheresql) {
                 $sql .= " WHERE $wheresql";
             }
 
             $index = 0;
             foreach ($newparams as $key => $val) {
-                $remoteparams['param['. $index .'][name]='] = $key;
-                $remoteparams['param['. $index .'][value]='] = $val;
+                $remoteparams['param[' . $index . '][name]='] = $key;
+                $remoteparams['param[' . $index . '][value]='] = $val;
                 ++$index;
             }
 
@@ -288,7 +297,7 @@ abstract class grade_object {
                 }
                 $data->remoteid = $data->id; //create remoteid
                 $data->id = $DB->get_field('grade_items', 'id', array('remoteid' => $data->remoteid));
-                if(empty($data->id) && !empty($data->remoteid)){
+                if (empty($data->id) && !empty($data->remoteid)) {
                     $data->id = $DB->insert_record('grade_items', $data);
                 } else {
                     $data->gradepass = $DB->get_field('grade_items', 'gradepass', array('remoteid' => $data->remoteid));
@@ -308,7 +317,7 @@ abstract class grade_object {
         }
 
         $result = array();
-        foreach($rs as $data) {
+        foreach ($rs as $data) {
             $instance = new $classname();
             grade_object::set_properties($instance, $data);
             $result[$instance->id] = $instance;
@@ -324,7 +333,8 @@ abstract class grade_object {
      * @param string $source from where was the object updated (mod/forum, manual, etc.)
      * @return bool success
      */
-    public function update($source=null) {
+    public function update($source = null)
+    {
         global $USER, $CFG, $DB;
 
         if (empty($this->id)) {
@@ -338,12 +348,12 @@ abstract class grade_object {
 
         if (empty($CFG->disablegradehistory)) {
             unset($data->timecreated);
-            $data->action       = GRADE_HISTORY_UPDATE;
-            $data->oldid        = $this->id;
-            $data->source       = $source;
+            $data->action = GRADE_HISTORY_UPDATE;
+            $data->oldid = $this->id;
+            $data->source = $source;
             $data->timemodified = time();
-            $data->loggeduser   = $USER->id;
-            $DB->insert_record($this->table.'_history', $data);
+            $data->loggeduser = $USER->id;
+            $DB->insert_record($this->table . '_history', $data);
         }
 
         $this->notify_changed(false);
@@ -356,7 +366,8 @@ abstract class grade_object {
      * @param string $source From where was the object deleted (mod/forum, manual, etc.)
      * @return bool success
      */
-    public function delete($source=null) {
+    public function delete($source = null)
+    {
         global $USER, $CFG, $DB;
 
         if (empty($this->id)) {
@@ -366,16 +377,16 @@ abstract class grade_object {
 
         $data = $this->get_record_data();
 
-        if ($DB->delete_records($this->table, array('id'=>$this->id))) {
+        if ($DB->delete_records($this->table, array('id' => $this->id))) {
             if (empty($CFG->disablegradehistory)) {
                 unset($data->id);
                 unset($data->timecreated);
-                $data->action       = GRADE_HISTORY_DELETE;
-                $data->oldid        = $this->id;
-                $data->source       = $source;
+                $data->action = GRADE_HISTORY_DELETE;
+                $data->oldid = $this->id;
+                $data->source = $source;
                 $data->timemodified = time();
-                $data->loggeduser   = $USER->id;
-                $DB->insert_record($this->table.'_history', $data);
+                $data->loggeduser = $USER->id;
+                $DB->insert_record($this->table . '_history', $data);
             }
             $this->notify_changed(true);
             return true;
@@ -390,10 +401,11 @@ abstract class grade_object {
      *
      * @return stdClass
      */
-    public function get_record_data() {
+    public function get_record_data()
+    {
         $data = new stdClass();
 
-        foreach ($this as $var=>$value) {
+        foreach ($this as $var => $value) {
             if (in_array($var, $this->required_fields) or array_key_exists($var, $this->optional_fields)) {
                 if (is_object($value) or is_array($value)) {
                     debugging("Incorrect property '$var' found when inserting grade object");
@@ -413,7 +425,8 @@ abstract class grade_object {
      * @param string $source From where was the object inserted (mod/forum, manual, etc.)
      * @return int The new grade object ID if successful, false otherwise
      */
-    public function insert($source=null) {
+    public function insert($source = null)
+    {
         global $USER, $CFG, $DB;
 
         if (!empty($this->id)) {
@@ -432,12 +445,12 @@ abstract class grade_object {
 
         if (empty($CFG->disablegradehistory)) {
             unset($data->timecreated);
-            $data->action       = GRADE_HISTORY_INSERT;
-            $data->oldid        = $this->id;
-            $data->source       = $source;
+            $data->action = GRADE_HISTORY_INSERT;
+            $data->oldid = $this->id;
+            $data->source = $source;
             $data->timemodified = time();
-            $data->loggeduser   = $USER->id;
-            $DB->insert_record($this->table.'_history', $data);
+            $data->loggeduser = $USER->id;
+            $DB->insert_record($this->table . '_history', $data);
         }
 
         $this->notify_changed(false);
@@ -452,7 +465,8 @@ abstract class grade_object {
      *
      * @return bool True if successful
      */
-    public function update_from_db() {
+    public function update_from_db()
+    {
         if (empty($this->id)) {
             debugging("The object could not be used in its state to retrieve a matching record from the DB, because its id field is not set.");
             return false;
@@ -476,8 +490,9 @@ abstract class grade_object {
      * @param array $params An array of properties to set like $propertyname => $propertyvalue
      * @return array|stdClass Either an associative array or an object containing property name, property value pairs
      */
-    public static function set_properties(&$instance, $params) {
-        $params = (array) $params;
+    public static function set_properties(&$instance, $params)
+    {
+        $params = (array)$params;
         foreach ($params as $var => $value) {
             if (in_array($var, $instance->required_fields) or array_key_exists($var, $instance->optional_fields)) {
                 $instance->$var = $value;
@@ -492,7 +507,8 @@ abstract class grade_object {
      *
      * @param bool $deleted
      */
-    protected function notify_changed($deleted) {
+    protected function notify_changed($deleted)
+    {
     }
 
     /**
@@ -502,7 +518,8 @@ abstract class grade_object {
      *
      * @return bool Current hidden state
      */
-    function is_hidden() {
+    function is_hidden()
+    {
         return ($this->hidden == 1 or ($this->hidden != 0 and $this->hidden > time()));
     }
 
@@ -511,7 +528,8 @@ abstract class grade_object {
      *
      * @return bool True if a "hidden until" timestamp is set, false if grade object is set to always visible or always hidden.
      */
-    function is_hiddenuntil() {
+    function is_hiddenuntil()
+    {
         return $this->hidden > 1;
     }
 
@@ -520,7 +538,8 @@ abstract class grade_object {
      *
      * @return int 0 means visible, 1 hidden always, a timestamp means "hidden until"
      */
-    function get_hidden() {
+    function get_hidden()
+    {
         return $this->hidden;
     }
 
@@ -530,7 +549,8 @@ abstract class grade_object {
      * @param int $hidden 0 means visiable, 1 means hidden always, a timestamp means "hidden until"
      * @param bool $cascade Ignored
      */
-    function set_hidden($hidden, $cascade=false) {
+    function set_hidden($hidden, $cascade = false)
+    {
         $this->hidden = $hidden;
         $this->update();
     }
@@ -540,7 +560,8 @@ abstract class grade_object {
      *
      * @return bool
      */
-    public function can_control_visibility() {
+    public function can_control_visibility()
+    {
         return true;
     }
 }

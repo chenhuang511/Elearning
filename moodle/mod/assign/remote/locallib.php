@@ -2,6 +2,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->dirroot . '/lib/remote/lib.php');
+require_once($CFG->dirroot . '/lib/additionallib.php');
 
 
 /**
@@ -59,12 +60,17 @@ function get_remote_assign_by_id_instanceid($assignid, $instanceid, $options = a
 function get_remote_get_submission_status($assignid, $userid = null)
 {
     $ruser = get_remote_mapping_user($userid);
+    $rassignment = get_local_assign_record($assignid, true)->remoteid;
+    
     return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_assign_get_remote_submission_status',
-            'params' => array('assignid' => $assignid,'userid' => $ruser[0]->id),
+            'params' => array(
+                'assignid' => $rassignment,
+                'userid' => $ruser[0]->id
+            ),
         ), false
     );
 }
@@ -104,7 +110,7 @@ function get_assignfeedback_comments($gradeid) {
             'params' => array('gradeid' => $gradeid),
         ), false
     );
-    
+
     return $resp->feedbackcomments;
 }
 
@@ -215,10 +221,12 @@ function get_submission_by_assignid_userid_groupid($params){
 
     $userid = $params['userid'];
     $params['userid'] = get_remote_mapping_user($params['userid'])[0]->id;
+    $assignment = $params['assignment'];
+    $params['assignment'] = get_local_assign_record($params['assignment'], true)->remoteid;
 
     $results = array();
 
-    $submissions =  moodle_webservice_client(
+    $resp =  moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
@@ -227,8 +235,9 @@ function get_submission_by_assignid_userid_groupid($params){
         ), false
     );
 
-    foreach ($submissions->submissions as $submission){
+    foreach ($resp->submissions as $submission){
         $submission->userid = $userid;
+        $submission->assignment = $assignment;
         $results[$submission->id] = $submission;
     }
 
@@ -250,9 +259,14 @@ function get_assign_grades_by_assignid_userid($params){
         $params['attemptnumber'] = -1;
     }
 
+    $userid = $params['userid'];
+    $params['userid'] = get_remote_mapping_user($params['userid'])[0]->id;
+    $assignment = $params['assignment'];
+    $params['assignment'] = get_local_assign_record($params['assignment'], true)->remoteid;
+
     $results = array();
 
-    $grades =  moodle_webservice_client(
+    $resp =  moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
@@ -261,7 +275,9 @@ function get_assign_grades_by_assignid_userid($params){
         ), false
     );
 
-    foreach ($grades->grades as $grade){
+    foreach ($resp->grades as $grade){
+        $grade->userid = $userid;
+        $grade->assignment = $assignment;
         $results[$grade->id] = $grade;
     }
     return $results;
@@ -278,6 +294,7 @@ function get_assign_grades_by_assignid_userid($params){
  */
 function get_attemptnumber_by_assignid_userid_groupid($params){
     $params['userid'] = get_remote_mapping_user($params['userid'])[0]->id;
+    $params['assignment'] = get_local_assign_record($params['assignment'], true)->remoteid;
 
     $attemptnumbers = moodle_webservice_client(
         array(
@@ -302,8 +319,10 @@ function get_attemptnumber_by_assignid_userid_groupid($params){
 function get_user_flags_by_assignid_userid($params){
     $userid = $params['userid'];
     $params['userid'] = get_remote_mapping_user($params['userid'])[0]->id;
-
-    $flags =  moodle_webservice_client(
+    $assignment = $params['assignment'];
+    $params['assignment'] = get_local_assign_record($params['assignment'], true)->remoteid;
+    
+    $resp =  moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
@@ -312,12 +331,13 @@ function get_user_flags_by_assignid_userid($params){
         ), false
     );
 
-    if($flags->exception)  {
+    if($resp->exception)  {
         return 0;
     }
-    $flags->userflags->userid = $userid;
+    $resp->userflags->userid = $userid;
+    $resp->userflags->assignment = $assignment;
 
-    return $flags->userflags;
+    return $resp->userflags;
 }
 
 /**
@@ -331,6 +351,7 @@ function get_user_flags_by_assignid_userid($params){
  */
 function set_submission_lastest($params){
     $params['userid'] = get_remote_mapping_user($params['userid'])[0]->id;
+    $params['assignment'] = get_local_assign_record($params['assignment'], true)->remoteid;
 
     $resp = moodle_webservice_client(
         array(
@@ -359,13 +380,14 @@ function set_submission_lastest($params){
  */
 function create_remote_submission($submission){
     $ruser = get_remote_mapping_user($submission->userid);
+    $rassignment = get_local_assign_record($submission->assignment, true)->remoteid;
     $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_assign_create_submission',
             'params' => array(
-                'assignment' => $submission->assignment,
+                'assignment' => $rassignment,
                 'userid' => $ruser[0]->id,
                 'timecreated' => $submission->timecreated,
                 'timemodified' => $submission->timemodified,
@@ -395,6 +417,8 @@ function create_remote_submission($submission){
  */
 function update_remote_submission($submission){
     $ruser = get_remote_mapping_user($submission->userid)[0]->id;
+    $rassignment = get_local_assign_record($submission->assignment, true)->remoteid;
+
     $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
@@ -402,7 +426,7 @@ function update_remote_submission($submission){
             'function_name' => 'local_mod_assign_update_submission',
             'params' => array(
                 'id' => $submission->id,
-                'assignment' => $submission->assignment,
+                'assignment' => $rassignment,
                 'userid' => $ruser,
                 'timecreated' => $submission->timecreated,
                 'timemodified' => $submission->timemodified,
@@ -432,6 +456,7 @@ function update_remote_submission($submission){
 function create_remote_grade($grade){
     $suserid = get_remote_mapping_user($grade->userid)[0]->id;
     $grader = get_remote_mapping_user($grade->grader)[0]->id;
+    $rassignment = get_local_assign_record($grade->assignment, true)->remoteid;
     
     $resp = moodle_webservice_client(
         array(
@@ -439,7 +464,7 @@ function create_remote_grade($grade){
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_assign_create_grade',
             'params' => array(
-                'assignment' => $grade->assignment,
+                'assignment' => $rassignment,
                 'userid' => $suserid,
                 'timecreated' => $grade->timecreated,
                 'timemodified' => $grade->timemodified,
@@ -470,8 +495,10 @@ function get_remote_submission_by_id($sid){
             'params' => array('id' => $sid)
         ), false
     );
+
     $user = $DB->get_record('user', array('email' => $resp->assignsubmisison->useremail));
     $resp->assignsubmisison->userid = $user->id;
+    $resp->assignsubmisison->assignment = get_local_assign_record($resp->assignsubmisison->assignment)->id;
     unset($resp->assignsubmisison->useremail);
 
     return $resp->assignsubmisison;
@@ -523,13 +550,15 @@ function save_remote_submission($assignmentid, $userid, $data){
  * @return bool $resp . check if success
  */
 function submit_remote_for_grading($assignment, $userid, $data){
+    $rassignment = get_local_assign_record($assignment, true)->remoteid;
+    
     $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_assign_submit_remote_for_grading',
             'params' => array(
-                'assignment' => $assignment,
+                'assignment' => $rassignment,
                 'userid' => $userid,
                 'data' => $data
             ),
@@ -550,13 +579,15 @@ function submit_remote_for_grading($assignment, $userid, $data){
  * @return stdClass $resp - list submission info for participants 
  */
 function get_remote_submission_info_for_participants($assignment, $emailparticipants){
+    $rassignment = get_local_assign_record($assignment, true)->remoteid;
+
     $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_assign_get_remote_submission_info_for_participants',
             'params' => array(
-                'assignment' => $assignment,
+                'assignment' => $rassignment,
                 'emails' => $emailparticipants,
             ),
         ), false
@@ -846,6 +877,8 @@ function get_remote_assign_grade_items_raw_data($sql, $param, $pagestart = 0, $p
 function update_remote_grade($grade){
     $suserid = get_remote_mapping_user($grade->userid)[0]->id;
     $grader = get_remote_mapping_user($grade->grader)[0]->id;
+    $rassignment = get_local_assign_record($grade->assignment, true)->remoteid;
+
     $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
@@ -853,7 +886,7 @@ function update_remote_grade($grade){
             'function_name' => 'local_mod_assign_update_grade',
             'params' => array(
                     'id' => $grade->id,
-                    'assignment' => $grade->assignment,
+                    'assignment' => $rassignment,
                     'userid' => $suserid,
                     'timecreated' => $grade->timecreated,
                     'timemodified' => $grade->timemodified,

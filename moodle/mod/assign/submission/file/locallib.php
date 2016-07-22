@@ -330,7 +330,7 @@ class assign_submission_file extends assign_submission_plugin {
      */
     public function view_summary(stdClass $submission, & $showviewlink) {
         $count = $this->count_files($submission->id, ASSIGNSUBMISSION_FILE_FILEAREA);
-
+                           
         // Show we show a link to view all files for this plugin?
         $showviewlink = $count > ASSIGNSUBMISSION_FILE_MAXSUMMARYFILES;
         if ($count <= ASSIGNSUBMISSION_FILE_MAXSUMMARYFILES) {
