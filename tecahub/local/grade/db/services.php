@@ -114,4 +114,12 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_get_field_mdl_grade_sql' => array(
+        'classname' => 'local_grade_external',
+        'methodname' => 'get_field_mdl_grade_sql',
+        'classpath' => 'local/grade/externallib.php',
+        'description' => 'get field',
+        'type' => 'read',
+        'ajax' => true
+    ),
 );
