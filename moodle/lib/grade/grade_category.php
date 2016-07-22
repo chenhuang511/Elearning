@@ -25,6 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/grade_object.php');
+require_once($CFG->dirroot . '/mod/assign/remote/locallib.php');
 
 /**
  * grade_category is an object mapped to DB table {prefix}grade_categories
@@ -34,7 +35,8 @@ require_once(__DIR__ . '/grade_object.php');
  * @copyright 2007 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class grade_category extends grade_object {
+class grade_category extends grade_object
+{
     /**
      * The DB table.
      * @var string $table
@@ -46,8 +48,8 @@ class grade_category extends grade_object {
      * @var array $required_fields
      */
     public $required_fields = array('id', 'courseid', 'parent', 'depth', 'path', 'fullname', 'aggregation',
-                                 'keephigh', 'droplow', 'aggregateonlygraded', 'aggregateoutcomes',
-                                 'timecreated', 'timemodified', 'hidden');
+        'keephigh', 'droplow', 'aggregateonlygraded', 'aggregateoutcomes',
+        'timecreated', 'timemodified', 'hidden');
 
     /**
      * The course this category belongs to.
@@ -169,15 +171,16 @@ class grade_category extends grade_object {
      * @param grade_category $grade_category A Grade_Category object
      * @return string The category's path string
      */
-    public static function build_path($grade_category) {
+    public static function build_path($grade_category)
+    {
         global $DB;
 
         if (empty($grade_category->parent)) {
-            return '/'.$grade_category->id.'/';
+            return '/' . $grade_category->id . '/';
 
         } else {
             $parent = $DB->get_record('grade_categories', array('id' => $grade_category->parent));
-            return grade_category::build_path($parent).$grade_category->id.'/';
+            return grade_category::build_path($parent) . $grade_category->id . '/';
         }
     }
 
@@ -187,7 +190,8 @@ class grade_category extends grade_object {
      * @param array $params associative arrays varname=>value
      * @return grade_category The retrieved grade_category instance or false if none found.
      */
-    public static function fetch($params) {
+    public static function fetch($params)
+    {
         if ($records = self::retrieve_record_set($params)) {
             return reset($records);
         }
@@ -212,7 +216,8 @@ class grade_category extends grade_object {
      * @param array $params associative arrays varname=>value
      * @return array array of grade_category insatnces or false if none found.
      */
-    public static function fetch_all($params) {
+    public static function fetch_all($params)
+    {
         if ($records = self::retrieve_record_set($params)) {
             return $records;
         }
@@ -229,13 +234,14 @@ class grade_category extends grade_object {
      * @param string $source from where was the object updated (mod/forum, manual, etc.)
      * @return bool success
      */
-    public function update($source=null) {
+    public function update($source = null)
+    {
         // load the grade item or create a new one
         $this->load_grade_item();
 
         // force recalculation of path;
         if (empty($this->path)) {
-            $this->path  = grade_category::build_path($this);
+            $this->path = grade_category::build_path($this);
             $this->depth = substr_count($this->path, '/') - 1;
             $updatechildren = true;
 
@@ -265,10 +271,10 @@ class grade_category extends grade_object {
         // now update paths in all child categories
         if ($result and $updatechildren) {
 
-            if ($children = grade_category::fetch_all(array('parent'=>$this->id))) {
+            if ($children = grade_category::fetch_all(array('parent' => $this->id))) {
 
                 foreach ($children as $child) {
-                    $child->path  = null;
+                    $child->path = null;
                     $child->depth = 0;
                     $child->update($source);
                 }
@@ -284,12 +290,13 @@ class grade_category extends grade_object {
      * @param string $source from where was the object deleted (mod/forum, manual, etc.)
      * @return bool success
      */
-    public function delete($source=null) {
+    public function delete($source = null)
+    {
         $grade_item = $this->load_grade_item();
 
         if ($this->is_course_category()) {
 
-            if ($categories = grade_category::fetch_all(array('courseid'=>$this->courseid))) {
+            if ($categories = grade_category::fetch_all(array('courseid' => $this->courseid))) {
 
                 foreach ($categories as $category) {
 
@@ -300,7 +307,7 @@ class grade_category extends grade_object {
                 }
             }
 
-            if ($items = grade_item::fetch_all(array('courseid'=>$this->courseid))) {
+            if ($items = grade_item::fetch_all(array('courseid' => $this->courseid))) {
 
                 foreach ($items as $item) {
 
@@ -317,13 +324,13 @@ class grade_category extends grade_object {
             $parent = $this->load_parent_category();
 
             // Update children's categoryid/parent field first
-            if ($children = grade_item::fetch_all(array('categoryid'=>$this->id))) {
+            if ($children = grade_item::fetch_all(array('categoryid' => $this->id))) {
                 foreach ($children as $child) {
                     $child->set_parent($parent->id);
                 }
             }
 
-            if ($children = grade_category::fetch_all(array('parent'=>$this->id))) {
+            if ($children = grade_category::fetch_all(array('parent' => $this->id))) {
                 foreach ($children as $child) {
                     $child->set_parent($parent->id);
                 }
@@ -348,7 +355,8 @@ class grade_category extends grade_object {
      * @param string $source from where was the object inserted (mod/forum, manual, etc.)
      * @return int PK ID if successful, false otherwise
      */
-    public function insert($source=null) {
+    public function insert($source = null)
+    {
 
         if (empty($this->courseid)) {
             print_error('cannotinsertgrade');
@@ -383,11 +391,12 @@ class grade_category extends grade_object {
      * @param int $courseid The course ID
      * @return int The ID of the new course category
      */
-    public function insert_course_category($courseid) {
-        $this->courseid    = $courseid;
-        $this->fullname    = '?';
-        $this->path        = null;
-        $this->parent      = null;
+    public function insert_course_category($courseid)
+    {
+        $this->courseid = $courseid;
+        $this->fullname = '?';
+        $this->path = null;
+        $this->parent = null;
         $this->aggregation = GRADE_AGGREGATE_WEIGHTED_MEAN2;
 
         $this->apply_default_settings();
@@ -413,19 +422,20 @@ class grade_category extends grade_object {
      *
      * @return bool
      */
-    public function qualifies_for_regrading() {
+    public function qualifies_for_regrading()
+    {
         if (empty($this->id)) {
             debugging("Can not regrade non existing category");
             return false;
         }
 
-        $db_item = grade_category::fetch(array('id'=>$this->id));
+        $db_item = grade_category::fetch(array('id' => $this->id));
 
-        $aggregationdiff = $db_item->aggregation         != $this->aggregation;
-        $keephighdiff    = $db_item->keephigh            != $this->keephigh;
-        $droplowdiff     = $db_item->droplow             != $this->droplow;
-        $aggonlygrddiff  = $db_item->aggregateonlygraded != $this->aggregateonlygraded;
-        $aggoutcomesdiff = $db_item->aggregateoutcomes   != $this->aggregateoutcomes;
+        $aggregationdiff = $db_item->aggregation != $this->aggregation;
+        $keephighdiff = $db_item->keephigh != $this->keephigh;
+        $droplowdiff = $db_item->droplow != $this->droplow;
+        $aggonlygrddiff = $db_item->aggregateonlygraded != $this->aggregateonlygraded;
+        $aggoutcomesdiff = $db_item->aggregateoutcomes != $this->aggregateoutcomes;
 
         return ($aggregationdiff || $keephighdiff || $droplowdiff || $aggonlygrddiff || $aggoutcomesdiff);
     }
@@ -433,7 +443,8 @@ class grade_category extends grade_object {
     /**
      * Marks this grade categories' associated grade item as needing regrading
      */
-    public function force_regrading() {
+    public function force_regrading()
+    {
         $grade_item = $this->load_grade_item();
         $grade_item->force_regrading();
     }
@@ -443,7 +454,8 @@ class grade_category extends grade_object {
      *
      * @return void
      */
-    public function pre_regrade_final_grades() {
+    public function pre_regrade_final_grades()
+    {
         $this->auto_update_weights();
         $this->auto_update_max();
     }
@@ -466,7 +478,8 @@ class grade_category extends grade_object {
      * @param int $userid The user ID if final grade generation should be limited to a single user
      * @return bool
      */
-    public function generate_grades($userid=null) {
+    public function generate_grades($userid = null)
+    {
         global $CFG, $DB;
 
         $this->load_grade_item();
@@ -493,7 +506,7 @@ class grade_category extends grade_object {
         }
 
         $grade_inst = new grade_grade();
-        $fields = 'g.'.implode(',g.', $grade_inst->required_fields);
+        $fields = 'g.' . implode(',g.', $grade_inst->required_fields);
 
         // where to look for final grades - include grade of this item too, we will store the results there
         $gis = array_merge($depends_on, array($this->grade_item->id));
@@ -517,8 +530,8 @@ class grade_category extends grade_object {
         if ($rs->valid()) {
             $prevuser = 0;
             $grade_values = array();
-            $excluded     = array();
-            $oldgrade     = null;
+            $excluded = array();
+            $oldgrade = null;
             $grademaxoverrides = array();
             $grademinoverrides = array();
 
@@ -533,16 +546,16 @@ class grade_category extends grade_object {
                 }
                 if ($grade->userid != $prevuser) {
                     $this->aggregate_grades($prevuser,
-                                            $items,
-                                            $grade_values,
-                                            $oldgrade,
-                                            $excluded,
-                                            $grademinoverrides,
-                                            $grademaxoverrides);
+                        $items,
+                        $grade_values,
+                        $oldgrade,
+                        $excluded,
+                        $grademinoverrides,
+                        $grademaxoverrides);
                     $prevuser = $grade->userid;
                     $grade_values = array();
-                    $excluded     = array();
-                    $oldgrade     = null;
+                    $excluded = array();
+                    $oldgrade = null;
                     $grademaxoverrides = array();
                     $grademinoverrides = array();
                 }
@@ -559,12 +572,12 @@ class grade_category extends grade_object {
                 }
             }
             $this->aggregate_grades($prevuser,
-                                    $items,
-                                    $grade_values,
-                                    $oldgrade,
-                                    $excluded,
-                                    $grademinoverrides,
-                                    $grademaxoverrides);//the last one
+                $items,
+                $grade_values,
+                $oldgrade,
+                $excluded,
+                $grademinoverrides,
+                $grademaxoverrides);//the last one
         }
         $rs->close();
 
@@ -574,13 +587,13 @@ class grade_category extends grade_object {
     /**
      * Internal function for grade category grade aggregation
      *
-     * @param int    $userid The User ID
-     * @param array  $items Grade items
-     * @param array  $grade_values Array of grade values
+     * @param int $userid The User ID
+     * @param array $items Grade items
+     * @param array $grade_values Array of grade values
      * @param object $oldgrade Old grade
-     * @param array  $excluded Excluded
-     * @param array  $grademinoverrides User specific grademin values if different to the grade_item grademin (key is itemid)
-     * @param array  $grademaxoverrides User specific grademax values if different to the grade_item grademax (key is itemid)
+     * @param array $excluded Excluded
+     * @param array $grademinoverrides User specific grademin values if different to the grade_item grademin (key is itemid)
+     * @param array $grademaxoverrides User specific grademax values if different to the grade_item grademax (key is itemid)
      */
     private function aggregate_grades($userid,
                                       $items,
@@ -588,7 +601,8 @@ class grade_category extends grade_object {
                                       $oldgrade,
                                       $excluded,
                                       $grademinoverrides,
-                                      $grademaxoverrides) {
+                                      $grademaxoverrides)
+    {
         global $CFG, $DB;
 
         // Remember these so we can set flags on them to describe how they were used in the aggregation.
@@ -609,7 +623,7 @@ class grade_category extends grade_object {
 
         } else {
             // insert final grade - it will be needed later anyway
-            $grade = new grade_grade(array('itemid'=>$this->grade_item->id, 'userid'=>$userid), false);
+            $grade = new grade_grade(array('itemid' => $this->grade_item->id, 'userid' => $userid), false);
             $grade->grade_item =& $this->grade_item;
             $grade->insert('system');
             $oldfinalgrade = null;
@@ -640,9 +654,9 @@ class grade_category extends grade_object {
             foreach ($notexisting as $itemid) {
                 $gradeitem = $items[$itemid];
                 $gradegrade = new grade_grade(array('itemid' => $itemid,
-                                                    'userid' => $userid,
-                                                    'rawgrademin' => $gradeitem->grademin,
-                                                    'rawgrademax' => $gradeitem->grademax), false);
+                    'userid' => $userid,
+                    'rawgrademin' => $gradeitem->grademin,
+                    'rawgrademax' => $gradeitem->grademax), false);
                 $gradegrade->grade_item = $gradeitem;
                 $gradegrade->insert('system');
             }
@@ -668,7 +682,7 @@ class grade_category extends grade_object {
 
         // Normalize the grades first - all will have value 0...1
         // ungraded items are not used in aggregation.
-        foreach ($grade_values as $itemid=>$v) {
+        foreach ($grade_values as $itemid => $v) {
             if (is_null($v)) {
                 // If null, it means no grade.
                 if ($this->aggregateonlygraded) {
@@ -702,7 +716,7 @@ class grade_category extends grade_object {
         }
 
         // For items with no value, and not excluded - either set their grade to 0 or exclude them.
-        foreach ($items as $itemid=>$value) {
+        foreach ($items as $itemid => $value) {
             if (!isset($grade_values[$itemid]) and !in_array($itemid, $excluded)) {
                 if (!$this->aggregateonlygraded) {
                     $grade_values[$itemid] = 0;
@@ -752,10 +766,10 @@ class grade_category extends grade_object {
 
         // do the maths
         $result = $this->aggregate_values_and_adjust_bounds($grade_values,
-                                                            $items,
-                                                            $usedweights,
-                                                            $grademinoverrides,
-                                                            $grademaxoverrides);
+            $items,
+            $usedweights,
+            $grademinoverrides,
+            $grademaxoverrides);
         $agg_grade = $result['grade'];
 
         // Set the actual grademin and max to bind the grade properly.
@@ -779,8 +793,9 @@ class grade_category extends grade_object {
 
         // Update in db if changed.
         if (grade_floats_different($grade->finalgrade, $oldfinalgrade) ||
-                grade_floats_different($grade->rawgrademax, $oldrawgrademax) ||
-                grade_floats_different($grade->rawgrademin, $oldrawgrademin)) {
+            grade_floats_different($grade->rawgrademax, $oldrawgrademax) ||
+            grade_floats_different($grade->rawgrademin, $oldrawgrademin)
+        ) {
             $grade->timemodified = time();
             $success = $grade->update('aggregation');
 
@@ -810,7 +825,8 @@ class grade_category extends grade_object {
      * @param array $extracredit An array with keys for each of the grade_item columns
      *                       considered extra credit by the aggregation.
      */
-    private function set_usedinaggregation($userid, $usedweights, $novalue, $dropped, $extracredit) {
+    private function set_usedinaggregation($userid, $usedweights, $novalue, $dropped, $extracredit)
+    {
         global $DB;
 
         // We want to know all current user grades so we can decide whether they need to be updated or they already contain the
@@ -850,7 +866,8 @@ class grade_category extends grade_object {
                     }
                     // Used weights can be present in multiple set_usedinaggregation arguments.
                     if (!isset($novalue[$currentgrade->id]) && !isset($dropped[$currentgrade->id]) &&
-                            !isset($extracredit[$currentgrade->id])) {
+                        !isset($extracredit[$currentgrade->id])
+                    ) {
                         continue;
                     }
                 }
@@ -858,7 +875,8 @@ class grade_category extends grade_object {
                 // No value grades.
                 if (!empty($novalue) && isset($novalue[$currentgrade->id])) {
                     if ($currentgrade->aggregationstatus !== 'novalue' ||
-                            grade_floats_different($currentgrade->aggregationweight, 0)) {
+                        grade_floats_different($currentgrade->aggregationweight, 0)
+                    ) {
                         $toupdate['novalue'][] = $currentgrade->id;
                     }
                     continue;
@@ -867,7 +885,8 @@ class grade_category extends grade_object {
                 // Dropped grades.
                 if (!empty($dropped) && isset($dropped[$currentgrade->id])) {
                     if ($currentgrade->aggregationstatus !== 'dropped' ||
-                            grade_floats_different($currentgrade->aggregationweight, 0)) {
+                        grade_floats_different($currentgrade->aggregationweight, 0)
+                    ) {
                         $toupdate['dropped'][] = $currentgrade->id;
                     }
                     continue;
@@ -879,14 +898,16 @@ class grade_category extends grade_object {
                     // If this grade item is already marked as 'extra' and it already has the provided $usedweights value would be
                     // silly to update to 'used' to later update to 'extra'.
                     if (!empty($usedweights) && isset($usedweights[$currentgrade->id]) &&
-                            grade_floats_equal($currentgrade->aggregationweight, $usedweights[$currentgrade->id])) {
+                        grade_floats_equal($currentgrade->aggregationweight, $usedweights[$currentgrade->id])
+                    ) {
                         unset($usedweights[$currentgrade->id]);
                     }
 
                     // Update the item to extra if it is not already marked as extra in the database or if the item's
                     // aggregationweight will be updated when going through $usedweights items.
                     if ($currentgrade->aggregationstatus !== 'extra' ||
-                            (!empty($usedweights) && isset($usedweights[$currentgrade->id]))) {
+                        (!empty($usedweights) && isset($usedweights[$currentgrade->id]))
+                    ) {
                         $toupdate['extracredit'][] = $currentgrade->id;
                     }
                     continue;
@@ -963,10 +984,10 @@ class grade_category extends grade_object {
             $itemlist['userid'] = $userid;
 
             $DB->set_field_select('grade_grades',
-                                  'aggregationstatus',
-                                  'extra',
-                                  "itemid $itemsql AND userid = :userid",
-                                  $itemlist);
+                'aggregationstatus',
+                'extra',
+                "itemid $itemsql AND userid = :userid",
+                $itemlist);
         }
     }
 
@@ -984,8 +1005,8 @@ class grade_category extends grade_object {
      *                         1. The weights must add up to 1 (unless there are extra credit)
      *                         2. The contributed points column must add up to the course
      *                         final grade and this column is calculated from these weights.
-     * @param array  $grademinoverrides User specific grademin values if different to the grade_item grademin (key is itemid)
-     * @param array  $grademaxoverrides User specific grademax values if different to the grade_item grademax (key is itemid)
+     * @param array $grademinoverrides User specific grademin values if different to the grade_item grademin (key is itemid)
+     * @param array $grademaxoverrides User specific grademax values if different to the grade_item grademax (key is itemid)
      * @return array containing values for:
      *                'grade' => the new calculated grade
      *                'grademin' => the new calculated min grade for the category
@@ -995,7 +1016,8 @@ class grade_category extends grade_object {
                                                        $items,
                                                        & $weights = null,
                                                        $grademinoverrides = array(),
-                                                       $grademaxoverrides = array()) {
+                                                       $grademaxoverrides = array())
+    {
         $category_item = $this->load_grade_item();
         $grademin = $category_item->grademin;
         $grademax = $category_item->grademax;
@@ -1009,10 +1031,10 @@ class grade_category extends grade_object {
                 // The median gets 100% - others get 0.
                 if ($weights !== null && $num > 0) {
                     $count = 0;
-                    foreach ($grade_values as $itemid=>$grade_value) {
-                        if (($num % 2 == 0) && ($count == intval($num/2)-1 || $count == intval($num/2))) {
+                    foreach ($grade_values as $itemid => $grade_value) {
+                        if (($num % 2 == 0) && ($count == intval($num / 2) - 1 || $count == intval($num / 2))) {
                             $weights[$itemid] = 0.5;
-                        } else if (($num % 2 != 0) && ($count == intval(($num/2)-0.5))) {
+                        } else if (($num % 2 != 0) && ($count == intval(($num / 2) - 0.5))) {
                             $weights[$itemid] = 1.0;
                         } else {
                             $weights[$itemid] = 0;
@@ -1021,9 +1043,9 @@ class grade_category extends grade_object {
                     }
                 }
                 if ($num % 2 == 0) {
-                    $agg_grade = ($grades[intval($num/2)-1] + $grades[intval($num/2)]) / 2;
+                    $agg_grade = ($grades[intval($num / 2) - 1] + $grades[intval($num / 2)]) / 2;
                 } else {
-                    $agg_grade = $grades[intval(($num/2)-0.5)];
+                    $agg_grade = $grades[intval(($num / 2) - 0.5)];
                 }
 
                 break;
@@ -1032,7 +1054,7 @@ class grade_category extends grade_object {
                 $agg_grade = reset($grade_values);
                 // Record the weights as used.
                 if ($weights !== null) {
-                    foreach ($grade_values as $itemid=>$grade_value) {
+                    foreach ($grade_values as $itemid => $grade_value) {
                         $weights[$itemid] = 0;
                     }
                 }
@@ -1044,7 +1066,7 @@ class grade_category extends grade_object {
             case GRADE_AGGREGATE_MAX:
                 // Record the weights as used.
                 if ($weights !== null) {
-                    foreach ($grade_values as $itemid=>$grade_value) {
+                    foreach ($grade_values as $itemid => $grade_value) {
                         $weights[$itemid] = 0;
                     }
                 }
@@ -1061,7 +1083,7 @@ class grade_category extends grade_object {
                 foreach ($grade_values as $k => $gv) {
 
                     if (!is_int($gv) && !is_string($gv)) {
-                        $converted_grade_values[$k] = (string) $gv;
+                        $converted_grade_values[$k] = (string)$gv;
 
                     } else {
                         $converted_grade_values[$k] = $gv;
@@ -1089,9 +1111,9 @@ class grade_category extends grade_object {
 
             case GRADE_AGGREGATE_WEIGHTED_MEAN: // Weighted average of all existing final grades, weight specified in coef
                 $weightsum = 0;
-                $sum       = 0;
+                $sum = 0;
 
-                foreach ($grade_values as $itemid=>$grade_value) {
+                foreach ($grade_values as $itemid => $grade_value) {
                     if ($weights !== null) {
                         $weights[$itemid] = $items[$itemid]->aggregationcoef;
                     }
@@ -1099,7 +1121,7 @@ class grade_category extends grade_object {
                         continue;
                     }
                     $weightsum += $items[$itemid]->aggregationcoef;
-                    $sum       += $items[$itemid]->aggregationcoef * $grade_value;
+                    $sum += $items[$itemid]->aggregationcoef * $grade_value;
                 }
                 if ($weightsum == 0) {
                     $agg_grade = null;
@@ -1121,9 +1143,9 @@ class grade_category extends grade_object {
                 // weight is the range of grade (usually grademax)
                 $this->load_grade_item();
                 $weightsum = 0;
-                $sum       = null;
+                $sum = null;
 
-                foreach ($grade_values as $itemid=>$grade_value) {
+                foreach ($grade_values as $itemid => $grade_value) {
                     if ($items[$itemid]->aggregationcoef > 0) {
                         continue;
                     }
@@ -1190,7 +1212,7 @@ class grade_category extends grade_object {
 
                 // Record the weights as used.
                 if ($weights !== null) {
-                    foreach ($grade_values as $itemid=>$grade_value) {
+                    foreach ($grade_values as $itemid => $grade_value) {
                         if ($items[$itemid]->aggregationcoef > 0) {
                             // Ignore extra credit items, the weights have already been computed.
                             continue;
@@ -1210,7 +1232,7 @@ class grade_category extends grade_object {
                 $num = 0;
                 $sum = null;
 
-                foreach ($grade_values as $itemid=>$grade_value) {
+                foreach ($grade_values as $itemid => $grade_value) {
                     if ($items[$itemid]->aggregationcoef == 0) {
                         $num += 1;
                         $sum += $grade_value;
@@ -1221,7 +1243,7 @@ class grade_category extends grade_object {
                 }
 
                 // Treating the extra credit items separately to get a chance to calculate their effective weights.
-                foreach ($grade_values as $itemid=>$grade_value) {
+                foreach ($grade_values as $itemid => $grade_value) {
                     if ($items[$itemid]->aggregationcoef > 0) {
                         $oldsum = $sum;
                         $sum += $items[$itemid]->aggregationcoef * $grade_value;
@@ -1256,7 +1278,7 @@ class grade_category extends grade_object {
                 }
 
                 if ($weights !== null && $num > 0) {
-                    foreach ($grade_values as $itemid=>$grade_value) {
+                    foreach ($grade_values as $itemid => $grade_value) {
                         if ($items[$itemid]->aggregationcoef > 0) {
                             // Extra credit weights were already calculated.
                             continue;
@@ -1348,7 +1370,7 @@ class grade_category extends grade_object {
                             $usergrademax = $grademaxoverrides[$itemid];
                         }
                         if ($nonoverriddenpoints > 0) {
-                            $userweights[$itemid] = ($usergrademax/$nonoverriddenpoints) * (1 - $totaloverriddenweight);
+                            $userweights[$itemid] = ($usergrademax / $nonoverriddenpoints) * (1 - $totaloverriddenweight);
                         } else {
                             $userweights[$itemid] = 0;
                             if ($items[$itemid]->aggregationcoef2 > 0) {
@@ -1444,7 +1466,7 @@ class grade_category extends grade_object {
                 $agg_grade = $sum / $num;
                 // Record the weights evenly.
                 if ($weights !== null && $num > 0) {
-                    foreach ($grade_values as $itemid=>$grade_value) {
+                    foreach ($grade_values as $itemid => $grade_value) {
                         $weights[$itemid] = 1.0 / $num;
                     }
                 }
@@ -1464,7 +1486,8 @@ class grade_category extends grade_object {
      * @param array $items The array of grade_items
      * @return float The aggregate grade for this grade category
      */
-    public function aggregate_values($grade_values, $items) {
+    public function aggregate_values($grade_values, $items)
+    {
         debugging('grade_category::aggregate_values() is deprecated.
                    Call grade_category::aggregate_values_and_adjust_bounds() instead.', DEBUG_DEVELOPER);
         $result = $this->aggregate_values_and_adjust_bounds($grade_values, $items);
@@ -1478,7 +1501,8 @@ class grade_category extends grade_object {
      *
      * @return void
      */
-    private function auto_update_max() {
+    private function auto_update_max()
+    {
         global $DB;
         if ($this->aggregation != GRADE_AGGREGATE_SUM) {
             // not needed at all
@@ -1495,7 +1519,7 @@ class grade_category extends grade_object {
         // Only run if the gradebook isn't frozen.
         if ($gradebookcalculationsfreeze && (int)$gradebookcalculationsfreeze <= 20150627) {
             // Do nothing.
-        } else{
+        } else {
             // Don't automatically update the max for calculated items.
             if ($this->grade_item->is_calculated()) {
                 return;
@@ -1514,8 +1538,8 @@ class grade_category extends grade_object {
         if (!$items) {
 
             if ($this->grade_item->grademax != 0 or $this->grade_item->gradetype != GRADE_TYPE_VALUE) {
-                $this->grade_item->grademax  = 0;
-                $this->grade_item->grademin  = 0;
+                $this->grade_item->grademax = 0;
+                $this->grade_item->grademin = 0;
                 $this->grade_item->gradetype = GRADE_TYPE_VALUE;
                 $this->grade_item->update('aggregation');
             }
@@ -1551,8 +1575,8 @@ class grade_category extends grade_object {
 
         // update db if anything changed
         if ($this->grade_item->grademax != $max or $this->grade_item->grademin != 0 or $this->grade_item->gradetype != GRADE_TYPE_VALUE) {
-            $this->grade_item->grademax  = $max;
-            $this->grade_item->grademin  = 0;
+            $this->grade_item->grademax = $max;
+            $this->grade_item->grademin = 0;
             $this->grade_item->gradetype = GRADE_TYPE_VALUE;
             $this->grade_item->update('aggregation');
         }
@@ -1566,7 +1590,8 @@ class grade_category extends grade_object {
      *
      * @return void
      */
-    private function auto_update_weights() {
+    private function auto_update_weights()
+    {
         global $CFG;
         if ($this->aggregation != GRADE_AGGREGATE_SUM) {
             // This is only required if we are using natural weights.
@@ -1581,8 +1606,8 @@ class grade_category extends grade_object {
         $totalgrademax = 0;
 
         // Out of 1, how much weight has been manually overriden by a user?
-        $totaloverriddenweight  = 0;
-        $totaloverriddengrademax  = 0;
+        $totaloverriddenweight = 0;
+        $totaloverriddengrademax = 0;
 
         // Has every assessment in this category been overridden?
         $automaticgradeitemspresent = false;
@@ -1713,12 +1738,13 @@ class grade_category extends grade_object {
                 } else {
                     // Calculate this item's weight as a percentage of the non-overridden total grade maxes
                     // then convert it to a proportion of the available non-overriden weight.
-                    $gradeitem->aggregationcoef2 = ($gradeitem->grademax/$totalnonoverriddengrademax) *
-                            (1 - $totaloverriddenweight);
+                    $gradeitem->aggregationcoef2 = ($gradeitem->grademax / $totalnonoverriddengrademax) *
+                        (1 - $totaloverriddenweight);
                 }
 
             } else if ((!$automaticgradeitemspresent && $normalisetotal != 1) || ($requiresnormalising)
-                    || $overridearray[$gradeitem->id]['weight'] < 0) {
+                || $overridearray[$gradeitem->id]['weight'] < 0
+            ) {
                 // Just divide the overriden weight for this item against the total weight override of all
                 // items in this category.
                 if ($normalisetotal == 0 || $overridearray[$gradeitem->id]['weight'] < 0) {
@@ -1744,7 +1770,8 @@ class grade_category extends grade_object {
      * @param array $items grade item objects
      * @return array Limited grades.
      */
-    public function apply_limit_rules(&$grade_values, $items) {
+    public function apply_limit_rules(&$grade_values, $items)
+    {
         $extraused = $this->is_extracredit_used();
 
         if (!empty($this->droplow)) {
@@ -1769,7 +1796,7 @@ class grade_category extends grade_object {
                 $originalindex = $founditemid = $foundmax = null;
 
                 // Find the first remaining grade item that is available to be dropped
-                foreach ($grade_keys as $gradekeyindex=>$gradekey) {
+                foreach ($grade_keys as $gradekeyindex => $gradekey) {
                     if (!$extraused || $items[$gradekey]->aggregationcoef <= 0) {
                         // Found a non-extra credit grade item that is eligible to be dropped
                         $originalindex = $gradekeyindex;
@@ -1789,7 +1816,7 @@ class grade_category extends grade_object {
                 $i = 1;
                 while ($originalindex + $i < $gradekeycount) {
 
-                    $possibleitemid = $grade_keys[$originalindex+$i];
+                    $possibleitemid = $grade_keys[$originalindex + $i];
                     $i++;
 
                     if ($grade_values[$founditemid] != $grade_values[$possibleitemid]) {
@@ -1820,7 +1847,7 @@ class grade_category extends grade_object {
             arsort($grade_values, SORT_NUMERIC);
             $kept = 0;
 
-            foreach ($grade_values as $itemid=>$value) {
+            foreach ($grade_values as $itemid => $value) {
 
                 if ($extraused and $items[$itemid]->aggregationcoef > 0) {
                     // we keep all extra credits
@@ -1844,7 +1871,8 @@ class grade_category extends grade_object {
      *
      * @return bool
      */
-    public function can_apply_limit_rules() {
+    public function can_apply_limit_rules()
+    {
         if ($this->canapplylimitrules !== null) {
             return $this->canapplylimitrules;
         }
@@ -1904,7 +1932,8 @@ class grade_category extends grade_object {
      *
      * @return bool True if extra credit used
      */
-    public function is_extracredit_used() {
+    public function is_extracredit_used()
+    {
         return self::aggregation_uses_extracredit($this->aggregation);
     }
 
@@ -1914,10 +1943,11 @@ class grade_category extends grade_object {
      * @param int $aggregation Aggregation const.
      * @return bool True if extra credit used
      */
-    public static function aggregation_uses_extracredit($aggregation) {
+    public static function aggregation_uses_extracredit($aggregation)
+    {
         return ($aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN2
-             or $aggregation == GRADE_AGGREGATE_EXTRACREDIT_MEAN
-             or $aggregation == GRADE_AGGREGATE_SUM);
+            or $aggregation == GRADE_AGGREGATE_EXTRACREDIT_MEAN
+            or $aggregation == GRADE_AGGREGATE_SUM);
     }
 
     /**
@@ -1925,7 +1955,8 @@ class grade_category extends grade_object {
      *
      * @return bool True if an aggregation coefficient is being used
      */
-    public function is_aggregationcoef_used() {
+    public function is_aggregationcoef_used()
+    {
         return self::aggregation_uses_aggregationcoef($this->aggregation);
 
     }
@@ -1936,11 +1967,12 @@ class grade_category extends grade_object {
      * @param int $aggregation Aggregation const.
      * @return bool True if an aggregation coefficient is being used
      */
-    public static function aggregation_uses_aggregationcoef($aggregation) {
+    public static function aggregation_uses_aggregationcoef($aggregation)
+    {
         return ($aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN
-             or $aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN2
-             or $aggregation == GRADE_AGGREGATE_EXTRACREDIT_MEAN
-             or $aggregation == GRADE_AGGREGATE_SUM);
+            or $aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN2
+            or $aggregation == GRADE_AGGREGATE_EXTRACREDIT_MEAN
+            or $aggregation == GRADE_AGGREGATE_SUM);
 
     }
 
@@ -1950,7 +1982,8 @@ class grade_category extends grade_object {
      * @param string $first Whether or not this is the first item in the recursion
      * @return string
      */
-    public function get_coefstring($first=true) {
+    public function get_coefstring($first = true)
+    {
         if (!is_null($this->coefstring)) {
             return $this->coefstring;
         }
@@ -2005,10 +2038,11 @@ class grade_category extends grade_object {
      * @param bool $include_category_items as category children
      * @return array
      */
-    public static function fetch_course_tree($courseid, $include_category_items=false) {
+    public static function fetch_course_tree($courseid, $include_category_items = false)
+    {
         $course_category = grade_category::fetch_course_category($courseid);
-        $category_array = array('object'=>$course_category, 'type'=>'category', 'depth'=>1,
-                                'children'=>$course_category->get_children($include_category_items));
+        $category_array = array('object' => $course_category, 'type' => 'category', 'depth' => 1,
+            'children' => $course_category->get_children($include_category_items));
 
         $course_category->sortorder = $course_category->get_sortorder();
         $sortorder = $course_category->get_sortorder();
@@ -2019,16 +2053,17 @@ class grade_category extends grade_object {
      * An internal function that recursively sorts grade categories within a course
      *
      * @param array $category_array The seed of the recursion
-     * @param int   $sortorder The current sortorder
+     * @param int $sortorder The current sortorder
      * @return array An array containing 'object', 'type', 'depth' and optionally 'children'
      */
-    static private function _fetch_course_tree_recursion($category_array, &$sortorder) {
-        if (isset($category_array['object']->gradetype) && $category_array['object']->gradetype==GRADE_TYPE_NONE) {
+    static private function _fetch_course_tree_recursion($category_array, &$sortorder)
+    {
+        if (isset($category_array['object']->gradetype) && $category_array['object']->gradetype == GRADE_TYPE_NONE) {
             return null;
         }
 
         // store the grade_item or grade_category instance with extra info
-        $result = array('object'=>$category_array['object'], 'type'=>$category_array['type'], 'depth'=>$category_array['depth']);
+        $result = array('object' => $category_array['object'], 'type' => $category_array['type'], 'depth' => $category_array['depth']);
 
         // reuse final grades if there
         if (array_key_exists('finalgrades', $category_array)) {
@@ -2041,7 +2076,7 @@ class grade_category extends grade_object {
             //process the category item first
             $child = null;
 
-            foreach ($category_array['children'] as $oldorder=>$child_array) {
+            foreach ($category_array['children'] as $oldorder => $child_array) {
 
                 if ($child_array['type'] == 'courseitem' or $child_array['type'] == 'categoryitem') {
                     $child = grade_category::_fetch_course_tree_recursion($child_array, $sortorder);
@@ -2051,7 +2086,7 @@ class grade_category extends grade_object {
                 }
             }
 
-            foreach ($category_array['children'] as $oldorder=>$child_array) {
+            foreach ($category_array['children'] as $oldorder => $child_array) {
 
                 if ($child_array['type'] != 'courseitem' and $child_array['type'] != 'categoryitem') {
                     $child = grade_category::_fetch_course_tree_recursion($child_array, $sortorder);
@@ -2073,18 +2108,25 @@ class grade_category extends grade_object {
      * @param bool $include_category_items Whether or not to include category grade_items in the children array
      * @return array Array of child objects (grade_category and grade_item).
      */
-    public function get_children($include_category_items=false) {
+    public function get_children($include_category_items = false)
+    {
         global $DB;
 
         // This function must be as fast as possible ;-)
         // fetch all course grade items and categories into memory - we do not expect hundreds of these in course
         // we have to limit the number of queries though, because it will be used often in grade reports
 
-        $cats  = $DB->get_records('grade_categories', array('courseid' => $this->courseid));
-        $items = $DB->get_records('grade_items', array('courseid' => $this->courseid));
+        $cats = $DB->get_records('grade_categories', array('courseid' => $this->courseid));
+
+        $localcourse = $DB->get_record('course', array('id' => $this->courseid), '*', MUST_EXIST);
+
+        $params = array();
+        $params['param[0][name]='] = "courseid";
+        $params['param[0][value]='] = $localcourse->remoteid;
+        $items = get_remote_assign_grade_items_raw_data("SELECT * FROM {grade_items} WHERE courseid = ?", $params);
 
         // init children array first
-        foreach ($cats as $catid=>$cat) {
+        foreach ($cats as $catid => $cat) {
             $cats[$catid]->children = array();
         }
 
@@ -2122,13 +2164,13 @@ class grade_category extends grade_object {
         // now find the requested category and connect categories as children
         $category = false;
 
-        foreach ($cats as $catid=>$cat) {
+        foreach ($cats as $catid => $cat) {
 
             if (empty($cat->parent)) {
 
-                if ($cat->path !== '/'.$cat->id.'/') {
+                if ($cat->path !== '/' . $cat->id . '/') {
                     $grade_category = new grade_category($cat, false);
-                    $grade_category->path  = '/'.$cat->id.'/';
+                    $grade_category->path = '/' . $cat->id . '/';
                     $grade_category->depth = 1;
                     $grade_category->update('system');
                     return $this->get_children($include_category_items);
@@ -2136,7 +2178,7 @@ class grade_category extends grade_object {
 
             } else {
 
-                if (empty($cat->path) or !preg_match('|/'.$cat->parent.'/'.$cat->id.'/$|', $cat->path)) {
+                if (empty($cat->path) or !preg_match('|/' . $cat->parent . '/' . $cat->id . '/$|', $cat->path)) {
                     //fix paths and depts
                     static $recursioncounter = 0; // prevents infinite recursion
                     $recursioncounter++;
@@ -2145,7 +2187,7 @@ class grade_category extends grade_object {
                         // fix paths and depths!
                         $grade_category = new grade_category($cat, false);
                         $grade_category->depth = 0;
-                        $grade_category->path  = null;
+                        $grade_category->path = null;
                         $grade_category->update('system');
                         return $this->get_children($include_category_items);
                     }
@@ -2185,23 +2227,24 @@ class grade_category extends grade_object {
      * @param grade_category $category Source of current recursion
      * @return array An array of child grade categories
      */
-    private static function _get_children_recursion($category) {
+    private static function _get_children_recursion($category)
+    {
 
         $children_array = array();
-        foreach ($category->children as $sortorder=>$child) {
+        foreach ($category->children as $sortorder => $child) {
 
             if (array_key_exists('itemtype', $child)) {
                 $grade_item = new grade_item($child, false);
 
                 if (in_array($grade_item->itemtype, array('course', 'category'))) {
-                    $type  = $grade_item->itemtype.'item';
+                    $type = $grade_item->itemtype . 'item';
                     $depth = $category->depth;
 
                 } else {
-                    $type  = 'item';
+                    $type = 'item';
                     $depth = $category->depth; // we use this to set the same colour
                 }
-                $children_array[$sortorder] = array('object'=>$grade_item, 'type'=>$type, 'depth'=>$depth);
+                $children_array[$sortorder] = array('object' => $grade_item, 'type' => $type, 'depth' => $depth);
 
             } else {
                 $children = grade_category::_get_children_recursion($child);
@@ -2210,7 +2253,7 @@ class grade_category extends grade_object {
                 if (empty($children)) {
                     $children = array();
                 }
-                $children_array[$sortorder] = array('object'=>$grade_category, 'type'=>'category', 'depth'=>$grade_category->depth, 'children'=>$children);
+                $children_array[$sortorder] = array('object' => $grade_category, 'type' => 'category', 'depth' => $grade_category->depth, 'children' => $children);
             }
         }
 
@@ -2225,7 +2268,8 @@ class grade_category extends grade_object {
      *
      * @return grade_item
      */
-    public function load_grade_item() {
+    public function load_grade_item()
+    {
         if (empty($this->grade_item)) {
             $this->grade_item = $this->get_grade_item();
         }
@@ -2239,17 +2283,18 @@ class grade_category extends grade_object {
      *
      * @return grade_item
      */
-    public function get_grade_item() {
+    public function get_grade_item()
+    {
         if (empty($this->id)) {
             debugging("Attempt to obtain a grade_category's associated grade_item without the category's ID being set.");
             return false;
         }
 
         if (empty($this->parent)) {
-            $params = array('courseid'=>$this->courseid, 'itemtype'=>'course', 'iteminstance'=>$this->id);
+            $params = array('courseid' => $this->courseid, 'itemtype' => 'course', 'iteminstance' => $this->id);
 
         } else {
-            $params = array('courseid'=>$this->courseid, 'itemtype'=>'category', 'iteminstance'=>$this->id);
+            $params = array('courseid' => $this->courseid, 'itemtype' => 'category', 'iteminstance' => $this->id);
         }
 
         if (!$grade_items = grade_item::fetch_all($params)) {
@@ -2263,7 +2308,7 @@ class grade_category extends grade_object {
             $grade_item = reset($grade_items);
 
         } else {
-            debugging("Found more than one grade_item attached to category id:".$this->id);
+            debugging("Found more than one grade_item attached to category id:" . $this->id);
             // return first one
             $grade_item = reset($grade_items);
         }
@@ -2276,7 +2321,8 @@ class grade_category extends grade_object {
      *
      * @return grade_category The parent category
      */
-    public function load_parent_category() {
+    public function load_parent_category()
+    {
         if (empty($this->parent_category) && !empty($this->parent)) {
             $this->parent_category = $this->get_parent_category();
         }
@@ -2288,7 +2334,8 @@ class grade_category extends grade_object {
      *
      * @return grade_category Returns the parent category or null if this category has no parent
      */
-    public function get_parent_category() {
+    public function get_parent_category()
+    {
         if (!empty($this->parent)) {
             $parent_category = new grade_category(array('id' => $this->parent));
             return $parent_category;
@@ -2302,11 +2349,12 @@ class grade_category extends grade_object {
      *
      * @return string name
      */
-    public function get_name() {
+    public function get_name()
+    {
         global $DB;
         // For a course category, we return the course name if the fullname is set to '?' in the DB (empty in the category edit form)
         if (empty($this->parent) && $this->fullname == '?') {
-            $course = $DB->get_record('course', array('id'=> $this->courseid));
+            $course = $DB->get_record('course', array('id' => $this->courseid));
             return format_string($course->fullname);
 
         } else {
@@ -2319,7 +2367,8 @@ class grade_category extends grade_object {
      *
      * @return string description
      */
-    public function get_description() {
+    public function get_description()
+    {
         $allhelp = array();
         if ($this->aggregation != GRADE_AGGREGATE_SUM) {
             $aggrstrings = grade_helper::get_aggregation_strings();
@@ -2348,7 +2397,8 @@ class grade_category extends grade_object {
      * @param string $source From where was the object updated (mod/forum, manual, etc.)
      * @return bool success
      */
-    public function set_parent($parentid, $source=null) {
+    public function set_parent($parentid, $source = null)
+    {
         if ($this->parent == $parentid) {
             return true;
         }
@@ -2362,17 +2412,17 @@ class grade_category extends grade_object {
         }
 
         // find parent and check course id
-        if (!$parent_category = grade_category::fetch(array('id'=>$parentid, 'courseid'=>$this->courseid))) {
+        if (!$parent_category = grade_category::fetch(array('id' => $parentid, 'courseid' => $this->courseid))) {
             return false;
         }
 
         $this->force_regrading();
 
         // set new parent category
-        $this->parent          = $parent_category->id;
+        $this->parent = $parent_category->id;
         $this->parent_category =& $parent_category;
-        $this->path            = null;       // remove old path and depth - will be recalculated in update()
-        $this->depth           = 0;          // remove old path and depth - will be recalculated in update()
+        $this->path = null;       // remove old path and depth - will be recalculated in update()
+        $this->depth = 0;          // remove old path and depth - will be recalculated in update()
         $this->update($source);
 
         return $this->update($source);
@@ -2384,7 +2434,8 @@ class grade_category extends grade_object {
      * @param int $userid Optional user ID to retrieve a single user's final grade
      * @return mixed An array of all final_grades (stdClass objects) for this grade_item, or a single final_grade.
      */
-    public function get_final($userid=null) {
+    public function get_final($userid = null)
+    {
         $this->load_grade_item();
         return $this->grade_item->get_final($userid);
     }
@@ -2396,7 +2447,8 @@ class grade_category extends grade_object {
      *
      * @return int Sort order
      */
-    public function get_sortorder() {
+    public function get_sortorder()
+    {
         $this->load_grade_item();
         return $this->grade_item->get_sortorder();
     }
@@ -2408,7 +2460,8 @@ class grade_category extends grade_object {
      *
      * @return string idnumber
      */
-    public function get_idnumber() {
+    public function get_idnumber()
+    {
         $this->load_grade_item();
         return $this->grade_item->get_idnumber();
     }
@@ -2420,7 +2473,8 @@ class grade_category extends grade_object {
      *
      * @param int $sortorder The sortorder to assign to this category
      */
-    public function set_sortorder($sortorder) {
+    public function set_sortorder($sortorder)
+    {
         $this->load_grade_item();
         $this->grade_item->set_sortorder($sortorder);
     }
@@ -2433,7 +2487,8 @@ class grade_category extends grade_object {
      * @param int $sortorder to place after.
      * @return void
      */
-    public function move_after_sortorder($sortorder) {
+    public function move_after_sortorder($sortorder)
+    {
         $this->load_grade_item();
         $this->grade_item->move_after_sortorder($sortorder);
     }
@@ -2443,7 +2498,8 @@ class grade_category extends grade_object {
      *
      * @return bool
      */
-    public function is_course_category() {
+    public function is_course_category()
+    {
         $this->load_grade_item();
         return $this->grade_item->is_course_item();
     }
@@ -2454,14 +2510,15 @@ class grade_category extends grade_object {
      * @param int $courseid The Course ID
      * @return grade_category Returns the course level grade_category instance
      */
-    public static function fetch_course_category($courseid) {
+    public static function fetch_course_category($courseid)
+    {
         if (empty($courseid)) {
             debugging('Missing course id!');
             return false;
         }
 
         // course category has no parent
-        if ($course_category = grade_category::fetch(array('courseid'=>$courseid, 'parent'=>null))) {
+        if ($course_category = grade_category::fetch(array('courseid' => $courseid, 'parent' => null))) {
             return $course_category;
         }
 
@@ -2477,7 +2534,8 @@ class grade_category extends grade_object {
      *
      * @return bool
      */
-    public function is_editable() {
+    public function is_editable()
+    {
         return true;
     }
 
@@ -2488,7 +2546,8 @@ class grade_category extends grade_object {
      *
      * @return bool
      */
-    public function is_locked() {
+    public function is_locked()
+    {
         $this->load_grade_item();
         return $this->grade_item->is_locked();
     }
@@ -2498,19 +2557,20 @@ class grade_category extends grade_object {
      *
      * Calls set_locked() on the categories' grade_item
      *
-     * @param int  $lockedstate 0, 1 or a timestamp int(10) after which date the item will be locked.
+     * @param int $lockedstate 0, 1 or a timestamp int(10) after which date the item will be locked.
      * @param bool $cascade lock/unlock child objects too
      * @param bool $refresh refresh grades when unlocking
      * @return bool success if category locked (not all children mayb be locked though)
      */
-    public function set_locked($lockedstate, $cascade=false, $refresh=true) {
+    public function set_locked($lockedstate, $cascade = false, $refresh = true)
+    {
         $this->load_grade_item();
 
         $result = $this->grade_item->set_locked($lockedstate, $cascade, true);
 
         if ($cascade) {
             //process all children - items and categories
-            if ($children = grade_item::fetch_all(array('categoryid'=>$this->id))) {
+            if ($children = grade_item::fetch_all(array('categoryid' => $this->id))) {
 
                 foreach ($children as $child) {
                     $child->set_locked($lockedstate, true, false);
@@ -2522,7 +2582,7 @@ class grade_category extends grade_object {
                 }
             }
 
-            if ($children = grade_category::fetch_all(array('parent'=>$this->id))) {
+            if ($children = grade_category::fetch_all(array('parent' => $this->id))) {
 
                 foreach ($children as $child) {
                     $child->set_locked($lockedstate, true, true);
@@ -2539,7 +2599,8 @@ class grade_category extends grade_object {
      * @param stdClass $instance the object to set the properties on
      * @param array|stdClass $params Either an associative array or an object containing property name, property value pairs
      */
-    public static function set_properties(&$instance, $params) {
+    public static function set_properties(&$instance, $params)
+    {
         global $DB;
 
         $fromaggregation = $instance->aggregation;
@@ -2583,7 +2644,8 @@ class grade_category extends grade_object {
      * @param int $hidden 0 mean always visible, 1 means always hidden and a number > 1 is a timestamp to hide until
      * @param bool $cascade apply to child objects too
      */
-    public function set_hidden($hidden, $cascade=false) {
+    public function set_hidden($hidden, $cascade = false)
+    {
         $this->load_grade_item();
         //this hides the associated grade item (the course total)
         $this->grade_item->set_hidden($hidden, $cascade);
@@ -2592,7 +2654,7 @@ class grade_category extends grade_object {
 
         if ($cascade) {
 
-            if ($children = grade_item::fetch_all(array('categoryid'=>$this->id))) {
+            if ($children = grade_item::fetch_all(array('categoryid' => $this->id))) {
 
                 foreach ($children as $child) {
                     if ($child->can_control_visibility()) {
@@ -2601,7 +2663,7 @@ class grade_category extends grade_object {
                 }
             }
 
-            if ($children = grade_category::fetch_all(array('parent'=>$this->id))) {
+            if ($children = grade_category::fetch_all(array('parent' => $this->id))) {
 
                 foreach ($children as $child) {
                     $child->set_hidden($hidden, $cascade);
@@ -2610,13 +2672,13 @@ class grade_category extends grade_object {
         }
 
         //if marking category visible make sure parent category is visible MDL-21367
-        if( !$hidden ) {
-            $category_array = grade_category::fetch_all(array('id'=>$this->parent));
+        if (!$hidden) {
+            $category_array = grade_category::fetch_all(array('id' => $this->parent));
             if ($category_array && array_key_exists($this->parent, $category_array)) {
                 $category = $category_array[$this->parent];
                 //call set_hidden on the category regardless of whether it is hidden as its parent might be hidden
                 //if($category->is_hidden()) {
-                    $category->set_hidden($hidden, false);
+                $category->set_hidden($hidden, false);
                 //}
             }
         }
@@ -2627,7 +2689,8 @@ class grade_category extends grade_object {
      *
      * @return bool True if anything changed
      */
-    public function apply_default_settings() {
+    public function apply_default_settings()
+    {
         global $CFG;
 
         foreach ($this->forceable as $property) {
@@ -2647,7 +2710,8 @@ class grade_category extends grade_object {
      *
      * @return bool True if anything changed
      */
-    public function apply_forced_settings() {
+    public function apply_forced_settings()
+    {
         global $CFG;
 
         $updated = false;
@@ -2655,7 +2719,8 @@ class grade_category extends grade_object {
         foreach ($this->forceable as $property) {
 
             if (isset($CFG->{"grade_$property"}) and isset($CFG->{"grade_{$property}_flag"}) and
-                                                    ((int) $CFG->{"grade_{$property}_flag"} & 1)) {
+                ((int)$CFG->{"grade_{$property}_flag"} & 1)
+            ) {
 
                 if ($CFG->{"grade_$property"} == -1) {
                     continue; //temporary bc before version bump
@@ -2673,7 +2738,8 @@ class grade_category extends grade_object {
      *
      * Causes all course and category grade items to be marked as needing to be updated
      */
-    public static function updated_forced_settings() {
+    public static function updated_forced_settings()
+    {
         global $CFG, $DB;
         $params = array(1, 'course', 'category');
         $sql = "UPDATE {grade_items} SET needsupdate=? WHERE itemtype=? or itemtype=?";
@@ -2686,7 +2752,8 @@ class grade_category extends grade_object {
      * @param int $aggregationmethod The aggregation method constant value.
      * @return array Containing the keys 'aggregationcoef', 'aggregationcoef2' and 'weightoverride'.
      */
-    public static function get_default_aggregation_coefficient_values($aggregationmethod) {
+    public static function get_default_aggregation_coefficient_values($aggregationmethod)
+    {
         $defaultcoefficients = array(
             'aggregationcoef' => 0,
             'aggregationcoef2' => 0,
@@ -2716,7 +2783,8 @@ class grade_category extends grade_object {
      * @param bool $deleted
      * @return void
      */
-    protected function notify_changed($deleted) {
+    protected function notify_changed($deleted)
+    {
         self::clean_record_set();
     }
 
@@ -2729,7 +2797,8 @@ class grade_category extends grade_object {
      * @param array $params An array of conditions like $fieldname => $fieldvalue
      * @return string
      */
-    protected static function generate_record_set_key($params) {
+    protected static function generate_record_set_key($params)
+    {
         return sha1(json_encode($params));
     }
 
@@ -2739,7 +2808,8 @@ class grade_category extends grade_object {
      * @param array $params The query params
      * @return grade_object[]|bool An array of grade_objects or false if not found.
      */
-    protected static function retrieve_record_set($params) {
+    protected static function retrieve_record_set($params)
+    {
         $cache = cache::make('core', 'grade_categories');
         return $cache->get(self::generate_record_set_key($params));
     }
@@ -2751,7 +2821,8 @@ class grade_category extends grade_object {
      * @param grade_object[]|bool $records An array of grade_objects or false if there are no records matching the $key filters
      * @return void
      */
-    protected static function set_record_set($params, $records) {
+    protected static function set_record_set($params, $records)
+    {
         $cache = cache::make('core', 'grade_categories');
         return $cache->set(self::generate_record_set_key($params), $records);
     }
@@ -2764,7 +2835,8 @@ class grade_category extends grade_object {
      *
      * @return void
      */
-    public static function clean_record_set() {
+    public static function clean_record_set()
+    {
         cache_helper::purge_by_event('changesingradecategories');
     }
 }

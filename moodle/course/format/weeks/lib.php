@@ -272,7 +272,7 @@ class format_weeks extends format_base
                 'numsections' => array(
                     'label' => new lang_string('numberweeks'),
                     'element_type' => 'select',
-                    'element_attributes' => array($sectionmenu, 'readonly'),
+                    'element_attributes' => array($sectionmenu, 'disabled'),
                 ),
                 'hiddensections' => array(
                     'label' => new lang_string('hiddensections'),
@@ -283,7 +283,7 @@ class format_weeks extends format_base
                         array(
                             0 => new lang_string('hiddensectionscollapsed'),
                             1 => new lang_string('hiddensectionsinvisible')
-                        ), 'readonly'
+                        ), 'disabled'
                     ),
                 ),
                 'coursedisplay' => array(
@@ -293,7 +293,7 @@ class format_weeks extends format_base
                         array(
                             COURSE_DISPLAY_SINGLEPAGE => new lang_string('coursedisplay_single'),
                             COURSE_DISPLAY_MULTIPAGE => new lang_string('coursedisplay_multi')
-                        ), 'readonly'
+                        ), 'disabled'
                     ),
                     'help' => 'coursedisplay',
                     'help_component' => 'moodle',

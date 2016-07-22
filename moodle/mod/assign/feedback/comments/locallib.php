@@ -23,6 +23,7 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
+defined('ISREMOTE') || define('ISREMOTE', MOODLE_RUN_MODE === MOODLE_MODE_HUB);
 
 /**
  * Library class for comment feedback plugin extending feedback plugin base class.
@@ -212,14 +213,23 @@ class assign_feedback_comments extends assign_feedback_plugin {
         }
         if ($feedbackcomment) {
             $feedbackcomment->commenttext = $quickgradecomments;
-            return $DB->update_record('assignfeedback_comments', $feedbackcomment);
+            if (ISREMOTE) {
+                return update_assignfeedback_comments($feedbackcomment);
+            } else {
+                return $DB->update_record('assignfeedback_comments', $feedbackcomment);
+            }
         } else {
             $feedbackcomment = new stdClass();
             $feedbackcomment->commenttext = $quickgradecomments;
             $feedbackcomment->commentformat = FORMAT_HTML;
             $feedbackcomment->grade = $grade->id;
-            $feedbackcomment->assignment = $this->assignment->get_instance()->id;
-            return $DB->insert_record('assignfeedback_comments', $feedbackcomment) > 0;
+            if (ISREMOTE){
+                $feedbackcomment->assignment = $this->assignment->get_instance()->remoteid;
+                return create_assignfeedback_comments($feedbackcomment);
+            } else {
+                $feedbackcomment->assignment = $this->assignment->get_instance()->id;
+                return $DB->insert_record('assignfeedback_comments', $feedbackcomment) > 0;
+            }
         }
     }
 

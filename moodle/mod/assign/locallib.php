@@ -1496,11 +1496,7 @@ class assign {
 
         list($insql, $params) = $DB->get_in_or_equal(array_keys($participants), SQL_PARAMS_NAMED);
 
-        if (MOODLE_RUN_MODE === MOODLE_RUN_HOST){
-            $assignid = $this->get_instance()->id;
-        } else {
-            $assignid = $this->get_instance()->remoteid;
-        }
+        $assignid = $this->get_instance()->id;
 
         $params['assignmentid1'] = $assignid;
         $params['assignmentid2'] = $assignid;
@@ -1738,8 +1734,7 @@ class assign {
             $hostip = $this->gethostip();
 
             //Load remote params
-            $rparams = $this->get_remote_params();
-            unset($rparams['userid']);
+            $rparams['assignid'] = $this->get_instance()->remoteid;
             $rparams['hostip'] = $hostip;
 
             $result = get_remote_count_submissions_need_grading_by_host_id($rparams);
@@ -1878,9 +1873,7 @@ class assign {
         if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
             $hostip = $this->gethostip();
 
-            //Load remote params
-            $rparams = $this->get_remote_params();
-            unset($rparams['userid']);
+            $rparams['assignid'] = $this->get_instance()->remoteid;
             $rparams['hostip'] = $hostip;
             $rparams['status'] = $status;
 
@@ -3169,11 +3162,7 @@ class assign {
             $userid = $USER->id;
         }
 
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-            $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid, 'groupid'=>0);
-        } else {
-            $params = array('assignment'=>$this->get_instance()->remoteid, 'userid'=>$userid, 'groupid'=>0);
-        }
+        $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid, 'groupid'=>0);
 
         if ($attemptnumber >= 0) {
             $params['attemptnumber'] = $attemptnumber;
@@ -3200,13 +3189,10 @@ class assign {
         if ($create) {
             $submission = new stdClass();
             $submission->userid = $userid;
-            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-                $submission->assignment   = $this->get_instance()->id;
-                $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid, 'groupid'=>0);
-            } else {
-                $submission->assignment   = $this->get_instance()->remoteid;
-                $params = array('assignment'=>$this->get_instance()->remoteid, 'userid'=>$userid, 'groupid'=>0);
-            }
+
+            $submission->assignment   = $this->get_instance()->id;
+            $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid, 'groupid'=>0);
+            
             $submission->timecreated = time();
             $submission->timemodified = $submission->timecreated;
             $submission->status = ASSIGN_SUBMISSION_STATUS_NEW;
@@ -3290,12 +3276,12 @@ class assign {
             $userid = $USER->id;
         }
 
+        $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid);
+
         if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-            $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid);
             $flags = $DB->get_record('assign_user_flags', $params);
         }
         else{
-            $params = array('assignment'=>$this->get_instance()->remoteid, 'userid'=>$userid);
             $flags = get_user_flags_by_assignid_userid($params);
         }
 
@@ -3306,11 +3292,7 @@ class assign {
         if ($create) {
             $flags = new stdClass();
             $flags->userid = $userid;
-            if (MOODLE_RUN_MODE === MOODLE_RUN_HOST) {
-                $flags->assignment = $this->get_instance()->id;
-            } else {
-                $flags->assignment = $this->get_instance()->remoteid;
-            }
+            $flags->assignment = $this->get_instance()->id;
             $flags->locked = 0;
             $flags->extensionduedate = 0;
             $flags->workflowstate = '';
@@ -3319,7 +3301,7 @@ class assign {
             // The mailed flag can be one of 3 values: 0 is unsent, 1 is sent and 2 is do not send yet.
             // This is because students only want to be notified about certain types of update (grades and feedback).
             $flags->mailed = 2;
-
+                        //@TODO: Create assign user flags
             $fid = $DB->insert_record('assign_user_flags', $flags);
             $flags->id = $fid;
             return $flags;
@@ -3345,11 +3327,8 @@ class assign {
 
         $submission = null;
 
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-            $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid);
-        } else {
-            $params = array('assignment'=>$this->get_instance()->remoteid, 'userid'=>$userid);
-        }
+        $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid);
+        
         if ($attemptnumber < 0 || $create) {
             // Make sure this grade matches the latest submission attempt.
             if ($this->get_instance()->teamsubmission) {
@@ -3389,11 +3368,7 @@ class assign {
         }
         if ($create) {
             $grade = new stdClass();
-            if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-                $grade->assignment   = $this->get_instance()->id;
-            } else {
-                $grade->assignment   = $this->get_instance()->remoteid;
-            }
+            $grade->assignment   = $this->get_instance()->id;
             $grade->userid       = $userid;
 
             $grade->timecreated = time();
@@ -4750,7 +4725,7 @@ class assign {
         // Check on hub
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
             $grader = null;
-            $feedback = get_remote_get_submission_status($instance->remoteid, $user->id)->feedback;
+            $feedback = get_remote_get_submission_status($instance->id, $user->id)->feedback;
 
             if (!$feedback){
                 return;
@@ -4864,20 +4839,6 @@ class assign {
     }
 
     /**
-     * Return remote params to call API
-     *
-     * @return array params
-     */
-    public function get_remote_params(){
-        $ruser = get_remote_mapping_user();
-
-        return $rparams = array(
-            'assignid' => $this->get_instance()->remoteid,
-            'userid' => $ruser[0]->id
-        );
-    }
-
-    /**
      * Print 2 tables of information with no action links -
      * the submission summary and the grading summary.
      *
@@ -4894,7 +4855,6 @@ class assign {
                 $submissionstatus = $this->get_assign_submission_status_renderable($user, $showlinks);
                 $o .= $this->get_renderer()->render($submissionstatus);
             }
-
             // If there is a visible grade, show the feedback.
             $feedbackstatus = $this->get_assign_feedback_status_renderable($user);
             if ($feedbackstatus) {
@@ -4969,7 +4929,7 @@ class assign {
 
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
             $grades = array();
-            $submissionstatus = get_remote_get_submission_status($this->get_instance()->remoteid, $userid);
+            $submissionstatus = get_remote_get_submission_status($this->get_instance()->id, $userid);
 
             foreach($submissionstatus->previousattempts as $previousattemp){
                 // Switch grader on hub to host
@@ -5058,13 +5018,8 @@ class assign {
             // Params to get the group submissions.
             $params = array('assignment'=>$this->get_instance()->id, 'groupid'=>$groupid, 'userid'=>0);
         } else {
-            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
                 // Params to get the user submissions.
-                $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid);
-            }
-            else {
-                $params = array('assignment'=>$this->get_instance()->remoteid, 'userid' => $userid);
-            }
+            $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid);
         }
         if (MOODLE_RUN_MODE === MOODLE_RUN_HOST){
             // Return the submissions ordered by attempt.
@@ -5135,7 +5090,7 @@ class assign {
         global $CFG, $DB, $USER, $PAGE;
 
         $instance = $this->get_instance();
-             
+
         $o = '';
 
         $postfix = '';
@@ -6083,7 +6038,7 @@ class assign {
                 return $this->submit_for_grading($data, $notices);
             } else{
                 $userid = get_remote_mapping_user();
-                return submit_remote_for_grading($this->get_instance()->remoteid, $userid[0]->id, $data);
+                return submit_remote_for_grading($this->get_instance()->id, $userid[0]->id, $data);
             }
         }
         return true;
@@ -6253,6 +6208,7 @@ class assign {
         if (ISREMOTE) {
             // mapping user
             $sqlmappingparams = $this->mapping_users($params);
+            $sqlmappingparams = $this->mapping_assign_remote_params($sqlmappingparams);
             $index = 0;
             foreach ($sqlmappingparams as $key => $val){
                 $sqlparams["param[$index][name]"] = $key;
@@ -6260,7 +6216,7 @@ class assign {
                 $index++;
             }
             $gradesrawdata = get_remote_assign_grade_raw_data_infomation($sql, $sqlparams);
-            $this->mapping_local_users($params, $gradesrawdata);
+            $this->mapping_local_users_assign($params, $gradesrawdata);
             $currentgrades = new json_moodle_recordset($gradesrawdata);
         } else {
             $currentgrades = $DB->get_recordset_sql($sql, $params);
@@ -6436,7 +6392,19 @@ class assign {
         return $result;
     }
 
-    function mapping_local_users($oldparams, &$rawdata) {
+    function mapping_assign_remote_params(array $hostparams) {
+        $result = array();
+        foreach ($hostparams as $key => $val){
+            if(strpos(trim($key), 'assignid')!== false){
+                $val = get_local_assign_record($val, true)->remoteid;
+            }
+            $result[trim($key)] = $val;
+        }
+        return $result;
+    }
+
+    function mapping_local_users_assign($oldparams, &$rawdata) {
+        $mapusers = array();
         foreach ($oldparams as $k => $v) {
             if (substr(trim($k),0,1) == 'u') {
                 $remoteuser = get_remote_mapping_user($v)[0]->id;
@@ -7891,7 +7859,6 @@ class assign {
      * @return bool - was the grade saved
      */
     public function save_grade($userid, $data) {
-
         // Need grade permission.
         require_capability('mod/assign:grade', $this->context);
 
