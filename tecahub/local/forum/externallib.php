@@ -842,7 +842,7 @@ class local_mod_forum_external extends external_api
         global $DB;
         $warnings = array();
 
-        $params = self::validate_parameters(self::get_list_forum_discussions_by_parameters(), array(
+        $params = self::validate_parameters(self::get_list_forum_discussions_sql_parameters(), array(
             'hostip' => $hostip,
             'parameters' => $parameters,
             'sort' => $sort
