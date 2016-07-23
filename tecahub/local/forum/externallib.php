@@ -1578,7 +1578,7 @@ class local_mod_forum_external extends external_api
         ));
 
         $host = $DB->get_record('mnet_host', array('ip_address' => $params['hostip']), '*', MUST_EXIST);
-        if(!$host) {
+        if (!$host) {
             $warnings['message'] = "Not found host";
         }
 
@@ -1590,12 +1590,21 @@ class local_mod_forum_external extends external_api
         $arr = array_merge($arr, array($host->id));
 
         $result = array();
+        $querySQL = "SELECT p.id,p.subject,p.modified,p.discussion,p.userid, d.name, d.timemodified, d.usermodified, d.groupid, d.timestart, d.timeend, d.pinned, u.firstnamephonetic,u.lastnamephonetic,u.middlename,u.alternatename,u.firstname,u.lastname,
+                   u.email, u.picture, u.imagealt , um.firstnamephonetic AS umfirstnamephonetic,um.lastnamephonetic AS umlastnamephonetic,um.middlename AS ummiddlename,um.alternatename AS umalternatename,um.firstname AS umfirstname,um.lastname AS umlastname, um.email AS umemail, um.picture AS umpicture,
+                        um.imagealt AS umimagealt
+              FROM {forum_discussions} d
+                   JOIN {forum_posts} p ON p.discussion = d.id
+                   JOIN {user} u ON p.userid = u.id
+                    LEFT JOIN {user} um ON (d.usermodified = um.id)
+             WHERE d.forum = ? AND p.parent = 0 AND p.userid IN (SELECT id FROM {user} WHERE mnethostid= ?)
+                    
+          ORDER BY d.pinned DESC, CASE WHEN d.timemodified < d.timestart
+                 THEN d.timestart
+                 ELSE d.timemodified
+                 END DESC, d.id DESC";
 
-        if ($params['limitfrom'] == 0 && $params['limitnum'] == 0) {
-            $data = $DB->get_records_sql($params['sql'], $arr);
-        } else {
-            $data = $DB->get_records_sql($params['sql'], $arr, $params['limitfrom'], $params['limitnum']);
-        }
+        $data = $DB->get_records_sql($querySQL, $arr);
 
         if (!$data) {
             $data = array();
