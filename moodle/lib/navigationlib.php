@@ -1981,7 +1981,13 @@ class global_navigation extends navigation_node {
             if ($activity->icon) {
                 $icon = new pix_icon($activity->icon, get_string('modulename', $activity->modname), $activity->iconcomponent);
             } else {
+                if(MOODLE_RUN_MODE===MOODLE_MODE_HOST){
                 $icon = new pix_icon('icon', get_string('modulename', $activity->modname), $activity->modname);
+                }
+                else{
+                $icon = new pix_icon('iconhost', get_string('modulename', $activity->modname), $activity->modname);               
+                }
+              
             }
 
             // Prepare the default name and url for the node
