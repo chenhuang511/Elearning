@@ -1395,7 +1395,12 @@ class cm_info implements IteratorAggregate {
                 }
             }
         } else {
-            $icon = $output->pix_url('icon', $this->modname);
+            if(MOODLE_RUN_MODE==MOODLE_MODE_HUB){
+                $icon = $output->pix_url('iconhost', $this->modname);
+            }
+            else{
+                 $icon = $output->pix_url('icon', $this->modname);
+            }
         }
         return $icon;
     }
