@@ -783,7 +783,7 @@ class mod_quiz_external extends external_api {
     protected static function validate_attempt($params, $checkaccessrules = true, $failifoverdue = true) {
         global $USER;
 
-        $attemptobj = quiz_attempt::create($params['attemptid']);
+        $attemptobj = quiz_attempt::create($params['attemptid'], $timeclose = true);//not check timeclose in hub
 
         $context = context_module::instance($attemptobj->get_cm()->id);
         self::validate_context($context);
