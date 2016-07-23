@@ -194,7 +194,7 @@ class mnetservice_enrol {
                 $course->idnumber       = substr($remote['idnumber'], 0, 100);
                 $course->summary        = $remote['summary'];
                 $course->summaryformat  = empty($remote['summaryformat']) ? FORMAT_MOODLE : (int)$remote['summaryformat'];
-                $course->format         = substr($remote['format'], 0, 100);
+                $course->format         = 'weeks';//substr($remote['format'], 0, 100);
                 $course->showgrades     = (int)$remote['showgrades'];
                 $course->newsitems      = (int)$remote['newsitems'];
                 $course->marker         = (int)$remote['marker'];

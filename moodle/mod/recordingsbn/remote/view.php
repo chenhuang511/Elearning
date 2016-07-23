@@ -8,7 +8,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v2 or later
  */
 
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
+require_once(dirname(dirname(dirname(__FILE__))).'/../config.php');
 require_once(dirname(__FILE__).'/locallib.php');
 require_once($CFG->dirroot.'/mod/bigbluebuttonbn/locallib.php');
 
