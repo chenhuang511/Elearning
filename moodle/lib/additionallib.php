@@ -113,7 +113,7 @@ function get_local_assign_record($assignid, $useid = false) {
         return $assignid;
     }
     $idfield = ((int)$assignid === 1 || $useid) ? "id" : "remoteid";
-    $assign = $DB->get_record("assign", array($idfield => $assignid), "*", MUST_EXIST);
+    $assign = $DB->get_record("assign", array($idfield => $assignid), "*");
     //convert_remote_course_record($course, $useid);
     return $assign;
 }

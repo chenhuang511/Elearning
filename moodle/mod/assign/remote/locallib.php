@@ -24,7 +24,9 @@ function get_remote_assign_by_id($assignid, $options = array()){
     ));
 
     if ($resp){
-        $resp->id = (int)get_local_assign_record($resp->id)->id;
+        if(get_local_assign_record($resp->id)){
+            $resp->id = get_local_assign_record($resp->id)->id;
+        }
     }
 
     return $resp;
