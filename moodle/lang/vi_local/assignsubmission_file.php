@@ -25,6 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['configmaxbytes'] = 'Dung lượng tệp tin tối đa';
 $string['enabled'] = 'Tập tin nộp';
 $string['file'] = 'Tập tin nộp';
+$string['maxbytes'] = 'Dung lượng tệp tin tối đa';
 $string['pluginname'] = 'Tập tin nộp';
