@@ -1557,13 +1557,14 @@ class local_mod_forum_external extends external_api
                         )
                     ), 'the params'
                 ),
+                'hostip' => new external_value(PARAM_RAW, 'host ip'),
                 'limitfrom' => new external_value(PARAM_INT, 'the limit from'),
                 'limitnum' => new external_value(PARAM_INT, 'the limit num')
             )
         );
     }
 
-    public static function forum_get_discussions_sql($sql, $parameters, $limitfrom, $limitnum)
+    public static function forum_get_discussions_sql($sql, $parameters, $hostip, $limitfrom, $limitnum)
     {
         global $DB;
         $warnings = array();
@@ -1571,14 +1572,22 @@ class local_mod_forum_external extends external_api
         $params = self::validate_parameters(self::forum_get_discussions_sql_parameters(), array(
             'sql' => $sql,
             'parameters' => $parameters,
+            'hostip' => $hostip,
             'limitfrom' => $limitfrom,
             'limitnum' => $limitnum
         ));
 
+        $host = $DB->get_record('mnet_host', array('ip_address' => $params['hostip']), '*', MUST_EXIST);
+        if(!$host) {
+            $warnings['message'] = "Not found host";
+        }
+
         $arr = array();
         foreach ($params['parameters'] as $p) {
-            $arr = array_merge($arr, array($p['name'] => $p['value']));
+            $arr = array_merge($arr, array($p['value']));
         }
+
+        $arr = array_merge($arr, array($host->id));
 
         $result = array();
 
