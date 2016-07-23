@@ -1663,7 +1663,7 @@ class table_sql extends flexible_table {
                         $row->id = $mapusers[$row->userid];
                         $row->userid = $mapusers[$row->userid];
                     }
-                    if (isset($mappingassign[$row->assignment])) {
+                    if (isset($row->assignment) && isset($mappingassign[$row->assignment])) {
                         $row->assignment = $mappingassign[$row->assignment];
                     }
                 }

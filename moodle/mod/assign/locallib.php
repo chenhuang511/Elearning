@@ -1903,7 +1903,7 @@ class assign {
                             s.timemodified IS NOT NULL AND
                             s.status = :submissionstatus';
             } else {
-                $hostip = $this->gethostip();
+                $hostip = gethostip();
 
                 $rparams['assignid'] = $this->get_instance()->remoteid;
                 $rparams['hostip'] = $hostip;
