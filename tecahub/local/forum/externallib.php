@@ -1548,7 +1548,13 @@ class local_mod_forum_external extends external_api
     {
         return new external_function_parameters(
             array(
-                'sql' => new external_value(PARAM_RAW, 'the query sql'),
+                'postdata' => new external_value(PARAM_RAW, 'the post data'),
+                'allnames' => new external_value(PARAM_RAW, 'the all names'),
+                'umfields' => new external_value(PARAM_RAW, 'the um fields'),
+                'umtable' => new external_value(PARAM_RAW, 'the um table'),
+                'timelimit' => new external_value(PARAM_RAW, 'the time limit'),
+                'groupselect' => new external_value(PARAM_RAW, 'the group select'),
+                'forumsort' => new external_value(PARAM_RAW, 'the forum sort'),
                 'parameters' => new external_multiple_structure(
                     new external_single_structure(
                         array(
@@ -1564,13 +1570,19 @@ class local_mod_forum_external extends external_api
         );
     }
 
-    public static function forum_get_discussions_sql($sql, $parameters, $hostip, $limitfrom, $limitnum)
+    public static function forum_get_discussions_sql($postdata, $allnames, $umfields, $umtable, $timelimit, $groupselect, $forumsort, $parameters, $hostip, $limitfrom, $limitnum)
     {
         global $DB;
         $warnings = array();
 
         $params = self::validate_parameters(self::forum_get_discussions_sql_parameters(), array(
-            'sql' => $sql,
+            'postdata' => $postdata,
+            'allnames' => $allnames,
+            'umfields' => $umfields,
+            'umtable' => $umtable,
+            'timelimit' => $timelimit,
+            'groupselect' => $groupselect,
+            'forumsort' => $forumsort,
             'parameters' => $parameters,
             'hostip' => $hostip,
             'limitfrom' => $limitfrom,
@@ -1582,6 +1594,31 @@ class local_mod_forum_external extends external_api
             $warnings['message'] = "Not found host";
         }
 
+        $postdata_field = $params['postdata'];
+        $allnames_field = $params['allnames'];
+        $umfields_field = $params['umfields'];
+        $umtable_field = $params['umtable'];
+        $timelimit_field = $params['timelimit'];
+        $groupselect_field = $params['groupselect'];
+        $forumsort_field = $params['forumsort'];
+
+        $sql = "SELECT $postdata_field, d.name, d.timemodified, d.usermodified, d.groupid, d.timestart, d.timeend, d.pinned, $allnames_field,
+                   u.email, u.picture, u.imagealt $umfields_field
+              FROM {forum_discussions} d
+                   JOIN {forum_posts} p ON p.discussion = d.id
+                   JOIN {user} u ON p.userid = u.id
+                   $umtable_field
+             WHERE d.forum = ? AND p.parent = 0 AND p.userid IN (SELECT id FROM {user} WHERE mnethostid= ?)";
+
+        if ($timelimit_field != '') {
+            $sql .= " $timelimit_field";
+        }
+        if ($groupselect_field != '') {
+            $sql .= " $groupselect_field";
+        }
+
+        $sql .= " ORDER BY $forumsort_field, d.id DESC";
+
         $arr = array();
         foreach ($params['parameters'] as $p) {
             $arr = array_merge($arr, array($p['value']));
@@ -1590,21 +1627,8 @@ class local_mod_forum_external extends external_api
         $arr = array_merge($arr, array($host->id));
 
         $result = array();
-        $querySQL = "SELECT p.id,p.subject,p.modified,p.discussion,p.userid, d.name, d.timemodified, d.usermodified, d.groupid, d.timestart, d.timeend, d.pinned, u.firstnamephonetic,u.lastnamephonetic,u.middlename,u.alternatename,u.firstname,u.lastname,
-                   u.email, u.picture, u.imagealt , um.firstnamephonetic AS umfirstnamephonetic,um.lastnamephonetic AS umlastnamephonetic,um.middlename AS ummiddlename,um.alternatename AS umalternatename,um.firstname AS umfirstname,um.lastname AS umlastname, um.email AS umemail, um.picture AS umpicture,
-                        um.imagealt AS umimagealt
-              FROM {forum_discussions} d
-                   JOIN {forum_posts} p ON p.discussion = d.id
-                   JOIN {user} u ON p.userid = u.id
-                    LEFT JOIN {user} um ON (d.usermodified = um.id)
-             WHERE d.forum = ? AND p.parent = 0 AND p.userid IN (SELECT id FROM {user} WHERE mnethostid= ?)
-                    
-          ORDER BY d.pinned DESC, CASE WHEN d.timemodified < d.timestart
-                 THEN d.timestart
-                 ELSE d.timemodified
-                 END DESC, d.id DESC";
 
-        $data = $DB->get_records_sql($querySQL, $arr);
+        $data = $DB->get_records_sql($sql, $arr, $params['limitfrom'], $params['limitnum']);
 
         if (!$data) {
             $data = array();

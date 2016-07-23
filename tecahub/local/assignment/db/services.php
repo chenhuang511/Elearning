@@ -338,5 +338,13 @@ $functions = array(
         'type'		  => 'read',
         'ajax'		  => true
     ),
+    'local_mod_assign_grades_get_grades' => array(
+        'classname'	  => 'local_mod_assign_external',
+        'methodname'  => 'get_grades',
+        'classpath'	  => 'local/assignment/externallib.php',
+        'description' => 'grade_get_greate are modified',
+        'type'		  => 'read',
+        'ajax'		  => true
+    ),
 );
 

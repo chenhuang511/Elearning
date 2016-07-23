@@ -164,7 +164,7 @@ class grading_app implements templatable, renderable {
         if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
             $export->modehub = true;
         }
-        
+
         return $export;
     }
 
