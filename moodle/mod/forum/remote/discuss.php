@@ -162,9 +162,10 @@ if ($move > 0 and confirm_sesskey()) {
     $result = update_remote_mdl_forum_by("forum_read", $prs, $updata);
 
     // Delete the existing per-discussion subscriptions and replace them with the newly calculated ones.
+    $user = get_remote_mapping_user($userid);
     $data = array();
     $data['data[0][name]'] = 'userid';
-    $data['data[0][value]'] = $userid;
+    $data['data[0][value]'] = $user[0]->id;
     $data['data[1][name]'] = 'discussion';
     $data['data[1][value]'] = $discussion->id;
     $data['data[2][name]'] = 'retry';
@@ -358,12 +359,12 @@ if ($forum->type != 'single'
     // single discussion forum can't be moved.
     $modinfo = get_fast_modinfo($course);
     if (isset($modinfo->instances['forum'])) {
-        $forummenu = array();
+        $prs = array();
         // Check forum types and eliminate simple discussions.
-        $forummenu['parameters[0][name]'] = "course";
-        $forummenu['parameters[0][value]'] = $course->id;
-        $forumcheck = get_remote_list_forum_posts_by($forummenu, $sort, '0,0');
-        //$forumcheck = $DB->get_remote('forum', array('course' => $course->id), '', 'id, type');
+        $prs['parameters[0][name]'] = "course";
+        $prs['parameters[0][value]'] = $course->id;
+        $forumcheck = get_remote_list_forum_by($prs);
+        //$forumcheck = $DB->get_records('forum', array('course' => $course->id),'', 'id, type');
         foreach ($modinfo->instances['forum'] as $forumcm) {
             if (!$forumcm->uservisible || !has_capability('mod/forum:startdiscussion',
                     context_module::instance($forumcm->id))

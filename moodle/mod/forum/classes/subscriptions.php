@@ -643,7 +643,12 @@ class subscriptions
             $i = 0;
             foreach ($sub as $key => $val) {
                 $subdata["data[$i][name]"] = "$key";
-                $subdata["data[$i][value]"] = $val;
+                if ($key == "userid") {
+                    $user = get_remote_mapping_user($val);
+                    $subdata["data[$i][value]"] = $user[0]->id;
+                } else {
+                    $subdata["data[$i][value]"] = $val;
+                }
                 $i++;
             }
 
@@ -865,9 +870,11 @@ class subscriptions
                 $subscription->preference = time();
 
                 if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+
+                    $user = get_remote_mapping_user($userid);
                     $data = array();
                     $data['data[0][name]'] = "userid";
-                    $data['data[0][value]'] = $userid;
+                    $data['data[0][value]'] = $user[0]->id;
                     $data['data[1][name]'] = "forum";
                     $data['data[1][value]'] = $discussion->forum;
                     $data['data[2][name]'] = "discussion";
@@ -963,7 +970,7 @@ class subscriptions
                     $data = array();
                     $data['data[0][name]'] = "preference";
                     $data['data[0][value]'] = self::FORUM_DISCUSSION_UNSUBSCRIBED;
-                    $result = update_remote_mdl_forum("", $subscription->id, $data);
+                    $result = update_remote_mdl_forum("forum_discussion_subs", $subscription->id, $data);
                 } else {
                     $DB->update_record('forum_discussion_subs', $subscription);
                 }
@@ -975,9 +982,10 @@ class subscriptions
                 $subscription->preference = self::FORUM_DISCUSSION_UNSUBSCRIBED;
 
                 if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+                    $user = get_remote_mapping_user($userid);
                     $data = array();
                     $data['data[0][name]'] = "userid";
-                    $data['data[0][value]'] = $userid;
+                    $data['data[0][value]'] = $user[0]->id;
                     $data['data[1][name]'] = "forum";
                     $data['data[1][value]'] = $discussion->forum;
                     $data['data[2][name]'] = "discussion";
