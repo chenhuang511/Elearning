@@ -1761,7 +1761,7 @@ class local_mod_forum_external extends external_api
         );
     }
 
-    public static function forum_discussions_user_has_posted_in($sql, $parameters, $limitfrom, $limitnum)
+    public static function forum_count_discussion_replies_sql($sql, $parameters, $limitfrom, $limitnum)
     {
         global $DB;
         $warnings = array();
