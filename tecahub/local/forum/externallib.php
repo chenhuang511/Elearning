@@ -2020,13 +2020,13 @@ class local_mod_forum_external extends external_api
             $sql .= " AND p.userid IN (SELECT id FROM {user} WHERE mnethostid = ?)";
         }
 
-        $sql .= "ORDER BY $sort_field";
+        $sql .= " ORDER BY $sort_field";
 
         $arr = array();
         foreach ($params['parameters'] as $p) {
-            $arr = array_merge($arr, array($p['name'] => $p['value']));
+            $arr = array_merge($arr, array($p['value']));
         }
-        $arr = array_merge($arr, array('mnethostid' => $host->id));
+        $arr = array_merge($arr, array($host->id));
 
         $result = array();
 
