@@ -2013,6 +2013,12 @@ class local_mod_forum_external extends external_api
                                           LEFT JOIN {user} u ON p.userid = u.id
                                           $tr_join
                                     WHERE p.discussion = ?";
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['value']));
+        }
+
         $host = new stdClass();
         if ($params['hostip'] != '') {
             $host = $DB->get_record('mnet_host', array('ip_address' => $params['hostip']), '*', MUST_EXIST);
@@ -2020,15 +2026,10 @@ class local_mod_forum_external extends external_api
 
         if ($host) {
             $sql .= " AND p.userid IN (SELECT id FROM {user} WHERE mnethostid = ?)";
+            $arr = array_merge($arr, array($host->id));
         }
 
         $sql .= " ORDER BY $sort_field";
-
-        $arr = array();
-        foreach ($params['parameters'] as $p) {
-            $arr = array_merge($arr, array($p['value']));
-        }
-        $arr = array_merge($arr, array($host->id));
 
         $result = array();
 
