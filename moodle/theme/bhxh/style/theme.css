@@ -19,6 +19,34 @@ h1, h2, h3, h4, h5, h6 {
 .quizattemptcounts a, .resourceworkaround a, .introattachments-image div a, .box a, .assignment-info-fix a{
     color: #337ab7;
 }
+.boxwidthwide a{
+    color: #fff;
+    background-color: #337ab7;
+    border-color: #2e6da4;
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: normal;
+    text-align: center;
+    vertical-align: middle;
+    touch-action: manipulation;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    border-radius: 4px;
+    -webkit-user-select: none;
+}
+.boxwidthwide a:hover{
+    color: #FFFFFF;
+    text-decoration:none;
+    background-color: #4F1CD1;
+}
+.mdl-align a{
+    color: #337ab7;
+}
 a {
     color: #333;
 }
