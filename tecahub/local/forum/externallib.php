@@ -1716,10 +1716,10 @@ class local_mod_forum_external extends external_api
 
         $host = $DB->get_record('mnet_host', array('ip_address' => $params['hostip']), '*', MUST_EXIST);
 
-        if(!$host) {
+        if (!$host) {
             $warnings['message'] = "Not found host";
         }
-        
+
         $arr = array();
         foreach ($params['parameters'] as $p) {
             $arr = array_merge($arr, array($p['value']));
@@ -1761,7 +1761,7 @@ class local_mod_forum_external extends external_api
         );
     }
 
-    public static function forum_count_discussion_replies_sql($sql, $parameters, $limitfrom, $limitnum)
+    public static function forum_discussions_user_has_posted_in($sql, $parameters, $limitfrom, $limitnum)
     {
         global $DB;
         $warnings = array();
@@ -2046,5 +2046,50 @@ class local_mod_forum_external extends external_api
                 'warnings' => new external_warnings()
             )
         );
+    }
+
+    public static function forum_user_has_posted_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'sql' => new external_value(PARAM_RAW, 'the query sql'),
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                )
+            )
+        );
+    }
+
+    public static function forum_user_has_posted($sql, $parameters)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::forum_user_has_posted_parameters(), array(
+            'sql' => $sql,
+            'parameters' => $parameters
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $element) {
+            $arr = array_merge($arr, array($element['name'] => $element['value']));
+        }
+
+        $result = array();
+
+        $result['status'] = $DB->record_exists_sql($sql, $arr);
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function forum_user_has_posted_returns()
+    {
+        return self::check_record_forum_exists_returns();
     }
 }

@@ -250,4 +250,12 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_forum_user_has_posted' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'forum_user_has_posted',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'check forum user has posted',
+        'type' => 'read',
+        'ajax' => true
+    ),
 );
