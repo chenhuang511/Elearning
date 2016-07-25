@@ -556,19 +556,21 @@ class core_admin_renderer extends plugin_renderer_base {
             return '';
         }
 
-        if (empty($CFG->cronclionly)) {
-            $url = new moodle_url('/admin/cron.php');
-            if (!empty($CFG->cronremotepassword)) {
-                $url = new moodle_url('/admin/cron.php', array('password' => $CFG->cronremotepassword));
+        if (isset($CFG->showcroninfo) && $CFG->showcroninfo) {
+            if (empty($CFG->cronclionly)) {
+                $url = new moodle_url('/admin/cron.php');
+                if (!empty($CFG->cronremotepassword)) {
+                    $url = new moodle_url('/admin/cron.php', array('password' => $CFG->cronremotepassword));
+                }
+
+                return $this->warning(get_string('cronwarning', 'admin', $url->out()) . '&nbsp;' .
+                    $this->help_icon('cron', 'admin'));
             }
 
-            return $this->warning(get_string('cronwarning', 'admin', $url->out()) . '&nbsp;' .
-                    $this->help_icon('cron', 'admin'));
-        }
-
-        // $CFG->cronclionly is not empty: cron can run only from CLI.
-        return $this->warning(get_string('cronwarningcli', 'admin') . '&nbsp;' .
+            // $CFG->cronclionly is not empty: cron can run only from CLI.
+            return $this->warning(get_string('cronwarningcli', 'admin') . '&nbsp;' .
                 $this->help_icon('cron', 'admin'));
+        }
     }
 
     /**
@@ -765,8 +767,8 @@ class core_admin_renderer extends plugin_renderer_base {
      * @return string HTML to output.
      */
     protected function registration_warning($registered) {
-
-        if (!$registered) {
+        global $CFG;
+        if (!$registered && (isset($CFG->registrationsite) && $CFG->registrationsite)) {
 
             $registerbutton = $this->single_button(new moodle_url('/admin/registration/register.php',
                     array('huburl' =>  HUB_MOODLEORGHUBURL, 'hubname' => 'Moodle.org')),
