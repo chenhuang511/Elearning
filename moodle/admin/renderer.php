@@ -765,8 +765,8 @@ class core_admin_renderer extends plugin_renderer_base {
      * @return string HTML to output.
      */
     protected function registration_warning($registered) {
-
-        if (!$registered) {
+        global $CFG;
+        if (!$registered && (isset($CFG->registrationsite) && $CFG->registrationsite)) {
 
             $registerbutton = $this->single_button(new moodle_url('/admin/registration/register.php',
                     array('huburl' =>  HUB_MOODLEORGHUBURL, 'hubname' => 'Moodle.org')),
