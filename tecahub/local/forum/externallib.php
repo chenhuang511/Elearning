@@ -1969,7 +1969,7 @@ class local_mod_forum_external extends external_api
         return new external_function_parameters(
             array(
                 'allnames' => new external_value(PARAM_RAW, 'get name field'),
-                'tracking' => new external_value(PARAM_BOOL, 'tracking'),
+                'tracking' => new external_value(PARAM_INT, 'tracking'),
                 'sort' => new external_value(PARAM_RAW, 'order by'),
                 'hostip' => new external_value(PARAM_HOST, 'host IP'),
                 'parameters' => new external_multiple_structure(
@@ -2000,7 +2000,7 @@ class local_mod_forum_external extends external_api
         $tr_sel = "";
         $tr_join = "";
 
-        if ($params['tracking']) {
+        if ($params['tracking'] || $params['tracking'] > 0) {
             $tr_sel = ", fr.id AS postread";
             $tr_join = "LEFT JOIN {forum_read} fr ON (fr.postid = p.id AND fr.userid = ?)";
         }
