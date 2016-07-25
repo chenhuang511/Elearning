@@ -258,4 +258,12 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_forum_user_has_posted_discussion' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'forum_user_has_posted_discussion',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'check forum user has posted discussion',
+        'type' => 'read',
+        'ajax' => true
+    ),
 );
