@@ -195,6 +195,9 @@ body.jsenabled .questionflagcheckbox {
     display: block;
     margin: 0.5em 0;
 }
+.othernav-mcboy{
+    color:#337ab7;
+}
 
 /* Countdown timer. */
 #quiz-timer {

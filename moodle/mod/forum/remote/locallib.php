@@ -419,14 +419,14 @@ function get_remote_forum_get_discussion_neighbours_sql($sql, $parameters, $stri
     return $result->neighbour;
 }
 
-function get_remote_forum_get_all_discussion_posts_sql($sql, $parameters)
+function get_remote_forum_get_all_discussion_posts_sql($allnames, $tracking, $sort, $ishub = true, $parameters)
 {
     $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_forum_get_all_discussion_posts_sql',
-            'params' => array_merge(array('sql' => $sql), $parameters)
+            'params' => array_merge(array('allnames' => $allnames, 'tracking' => $tracking, 'sort' => $sort, 'hostip' => $ishub ? gethostip() : ''), $parameters)
         )
     );
 
@@ -437,5 +437,33 @@ function get_remote_forum_get_all_discussion_posts_sql($sql, $parameters)
     }
 
     return $posts;
+}
+
+function get_remote_forum_user_has_posted($sql, $parameters)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_forum_user_has_posted',
+            'params' => array_merge(array('sql' => $sql), $parameters)
+        )
+    );
+
+    return $result->status;
+}
+
+function get_remote_forum_user_has_posted_discussion($sql, $parameters)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_forum_user_has_posted_discussion',
+            'params' => array_merge(array('sql' => $sql), $parameters)
+        )
+    );
+
+    return $result->status;
 }
 

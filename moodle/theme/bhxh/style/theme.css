@@ -16,13 +16,43 @@ h1, h2, h3, h4, h5, h6 {
     color: #097eaf;
     font-weight: bold;
 }
-.remote-link-action, .quizattemptcounts a, .resourceworkaround a, .introattachments-image div a, .box a, .assignment-info-fix a{
+.quizattemptcounts a, .resourceworkaround a, .introattachments-image div a, .box a, .assignment-info-fix a{
     color: #337ab7;
+}
+.boxwidthwide a, .mod_quiz-next-nav{
+    color: #fff;
+    background-color: #337ab7;
+    border-color: #2e6da4;
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: normal;
+    text-align: center;
+    vertical-align: middle;
+    touch-action: manipulation;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    border-radius: 4px;
+    -webkit-user-select: none;
+}
+.boxwidthwide a:hover, .mod_quiz-next-nav:hover{
+    color: #FFFFFF;
+    text-decoration:none;
+    background-color: #4F1CD1;
+}
+.mdl-align a, .row-fluid a, .othernav-mcboy, .endtestlink{
+    color: #337ab7;
+}
+.cell {
+    color: #FF0C0C;
 }
 a {
     color: #333;
 }
-
 a:hover,
 a:active,
 a:focus {
@@ -30,7 +60,7 @@ a:focus {
     outline: none;
 }
 
-
+}
 .dropdown-menu {
     border-color: #e8e3e3;
     border-radius: 0;
@@ -72,12 +102,6 @@ a:focus {
 }
 .userprofile .bhxh-category ul li:nth-last-child(1) {
     height: 20px;
-
-}
-.noti-content-main h2{
-
-    border-bottom: solid 1px #337ab7;
-    padding-bottom: 9px;
 
 }
 #page-user-profile .bhxh-category li {
@@ -550,8 +574,35 @@ a:focus {
 .banner .banner-content {
     width: 100%;
     height: 200px;
-    background: #333 url([[pix:theme|banner/banner-home]]) right center no-repeat;
+    background:url("/theme/image.php/bhxh/theme/1468381503/banner/banner-home-v2") right center no-repeat;
     background-size: cover;
+}
+
+.banner-content.css{
+    background-color: #297fae;
+
+}
+.font{
+    color: #ffffff;
+    font-style: arial;
+}
+.font.d1{
+    padding-top: 10%;
+    font-size: 25px;
+    padding-left: 63%;
+}
+
+.font.d2{
+    padding-top: 5px;
+    font-size: 30px;
+    padding-left: 65%;
+    font-weight: 2px;
+}
+.font.d3{
+    padding-top: 5px;
+    font-size: 35px;
+    padding-left: 67%;
+    font-weight: bolder;
 }
 
 .footer-main .foot-links {
@@ -2697,7 +2748,7 @@ div.backup-section + form,
     font: 12px Arial, Helvetica, sans-serif;
     color: #8e8d8d;
     margin: 0;
-    text-align: right;
+    text-align: left;
 }
 
 .dir-rtl .mform .fdescription.required {

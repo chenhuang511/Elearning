@@ -25,6 +25,7 @@
 namespace mod_forum;
 
 defined('MOODLE_INTERNAL') || die();
+require_once($CFG->dirroot . '/mnet/lib.php');
 require_once($CFG->dirroot . '/mod/forum/remote/locallib.php');
 require_once($CFG->dirroot . '/course/remote/locallib.php');
 
@@ -339,9 +340,10 @@ class subscriptions
 
                 if (!isset(self::$forumcache[$userid][$forumid])) {
                     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+                        $user = get_remote_mapping_user($userid);
                         $params = array();
                         $params['parameters[0][name]'] = "userid";
-                        $params['parameters[0][value]'] = $userid;
+                        $params['parameters[0][value]'] = $user[0]->id;
                         $params['parameters[1][name]'] = "forum";
                         $params['parameters[1][value]'] = $forumid;
                         $isexists = check_remote_record_forum_exists("forum_subscriptions", $params);
@@ -809,9 +811,10 @@ class subscriptions
 
         // First check whether the user is subscribed to the discussion already.
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $user = get_remote_mapping_user($userid);
             $params = array();
             $params['parameters[0][name]'] = "userid";
-            $params['parameters[0][value]'] = $userid;
+            $params['parameters[0][value]'] = $user->id;
             $params['parameters[1][name]'] = "discussion";
             $params['parameters[1][value]'] = $discussion->id;
             $subscription = get_remote_forum_discussion_subs_by($params);
