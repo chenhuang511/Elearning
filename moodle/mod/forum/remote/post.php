@@ -510,7 +510,13 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         $icount = 0;
         foreach ($newdiscussion as $key => $val) {
             $data["data[$icount][name]"] = "$key";
-            $data["data[$icount][value]"] = $val;
+            if ($key == "userid" || $key == "usermodified") {
+                $user = get_remote_mapping_user($post->userid);
+                $data["data[$icount][value]"] = $user[0]->id;
+            } else {
+                $data["data[$icount][value]"] = $val;
+            }
+            $icount++;
         }
 
         $newid = save_remote_mdl_forum('forum_discussions', $data);

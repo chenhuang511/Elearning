@@ -1690,6 +1690,7 @@ class local_mod_forum_external extends external_api
         return new external_function_parameters(
             array(
                 'sql' => new external_value(PARAM_RAW, 'the query sql'),
+                'hostip' => new external_value(PARAM_HOST, 'host ip'),
                 'parameters' => new external_multiple_structure(
                     new external_single_structure(
                         array(
@@ -1702,20 +1703,29 @@ class local_mod_forum_external extends external_api
         );
     }
 
-    public static function get_count_forum_sql($sql, $parameters)
+    public static function get_count_forum_sql($sql, $hostip, $parameters)
     {
         global $DB;
         $warnings = array();
 
         $params = self::validate_parameters(self::get_count_forum_sql_parameters(), array(
             'sql' => $sql,
+            'hostip' => $hostip,
             'parameters' => $parameters
         ));
 
+        $host = $DB->get_record('mnet_host', array('ip_address' => $params['hostip']), '*', MUST_EXIST);
+
+        if(!$host) {
+            $warnings['message'] = "Not found host";
+        }
+        
         $arr = array();
         foreach ($params['parameters'] as $p) {
-            $arr = array_merge($arr, array($p['name'] => $p['value']));
+            $arr = array_merge($arr, array($p['value']));
         }
+
+        $arr = array_merge($arr, array($host->id));
 
         $result = array();
 
