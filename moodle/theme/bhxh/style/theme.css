@@ -16,7 +16,7 @@ h1, h2, h3, h4, h5, h6 {
     color: #097eaf;
     font-weight: bold;
 }
-.remote-link-action, .quizattemptcounts a, .resourceworkaround a, .introattachments-image div a, .box a, .assignment-info-fix a{
+.quizattemptcounts a, .resourceworkaround a, .introattachments-image div a, .box a, .assignment-info-fix a{
     color: #337ab7;
 }
 a {
