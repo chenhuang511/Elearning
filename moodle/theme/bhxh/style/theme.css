@@ -44,7 +44,7 @@ h1, h2, h3, h4, h5, h6 {
     text-decoration:none;
     background-color: #4F1CD1;
 }
-.mdl-align a, .row-fluid a, .othernav-mcboy{
+.mdl-align a, .row-fluid a {
     color: #337ab7;
 }
 a {
