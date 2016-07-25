@@ -1971,7 +1971,7 @@ class local_mod_forum_external extends external_api
                 'allnames' => new external_value(PARAM_RAW, 'get name field'),
                 'tracking' => new external_value(PARAM_INT, 'tracking'),
                 'sort' => new external_value(PARAM_RAW, 'order by'),
-                'hostip' => new external_value(PARAM_HOST, 'host IP'),
+                'hostip' => new external_value(PARAM_RAW, 'host IP'),
                 'parameters' => new external_multiple_structure(
                     new external_single_structure(
                         array(
@@ -2013,8 +2013,10 @@ class local_mod_forum_external extends external_api
                                           LEFT JOIN {user} u ON p.userid = u.id
                                           $tr_join
                                     WHERE p.discussion = ?";
-
-        $host = $DB->get_record('mnet_host', array('ip_address' => $params['hostip']), '*', MUST_EXIST);
+        $host = new stdClass();
+        if ($params['hostip'] != '') {
+            $host = $DB->get_record('mnet_host', array('ip_address' => $params['hostip']), '*', MUST_EXIST);
+        }
 
         if ($host) {
             $sql .= " AND p.userid IN (SELECT id FROM {user} WHERE mnethostid = ?)";
