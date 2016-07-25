@@ -89,6 +89,7 @@ $string['reviewoptionsheading'] = 'Tùy chọn xem lại';
 $string['reviewoverallfeedback'] = 'Phản hồi chung';
 $string['sameasoverall'] = 'Tương tự như tổng điểm';
 $string['showblocks'] = 'Hiển thị các khối của các lần thi';
+$string['showeachpage'] = 'Hiển thị một trang tại một thời điểm';
 $string['showlargeimage'] = 'Hình ảnh lớn';
 $string['shownoimage'] = 'Không hình ảnh';
 $string['showreport'] = 'Hiển thị báo cáo';
