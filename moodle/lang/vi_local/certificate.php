@@ -33,3 +33,4 @@ $string['openwindow'] = 'Click vào nút bên dưới để mở chứng chỉ t
 $string['statement'] = 'Đã hoàn thành khóa học';
 $string['summaryofattempts'] = 'Tóm tắt về chứng chỉ';
 $string['title'] = 'GIẤY CHỨNG NHẬN THÀNH TÍCH';
+$string['viewcertificateviews'] = 'Xem {$a} chứng chỉ được cấp';

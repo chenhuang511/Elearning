@@ -64,6 +64,7 @@ function assignfeedback_file_pluginfile($course,
         if (!$assign = get_remote_assign_by_id($cm->instance)) {
             return false;
         }
+        $assign = get_local_assign_record($assign->id);
     }
 
     if ($assign->id != $record->assignment) {
