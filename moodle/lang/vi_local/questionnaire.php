@@ -26,6 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['activityoverview'] = 'Bạn có câu hỏi quá hạn';
+$string['addquestions'] = 'Thêm các câu hỏi';
 $string['alreadyfilled'] = 'Bạn đã trả lời khảo sát này cho{$a}.';
 $string['anonymous'] = 'Vô danh';
 $string['answerquestions'] = 'Trả lời khảo sát...';
@@ -39,6 +40,7 @@ $string['finished'] = 'Bạn đã trả lời tất cả câu hỏi trong khảo
 $string['missingquestion'] = 'Làm ơn trả lời câu hỏi bắt buộc';
 $string['missingquestions'] = 'Làm ơn trả lời câu hỏi bắt buộc:';
 $string['myresponses'] = 'Câu trả lời của bạn';
+$string['nextpage'] = 'Trang tiếp theo';
 $string['noneinuse'] = 'Phiếu khảo sát này không có câu hỏi nào.';
 $string['non_respondents'] = 'Người dùng chưa nộp trả lời cho khảo sát này';
 $string['noresponses'] = 'Không có câu trả lời';
@@ -53,6 +55,7 @@ $string['overviewnumrespvw'] = 'Câu trả lời';
 $string['overviewnumrespvw1'] = 'Câu trả lời';
 $string['pluginadministration'] = 'Quản lý phiếu khảo sát';
 $string['previewing'] = 'Xem trước phiếu khảo sát';
+$string['previouspage'] = 'Trang trước';
 $string['print'] = 'In câu trả lời';
 $string['questionnaire:deleteresponses'] = 'Xóa trả lời';
 $string['questionnaire:downloadresponses'] = 'Tải về câu trả lời trong tập tin dạng CSV';
