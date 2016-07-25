@@ -2092,4 +2092,49 @@ class local_mod_forum_external extends external_api
     {
         return self::check_record_forum_exists_returns();
     }
+
+    public static function forum_user_has_posted_discussion_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'sql' => new external_value(PARAM_RAW, 'the query sql'),
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                )
+            )
+        );
+    }
+
+    public static function forum_user_has_posted_discussion($sql, $parameters)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::forum_user_has_posted_discussion_parameters(), array(
+            'sql' => $sql,
+            'parameters' => $parameters
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $element) {
+            $arr = array_merge($arr, array($element['name'] => $element['value']));
+        }
+
+        $result = array();
+
+        $result['status'] = $DB->record_exists_sql($sql, $arr);
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function forum_user_has_posted_discussion_returns()
+    {
+        return self::check_record_forum_exists_returns();
+    }
 }
