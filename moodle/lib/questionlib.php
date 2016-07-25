@@ -704,10 +704,10 @@ function question_preload_questions($questionids = null, $extrafields = '', $joi
           {$orderby}";
 
     // Load the questions.
-    $questions = $DB->get_records_sql($sql, $extraparams + $params);
-
-    //hanv: 04/06/2016: get_remote_questions
-    if(!$questions){
+    if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        $questions = $DB->get_records_sql($sql, $extraparams + $params);
+    }else{
+        //hanv: 04/06/2016: get_remote_questions
         $questions = get_remote_question($quizid);
         return $questions;
     }
@@ -733,8 +733,17 @@ function question_preload_questions($questionids = null, $extrafields = '', $joi
  * @return array question objects.
  */
 function question_load_questions($questionids, $extrafields = '', $join = '') {
-    $questions = question_preload_questions($questionids, $extrafields, $join);
-
+    if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+        $quesdata = array();
+        $index = 0;
+        foreach ($questionids as $questionid){
+            $quesdata["questionids[$index]"] = $questionid;
+            $index++;
+        }
+        $questions = get_remote_question_preload_questions($quesdata);
+    }else{
+        $questions = question_preload_questions($questionids, $extrafields, $join, '', '');
+    }
     // Load the question type specific information
     if (!get_question_options($questions)) {
         return 'Could not load the question options';
