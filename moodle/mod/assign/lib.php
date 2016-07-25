@@ -313,13 +313,13 @@ function assign_get_coursemodule_info($coursemodule) {
         if (!$assignment = $DB->get_record('assign', $dbparams, $fields)) {
             return false;
         }
-    } else if(MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+    } else {
         require_once($CFG->dirroot . '/mod/assign/remote/locallib.php');
         if (!$assignment = get_remote_assign_by_id($coursemodule->instance)) {
             return false;
         }
     }
-
+    
     $result = new cached_cm_info();
     $result->name = $assignment->name;
     if ($coursemodule->showdescription) {

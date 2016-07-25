@@ -25,6 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['assignmentsperpage'] = 'Số bài tập mỗi trang';
 $string['listnotupgraded'] = 'Danh sách bài tập chưa được nâng cấp';
 $string['listnotupgraded_desc'] = 'Bạn có thể nâng cấp bài tập cá nhân từ đây';
 $string['pluginname'] = 'Công cụ nâng cấp bài tập';

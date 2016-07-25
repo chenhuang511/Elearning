@@ -60,6 +60,7 @@ class mod_quiz_mod_form extends moodleform_mod {
 
     protected function definition() {
         global $COURSE, $CFG, $DB, $PAGE;
+        $isremote = MOODLE_RUN_MODE == MOODLE_MODE_HOST ? true : false ;
         $quizconfig = get_config('quiz');
         $mform = $this->_form;
 
@@ -67,7 +68,12 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         // Name.
-        $mform->addElement('text', 'name', get_string('name'), array('size'=>'64'));
+        if($isremote){
+            $disable = array();
+        } else {
+            $disable = array('disabled' => 'disabled');
+        }
+        $mform->addElement('text', 'name', get_string('name'), array_merge(array('size'=>'64')));
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);
         } else {

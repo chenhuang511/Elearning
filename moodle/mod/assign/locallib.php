@@ -1733,6 +1733,13 @@ class assign {
      * @return int number of matching submissions
      */
     public function count_submissions_need_grading() {
+        global $DB;
+
+        if ($this->get_instance()->teamsubmission) {
+            // This does not make sense for group assignment because the submission is shared.
+            return 0;
+        }
+
         if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
             $hostip = gethostip();
 
@@ -1743,13 +1750,6 @@ class assign {
             $result = get_remote_count_submissions_need_grading_by_host_id($rparams);
 
             return $result;
-        }
-
-        global $DB;
-
-        if ($this->get_instance()->teamsubmission) {
-            // This does not make sense for group assignment because the submission is shared.
-            return 0;
         }
 
         $currentgroup = groups_get_activity_group($this->get_course_module(), true);
@@ -3333,20 +3333,8 @@ class assign {
             $grades = $DB->get_records('assign_grades', $params, 'attemptnumber DESC', '*', 0, 1);
         }
         else {
+            $params['mode'] = 'DESC';
             $grades = get_remote_assign_grades_by_assignid_userid($params);
-//            $adminid = reset(explode(',', $CFG->siteadmins));
-
-            if ($grades){
-                foreach ($grades as $grade) {
-                    $grade->userid = $userid;
-                    if (isset($grade->grader)) {
-                        $grader = $DB->get_record('user', array('email' => $grade->grader));
-                        $grade->grader = $grader->id;
-                        // Check if not found on host then return admin host
-//                        !$grader ? $grade->grader = (int)$adminid : $grade->grader = $grader->id;
-                    }
-                }
-            }
         }
 
         if ($grades) {
@@ -4123,8 +4111,11 @@ class assign {
         foreach ($notices as $notice) {
             $o .= $this->get_renderer()->notification($notice);
         }
-
-        $url = new moodle_url('/mod/assign/view.php', array('id'=>$this->get_course_module()->id, 'action'=>'view'));
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $url = new moodle_url('/mod/assign/view.php', array('id'=>$this->get_course_module()->id, 'action'=>'view'));
+        } else {
+            $url = new moodle_url('/mod/assign/remote/view.php', array('id'=>$this->get_course_module()->id, 'action'=>'view'));
+        }
         $o .= $this->get_renderer()->continue_button($url);
 
         $o .= $this->view_footer();
@@ -4700,42 +4691,21 @@ class assign {
 
         $instance = $this->get_instance();
         $grade = $this->get_user_grade($user->id, false);
-        $gradingstatus = $this->get_grading_status($user->id);
-
-        $gradinginfo = grade_get_grades($this->get_course()->id,
-                                    'mod',
-                                    'assign',
-                                    $instance->id,
-                                    $user->id);
-                 
-        // Check on hub
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-            $grader = null;
-            $feedback = get_remote_get_submission_status($instance->id, $user->id)->feedback;
-
-            if (!$feedback){
-                return;
-            }
-
-            $grader = $DB->get_record('user', array('email' => $feedback->grade->grader));
-
-//            $adminid = reset(explode(',', $CFG->siteadmins));
-//            if(!$grader)
-//                $grader = $DB->get_record('user', array('id' => (int)$adminid));
-
-            unset($feedback->plugins);
-
-            $feedbackstatus = new assign_feedback_status($feedback->gradefordisplay,
-                $feedback->gradeddate,
-                $grader,
-                $this->get_feedback_plugins(),
-                $feedback->grade,
+        $gradingstatus = $this->get_grading_status($user->id);   
+        
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $gradinginfo = grade_get_grades($this->get_course()->id,
+                'mod',
+                'assign',
+                $instance->id,
+                $user->id);
+        } else {
+            $gradinginfo = get_remote_assign_grades_get_grades($this->get_course()->remoteid,
+                'mod_assign',
                 $this->get_course_module()->id,
-                $this->get_return_action(),
-                $this->get_return_params());
-            return $feedbackstatus;
+                array($user->id));
         }
-
+        
         $gradingitem = null;
         $gradebookgrade = null;
         if (isset($gradinginfo->items[0])) {
@@ -4810,7 +4780,6 @@ class assign {
     public function get_assign_attempt_history_renderable($user) {
         $allsubmissions = $this->get_all_submissions($user->id);
         $allgrades = $this->get_all_grades($user->id);
-
         $history = new assign_attempt_history($allsubmissions,
                                               $allgrades,
                                               $this->get_submission_plugins(),
@@ -4842,16 +4811,16 @@ class assign {
                 $o .= $this->get_renderer()->render($submissionstatus);
             }
             // If there is a visible grade, show the feedback.
-//            $feedbackstatus = $this->get_assign_feedback_status_renderable($user);
-//            if ($feedbackstatus) {
-//                $o .= $this->get_renderer()->render($feedbackstatus);
-//            }
+            $feedbackstatus = $this->get_assign_feedback_status_renderable($user);
+            if ($feedbackstatus) {
+                $o .= $this->get_renderer()->render($feedbackstatus);
+            }
 //
-//            // If there is more than one submission, show the history.
-//            $history = $this->get_assign_attempt_history_renderable($user);
-//            if (count($history->submissions) > 1) {
-//                $o .= $this->get_renderer()->render($history);
-//            }
+            // If there is more than one submission, show the history.
+            $history = $this->get_assign_attempt_history_renderable($user);
+            if (count($history->submissions) > 1) {
+                $o .= $this->get_renderer()->render($history);
+            }
         }
         return $o;
     }
@@ -4913,25 +4882,14 @@ class assign {
             $userid = $USER->id;
         }
 
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-            $grades = array();
-            $submissionstatus = get_remote_get_submission_status($this->get_instance()->id, $userid);
-
-            foreach($submissionstatus->previousattempts as $previousattemp){
-                // Switch grader on hub to host
-                $grader = $DB->get_record('user', array('email' => $previousattemp->grade->grader));
-                $previousattemp->grade->grader = $grader;
-
-                $grades[$previousattemp->grade->id] = $previousattemp->grade;
-            }
-            ksort($grades);
-
-            return $grades;
-        }
-
         $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid);
-
-        $grades = $DB->get_records('assign_grades', $params, 'attemptnumber ASC');
+       
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $grades = $DB->get_records('assign_grades', $params, 'attemptnumber ASC');
+        } else {
+            $params['mode'] = 'ASC';
+            $grades =  get_remote_assign_grades_by_assignid_userid($params);
+        }
 
         $gradercache = array();
         $cangrade = has_capability('mod/assign:grade', $this->get_context());
@@ -4940,11 +4898,18 @@ class assign {
         $gradingmanager = get_grading_manager($this->get_context(), 'mod_assign', 'submissions');
         $controller = $gradingmanager->get_active_controller();
 
-        $gradinginfo = grade_get_grades($this->get_course()->id,
-                                        'mod',
-                                        'assign',
-                                        $this->get_instance()->id,
-                                        $userid);
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $gradinginfo = grade_get_grades($this->get_course()->id,
+                'mod',
+                'assign',
+                $this->get_instance()->id,
+                $userid);
+        } else {
+            $gradinginfo = get_remote_assign_grades_get_grades($this->get_course()->remoteid,
+                                                            'mod_assign',
+                                                            $this->get_course_module()->id,
+                                                            array($userid));
+        }
 
         $gradingitem = null;
         if (isset($gradinginfo->items[0])) {
@@ -4974,7 +4939,7 @@ class assign {
             }
 
         }
-
+                   
         return $grades;
     }
 
@@ -5011,8 +4976,12 @@ class assign {
             // Return the submissions ordered by attempt.
             $submissions = $DB->get_records('assign_submission', $params, 'attemptnumber ASC');
         } else {
-            $params['mode'] = 'ASC';
-            $submissions = get_submission_by_assignid_userid_groupid($params);
+            if ($this->get_instance()->teamsubmission) {
+                $submissions = $DB->get_records('assign_submission', $params, 'attemptnumber ASC');
+            } else {
+                $params['mode'] = 'ASC';
+                $submissions = get_submission_by_assignid_userid_groupid($params);
+            }
         }
 
         return $submissions;
@@ -5118,7 +5087,7 @@ class assign {
 
         if (MOODLE_RUN_MODE === MOODLE_MODE_HOST || $CFG->nonajax) {
             $o .= $this->view_footer();
-        }else{
+        } else {
             $o .= $this->get_renderer()->footer(true);
         }
 
@@ -5293,7 +5262,11 @@ class assign {
             foreach ($team as $member) {
                 $membersubmission = $this->get_user_submission($member->id, true, $submission->attemptnumber);
                 $membersubmission->status = ASSIGN_SUBMISSION_STATUS_REOPENED;
-                $result = $DB->update_record('assign_submission', $membersubmission) && $result;
+                if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+                    $result = $DB->update_record('assign_submission', $membersubmission) && $result;
+                } else {
+                    $result = update_remote_submission($membersubmission) && $result;
+                }
             }
             $result = $DB->update_record('assign_submission', $submission) && $result;
         }
@@ -6870,7 +6843,7 @@ class assign {
             return true;
         }
         if ($data = $mform->get_data()) {
-                return $this->save_submission($data, $notices);
+            return $this->save_submission($data, $notices);
         }
         return false;
     }
@@ -6899,13 +6872,10 @@ class assign {
                 $this->get_instance()->id,
                 array($userid));
         } else {
-            $ruser = get_remote_mapping_user($userid);
-
-            $gradinginfo = core_grades_get_grades($this->get_course()->remoteid, 'mod_assign' , $this->get_course_module()->id, array($ruser[0]->id));
-            foreach ($gradinginfo->items[0]->grades as $studentid => $studentgrade){
-                $gradinginfo->items[0]->grades[$studentgrade->userid] = $studentgrade;
-                unset($gradinginfo->items[0]->grades[$studentid]);
-            }
+            $gradinginfo = get_remote_assign_grades_get_grades($this->get_course()->remoteid,
+                                                    'mod_assign',
+                                                    $this->get_course_module()->id,
+                                                    array($userid));
         }
 
         if (!$gradinginfo) {
@@ -6915,13 +6885,9 @@ class assign {
         if (!isset($gradinginfo->items[0]->grades[$userid])) {
             return false;
         }
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-            $gradingdisabled = $gradinginfo->items[0]->grades[$userid]->locked ||
-                $gradinginfo->items[0]->grades[$userid]->overridden;
-        } else {
-            $gradingdisabled = $gradinginfo->items[0]->grades[$ruser[0]->id]->locked ||
-                $gradinginfo->items[0]->grades[$ruser[0]->id]->overridden;
-        }
+        $gradingdisabled = $gradinginfo->items[0]->grades[$userid]->locked ||
+            $gradinginfo->items[0]->grades[$userid]->overridden;
+
         return $gradingdisabled;
     }
 
@@ -7066,13 +7032,10 @@ class assign {
                 $this->get_instance()->id,
                 $userid);
         } else{
-            $ruser = get_remote_mapping_user($userid);
-
-            $gradinginfo = core_grades_get_grades($this->get_course()->remoteid, 'mod_assign' , $this->get_course_module()->id, array($ruser[0]->id) );
-            foreach ($gradinginfo->items[0]->grades as $studentid => $studentgrade){
-                $gradinginfo->items[0]->grades[$studentgrade->userid] = $studentgrade;
-                unset($gradinginfo->items[0]->grades[$studentid]);
-            }
+            $gradinginfo = get_remote_assign_grades_get_grades($this->get_course()->remoteid,
+                                                            'mod_assign',
+                                                            $this->get_course_module()->id,
+                                                            array($userid));
         }
         //@ TODO: Handle outcome on host
         if (!empty($CFG->enableoutcomes)) {
@@ -7104,28 +7067,16 @@ class assign {
             $urlparams = array('id'=>$this->get_course()->id);
             $url = new moodle_url('/grade/report/grader/index.php', $urlparams);
             $usergrade = '-';
-            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-                if (isset($gradinginfo->items[0]->grades[$userid]->str_grade)) {
-                    $usergrade = $gradinginfo->items[0]->grades[$userid]->str_grade;
-                }
-            }else{
-                if (isset($gradinginfo->items[0]->grades[$ruser[0]->id]->str_grade)) {
-                    $usergrade = $gradinginfo->items[0]->grades[$ruser[0]->id]->str_grade;
-                }
+            if (isset($gradinginfo->items[0]->grades[$userid]->str_grade)) {
+                $usergrade = $gradinginfo->items[0]->grades[$userid]->str_grade;
             }
             $gradestring = $this->get_renderer()->action_link($url, $usergrade);
         } else {
             $usergrade = '-';
-            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
-                if (isset($gradinginfo->items[0]->grades[$userid]) &&
-                    !$gradinginfo->items[0]->grades[$userid]->hidden) {
-                    $usergrade = $gradinginfo->items[0]->grades[$userid]->str_grade;
-                }
-            } else {
-                if (isset($gradinginfo->items[0]->grades[$ruser[0]->id]) &&
-                    !$gradinginfo->items[0]->grades[$ruser[0]->id]->hidden) {
-                    $usergrade = $gradinginfo->items[0]->grades[$ruser[0]->id]->str_grade;
-                }
+            if (isset($gradinginfo->items[0]->grades[$userid]) &&
+                !$gradinginfo->items[0]->grades[$userid]->hidden
+            ) {
+                $usergrade = $gradinginfo->items[0]->grades[$userid]->str_grade;
             }
             $gradestring = $usergrade;
         }

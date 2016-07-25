@@ -228,6 +228,26 @@ function get_remote_list_forum_posts_by($parameters, $sort = '', $limitfrom = 0,
     return $posts;
 }
 
+function get_remote_list_forum_posts_sql($parameters, $sort = '')
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_list_forum_posts_sql',
+            'params' => array_merge(array('hostip' => gethostip(), 'sort' => $sort), $parameters)
+        )
+    );
+
+    $posts = array();
+
+    foreach ($result->posts as $post) {
+        $posts[$post->id] = $post;
+    }
+
+    return $posts;
+}
+
 function get_remote_list_forum_read_by($parameters, $sort = '', $limitfrom = 0, $limitnum = 0)
 {
     $result = moodle_webservice_client(
@@ -318,14 +338,14 @@ function check_remote_record_forum_exists($modname, $parameters)
     return $result->status;
 }
 
-function get_remote_forum_get_discussions_sql($sql, $parameters, $limitfrom = 0, $limitnum = 0)
+function get_remote_forum_get_discussions_sql($postdata, $allnames, $umfields, $umtable, $timelimit, $groupselect, $forumsort, $parameters, $limitfrom = 0, $limitnum = 0)
 {
     $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_forum_get_discussions_sql',
-            'params' => array_merge(array('sql' => $sql, 'limitfrom' => $limitfrom, 'limitnum' => $limitnum), $parameters)
+            'params' => array_merge(array('postdata' => $postdata, 'allnames' => $allnames, 'umfields' => $umfields, 'umtable' => $umtable, 'timelimit' => $timelimit, 'groupselect' => $groupselect, 'forumsort' => $forumsort, 'hostip' => gethostip(), 'limitfrom' => $limitfrom, 'limitnum' => $limitnum), $parameters)
         )
     );
 
@@ -345,7 +365,7 @@ function get_remote_count_forum_sql($sql, $parameters)
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_count_forum_sql',
-            'params' => array_merge(array('sql' => $sql), $parameters)
+            'params' => array_merge(array('sql' => $sql, 'hostip' => gethostip()), $parameters)
         )
     );
 

@@ -53,4 +53,4 @@ $string['managebadges'] = 'Quản lí các huy hiệu';
 $string['mybadges'] = 'Huy hiệu của tôi';
 $string['nobadges'] = 'Không có huy hiệu.';
 $string['selecting'] = 'Với các huy hiệu được chọn';
-$string['sitebadges'] = 'Huy hiệu trang';
+$string['sitebadges'] = 'Huy hiệu';

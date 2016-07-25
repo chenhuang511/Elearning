@@ -23,12 +23,6 @@ function get_remote_assign_by_id($assignid, $options = array()){
         )
     ));
 
-    if ($resp){
-        if(get_local_assign_record($resp->id)){
-            $resp->id = get_local_assign_record($resp->id)->id;
-        }
-    }
-
     return $resp;
 }
 
@@ -104,7 +98,8 @@ function get_remote_onlinetext_submission($submissionid, $options = array()) {
             'params' => array('submissionid' => $submissionid),
         )
     ), false);
-    if (isset($resp->onlinetext)){
+
+    if (!isset($resp->onlinetext)){
         return 0;
     }
 
@@ -300,7 +295,8 @@ function get_remote_assign_grades_by_id($id){
  * @return stdClass $results . list grades
  */
 function get_remote_assign_grades_by_assignid_userid($params){
-    
+    global $DB;
+
     if(!isset($params['attemptnumber'])){
         $params['attemptnumber'] = -1;
     }
@@ -324,8 +320,13 @@ function get_remote_assign_grades_by_assignid_userid($params){
     foreach ($resp->grades as $grade){
         $grade->userid = $userid;
         $grade->assignment = $assignment;
+        if (isset($grade->grader)) {
+            $grader = $DB->get_record('user', array('email' => $grade->grader));
+            $grade->grader = $grader->id;
+        }
         $results[$grade->id] = $grade;
     }
+    
     return $results;
 }
 
@@ -653,20 +654,39 @@ function get_remote_submission_info_for_participants($assignment, $emailparticip
  *
  * @return stdClass $resp - Returns student course total grade and grades for activities
  */
-function core_grades_get_grades($courseid, $component, $activityid, $userids){
+function get_remote_assign_grades_get_grades($courseid, $component, $activityid, $userids){
+    global $DB;
+    $ruserids = array();
+    foreach ($userids as $userid) {
+        $ruserids[] = get_remote_mapping_user($userid)[0]->id;
+    }
+
     $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
-            'function_name' => 'core_grades_get_grades',
+            'function_name' => 'local_mod_assign_grades_get_grades',
             'params' => array(
                 'courseid' => $courseid,
                 'component' => $component,
                 'activityid' => $activityid,
-                'userids' => $userids,
+                'userids' => $ruserids,
             ),
         ), false
     );
+
+
+    foreach ($resp->items as $item){
+        foreach ($item->grades as $studentid => $studentgrades){
+            $student = $DB->get_record('user', array('email' => $studentgrades->useremail));
+            $studentgrades->userid = $student->id;
+            unset($studentgrades->useremail);
+
+            $item->grades[$student->id] = $studentgrades;
+            unset($item->grades[$studentid]);
+        }
+    }
+     
     return $resp;
 }
 

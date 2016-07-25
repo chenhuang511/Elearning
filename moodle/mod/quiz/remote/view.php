@@ -157,6 +157,7 @@ $viewobj->mygrade = $mygrade;
 
 /**
  * override mygrade follow local setting
+ * @todo: Need check handel $mygrade
  */
 $gradearray = array();
 foreach ($viewobj->attemptobjs as $attemptobj) {
