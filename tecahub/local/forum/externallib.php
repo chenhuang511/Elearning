@@ -2019,12 +2019,11 @@ class local_mod_forum_external extends external_api
             $arr = array_merge($arr, array($p['value']));
         }
 
-        $host = new stdClass();
         if ($params['hostip'] != '') {
             $host = $DB->get_record('mnet_host', array('ip_address' => $params['hostip']), '*', MUST_EXIST);
         }
 
-        if ($host) {
+        if (isset($host) && $host) {
             $sql .= " AND p.userid IN (SELECT id FROM {user} WHERE mnethostid = ?)";
             $arr = array_merge($arr, array($host->id));
         }
