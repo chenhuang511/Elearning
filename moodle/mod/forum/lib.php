@@ -5225,6 +5225,7 @@ function forum_add_discussion($discussion, $mform = null, $unused = null, $useri
     $discussion->timemodified = $timenow;
     $discussion->usermodified = $post->userid;
     $discussion->userid = $userid;
+    $discussion->course = $forum->course;
     $discussion->assessed = 0;
 
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
