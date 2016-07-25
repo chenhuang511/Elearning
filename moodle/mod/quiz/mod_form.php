@@ -73,7 +73,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         } else {
             $disable = array('disabled' => 'disabled');
         }
-        $mform->addElement('text', 'name', get_string('name'), array_merge(array('size'=>'64'), $disable));
+        $mform->addElement('text', 'name', get_string('name'), array_merge(array('size'=>'64')));
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);
         } else {
