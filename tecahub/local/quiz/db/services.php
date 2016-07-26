@@ -218,4 +218,20 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_quiz_get_multichoice_question_options' => array(
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'get_multichoice_question_options',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Get multichoice question options.",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_quiz_get_statistic_questions_usages' => array(
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'get_statistic_questions_usages',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Get the latest step data from the db, from which we will calculate stats.",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 );
