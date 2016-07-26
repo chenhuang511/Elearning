@@ -1,0 +1,10 @@
+.DS_Store
+app/tmp
+app/reports
+*.un~
+.elasticbeanstalk
+.elasticbeanstalk/
+Plugin
+Vendor
+work
+node_modules
