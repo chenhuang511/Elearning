@@ -34,9 +34,11 @@ function get_remote_assign_by_id($assignid, $options = array()){
  *
  * @return stdClass $asssign
  */
-function get_remote_assign_by_id_instanceid($assignid, $instanceid, $options = array())
+function get_remote_assign_by_id_instanceid($assignid, $instanceid)
 {
-    $resp = moodle_webservice_client(array_merge($options,
+
+
+    $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
@@ -44,13 +46,9 @@ function get_remote_assign_by_id_instanceid($assignid, $instanceid, $options = a
             'params' => array(
                 'assignid' => $assignid,
                 'instanceid' => $instanceid
-            ),
-        )
-    ));
-
-    if ($resp->assignment){
-        $resp->assignment->id = (int)get_local_assign_record($resp->assignment->id)->id;
-    }
+            )
+        ), false
+    );
 
     return $resp->assignment;
 }
