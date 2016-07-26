@@ -77,8 +77,8 @@ class local_mod_assign_external extends external_api {
     /**
      * Returns information about an assignment submission status for a given user.
      *
-     * @param int $assignid assignment instance id
-     * @param int $userid user id (empty for current user)
+     * @param int $assignid     - The id of assignment
+     * @param int $userid       - The id of user (empty for current user)
      * @return array of warnings and grading, status, feedback and previous attempts information
      * @since Moodle 3.1
      * @throws required_capability_exception
@@ -458,7 +458,7 @@ class local_mod_assign_external extends external_api {
     }
 
     /**
-     * Returns description of method get_mod_assign_by_id_instanceid_parameters parameters
+     * Returns description of method get_mod_assign_by_id_instanceid parameters
      *
      * @return external_function_parameters
      * @since Moodle 3.0
@@ -584,7 +584,7 @@ class local_mod_assign_external extends external_api {
     }
 
     /**
-     * Returns description of method parameters
+     * Returns description of method get_mod_assign_by_id parameters
      *
      * @return external_function_parameters
      * @since Moodle 3.0
@@ -592,15 +592,17 @@ class local_mod_assign_external extends external_api {
     public static function get_mod_assign_by_id_parameters()
     {
         return new external_function_parameters(
-			array('assignid' => new external_value(PARAM_INT, 'the assign id'))
+			array(
+                'assignid' => new external_value(PARAM_INT, 'the assign id')
+            )
         );
     }
 
     /**
-     * Return information about a lesson.
+     * Return information about a assign.
      *
-     * @param int $lessonid the lesson id
-     * @return array of warnings and the lesson
+     * @param int $assignid the id of assignment
+     * @return array of warnings and the assign
      * @since Moodle 3.0
      * @throws moodle_exception
      */
@@ -619,7 +621,7 @@ class local_mod_assign_external extends external_api {
     }
 
     /**
-     * Returns description of method result value
+     * Returns description of method get_mod_assign_by_id result value
      *
      * @return external_description
      * @since Moodle 3.0
@@ -659,167 +661,22 @@ class local_mod_assign_external extends external_api {
             )
         );
     }
-
+    
     /**
-     * validate params
-     * @return external_function_parameters
-     */
-    public static function get_submissions_by_host_ip_parameters() {
-        return new external_function_parameters(
-            array(
-                'assignmentids' => new external_multiple_structure(
-                    new external_value(PARAM_INT, 'assignment id'),
-                    '1 or more assignment ids',
-                    VALUE_REQUIRED),
-                'ip' => new external_value(PARAM_HOST, 'host ip', VALUE_REQUIRED),
-                'status' => new external_value(PARAM_ALPHA, 'status', VALUE_DEFAULT, ''),
-                'since' => new external_value(PARAM_INT, 'submitted since', VALUE_DEFAULT, 0),
-                'before' => new external_value(PARAM_INT, 'submitted before', VALUE_DEFAULT, 0)
-            )
-        );
-    }
-
-    /**
-     * get submissions by assignment ids and ip
-     * @param $assignmentids
-     * @param $ip
-     * @param string $status
-     * @param int $since
-     * @param int $before
-     * @return array
-     * @throws invalid_parameter_exception
-     */
-    public static function get_submissions_by_host_ip($assignmentids, $ip, $status = '', $since = 0, $before = 0) {
-        global $DB, $CFG;
-
-        $params = self::validate_parameters(self::get_submissions_by_host_ip_parameters(),
-            array('assignmentids' => $assignmentids,
-                'ip' => $ip,
-                'status' => $status,
-                'since' => $since,
-                'before' => $before));
-
-        $warnings = array();
-        $assignments = array();
-
-        // Check the user is allowed to get the submissions for the assignments requested.
-        $placeholders = array();
-        list($inorequalsql, $placeholders) = $DB->get_in_or_equal($params['assignmentids'], SQL_PARAMS_NAMED);
-        $sql = "SELECT cm.id, cm.instance FROM {course_modules} cm JOIN {modules} md ON md.id = cm.module ".
-            "WHERE md.name = :modname AND cm.instance ".$inorequalsql;
-        $placeholders['modname'] = 'assign';
-        $cms = $DB->get_records_sql($sql, $placeholders);
-        $assigns = array();
-        foreach ($cms as $cm) {
-            try {
-                $context = context_module::instance($cm->id);
-                self::validate_context($context);
-                require_capability('mod/assign:grade', $context);
-                $assign = new assign($context, null, null);
-                $assigns[] = $assign;
-            } catch (Exception $e) {
-                $warnings[] = array(
-                    'item' => 'assignment',
-                    'itemid' => $cm->instance,
-                    'warningcode' => '1',
-                    'message' => 'No access rights in module context'
-                );
-            }
-        }
-
-        foreach ($assigns as $assign) {
-            $submissions = array();
-            $placeholders = array('assignid1' => $assign->get_instance()->id,
-                'assignid2' => $assign->get_instance()->id,
-                'ip' => $params['ip'],
-            );
-
-            $submissionmaxattempt = 'SELECT mxs.userid, MAX(mxs.attemptnumber) AS maxattempt
-                                     FROM {assign_submission} mxs
-                                     WHERE mxs.assignment = :assignid1 GROUP BY mxs.userid';
-
-            $sql = "SELECT mas.id, mas.assignment,mas.userid,".
-                "mas.timecreated,mas.timemodified,mas.status,mas.groupid,mas.attemptnumber ".
-                "FROM {assign_submission} mas ".
-                "JOIN ( " . $submissionmaxattempt . " ) smx ON mas.userid = smx.userid ".
-                "WHERE mas.assignment = :assignid2 AND mas.attemptnumber = smx.maxattempt".
-                " AND mas.userid in ( SELECT u.id FROM {user} u ".
-                "JOIN {mnet_host} h ON u.mnethostid = h.id WHERE h.ip_address = :ip ) ";
-
-            if (!empty($params['status'])) {
-                $placeholders['status'] = $params['status'];
-                $sql = $sql." AND mas.status = :status";
-            }
-            if (!empty($params['before'])) {
-                $placeholders['since'] = $params['since'];
-                $placeholders['before'] = $params['before'];
-                $sql = $sql." AND mas.timemodified BETWEEN :since AND :before";
-            } else {
-                $placeholders['since'] = $params['since'];
-                $sql = $sql." AND mas.timemodified >= :since";
-            }
-
-            $submissionrecords = $DB->get_records_sql($sql, $placeholders);
-
-            if (!empty($submissionrecords)) {
-                $submissionplugins = $assign->get_submission_plugins();
-                foreach ($submissionrecords as $submissionrecord) {
-                    $submission = array(
-                        'id' => $submissionrecord->id,
-                        'userid' => $submissionrecord->userid,
-                        'timecreated' => $submissionrecord->timecreated,
-                        'timemodified' => $submissionrecord->timemodified,
-                        'status' => $submissionrecord->status,
-                        'attemptnumber' => $submissionrecord->attemptnumber,
-                        'groupid' => $submissionrecord->groupid,
-                        'plugins' => self::get_plugins_data($assign, $submissionplugins, $submissionrecord)
-                    );
-                    $submissions[] = $submission;
-                }
-            } else {
-                $warnings[] = array(
-                    'item' => 'module',
-                    'itemid' => $assign->get_instance()->id,
-                    'warningcode' => '3',
-                    'message' => 'No submissions found'
-                );
-            }
-
-            $assignments[] = array(
-                'assignmentid' => $assign->get_instance()->id,
-                'submissions' => $submissions
-            );
-
-        }
-
-        $result = array(
-            'assignments' => $assignments,
-            'warnings' => $warnings
-        );
-        return $result;
-    }
-
-    /**
-     * return value
-     * @return external_single_structure
-     */
-    public static function get_submissions_by_host_ip_returns() {
-        return mod_assign_external::get_submissions_returns();
-    }
-
-    /**
-     * Describes the parameters for get_onlinetext_submission_parameters
+     * Describes the parameters for get_onlinetext_submission
      *
      * @return external_external_function_parameters
      */
     public static function get_onlinetext_submission_parameters(){
         return new external_function_parameters(
-            array('submissionid' => new external_value(PARAM_INT, 'the submission id'))
+            array(
+                'submissionid' => new external_value(PARAM_INT, 'the submission id')
+            )
         );
     }
     
     /**
-     * Returns Object onlinetext submission.
+     * Returns Object onlinetext submission by submission id.
      *
      * @param int $submissionid   -   The id of submission
      *
@@ -872,7 +729,7 @@ class local_mod_assign_external extends external_api {
     }
 
     /**
-     * Describes the parameters for create_onlinetext_submission_parameters
+     * Describes the parameters for create_onlinetext_submission
      *
      * @return external_external_function_parameters
      */
@@ -943,7 +800,7 @@ class local_mod_assign_external extends external_api {
     }
     
     /**
-     * Describes the parameters for update_onlinetext_submission_parameters
+     * Describes the parameters for update_onlinetext_submission
      *
      * @return external_external_function_parameters
      */
@@ -1017,20 +874,24 @@ class local_mod_assign_external extends external_api {
     }
 
     /**
-     * Describes the parameters for get_assignfeedback_comments_parameters
+     * Describes the parameters for get_assignfeedback_comments
      *
      * @return external_external_function_parameters
      */
     public static function get_assignfeedback_comments_parameters(){
         return new external_function_parameters(
-            array('gradeid' => new external_value(PARAM_INT, 'the grade id'))
+            array(
+                'gradeid' => new external_value(PARAM_INT, 'the grade id')
+            )
         );
     }
 
-    /**
+    /**       
+     * Get assign feedback comments of teacher by grade id 
+     * 
      * @param int $gradeid  -  The id of grade   
      * 
-     * @return array
+     * @return array of feedback comments and warnings
      * @throws invalid_parameter_exception
      */
     public static function get_assignfeedback_comments($gradeid){
@@ -1058,7 +919,7 @@ class local_mod_assign_external extends external_api {
     }
 
     /**
-     * Describes the get_assignfeedback_comments_returns value.
+     * Describes the get_assignfeedback_comments returns value.
      *
      * @return external_single_structure
      * @since Moodle 3.1
@@ -1081,7 +942,7 @@ class local_mod_assign_external extends external_api {
     }
     
     /**
-     * Describes the parameters for update_assignfeedback_comments_parameters
+     * Describes the parameters for update_assignfeedback_comments
      *
      * @return external_external_function_parameters
      */
@@ -1097,14 +958,16 @@ class local_mod_assign_external extends external_api {
         );
     }
 
-    /**
-     * @param int $id  -  The id of grade   
-     * @param int $assignment  -  The id of assignment   
-     * @param int $grade  -  The id of grade   
-     * @param int $commenttext  -  The content of commenttext   
-     * @param int $commentformat  -  The format of commenttext   
+    /**         
+     * Update assignfeedback comments by id, assignment, grade, comment text, and comment format 
      * 
-     * @return array
+     * @param int $id           -  The id of grade   
+     * @param int $assignment   -  The id of assignment   
+     * @param int $grade        -  The id of grade   
+     * @param int $commenttext  -  The content of commenttext   
+     * @param int $commentformat-  The format of commenttext   
+     * 
+     * @return array of bool and warning
      * @throws invalid_parameter_exception
      */
     public static function update_assignfeedback_comments($id, $assignment, $grade, $commenttext, $commentformat){
@@ -1136,7 +999,7 @@ class local_mod_assign_external extends external_api {
     }
 
     /**
-     * Describes the update_assignfeedback_comments_returns value.
+     * Describes the update_assignfeedback_comments value.
      *
      * @return external_single_structure
      * @since Moodle 3.1
@@ -1151,7 +1014,7 @@ class local_mod_assign_external extends external_api {
     }
     
     /**
-     * Describes the parameters for create_assignfeedback_comments_parameters
+     * Describes the parameters for create_assignfeedback_comments
      *
      * @return external_external_function_parameters
      */
@@ -1166,13 +1029,15 @@ class local_mod_assign_external extends external_api {
         );
     }
 
-    /**
-     * @param int $assignment  -  The id of assignment   
-     * @param int $grade  -  The id of grade   
-     * @param int $commenttext  -  The content of commenttext   
-     * @param int $commentformat  -  The format of commenttext   
+    /**   
+     * Create assignment feedback comment with params
      * 
-     * @return array
+     * @param int $assignment   -  The id of assignment   
+     * @param int $grade        -  The id of grade   
+     * @param int $commenttext  -  The content of commenttext   
+     * @param int $commentformat-  The format of commenttext   
+     * 
+     * @return array of feedback comments if just created and warnings.
      * @throws invalid_parameter_exception
      */
     public static function create_assignfeedback_comments($assignment, $grade, $commenttext, $commentformat){
@@ -1204,7 +1069,7 @@ class local_mod_assign_external extends external_api {
     }
 
     /**
-     * Describes the create_assignfeedback_comments_returns value.
+     * Describes the create_assignfeedback_comments returns value.
      *
      * @return external_single_structure
      * @since Moodle 3.1
@@ -1219,7 +1084,7 @@ class local_mod_assign_external extends external_api {
     }
 
     /**
-     * Describes the parameters for create_assignfeedback_comments_parameters
+     * Describes the parameters for get_assign_plugin_config
      *
      * @return external_external_function_parameters
      */
@@ -1231,9 +1096,11 @@ class local_mod_assign_external extends external_api {
         );
     }
 
-    /**
-     * @param $assignment
-     * @return array
+    /**             
+     * Get assign plugin config on hub by assignment id
+     * 
+     * @param int $assignment  -  The id of assignment
+     * @return array of assign plugin config and warnings  
      * @throws invalid_parameter_exception
      */
     public static function get_assign_plugin_config($assignment){
@@ -1264,7 +1131,7 @@ class local_mod_assign_external extends external_api {
     }
 
     /**
-     * Describes the get_assign_plugin_config_returns value.
+     * Describes the get_assign_plugin_config returns value.
      *
      * @return external_single_structure
      * @since Moodle 3.1
@@ -1288,87 +1155,11 @@ class local_mod_assign_external extends external_api {
         );
     }
 
-    // MINHND: Get comment status
-    public static function get_comment_status_parameters(){
-        return new external_function_parameters(
-            array(
-                'itemid' => new external_value(PARAM_INT, 'item ID'),
-                'commentarea' => new external_value(PARAM_RAW, 'comment area'),
-                'component' => new external_value(PARAM_RAW, 'component'),
-                'instanceid' => new external_value(PARAM_INT, 'instance ID'),
-                'courseid' => new external_value(PARAM_INT, 'course ID')
-            )
-        );
-    }
-
-    public static function get_comment_status($itemid, $commentarea, $component, $instanceid, $cousreid){
-        global $CFG;
-
-        require_once($CFG->dirroot . '/comment/lib.php');
-        
-        $warnings = array();
-
-        // Now, build the result.
-        $result = array();
-
-        //Validate param
-        $params = self::validate_parameters(self::get_comment_status_parameters(),
-            array(
-                'itemid' => $itemid,
-                'commentarea' => $commentarea,
-                'component' => $component,
-                'instanceid' => $instanceid,
-                'courseid' => $cousreid
-            )
-        );
-
-        $context = context_module::instance($params['instanceid']);
-
-        $options = new stdClass();
-        
-        $options->area    = $params['commentarea'];
-        $options->courseid    = $params['courseid'];
-        $options->context = $context;
-        $options->itemid  = $params['itemid'];
-        $options->component = $params['component'];
-        $options->showcount = true;
-        $options->displaycancel = true;
-
-        $comment = new comment($options);
-
-        $result['countcomment'] = $comment->count();
-
-        $result['getcomment'] = $comment->get_comments(0);
-
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    public static function get_comment_status_returns(){
-        return new external_single_structure(
-            array(
-                'countcomment' => new external_value(PARAM_INT, 'count total comment', VALUE_OPTIONAL),
-                'getcomment' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'id' => new external_value(PARAM_INT, 'comment ID'),
-                            'content' => new external_value(PARAM_RAW, 'content comment'),
-                            'format' => new external_value(PARAM_INT, 'format content'),
-                            'timecreated' => new external_value(PARAM_INT, 'time created'),
-                            'strftimeformat' => new external_value(PARAM_RAW, 'time format'),
-                            'fullname' => new external_value(PARAM_RAW, 'full name.'),
-                            'time' => new external_value(PARAM_RAW, 'date time'),
-                            'delete' => new external_value(PARAM_INT, 'can detele'),
-                        )
-                    ), 'List comments by the user.', VALUE_OPTIONAL
-                ),
-                'warnings' => new external_warnings(),
-            )
-        );
-    }
-
-    // MINHD: Count submissions with status by host id
+    /**
+     * Describes the parameters for count_submissions_with_status_by_host_id
+     *
+     * @return external_external_function_parameters
+     */
     public static function count_submissions_with_status_by_host_id_parameters(){
         return new external_function_parameters(
             array(
@@ -1379,6 +1170,16 @@ class local_mod_assign_external extends external_api {
         );
     }
 
+    /**      
+     * Count submission with status by assignment id and host ip
+     * 
+     * @param int $assignid     - The id of assignmn
+     * @param string $hostip    - The string of hostip
+     * @param string $status    - The string of status
+     * @return int The numbers of submissions wwith params
+     * @throws invalid_parameter_exception
+     * @throws restricted_context_exception
+     */
     public static function count_submissions_with_status_by_host_id($assignid, $hostip, $status){
         global $DB;
         
@@ -1447,11 +1248,21 @@ class local_mod_assign_external extends external_api {
         return $DB->count_records_sql($sql, $dbparams);
     }
 
+    /**
+     * Describes the count_submissions_with_status_by_host_id returns value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
     public static function count_submissions_with_status_by_host_id_returns(){
         return new external_value(PARAM_INT, 'count submission with status by host id');
     }
 
-    // MINHD: Count submissions need grading by host id
+    /**
+     * Describes the parameters for count_submissions_need_grading_by_host_id
+     *
+     * @return external_external_function_parameters
+     */
     public static function count_submissions_need_grading_by_host_id_parameters(){
         return new external_function_parameters(
             array(
@@ -1461,6 +1272,15 @@ class local_mod_assign_external extends external_api {
         );
     }
 
+    /**       
+     * Count submission need grading filter on hostip
+     * 
+     * @param int $assignid     - The id of assignment
+     * @param string $hostip    - The string if hostip like: 192.168.1.88 ...
+     * @return int The numbers of submissions need grading 
+     * @throws invalid_parameter_exception
+     * @throws restricted_context_exception
+     */
     public static function count_submissions_need_grading_by_host_id($assignid, $hostip){
         global $DB;
 
@@ -1513,11 +1333,21 @@ class local_mod_assign_external extends external_api {
         return $DB->count_records_sql($sql, $dbparams);
     }
 
+    /**
+     * Describes the count_submissions_need_grading_by_host_id returns value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
     public static function count_submissions_need_grading_by_host_id_returns(){
         return new external_value(PARAM_INT, 'count submission need grading by host id');
     }
 
-    //MinhND: get DB assign_submission 
+    /**
+     * Describes the parameters for get_submission_by_assignid_userid_groupid
+     *
+     * @return external_external_function_parameters
+     */
     public static function get_submission_by_assignid_userid_groupid_parameters(){
         return new external_function_parameters(
             array(
@@ -1530,6 +1360,17 @@ class local_mod_assign_external extends external_api {
         );
     }
 
+    /**  
+     * Get assign submission with params based on mode
+     * 
+     * @param int $assignment   - The id of assignment   
+     * @param int $userid       - The id of user
+     * @param int $groupid      - The id of group
+     * @param int $attempnumber - The number of attempnumber
+     * @param string $mode      - The string of mode to chooice the way call DB
+     * @return array of submissions and warnings
+     * @throws invalid_parameter_exception
+     */
     public static function get_submission_by_assignid_userid_groupid($assignment, $userid, $groupid, $attempnumber, $mode){
         global $DB;
 
@@ -1563,7 +1404,13 @@ class local_mod_assign_external extends external_api {
         
         return $result;
     }
-    
+
+    /**
+     * Describes the get_submission_by_assignid_userid_groupid returns value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
     public static function get_submission_by_assignid_userid_groupid_returns(){
         return new external_single_structure(
             array(
@@ -1587,7 +1434,11 @@ class local_mod_assign_external extends external_api {
         );
     }
 
-    //MinhND: get attemptnumber in DB assign_submission
+    /**
+     * Describes the parameters for get_attemptnumber_by_assignid_userid_groupid
+     *
+     * @return external_external_function_parameters
+     */
     public static function get_attemptnumber_by_assignid_userid_groupid_parameters(){
         return new external_function_parameters(
             array(
@@ -1598,6 +1449,15 @@ class local_mod_assign_external extends external_api {
         );
     }
 
+    /**   
+     * Get the number of attemptnumber submission by assigment id, user id, group id
+     * 
+     * @param int $assignment  - The id of assignment
+     * @param int $userid      - The id of user
+     * @param int $groupid     - The id of group
+     * @return array of attemptnumber and warnings
+     * @throws invalid_parameter_exception
+     */
     public static function get_attemptnumber_by_assignid_userid_groupid($assignment, $userid, $groupid){
         global $DB;
 
@@ -1621,6 +1481,12 @@ class local_mod_assign_external extends external_api {
         return $result;
     }
 
+    /**
+     * Describes the get_attemptnumber_by_assignid_userid_groupid returns value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
     public static function get_attemptnumber_by_assignid_userid_groupid_returns(){
         return new external_single_structure(
             array(
@@ -1636,7 +1502,11 @@ class local_mod_assign_external extends external_api {
         );
     }
 
-    //MinhND: get DB assign_submission 
+    /**
+     * Describes the parameters for get_user_flags_by_assignid_userid
+     *
+     * @return external_external_function_parameters
+     */
     public static function get_user_flags_by_assignid_userid_parameters(){
         return new external_function_parameters(
             array(
@@ -1645,7 +1515,15 @@ class local_mod_assign_external extends external_api {
             )
         );
     }
-    
+
+    /**     
+     * Get user flags by assignment id and user id
+     * 
+     * @param int $assignment  -  The id of assignment.
+     * @param int $userid      -  The id of user.
+     * @return array of user flags and warnings
+     * @throws invalid_parameter_exception
+     */
     public static function get_user_flags_by_assignid_userid($assignment, $userid){
         global $DB;
 
@@ -1663,24 +1541,33 @@ class local_mod_assign_external extends external_api {
         );
         
         $result['userflags'] = $DB->get_record('assign_user_flags', $params);
+        if(!$result['userflags']){
+            $result['userflags'] = array();
+        }
         $result['warnings'] = $warnings;
 
         return $result;
     }
-    
+
+    /**
+     * Describes the get_user_flags_by_assignid_userid returns value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
     public static function get_user_flags_by_assignid_userid_returns(){
         return new external_single_structure(
             array(
                 'userflags' => new external_single_structure(
                     array(
-                        'id' => new external_value(PARAM_INT, 'assign user flags ID'),
-                        'userid' => new external_value(PARAM_INT, 'user ID'),
-                        'assignment' => new external_value(PARAM_INT, 'assignment ID'),
-                        'locked' => new external_value(PARAM_INT, 'locked'),
-                        'mailed' => new external_value(PARAM_INT, 'mailed'),
-                        'extensionduedate' => new external_value(PARAM_INT, 'extension due date'),
-                        'workflowstate' => new external_value(PARAM_RAW, 'work flow state'),
-                        'allocatedmarker' => new external_value(PARAM_INT, 'allocated maker'),
+                        'id' => new external_value(PARAM_INT, 'assign user flags ID', VALUE_OPTIONAL),
+                        'userid' => new external_value(PARAM_INT, 'user ID', VALUE_OPTIONAL),
+                        'assignment' => new external_value(PARAM_INT, 'assignment ID', VALUE_OPTIONAL),
+                        'locked' => new external_value(PARAM_INT, 'locked', VALUE_OPTIONAL),
+                        'mailed' => new external_value(PARAM_INT, 'mailed', VALUE_OPTIONAL),
+                        'extensionduedate' => new external_value(PARAM_INT, 'extension due date', VALUE_OPTIONAL),
+                        'workflowstate' => new external_value(PARAM_RAW, 'work flow state', VALUE_OPTIONAL),
+                        'allocatedmarker' => new external_value(PARAM_INT, 'allocated maker', VALUE_OPTIONAL),
                     )
                 ),
                 'warnings' => new external_warnings()
@@ -1688,7 +1575,11 @@ class local_mod_assign_external extends external_api {
         );
     }
 
-    //MinhND: Set assign submission lastest
+    /**
+     * Describes the parameters for set_submission_lastest
+     *
+     * @return external_external_function_parameters
+     */
     public static function set_submission_lastest_parameters(){
         return new external_function_parameters(
             array(
@@ -1699,6 +1590,15 @@ class local_mod_assign_external extends external_api {
         );
     }
 
+    /**      
+     * Set submission lastest on hub with params 
+     * 
+     * @param int $assignment   - The id of assignment
+     * @param int $userid       - The id of user 
+     * @param int $groupid      - The id of group
+     * @return array of result and warnings
+     * @throws invalid_parameter_exception
+     */
     public static function set_submission_lastest($assignment, $userid, $groupid){
         global $DB;
 
@@ -1722,10 +1622,16 @@ class local_mod_assign_external extends external_api {
         return $result;
     }
 
+    /**
+     * Describes the set_submission_lastest return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
     public static function set_submission_lastest_returns(){
         return new external_single_structure(
             array(
-                'result' => new external_value(PARAM_BOOL, 'Boolean'),
+                'result' => new external_value(PARAM_BOOL, 'True if success'),
                 'warnings' => new external_warnings()
             )
         );
@@ -1750,15 +1656,17 @@ class local_mod_assign_external extends external_api {
         );
     }
 
-    /**
-     * @param int $assignment - The id of assignment
-     * @param int $userid - The id of user
-     * @param int $timecreated - Time created
-     * @param int $timemodified - Time modified
-     * @param string $status - Status
-     * @param int $attemptnumber - Attemptnumber
-     * @param int $latest - Lastest
-     * @return array
+    /**       
+     * Create new submission with params received from host            
+     * 
+     * @param int $assignment   - The id of assignment
+     * @param int $userid       - The id of user
+     * @param int $timecreated  - The created time
+     * @param int $timemodified - The modified time
+     * @param string $status    - The string of status
+     * @param int $attemptnumber- The number of attemptnumber
+     * @param int $latest       - Lastest
+     * @return array of id number submission just created and warnings
      * @throws invalid_parameter_exception
      */
     public static function create_submission($assignment, $userid, $timecreated, $timemodified, $status, $attemptnumber, $latest){
@@ -1798,7 +1706,7 @@ class local_mod_assign_external extends external_api {
     }
 
     /**
-     * Describes the create_submission_parameters return value.
+     * Describes the create_submission return value.
      *
      * @return external_single_structure
      * @since Moodle 3.1
@@ -1813,7 +1721,7 @@ class local_mod_assign_external extends external_api {
     }
     
     /**
-     * Describes the parameters for update_submission_parameters
+     * Describes the parameters for update_submission
      *
      * @return external_external_function_parameters
      */
@@ -1832,16 +1740,18 @@ class local_mod_assign_external extends external_api {
         );
     }
 
-    /**
-     * @param int $id - The id of submission
-     * @param int $assignment - The id of assignment
-     * @param int $userid - The id of user
-     * @param int $timecreated - Time created
-     * @param int $timemodified - Time modified
-     * @param string $status - Status
-     * @param int $attemptnumber - Attemptnumber
-     * @param int $latest - Lastest
-     * @return array
+    /**          
+     * Update assign submission wwith id and params from host
+     * 
+     * @param int $id           - The id of submission
+     * @param int $assignment   - The id of assignment
+     * @param int $userid       - The id of user
+     * @param int $timecreated  - The created time
+     * @param int $timemodified - The modified time
+     * @param string $status    - The string of status
+     * @param int $attemptnumber- The number of attempnumber
+     * @param int $latest       - Is lastest?
+     * @return array of bool check update DB and warnings
      * @throws invalid_parameter_exception
      */
     public static function update_submission($id, $assignment, $userid, $timecreated, $timemodified, $status, $attemptnumber, $latest){
@@ -1875,7 +1785,7 @@ class local_mod_assign_external extends external_api {
     }
 
     /**
-     * Describes the update_submission_parameters return value.
+     * Describes the update_submission return value.
      *
      * @return external_single_structure
      * @since Moodle 3.1
@@ -1883,13 +1793,17 @@ class local_mod_assign_external extends external_api {
     public static function update_submission_returns(){
         return new external_single_structure(
             array(
-                'bool' => new external_value(PARAM_INT, 'check if success'),
+                'bool' => new external_value(PARAM_INT, 'true if success'),
                 'warnings' => new external_warnings()
             )
         );
     }
 
-    //MinhND: get submission by ID
+    /**
+     * Describes the parameters for get_submission_by_id
+     *
+     * @return external_external_function_parameters
+     */
     public static function get_submission_by_id_parameters(){
         return new external_function_parameters(
             array(
@@ -1898,6 +1812,13 @@ class local_mod_assign_external extends external_api {
         );
     }
 
+    /** 
+     * Get assign submission by id
+     * 
+     * @param int $id   - The id of submission
+     * @return array of assign submission and warnings
+     * @throws invalid_parameter_exception
+     */
     public static function get_submission_by_id($id){
         global $DB;
 
@@ -2440,6 +2361,7 @@ class local_mod_assign_external extends external_api {
 
     /**
      * Describes the parameters for get grades by assignid & userid
+     * 
      * @return external_external_function_parameters
      */
     public static function get_grades_by_assignid_userid_parameters(){
@@ -2456,9 +2378,9 @@ class local_mod_assign_external extends external_api {
     /**
      * Returns information about a list array assign grades.
      *
-     * @param int $assignmentid assignment id
-     * @param int $userid user id
-     * @param int $attemptnumber attemp number
+     * @param int $assignmentid  -  The id of assignment
+     * @param int $userid        -  The id of user
+     * @param int $attemptnumber -  The id of attemptnumber
      * @return array of warnings and grades information
      * @throws required_capability_exception
      */
@@ -2533,7 +2455,8 @@ class local_mod_assign_external extends external_api {
     }
     
     /**
-     * Describes the parameters for get grades by id
+     * Describes the parameters for get grades by id  
+     * 
      * @return external_external_function_parameters
      */
     public static function get_grades_by_id_parameters(){
@@ -2596,7 +2519,8 @@ class local_mod_assign_external extends external_api {
     }
 
     /**
-     * Describes the parameters for create grade
+     * Describes the parameters for create grade  
+     * 
      * @return external_external_function_parameters
      */
     public static function create_grade_parameters(){
