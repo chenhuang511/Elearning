@@ -11,7 +11,7 @@ function get_remote_chat_latest_messages($chatsid)
             'token' => HOST_TOKEN_M,
             'function_name' => 'mod_chat_get_chat_latest_messages',
             'params' => array('chatsid' => $chatsid)
-        )
+        ),false
     );
     return $lastmessage->messages;
 }
@@ -35,7 +35,7 @@ function get_remote_chat_user($chatsid)
             'token' => HOST_TOKEN_M,
             'function_name' => 'mod_chat_get_chat_users',
             'params' => array('chatsid' => $chatsid)
-        )
+        ), false
     );
     return $user->users[0];
 }
@@ -47,7 +47,7 @@ function get_remote_chat_login_user($userid, $chatid, $groupid = 0)
             'token' => HOST_TOKEN_M,
             'function_name' => 'mod_chat_login_user',
             'params' => array('userid' => $userid, 'chatid' => $chatid, 'groupid' => $groupid)
-        )
+        ) , false
     );
 }
 
