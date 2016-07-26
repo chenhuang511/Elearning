@@ -1126,6 +1126,81 @@ class local_mod_forum_external extends external_api
         );
     }
 
+    public static function get_list_forum_discussion_subs_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'sort' => new external_value(PARAM_RAW, 'sort'),
+                'limitfrom' => new external_value(PARAM_INT, 'limit from'),
+                'limitnum' => new external_value(PARAM_INT, 'limit num')
+            )
+        );
+    }
+
+    public static function get_list_forum_discussion_subs_by($parameters, $sort, $limitfrom, $limitnum)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_list_forum_discussion_subs_by_parameters(), array(
+            'parameters' => $parameters,
+            'sort' => $sort,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+        if (($params['limitfrom'] == 0 && $params['limitnum'] == 0) && $params['sort'] == '') {
+            $subs = $DB->get_records("forum_discussion_subs", $arr);
+        } else if (($params['limitfrom'] == 0 && $params['limitnum'] == 0) && $params['sort'] != '') {
+            $subs = $DB->get_records("forum_discussion_subs", $arr, $params['sort']);
+        } else {
+            $subs = $DB->get_records("forum_discussion_subs", $arr, $params['sort'], '*', $params['limitfrom'], $params['limitnum']);
+        }
+
+        if (!$subs) {
+            $subs = array();
+        }
+
+        $result['subs'] = $subs;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_list_forum_discussion_subs_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'subs' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'the id'),
+                            'forum' => new external_value(PARAM_INT, 'the forum id'),
+                            'userid' => new external_value(PARAM_INT, 'the user id'),
+                            'discussion' => new external_value(PARAM_INT, 'the discussion id'),
+                            'preference' => new external_value(PARAM_INT, 'the preference')
+                        )
+                    ), 'forum discussion subs'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
     public static function delete_mdl_forum_parameters()
     {
         return new external_function_parameters(
@@ -1716,10 +1791,10 @@ class local_mod_forum_external extends external_api
 
         $host = $DB->get_record('mnet_host', array('ip_address' => $params['hostip']), '*', MUST_EXIST);
 
-        if(!$host) {
+        if (!$host) {
             $warnings['message'] = "Not found host";
         }
-        
+
         $arr = array();
         foreach ($params['parameters'] as $p) {
             $arr = array_merge($arr, array($p['value']));
@@ -1968,7 +2043,10 @@ class local_mod_forum_external extends external_api
     {
         return new external_function_parameters(
             array(
-                'sql' => new external_value(PARAM_RAW, 'the query sql'),
+                'allnames' => new external_value(PARAM_RAW, 'get name field'),
+                'tracking' => new external_value(PARAM_INT, 'tracking'),
+                'sort' => new external_value(PARAM_RAW, 'order by'),
+                'hostip' => new external_value(PARAM_RAW, 'host IP'),
                 'parameters' => new external_multiple_structure(
                     new external_single_structure(
                         array(
@@ -1981,24 +2059,55 @@ class local_mod_forum_external extends external_api
         );
     }
 
-    public static function forum_get_all_discussion_posts_sql($sql, $parameters)
+    public static function forum_get_all_discussion_posts_sql($allnames, $tracking, $sort, $hostip, $parameters)
     {
         global $DB;
         $warnings = array();
 
         $params = self::validate_parameters(self::forum_get_all_discussion_posts_sql_parameters(), array(
-            'sql' => $sql,
+            'allnames' => $allnames,
+            'tracking' => $tracking,
+            'sort' => $sort,
+            'hostip' => $hostip,
             'parameters' => $parameters
         ));
 
+        $tr_sel = "";
+        $tr_join = "";
+
+        if ($params['tracking'] || $params['tracking'] > 0) {
+            $tr_sel = ", fr.id AS postread";
+            $tr_join = "LEFT JOIN {forum_read} fr ON (fr.postid = p.id AND fr.userid = ?)";
+        }
+
+        $allnames_field = $params['allnames'];
+        $sort_field = $params['sort'];
+
+        $sql = "SELECT p.*, $allnames_field, u.email, u.picture, u.imagealt $tr_sel
+                                     FROM {forum_posts} p
+                                          LEFT JOIN {user} u ON p.userid = u.id
+                                          $tr_join
+                                    WHERE p.discussion = ?";
+
         $arr = array();
         foreach ($params['parameters'] as $p) {
-            $arr = array_merge($arr, array($p['name'] => $p['value']));
+            $arr = array_merge($arr, array($p['value']));
         }
+
+        if ($params['hostip'] != '') {
+            $host = $DB->get_record('mnet_host', array('ip_address' => $params['hostip']), '*', MUST_EXIST);
+        }
+
+        if (isset($host) && $host) {
+            $sql .= " AND p.userid IN (SELECT id FROM {user} WHERE mnethostid = ?)";
+            $arr = array_merge($arr, array($host->id));
+        }
+
+        $sql .= " ORDER BY $sort_field";
 
         $result = array();
 
-        $posts = $DB->get_records_sql($params['sql'], $arr);
+        $posts = $DB->get_records_sql($sql, $arr);
 
         if (!$posts) {
             $posts = array();
@@ -2046,5 +2155,95 @@ class local_mod_forum_external extends external_api
                 'warnings' => new external_warnings()
             )
         );
+    }
+
+    public static function forum_user_has_posted_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'sql' => new external_value(PARAM_RAW, 'the query sql'),
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                )
+            )
+        );
+    }
+
+    public static function forum_user_has_posted($sql, $parameters)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::forum_user_has_posted_parameters(), array(
+            'sql' => $sql,
+            'parameters' => $parameters
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $element) {
+            $arr = array_merge($arr, array($element['name'] => $element['value']));
+        }
+
+        $result = array();
+
+        $result['status'] = $DB->record_exists_sql($sql, $arr);
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function forum_user_has_posted_returns()
+    {
+        return self::check_record_forum_exists_returns();
+    }
+
+    public static function forum_user_has_posted_discussion_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'sql' => new external_value(PARAM_RAW, 'the query sql'),
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                )
+            )
+        );
+    }
+
+    public static function forum_user_has_posted_discussion($sql, $parameters)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::forum_user_has_posted_discussion_parameters(), array(
+            'sql' => $sql,
+            'parameters' => $parameters
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $element) {
+            $arr = array_merge($arr, array($element['name'] => $element['value']));
+        }
+
+        $result = array();
+
+        $result['status'] = $DB->record_exists_sql($sql, $arr);
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function forum_user_has_posted_discussion_returns()
+    {
+        return self::check_record_forum_exists_returns();
     }
 }

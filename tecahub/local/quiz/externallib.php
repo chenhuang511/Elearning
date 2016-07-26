@@ -289,7 +289,6 @@ class local_mod_quiz_external extends external_api {
                     'slot' => new external_value(PARAM_INT, 'slot.'),
                     'page' => new external_value(PARAM_INT, 'page.'),
                     '_partiallyloaded' => new external_value(PARAM_BOOL, '_partiallyloaded.'),
-
                 )
             )
         );
@@ -1753,6 +1752,279 @@ ORDER BY
         return new external_single_structure(
             array(
                 'state' => new external_value(PARAM_ALPHANUMEXT, 'success or unsuccess'),
+            )
+        );
+    }
+
+    /**
+     * Hanv 23/07/2016
+     * Get essay question options.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     *
+     */
+    public static function get_essay_question_options_parameters() {
+        return new external_function_parameters(
+            array(
+                'questionid' => new external_value(PARAM_INT, 'questionid'),
+            )
+        );
+    }
+
+    /**
+     * Get essay question options.
+     *
+     * @return array
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function get_essay_question_options($questionid) {
+        global $CFG, $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::get_essay_question_options_parameters(),
+            array('questionid' => $questionid));
+        // Get essay question options.
+        $options = $DB->get_record('qtype_essay_options',
+            array('questionid' => $questionid), '*', MUST_EXIST);
+        return $options;
+    }
+
+    /**
+     * Describes a single attempt structure.
+     *
+     * @return external_single_structure the attempt structure
+     */
+    public static function get_essay_question_options_returns() {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_RAW, 'Attempt id.', VALUE_OPTIONAL),
+                'questionid' => new external_value(PARAM_RAW, 'questionid', VALUE_OPTIONAL),
+                'responseformat' => new external_value(PARAM_RAW, 'responseformat.', VALUE_OPTIONAL),
+                'responserequired' => new external_value(PARAM_RAW, 'responserequired.', VALUE_OPTIONAL),
+                'responsefieldlines' => new external_value(PARAM_RAW, 'responsefieldlines.', VALUE_OPTIONAL),
+                'attachments' => new external_value(PARAM_RAW, 'attachments.', VALUE_OPTIONAL),
+                'attachmentsrequired' => new external_value(PARAM_RAW, 'attachmentsrequired.', VALUE_OPTIONAL),
+                'graderinfo' => new external_value(PARAM_RAW, 'graderinfo.', VALUE_OPTIONAL),
+                'graderinfoformat' => new external_value(PARAM_RAW, 'graderinfoformat.', VALUE_OPTIONAL),
+                'responsetemplate' => new external_value(PARAM_RAW, 'responsetemplate.', VALUE_OPTIONAL),
+                'responsetemplateformat' => new external_value(PARAM_RAW, 'responsetemplateformat.', VALUE_OPTIONAL),
+            )
+        );
+    }
+
+
+    /**
+     * Hanv 25/07/2016
+     * Get question option answer. Don't check for success or failure because some question types do not use the answers table.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     *
+     */
+    public static function get_question_options_answer_parameters() {
+        return new external_function_parameters(
+            array(
+                'questionid' => new external_value(PARAM_INT, 'questionid'),
+            )
+        );
+    }
+
+    /**
+     * Get question option answer. Don't check for success or failure because some question types do not use the answers table.
+     *
+     * @return array
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function get_question_options_answer($questionid) {
+        global $CFG, $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::get_question_options_answer_parameters(),
+            array('questionid' => $questionid));
+        // Get essay question options.
+        $answers = $DB->get_records('question_answers', array('question' => $questionid), 'id ASC');
+        return $answers;
+    }
+
+    /**
+     * Describes a single attempt structure.
+     *
+     * @return external_single_structure the attempt structure
+     */
+    public static function get_question_options_answer_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_RAW, 'id.', VALUE_OPTIONAL),
+                    'question' => new external_value(PARAM_RAW, 'question', VALUE_OPTIONAL),
+                    'answer' => new external_value(PARAM_RAW, 'answer.', VALUE_OPTIONAL),
+                    'answerformat' => new external_value(PARAM_RAW, 'answerformat.', VALUE_OPTIONAL),
+                    'fraction' => new external_value(PARAM_RAW, 'fraction.', VALUE_OPTIONAL),
+                    'feedback' => new external_value(PARAM_RAW, 'feedback.', VALUE_OPTIONAL),
+                    'feedbackformat' => new external_value(PARAM_RAW, 'feedbackformat.', VALUE_OPTIONAL),
+                )
+            )
+        );
+    }
+
+    /**
+     * Hanv 25/07/2016
+     * Get remote question hints.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     *
+     */
+    public static function get_question_hints_parameters() {
+        return new external_function_parameters(
+            array(
+                'questionid' => new external_value(PARAM_INT, 'questionid'),
+            )
+        );
+    }
+
+    /**
+     * Get remote question hints.
+     *
+     * @return array
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function get_question_hints($questionid) {
+        global $CFG, $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::get_question_hints_parameters(),
+            array('questionid' => $questionid));
+        // Get essay question options.
+        $hints = $DB->get_records('question_hints', array('questionid' => $questionid), 'id ASC');
+        return $hints;
+    }
+
+    /**
+     * Describes a single attempt structure.
+     *
+     * @return external_single_structure the attempt structure
+     */
+    public static function get_question_hints_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_RAW, 'id.', VALUE_OPTIONAL),
+                    'questionid' => new external_value(PARAM_RAW, 'questionid', VALUE_OPTIONAL),
+                    'hint' => new external_value(PARAM_RAW, 'hint.', VALUE_OPTIONAL),
+                    'hintformat' => new external_value(PARAM_RAW, 'hintformat.', VALUE_OPTIONAL),
+                    'shownumcorrect' => new external_value(PARAM_RAW, 'shownumcorrect.', VALUE_OPTIONAL),
+                    'clearwrong' => new external_value(PARAM_RAW, 'clearwrong.', VALUE_OPTIONAL),
+                    'options' => new external_value(PARAM_RAW, 'options.', VALUE_OPTIONAL),
+                )
+            )
+        );
+    }
+
+    /**
+     * Hanv 25/07/2016
+     * Return a list of ids, load the basic information about a set of questions from the questions table.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     *
+     */
+    public static function get_question_preload_question_parameters() {
+        return new external_function_parameters(
+            array(
+                'questionids' => new external_multiple_structure(new external_value(PARAM_INT, 'questionids')),
+                'extrafields' => new external_value(PARAM_RAW, 'extrafields', VALUE_DEFAULT, null),
+                'join' => new external_value(PARAM_RAW, 'join', VALUE_DEFAULT, null),
+                'extraparams' => new  external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'name'),
+                            'value' => new external_value(PARAM_RAW, 'value'),
+                        )
+                    ), 'Options, used since Moodle 3.1', VALUE_DEFAULT, array()
+                ),
+                'orderby' => new external_value(PARAM_RAW, 'orderby', VALUE_DEFAULT, null),
+            )
+        );
+    }
+
+    /**
+     * Return a list of ids, load the basic information about a set of questions from the questions table.
+     *
+     * @param int $id quizid
+     * @param array $options Options for filtering the results, used since Moodle 3.1
+     * @return array
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function get_question_preload_question($questionids = null, $extrafields = '', $join = '',
+                                                         $extraparams, $orderby = '') {
+        global $CFG, $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::get_question_preload_question_parameters(),
+            array('questionids' => $questionids, 'extrafields' => $extrafields, 'join' => $join,
+                'extraparams' => $extraparams, 'orderby' => $orderby));
+        $quesvalues = array();
+        foreach ($questionids as $question) {
+            $quesvalues[$question] = $question;
+        }
+
+        $paramdata = array();
+        foreach ($params['extraparams'] as $element) {
+            $paramdata[$element['name']] = $element['value'];
+        }
+
+        $questions = question_preload_questions($quesvalues, $extrafields, $join,
+            $paramdata, $orderby);
+        return $questions;
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function get_question_preload_question_returns() {
+        return  new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
+                    'category' => new external_value(PARAM_INT, 'category',VALUE_OPTIONAL),
+                    'parent' => new external_value(PARAM_INT, 'parent', VALUE_OPTIONAL),
+                    'name' => new external_value(PARAM_RAW, 'Question name'),
+                    'questiontext' => new external_value(PARAM_RAW, 'Question introduction text.', VALUE_OPTIONAL),
+                    'questiontextformat' => new external_value(PARAM_INT, 'questiontext format.', VALUE_OPTIONAL),
+                    'generalfeedback' => new external_value(PARAM_RAW, 'generalfeedback.', VALUE_OPTIONAL),
+                    'generalfeedbackformat' => new external_value(PARAM_INT, 'general feedback format.', VALUE_OPTIONAL),
+                    'defaultmark' => new external_value(PARAM_FLOAT, 'default mark.', VALUE_OPTIONAL),
+                    'penalty' => new external_value(PARAM_FLOAT, 'penalty.', VALUE_OPTIONAL),
+                    'qtype' => new external_value(PARAM_RAW, 'qtype', VALUE_OPTIONAL),
+                    'length' => new external_value(PARAM_INT, 'length', VALUE_OPTIONAL),
+                    'stamp' => new external_value(PARAM_RAW, 'stamp'),
+                    'version' => new external_value(PARAM_RAW, 'Question version'),
+                    'hidden' => new external_value(PARAM_INT, '	hidden', VALUE_OPTIONAL),
+                    'timecreated' => new external_value(PARAM_INT, 'The time when the question was added to the question bank.', VALUE_OPTIONAL),
+                    'timemodified' => new external_value(PARAM_INT, 'Last modified time.', VALUE_OPTIONAL),
+                    'createdby' => new external_value(PARAM_INT, 'created by.', VALUE_OPTIONAL),
+                    'modifiedby' => new external_value(PARAM_INT, 'modified by.', VALUE_OPTIONAL),
+                    'contextid' => new external_value(PARAM_INT, 'comtext id.'),
+//                    'maxmark' => new external_value(PARAM_FLOAT, 'max mark.', VALUE_OPTIONAL),
+//                    'slotid' => new external_value(PARAM_INT, 'slot id.'),
+//                    'slot' => new external_value(PARAM_INT, 'slot.'),
+//                    'page' => new external_value(PARAM_INT, 'page.'),
+                    '_partiallyloaded' => new external_value(PARAM_BOOL, '_partiallyloaded.'),
+                )
             )
         );
     }

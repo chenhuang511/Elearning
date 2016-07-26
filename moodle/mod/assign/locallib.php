@@ -1261,7 +1261,7 @@ class assign {
                 $this->instance->intro = $instanceremote->intro;
                 $this->instance->introformat = $instanceremote->introformat;
                 $this->instance->alwaysshowdescription = $instanceremote->alwaysshowdescription;
-                if (isset($this->instance->introattachments)){
+                if (isset($instanceremote->introattachments)){
                     $this->instance->introattachments = $instanceremote->introattachments;
                 }
             }
@@ -5087,7 +5087,7 @@ class assign {
 
         if (MOODLE_RUN_MODE === MOODLE_MODE_HOST || $CFG->nonajax) {
             $o .= $this->view_footer();
-        }else{
+        } else {
             $o .= $this->get_renderer()->footer(true);
         }
 
@@ -5262,7 +5262,11 @@ class assign {
             foreach ($team as $member) {
                 $membersubmission = $this->get_user_submission($member->id, true, $submission->attemptnumber);
                 $membersubmission->status = ASSIGN_SUBMISSION_STATUS_REOPENED;
-                $result = $DB->update_record('assign_submission', $membersubmission) && $result;
+                if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+                    $result = $DB->update_record('assign_submission', $membersubmission) && $result;
+                } else {
+                    $result = update_remote_submission($membersubmission) && $result;
+                }
             }
             $result = $DB->update_record('assign_submission', $submission) && $result;
         }

@@ -146,6 +146,14 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_get_list_forum_discussion_subs_by' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'get_list_forum_discussion_subs_by',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'Get list forum discussion subs by',
+        'type' => 'read',
+        'ajax' => true
+    ),
     'local_mod_delete_mdl_forum' => array(
         'classname' => 'local_mod_forum_external',
         'methodname' => 'delete_mdl_forum',
@@ -247,6 +255,22 @@ $functions = array(
         'methodname' => 'forum_get_all_discussion_posts_sql',
         'classpath' => 'local/forum/externallib.php',
         'description' => 'get all discussion post',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_forum_user_has_posted' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'forum_user_has_posted',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'check forum user has posted',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_forum_user_has_posted_discussion' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'forum_user_has_posted_discussion',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'check forum user has posted discussion',
         'type' => 'read',
         'ajax' => true
     ),

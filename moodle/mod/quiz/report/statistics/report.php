@@ -59,7 +59,14 @@ class quiz_statistics_report extends quiz_default_report {
 
         $this->context = context_module::instance($cm->id);
 
-        if (!quiz_has_questions($quiz->id)) {
+        if($isremote){
+            $r_questions = get_remote_significant_questions($quiz->id);
+            $hasquestions = !empty($r_questions);
+        }else{
+            $hasquestions = quiz_has_questions($quiz->id);
+        }
+
+        if (!$hasquestions) {
             $this->print_header_and_tabs($cm, $course, $quiz, 'statistics');
             echo quiz_no_questions_message($quiz, $cm, $this->context);
             return true;
@@ -745,7 +752,11 @@ class quiz_statistics_report extends quiz_default_report {
      */
     public function load_and_initialise_questions_for_calculations($quiz) {
         // Load the questions.
-        $questions = quiz_report_get_significant_questions($quiz);
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $questions = get_remote_significant_questions($quiz->id);
+        }else{
+            $questions = quiz_report_get_significant_questions($quiz);
+        }
         $questionids = array();
         foreach ($questions as $question) {
             $questionids[] = $question->id;

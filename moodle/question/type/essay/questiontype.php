@@ -46,8 +46,12 @@ class qtype_essay extends question_type {
 
     public function get_question_options($question) {
         global $DB;
-        $question->options = $DB->get_record('qtype_essay_options',
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $question->options = get_remote_qtype_essay_question_options($question->id);
+        }else{
+            $question->options = $DB->get_record('qtype_essay_options',
                 array('questionid' => $question->id), '*', MUST_EXIST);
+        }
         parent::get_question_options($question);
     }
 

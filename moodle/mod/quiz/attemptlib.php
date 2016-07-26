@@ -2624,10 +2624,10 @@ class quiz_review_nav_panel extends quiz_nav_panel_base {
         if ($this->attemptobj->get_num_pages() > 1) {
             if ($this->showall) {
                 $html .= html_writer::link($this->attemptobj->review_url(null, 0, false),
-                        get_string('showeachpage', 'quiz'));
+                        get_string('showeachpage', 'quiz'),array('class'=>'othernav-mcboy'));
             } else {
                 $html .= html_writer::link($this->attemptobj->review_url(null, 0, true),
-                        get_string('showall', 'quiz'));
+                        get_string('showall', 'quiz'),array('class'=>'othernav-mcboy'));
             }
         }
         $html .= $output->finish_review_link($this->attemptobj);
