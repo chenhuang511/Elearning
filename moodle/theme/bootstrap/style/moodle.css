@@ -17903,7 +17903,7 @@ select.singleselect {
     width: auto;
     max-width: 300px;
     display: inline;
-    margin: 0 0 5px 20px;
+    /*margin: 0 0 5px 20px;*/
 }
 
 form select:focus,
