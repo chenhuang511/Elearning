@@ -18,19 +18,16 @@
 /**
  * Local language pack from http://192.168.1.253
  *
- * @package    core
- * @subpackage competency
+ * @package    quiz
+ * @subpackage overview
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['competencies'] = 'Năng lực';
-$string['competenciesarenotenabled'] = 'Năng lực không được kích hoạt';
-$string['competenciessettings'] = 'Cài đặt năng lực';
-$string['deletecompetencyratings'] = 'Xóa xếp hạng năng lực';
-$string['enablecompetencies'] = 'Kích hoạt năng lực';
-$string['enablecompetencies_desc'] = 'Năng cho phép người dùng được đánh giá theo kế hoạch học tập';
-$string['pushcourseratingstouserplans'] = 'Đẩy xếp hạng khóa học đến kế hoạch học tập cá nhân';
-$string['pushcourseratingstouserplans_desc'] = 'Cài đặt kế hoạch học tập cá nhân với giá trị mặc định khi năng lực khóa học được đánh giá';
-$string['userplans'] = 'Kế hoạch học tập';
+$string['deleteselected'] = 'Xóa những lần thi được chọn';
+$string['optonlyregradedattempts'] = 'Được chấm lại / được đánh dấu cần thiết cho chấm lại';
+$string['preferencessave'] = 'Hiển thị báo cáo';
+$string['regradeselected'] = 'Chấm lại những lần thi được chọn';
+$string['showdetailedmarks'] = 'Ghi điểm cho mỗi câu hỏi';
+$string['showinggradedandungraded'] = 'Hiển thị cho những lần thi có điểm và không có điểm cho mỗi người dùng. Mỗi người dùng có một lần thi có điểm được nổi bật. Cách tính điểm cho bài thi này là {$a}.';

@@ -18,19 +18,19 @@
 /**
  * Local language pack from http://192.168.1.253
  *
- * @package    core
- * @subpackage competency
+ * @package    gradereport
+ * @subpackage history
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['competencies'] = 'Năng lực';
-$string['competenciesarenotenabled'] = 'Năng lực không được kích hoạt';
-$string['competenciessettings'] = 'Cài đặt năng lực';
-$string['deletecompetencyratings'] = 'Xóa xếp hạng năng lực';
-$string['enablecompetencies'] = 'Kích hoạt năng lực';
-$string['enablecompetencies_desc'] = 'Năng cho phép người dùng được đánh giá theo kế hoạch học tập';
-$string['pushcourseratingstouserplans'] = 'Đẩy xếp hạng khóa học đến kế hoạch học tập cá nhân';
-$string['pushcourseratingstouserplans_desc'] = 'Cài đặt kế hoạch học tập cá nhân với giá trị mặc định khi năng lực khóa học được đánh giá';
-$string['userplans'] = 'Kế hoạch học tập';
+$string['allgraders'] = 'Tất cả điểm';
+$string['datefrom'] = 'Tù ngày';
+$string['dateto'] = 'Đến ngày';
+$string['grader'] = 'Điểm';
+$string['historyperpage'] = 'Lịch sử truy cập mỗi trang';
+$string['historyperpage_help'] = 'Thiết lập này xác định lịch sử số lần truy cập được trình bày mỗi trang trong báo cáo lịch sử.';
+$string['pluginname'] = 'Lịch sử điểm';
+$string['revisedonly'] = 'Chỉ xem lại điểm';
+$string['selectusers'] = 'Lựa chọn người dùng';

@@ -18,19 +18,14 @@
 /**
  * Local language pack from http://192.168.1.253
  *
- * @package    core
- * @subpackage competency
+ * @package    availability
+ * @subpackage completion
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['competencies'] = 'Năng lực';
-$string['competenciesarenotenabled'] = 'Năng lực không được kích hoạt';
-$string['competenciessettings'] = 'Cài đặt năng lực';
-$string['deletecompetencyratings'] = 'Xóa xếp hạng năng lực';
-$string['enablecompetencies'] = 'Kích hoạt năng lực';
-$string['enablecompetencies_desc'] = 'Năng cho phép người dùng được đánh giá theo kế hoạch học tập';
-$string['pushcourseratingstouserplans'] = 'Đẩy xếp hạng khóa học đến kế hoạch học tập cá nhân';
-$string['pushcourseratingstouserplans_desc'] = 'Cài đặt kế hoạch học tập cá nhân với giá trị mặc định khi năng lực khóa học được đánh giá';
-$string['userplans'] = 'Kế hoạch học tập';
+$string['requires_complete'] = 'Hoạt động <strong>{$a}</strong> được đánh dấu hoàn thành';
+$string['requires_complete_fail'] = 'Hoạt động <strong>{$a}</strong> đã hoàn thành và trượt';
+$string['requires_complete_pass'] = 'Hoạt động <strong>{$a}</strong> đã hoàn thành và vượt qua';
+$string['requires_incomplete'] = 'Hoạt động <strong>{$a}</strong> chưa được hoàn thành';

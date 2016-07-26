@@ -19,18 +19,16 @@
  * Local language pack from http://192.168.1.253
  *
  * @package    core
- * @subpackage competency
+ * @subpackage plugin
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['competencies'] = 'Năng lực';
-$string['competenciesarenotenabled'] = 'Năng lực không được kích hoạt';
-$string['competenciessettings'] = 'Cài đặt năng lực';
-$string['deletecompetencyratings'] = 'Xóa xếp hạng năng lực';
-$string['enablecompetencies'] = 'Kích hoạt năng lực';
-$string['enablecompetencies_desc'] = 'Năng cho phép người dùng được đánh giá theo kế hoạch học tập';
-$string['pushcourseratingstouserplans'] = 'Đẩy xếp hạng khóa học đến kế hoạch học tập cá nhân';
-$string['pushcourseratingstouserplans_desc'] = 'Cài đặt kế hoạch học tập cá nhân với giá trị mặc định khi năng lực khóa học được đánh giá';
-$string['userplans'] = 'Kế hoạch học tập';
+$string['actions'] = 'Hành động';
+$string['overviewall'] = 'Tất cả các tiện ích';
+$string['overviewext'] = 'Tiện ích thêm vào';
+$string['plugincheckall'] = 'Tất cả các tiện ích';
+$string['type_antivirus_plural'] = 'Tiện ích chống vi-rút';
+$string['type_search'] = 'Bộ máy tìm kiếm';
+$string['type_search_plural'] = 'Bộ máy tìm kiếm';

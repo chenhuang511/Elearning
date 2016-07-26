@@ -18,19 +18,20 @@
 /**
  * Local language pack from http://192.168.1.253
  *
- * @package    core
- * @subpackage competency
+ * @package    assignfeedback
+ * @subpackage editpdf
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['competencies'] = 'Năng lực';
-$string['competenciesarenotenabled'] = 'Năng lực không được kích hoạt';
-$string['competenciessettings'] = 'Cài đặt năng lực';
-$string['deletecompetencyratings'] = 'Xóa xếp hạng năng lực';
-$string['enablecompetencies'] = 'Kích hoạt năng lực';
-$string['enablecompetencies_desc'] = 'Năng cho phép người dùng được đánh giá theo kế hoạch học tập';
-$string['pushcourseratingstouserplans'] = 'Đẩy xếp hạng khóa học đến kế hoạch học tập cá nhân';
-$string['pushcourseratingstouserplans_desc'] = 'Cài đặt kế hoạch học tập cá nhân với giá trị mặc định khi năng lực khóa học được đánh giá';
-$string['userplans'] = 'Kế hoạch học tập';
+$string['deletecomment'] = 'Xóa nhận xét';
+$string['deletefeedback'] = 'Xóa phản hồi PDF';
+$string['filter'] = 'Lọc nhận xét...';
+$string['line'] = 'Dòng';
+$string['navigatenext'] = 'Trang tiếp theo';
+$string['navigateprevious'] = 'Trang trước';
+$string['pagenumber'] = 'Trang {$a}';
+$string['pen'] = 'Bút';
+$string['result'] = 'Kết quả:';
+$string['searchcomments'] = 'Tìm kiếm nhận xét:';
