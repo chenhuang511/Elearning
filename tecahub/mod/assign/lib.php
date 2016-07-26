@@ -1443,8 +1443,9 @@ function assign_pluginfile($course,
     if ($context->contextlevel != CONTEXT_MODULE) {
         return false;
     }
-
-    require_login($course, false, $cm);
+    if (!isset($CFG->allowdownloadresource) && !$CFG->allowdownloadresource){
+        require_login($course, false, $cm);
+    }
     if (!has_capability('mod/assign:view', $context)) {
         return false;
     }
