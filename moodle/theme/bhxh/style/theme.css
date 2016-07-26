@@ -19,12 +19,13 @@ h1, h2, h3, h4, h5, h6 {
 .quizattemptcounts a, .resourceworkaround a, .introattachments-image div a, .box a, .assignment-info-fix a, .lastcol a{
     color: #337ab7;
 }
-.boxwidthwide a, .mod_quiz-next-nav{
+.boxwidthwide a, .mod_quiz-next-nav, .mod_quiz-prev-nav{
     color: #fff;
     background-color: #337ab7;
     border-color: #2e6da4;
     display: inline-block;
     margin-bottom: 0;
+    margin:10px;
     font-weight: normal;
     text-align: center;
     vertical-align: middle;
@@ -39,10 +40,10 @@ h1, h2, h3, h4, h5, h6 {
     border-radius: 4px;
     -webkit-user-select: none;
 }
-.boxwidthwide a:hover, .mod_quiz-next-nav:hover{
+.boxwidthwide a:hover, .mod_quiz-next-nav, .mod_quiz-prev-nav:hover{
     color: #FFFFFF;
     text-decoration:none;
-    background-color: #4F1CD1;
+    background-color: #1E5E95;
 }
 .mdl-align a, .row-fluid a, .othernav-mcboy, .endtestlink{
     color: #337ab7;
