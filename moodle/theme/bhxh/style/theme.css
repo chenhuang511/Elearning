@@ -61,7 +61,10 @@ a:focus {
     outline: none;
 }
 
+.felement select {
+    float: none;
 }
+
 .dropdown-menu {
     border-color: #e8e3e3;
     border-radius: 0;
