@@ -896,11 +896,18 @@ abstract class moodleform_mod extends moodleform {
         $mform = $this->_form;
         $label = is_null($customlabel) ? get_string('moduleintro') : $customlabel;
 
-        $mform->addElement('editor', 'introeditor', $label, array('rows' => 10), array('maxfiles' => EDITOR_UNLIMITED_FILES,
-            'noclean' => true, 'context' => $this->context, 'subdirs' => true));
-        $mform->setType('introeditor', PARAM_RAW); // no XSS prevention here, users must be trusted
-        if ($required) {
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $mform->addElement('editor', 'introeditor', $label, array('rows' => 10), array('maxfiles' => EDITOR_UNLIMITED_FILES,
+                'noclean' => true, 'context' => $this->context, 'subdirs' => true));
+            $mform->setType('introeditor', PARAM_RAW);
+
             $mform->addRule('introeditor', get_string('required'), 'required', null, 'client');
+        } else {
+            $mform->addElement('html', '<div class="introdesc">');
+            $mform->addElement('htmleditor', 'intro', $label);
+            $mform->setType('intro', PARAM_RAW);
+            $mform->freeze('intro');
+            $mform->addElement('html', '</div>');
         }
 
         if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){

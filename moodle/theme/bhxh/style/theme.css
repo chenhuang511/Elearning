@@ -3451,4 +3451,16 @@ table#permissions tbody tr:hover > th {
     background: #1D2939;
 }
 
+.introdesc > #fitem_id_intro > .fitemtitle > .fstaticlabel {
+    font-size: 16px;
+    font-weight: bold;
+    padding-top: 7px;
+}
+.introdesc > #fitem_id_intro > .fstatic > .text_to_html{
+    border: 1px solid #ccc;
+    padding: 6px 12px;
+    background: #eee;
+    border-radius: 4px;
+}
+
 

@@ -13,15 +13,17 @@ require_once($CFG->dirroot . '/lib/additionallib.php');
  *
  * @return stdClass $asssign
  */
-function get_remote_assign_by_id($assignid, $options = array()){
-    $resp = moodle_webservice_client(array_merge($options,
+function get_remote_assign_by_id($assignid){
+    $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_assign_get_assign_by_id',
-            'params' => array('assignid' => $assignid),
-        )
-    ));
+            'params' => array(
+                'assignid' => $assignid
+            )
+        ), false
+    );
 
     return $resp;
 }
