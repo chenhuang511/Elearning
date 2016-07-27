@@ -538,7 +538,7 @@ class subscriptions
      */
     public static function fill_discussion_subscription_cache($forumid, $userid = null)
     {
-        global $DB;
+        global $CFG, $DB;
 
         if (!isset(self::$discussionfetchedforums[$forumid])) {
             // This forum hasn't been fetched as a whole yet.
@@ -548,10 +548,23 @@ class subscriptions
                 }
 
                 if (!isset(self::$forumdiscussioncache[$userid][$forumid])) {
-                    $subscriptions = $DB->get_recordset('forum_discussion_subs', array(
-                        'userid' => $userid,
-                        'forum' => $forumid,
-                    ), null, 'id, discussion, preference');
+                    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+                        $user = get_remote_mapping_user($userid);
+                        $params = array();
+                        $params['parameters[0][name]'] = "userid";
+                        $params['parameters[0][value]'] = $user[0]->id;
+                        $params['parameters[1][name]'] = "forum";
+                        $params['parameters[1][value]'] = $forumid;
+
+                        $subdata = get_remote_list_forum_discussion_subs_by($params);
+                        require_once($CFG->libdir . '/dml/json_moodle_recordset.php');
+                        $subscriptions = new \json_moodle_recordset($subdata);
+                    } else {
+                        $subscriptions = $DB->get_recordset('forum_discussion_subs', array(
+                            'userid' => $userid,
+                            'forum' => $forumid,
+                        ), null, 'id, discussion, preference');
+                    }
                     foreach ($subscriptions as $id => $data) {
                         self::add_to_discussion_cache($forumid, $userid, $data->discussion, $data->preference);
                     }
@@ -715,12 +728,20 @@ class subscriptions
      */
     public static function unsubscribe_user($userid, $forum, $context = null, $userrequest = false)
     {
-        global $DB;
+        global $CFG, $DB;
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $user = get_remote_mapping_user($userid);
 
-        $sqlparams = array(
-            'userid' => $userid,
-            'forum' => $forum->id,
-        );
+            $sqlparams = array(
+                'userid' => $user[0]->id,
+                'forum' => $forum->id,
+            );
+        } else {
+            $sqlparams = array(
+                'userid' => $userid,
+                'forum' => $forum->id,
+            );
+        }
 
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
             $params = array();
@@ -749,11 +770,20 @@ class subscriptions
 
             if ($userrequest) {
                 if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-                    $discussionsubscriptions = $DB->get_recordset('forum_discussion_subs', $sqlparams);
+                    $prs = array();
+                    $i = 0;
+                    foreach ($sqlparams as $key => $val) {
+                        $prs["parameters[$i][name]"] = $key;
+                        $prs["parameters[$i][value]"] = $val;
+                        $i++;
+                    }
+                    $subdata = get_remote_list_forum_discussion_subs_by($prs);
+                    require_once($CFG->libdir . '/dml/json_moodle_recordset.php');
+                    $discussionsubscriptions = new \json_moodle_recordset($subdata);
 
                     $params = array();
                     $params['parameters[0][name]'] = "userid";
-                    $params['parameters[0][value]'] = $userid;
+                    $params['parameters[0][value]'] = $sqlparams['userid'];
                     $params['parameters[1][name]'] = "forum";
                     $params['parameters[1][value]'] = $forum->id;
                     $params['parameters[2][name]'] = "preference";
@@ -809,18 +839,24 @@ class subscriptions
     {
         global $DB;
 
-        // First check whether the user is subscribed to the discussion already.
+        $hubuserid = $userid;
+
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
             $user = get_remote_mapping_user($userid);
+            $hubuserid = $user[0]->id;
+        }
+        // First check whether the user is subscribed to the discussion already.
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
             $params = array();
             $params['parameters[0][name]'] = "userid";
-            $params['parameters[0][value]'] = $user->id;
+            $params['parameters[0][value]'] = $hubuserid;
             $params['parameters[1][name]'] = "discussion";
             $params['parameters[1][value]'] = $discussion->id;
             $subscription = get_remote_forum_discussion_subs_by($params);
         } else {
             $subscription = $DB->get_record('forum_discussion_subs', array('userid' => $userid, 'discussion' => $discussion->id));
         }
+
         if ($subscription) {
             if ($subscription->preference != self::FORUM_DISCUSSION_UNSUBSCRIBED) {
                 // The user is already subscribed to the discussion. Ignore.
@@ -831,7 +867,7 @@ class subscriptions
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
             $params = array();
             $params['parameters[0][name]'] = "userid";
-            $params['parameters[0][value]'] = $userid;
+            $params['parameters[0][value]'] = $hubuserid;
             $params['parameters[1][name]'] = "forum";
             $params['parameters[1][value]'] = $discussion->forum;
             $isexists = check_remote_record_forum_exists("forum_subscriptions", $params);
@@ -873,17 +909,18 @@ class subscriptions
                 $subscription->preference = time();
 
                 if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-
-                    $user = get_remote_mapping_user($userid);
                     $data = array();
-                    $data['data[0][name]'] = "userid";
-                    $data['data[0][value]'] = $user[0]->id;
-                    $data['data[1][name]'] = "forum";
-                    $data['data[1][value]'] = $discussion->forum;
-                    $data['data[2][name]'] = "discussion";
-                    $data['data[2][value]'] = $discussion->id;
-                    $data['data[3][name]'] = "preference";
-                    $data['data[3][value]'] = time();
+                    $i = 0;
+                    foreach ($data as $key => $val) {
+                        $data["data[$i][name]"] = $key;
+                        if ($key == "userid") {
+                            $data["data[$i][value]"] = $hubuserid;
+                        } else {
+                            $data["data[$i][value]"] = $val;
+                        }
+                        $i++;
+                    }
+
                     $subscription->id = save_remote_mdl_forum("forum_discussion_subs", $data);
                 } else {
                     $subscription->id = $DB->insert_record('forum_discussion_subs', $subscription);
@@ -922,11 +959,17 @@ class subscriptions
     {
         global $DB;
 
+        $hubuserid = $userid;
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $user = get_remote_mapping_user($userid);
+            $hubuserid = $user[0]->id;
+        }
+
         // First check whether the user's subscription preference for this discussion.
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
             $params = array();
             $params['parameters[0][name]'] = "userid";
-            $params['parameters[0][value]'] = $userid;
+            $params['parameters[0][value]'] = $hubuserid;
             $params['parameters[1][name]'] = "discussion";
             $params['parameters[1][value]'] = $discussion->id;
             $subscription = get_remote_forum_discussion_subs_by($params);
@@ -943,7 +986,7 @@ class subscriptions
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
             $params = array();
             $params['parameters[0][name]'] = "userid";
-            $params['parameters[0][value]'] = $userid;
+            $params['parameters[0][value]'] = $hubuserid;
             $params['parameters[1][name]'] = "forum";
             $params['parameters[1][value]'] = $discussion->forum;
             $isexists = check_remote_record_forum_exists("forum_subscriptions", $params);
@@ -985,16 +1028,18 @@ class subscriptions
                 $subscription->preference = self::FORUM_DISCUSSION_UNSUBSCRIBED;
 
                 if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-                    $user = get_remote_mapping_user($userid);
                     $data = array();
-                    $data['data[0][name]'] = "userid";
-                    $data['data[0][value]'] = $user[0]->id;
-                    $data['data[1][name]'] = "forum";
-                    $data['data[1][value]'] = $discussion->forum;
-                    $data['data[2][name]'] = "discussion";
-                    $data['data[2][value]'] = $discussion->id;
-                    $data['data[3][name]'] = "preference";
-                    $data['data[3][value]'] = self::FORUM_DISCUSSION_UNSUBSCRIBED;
+                    $count = 0;
+                    foreach ($subscription as $key => $val) {
+                        $data["data[$count][name]"] = $key;
+                        if ($key == "userid") {
+                            $data["data[$count][value]"] = $hubuserid;
+                        } else {
+                            $data["data[$count][value]"] = $val;
+                        }
+                        $count++;
+                    }
+
                     $subscription->id = save_remote_mdl_forum("forum_discussion_subs", $data);
                 } else {
                     $subscription->id = $DB->insert_record('forum_discussion_subs', $subscription);

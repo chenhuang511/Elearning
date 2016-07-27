@@ -1110,7 +1110,8 @@ ORDER BY
         return new external_function_parameters(
             array(
                 'qubaids' => new external_multiple_structure(new external_value(PARAM_INT, 'quba ID')),
-                'questions' => new external_multiple_structure(new external_value(PARAM_INT, 'questions'))
+                'questions' => new external_multiple_structure(new external_value(PARAM_INT, 'questions')),
+                'fields' => new external_value(PARAM_RAW, 'fields', VALUE_DEFAULT, null),
             )
         );
     }
@@ -1125,7 +1126,7 @@ ORDER BY
         global $CFG, $DB;
 
         $params = self::validate_parameters(self::load_questions_usages_latest_steps_parameters(),
-            array('qubaids' => $qubaids,'questions' => $questions));
+            array('qubaids' => $qubaids, 'questions' => $questions, 'fields' => $fields));
         $qubavalues = array();
         foreach ($qubaids as $qubaid) {
             $qubavalues[] = $qubaid;
@@ -1140,7 +1141,7 @@ ORDER BY
         
         $dm = new question_engine_data_mapper();
         $latesstepdata = $dm->load_questions_usages_latest_steps(
-            $qubaids, array_keys($quesvalues));
+            $qubaids, array_keys($quesvalues), $fields);
         return $latesstepdata;
     }
 
@@ -2019,11 +2020,148 @@ ORDER BY
                     'createdby' => new external_value(PARAM_INT, 'created by.', VALUE_OPTIONAL),
                     'modifiedby' => new external_value(PARAM_INT, 'modified by.', VALUE_OPTIONAL),
                     'contextid' => new external_value(PARAM_INT, 'comtext id.'),
-//                    'maxmark' => new external_value(PARAM_FLOAT, 'max mark.', VALUE_OPTIONAL),
-//                    'slotid' => new external_value(PARAM_INT, 'slot id.'),
-//                    'slot' => new external_value(PARAM_INT, 'slot.'),
-//                    'page' => new external_value(PARAM_INT, 'page.'),
                     '_partiallyloaded' => new external_value(PARAM_BOOL, '_partiallyloaded.'),
+                )
+            )
+        );
+    }
+
+    /**
+     * Hanv 23/07/2016
+     * Get essay question options.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     *
+     */
+    public static function get_multichoice_question_options_parameters() {
+        return new external_function_parameters(
+            array(
+                'questionid' => new external_value(PARAM_INT, 'questionid'),
+            )
+        );
+    }
+
+    /**
+     * Get essay question options.
+     *
+     * @return array
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function get_multichoice_question_options($questionid) {
+        global $CFG, $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::get_multichoice_question_options_parameters(),
+            array('questionid' => $questionid));
+        // Get essay question options.
+        $options = $DB->get_record('qtype_multichoice_options',
+            array('questionid' => $questionid), '*', MUST_EXIST);
+        return $options;
+    }
+
+    /**
+     * Describes a single attempt structure.
+     *
+     * @return external_single_structure the attempt structure
+     */
+    public static function get_multichoice_question_options_returns() {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_RAW, 'Attempt id.', VALUE_OPTIONAL),
+                'questionid' => new external_value(PARAM_RAW, 'questionid', VALUE_OPTIONAL),
+                'layout' => new external_value(PARAM_RAW, 'responseformat.', VALUE_OPTIONAL),
+                'single' => new external_value(PARAM_RAW, 'responserequired.', VALUE_OPTIONAL),
+                'shuffleanswers' => new external_value(PARAM_RAW, 'responsefieldlines.', VALUE_OPTIONAL),
+                'correctfeedback' => new external_value(PARAM_RAW, 'attachments.', VALUE_OPTIONAL),
+                'correctfeedbackformat' => new external_value(PARAM_RAW, 'attachmentsrequired.', VALUE_OPTIONAL),
+                'partiallycorrectfeedback' => new external_value(PARAM_RAW, 'graderinfo.', VALUE_OPTIONAL),
+                'partiallycorrectfeedbackformat' => new external_value(PARAM_RAW, 'graderinfoformat.', VALUE_OPTIONAL),
+                'incorrectfeedback' => new external_value(PARAM_RAW, 'responsetemplate.', VALUE_OPTIONAL),
+                'incorrectfeedbackformat' => new external_value(PARAM_RAW, 'responsetemplate.', VALUE_OPTIONAL),
+                'answernumbering' => new external_value(PARAM_RAW, 'responsetemplateformat.', VALUE_OPTIONAL),
+                'shownumcorrect' => new external_value(PARAM_RAW, 'responsetemplateformat.', VALUE_OPTIONAL),
+            )
+        );
+    }
+
+    /**
+     * Hanv 26/07/2016
+     * Get the latest step data from the db, from which we will calculate stats.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     *
+     */
+    public static function get_statistic_questions_usages_parameters() {
+        return new external_function_parameters (
+            array(
+                'from' => new external_value(PARAM_RAW, 'from'),
+                'where' => new external_value(PARAM_RAW, 'where'),
+                'fields' => new external_value(PARAM_RAW, 'fields', VALUE_DEFAULT, null),
+                'param' => new  external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'name'),
+                            'value' => new external_value(PARAM_RAW, 'value'),
+                        )
+                    )
+                ),
+                'slots' => new external_multiple_structure(new external_value(PARAM_INT, 'slots')),
+            )
+        );
+    }
+
+    /**
+     * Get the latest step data from the db, from which we will calculate stats.
+     *
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function get_statistic_questions_usages($from, $where, $fields, $paramdata, $slots) {
+        global $CFG, $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::get_statistic_questions_usages_parameters(),
+            array('from' => $from, 'where' => $where, 'fields' => $fields, 'param' => $paramdata, 'slots' => $slots));
+
+        $r_params = array();
+        foreach ($paramdata as $element) {
+            $r_params[$element['name']] = $element['value'];
+        }
+
+        $r_slots = array();
+        foreach ($slots as $slot) {
+            $r_slots[$slot] = $slot;
+        }
+
+        $dm = new question_engine_data_mapper();
+        $qubaids = new qubaid_join($from, 'quiza.uniqueid', $where, $r_params);
+        $lateststeps = $dm->load_questions_usages_latest_steps($qubaids, array_keys($r_slots), $fields);
+        return $lateststeps;
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function get_statistic_questions_usages_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'id.', VALUE_OPTIONAL),
+                    'questionusageid' => new external_value(PARAM_INT, 'questionusageid.', VALUE_OPTIONAL),
+                    'questionid' => new external_value(PARAM_INT, 'question id.', VALUE_OPTIONAL),
+                    'variant' => new external_value(PARAM_INT, 'variant.', VALUE_OPTIONAL),
+                    'slot' => new external_value(PARAM_INT, 'slot.', VALUE_OPTIONAL),
+                    'maxmark' => new external_value(PARAM_FLOAT, 'max mark.', VALUE_OPTIONAL),
+                    'mark' => new external_value(PARAM_FLOAT, 'mark.', VALUE_OPTIONAL),
                 )
             )
         );

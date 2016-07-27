@@ -292,7 +292,23 @@ class calculator {
     qa.maxmark,
     qas.fraction * qa.maxmark as mark";
 
-        $lateststeps = $dm->load_questions_usages_latest_steps($qubaids, $this->stats->get_all_slots(), $fields);
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $index1 = 0;
+            foreach ($qubaids->params as $key =>$value) {
+                $paramdata["param[$index1][name]"] = $key;
+                $paramdata["param[$index1][value]"]= $value;
+                $index1++;
+            }
+            $index2 = 0;
+            foreach ($this->stats->get_all_slots() as $slot) {
+                $slotdata["slots[$index2]"] = $slot;
+                $index2++;
+            }
+            $lateststeps = get_remote_statistic_questions_usages($qubaids->from, $qubaids->where, $paramdata, $slotdata, $fields);
+        }else{
+            $lateststeps = $dm->load_questions_usages_latest_steps($qubaids, $this->stats->get_all_slots(), $fields);
+        }
+
         $summarks = array();
         if ($lateststeps) {
             foreach ($lateststeps as $step) {

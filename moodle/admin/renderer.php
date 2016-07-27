@@ -674,14 +674,16 @@ class core_admin_renderer extends plugin_renderer_base {
 
         //////////////////////////////////////////////////////////////////////////////////////////////////
         ////  IT IS ILLEGAL AND A VIOLATION OF THE GPL TO HIDE, REMOVE OR MODIFY THIS COPYRIGHT NOTICE ///
-        $copyrighttext = '<a href="http://moodle.org/">Moodle</a> '.
-                         '<a href="http://docs.moodle.org/dev/Releases" title="'.$CFG->version.'">'.$CFG->release.'</a><br />'.
-                         'Copyright &copy; 1999 onwards, Martin Dougiamas<br />'.
-                         'and <a href="http://moodle.org/dev">many other contributors</a>.<br />'.
-                         '<a href="http://docs.moodle.org/dev/License">GNU Public License</a>';
-        //////////////////////////////////////////////////////////////////////////////////////////////////
+        if (isset($CFG->copyright) && $CFG->copyright) {
+            $copyrighttext = '<a href="http://moodle.org/">Moodle</a> ' .
+                '<a href="http://docs.moodle.org/dev/Releases" title="' . $CFG->version . '">' . $CFG->release . '</a><br />' .
+                'Copyright &copy; 1999 onwards, Martin Dougiamas<br />' .
+                'and <a href="http://moodle.org/dev">many other contributors</a>.<br />' .
+                '<a href="http://docs.moodle.org/dev/License">GNU Public License</a>';
+            //////////////////////////////////////////////////////////////////////////////////////////////////
 
-        return $this->box($copyrighttext, 'copyright');
+            return $this->box($copyrighttext, 'copyright');
+        }
     }
 
     /**

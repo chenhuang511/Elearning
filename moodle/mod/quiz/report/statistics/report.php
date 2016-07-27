@@ -122,7 +122,17 @@ class quiz_statistics_report extends quiz_default_report {
             }
         }
 
-        $qubaids = quiz_statistics_qubaids_condition($quiz->id, $groupstudents, $whichattempts);
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $users = get_users_by_capability($this->context,
+                array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), '', '', '', '',
+                $currentgroup, '', false);
+            // list userids (mapping hub) in this course.
+            $usermaps = array();
+            foreach ($users as $user){
+                $usermaps[] = get_remote_mapping_user($user->id)[0]->id;
+            }
+        }
+        $qubaids = quiz_statistics_qubaids_condition($quiz->id, $groupstudents, $whichattempts, false, $usermaps);
 
         // If recalculate was requested, handle that.
         if ($recalculate && confirm_sesskey()) {
@@ -153,7 +163,7 @@ class quiz_statistics_report extends quiz_default_report {
             // Get the data to be displayed.
             $progress = $this->get_progress_trace_instance();
             list($quizstats, $questionstats) =
-                $this->get_all_stats_and_analysis($quiz, $whichattempts, $whichtries, $groupstudents, $questions, $progress);
+                $this->get_all_stats_and_analysis($quiz, $whichattempts, $whichtries, $groupstudents, $questions, $progress, $usermaps);
         } else {
             // Or create empty stats containers.
             $quizstats = new \quiz_statistics\calculated($whichattempts);
@@ -549,20 +559,20 @@ class quiz_statistics_report extends quiz_default_report {
      * @return array with 2 elements:    - $quizstats The statistics for overall attempt scores.
      *                                   - $questionstats \core_question\statistics\questions\all_calculated_for_qubaid_condition
      */
-    public function get_all_stats_and_analysis($quiz, $whichattempts, $whichtries, $groupstudents, $questions, $progress = null) {
+    public function get_all_stats_and_analysis($quiz, $whichattempts, $whichtries, $groupstudents, $questions, $progress = null, $usermaps = null) {
 
         if ($progress === null) {
             $progress = new \core\progress\none();
         }
 
-        $qubaids = quiz_statistics_qubaids_condition($quiz->id, $groupstudents, $whichattempts);
+        $qubaids = quiz_statistics_qubaids_condition($quiz->id, $groupstudents, $whichattempts, false, $usermaps);
 
         $qcalc = new \core_question\statistics\questions\calculator($questions, $progress);
 
         $quizcalc = new \quiz_statistics\calculator($progress);
 
         $progress->start_progress('', 3);
-        if ($quizcalc->get_last_calculated_time($qubaids) === false) {
+        if ($quizcalc->get_last_calculated_time($qubaids) === false) {//@TODO chua check truong hop == true, tam thoi bo qua
 
             // Recalculate now.
             $questionstats = $qcalc->calculate($qubaids);

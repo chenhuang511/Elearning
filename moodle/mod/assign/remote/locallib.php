@@ -1026,3 +1026,27 @@ function get_remote_assign_grade_grades_raw_data($sql, $param, $pagestart = 0, $
     );
     return $resp;
 }
+
+/**    
+ * Count record in mdl_grade_grades to check any existing grades for this grade_item on hub
+ * 
+ * @param int $remoteitemid   - The id of grade item on hub
+ * @param string $hostip      - The string of hostip on host
+ * @return int $resp          - Count record mdl_grade_grades by itemid
+ */
+function count_remote_grade_grades_by_itemid($remoteitemid, $hostip) {
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_count_remote_grade_grades_by_itemid',
+            'params' => array_merge(
+                array(
+                    'gradeitemid' => $remoteitemid,
+                    'hostip' => $hostip    
+                )
+        ), false
+    ));
+    
+    return $resp->count;
+}

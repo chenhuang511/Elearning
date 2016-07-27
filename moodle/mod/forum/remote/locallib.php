@@ -208,6 +208,26 @@ function get_remote_list_forum_discussions_sql($parameters, $sort = '')
     return $discussions;
 }
 
+function get_remote_list_forum_discussion_subs_by($parameters, $sort = '', $limitfrom = 0, $limitnum = 0)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_list_forum_discussion_subs_by',
+            'params' => array_merge(array('sort' => $sort, 'limitfrom' => $limitfrom, 'limitnum' => $limitnum), $parameters)
+        )
+    );
+
+    $subs = array();
+
+    foreach ($result->subs as $sub) {
+        $subs[$sub->id] = $sub;
+    }
+
+    return $subs;
+}
+
 function get_remote_list_forum_posts_by($parameters, $sort = '', $limitfrom = 0, $limitnum = 0)
 {
     $result = moodle_webservice_client(
