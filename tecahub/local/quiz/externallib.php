@@ -2027,8 +2027,8 @@ ORDER BY
     }
 
     /**
-     * Hanv 23/07/2016
-     * Get essay question options.
+     * Hanv 26/07/2016
+     * Get multichoice question options.
      *
      * @return external_function_parameters
      * @since Moodle 3.1 Options available
@@ -2044,7 +2044,7 @@ ORDER BY
     }
 
     /**
-     * Get essay question options.
+     * Get multichoice question options.
      *
      * @return array
      * @since Moodle 3.1 Options available
