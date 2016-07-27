@@ -366,7 +366,7 @@ function get_remote_forum_get_discussions_sql($postdata, $allnames, $umfields, $
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_forum_get_discussions_sql',
             'params' => array_merge(array('postdata' => $postdata, 'allnames' => $allnames, 'umfields' => $umfields, 'umtable' => $umtable, 'timelimit' => $timelimit, 'groupselect' => $groupselect, 'forumsort' => $forumsort, 'hostip' => gethostip(), 'limitfrom' => $limitfrom, 'limitnum' => $limitnum), $parameters)
-        )
+        ),false
     );
 
     $data = array();
