@@ -27,3 +27,4 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['uploadactions'] = 'Hành động';
 $string['wikiexternalurl'] = 'URL ngoài';
+$string['wikiintro'] = 'Mô tả';

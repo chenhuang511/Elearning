@@ -73,6 +73,7 @@ $string['responseformat'] = 'Định dạng câu trả lời';
 $string['responses'] = 'Câu trả lời';
 $string['responseview'] = 'Học sinh có thể xem TOÀN BỘ câu trả lời';
 $string['responseviewstudentsalways'] = 'Luôn luôn';
+$string['section'] = 'Mô tả';
 $string['send'] = 'Gửi';
 $string['sendemail'] = 'Gửi email';
 $string['send_message'] = 'Gửi tin nhắn tới những người được chọn';

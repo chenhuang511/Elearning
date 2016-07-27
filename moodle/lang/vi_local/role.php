@@ -25,4 +25,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['localroles'] = 'Vai trò được bổ nhiệm';
 $string['permissions'] = 'Quyền hạn';
