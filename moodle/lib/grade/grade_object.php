@@ -280,6 +280,7 @@ abstract class grade_object
                 $sql .= " WHERE $wheresql";
             }
 
+            $remoteparams = array();
             $index = 0;
             foreach ($newparams as $key => $val) {
                 $remoteparams['param[' . $index . '][name]='] = $key;
