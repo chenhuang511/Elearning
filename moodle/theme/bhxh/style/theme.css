@@ -16,8 +16,11 @@ h1, h2, h3, h4, h5, h6 {
     color: #097eaf;
     font-weight: bold;
 }
-.quizattemptcounts a, .resourceworkaround a, .introattachments-image div a, .box a, .assignment-info-fix a, .lastcol a{
+.quizattemptcounts a, .resourceworkaround a, .introattachments-image div a, .box a, .assignment-info-fix a, .lastcol a, .noti-content a{
     color: #337ab7;
+}
+.submitbtns a{
+    color: #FFFFFF;
 }
 .boxwidthwide a, .mod_quiz-next-nav, .mod_quiz-prev-nav{
     color: #fff;
@@ -3267,7 +3270,7 @@ table#permissions tbody tr:hover > th {
 }
 
 #page-mod-quiz-mod #id_reviewoptionshdr .fitem {
-    width: 47%;
+    width: 23.5%;
 }
 
 #page-mod-quiz-mod #id_reviewoptionshdr .fitemtitle {
