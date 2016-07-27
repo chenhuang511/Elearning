@@ -896,28 +896,34 @@ abstract class moodleform_mod extends moodleform {
         $mform = $this->_form;
         $label = is_null($customlabel) ? get_string('moduleintro') : $customlabel;
 
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-            $mform->addElement('editor', 'introeditor', $label, array('rows' => 10), array('maxfiles' => EDITOR_UNLIMITED_FILES,
-                'noclean' => true, 'context' => $this->context, 'subdirs' => true));
-            $mform->setType('introeditor', PARAM_RAW);
-
+        $mform->addElement('editor', 'introeditor', $label, array('rows' => 10), array('maxfiles' => EDITOR_UNLIMITED_FILES,
+            'noclean' => true, 'context' => $this->context, 'subdirs' => true));
+        $mform->setType('introeditor', PARAM_RAW); // no XSS prevention here, users must be trusted
+        if ($required) {
             $mform->addRule('introeditor', get_string('required'), 'required', null, 'client');
-        } else {
+        }
+
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            // Freeze editor and create new intro
+            $mform->freeze('introeditor');
+
             $mform->addElement('html', '<div class="introdesc">');
             $mform->addElement('htmleditor', 'intro', $label);
             $mform->setType('intro', PARAM_RAW);
             $mform->freeze('intro');
             $mform->addElement('html', '</div>');
+
         }
 
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
             // If the 'show description' feature is enabled, this checkbox appears below the intro.
             // We want to hide that when using the singleactivity course format because it is confusing.
-            if ($this->_features->showdescription  && $this->courseformat->has_view_page()) {
+            if ($this->_features->showdescription && $this->courseformat->has_view_page()) {
                 $mform->addElement('checkbox', 'showdescription', get_string('showdescription'));
                 $mform->addHelpButton('showdescription', 'showdescription');
             }
         }
+
     }
 
     /**
