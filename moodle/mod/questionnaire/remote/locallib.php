@@ -213,6 +213,25 @@ function update_remote_response_by_tbl($tablename, $id, $data)
     );
     return $res;
 }
+
+/**
+ * delete a tbl
+ *
+ * @param $branch
+ * @return false|mixed
+ */
+function delete_remote_response_by_tbl($tablename, $select, $sort = '')
+{
+    $res = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_delete_response_by_mbl',
+            'params' => array('tablename' => $tablename, 'select' => $select, 'sort' => $sort)
+        )
+    );
+    return $res;
+}
 /**
  * get questionnaire_attempts by condition
  *

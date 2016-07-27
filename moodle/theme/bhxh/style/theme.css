@@ -16,8 +16,11 @@ h1, h2, h3, h4, h5, h6 {
     color: #097eaf;
     font-weight: bold;
 }
-.quizattemptcounts a, .resourceworkaround a, .introattachments-image div a, .box a, .assignment-info-fix a, .lastcol a{
+.quizattemptcounts a, .resourceworkaround a, .introattachments-image div a, .box a, .assignment-info-fix a, .lastcol a, .noti-content a{
     color: #337ab7;
+}
+.submitbtns a{
+    color: #FFFFFF;
 }
 .boxwidthwide a, .mod_quiz-next-nav, .mod_quiz-prev-nav{
     color: #fff;
@@ -1879,10 +1882,15 @@ ul#coursetabs > li.active > a, ul#coursetabs > li > a:focus, ul#coursetabs > li 
 }
 
 #footer .footer-main .foot-links ul li a {
-    font-size: 16px;
+    font-size: 20px;
     color: #fff;
     line-height: 32px;
+    text-decoration: underline;
+    font-style: italic;
+    margin-left: 20px;
+    font-weight: bolder;
 }
+
 
 #footer .footer-main .foot-links ul li a:hover {
     color: #097eaf;
@@ -2007,6 +2015,7 @@ ul#coursetabs > li.active > a, ul#coursetabs > li > a:focus, ul#coursetabs > li 
 
 label {
     padding-top: 10px;
+    margin-left: 0px;
 }
 
 legend {
@@ -3267,7 +3276,7 @@ table#permissions tbody tr:hover > th {
 }
 
 #page-mod-quiz-mod #id_reviewoptionshdr .fitem {
-    width: 47%;
+    width: 23.5%;
 }
 
 #page-mod-quiz-mod #id_reviewoptionshdr .fitemtitle {
@@ -3409,10 +3418,18 @@ table#permissions tbody tr:hover > th {
     padding: 5px;
     margin: 10px;
 }
+
 .introattachments-image{
     padding:5px;
     margin: 5px;
 }
+
+.alert{
+    padding: 8px;
+    border-radius: 2px;
+    color: #8a6d3b;
+}
+
 .bhxh-chat-span{
     margin-left: -6px;
     margin-bottom: 15px;

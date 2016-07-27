@@ -219,7 +219,7 @@ abstract class grade_object
                 if (strpos($var, 'courseid') !== false) {
                     if ($value) {
                         $remoteid = get_local_course_record($value, true)->remoteid;
-                        if ($remoteid === 0) {
+                        if ($remoteid == 0) {
                             $useremote = false;
                             break;
                         }
