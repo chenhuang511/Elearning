@@ -903,11 +903,13 @@ abstract class moodleform_mod extends moodleform {
             $mform->addRule('introeditor', get_string('required'), 'required', null, 'client');
         }
 
-        // If the 'show description' feature is enabled, this checkbox appears below the intro.
-        // We want to hide that when using the singleactivity course format because it is confusing.
-        if ($this->_features->showdescription  && $this->courseformat->has_view_page()) {
-            $mform->addElement('checkbox', 'showdescription', get_string('showdescription'));
-            $mform->addHelpButton('showdescription', 'showdescription');
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            // If the 'show description' feature is enabled, this checkbox appears below the intro.
+            // We want to hide that when using the singleactivity course format because it is confusing.
+            if ($this->_features->showdescription  && $this->courseformat->has_view_page()) {
+                $mform->addElement('checkbox', 'showdescription', get_string('showdescription'));
+                $mform->addHelpButton('showdescription', 'showdescription');
+            }
         }
     }
 

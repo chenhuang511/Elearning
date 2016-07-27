@@ -1550,7 +1550,6 @@ function assign_get_local_settings_info($coursemodule){
     $assign->name = $assignremote->name;
     $assign->intro = $assignremote->intro;
     $assign->introformat = $assignremote->introformat;
-    $assign->alwaysshowdescription = $assignremote->alwaysshowdescription;
 
     return $assign;
 }

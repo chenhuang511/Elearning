@@ -5207,10 +5207,7 @@ function forum_add_discussion($discussion, $mform = null, $unused = null, $useri
             if ($key == "userid") {
                 $user = get_remote_mapping_user($val);
                 $postdata["data[$i][value]"] = $user[0]->id;
-            } else if ($key == "course") {
-                $localcourse = $DB->get_record('course', array('id' => $val), 'id, remoteid', MUST_EXIST);
-                $postdata["data[$i][value]"] = $localcourse->remoteid;
-            } else {
+            }  else {
                 $postdata["data[$i][value]"] = $val;
             }
             $i++;
@@ -5251,10 +5248,7 @@ function forum_add_discussion($discussion, $mform = null, $unused = null, $useri
             if ($key == "userid" || $key == "usermodified") {
                 $user = get_remote_mapping_user($val);
                 $discussiondata["data[$count][value]"] = $user[0]->id;
-            } else if ($key == "course") {
-                $localcourse = $DB->get_record('course', array('id' => $val), '*', MUST_EXIST);
-                $discussiondata["data[$count][value]"] = $localcourse->remoteid;
-            } else {
+            }  else {
                 $discussiondata["data[$count][value]"] = $val;
             }
             $count++;

@@ -6293,9 +6293,10 @@ a.thumbnail.active {
 }
 
 .alert {
-    padding: 15px;
+    padding: 8px 35px 8px 14px;
     margin-bottom: 20px;
-    border: 1px solid transparent;
+    border-color: #fcf8e3;
+    border: 1px solid #fbeed5;
     border-radius: 4px;
 }
 
@@ -17527,7 +17528,7 @@ textarea.searchform input[type="text"] {
     transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
 }
 .fitemtitle label, .felement select {
-    margin:0px;
+    margin: 0px;
 }
 .mform .fitem .felement select:focus,
 .mform .fitem .felement input[type="text"]:focus,
