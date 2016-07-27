@@ -1894,9 +1894,7 @@ ul#coursetabs > li.active > a, ul#coursetabs > li > a:focus, ul#coursetabs > li 
     color: #fff;
     line-height: 32px;
     text-decoration: underline;
-    font-style: italic;
     margin-left: 20px;
-    font-weight: bolder;
 }
 
 
