@@ -18,9 +18,9 @@ $copyright_footer = theme_bhxh_get_setting('copyright_footer');
                 <div class="row-fluid">
                     <div class="foot-links-wrap">
                         <ul class="foot-links clearfix">
-                            <p><?php
+                            <?php
                             echo $OUTPUT->custom_menu();
-                            ?></p>
+                            ?>
                         </ul>
                     </div>
                 </div>
