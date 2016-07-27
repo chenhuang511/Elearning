@@ -106,6 +106,14 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_delete_response_by_mbl' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'delete_response_by_mbl',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "delete response by table name",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 	'local_mod_get_questionnaire_attempts' => array(
 		'classname'	  => 'local_questionnaire_external',
 		'methodname'  => 'get_questionnaire_attempts',

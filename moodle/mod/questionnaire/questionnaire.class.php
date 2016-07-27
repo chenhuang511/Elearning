@@ -439,7 +439,7 @@ class questionnaire {
             $sql_sort = 'timemodified DESC';
             $attempts = get_remote_questionnaire_attempts($sql_select, $sql_sort);
         }
-        if (!($attempts = $DB->get_records_select('questionnaire_attempts', $sql_select, null, 'timemodified DESC'))) {
+        if (!($attempts)) {
             return true;
         }
 
@@ -693,7 +693,6 @@ class questionnaire {
                 return;
             }
         }
-
         if (!empty($formdata->resume) && ($this->resume)) {
             $this->response_delete($formdata->rid, $formdata->sec);
             $formdata->rid = $this->response_insert($this->survey->id, $formdata->sec, $formdata->rid, $quser, $resume = true);
@@ -913,7 +912,12 @@ class questionnaire {
         $ruser = '';
         if ($resp && !$blankquestionnaire) {
             if ($userid) {
-                if ($user = $DB->get_record('user', array('id' => $userid))) {
+                if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                    $user = $DB->get_record('user', array('id' => $userid));
+                } else {
+                    $user = get_remote_user_by_id($userid);
+                }
+                if ($user) {
                     $ruser = fullname($user);
                 }
             }
@@ -1346,8 +1350,13 @@ class questionnaire {
             if (empty($qids)) {
                 return;
             } else {
-                list($qsql, $params) = $DB->get_in_or_equal($qids);
-                $qsql = ' AND question_id ' . $qsql;
+                if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                    list($qsql, $params) = $DB->get_in_or_equal($qids);
+                    $qsql = ' AND question_id ' . $qsql;
+                } else {
+                    $qsql = implode(',', $qids);
+                    $qsql = ' AND response_id IN (' . $qsql . ')';
+                }
             }
 
         } else {
@@ -1360,7 +1369,11 @@ class questionnaire {
         $select = 'response_id = \'' . $rid . '\' ' . $qsql;
         foreach (array('response_bool', 'resp_single', 'resp_multiple', 'response_rank', 'response_text',
                        'response_other', 'response_date') as $tbl) {
-            $DB->delete_records_select('questionnaire_'.$tbl, $select, $params);
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $DB->delete_records_select('questionnaire_'.$tbl, $select, $params);
+            } else {
+                delete_remote_response_by_tbl('questionnaire_'.$tbl, $select);
+            }
         }
     }
 
@@ -1434,19 +1447,29 @@ class questionnaire {
 
     private function get_response($username, $rid = 0) {
         global $DB;
-
+        $isremote = MOODLE_RUN_MODE === MOODLE_MODE_HOST ? true : false;
         $rid = intval($rid);
         if ($rid != 0) {
             // Check for valid rid.
             $fields = 'id, username';
             $select = 'id = '.$rid.' AND survey_id = '.$this->sid.' AND username = \''.$username.'\' AND complete = \'n\'';
-            return ($DB->get_record_select('questionnaire_response', $select, null, $fields) !== false) ? $rid : '';
-
+            if($isremote){
+                return ($DB->get_record_select('questionnaire_response', $select, null, $fields) !== false) ? $rid : '';
+            } else {
+                $select = 'id = '.$rid.' AND survey_id = '.$this->sid.' AND username = \''.get_remote_mapping_user($username)[0]->id.'\' AND complete = \'n\'';
+                return (get_remote_questionnaire_response($select) !== false) ? $rid : '';
+            }
         } else {
             // Find latest in progress rid.
             $select = 'survey_id = '.$this->sid.' AND complete = \'n\' AND username = \''.$username.'\'';
-            if ($records = $DB->get_records_select('questionnaire_response', $select, null, 'submitted DESC',
-                                              'id,survey_id', 0, 1)) {
+            if($isremote){
+                $records = $DB->get_records_select('questionnaire_response', $select, null, 'submitted DESC',
+                    'id,survey_id', 0, 1);
+            } else {
+                $select = 'survey_id = '.$this->sid.' AND complete = \'n\' AND username = \''.get_remote_mapping_user($username)[0]->id.'\'';
+                $records = get_remote_questionnaire_response($select, 'submitted DESC');
+            }
+            if ($records) {
                 $rec = reset($records);
                 return $rec->id;
             } else {
@@ -2566,7 +2589,7 @@ class questionnaire {
                 } else if ($currentgroupid == 0) {
                     $sql_select = "survey_id='{$this->survey->id}' AND complete='y'";
                     $sql_sort = 'id';
-                } else { // Members of a specific group. // sua
+                } else { // Members of a specific group. // not yet
                     $sql = "SELECT r.id, r.survey_id
                           FROM {questionnaire_response} r,
                                 {groups_members} gm
