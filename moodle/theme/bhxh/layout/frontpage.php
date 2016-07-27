@@ -41,29 +41,27 @@ echo $OUTPUT->doctype() ?>
 <html <?php echo $OUTPUT->htmlattributes(); ?>>
 <head>
     <title><?php echo $OUTPUT->page_title(); ?></title>
-    <link rel="shortcut icon" href="<?php echo $OUTPUT->favicon(); ?>"/>
+    <link rel="shortcut icon" href="<?php echo $OUTPUT->favicon(); ?>" />
     <?php echo $OUTPUT->standard_head_html() ?>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link
-        href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,600,700italic,400italic,600italic&subset=latin,vietnamese'
-        rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,600,700italic,400italic,600italic&subset=latin,vietnamese' rel='stylesheet' type='text/css'>
 </head>
 
 <body <?php echo $OUTPUT->body_attributes(); ?>>
 
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
 
-<?php require_once(dirname(__FILE__) . '/includes/header.php'); ?>
+<?php  require_once(dirname(__FILE__) . '/includes/header.php');  ?>
 
 <div class="container-fluid">
-    <?php
-    $toggleslideshow = theme_bhxh_get_setting('toggleslideshow');
-    if ($toggleslideshow == 1) {
-        require_once(dirname(__FILE__) . '/includes/slideshow.php');
-    } else {
-        echo "<br/><br/>";
-    }
-    ?>
+   <?php
+         $toggleslideshow = theme_bhxh_get_setting('toggleslideshow');
+        if ($toggleslideshow == 1) {
+            require_once(dirname(__FILE__) . '/includes/slideshow.php');
+        }else{
+								    echo "<br/><br/>";
+								}
+        ?>
 </div>
 <!--Slider-->
 
@@ -73,11 +71,7 @@ echo $OUTPUT->doctype() ?>
         <?php echo $html->heading; ?>
         <div id="page-navbar" class="clearfix">
             <nav class="breadcrumb-nav"><?php echo $OUTPUT->navbar(); ?></nav>
-            <?php
-            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
-                ?>
-                <div class="breadcrumb-button"><?php echo $OUTPUT->page_heading_button(); ?></div>
-            <?php } ?>
+            <div class="breadcrumb-button"><?php echo $OUTPUT->page_heading_button(); ?></div>
         </div>
         <div id="course-header">
             <?php echo $OUTPUT->course_header(); ?>
@@ -96,6 +90,6 @@ echo $OUTPUT->doctype() ?>
 
 </div>
 
-<?php require_once(dirname(__FILE__) . '/includes/footer.php'); ?>
+<?php  require_once(dirname(__FILE__) . '/includes/footer.php');  ?>
 </body>
 </html>
