@@ -25,4 +25,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['pluginname'] = 'Hạn chế bằng điểm';
 $string['requires_min'] = 'Bạn đạt điểm số được yêu cầu trong  <strong>{$a}</strong>';

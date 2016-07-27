@@ -24,8 +24,11 @@ h2.main, #pageheading {
     color: #097eaf;
     font-weight: bold;
 }
-.quizattemptcounts a, .resourceworkaround a, .introattachments-image div a, .box a, .assignment-info-fix a, .lastcol a{
+.quizattemptcounts a, .resourceworkaround a, .introattachments-image div a, .box a, .assignment-info-fix a, .lastcol a, .noti-content a{
     color: #337ab7;
+}
+.submitbtns a{
+    color: #FFFFFF;
 }
 .boxwidthwide a, .mod_quiz-next-nav, .mod_quiz-prev-nav{
     color: #fff;
@@ -3281,7 +3284,7 @@ table#permissions tbody tr:hover > th {
 }
 
 #page-mod-quiz-mod #id_reviewoptionshdr .fitem {
-    width: 47%;
+    width: 23.5%;
 }
 
 #page-mod-quiz-mod #id_reviewoptionshdr .fitemtitle {
@@ -3454,6 +3457,18 @@ table#permissions tbody tr:hover > th {
 }
 .bhxh-link-chat .btn-primary:hover{
     background: #1D2939;
+}
+
+.introdesc > #fitem_id_intro > .fitemtitle > .fstaticlabel {
+    font-size: 16px;
+    font-weight: bold;
+    padding-top: 7px;
+}
+.introdesc > #fitem_id_intro > .fstatic > .text_to_html{
+    border: 1px solid #ccc;
+    padding: 6px 12px;
+    background: #eee;
+    border-radius: 4px;
 }
 
 

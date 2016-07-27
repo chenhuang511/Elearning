@@ -37,6 +37,7 @@ $string['couldnotcreatenewsurvey'] = 'Không thể tạo khảo sát mới';
 $string['deletingresp'] = 'Đang xóa câu trả lời';
 $string['errnewname'] = 'Xin lỗi, tên đã tồn tại. Vùi lòng chọn tên khác.';
 $string['finished'] = 'Bạn đã trả lời tất cả câu hỏi trong khảo sát!';
+$string['messageprovider:message'] = 'Bảng câu hỏi nhắc nhở';
 $string['missingquestion'] = 'Làm ơn trả lời câu hỏi bắt buộc';
 $string['missingquestions'] = 'Làm ơn trả lời câu hỏi bắt buộc:';
 $string['myresponses'] = 'Câu trả lời của bạn';

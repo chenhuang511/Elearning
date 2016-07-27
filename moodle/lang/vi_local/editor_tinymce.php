@@ -26,3 +26,5 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['advlink_dlg:popup_opts'] = 'Tùy chọn';
+$string['pluginname'] = 'Trình soạn thảo TinyMCE HTML';
+$string['settings'] = 'Cài đặt chung';

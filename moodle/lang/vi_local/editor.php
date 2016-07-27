@@ -25,4 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['acteditorshhdr'] = 'Trình soạn thảo văn bản có sẵn';
+$string['editors'] = 'Trình soạn thảo văn bản';
 $string['options'] = 'Tùy chọn';

@@ -25,4 +25,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['autohide'] = 'Tự động ẩn';
+$string['autohide_desc'] = 'Tự động ẩn các liên kết thùng rác khi thùng rỗng.';
+$string['categorybinenable'] = 'Kích hoạt thùng rác danh mục';
+$string['categorybinexpiry'] = 'Vòng đời khóa học';
+$string['categorybinexpiry_desc'] = 'Nên duy trì khóa học bị xóa trong thùng rác bao lâu?';
+$string['coursebinenable'] = 'Kích hoạt thùng rác của khóa học';
+$string['coursebinexpiry'] = 'Vòng đời của mục';
+$string['coursebinexpiry_desc'] = 'Nên để mục bị xóa duy trì bao lâu trong thùng rác?';
 $string['pluginname'] = 'Thùng rác';

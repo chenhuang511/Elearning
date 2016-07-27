@@ -26,3 +26,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['description'] = 'Mô tả';
+$string['messageprovider:invalidrecipienthandler'] = 'Tin nhắn để xác nhận rằng tin nhắn được gửi đến từ bạn';
+$string['messageprovider:messageprocessingerror'] = 'Cảnh báo khi một thông báo gửi vào không thể được xử lý';
+$string['messageprovider:messageprocessingsuccess'] = 'Xác nhận một tin nhắn được xử lý thành công';

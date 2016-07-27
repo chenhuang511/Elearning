@@ -572,7 +572,7 @@ class quiz_statistics_report extends quiz_default_report {
         $quizcalc = new \quiz_statistics\calculator($progress);
 
         $progress->start_progress('', 3);
-        if ($quizcalc->get_last_calculated_time($qubaids) === false) {//@TODO chua check truong hop == true, tam thoi bo qua
+        if ($quizcalc->get_last_calculated_time($qubaids) === false) {
 
             // Recalculate now.
             $questionstats = $qcalc->calculate($qubaids);

@@ -25,6 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['installaddon'] = 'Cài đặt tiện ích!';
 $string['installaddons'] = 'Cài đặt tiện ích';
 $string['installfromrepo'] = 'Cài đặt tiện ích từ hướng dẫn tiện ích của Moodle';
 $string['installfromzip'] = 'Cài đặt tiện ích từ tệp ZIP';

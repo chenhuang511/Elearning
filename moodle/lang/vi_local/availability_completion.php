@@ -25,6 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['pluginname'] = 'Hạn chế bằng cách hoàn thành các hoạt động';
 $string['requires_complete'] = 'Hoạt động <strong>{$a}</strong> được đánh dấu hoàn thành';
 $string['requires_complete_fail'] = 'Hoạt động <strong>{$a}</strong> đã hoàn thành và trượt';
 $string['requires_complete_pass'] = 'Hoạt động <strong>{$a}</strong> đã hoàn thành và vượt qua';

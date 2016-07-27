@@ -21,6 +21,14 @@ class course_edit_form extends moodleform
     {
         global $CFG, $PAGE;
 
+        $readonly = '';
+        $disabled = '';
+
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $readonly = 'readonly';
+            $disabled = 'disabled';
+        }
+
         $mform = $this->_form;
         $PAGE->requires->yui_module('moodle-course-formatchooser', 'M.course.init_formatchooser',
             array(array('formid' => $mform->getAttribute('id'))));
@@ -58,7 +66,7 @@ class course_edit_form extends moodleform
         $mform->setType('returnurl', PARAM_LOCALURL);
         $mform->setConstant('returnurl', $returnurl);
 
-        $mform->addElement('text', 'fullname', get_string('fullnamecourse'), 'maxlength="254" size="50" disabled');
+        $mform->addElement('text', 'fullname', get_string('fullnamecourse'), 'maxlength="254" size="50" ' . "$readonly");
         $mform->addHelpButton('fullname', 'fullnamecourse');
         $mform->addRule('fullname', get_string('missingfullname'), 'required', null, 'client');
         $mform->setType('fullname', PARAM_TEXT);
@@ -67,7 +75,7 @@ class course_edit_form extends moodleform
             $mform->setConstant('fullname', $course->fullname);
         }
 
-        $mform->addElement('text', 'shortname', get_string('shortnamecourse'), 'maxlength="100" size="20" disabled');
+        $mform->addElement('text', 'shortname', get_string('shortnamecourse'), 'maxlength="100" size="20" ' . "$readonly");
         $mform->addHelpButton('shortname', 'shortnamecourse');
         $mform->addRule('shortname', get_string('missingshortname'), 'required', null, 'client');
         $mform->setType('shortname', PARAM_TEXT);
@@ -80,7 +88,7 @@ class course_edit_form extends moodleform
         if (empty($course->id)) {
             if (has_capability('moodle/course:create', $categorycontext)) {
                 $displaylist = coursecat::make_categories_list('moodle/course:create');
-                $mform->addElement('select', 'category', get_string('coursecategory'), $displaylist, 'disabled');
+                $mform->addElement('select', 'category', get_string('coursecategory'), $displaylist, $disabled);
                 $mform->addHelpButton('category', 'coursecategory');
                 $mform->setDefault('category', $category->id);
             } else {
@@ -95,7 +103,7 @@ class course_edit_form extends moodleform
                     //always keep current
                     $displaylist[$course->category] = coursecat::get($course->category, MUST_EXIST, true)->get_formatted_name();
                 }
-                $mform->addElement('select', 'category', get_string('coursecategory'), $displaylist, "disabled");
+                $mform->addElement('select', 'category', get_string('coursecategory'), $displaylist, $disabled);
                 $mform->addHelpButton('category', 'coursecategory');
             } else {
                 //keep current
@@ -108,7 +116,7 @@ class course_edit_form extends moodleform
         $choices = array();
         $choices['0'] = get_string('hide');
         $choices['1'] = get_string('show');
-        $mform->addElement('select', 'visible', get_string('visible'), $choices, 'disabled');
+        $mform->addElement('select', 'visible', get_string('visible'), $choices, $disabled);
         $mform->addHelpButton('visible', 'visible');
         $mform->setDefault('visible', $courseconfig->visible);
         if (!empty($course->id)) {
@@ -123,11 +131,11 @@ class course_edit_form extends moodleform
             }
         }
 
-        $mform->addElement('date_selector', 'startdate', get_string('startdate'), 'disabled');
-        $mform->addHelpButton('startdate', 'startdate');
-        $mform->setDefault('startdate', time() + 3600 * 24);
+        $mform->addElement('date_selector', 'startdate', get_string('startdate'));
+        $mform->addHelpButton('startdate', 'startdate', $disabled);
+        $mform->setDefault('startdate', time() + 3600 * 24, $disabled);
 
-        $mform->addElement('text', 'idnumber', get_string('idnumbercourse'), 'maxlength="100"  size="10" disabled');
+        $mform->addElement('text', 'idnumber', get_string('idnumbercourse'), 'maxlength="100"  size="10" ' . "$disabled");
         $mform->addHelpButton('idnumber', 'idnumbercourse');
         $mform->setType('idnumber', PARAM_RAW);
         if (!empty($course->id) and !has_capability('moodle/course:changeidnumber', $coursecontext)) {

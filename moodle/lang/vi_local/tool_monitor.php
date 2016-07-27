@@ -26,3 +26,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['description'] = 'Mô tả:';
+$string['messageprovider:notification'] = 'Thông báo việc đăng ký các quy định';

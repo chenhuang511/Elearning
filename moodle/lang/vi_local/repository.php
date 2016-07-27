@@ -26,3 +26,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['original'] = 'Nguồn gốc';
+$string['repositories'] = 'Kho';
