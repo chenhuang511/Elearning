@@ -32,6 +32,7 @@ $string['maxfiles'] = 'Số tệp tối đa được gửi';
 $string['maximumsize'] = 'Dung lượng tệp tin tối đa';
 $string['nochanges'] = 'Không có gì thay đổi';
 $string['pluginname'] = 'Tệp tin phản hồi';
+$string['selectedusers'] = 'Chọn người dùng';
 $string['uploadfiles'] = 'Gửi tệp phản hồi';
 $string['uploadzip'] = 'Tải lên nhiều tệp phản hồi trong một zip';
 $string['uploadzipsummary'] = 'Nhập tệp tin phản hồi từ một file zip';

@@ -106,6 +106,7 @@ $string['requireallteammemberssubmit'] = 'Yêu cầu tất cả thành viên nh�
 $string['requiresubmissionstatement'] = 'Yêu cầu học viên chấp nhận trạng thái nộp';
 $string['requiresubmissionstatement_help'] = 'Yêu cầu học viên chấp nhận trạng thái nộp cho các lần nộp đến bài tập này';
 $string['search:activity'] = 'Bài tập - thông tin hoạt động';
+$string['selectedusers'] = 'Chọn người dùng';
 $string['sendlatenotifications'] = 'Thông báo cho giáo viên về việc nộp muộn';
 $string['sendnotifications'] = 'Thông báo cho giáo viên về bài nộp';
 $string['sendstudentnotificationsdefault'] = 'Cài đặt mặc định "Thông báo cho học viên"';
