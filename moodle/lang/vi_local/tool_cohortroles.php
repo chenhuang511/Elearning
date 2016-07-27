@@ -30,3 +30,4 @@ $string['backgroundsync'] = 'Lưu ý: Hiển thị vai trò nhóm  mới sẽ kh
 $string['existingcohortroles'] = 'Hiển thị vai trò của nhóm hiện tại';
 $string['managecohortroles'] = 'Gán vai trò người dùng đến đoàn thể';
 $string['noassignableroles'] = 'Hiện tại không có vai trò có thể được giao trong bối cảnh người dùng. Quản lý vai trò';
+$string['pluginname'] = 'Quản lý vai trò nhóm';

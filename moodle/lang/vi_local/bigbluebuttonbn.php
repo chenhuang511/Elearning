@@ -30,6 +30,7 @@ $string['index_heading_actions'] = 'Hành động';
 $string['index_heading_group'] = 'Nhóm';
 $string['index_heading_recording'] = 'Ghi lại';
 $string['index_heading_users'] = 'Người dùng';
+$string['mod_form_block_general'] = 'Cài đặt chung';
 $string['mod_form_field_intro'] = 'Mô tả';
 $string['mod_form_field_name'] = 'Tên lớp học ảo';
 $string['view_conference_action_join'] = 'Tham gia buổi học';

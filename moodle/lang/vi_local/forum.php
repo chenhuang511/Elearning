@@ -31,5 +31,7 @@ $string['displayend'] = 'Kết thúc hiển thị';
 $string['displayperiod'] = 'Thời gian hiển thị';
 $string['displaystart'] = 'Bắt đầu hiển thị';
 $string['forum:addquestion'] = 'Thêm câu hỏi';
+$string['messageprovider:digests'] = 'Phân loại diễn đàn đăng ký';
+$string['messageprovider:posts'] = 'Bài viết đã đăng ký trên diễn đàn';
 $string['search:activity'] = 'Diễn đàn - thông tin hoạt động';
 $string['search:post'] = 'Diễn đàn - bài viết';

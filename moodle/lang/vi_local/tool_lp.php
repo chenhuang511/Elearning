@@ -45,4 +45,5 @@ $string['notemplates'] = 'Không có biểu mẫu kế hoạch học tập nào 
 $string['plandescription'] = 'Mô tả';
 $string['stopreview'] = 'Kết thúc xem lại';
 $string['templates'] = 'Bản mẫu kế hoạch học tập';
+$string['uponcoursemodulecompletion'] = 'Sau khi hoàn thành các hoạt động:';
 $string['userevidencedescription'] = 'Mô tả';

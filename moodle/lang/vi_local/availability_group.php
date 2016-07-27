@@ -25,4 +25,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['pluginname'] = 'Hạn chế bằng nhóm';
 $string['title'] = 'Nhóm';

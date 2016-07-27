@@ -34,4 +34,5 @@ $string['migrateframeworks'] = 'Chuyển đổi dữ liệu';
 $string['migratefrom'] = 'Di chuyển từ';
 $string['migrateto'] = 'Di chuyển đến';
 $string['performmigration'] = 'Thực hiện di chuyển';
+$string['pluginname'] = 'Công cụ chuyển đổi năng lực';
 $string['startdatefrom'] = 'Ngày bắt đầu từ';
