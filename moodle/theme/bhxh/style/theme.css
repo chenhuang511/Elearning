@@ -1860,6 +1860,7 @@ ul#coursetabs > li.active > a, ul#coursetabs > li > a:focus, ul#coursetabs > li 
 #footer .footer-main .foot-links {
     padding: 0;
     margin: 0;
+    margin-left: 300px;
 }
 
 #footer .footer-main .foot-links ul {
@@ -1872,10 +1873,13 @@ ul#coursetabs > li.active > a, ul#coursetabs > li > a:focus, ul#coursetabs > li 
 }
 
 #footer .footer-main .foot-links ul li a {
+    text-align: center;
     font-size: 16px;
     color: #fff;
     line-height: 32px;
+    text-decoration: underline;
 }
+
 
 #footer .footer-main .foot-links ul li a:hover {
     color: #097eaf;
