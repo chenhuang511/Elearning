@@ -1,0 +1,35 @@
+{
+    "name": "ryuzee/open-slideshare",
+    "description": "Sharing slide decks",
+    "license": "MIT License",
+    "authors": [
+        {
+            "name": "Ryutaro YOSHIBA",
+            "email": "ryutaroy@amazon.com"
+        }
+    ],
+    "config": {
+        "vendor-dir": "Vendor"
+    },
+    "extra": {
+        "installer-paths": {
+            "Plugin/SQS": ["lorenzo/cakephp-sqs"]
+        }
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "2.*"
+    },
+    "require": {
+        "cakephp/cakephp": "2.7.*",
+        "phpunit/phpunit": "3.7.38",
+        "aws/aws-sdk-php": "2.*",
+        "cakedc/migrations": "~2.3",
+        "cakedc/tags": "1.6.1",
+        "cakedc/search": "*",
+        "slywalker/boost_cake": "*",
+        "lorenzo/cakephp-sqs": "dev-master",
+        "cakephp/debug_kit": "2.2.5",
+        "tholu/php-packer": "0.1.2",
+        "monolog/monolog":"*"
+    }
+}

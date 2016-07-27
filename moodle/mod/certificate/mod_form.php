@@ -34,7 +34,7 @@ class mod_certificate_mod_form extends moodleform_mod {
 
     function definition() {
         global $CFG;
-
+        $isremote = (MOODLE_RUN_MODE === MOODLE_MODE_HOST) ? true : false;
         $mform =& $this->_form;
 
         $mform->addElement('header', 'general', get_string('general', 'form'));
@@ -83,7 +83,11 @@ class mod_certificate_mod_form extends moodleform_mod {
         // Text Options
         $mform->addElement('header', 'textoptions', get_string('textoptions', 'certificate'));
 
-        $modules = certificate_get_mods();
+        if($isremote) {
+            $modules = certificate_get_mods();
+        } else {
+            $modules = array();
+        }
         $dateoptions = certificate_get_date_options() + $modules;
         $mform->addElement('select', 'printdate', get_string('printdate', 'certificate'), $dateoptions);
         $mform->setDefault('printdate', 'N');
@@ -110,7 +114,11 @@ class mod_certificate_mod_form extends moodleform_mod {
         $mform->setDefault('gradefmt', 0);
         $mform->addHelpButton('gradefmt', 'gradefmt', 'certificate');
 
-        $outcomeoptions = certificate_get_outcomes();
+        if($isremote) {
+            $outcomeoptions = certificate_get_outcomes();
+        } else {
+            $outcomeoptions = array();
+        }
         $mform->addElement('select', 'printoutcome', get_string('printoutcome', 'certificate'),$outcomeoptions);
         $mform->setDefault('printoutcome', 0);
         $mform->addHelpButton('printoutcome', 'printoutcome', 'certificate');

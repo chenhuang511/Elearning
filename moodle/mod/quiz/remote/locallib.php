@@ -351,7 +351,7 @@ function get_remote_count_attempts($quizid) {
 }
 
 function get_remote_significant_questions($quizid) {
-    return moodle_webservice_client(
+    $questions = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
@@ -359,6 +359,11 @@ function get_remote_significant_questions($quizid) {
             'params' => array('quizid' => $quizid)
         ), false
     );
+    $sigquestions = array();
+    foreach($questions as $question){
+        $sigquestions[$question->slot] = $question;
+    }
+    return $sigquestions;
 }
 
 function get_remote_report_get_grand_total($countsql, $countparam) {
@@ -472,4 +477,92 @@ function remote_process_submitted_data($attemptids, $data) {
             'params' => array_merge($attemptids, $data)
         ), false
     );
+}
+
+function get_remote_qtype_essay_question_options($questionid) {
+    return moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_quiz_get_essay_question_options',
+            'params' => array('questionid' => $questionid)
+        ), false
+    );
+}
+
+function get_remote_question_option_answer($questionid) {
+    $results = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_quiz_get_question_options_answer',
+            'params' => array('questionid' => $questionid)
+        ), false
+    );
+    $optionanswer = array();
+    foreach ($results as $result){
+        $optionanswer[$result->id] = $result;
+    }
+    return $optionanswer;
+}
+
+function get_remote_question_hints($questionid) {
+    $results = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_quiz_get_question_hints',
+            'params' => array('questionid' => $questionid)
+        ), false
+    );
+    $questionhints = array();
+    foreach ($results as $result){
+        $questionhints[$result->id] = $result;
+    }
+    return $questionhints;
+}
+
+function get_remote_question_preload_questions($questionids = null, $extrafields = '', $join = '',
+                                               $extraparams = array(), $orderby = '') {
+    $results = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_quiz_get_question_preload_question',
+            'params' => array_merge(array('extrafields' => $extrafields, 'join' => $join,
+                'orderby' => $orderby), $questionids, $extraparams)
+        ), false
+    );
+    $questions = array();
+    foreach ($results as $result) {
+        $questions[$result->id] = $result;
+    }
+    return $questions;
+}
+
+function get_remote_qtype_multichoice_question_options($questionid) {
+    return moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_quiz_get_multichoice_question_options',
+            'params' => array('questionid' => $questionid)
+        ), false
+    );
+}
+
+function get_remote_statistic_questions_usages($from, $where, $params, $slots, $fields) {
+    $results = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_quiz_get_statistic_questions_usages',
+            'params' => array_merge(array('from' => $from, 'where' => $where, 'fields' => $fields), $params, $slots)
+        ), false
+    );
+    $res = array();
+    foreach ($results as $result){
+        $res[$result->id] = $result;
+    }
+    return $res;
 }

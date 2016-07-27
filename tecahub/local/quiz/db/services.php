@@ -186,4 +186,52 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_quiz_get_essay_question_options' => array(
+	'classname'	  => 'local_mod_quiz_external',
+	'methodname'  => 'get_essay_question_options',
+	'classpath'	  => 'local/quiz/externallib.php',
+	'description' => "Get essay question options.",
+	'type'		  => 'read',
+	'ajax'		  => true
+	),
+	'local_mod_quiz_get_question_options_answer' => array(
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'get_question_options_answer',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Get question option answer. Don't check for success or failure because some question types do not use the answers table.",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_quiz_get_question_hints' => array(
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'get_question_hints',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Get remote question hints.",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_quiz_get_question_preload_question' => array(
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'get_question_preload_question',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Given a list of ids, load the basic information about a set of questions from the questions table.",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_quiz_get_multichoice_question_options' => array(
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'get_multichoice_question_options',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Get multichoice question options.",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_quiz_get_statistic_questions_usages' => array(
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'get_statistic_questions_usages',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Get the latest step data from the db, from which we will calculate stats.",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 );

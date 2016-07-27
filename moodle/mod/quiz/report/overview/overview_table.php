@@ -235,7 +235,7 @@ class quiz_overview_table extends quiz_attempts_report_table {
             $grade = html_writer::tag('del', $oldsumgrade) . '/' .
                     html_writer::empty_tag('br') . $newsumgrade;
         }
-        return html_writer::link(new moodle_url('/mod/quiz/review.php',
+        return html_writer::link(new moodle_url('/mod/quiz/remote/review.php',
                 array('attempt' => $attempt->attempt)), $grade,
                 array('title' => get_string('reviewattempt', 'quiz')));
     }

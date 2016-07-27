@@ -35,13 +35,24 @@
  * @param bool   $includeungraded whether to fetch ungraded attempts too
  * @return array FROM and WHERE sql fragments and sql params
  */
-function quiz_statistics_attempts_sql($quizid, $groupstudents, $whichattempts = QUIZ_GRADEAVERAGE, $includeungraded = false) {
+function quiz_statistics_attempts_sql($quizid, $groupstudents, $whichattempts = QUIZ_GRADEAVERAGE, $includeungraded = false, $usermaps = null) {
     global $DB;
 
     $fromqa = '{quiz_attempts} quiza ';
 
     $whereqa = 'quiza.quiz = :quizid AND quiza.preview = 0 AND quiza.state = :quizstatefinished';
     $qaparams = array('quizid' => (int)$quizid, 'quizstatefinished' => quiz_attempt::FINISHED);
+
+    if($usermaps){
+        ksort($usermaps);
+        //$um = usermap : user chi cua host do ma thoi
+        list($umsql, $umparams) = $DB->get_in_or_equal(array_values($usermaps),
+            SQL_PARAMS_NAMED, 'statsuser');
+        list($umsql, $umparams) = quiz_statistics_renumber_placeholders(
+            $umsql, $umparams, 'statsuser');
+        $whereqa .= " AND quiza.userid $umsql";
+        $qaparams += $umparams;
+    }
 
     if ($groupstudents) {
         ksort($groupstudents);
@@ -102,8 +113,8 @@ function quiz_statistics_renumber_placeholders($sql, $params, $paramprefix) {
  * @param bool    $includeungraded
  * @return        \qubaid_join
  */
-function quiz_statistics_qubaids_condition($quizid, $groupstudents, $whichattempts = QUIZ_GRADEAVERAGE, $includeungraded = false) {
-    list($fromqa, $whereqa, $qaparams) = quiz_statistics_attempts_sql($quizid, $groupstudents, $whichattempts, $includeungraded);
+function quiz_statistics_qubaids_condition($quizid, $groupstudents, $whichattempts = QUIZ_GRADEAVERAGE, $includeungraded = false, $usermaps = null) {
+    list($fromqa, $whereqa, $qaparams) = quiz_statistics_attempts_sql($quizid, $groupstudents, $whichattempts, $includeungraded, $usermaps);
     return new qubaid_join($fromqa, 'quiza.uniqueid', $whereqa, $qaparams);
 }
 

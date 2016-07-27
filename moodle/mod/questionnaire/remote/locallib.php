@@ -18,6 +18,7 @@ require_once($CFG->dirroot . '/lib/additionallib.php');
  * @return false|mixed
  */
 function get_remote_questionnaire_by_id($id) {
+    global $DB;
     $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
@@ -26,6 +27,30 @@ function get_remote_questionnaire_by_id($id) {
             'params' => array('id' => $id)
         )
     );
+    /**
+     *  override questionnaire setting hub
+     */
+    $fields = ' remoteid,
+                opendate,
+                closedate,
+                qtype,
+                respondenttype,
+                resp_eligible,
+                resp_view,
+                resume,
+                navigate,
+                timemodified,
+                completionsubmit,
+                autonum,
+                grade';
+    $local_questionnaire_data = $DB->get_record('questionnaire', array('remoteid' => $resp->id), $fields);
+    if(empty($local_questionnaire_data)){ // check data questionnaire in local db
+        $resp->remoteid = $resp->id;
+    } else {
+        foreach ($local_questionnaire_data as $key => $value){
+            $resp->$key = $value;
+        }
+    }
     return $resp;
 }
 

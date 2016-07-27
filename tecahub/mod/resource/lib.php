@@ -355,7 +355,10 @@ function resource_pluginfile($course, $cm, $context, $filearea, $args, $forcedow
         return false;
     }
 
-    require_course_login($course, true, $cm);
+    if (!isset($CFG->allowdownloadresource) && !$CFG->allowdownloadresource){
+        require_course_login($course, true, $cm);
+    }
+
     if (!has_capability('mod/resource:view', $context)) {
         return false;
     }

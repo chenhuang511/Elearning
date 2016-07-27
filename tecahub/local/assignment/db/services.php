@@ -58,14 +58,6 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
-	'local_mod_assign_get_submissions_by_host_ip' => array(
-		'classname'	  => 'local_mod_assign_external',
-		'methodname'  => 'get_submissions_by_host_ip',
-		'classpath'	  => 'local/assignment/externallib.php',
-		'description' => "Get assign Submitions by assign ids and host ip",
-		'type'		  => 'read',
-		'ajax'		  => true
-	),
 	'local_mod_assign_get_onlinetext_submission' => array(
 		'classname'	  => 'local_mod_assign_external',
 		'methodname'  => 'get_onlinetext_submission',
@@ -95,14 +87,6 @@ $functions = array(
 		'methodname'  => 'get_assign_plugin_config',
 		'classpath'	  => 'local/assignment/externallib.php',
 		'description' => "Get assign plugin config",
-		'type'		  => 'read',
-		'ajax'		  => true
-	),
-	'local_mod_assign_get_comment_status' => array(
-		'classname'	  => 'local_mod_assign_external',
-		'methodname'  => 'get_comment_status',
-		'classpath'	  => 'local/assignment/externallib.php',
-		'description' => "Get total comment status",
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
@@ -342,7 +326,15 @@ $functions = array(
         'classname'	  => 'local_mod_assign_external',
         'methodname'  => 'get_grades',
         'classpath'	  => 'local/assignment/externallib.php',
-        'description' => 'grade_get_greate are modified',
+        'description' => 'Modify API core_grades_get_grades',
+        'type'		  => 'read',
+        'ajax'		  => true
+    ),
+    'local_mod_assign_count_remote_grade_grades_by_itemid' => array(
+        'classname'	  => 'local_mod_assign_external',
+        'methodname'  => 'count_remote_grade_grades_by_itemid',
+        'classpath'	  => 'local/assignment/externallib.php',
+        'description' => 'Count record table grade_grades by itemid',
         'type'		  => 'read',
         'ajax'		  => true
     ),

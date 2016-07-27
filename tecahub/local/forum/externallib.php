@@ -1126,6 +1126,81 @@ class local_mod_forum_external extends external_api
         );
     }
 
+    public static function get_list_forum_discussion_subs_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'sort' => new external_value(PARAM_RAW, 'sort'),
+                'limitfrom' => new external_value(PARAM_INT, 'limit from'),
+                'limitnum' => new external_value(PARAM_INT, 'limit num')
+            )
+        );
+    }
+
+    public static function get_list_forum_discussion_subs_by($parameters, $sort, $limitfrom, $limitnum)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_list_forum_discussion_subs_by_parameters(), array(
+            'parameters' => $parameters,
+            'sort' => $sort,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+        if (($params['limitfrom'] == 0 && $params['limitnum'] == 0) && $params['sort'] == '') {
+            $subs = $DB->get_records("forum_discussion_subs", $arr);
+        } else if (($params['limitfrom'] == 0 && $params['limitnum'] == 0) && $params['sort'] != '') {
+            $subs = $DB->get_records("forum_discussion_subs", $arr, $params['sort']);
+        } else {
+            $subs = $DB->get_records("forum_discussion_subs", $arr, $params['sort'], '*', $params['limitfrom'], $params['limitnum']);
+        }
+
+        if (!$subs) {
+            $subs = array();
+        }
+
+        $result['subs'] = $subs;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_list_forum_discussion_subs_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'subs' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'the id'),
+                            'forum' => new external_value(PARAM_INT, 'the forum id'),
+                            'userid' => new external_value(PARAM_INT, 'the user id'),
+                            'discussion' => new external_value(PARAM_INT, 'the discussion id'),
+                            'preference' => new external_value(PARAM_INT, 'the preference')
+                        )
+                    ), 'forum discussion subs'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
     public static function delete_mdl_forum_parameters()
     {
         return new external_function_parameters(

@@ -16,15 +16,16 @@ h1, h2, h3, h4, h5, h6 {
     color: #097eaf;
     font-weight: bold;
 }
-.quizattemptcounts a, .resourceworkaround a, .introattachments-image div a, .box a, .assignment-info-fix a{
+.quizattemptcounts a, .resourceworkaround a, .introattachments-image div a, .box a, .assignment-info-fix a, .lastcol a{
     color: #337ab7;
 }
-.boxwidthwide a, .mod_quiz-next-nav{
+.boxwidthwide a, .mod_quiz-next-nav, .mod_quiz-prev-nav{
     color: #fff;
     background-color: #337ab7;
     border-color: #2e6da4;
     display: inline-block;
     margin-bottom: 0;
+    margin:10px;
     font-weight: normal;
     text-align: center;
     vertical-align: middle;
@@ -39,14 +40,17 @@ h1, h2, h3, h4, h5, h6 {
     border-radius: 4px;
     -webkit-user-select: none;
 }
-.boxwidthwide a:hover, .mod_quiz-next-nav:hover{
+.boxwidthwide a:hover, .mod_quiz-next-nav, .mod_quiz-prev-nav:hover{
     color: #FFFFFF;
     text-decoration:none;
-    background-color: #4F1CD1;
+    background-color: #1E5E95;
 }
 .mdl-align a, .row-fluid a, .othernav-mcboy, .endtestlink{
     color: #337ab7;
 }
+/* .cell {
+    color: #FF0C0C;
+} */
 a {
     color: #333;
 }
@@ -57,7 +61,10 @@ a:focus {
     outline: none;
 }
 
+.felement select {
+    float: none;
 }
+
 .dropdown-menu {
     border-color: #e8e3e3;
     border-radius: 0;
@@ -2004,6 +2011,7 @@ ul#coursetabs > li.active > a, ul#coursetabs > li > a:focus, ul#coursetabs > li 
 
 label {
     padding-top: 10px;
+    margin-left: 0px;
 }
 
 legend {
@@ -3406,10 +3414,18 @@ table#permissions tbody tr:hover > th {
     padding: 5px;
     margin: 10px;
 }
+
 .introattachments-image{
     padding:5px;
     margin: 5px;
 }
+
+.alert{
+    padding: 8px;
+    border-radius: 2px;
+    color: #8a6d3b;
+}
+
 .bhxh-chat-span{
     margin-left: -6px;
     margin-bottom: 15px;

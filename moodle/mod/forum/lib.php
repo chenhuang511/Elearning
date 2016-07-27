@@ -28,6 +28,7 @@ require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->libdir . '/eventslib.php');
 require_once($CFG->dirroot . '/mod/forum//remote/locallib.php');
 require_once($CFG->dirroot . '/course/remote/locallib.php');
+require_once($CFG->dirroot . '/lib/remote/lib.php');
 
 /// CONSTANTS ///////////////////////////////////////////////////////////
 
@@ -2121,12 +2122,6 @@ function forum_get_all_discussion_posts($discussionid, $sort, $tracking = false)
 
     $allnames = get_all_user_name_fields(true, 'u');
     $params[] = $discussionid;
-    $sql = "SELECT p.*, $allnames, u.email, u.picture, u.imagealt $tr_sel
-                                     FROM {forum_posts} p
-                                          LEFT JOIN {user} u ON p.userid = u.id
-                                          $tr_join
-                                    WHERE p.discussion = ?
-                                 ORDER BY $sort";
 
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
         $prs = array();
@@ -2136,10 +2131,16 @@ function forum_get_all_discussion_posts($discussionid, $sort, $tracking = false)
             $prs["parameters[$i][value]"] = $val;
             $i++;
         }
-        if (!$posts = get_remote_forum_get_all_discussion_posts_sql($sql, $prs)) {
+        if (!$posts = get_remote_forum_get_all_discussion_posts_sql($allnames, $tracking ? 1 : 0, $sort, false, $prs)) {
             return array();
         }
     } else {
+        $sql = "SELECT p.*, $allnames, u.email, u.picture, u.imagealt $tr_sel
+                                     FROM {forum_posts} p
+                                          LEFT JOIN {user} u ON p.userid = u.id
+                                          $tr_join
+                                    WHERE p.discussion = ?
+                                 ORDER BY $sort";
         if (!$posts = $DB->get_records_sql($sql, $params)) {
             return array();
         }
@@ -2893,7 +2894,12 @@ function forum_get_discussions($cm, $forumsort = "", $fullpost = true, $unused =
             $params[] = $now;
             if (isloggedin()) {
                 $timelimit .= " OR d.userid = ?";
-                $params[] = $USER->id;
+                if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+                    $user = get_remote_mapping_user($USER->id);
+                    $params[] = $user[0]->id;
+                } else {
+                    $params[] = $USER->id;
+                }
             }
             $timelimit .= ")";
         }
@@ -4983,6 +4989,9 @@ function forum_add_new_post($post, $mform, $unused = null)
             if ($key == "userid") {
                 $user = get_remote_mapping_user($val);
                 $postdata["data[$i][value]"] = $user[0]->id;
+            } else if ($key == "course") {
+                $localcourse = $DB->get_record('course', array('id' => $val), 'id, remoteid', MUST_EXIST);
+                $postdata["data[$i][value]"] = $localcourse->remoteid;
             } else {
                 $postdata["data[$i][value]"] = $val;
             }
@@ -5068,9 +5077,9 @@ function forum_update_post($post, $mform, &$message)
         foreach ($post as $key => $val) {
             if ($key != "id") {
                 $postdata["data[$i][name]"] = "$key";
-                if ($key == "userid") {
-                    $user = get_remote_mapping_user($val);
-                    $postdata["data[$i][value]"] = $user[0]->id;
+                if ($key == "course") {
+                    $localcourse = $DB->get_record('course', array('id' => $val));
+                    $postdata["data[$i][value]"] = $localcourse->remoteid;
                 } else {
                     $postdata["data[$i][value]"] = $val;
                 }
@@ -5114,6 +5123,9 @@ function forum_update_post($post, $mform, &$message)
                 if ($key == "userid" || $key == "usermodified") {
                     $user = get_remote_mapping_user($val);
                     $discussiondata["data[$count][value]"] = $user[0]->id;
+                } else if ($key == "course") {
+                    $localcourse = $DB->get_record('course', array('id' => $val));
+                    $discussiondata["data[$count][value]"] = $localcourse->remoteid;
                 } else {
                     $discussiondata["data[$count][value]"] = $val;
                 }
@@ -5195,6 +5207,9 @@ function forum_add_discussion($discussion, $mform = null, $unused = null, $useri
             if ($key == "userid") {
                 $user = get_remote_mapping_user($val);
                 $postdata["data[$i][value]"] = $user[0]->id;
+            } else if ($key == "course") {
+                $localcourse = $DB->get_record('course', array('id' => $val), 'id, remoteid', MUST_EXIST);
+                $postdata["data[$i][value]"] = $localcourse->remoteid;
             } else {
                 $postdata["data[$i][value]"] = $val;
             }
@@ -5236,6 +5251,9 @@ function forum_add_discussion($discussion, $mform = null, $unused = null, $useri
             if ($key == "userid" || $key == "usermodified") {
                 $user = get_remote_mapping_user($val);
                 $discussiondata["data[$count][value]"] = $user[0]->id;
+            } else if ($key == "course") {
+                $localcourse = $DB->get_record('course', array('id' => $val), '*', MUST_EXIST);
+                $discussiondata["data[$count][value]"] = $localcourse->remoteid;
             } else {
                 $discussiondata["data[$count][value]"] = $val;
             }
@@ -5653,7 +5671,24 @@ function forum_user_has_posted_discussion($forumid, $userid, $groupid = null)
         $params[] = $groupid;
     }
 
-    return $DB->record_exists_sql($sql, $params);
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $user = get_remote_mapping_user($userid);
+        $prs = array();
+        $prs['parameters[0][name]'] = "forum";
+        $prs['parameters[0][value]'] = $forumid;
+        $prs['parameters[1][name]'] = "userid";
+        $prs['parameters[1][value]'] = $user[0]->id;
+
+        if (count($params) > 2) {
+            $prs['parameters[2][name]'] = "groupid";
+            $prs['parameters[2][value]'] = $groupid;
+        }
+
+        $status = get_remote_forum_user_has_posted_discussion($sql, $prs);
+        return $status;
+    } else {
+        return $DB->record_exists_sql($sql, $params);
+    }
 }
 
 /**
@@ -5696,9 +5731,33 @@ function forum_user_has_posted($forumid, $did, $userid)
                   FROM {forum_posts} p
                   JOIN {forum_discussions} d ON d.id = p.discussion
                  WHERE p.userid = :userid AND d.forum = :forumid";
-        return $DB->record_exists_sql($sql, array('forumid' => $forumid, 'userid' => $userid));
+
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $user = get_remote_mapping_user($userid);
+
+            $params = array();
+            $params['parameters[0][name]'] = "forumid";
+            $params['parameters[0][value]'] = $forumid;
+            $params['parameters[1][name]'] = "userid";
+            $params['parameters[1][value]'] = $user[0]->id;
+            $status = get_remote_forum_user_has_posted($sql, $params);
+            return $status;
+        } else {
+            return $DB->record_exists_sql($sql, array('forumid' => $forumid, 'userid' => $userid));
+        }
     } else {
-        return $DB->record_exists('forum_posts', array('discussion' => $did, 'userid' => $userid));
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $user = get_remote_mapping_user($userid);
+
+            $params = array();
+            $params['parameters[0][name]'] = "discussion";
+            $params['parameters[0][value]'] = $did;
+            $params['parameters[1][name]'] = "userid";
+            $params['parameters[1][value]'] = $user[0]->id;
+            $status = check_remote_record_forum_exists("forum_posts", $params);
+        } else {
+            return $DB->record_exists('forum_posts', array('discussion' => $did, 'userid' => $userid));
+        }
     }
 }
 
@@ -5716,8 +5775,8 @@ function forum_get_user_posted_time($did, $userid)
         $params = array();
         $params['parameters[0][name]'] = "userid";
         $params['parameters[0][value]'] = $userid;
-        $params['parameters[0][name]'] = "discussion";
-        $params['parameters[0][value]'] = $did;
+        $params['parameters[1][name]'] = "discussion";
+        $params['parameters[1][value]'] = $did;
         $posttime = get_remote_field_forum_by("forum_posts", $params, "MIN(created)");
     } else {
         $posttime = $DB->get_field('forum_posts', 'MIN(created)', array('userid' => $userid, 'discussion' => $did));
@@ -7678,6 +7737,9 @@ function forum_discussion_update_last_post($discussionid)
                     if ($key == "userid" || $key == "usermodified") {
                         $user = get_remote_mapping_user($val);
                         $discussionobjectdata["data[$i][value]"] = $user[0]->id;
+                    } else if ($key == "course") {
+                        $localcourse = $DB->get_record('course', array('id' => $val));
+                        $discussionobjectdata["data[$i][value]"] = $localcourse->remoteid;
                     } else {
                         $discussionobjectdata["data[$i][value]"] = $val;
                     }
@@ -9092,4 +9154,15 @@ function forum_get_coursemodule_info($coursemodule)
     $result->content = format_module_intro('forum', $forum, $coursemodule->id, false);
 
     return $result;
+}
+
+function forum_get_local_settings_info($coursemodule)
+{
+    global $CFG, $DB;
+    require_once($CFG->dirroot . '/mod/forum/remote/locallib.php');
+    $params = array();
+    $params['parameters[0][name]'] = "id";
+    $params['parameters[0][value]'] = $coursemodule->instance;
+    $forum = get_remote_forum_by($params);
+    return $forum;
 }

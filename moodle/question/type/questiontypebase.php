@@ -794,12 +794,20 @@ class question_type {
         } else {
             // Don't check for success or failure because some question types do
             // not use the answers table.
-            $question->options->answers = $DB->get_records('question_answers',
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+                $question->options->answers = get_remote_question_option_answer($question->id);
+            }else{
+                $question->options->answers = $DB->get_records('question_answers',
                     array('question' => $question->id), 'id ASC');
+            }
         }
 
-        $question->hints = $DB->get_records('question_hints',
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $question->hints = get_remote_question_hints($question->id);
+        }else{
+            $question->hints = $DB->get_records('question_hints',
                 array('questionid' => $question->id), 'id ASC');
+        }
 
         return true;
     }

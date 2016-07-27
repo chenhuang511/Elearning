@@ -146,6 +146,14 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_get_list_forum_discussion_subs_by' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'get_list_forum_discussion_subs_by',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'Get list forum discussion subs by',
+        'type' => 'read',
+        'ajax' => true
+    ),
     'local_mod_delete_mdl_forum' => array(
         'classname' => 'local_mod_forum_external',
         'methodname' => 'delete_mdl_forum',
