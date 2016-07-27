@@ -9,6 +9,14 @@ h1, h2, h3, h4, h5, h6 {
     font-family: 'Open Sans', Arial, Helvetica, sans-serif;
     color: #333;
 }
+
+h2.main, #pageheading {
+    font-size: 1.4em;
+    line-height: 35px;
+    color: #777;
+    border-bottom: 1px solid #e1e1e1;
+}
+
 #page-mod-assign-grader{
     overflow:auto;
 }
@@ -52,7 +60,7 @@ h1, h2, h3, h4, h5, h6 {
     color: #FF0C0C;
 } */
 a {
-    color: #333;
+    color: #337ab7;
 }
 a:hover,
 a:active,
