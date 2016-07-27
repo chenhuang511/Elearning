@@ -3824,4 +3824,75 @@ class local_mod_assign_external extends external_api {
 
     }
 
+    /**
+     * Describes the count_remote_grade_grades_by_itemid parameters
+     *
+     * @return external_external_function_parameters
+     */
+    public static function count_remote_grade_grades_by_itemid_parameters(){
+        return new external_function_parameters(
+            array(
+                'gradeitemid' => new external_value(PARAM_INT, 'The id of grade item'),
+                'hostip' => new external_value(PARAM_TEXT, 'The ip address on host')
+            )
+        );
+    }
+
+    /**
+     * Count record mdl_grade_grades by itemid to check any existing grades
+     *
+     * @param int $gradeitemid  -  The id of grade item
+     * @param int $hostip       -  The ip address of host
+     *
+     * @return array of count number record and warnings
+     * @throws invalid_parameter_exception
+     */
+    public static function count_remote_grade_grades_by_itemid($gradeitemid, $hostip){
+        global $DB;
+
+        $result = array();
+
+        $warnings = array();
+
+        // validate params
+        $params = self::validate_parameters(self::count_remote_grade_grades_by_itemid_parameters(),
+            array(
+                'gradeitemid' => $gradeitemid,
+                'hostip' => $hostip
+            )
+        );
+
+        $result['count'] = $DB->count_records_sql('SELECT COUNT(gg.finalgrade) FROM {grade_grades} gg 
+                                                LEFT JOIN {user} u
+                                                ON gg.userid = u.id
+                                                JOIN {mnet_host} mh
+                                                ON u.mnethostid = mh.id
+                                                AND mh.ip_address = :hostip
+                                                WHERE gg.itemid = :gradeitemid
+                                                AND gg.finalgrade IS NOT NULL',
+                                                    array( 
+                                                        'hostip' => $params['hostip'], 
+                                                        'gradeitemid' => $params['gradeitemid']));
+                                                    
+        
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    /**
+     * Describes the count_remote_grade_grades_by_itemid returns value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function count_remote_grade_grades_by_itemid_returns(){
+        return new external_single_structure(
+            array(
+                'count' => new external_value(PARAM_INT, 'Count record table grade grades'), 
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
 }

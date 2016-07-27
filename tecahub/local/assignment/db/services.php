@@ -326,7 +326,15 @@ $functions = array(
         'classname'	  => 'local_mod_assign_external',
         'methodname'  => 'get_grades',
         'classpath'	  => 'local/assignment/externallib.php',
-        'description' => 'grade_get_greate are modified',
+        'description' => 'Modify API core_grades_get_grades',
+        'type'		  => 'read',
+        'ajax'		  => true
+    ),
+    'local_mod_assign_count_remote_grade_grades_by_itemid' => array(
+        'classname'	  => 'local_mod_assign_external',
+        'methodname'  => 'count_remote_grade_grades_by_itemid',
+        'classpath'	  => 'local/assignment/externallib.php',
+        'description' => 'Count record table grade_grades by itemid',
         'type'		  => 'read',
         'ajax'		  => true
     ),

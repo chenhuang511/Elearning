@@ -27,3 +27,4 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['colactions'] = 'Hành động';
 $string['commontasks'] = 'Tùy chọn';
+$string['group'] = 'Nhóm';

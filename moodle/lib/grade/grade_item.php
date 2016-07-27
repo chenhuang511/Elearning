@@ -367,10 +367,15 @@ class grade_item extends grade_object
     public function has_grades()
     {
         global $DB;
-
-        $count = $DB->count_records_select('grade_grades',
-            'itemid = :gradeitemid AND finalgrade IS NOT NULL',
-            array('gradeitemid' => $this->id));
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+            $count = $DB->count_records_select('grade_grades',
+                'itemid = :gradeitemid AND finalgrade IS NOT NULL',
+                array('gradeitemid' => $this->id));
+        } else {
+            $remoteitemid = $DB->get_record('grade_items', array('id' => $this->id), 'remoteid')->remoteid;
+            $hostip = gethostip();
+            $count = count_remote_grade_grades_by_itemid($remoteitemid, $hostip);
+        }
         return $count > 0;
     }
 

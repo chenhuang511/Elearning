@@ -60,7 +60,7 @@ echo $OUTPUT->doctype() ?>
             require_once(dirname(__FILE__) . '/includes/slideshow.php');
         }else{
 								    echo "<br/><br/>";
-								} 
+								}
         ?>
 </div>
 <!--Slider-->
@@ -90,6 +90,6 @@ echo $OUTPUT->doctype() ?>
 
 </div>
 
-<?php  require_once(dirname(__FILE__) . '/includes/footer.php');  ?>   
+<?php  require_once(dirname(__FILE__) . '/includes/footer.php');  ?>
 </body>
 </html>

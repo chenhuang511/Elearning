@@ -491,7 +491,7 @@ function get_remote_qtype_essay_question_options($questionid) {
 }
 
 function get_remote_question_option_answer($questionid) {
-    return moodle_webservice_client(
+    $results = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
@@ -499,10 +499,15 @@ function get_remote_question_option_answer($questionid) {
             'params' => array('questionid' => $questionid)
         ), false
     );
+    $optionanswer = array();
+    foreach ($results as $result){
+        $optionanswer[$result->id] = $result;
+    }
+    return $optionanswer;
 }
 
 function get_remote_question_hints($questionid) {
-    return moodle_webservice_client(
+    $results = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
@@ -510,6 +515,11 @@ function get_remote_question_hints($questionid) {
             'params' => array('questionid' => $questionid)
         ), false
     );
+    $questionhints = array();
+    foreach ($results as $result){
+        $questionhints[$result->id] = $result;
+    }
+    return $questionhints;
 }
 
 function get_remote_question_preload_questions($questionids = null, $extrafields = '', $join = '',
@@ -528,4 +538,31 @@ function get_remote_question_preload_questions($questionids = null, $extrafields
         $questions[$result->id] = $result;
     }
     return $questions;
+}
+
+function get_remote_qtype_multichoice_question_options($questionid) {
+    return moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_quiz_get_multichoice_question_options',
+            'params' => array('questionid' => $questionid)
+        ), false
+    );
+}
+
+function get_remote_statistic_questions_usages($from, $where, $params, $slots, $fields) {
+    $results = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_quiz_get_statistic_questions_usages',
+            'params' => array_merge(array('from' => $from, 'where' => $where, 'fields' => $fields), $params, $slots)
+        ), false
+    );
+    $res = array();
+    foreach ($results as $result){
+        $res[$result->id] = $result;
+    }
+    return $res;
 }
