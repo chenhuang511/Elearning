@@ -33,3 +33,4 @@ $string['groups'] = 'Nhóm';
 $string['managemodules'] = 'Mô-đun';
 $string['myhome'] = 'Trang cá nhân';
 $string['options'] = 'Tùy chọn';
+$string['parentfolder'] = 'Thư mục gốc';

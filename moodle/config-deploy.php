@@ -32,6 +32,9 @@ $CFG->langlocalroot    = dirname(__FILE__) . "/lang";
 $CFG->langotherroot    = dirname(__FILE__) . "/lang";
 $CFG->skiplangupgrade  = true;
 
+$CFG->locale = 'vi_VN';
+$CFG->disableupdateautodeploy = true;
+
 //$CFG->debug = 6143; 
 //$CFG->debugdisplay = 1;
 
