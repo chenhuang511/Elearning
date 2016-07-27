@@ -25,5 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['introduction'] = 'Mô tả';
 $string['noyoursubmission'] = 'Bạn chưa nộp công vieeccj của bạn';
 $string['resetsubmissions'] = 'Xóa tất cả lần nộp';
+$string['submissionsettings'] = 'Cài đặt nộp bài';

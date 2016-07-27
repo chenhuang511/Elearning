@@ -25,4 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['enabled'] = 'Bảng chấm điểm ẩn';
+$string['pluginname'] = 'Bảng chấm điểm ẩn';
 $string['updaterecord'] = 'Cập nhận bản ghi';

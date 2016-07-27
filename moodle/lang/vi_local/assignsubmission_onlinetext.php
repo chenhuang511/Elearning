@@ -18,13 +18,13 @@
 /**
  * Local language pack from http://192.168.1.253
  *
- * @package    assignfeedback
- * @subpackage comments
+ * @package    assignsubmission
+ * @subpackage onlinetext
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['commentinline'] = 'Bình luận trực tiếp';
-$string['enabled'] = 'Bình luận phản hồi';
-$string['pluginname'] = 'Bình luận phản hồi';
+$string['enabled'] = 'Văn bản trực tuyến';
+$string['onlinetext'] = 'Văn bản trực tuyến';
+$string['wordlimit'] = 'Giới hạn từ';
