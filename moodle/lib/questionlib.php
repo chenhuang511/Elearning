@@ -733,7 +733,7 @@ function question_preload_questions($questionids = null, $extrafields = '', $joi
  * @return array question objects.
  */
 function question_load_questions($questionids, $extrafields = '', $join = '') {
-    if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+    if(MOODLE_RUN_MODE === MOODLE_MODE_HUB && $questionids){
         $quesdata = array();
         $index = 0;
         foreach ($questionids as $questionid){

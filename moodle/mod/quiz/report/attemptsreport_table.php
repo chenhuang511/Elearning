@@ -139,7 +139,7 @@ abstract class quiz_attempts_report_table extends table_sql {
         }
 
         return $html . html_writer::empty_tag('br') . html_writer::link(
-                new moodle_url('/mod/quiz/review.php', array('attempt' => $attempt->attempt)),
+                new moodle_url((MOODLE_RUN_MODE == MOODLE_MODE_HUB)?'/mod/quiz/remote/review.php':'/mod/quiz/review.php', array('attempt' => $attempt->attempt)),
                 get_string('reviewattempt', 'quiz'), array('class' => 'reviewlink'));
     }
 

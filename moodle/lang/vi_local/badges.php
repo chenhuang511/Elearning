@@ -25,6 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['actions'] = 'Hành động';
 $string['activatesuccess'] = 'Tiếp cận các huy hiệu đã được kích hoạt thành công.';
 $string['allowcoursebadges'] = 'Kích hoạt huy chương khóa học';
 $string['allowcoursebadges_desc'] = 'Cho phép huy hiệu được tạo và trong trong bối cảnh khóa học.';

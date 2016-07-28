@@ -395,20 +395,33 @@ class display_support {
 
         $rsql = '';
         if (!empty($rids)) {
-            list($rsql, $params) = $DB->get_in_or_equal($rids);
-            $rsql = ' AND response_id ' . $rsql;
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                list($rsql, $params) = $DB->get_in_or_equal($rids);
+                $rsql = ' AND response_id ' . $rsql;
+            } else {
+                $rsql = implode(',', $rids);
+                $rsql = ' AND response_id IN (' . $rsql . ')';
+            }
         }
 
         array_unshift($params, $question->id); // This is question_id.
-        $sql = 'SELECT r.id, c.content, r.rank, c.id AS choiceid ' .
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $sql = 'SELECT r.id, c.content, r.rank, c.id AS choiceid ' .
                 'FROM {questionnaire_quest_choice} c , ' .
-                     '{questionnaire_response_rank} r ' .
+                '{questionnaire_response_rank} r ' .
                 'WHERE c.question_id = ?' .
                 ' AND r.question_id = c.question_id' .
                 ' AND r.choice_id = c.id ' .
                 $rsql .
                 ' ORDER BY choiceid, rank ASC';
-        $choices = $DB->get_records_sql($sql, $params);
+            $choices = $DB->get_records_sql($sql, $params);
+        } else {
+            $sql_select = "r.choice_id = c.id
+                            AND c.question_id = " . $question->id . "
+                            AND r.question_id = c.question_id " . $rsql;
+            $sql_sort = " choiceid, rank ASC";
+            $choices =  get_remote_questionnaire_choice_rank($sql_select, $sql_sort);
+        }
 
         // Sort rows (results) by average value.
         if ($sort != 'default') {

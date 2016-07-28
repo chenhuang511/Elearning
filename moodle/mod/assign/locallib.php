@@ -1260,8 +1260,7 @@ class assign {
                 $this->instance->name = $instanceremote->name;
                 $this->instance->intro = $instanceremote->intro;
                 $this->instance->introformat = $instanceremote->introformat;
-                $this->instance->alwaysshowdescription = $instanceremote->alwaysshowdescription;
-                if (isset($this->instance->introattachments)){
+                if (isset($instanceremote->introattachments)){
                     $this->instance->introattachments = $instanceremote->introattachments;
                 }
             }

@@ -146,7 +146,11 @@ function questionnaire_update_instance($questionnaire) {
     }
 
     $questionnaire->timemodified = time();
-    $questionnaire->id = $questionnaire->instance;
+    if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        $questionnaire->id = $questionnaire->instance;
+    } else {
+        $questionnaire->id = $DB->get_field('questionnaire', 'id', array('remoteid' => $questionnaire->instance));
+    }
 
     // May have to add extra stuff in here.
     if (empty($questionnaire->useopendate)) {
@@ -165,8 +169,9 @@ function questionnaire_update_instance($questionnaire) {
     // Get existing grade item.
     questionnaire_grade_item_update($questionnaire);
 
-    questionnaire_set_events($questionnaire);
-
+    if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        questionnaire_set_events($questionnaire);
+    }
     return $DB->update_record("questionnaire", $questionnaire);
 }
 
@@ -1194,5 +1199,17 @@ function questionnaire_get_coursemodule_info($coursemodule) {
     }
 
     return $info;
+}
+function questionnaire_get_local_settings_info($coursemodule){
+    global $CFG, $DB;
+    require_once($CFG->dirroot . '/mod/questionnaire/remote/locallib.php');
+    $questionnaire = get_remote_questionnaire_by_id($coursemodule->instance);
+    $id = $DB->get_field('questionnaire', 'id', array('remoteid' => $coursemodule->instance));
+    if(empty($id)){ // check data questionnaire in local db
+        $questionnaire->id = $DB->insert_record('questionnaire', $questionnaire, true);
+    } else {
+        $questionnaire->id = $id;
+    }
+    return $questionnaire;
 }
 

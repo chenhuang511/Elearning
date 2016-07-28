@@ -127,7 +127,7 @@ class local_questionnaire_external extends external_api {
         //validate parameter
         $params = self::validate_parameters(self::questionnaire_get_user_by_id_parameters(),
             array('id' => $id));
-        return $DB->get_record('user', array('id' => $params['id']), 'username, firstname, lastname, email', MUST_EXIST);
+        return $DB->get_record('user', array('id' => $params['id']), '*', MUST_EXIST);
     }
 
     /**
@@ -459,6 +459,66 @@ class local_questionnaire_external extends external_api {
      * @since Moodle 3.0
      */
     public static function update_response_by_mbl_returns()
+    {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+    /**
+     * delete response
+     */
+    public static function delete_response_by_mbl_parameters()
+    {
+        return new external_function_parameters (
+            array(
+                'tablename' => new external_value(PARAM_TEXT, ' the table name'),
+                'select' => new external_value(PARAM_RAW, 'condition'),
+                'sort' => new external_value(PARAM_RAW, 'sort')
+            )
+        );
+    }
+
+    /**
+     * create new a response
+     *
+     * @param $data
+     * @return array
+     * @throws invalid_parameter_exception
+     */
+    public static function delete_response_by_mbl($tablename, $select, $sort)
+    {
+        global $DB;
+
+        $warnings = array();
+
+        $params = array(
+            'tablename' => $tablename,
+            'select' => $select,
+            'sort' => $sort
+        );
+
+        $params = self::validate_parameters(self::delete_response_by_mbl_parameters(), $params);
+
+        $result = array();
+
+        $DB->delete_records_select($params['tablename'], $params['select'], $params['param']);
+
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
+    public static function delete_response_by_mbl_returns()
     {
         return new external_single_structure(
             array(

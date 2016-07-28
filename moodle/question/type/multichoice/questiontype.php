@@ -39,8 +39,12 @@ require_once($CFG->libdir . '/questionlib.php');
 class qtype_multichoice extends question_type {
     public function get_question_options($question) {
         global $DB, $OUTPUT;
-        $question->options = $DB->get_record('qtype_multichoice_options',
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $question->options = get_remote_qtype_multichoice_question_options($question->id);
+        }else{
+            $question->options = $DB->get_record('qtype_multichoice_options',
                 array('questionid' => $question->id), '*', MUST_EXIST);
+        }
         parent::get_question_options($question);
     }
 

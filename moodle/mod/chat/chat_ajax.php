@@ -126,7 +126,6 @@ switch ($action) {
         }
 
         $messages = chat_get_latest_messages($chatuser, $chatlasttime, $chatsid);
-
         if (!empty($messages)) {
             $num = count($messages);
         } else {

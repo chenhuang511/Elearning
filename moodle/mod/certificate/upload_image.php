@@ -51,7 +51,11 @@ if ($upload_form->is_cancelled()) {
     $uploaddir = "mod/certificate/pix/$data->imagetype";
     $filename = $upload_form->get_new_filename('certificateimage');
     make_upload_directory($uploaddir);
-    $destination = $CFG->dataroot . '/' . $uploaddir . '/' . $filename;
+    if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        $destination = $CFG->dataroot . '/' . $uploaddir . '/' . $filename;
+    } else {
+        $destination = $CFG->dirroot . '/' . $uploaddir . '/' . $filename;
+    }
     if (!$upload_form->save_file('certificateimage', $destination, true)) {
         throw new coding_exception('File upload failed');
     }

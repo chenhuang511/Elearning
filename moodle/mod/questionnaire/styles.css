@@ -11,7 +11,9 @@
     float: left;
     color: gray;
 }
-
+.noti-content a{
+    color: #337ab7;
+}
 #page-mod-questionnaire-questions .qcontainer .fstatic {
     width: 97%;
     margin-right: 1em;

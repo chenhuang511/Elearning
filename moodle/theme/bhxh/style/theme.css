@@ -9,6 +9,14 @@ h1, h2, h3, h4, h5, h6 {
     font-family: 'Open Sans', Arial, Helvetica, sans-serif;
     color: #333;
 }
+
+h2.main, #pageheading {
+    font-size: 1.4em;
+    line-height: 35px;
+    color: #777;
+    border-bottom: 1px solid #e1e1e1;
+}
+
 #page-mod-assign-grader{
     overflow:auto;
 }
@@ -16,8 +24,11 @@ h1, h2, h3, h4, h5, h6 {
     color: #097eaf;
     font-weight: bold;
 }
-.quizattemptcounts a, .resourceworkaround a, .introattachments-image div a, .box a, .assignment-info-fix a, .lastcol a{
+.quizattemptcounts a, .resourceworkaround a, .introattachments-image div a, .box a, .assignment-info-fix a, .lastcol a, .noti-content a{
     color: #337ab7;
+}
+.submitbtns a{
+    color: #FFFFFF;
 }
 .boxwidthwide a, .mod_quiz-next-nav, .mod_quiz-prev-nav{
     color: #fff;
@@ -52,7 +63,7 @@ h1, h2, h3, h4, h5, h6 {
     color: #FF0C0C;
 } */
 a {
-    color: #333;
+    color: #337ab7;
 }
 a:hover,
 a:active,
@@ -61,7 +72,10 @@ a:focus {
     outline: none;
 }
 
+.felement select {
+    float: none;
 }
+
 .dropdown-menu {
     border-color: #e8e3e3;
     border-radius: 0;
@@ -1876,10 +1890,13 @@ ul#coursetabs > li.active > a, ul#coursetabs > li > a:focus, ul#coursetabs > li 
 }
 
 #footer .footer-main .foot-links ul li a {
-    font-size: 16px;
+    font-size: 20px;
     color: #fff;
     line-height: 32px;
+    text-decoration: underline;
+    margin-left: 20px;
 }
+
 
 #footer .footer-main .foot-links ul li a:hover {
     color: #097eaf;
@@ -2004,6 +2021,7 @@ ul#coursetabs > li.active > a, ul#coursetabs > li > a:focus, ul#coursetabs > li 
 
 label {
     padding-top: 10px;
+    margin-left: 0px;
 }
 
 legend {
@@ -3264,7 +3282,7 @@ table#permissions tbody tr:hover > th {
 }
 
 #page-mod-quiz-mod #id_reviewoptionshdr .fitem {
-    width: 47%;
+    width: 23.5%;
 }
 
 #page-mod-quiz-mod #id_reviewoptionshdr .fitemtitle {
@@ -3406,10 +3424,18 @@ table#permissions tbody tr:hover > th {
     padding: 5px;
     margin: 10px;
 }
+
 .introattachments-image{
     padding:5px;
     margin: 5px;
 }
+
+.alert{
+    padding: 8px;
+    border-radius: 2px;
+    color: #8a6d3b;
+}
+
 .bhxh-chat-span{
     margin-left: -6px;
     margin-bottom: 15px;
@@ -3429,6 +3455,18 @@ table#permissions tbody tr:hover > th {
 }
 .bhxh-link-chat .btn-primary:hover{
     background: #1D2939;
+}
+
+.introdesc > #fitem_id_intro > .fitemtitle > .fstaticlabel {
+    font-size: 16px;
+    font-weight: bold;
+    padding-top: 7px;
+}
+.introdesc > #fitem_id_intro > .fstatic > .text_to_html{
+    border: 1px solid #ccc;
+    padding: 6px 12px;
+    background: #eee;
+    border-radius: 4px;
 }
 
 
