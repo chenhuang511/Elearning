@@ -25,9 +25,15 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
             $course = $DB->get_record('course', array('id' => $course_id), '*', MUST_EXIST);
             $bigbluebuttonbn = null;
         } else if ($course_module_id) {
-            $cm = get_coursemodule_from_id('bigbluebuttonbn', $course_module_id, 0, false, MUST_EXIST);
-            $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-            $bigbluebuttonbn = $DB->get_record('bigbluebuttonbn', array('id' => $cm->instance), '*', MUST_EXIST);
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $cm = get_coursemodule_from_id('bigbluebuttonbn', $course_module_id, 0, false, MUST_EXIST);
+                $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+                $bigbluebuttonbn = $DB->get_record('bigbluebuttonbn', array('id' => $cm->instance), '*', MUST_EXIST);
+            } else {
+                $cm = get_remote_course_module_by_cmid('bigbluebuttonbn', $course_module_id);
+                $course = get_local_course_record($cm->course);
+                $bigbluebuttonbn = get_remote_bigbluebuttonbn_by_id($cm->instance);
+            }
         }
 
         $context = bigbluebuttonbn_get_context_course($course->id);
