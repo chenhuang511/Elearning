@@ -3351,8 +3351,9 @@ function forum_get_discussions_count($cm)
               FROM {forum_discussions} d
                    JOIN {forum_posts} p ON p.discussion = d.id
                    JOIN {user} u ON u.id = d.userid 
-             WHERE d.forum = ? AND p.parent = 0 AND d.userid IN (SELECT id FROM {user} WHERE mnethostid = ?) 
-                   $groupselect $timelimit";
+             WHERE d.forum = ? AND p.parent = 0 
+                   $groupselect $timelimit
+                   AND d.userid IN (SELECT id FROM {user} WHERE mnethostid = ?)";
 
         $prs = array();
         $i = 0;
@@ -5207,7 +5208,7 @@ function forum_add_discussion($discussion, $mform = null, $unused = null, $useri
             if ($key == "userid") {
                 $user = get_remote_mapping_user($val);
                 $postdata["data[$i][value]"] = $user[0]->id;
-            }  else {
+            } else {
                 $postdata["data[$i][value]"] = $val;
             }
             $i++;
@@ -5248,7 +5249,7 @@ function forum_add_discussion($discussion, $mform = null, $unused = null, $useri
             if ($key == "userid" || $key == "usermodified") {
                 $user = get_remote_mapping_user($val);
                 $discussiondata["data[$count][value]"] = $user[0]->id;
-            }  else {
+            } else {
                 $discussiondata["data[$count][value]"] = $val;
             }
             $count++;
