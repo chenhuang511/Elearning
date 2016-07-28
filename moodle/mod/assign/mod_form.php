@@ -64,15 +64,13 @@ class mod_assign_mod_form extends moodleform_mod {
             $mform->addHelpButton('introattachments', 'introattachments', 'assign');
         } else {
             // Can't change general setting for host
-            $mform->disabledIf('name');
+            $mform->freeze('name');
             $mform->addElement('hidden', 'introeditor');
 
             $mform->addElement('html', '<div class="introdesc">');
             $mform->addElement('htmleditor', 'intro', get_string('description', 'assign'));
-            $mform->setType('intro', PARAM_RAW);
             $mform->freeze('intro');
             $mform->addElement('html', '</div>');
-
         }
 
         $ctx = null;
