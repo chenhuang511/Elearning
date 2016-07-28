@@ -419,7 +419,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element
         if (!is_null($this->getAttribute('onblur')) && !is_null($this->getAttribute('onchange'))) {
             $editorrules = ' onblur="' . htmlspecialchars($this->getAttribute('onblur')) . '" onchange="' . htmlspecialchars($this->getAttribute('onchange')) . '"';
         }
-        if(!$CFG->isedit) {
+        if(!$CFG->enablededitor) {
             $attributes = "readonly";
         }
         $str .= '<div><textarea id="' . $id . '" name="' . $elname . '[text]" rows="' . $rows . '" cols="' . $cols . '" spellcheck="true"' .$attributes . $editorrules . '>';

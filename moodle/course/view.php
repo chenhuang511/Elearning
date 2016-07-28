@@ -239,7 +239,7 @@ if ($completion->is_enabled()) {
 // We are currently keeping the button here from 1.x to help new teachers figure out
 // what to do, even though the link also appears in the course admin block.  It also
 // means you can back out of a situation where you removed the admin block. :)
-if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+if ($CFG->enabledcourseeditbutton) {
     if ($PAGE->user_allowed_editing()) {
         $buttons = $OUTPUT->edit_button($PAGE->url);
         $PAGE->set_button($buttons);
