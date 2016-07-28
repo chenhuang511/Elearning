@@ -204,7 +204,7 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
             }
 
             $gradesexisthtml = '<div class=\'alert\'>' . $gradesexistmsg . '</div>';
-            $this->_elements[] = @MoodleQuickForm::createElement('static', 'gradesexistmsg', '', $gradesexisthtml);
+            $this->_elements[] = @MoodleQuickForm::createElement('static', 'gradesexistmsg', null, $gradesexisthtml);
         }
         // Init tag div for each form
         $startdiv = html_writer::start_div('form-group');
@@ -212,7 +212,7 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
 
         // Grade type select box.
         $label = html_writer::tag('label', $this->gradetypeformelement->getLabel(),
-            array('for' => $this->gradetypeformelement->getAttribute('id'), 'class' => 'col-sm-5'));
+            array('for' => $this->gradetypeformelement->getAttribute('id'), 'class' => 'col-sm-3'));
         $this->_elements[] = @MoodleQuickForm::createElement('static', 'gradetypelabel', '', $startdiv . $label);
         $this->_elements[] = $this->gradetypeformelement;
         $this->_elements[] = @MoodleQuickForm::createElement('static', 'gradetypespacer', '', $enddiv);
@@ -220,7 +220,7 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
         // Only show the grade scale select box when applicable.
         if (!$this->isupdate || !$this->hasgrades || $this->currentgradetype == 'scale') {
             $label = html_writer::tag('label', $this->scaleformelement->getLabel(),
-                array('for' => $this->scaleformelement->getAttribute('id'), 'class' => 'col-sm-5'));
+                array('for' => $this->scaleformelement->getAttribute('id'), 'class' => 'col-sm-3'));
             $this->_elements[] = @MoodleQuickForm::createElement('static', 'scalelabel', '', $startdiv . $label);
             $this->_elements[] = $this->scaleformelement;
             $this->_elements[] = @MoodleQuickForm::createElement('static', 'scalespacer', '', $enddiv);
@@ -228,11 +228,10 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
 
         if ($this->isupdate && $this->hasgrades && $this->canrescale && $this->currentgradetype == 'point') {
             // We need to know how to apply any changes to maxgrade - ie to either update, or don't touch exising grades.
-            $label = html_writer::tag('label', $rescalegradesselect->getLabel(),
-                array('for' => $rescalegradesselect->getAttribute('id')));
             $labelhelp = new help_icon('modgraderescalegrades', 'grades');
-            $itemhtml = html_writer::start_div('col-sm-5') . $label . $OUTPUT->render($labelhelp) . html_writer::end_div();
-            $this->_elements[] = @MoodleQuickForm::createElement('static', 'scalelabel', '', $startdiv . $itemhtml);
+            $label = html_writer::tag('label', $rescalegradesselect->getLabel() . $OUTPUT->render($labelhelp),
+                array('for' => $rescalegradesselect->getAttribute('id'), 'class' => 'col-sm-3'));
+            $this->_elements[] = @MoodleQuickForm::createElement('static', 'scalelabel', '', $startdiv . $label);
             $this->_elements[] = $rescalegradesselect;
             $this->_elements[] = @MoodleQuickForm::createElement('static', 'scalespacer', '', $enddiv);
         }
@@ -240,7 +239,7 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
         // Only show the max points form element when applicable.
         if (!$this->isupdate || !$this->hasgrades || $this->currentgradetype == 'point') {
             $label = html_writer::tag('label', $this->maxgradeformelement->getLabel(),
-                array('for' => $this->maxgradeformelement->getAttribute('id'), 'class' => 'col-sm-5'));
+                array('for' => $this->maxgradeformelement->getAttribute('id'), 'class' => 'col-sm-3'));
             $this->_elements[] = @MoodleQuickForm::createElement('static', 'pointlabel', '', $startdiv . $label);
             $this->_elements[] = $this->maxgradeformelement;
             $this->_elements[] = @MoodleQuickForm::createElement('static', 'pointspacer', '', $enddiv);
