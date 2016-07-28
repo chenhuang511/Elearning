@@ -31,7 +31,7 @@ class mod_questionnaire_mod_form extends moodleform_mod {
     protected function definition() {
         global $COURSE;
         global $questionnairetypes, $questionnairerespondents, $questionnaireresponseviewers, $autonumbering;
-
+        $isremote = (MOODLE_RUN_MODE === MOODLE_MODE_HOST) ? true : false ;
         $questionnaire = new questionnaire($this->_instance, null, $COURSE, $this->_cm);
 
         $mform    =& $this->_form;
@@ -42,7 +42,17 @@ class mod_questionnaire_mod_form extends moodleform_mod {
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
 
-        $this->standard_intro_elements(get_string('description'));
+        if($isremote){
+            $this->standard_intro_elements(get_string('description'));
+        } else {
+            $mform->freeze('name');
+            $mform->addElement('hidden', 'introeditor');
+            $mform->addElement('html', '<div class="introdesc">');
+            $mform->addElement('htmleditor', 'intro', get_string('description'));
+            $mform->setType('intro', PARAM_RAW);
+            $mform->freeze('intro');
+            $mform->addElement('html', '</div>');
+        }
 
         $mform->addElement('header', 'timinghdr', get_string('timing', 'form'));
 
