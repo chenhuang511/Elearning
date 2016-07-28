@@ -1683,22 +1683,20 @@ class local_mod_forum_external extends external_api
                    JOIN {forum_posts} p ON p.discussion = d.id
                    JOIN {user} u ON p.userid = u.id
                    $umtable_field
-             WHERE d.forum = ? AND p.parent = 0 AND p.userid IN (SELECT id FROM {user} WHERE mnethostid = ?)
+             WHERE d.forum = ? AND p.parent = 0
                    $timelimit_field $groupselect_field
+                   AND p.userid IN (SELECT id FROM {user} WHERE mnethostid = ?)
           ORDER BY $forumsort_field, d.id DESC";
 
         $arr = array();
         $i = 0;
+
         foreach ($params['parameters'] as $p) {
-            if (($timelimit_field != '' || !empty($timelimit_field)) && $i > 0) {
-                $arr = array_merge($arr, array($i + 1 => $p['value']));
-            } else {
-                $arr = array_merge($arr, array($i => $p['value']));
-            }
+            $arr[$i] = $p['value'];
             $i++;
         }
 
-        $arr = array_merge($arr, array(1 => $hostid));
+        $arr[$i + 1] = $hostid;
 
         $result = array();
 
