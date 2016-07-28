@@ -206,21 +206,24 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
             $gradesexisthtml = '<div class=\'alert\'>' . $gradesexistmsg . '</div>';
             $this->_elements[] = @MoodleQuickForm::createElement('static', 'gradesexistmsg', '', $gradesexisthtml);
         }
+        // Init tag div for each form
+        $startdiv = html_writer::start_div('form-group');
+        $enddiv  = html_writer::end_div();
 
         // Grade type select box.
         $label = html_writer::tag('label', $this->gradetypeformelement->getLabel(),
-            array('for' => $this->gradetypeformelement->getAttribute('id')));
-        $this->_elements[] = @MoodleQuickForm::createElement('static', 'gradetypelabel', '', '&nbsp;'.$label);
+            array('for' => $this->gradetypeformelement->getAttribute('id'), 'class' => 'col-sm-5'));
+        $this->_elements[] = @MoodleQuickForm::createElement('static', 'gradetypelabel', '', $startdiv . $label);
         $this->_elements[] = $this->gradetypeformelement;
-        $this->_elements[] = @MoodleQuickForm::createElement('static', 'gradetypespacer', '', '<br />');
+        $this->_elements[] = @MoodleQuickForm::createElement('static', 'gradetypespacer', '', $enddiv);
 
         // Only show the grade scale select box when applicable.
         if (!$this->isupdate || !$this->hasgrades || $this->currentgradetype == 'scale') {
             $label = html_writer::tag('label', $this->scaleformelement->getLabel(),
-                array('for' => $this->scaleformelement->getAttribute('id')));
-            $this->_elements[] = @MoodleQuickForm::createElement('static', 'scalelabel', '', $label);
+                array('for' => $this->scaleformelement->getAttribute('id'), 'class' => 'col-sm-5'));
+            $this->_elements[] = @MoodleQuickForm::createElement('static', 'scalelabel', '', $startdiv . $label);
             $this->_elements[] = $this->scaleformelement;
-            $this->_elements[] = @MoodleQuickForm::createElement('static', 'scalespacer', '', '<br />');
+            $this->_elements[] = @MoodleQuickForm::createElement('static', 'scalespacer', '', $enddiv);
         }
 
         if ($this->isupdate && $this->hasgrades && $this->canrescale && $this->currentgradetype == 'point') {
@@ -228,18 +231,19 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
             $label = html_writer::tag('label', $rescalegradesselect->getLabel(),
                 array('for' => $rescalegradesselect->getAttribute('id')));
             $labelhelp = new help_icon('modgraderescalegrades', 'grades');
-            $this->_elements[] = @MoodleQuickForm::createElement('static', 'scalelabel', '', $label . $OUTPUT->render($labelhelp));
+            $itemhtml = html_writer::start_div('col-sm-5') . $label . $OUTPUT->render($labelhelp) . html_writer::end_div();
+            $this->_elements[] = @MoodleQuickForm::createElement('static', 'scalelabel', '', $startdiv . $itemhtml);
             $this->_elements[] = $rescalegradesselect;
-            $this->_elements[] = @MoodleQuickForm::createElement('static', 'scalespacer', '', '<br />');
+            $this->_elements[] = @MoodleQuickForm::createElement('static', 'scalespacer', '', $enddiv);
         }
 
         // Only show the max points form element when applicable.
         if (!$this->isupdate || !$this->hasgrades || $this->currentgradetype == 'point') {
             $label = html_writer::tag('label', $this->maxgradeformelement->getLabel(),
-                array('for' => $this->maxgradeformelement->getAttribute('id')));
-            $this->_elements[] = @MoodleQuickForm::createElement('static', 'pointlabel', '', $label);
+                array('for' => $this->maxgradeformelement->getAttribute('id'), 'class' => 'col-sm-5'));
+            $this->_elements[] = @MoodleQuickForm::createElement('static', 'pointlabel', '', $startdiv . $label);
             $this->_elements[] = $this->maxgradeformelement;
-            $this->_elements[] = @MoodleQuickForm::createElement('static', 'pointspacer', '', '<br />');
+            $this->_elements[] = @MoodleQuickForm::createElement('static', 'pointspacer', '', $enddiv);
         }
     }
 
