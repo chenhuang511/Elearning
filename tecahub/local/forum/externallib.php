@@ -1691,7 +1691,7 @@ class local_mod_forum_external extends external_api
         $i = 0;
         foreach ($params['parameters'] as $p) {
             if (($timelimit_field != '' || !empty($timelimit_field)) && $i > 0) {
-                $arr = array_merge($arr, array($i + 1 => $hostip));
+                $arr = array_merge($arr, array($i + 1 => $p['value']));
             } else {
                 $arr = array_merge($arr, array($i => $p['value']));
             }
