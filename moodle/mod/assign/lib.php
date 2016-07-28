@@ -1545,11 +1545,43 @@ function assign_get_local_settings_info($coursemodule){
     // Get assign from host
     $assign = get_local_assign_record($coursemodule->instance);
     // Get assign from hub
-    $assignremote = get_remote_assign_by_id($coursemodule->instance);
+    $assignremote = get_remote_assign_by_id_instanceid($coursemodule->instance, $coursemodule->id);
     // Merge neccessary information
     $assign->name = $assignremote->name;
     $assign->intro = $assignremote->intro;
     $assign->introformat = $assignremote->introformat;
+    if(isset($assignremote->introattachments)){
+        $assign->introattachments = $assignremote->introattachments;
+    }
 
     return $assign;
+}
+
+/**
+ * Generate output html for show download file.
+ *
+ * @param array $introattachments   -  List files introattachments
+ * @return string $output           -  The html output
+ */
+function generate_output_introattachment($introattachments){
+    global $OUTPUT;
+
+    $o = '';
+    $o .= '<div>';
+    $o .= '<ul class="introattachments">';
+    foreach ($introattachments as $file) {
+        $image = $OUTPUT->pix_icon(file_file_icon($file),
+            $file->mimetype,
+            'moodle',
+            array('class'=>'icon'));
+
+        $fileurl = html_writer::link($file->fileurl, $file->filename);
+        $o .= '<li class="introattachments-image">' .
+            '<div>' . $image . ' ' . $fileurl . '</div> ' .
+            '</li>';
+    }
+    $o .= '</ul>';
+    $o .= '</div>';
+
+    return $o;
 }
