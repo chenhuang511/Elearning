@@ -94,6 +94,8 @@ $string['notsubmittedyet'] = 'Chưa nộp';
 $string['numberofparticipants'] = 'Số người tham gia';
 $string['numberofsubmissionsneedgrading'] = 'Cần chấm điểm';
 $string['numberofsubmittedassignments'] = 'Bài đã nộp';
+$string['numberofteams'] = 'Số nhóm';
+$string['outof'] = '{$a->current} trên {$a->total}';
 $string['overdue'] = '<font color="red">Bài tập đã quá hạn nộp: {$a}</font>';
 $string['pluginadministration'] = 'Quản trị bài tập';
 $string['pluginname'] = 'Bài tập';

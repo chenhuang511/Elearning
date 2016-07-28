@@ -33,6 +33,7 @@ $string['index_heading_users'] = 'Người dùng';
 $string['mod_form_block_general'] = 'Cài đặt chung';
 $string['mod_form_field_intro'] = 'Mô tả';
 $string['mod_form_field_name'] = 'Tên lớp học ảo';
+$string['predefined_profile_default'] = 'Mặc định';
 $string['view_conference_action_join'] = 'Tham gia buổi học';
 $string['view_message_conference_not_started'] = 'Buổi học này chưa bắt đầu.';
 $string['view_message_conference_room_ready'] = 'Phòng học đã sẵn sàng. Bạn có thể tham gia buổi học bây giờ';

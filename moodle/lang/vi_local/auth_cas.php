@@ -18,12 +18,11 @@
 /**
  * Local language pack from http://192.168.1.253
  *
- * @package    tool
- * @subpackage task
+ * @package    auth
+ * @subpackage cas
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['default'] = 'Mặc định';
-$string['scheduledtasks'] = 'Lịch trình công việc';
+$string['auth_cas_curl_ssl_version_default'] = 'Mặc định';

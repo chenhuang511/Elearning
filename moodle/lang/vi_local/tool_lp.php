@@ -33,6 +33,7 @@ $string['competencyframework'] = 'Khung năng lực';
 $string['competencyframeworks'] = 'Khung năng lực';
 $string['coursecompetencies'] = 'Năng lực của khóa học';
 $string['coursecompetencyratingsarepushedtouserplans'] = 'Xếp hạng năng lực trong khóa học này được cập nhật ngay lập tức trong kế hoạch học tập.';
+$string['default'] = 'Mặc định';
 $string['description'] = 'Mô tả';
 $string['learningplans'] = 'Kế hoạch học tập';
 $string['listcompetencyframeworkscaption'] = 'Danh sách khung năng lực';

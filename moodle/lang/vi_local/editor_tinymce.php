@@ -26,5 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['advlink_dlg:popup_opts'] = 'Tùy chọn';
+$string['advlist:def'] = 'Mặc định';
 $string['pluginname'] = 'Trình soạn thảo TinyMCE HTML';
 $string['settings'] = 'Cài đặt chung';
+$string['table_dlg:frame_groups'] = 'các nhóm';

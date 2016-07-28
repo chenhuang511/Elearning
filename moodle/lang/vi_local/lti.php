@@ -25,4 +25,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['default'] = 'Mặc định';
 $string['never'] = 'Không bao giờ';
