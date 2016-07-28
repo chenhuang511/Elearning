@@ -518,7 +518,7 @@ class local_mod_assign_external extends external_api {
                     'filename' => $filename,
                     'mimetype' => $file->get_mimetype(),
                     'fileurl' => moodle_url::make_pluginfile_url(
-                        $context->id, 'mod_assign', ASSIGN_INTROATTACHMENT_FILEAREA, 0, '/', $filename)->out(false)
+                        $context->id, 'mod_assign', ASSIGN_INTROATTACHMENT_FILEAREA, 0, '/', $filename, true)->out(false)
                 );
             }
             $result['assignment']->introattachments = $assignment['introattachments'];

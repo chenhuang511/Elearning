@@ -68,6 +68,10 @@ class mod_assign_mod_form extends moodleform_mod {
             $mform->addElement('hidden', 'introeditor');
 
             $mform->addElement('html', '<div class="introdesc">');
+            if (isset($this->current->introattachments)) {
+                $introattachment = generate_output_introattachment($this->current->introattachments);
+                $this->current->intro .= $introattachment;
+            }
             $mform->addElement('htmleditor', 'intro', get_string('description', 'assign'));
             $mform->freeze('intro');
             $mform->addElement('html', '</div>');
