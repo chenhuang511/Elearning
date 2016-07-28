@@ -1402,3 +1402,11 @@ function chat_get_coursemodule_info($coursemodule) {
 
     return $result;
 }
+
+function chat_get_local_settings_info($coursemodule){
+    global $CFG, $DB;
+    require_once($CFG->dirroot . '/mod/chat/remote/locallib.php');
+    $chat = get_remote_chat_by_id($coursemodule->instance);
+
+    return $chat;
+}
