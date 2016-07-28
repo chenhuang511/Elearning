@@ -1786,9 +1786,9 @@ class local_mod_forum_external extends external_api
             'parameters' => $parameters
         ));
 
-        $host = $DB->get_record('mnet_host', array('ip_address' => $params['hostip']), '*', MUST_EXIST);
+        $hostid = $DB->get_field('mnet_host', 'id', array('ip_address' => $params['hostip']));
 
-        if (!$host) {
+        if (!$hostid) {
             $warnings['message'] = "Not found host";
         }
 
@@ -1797,7 +1797,7 @@ class local_mod_forum_external extends external_api
             $arr = array_merge($arr, array($p['value']));
         }
 
-        $arr = array_merge($arr, array($host->id));
+        $arr = array_merge($arr, array($hostid));
 
         $result = array();
 
