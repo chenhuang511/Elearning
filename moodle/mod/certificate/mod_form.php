@@ -32,6 +32,16 @@ require_once($CFG->dirroot.'/mod/certificate/locallib.php');
 
 class mod_certificate_mod_form extends moodleform_mod {
 
+    protected function checkDisable($name, $freeze = false) {
+        if(MOODLE_RUN_MODE != MOODLE_MODE_HOST) {
+            $mform =& $this->_form;
+            if($freeze){
+                $mform->freeze($name);
+            } else {
+                $mform->disabledIf($name);
+            }
+        }
+    }
     function definition() {
         global $CFG;
         $isremote = (MOODLE_RUN_MODE === MOODLE_MODE_HOST) ? true : false;
@@ -46,8 +56,18 @@ class mod_certificate_mod_form extends moodleform_mod {
             $mform->setType('name', PARAM_CLEAN);
         }
         $mform->addRule('name', null, 'required', null, 'client');
+        $this->checkDisable('name', true);
 
-        $this->standard_intro_elements(get_string('intro', 'certificate'));
+        if($isremote){
+            $this->standard_intro_elements(get_string('intro', 'certificate'));
+        } else {
+            $mform->addElement('hidden', 'introeditor');
+            $mform->addElement('html', '<div class="introdesc">');
+            $mform->addElement('htmleditor', 'intro', get_string('intro', 'certificate'));
+            $mform->setType('intro', PARAM_RAW);
+            $mform->freeze('intro');
+            $mform->addElement('html', '</div>');
+        }
 
         // Issue options
         $mform->addElement('header', 'issueoptions', get_string('issueoptions', 'certificate'));
@@ -55,30 +75,36 @@ class mod_certificate_mod_form extends moodleform_mod {
         $mform->addElement('select', 'emailteachers', get_string('emailteachers', 'certificate'), $ynoptions);
         $mform->setDefault('emailteachers', 0);
         $mform->addHelpButton('emailteachers', 'emailteachers', 'certificate');
+        $this->checkDisable('emailteachers');
 
         $mform->addElement('text', 'emailothers', get_string('emailothers', 'certificate'), array('size'=>'40', 'maxsize'=>'200'));
         $mform->setType('emailothers', PARAM_TEXT);
         $mform->addHelpButton('emailothers', 'emailothers', 'certificate');
+        $this->checkDisable('emailothers', true);
 
         $deliveryoptions = array( 0 => get_string('openbrowser', 'certificate'), 1 => get_string('download', 'certificate'), 2 => get_string('emailcertificate', 'certificate'));
         $mform->addElement('select', 'delivery', get_string('delivery', 'certificate'), $deliveryoptions);
         $mform->setDefault('delivery', 0);
         $mform->addHelpButton('delivery', 'delivery', 'certificate');
+        $this->checkDisable('delivery');
 
         $mform->addElement('select', 'savecert', get_string('savecert', 'certificate'), $ynoptions);
         $mform->setDefault('savecert', 0);
         $mform->addHelpButton('savecert', 'savecert', 'certificate');
+        $this->checkDisable('savecert');
 
         $reportfile = "$CFG->dirroot/certificates/index.php";
         if (file_exists($reportfile)) {
             $mform->addElement('select', 'reportcert', get_string('reportcert', 'certificate'), $ynoptions);
             $mform->setDefault('reportcert', 0);
             $mform->addHelpButton('reportcert', 'reportcert', 'certificate');
+            $this->checkDisable('reportcert');
         }
 
         $mform->addElement('text', 'requiredtime', get_string('coursetimereq', 'certificate'), array('size'=>'3'));
         $mform->setType('requiredtime', PARAM_INT);
         $mform->addHelpButton('requiredtime', 'coursetimereq', 'certificate');
+        $this->checkDisable('requiredtime', true);
 
         // Text Options
         $mform->addElement('header', 'textoptions', get_string('textoptions', 'certificate'));
@@ -117,11 +143,12 @@ class mod_certificate_mod_form extends moodleform_mod {
         if($isremote) {
             $outcomeoptions = certificate_get_outcomes();
         } else {
-            $outcomeoptions = array();
+            $outcomeoptions = array('Không');
         }
         $mform->addElement('select', 'printoutcome', get_string('printoutcome', 'certificate'),$outcomeoptions);
         $mform->setDefault('printoutcome', 0);
         $mform->addHelpButton('printoutcome', 'printoutcome', 'certificate');
+        $this->checkDisable('printoutcome');
 
         $mform->addElement('text', 'printhours', get_string('printhours', 'certificate'), array('size'=>'5', 'maxlength' => '255'));
         $mform->setType('printhours', PARAM_TEXT);
