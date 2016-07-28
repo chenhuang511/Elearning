@@ -137,8 +137,6 @@ if (!empty($add)) {
         $course = get_local_course_record($cm->course);
     }
 
-
-
     // require_login
     require_login($course, false, $cm); // needed to setup proper $COURSE
 

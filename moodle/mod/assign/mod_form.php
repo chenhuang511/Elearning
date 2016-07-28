@@ -56,16 +56,25 @@ class mod_assign_mod_form extends moodleform_mod {
         if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
             $mform->addRule('name', null, 'required', null, 'client');
             $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
-        } else {
-            $mform->freeze('name');
-        }
 
-        $this->standard_intro_elements(get_string('description', 'assign'));
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $this->standard_intro_elements(get_string('description', 'assign'));
             $mform->addElement('filemanager', 'introattachments',
                 get_string('introattachments', 'assign'),
                 null, array('subdirs' => 0, 'maxbytes' => $COURSE->maxbytes) );
             $mform->addHelpButton('introattachments', 'introattachments', 'assign');
+        } else {
+            // Can't change general setting for host
+            $mform->freeze('name');
+            $mform->addElement('hidden', 'introeditor');
+
+            $mform->addElement('html', '<div class="introdesc">');
+            if (isset($this->current->introattachments)) {
+                $introattachment = generate_output_introattachment($this->current->introattachments);
+                $this->current->intro .= $introattachment;
+            }
+            $mform->addElement('htmleditor', 'intro', get_string('description', 'assign'));
+            $mform->freeze('intro');
+            $mform->addElement('html', '</div>');
         }
 
         $ctx = null;

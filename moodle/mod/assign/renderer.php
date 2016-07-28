@@ -256,20 +256,7 @@ class mod_assign_renderer extends plugin_renderer_base {
             $o .= format_module_intro('assign', $header->assign, $header->coursemoduleid);
             if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
                 if (isset($header->assign->introattachments)){
-                    $o .= '<div>';
-                    $o .= '<ul class="introattachments">';
-                    foreach ($header->assign->introattachments as $file) {
-                        $image = $this->output->pix_icon(file_file_icon($file),
-                            $file->mimetype,
-                            'moodle',
-                            array('class'=>'icon'));
-                        $fileurl = html_writer::link($file->fileurl, $file->filename);
-                        $o .= '<li class="introattachments-image">' .
-                            '<div>' . $image . ' ' . $fileurl . '</div> ' .
-                            '</li>';
-                    }
-                    $o .= '</ul>';
-                    $o .= '</div>';
+                    $o .= generate_output_introattachment($header->assign->introattachments);
                 }
             }
             $o .= $header->postfix;

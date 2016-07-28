@@ -1664,8 +1664,8 @@ class local_mod_forum_external extends external_api
             'limitnum' => $limitnum
         ));
 
-        $host = $DB->get_record('mnet_host', array('ip_address' => $params['hostip']), '*', MUST_EXIST);
-        if (!$host) {
+        $hostid = $DB->get_field('mnet_host', 'id', array('ip_address' => $params['hostip']));
+        if (!$hostid) {
             $warnings['message'] = "Not found host";
         }
 
@@ -1683,23 +1683,20 @@ class local_mod_forum_external extends external_api
                    JOIN {forum_posts} p ON p.discussion = d.id
                    JOIN {user} u ON p.userid = u.id
                    $umtable_field
-             WHERE d.forum = ? AND p.parent = 0 AND p.userid IN (SELECT id FROM {user} WHERE mnethostid= ?)";
-
-        if ($timelimit_field != '') {
-            $sql .= " $timelimit_field";
-        }
-        if ($groupselect_field != '') {
-            $sql .= " $groupselect_field";
-        }
-
-        $sql .= " ORDER BY $forumsort_field, d.id DESC";
+             WHERE d.forum = ? AND p.parent = 0
+                   $timelimit_field $groupselect_field
+                   AND p.userid IN (SELECT id FROM {user} WHERE mnethostid = ?)
+          ORDER BY $forumsort_field, d.id DESC";
 
         $arr = array();
+        $i = 0;
+
         foreach ($params['parameters'] as $p) {
-            $arr = array_merge($arr, array($p['value']));
+            $arr[$i] = $p['value'];
+            $i++;
         }
 
-        $arr = array_merge($arr, array($host->id));
+        $arr[$i + 1] = $hostid;
 
         $result = array();
 
@@ -1789,9 +1786,9 @@ class local_mod_forum_external extends external_api
             'parameters' => $parameters
         ));
 
-        $host = $DB->get_record('mnet_host', array('ip_address' => $params['hostip']), '*', MUST_EXIST);
+        $hostid = $DB->get_field('mnet_host', 'id', array('ip_address' => $params['hostip']));
 
-        if (!$host) {
+        if (!$hostid) {
             $warnings['message'] = "Not found host";
         }
 
@@ -1800,7 +1797,7 @@ class local_mod_forum_external extends external_api
             $arr = array_merge($arr, array($p['value']));
         }
 
-        $arr = array_merge($arr, array($host->id));
+        $arr = array_merge($arr, array($hostid));
 
         $result = array();
 
