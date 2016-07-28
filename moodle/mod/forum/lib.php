@@ -2308,6 +2308,14 @@ function forum_search_posts($searchterms, $courseid = 0, $limitfrom = 0, $limitn
 {
     global $CFG, $DB, $USER;
     require_once($CFG->libdir . '/searchlib.php');
+    $hubuserid = $USER->id;
+
+    if(MOODLE_RUN_MODE === MOODLE_MOD_HUB) {
+        $user = get_remote_mapping_user($USER->id);
+        $hubuserid = $user[0]->id;
+    }
+    
+    $forums = sadsds($hubuserid)
 
     $forums = forum_get_readable_forums($USER->id, $courseid);
 

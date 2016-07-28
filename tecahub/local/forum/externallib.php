@@ -2243,4 +2243,197 @@ class local_mod_forum_external extends external_api
     {
         return self::check_record_forum_exists_returns();
     }
+
+    public static function forum_search_posts_by_hostip_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'hubuserid' => new external_value(PARAM_INT, 'hubuserid'),
+                'searchterms' => new external_value(PARAM_RAW, 'searchterms'),
+                'courseid' => new external_value(PARAM_RAW, 'course id'),
+                'limitfrom' => new external_value(PARAM_INT, 'limitfrom'),
+                'limitnum' => new external_value(PARAM_INT, 'limitnum'),
+                'extrasql' => new external_value(PARAM_RAW, 'extrasql')
+            )
+        );
+    }
+
+    public static function forum_search_posts_by_hostip($hubuserid, $searchterms, $courseid, $limitfrom, $limitnum, $extrasql)
+    {
+        global $CFG, $DB;
+        require_once($CFG->libdir.'/searchlib.php');
+
+        $params = self::validate_parameters(self::forum_search_posts_by_hostip_parameters,
+            array(
+                'hubuserid' => $hubuserid,
+                'searchterms' => $searchterms,
+                'courseid' => $courseid,
+                'limitfrom' => $limitfrom,
+                'limitnum' => $limitnum,
+                'extrasql'=> $extrasql
+            )
+        );
+        $result = array();
+
+        $forums = forum_get_readable_forums($hubuserid, $courseid);
+        if (count($forums) == 0) {
+            $totalcount = 0;
+            return false;
+        }
+
+        $now = round(time(), -2); // db friendly
+
+        $fullaccess = array();
+        $where = array();
+        $params = array();
+
+        foreach ($forums as $forumid => $forum) {
+            $select = array();
+
+            if (!$forum->viewhiddentimedposts) {
+                $select[] = "(d.userid = :userid{$forumid} OR (d.timestart < :timestart{$forumid} AND (d.timeend = 0 OR d.timeend > :timeend{$forumid})))";
+                $params = array_merge($params, array('userid'.$forumid=>$hubuserid, 'timestart'.$forumid=>$now, 'timeend'.$forumid=>$now));
+            }
+
+            $cm = $forum->cm;
+            $context = $forum->context;
+
+            if ($forum->type == 'qanda'
+                && !has_capability('mod/forum:viewqandawithoutposting', $context)) {
+                if (!empty($forum->onlydiscussions)) {
+                    list($discussionid_sql, $discussionid_params) = $DB->get_in_or_equal($forum->onlydiscussions, SQL_PARAMS_NAMED, 'qanda'.$forumid.'_');
+                    $params = array_merge($params, $discussionid_params);
+                    $select[] = "(d.id $discussionid_sql OR p.parent = 0)";
+                } else {
+                    $select[] = "p.parent = 0";
+                }
+            }
+
+            if (!empty($forum->onlygroups)) {
+                list($groupid_sql, $groupid_params) = $DB->get_in_or_equal($forum->onlygroups, SQL_PARAMS_NAMED, 'grps'.$forumid.'_');
+                $params = array_merge($params, $groupid_params);
+                $select[] = "d.groupid $groupid_sql";
+            }
+
+            if ($select) {
+                $selects = implode(" AND ", $select);
+                $where[] = "(d.forum = :forum{$forumid} AND $selects)";
+                $params['forum'.$forumid] = $forumid;
+            } else {
+                $fullaccess[] = $forumid;
+            }
+        }
+
+        if ($fullaccess) {
+            list($fullid_sql, $fullid_params) = $DB->get_in_or_equal($fullaccess, SQL_PARAMS_NAMED, 'fula');
+            $params = array_merge($params, $fullid_params);
+            $where[] = "(d.forum $fullid_sql)";
+        }
+
+        $selectdiscussion = "(".implode(" OR ", $where).")";
+
+        $messagesearch = '';
+        $searchstring = '';
+
+        // Need to concat these back together for parser to work.
+        foreach($searchterms as $searchterm){
+            if ($searchstring != '') {
+                $searchstring .= ' ';
+            }
+            $searchstring .= $searchterm;
+        }
+
+        // We need to allow quoted strings for the search. The quotes *should* be stripped
+        // by the parser, but this should be examined carefully for security implications.
+        $searchstring = str_replace("\\\"","\"",$searchstring);
+        $parser = new search_parser();
+        $lexer = new search_lexer($parser);
+
+        if ($lexer->parse($searchstring)) {
+            $parsearray = $parser->get_parsed_array();
+            list($messagesearch, $msparams) = search_generate_SQL($parsearray, 'p.message', 'p.subject',
+                'p.userid', 'u.id', 'u.firstname',
+                'u.lastname', 'p.modified', 'd.forum');
+            $params = array_merge($params, $msparams);
+        }
+
+        $fromsql = "{forum_posts} p,
+                  {forum_discussions} d,
+                  {user} u";
+
+        $selectsql = " $messagesearch
+               AND p.discussion = d.id
+               AND p.userid = u.id
+               AND $selectdiscussion
+                   $extrasql";
+
+        $countsql = "SELECT COUNT(*)
+                   FROM $fromsql
+                  WHERE $selectsql";
+
+        $allnames = get_all_user_name_fields(true, 'u');
+        $searchsql = "SELECT p.*,
+                         d.forum,
+                         $allnames,
+                         u.email,
+                         u.picture,
+                         u.imagealt
+                    FROM $fromsql
+                   WHERE $selectsql
+                ORDER BY p.modified DESC";
+
+        $result['totalcount'] = $DB->count_records_sql($countsql, $params);
+        if (!$result['totalcount']){
+            $result['totalcount'] = array();
+        }
+
+        $result['ret']->get_records_sql($searchsql, $params, $limitfrom, $limitnum);
+        if (!$result['ret']){
+            $result['ret'] = array();
+        }
+
+        return $result;
+    }
+
+    public static function forum_search_posts_by_hostip_returns()
+    {
+
+        return new external_single_structure(
+            array(
+                'ret' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'the id'),
+                            'discussion' => new external_value(PARAM_INT, 'the discussion id'),
+                            'parent' => new external_value(PARAM_INT, 'the parent'),
+                            'userid' => new external_value(PARAM_INT, 'the user id'),
+                            'created' => new external_value(PARAM_INT, 'created'),
+                            'modified' => new external_value(PARAM_INT, 'modified'),
+                            'mailed' => new external_value(PARAM_INT, 'mailed'),
+                            'subject' => new external_value(PARAM_RAW, 'the subject'),
+                            'message' => new external_value(PARAM_RAW, 'the message'),
+                            'messageformat' => new external_value(PARAM_INT, 'message format'),
+                            'messagetrust' => new external_value(PARAM_INT, 'message trust'),
+                            'attachment' => new external_value(PARAM_RAW, 'attachment'),
+                            'totalscore' => new external_value(PARAM_INT, 'total score'),
+                            'mailnow' => new external_value(PARAM_INT, 'mail now')
+                            'forum' => new external_value(PARAM_INT, 'the forum')
+                            'firstnamephonetic' => new external_value(PARAM_RAW, 'the firstnamephonetic')
+                            'lastnamephonetic' => new external_value(PARAM_RAW, 'the lastnamephonetic'),
+                            'middlename' => new external_value(PARAM_RAW, 'the middlename'),
+                            'alternatename' => new external_value(PARAM_RAW, 'the alternatename'),
+                            'firstname' => new external_value(PARAM_RAW, 'the firstname'),
+                            'lastname' => new external_value(PARAM_RAW, 'the lastname'),
+                            'email' => new external_value(PARAM_RAW, 'the email'),
+                            'picture' => new external_value(PARAM_INT, 'the picture'),
+                            'imagealt' => new external_value(PARAM_RAW, 'the imagealt'),
+                        )
+                    )
+                ),
+                'totalcount' => new external_value(PARAM_INT, 'The totalcount')
+            )
+        );
+    }
+
+
 }
