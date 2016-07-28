@@ -34,10 +34,16 @@ class mod_forum_mod_form extends moodleform_mod {
 
         $mform    =& $this->_form;
 
+        $readonly = '';
+
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $readonly = 'readonly';
+        }
+
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
-        $mform->addElement('text', 'name', get_string('forumname', 'forum'), array('size'=>'64'));
+        $mform->addElement('text', 'name', get_string('forumname', 'forum'), array('size'=>'64', $readonly));
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);
         } else {
