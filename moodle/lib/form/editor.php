@@ -419,7 +419,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element
         if (!is_null($this->getAttribute('onblur')) && !is_null($this->getAttribute('onchange'))) {
             $editorrules = ' onblur="' . htmlspecialchars($this->getAttribute('onblur')) . '" onchange="' . htmlspecialchars($this->getAttribute('onchange')) . '"';
         }
-        if((MOODLE_RUN_MODE === MOODLE_MODE_HUB) && ($this->_label == "Tóm tắt về khoá học")) {
+        if(!$CFG->isedit) {
             $attributes = "readonly";
         }
         $str .= '<div><textarea id="' . $id . '" name="' . $elname . '[text]" rows="' . $rows . '" cols="' . $cols . '" spellcheck="true"' .$attributes . $editorrules . '>';
