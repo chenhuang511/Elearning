@@ -131,8 +131,14 @@ class comment_manager {
                 break;
             case CONTEXT_MODULE:
                 $this->plugintype = 'mod';
-                $this->cm = get_coursemodule_from_id('', $this->context->instanceid);
-                $this->setup_course($this->cm->course);
+                if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                    $this->cm = get_coursemodule_from_id('', $this->context->instanceid);
+                    $this->setup_course($this->cm->course);
+                } else {
+                    $this->cm = get_remote_course_module($this->context->instanceid);
+                    $courseid = $DB->get_field('course', 'id', array('remoteid' => $this->cm->course));
+                    $this->setup_course($courseid);
+                }
                 $this->modinfo = get_fast_modinfo($this->course);
                 $this->pluginname = $this->modinfo->cms[$this->cm->id]->modname;
                 break;
