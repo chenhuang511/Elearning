@@ -35,7 +35,7 @@ $isremote = (MOODLE_RUN_MODE == MOODLE_MODE_HUB)?true:false;
 if($isremote){
     $quiz = get_remote_quiz_by_id($quizid);
     $course = get_local_course_record($quiz->course);
-    $cm = get_remote_course_module_by_instance("quiz", $quiz->id)->cm;
+    $cm = get_remote_course_module_by_instance("quiz", $quiz->id);
 }else{
     $quiz = $DB->get_record('quiz', array('id' => $quizid));
     $course = $DB->get_record('course', array('id' => $quiz->course));

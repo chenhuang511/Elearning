@@ -238,7 +238,7 @@ foreach ($posts as $post) {
         print_error('invalidforumid', 'forum');
     }
 
-    if (!$cm = get_remote_course_module_by_instance('forum', $forum->id)->cm) {
+    if (!$cm = get_remote_course_module_by_instance('forum', $forum->id)) {
         print_error('invalidcoursemodule');
     }
 

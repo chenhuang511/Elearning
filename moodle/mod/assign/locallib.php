@@ -8175,7 +8175,7 @@ class assign {
             $cm = get_coursemodule_from_instance('assign', $assignid, 0, false, MUST_EXIST);
         }
         else{
-            $cm = get_remote_course_module_by_instance('assign', $assignid)->cm;
+            $cm = get_remote_course_module_by_instance('assign', $assignid);
         }
         $context = context_module::instance($cm->id);
 

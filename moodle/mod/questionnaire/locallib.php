@@ -1089,7 +1089,7 @@ function questionnaire_get_standard_page_items($id = null, $a = null) {
             if (!$course = get_local_course_record($questionnaire->course)) {
                 print_error('coursemisconf');
             }
-            if (!$cm = get_remote_course_module_by_instance('questionnaire', $a)->cm) {
+            if (!$cm = get_remote_course_module_by_instance('questionnaire', $a)) {
                 print_error('invalidcoursemodule');
             }
         }

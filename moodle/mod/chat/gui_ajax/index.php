@@ -37,7 +37,7 @@ if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
 } else {
     $chat = get_remote_chat_by_id($id);
     $course = get_local_course_record($chat->course);
-    $cm = get_remote_course_module_by_instance('chat', $chat->id)->cm;
+    $cm = get_remote_course_module_by_instance('chat', $chat->id);
 }
 
 $context = context_module::instance($cm->id);

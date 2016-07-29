@@ -495,7 +495,7 @@ class subscriptions
 
         // Apply the activity module availability resetrictions.
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            $cm = get_remote_course_module_by_instance('forum', $forum->id)->cm;
+            $cm = get_remote_course_module_by_instance('forum', $forum->id);
         } else {
             $cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course);
         }

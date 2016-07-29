@@ -1661,7 +1661,7 @@ class lesson extends lesson_base
         global $USER, $DB;
 
         //$cm = get_coursemodule_from_instance('lesson', $this->properties()->id, $this->properties()->course, false, MUST_EXIST);
-        $cm = get_remote_course_module_by_instance('lesson', $this->properties()->id)->cm;
+        $cm = get_remote_course_module_by_instance('lesson', $this->properties()->id);
 
         // Trigger lesson started event.
         $event = \mod_lesson\event\lesson_started::create(array(
@@ -1702,7 +1702,7 @@ class lesson extends lesson_base
     {
         global $USER, $DB;
 
-        $cm = get_remote_course_module_by_instance('lesson', $this->properties->id)->cm;
+        $cm = get_remote_course_module_by_instance('lesson', $this->properties->id);
 
         // clock code
         // get time information for this user
@@ -1755,7 +1755,7 @@ class lesson extends lesson_base
         $result = update_remote_mdl_lesson("lesson_timer", $timer->id, $data);
 
         // Update completion state.
-        $cm = get_remote_course_module_by_instance('lesson', $this->properties()->id)->cm;
+        $cm = get_remote_course_module_by_instance('lesson', $this->properties()->id);
         $course = get_course($cm->course);
         $completion = new completion_info($course);
         if ($completion->is_enabled($cm) && $this->properties()->completiontimespent > 0) {
@@ -1774,7 +1774,7 @@ class lesson extends lesson_base
         unset($USER->startlesson[$this->properties->id]);
 
         //$cm = get_coursemodule_from_instance('lesson', $this->properties()->id, $this->properties()->course,false, MUST_EXIST);
-        $cm = get_remote_course_module_by_instance('lesson', $this->properties()->id)->cm;
+        $cm = get_remote_course_module_by_instance('lesson', $this->properties()->id);
 
         // Trigger lesson ended event.
         $event = \mod_lesson\event\lesson_ended::create(array(

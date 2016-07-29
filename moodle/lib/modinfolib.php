@@ -2210,7 +2210,7 @@ function get_course_and_cm_from_instance($instanceorid, $modulename, $courseorid
     $modinfo = get_fast_modinfo($course, $userid);
     $instances = $modinfo->get_instances_of($modulename);
     if (!array_key_exists($instanceid, $instances)) {
-        if(!$instances[$instanceid] = get_remote_course_module_by_instance($modulename, $instanceid)->cm){
+        if(!$instances[$instanceid] = get_remote_course_module_by_instance($modulename, $instanceid)){
             throw new moodle_exception('invalidmoduleid', 'error', $instanceid);
         }
     }

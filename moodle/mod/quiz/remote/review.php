@@ -25,7 +25,7 @@ $PAGE->set_url($url);
 $attempt = get_remote_attempt_by_attemptid($attemptid);
 $quiz = get_remote_quiz_by_id($attempt->quiz);
 $course = get_local_course_record($quiz->course);
-$cm = get_remote_course_module_by_instance("quiz", $quiz->id)->cm;
+$cm = get_remote_course_module_by_instance("quiz", $quiz->id);
 $attemptobj = new quiz_attempt($attempt, $quiz, $cm, $course, false, true);
 $page = $attemptobj->force_page_number_into_range($page);
 

@@ -35,7 +35,7 @@ if ($id) {
     if (!$course = get_local_course_record($quiz->course)) {
         print_error('invalidcourseid');
     }
-    if (!$cm = get_remote_course_module_by_instance("quiz", $quiz->id)->cm) {
+    if (!$cm = get_remote_course_module_by_instance("quiz", $quiz->id)) {
         print_error('invalidcoursemodule');
     }
 }

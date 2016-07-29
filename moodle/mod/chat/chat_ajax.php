@@ -55,7 +55,7 @@ if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
     if (!$course = get_local_course_record($chat->course)) {
         throw new moodle_exception('invalidcourseid', 'error');
     }
-    if (!$cm = $cm = get_remote_course_module_by_instance('chat', $chat->id)->cm) {
+    if (!$cm = $cm = get_remote_course_module_by_instance('chat', $chat->id)) {
         throw new moodle_exception('invalidcoursemodule', 'error');
     }
 }

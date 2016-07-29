@@ -52,7 +52,7 @@ if (! $course = get_local_course_record($forum->course)) {
     print_error('invalidcourseid');
 }
 
-if (!$cm = get_remote_course_module_by_instance("forum", $forum->id)->cm) {
+if (!$cm = get_remote_course_module_by_instance("forum", $forum->id)) {
     print_error('invalidcoursemodule');
 }
 
