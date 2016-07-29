@@ -71,7 +71,7 @@ class mod_assign_mod_form extends moodleform_mod {
             if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
                 $cm = get_coursemodule_from_instance('assign', $this->current->id, 0, false, MUST_EXIST);
             } else {
-                $cm = get_remote_course_module_by_instance('assign', $this->current->remoteid)->cm;
+                $cm = get_remote_course_module_by_instance('assign', $this->current->remoteid);
             }
             $ctx = context_module::instance($cm->id);
         }

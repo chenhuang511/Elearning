@@ -25,7 +25,7 @@ $PAGE->set_url($url);
 $attempt = get_remote_attempt_by_attemptid($attemptid);
 $quiz = get_remote_quiz_by_id($attempt->quiz);
 $course = get_local_course_record($quiz->course);
-$cm = get_remote_course_module_by_instance("quiz", $quiz->id)->cm;
+$cm = get_remote_course_module_by_instance("quiz", $quiz->id);
 $attemptobj = new quiz_attempt($attempt, $quiz, $cm, $course, false, true);
 $page = $attemptobj->force_page_number_into_range($page);
 
@@ -123,7 +123,20 @@ if ($attempt->state == quiz_attempt::FINISHED) {
     $timetaken = get_string('unfinished', 'quiz');
 }
 
-// @TODO: Prepare summary informat about the whole attempt.
+// Prepare summary informat about the whole attempt.
+$summarydata = array();
+if (!$attemptobj->get_quiz()->showuserpicture && $attemptobj->get_userid() != $USER->id) {
+    // If showuserpicture is true, the picture is shown elsewhere, so don't repeat it.
+    $student = $DB->get_record('user', array('id' => $attemptobj->get_userid()));
+    $userpicture = new user_picture($student);
+    $userpicture->courseid = $attemptobj->get_courseid();
+    $summarydata['user'] = array(
+        'title'   => $userpicture,
+        'content' => new action_link(new moodle_url('/user/view.php', array(
+            'id' => $student->id, 'course' => $attemptobj->get_courseid())),
+            fullname($student, true)),
+    );
+}
 
 if ($attemptobj->has_capability('mod/quiz:viewreports')) {
     $attemptlist = $attemptobj->links_to_other_attempts($attemptobj->review_url(null, $page,

@@ -66,7 +66,7 @@ if ($id) {
         if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
             $cm = get_coursemodule_from_instance('questionnaire', $qid, $course->id);
         } else {
-            $cm = get_remote_course_module_by_instance('questionnaire', $qid)->cm;
+            $cm = get_remote_course_module_by_instance('questionnaire', $qid);
         }
     } else {
         $cm = false;

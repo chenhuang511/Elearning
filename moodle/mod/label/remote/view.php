@@ -50,7 +50,7 @@ if ($id) {
     if (! $course = get_local_course_record($label->course)) {
         print_error('coursemisconf');
     }
-    if (! $cm = get_remote_course_module_by_instance("label", $label->id)->cm) {
+    if (! $cm = get_remote_course_module_by_instance("label", $label->id)) {
         print_error('invalidcoursemodule');
     }
 }

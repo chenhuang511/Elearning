@@ -98,7 +98,7 @@ if (!isloggedin() or isguestuser()) {
         print_error('invalidcourseid');
     }
 
-    if (!$cm = get_remote_course_module_by_instance('forum', $forum->id)->cm) { // For the logs
+    if (!$cm = get_remote_course_module_by_instance('forum', $forum->id)) { // For the logs
         print_error('invalidcoursemodule');
     } else {
         $modcontext = context_module::instance($cm->id);
@@ -129,7 +129,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     if (!$course = get_local_course_record($forum->course)) {
         print_error('invalidcourseid');
     }
-    if (!$cm = get_remote_course_module_by_instance('forum', $forum->id)->cm) {
+    if (!$cm = get_remote_course_module_by_instance('forum', $forum->id)) {
         print_error("invalidcoursemodule");
     }
 
@@ -201,7 +201,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     if (!$course = get_local_course_record($discussion->course)) {
         print_error('invalidcourseid');
     }
-    if (!$cm = get_remote_course_module_by_instance("forum", $forum->id)->cm) {
+    if (!$cm = get_remote_course_module_by_instance("forum", $forum->id)) {
         print_error('invalidcoursemodule');
     }
 
@@ -290,7 +290,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     if (!$course = get_local_course_record($discussion->course)) {
         print_error('invalidcourseid');
     }
-    if (!$cm = get_remote_course_module_by_instance("forum", $forum->id)->cm) {
+    if (!$cm = get_remote_course_module_by_instance("forum", $forum->id)) {
         print_error('invalidcoursemodule');
     } else {
         $modcontext = context_module::instance($cm->id);
@@ -339,7 +339,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     if (!$forum = get_remote_forum_by($param)) {
         print_error('invalidforumid', 'forum');
     }
-    if (!$cm = get_remote_course_module_by_instance("forum", $forum->id)->cm) {
+    if (!$cm = get_remote_course_module_by_instance("forum", $forum->id)) {
         print_error('invalidcoursemodule');
     }
     if (!$course = get_local_course_record($forum->course)) {
@@ -475,7 +475,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     if (!$post->parent) {
         print_error('alreadyfirstpost', 'forum');
     }
-    if (!$cm = get_remote_course_module_by_instance("forum", $forum->id)->cm) { // For the logs
+    if (!$cm = get_remote_course_module_by_instance("forum", $forum->id)) { // For the logs
         print_error('invalidcoursemodule');
     } else {
         $modcontext = context_module::instance($cm->id);
@@ -608,7 +608,7 @@ if (!isset($coursecontext)) {
 
 // from now on user must be logged on properly
 
-if (!$cm = get_remote_course_module_by_instance('forum', $forum->id)->cm) { // For the logs
+if (!$cm = get_remote_course_module_by_instance('forum', $forum->id)) { // For the logs
     print_error('invalidcoursemodule');
 }
 $modcontext = context_module::instance($cm->id);

@@ -43,7 +43,7 @@ if ($r) {
         resource_redirect_if_migrated($r, 0);
         print_error('invalidaccessparameter');
     }
-    $cm = get_remote_course_module_by_instance('resource', $resource->id)->cm;
+    $cm = get_remote_course_module_by_instance('resource', $resource->id);
 
 } else {
     if (!$cm = get_remote_course_module_by_cmid('resource', $id)) {

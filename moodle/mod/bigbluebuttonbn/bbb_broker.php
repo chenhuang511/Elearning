@@ -37,7 +37,7 @@ if( empty($params['action']) ) {
         if ($params['bigbluebuttonbn'] != 0) {
             if(MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
                 $bigbluebuttonbn = get_remote_bigbluebuttonbn_by_id($params['bigbluebuttonbn']);
-                if (!$cm = get_remote_course_module_by_instance('bigbluebuttonbn', $params['bigbluebuttonbn'])->cm) {
+                if (!$cm = get_remote_course_module_by_instance('bigbluebuttonbn', $params['bigbluebuttonbn'])) {
                     print_error('invalidcoursemodule');
                 }
                 if (!$course = get_local_course_record($cm->course)) {

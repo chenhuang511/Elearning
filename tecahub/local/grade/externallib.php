@@ -739,7 +739,7 @@ class local_grade_external extends external_api
     /**
      * @return external_function_parameters
      */
-    public function get_list_grade_categories_raw_data_parameters() {
+    public static function get_list_grade_categories_raw_data_parameters() {
         return new external_function_parameters (
             array(
                 'sql' => new external_value(PARAM_RAW, 'sql'),
@@ -765,7 +765,7 @@ class local_grade_external extends external_api
      * @param $pagesize
      * @return array
      */
-    public function get_list_grade_categories_raw_data($sql, $param, $pagestart, $pagesize) {
+    public static function get_list_grade_categories_raw_data($sql, $param, $pagestart, $pagesize) {
         global $DB;
 
         //validate parameter
@@ -784,7 +784,7 @@ class local_grade_external extends external_api
     /**
      * @return external_multiple_structure
      */
-    public function get_list_grade_categories_raw_data_returns() {
+    public static function get_list_grade_categories_raw_data_returns() {
         return new external_multiple_structure(
             new external_single_structure(
                 array(

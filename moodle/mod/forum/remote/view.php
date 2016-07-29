@@ -85,7 +85,7 @@ if ($id) {
 
     // TODO: kiem tra lai api nay, ro rang parameters dang sai
     // RESOLVED: fixed like quiz issue
-    if (!$cm = get_remote_course_module_by_instance("forum", $forum->id)->cm) {
+    if (!$cm = get_remote_course_module_by_instance("forum", $forum->id)) {
         print_error('missingparameter');
     }
     // move require_course_login here to use forced language for course

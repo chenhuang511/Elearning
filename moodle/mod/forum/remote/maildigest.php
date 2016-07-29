@@ -39,7 +39,7 @@ $params['parameters[0][name]'] = "id";
 $params['parameters[0][value]'] = $id;
 $forum = get_remote_forum_by($params);
 $course  = get_local_course_record($forum->course);
-$cm      = get_remote_course_module_by_instance('forum', $forum->id)->cm;
+$cm      = get_remote_course_module_by_instance('forum', $forum->id);
 $context = context_module::instance($cm->id);
 
 require_login($course, false, $cm);

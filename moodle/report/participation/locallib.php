@@ -230,5 +230,8 @@ function report_participation_print_filter_form($course, $timefrom, $minlog, $ac
     echo html_writer::select($roleoptions,'roleid',$roleid,false);
     echo '<label for="menuaction">'.get_string('showactions').'</label>'."\n";
     echo html_writer::select($actionoptions,'action',$action,false);
-    echo '<input type="submit" value="'.get_string('go').'" />'."\n</div></form>\n";
+    echo "</div>\n";
+    echo '<div><input type="submit" value="'.get_string('go').'" />'."\n</div></form>\n";
+    // echo '<input type="submit" value="'.get_string('go').'" />'."\n</div></form>\n";
+
 }
