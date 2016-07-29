@@ -59,6 +59,7 @@ $string['downloadselectedsubmissions'] = 'Tải bài nộp đã chọn';
 $string['duedatereached'] = 'Ngày hết hạn nộp bài đã qua';
 $string['editaction'] = 'Hành động';
 $string['editsubmission_help'] = 'Thực hiện thay đổi bài nộp của bạn';
+$string['enabled'] = 'Đã kích hoạt';
 $string['feedbackplugin'] = 'Trình bổ trợ phản hồi';
 $string['feedbackplugins'] = 'Trình bổ trợ phản hồi';
 $string['feedbacktypes'] = 'Hình thức phản hồi';

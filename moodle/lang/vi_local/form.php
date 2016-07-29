@@ -26,5 +26,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['noselection'] = 'Không có lựa chọn';
+$string['nosuggestions'] = 'Không đề nghị';
 $string['showless'] = 'Thu gọn...';
 $string['showmore'] = 'Mở rộng...';

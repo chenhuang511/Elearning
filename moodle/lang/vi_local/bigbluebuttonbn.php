@@ -26,6 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['email_body_notification_meeting_description'] = 'Mô tả';
+$string['index_enabled'] = 'đã kích hoạt';
 $string['index_heading_actions'] = 'Hành động';
 $string['index_heading_group'] = 'Nhóm';
 $string['index_heading_recording'] = 'Ghi lại';

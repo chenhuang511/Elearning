@@ -26,5 +26,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['actions'] = 'Hành động';
+$string['enabled'] = 'Đã kích hoạt';
 $string['messageprovider:graded_essay'] = 'Thông báo đã chấm điểm bài luận trong bài học';
 $string['truefalse'] = 'Đúng/Sai';

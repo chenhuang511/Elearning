@@ -25,4 +25,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['component'] = 'Thành phần';
 $string['filter'] = 'Bộ lọc';
