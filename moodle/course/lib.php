@@ -1563,7 +1563,12 @@ function set_coursemodule_groupmode($id, $groupmode) {
 
 function set_coursemodule_idnumber($id, $idnumber) {
     global $DB;
-    $cm = $DB->get_record('course_modules', array('id' => $id), 'id,course,idnumber', MUST_EXIST);
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        $cm = $DB->get_record('course_modules', array('id' => $id), 'id,course,idnumber', MUST_EXIST);
+    } else {
+        $cm = get_local_course_modules_record($id);
+    }
+
     if ($cm->idnumber != $idnumber) {
         $DB->set_field('course_modules', 'idnumber', $idnumber, array('id' => $cm->id));
         rebuild_course_cache($cm->course, true);
