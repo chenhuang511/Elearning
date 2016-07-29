@@ -57,16 +57,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         );
         parent::__construct($current, $section, $cm, $course);
     }
-    protected function checkDisable($name, $freeze = false) {
-        if(MOODLE_RUN_MODE != MOODLE_MODE_HOST) {
-            $mform =& $this->_form;
-            if($freeze){
-                $mform->freeze($name);
-            } else {
-                $mform->disabledIf($name);
-            }
-        }
-    }
+
     protected function definition() {
         global $COURSE, $CFG, $DB, $PAGE;
         $isremote = MOODLE_RUN_MODE == MOODLE_MODE_HOST ? true : false ;

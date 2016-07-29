@@ -31,17 +31,7 @@ require_once ($CFG->dirroot.'/course/moodleform_mod.php');
 require_once($CFG->dirroot.'/mod/certificate/locallib.php');
 
 class mod_certificate_mod_form extends moodleform_mod {
-
-    protected function checkDisable($name, $freeze = false) {
-        if(MOODLE_RUN_MODE != MOODLE_MODE_HOST) {
-            $mform =& $this->_form;
-            if($freeze){
-                $mform->freeze($name);
-            } else {
-                $mform->disabledIf($name);
-            }
-        }
-    }
+    
     function definition() {
         global $CFG;
         $isremote = (MOODLE_RUN_MODE === MOODLE_MODE_HOST) ? true : false;

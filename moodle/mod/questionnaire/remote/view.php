@@ -148,7 +148,7 @@ if ($questionnaire->is_active() && !$questionnaire->questions) {
     echo '<p>'.get_string('noneinuse', 'questionnaire').'</p>';
 }
 
-if ($questionnaire->is_active() && $questionnaire->capabilities->editquestions && !$questionnaire->questions) { // Sanity check.
+if ($questionnaire->is_active() && $questionnaire->capabilities->editquestions && !$questionnaire->questions && (MOODLE_RUN_MODE === MOODLE_MODE_HOST)) { // Sanity check.
     if($CFG->nonajax == true){
         echo '<a href="'.$CFG->wwwroot.htmlspecialchars('/mod/questionnaire/questions.php?'.
                 'id='.$questionnaire->cm->id).'&nonajax=1">'.'<strong>'.get_string('addquestions', 'questionnaire').'</strong></a>';

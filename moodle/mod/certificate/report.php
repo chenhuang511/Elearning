@@ -53,17 +53,33 @@ if ($action) {
 }
 $PAGE->set_url($url);
 
-if (!$cm = get_coursemodule_from_id('certificate', $id)) {
-    print_error('Course Module ID was incorrect');
+if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+    if (!$cm = get_coursemodule_from_id('certificate', $id)) {
+        print_error('Course Module ID was incorrect');
+    }
+
+    if (!$course = $DB->get_record('course', array('id'=> $cm->course))) {
+        print_error('Course is misconfigured');
+    }
+
+    if (!$certificate = $DB->get_record('certificate', array('id'=> $cm->instance))) {
+        print_error('Certificate ID was incorrect');
+    }
+} else {
+    require_once("$CFG->dirroot/mod/certificate/remote/locallib.php");
+    
+    if (!$cm = get_remote_course_module_by_cmid('certificate', $id)) {
+        print_error('Course Module ID was incorrect');
+    }
+    if (!$course = get_local_course_record($cm->course)) {
+        print_error('course is misconfigured');
+    }
+
+    if (! $certificate = get_remote_certificate_by_id($cm->instance)) {
+        print_error('course module is incorrect');
+    }
 }
 
-if (!$course = $DB->get_record('course', array('id'=> $cm->course))) {
-    print_error('Course is misconfigured');
-}
-
-if (!$certificate = $DB->get_record('certificate', array('id'=> $cm->instance))) {
-    print_error('Certificate ID was incorrect');
-}
 
 // Requires a course login
 require_login($course, false, $cm);

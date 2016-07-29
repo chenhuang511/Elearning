@@ -1072,6 +1072,22 @@ abstract class moodleform_mod extends moodleform {
             }
         }
     }
+
+    /**
+     * Check disable in host
+     * @param $name
+     * @param bool $freeze
+     */
+    protected function checkDisable($name, $freeze = false) {
+        if(MOODLE_RUN_MODE != MOODLE_MODE_HOST) {
+            $mform =& $this->_form;
+            if($freeze){
+                $mform->freeze($name);
+            } else {
+                $mform->disabledIf($name);
+            }
+        }
+    }
 }
 
 
