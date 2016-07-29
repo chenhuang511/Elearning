@@ -9,7 +9,9 @@ h1, h2, h3, h4, h5, h6 {
     font-family: 'Open Sans', Arial, Helvetica, sans-serif;
     color: #333;
 }
-
+td.cell.c0{
+    width: 30%;
+}
 h2.main, #pageheading {
     font-size: 1.4em;
     line-height: 35px;
