@@ -1275,7 +1275,6 @@ class local_mod_assign_external extends external_api {
 
         $assign = new assign($context, $cm, $course);
 
-        
         $currentgroup = groups_get_activity_group($assign->get_course_module(), true);
         list($esql, $dbparams) = get_enrolled_sql($assign->get_context(), 'mod/assign:submit', $currentgroup, true);
 
@@ -1308,6 +1307,84 @@ class local_mod_assign_external extends external_api {
      */
     public static function count_submissions_need_grading_by_host_id_returns(){
         return new external_value(PARAM_INT, 'count submission need grading by host id');
+    }
+
+    /**
+     * Describes the parameters for count_remote_all_submission_and_grade
+     *
+     * @return external_external_function_parameters
+     */
+    public static function count_remote_all_submission_and_grade_parameters(){
+        return new external_function_parameters(
+            array(
+                'assignid' => new external_value(PARAM_INT, 'asssign ID'),
+                'hostip' => new external_value(PARAM_TEXT, 'host ip', VALUE_REQUIRED),
+                'mode' => new external_value(PARAM_TEXT, 'mode to operate'),
+            )
+        );
+    }
+
+    /**
+     * Count all submission and grade by assign id, host ip address and mode
+     *
+     * @param int $assignid     - The id of assignment.
+     * @param string $hostip    - The ip address of host.
+     * @param string $mode      - Mode grade or submission to count
+     * @return int Count the number of submission or grade
+     * @throws restricted_context_exception
+     */
+    public static function count_remote_all_submission_and_grade($assignid, $hostip, $mode){
+        global $DB;
+
+        //Validate param
+        $params = self::validate_parameters(self::count_remote_all_submission_and_grade_parameters(),
+            array(
+                'assignid' => $assignid,
+                'hostip' => $hostip,
+                'mode' => $mode,
+            )
+        );
+
+        // Request and permission validation.
+        list($course, $cm) = get_course_and_cm_from_instance($params['assignid'], 'assign');
+
+        $mnethostid =  $DB->get_record('mnet_host', array('ip_address' => $params['hostip']), 'id', MUST_EXIST);
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        $assign = new assign($context, $cm, $course);
+
+        $currentgroup = groups_get_activity_group($assign->get_course_module(), true);
+        list($esql, $dbparams) = get_enrolled_sql($assign->get_context(), 'mod/assign:submit', $currentgroup, true);
+        $dbparams['mnethostid'] = $mnethostid->id;
+        $dbparams['assignid'] = $assign->get_instance()->id;
+
+        if ($params['mode'] == 'GRADES'){
+            $sql = 'SELECT COUNT(g.userid)
+                   FROM {assign_grades} g
+                   JOIN(' . $esql . ' AND eu1_u.mnethostid = :mnethostid) e ON e.id = g.userid
+                   WHERE g.assignment = :assignid';
+        } else if ($params['mode'] == 'SUBMISSIONS') {
+            $sql = 'SELECT COUNT(DISTINCT s.userid)
+                       FROM {assign_submission} s
+                       JOIN(' . $esql . ' AND eu1_u.mnethostid = :mnethostid) e ON e.id = s.userid
+                       WHERE
+                            s.assignment = :assignid AND
+                            s.timemodified IS NOT NULL';
+        }
+
+        return $DB->count_records_sql($sql, $dbparams);
+    }
+
+    /**
+     * Describes the count_remote_all_submission_and_grade returns value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function count_remote_all_submission_and_grade_returns(){
+        return new external_value(PARAM_INT, 'Count the number of submission or grade');
     }
 
     /**
@@ -1802,7 +1879,7 @@ class local_mod_assign_external extends external_api {
         
         $user = $DB->get_record('user', array('id' => $assignsubmisison->userid));
         $assignsubmisison->useremail = $user->email;
-        
+
         $result['assignsubmisison'] = $assignsubmisison;
 
         $result['warnings'] = $warnings;

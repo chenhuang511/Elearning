@@ -881,6 +881,33 @@ abstract class moodleform_mod extends moodleform {
         $this->standard_intro_elements($customlabel);
     }
 
+    /**
+     * Disable editor for an activity's introduction field.
+     *
+     * @param null $customlabel Override default label for editor
+     * @throws coding_exception
+     */
+    protected function remote_intro_elements($customlabel=null) {
+        global $CFG;
+
+        $required = $CFG->requiremodintro;
+
+        $mform = $this->_form;
+        $label = is_null($customlabel) ? get_string('moduleintro') : $customlabel;
+
+        // Can't change general setting for host
+        $mform->freeze('name');
+        $mform->addElement('hidden', 'introeditor');
+
+        $mform->addElement('html', '<div class="introdesc">');
+        if (isset($this->current->introattachments)) {
+            $introattachment = generate_output_introattachment($this->current->introattachments);
+            $this->current->intro .= $introattachment;
+        }
+        $mform->addElement('htmleditor', 'intro', $label);
+        $mform->freeze('intro');
+        $mform->addElement('html', '</div>');
+    }
 
     /**
      * Add an editor for an activity's introduction field.
