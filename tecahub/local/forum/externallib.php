@@ -2416,9 +2416,9 @@ class local_mod_forum_external extends external_api
                             'messagetrust' => new external_value(PARAM_INT, 'message trust'),
                             'attachment' => new external_value(PARAM_RAW, 'attachment'),
                             'totalscore' => new external_value(PARAM_INT, 'total score'),
-                            'mailnow' => new external_value(PARAM_INT, 'mail now')
-                            'forum' => new external_value(PARAM_INT, 'the forum')
-                            'firstnamephonetic' => new external_value(PARAM_RAW, 'the firstnamephonetic')
+                            'mailnow' => new external_value(PARAM_INT, 'mail now'),
+                            'forum' => new external_value(PARAM_INT, 'the forum'),
+                            'firstnamephonetic' => new external_value(PARAM_RAW, 'the firstnamephonetic'),
                             'lastnamephonetic' => new external_value(PARAM_RAW, 'the lastnamephonetic'),
                             'middlename' => new external_value(PARAM_RAW, 'the middlename'),
                             'alternatename' => new external_value(PARAM_RAW, 'the alternatename'),
