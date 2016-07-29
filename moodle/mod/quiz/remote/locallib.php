@@ -566,3 +566,17 @@ function get_remote_statistic_questions_usages($from, $where, $params, $slots, $
     }
     return $res;
 }
+
+function get_userlocal_by_userhubid($userhubid) {
+    global $DB;
+    $userinfo = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_quiz_get_userlocal_by_userhubid',
+            'params' => array('userid' => $userhubid)
+        ), false
+    );
+    $user = $DB->get_record('user', array('email' => $userinfo->email), 'id', MUST_EXIST);
+    return $user->id;
+}

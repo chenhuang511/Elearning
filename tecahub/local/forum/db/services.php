@@ -274,4 +274,12 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_forum_search_posts_by_hostip' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'forum_search_posts_by_hostip',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'check forum search posts by hostip',
+        'type' => 'read',
+        'ajax' => true
+    ),
 );

@@ -25,7 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['answer'] = 'Câu trả lời';
-$string['answerno'] = 'Câu trả lời';
+$string['answerno'] = 'Câu trả lời {$a}';
 $string['correctanswers'] = 'Câu trả lời đúng';
 $string['pleaseenterananswer'] = 'Nhấn enter để trả lời';

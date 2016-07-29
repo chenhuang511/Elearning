@@ -25,4 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['component'] = 'Thành phần';
+$string['default'] = 'Mặc định';
 $string['scheduledtasks'] = 'Lịch trình công việc';

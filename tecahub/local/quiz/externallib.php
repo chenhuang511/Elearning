@@ -2166,4 +2166,53 @@ ORDER BY
             )
         );
     }
+
+    /**
+     * Hanv 29/07/2016
+     * Get user email by userhub id to get userinfo in host.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     *
+     */
+    public static function get_userlocal_by_userhubid_parameters() {
+        return new external_function_parameters (
+            array(
+                'userid' => new external_value(PARAM_INT, 'userid')
+            )
+        );
+    }
+
+    /**
+     * Get user email by userhub id to get userinfo in host.
+     *
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function get_userlocal_by_userhubid($userhubid) {
+        global $CFG, $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::get_userlocal_by_userhubid_parameters(),
+            array('userid' => $userhubid));
+        $user = $DB->get_record('user', array('id' => $params['userid']), 'username, email', MUST_EXIST);
+        return $user;
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function get_userlocal_by_userhubid_returns() {
+        return new external_single_structure(
+            array(
+                'username' => new external_value(PARAM_RAW, 'username.', VALUE_OPTIONAL),
+                'email' => new external_value(PARAM_RAW, 'email.', VALUE_OPTIONAL),
+            )
+        );
+    }
 }

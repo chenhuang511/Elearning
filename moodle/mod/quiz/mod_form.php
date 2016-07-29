@@ -57,7 +57,16 @@ class mod_quiz_mod_form extends moodleform_mod {
         );
         parent::__construct($current, $section, $cm, $course);
     }
-
+    protected function checkDisable($name, $freeze = false) {
+        if(MOODLE_RUN_MODE != MOODLE_MODE_HOST) {
+            $mform =& $this->_form;
+            if($freeze){
+                $mform->freeze($name);
+            } else {
+                $mform->disabledIf($name);
+            }
+        }
+    }
     protected function definition() {
         global $COURSE, $CFG, $DB, $PAGE;
         $isremote = MOODLE_RUN_MODE == MOODLE_MODE_HOST ? true : false ;
@@ -68,12 +77,9 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         // Name.
-        if($isremote){
-            $disable = array();
-        } else {
-            $disable = array('disabled' => 'disabled');
-        }
-        $mform->addElement('text', 'name', get_string('name'), array_merge(array('size'=>'64')));
+        $mform->addElement('text', 'name', get_string('name'), array('size'=>'64'));
+        $this->checkDisable('name', true);
+
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);
         } else {
@@ -83,7 +89,16 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
         // Introduction.
-        $this->standard_intro_elements(get_string('introduction', 'quiz'));
+        if($isremote){
+            $this->standard_intro_elements(get_string('introduction', 'quiz'));
+        } else {
+            $mform->addElement('hidden', 'introeditor');
+            $mform->addElement('html', '<div class="introdesc">');
+            $mform->addElement('htmleditor', 'intro', get_string('introduction', 'quiz'));
+            $mform->setType('intro', PARAM_RAW);
+            $mform->freeze('intro');
+            $mform->addElement('html', '</div>');
+        }
 
         // -------------------------------------------------------------------------------
         $mform->addElement('header', 'timing', get_string('timing', 'quiz'));
@@ -160,11 +175,14 @@ class mod_quiz_mod_form extends moodleform_mod {
         $pagegroup = array();
         $pagegroup[] = $mform->createElement('select', 'questionsperpage',
                 get_string('newpage', 'quiz'), quiz_questions_per_page_options(), array('id' => 'id_questionsperpage'));
+        $this->checkDisable('questionsperpage');
+
         $mform->setDefault('questionsperpage', $quizconfig->questionsperpage);
 
         if (!empty($this->_cm)) {
             $pagegroup[] = $mform->createElement('checkbox', 'repaginatenow', '',
                     get_string('repaginatenow', 'quiz'), array('id' => 'id_repaginatenow'));
+            $this->checkDisable('repaginatenow');
         }
 
         $mform->addGroup($pagegroup, 'questionsperpagegrp',
@@ -175,15 +193,20 @@ class mod_quiz_mod_form extends moodleform_mod {
         // Navigation method.
         $mform->addElement('select', 'navmethod', get_string('navmethod', 'quiz'),
                 quiz_get_navigation_options());
+        $this->checkDisable('navmethod');
+
         $mform->addHelpButton('navmethod', 'navmethod', 'quiz');
         $mform->setAdvanced('navmethod', $quizconfig->navmethod_adv);
         $mform->setDefault('navmethod', $quizconfig->navmethod);
 
         // -------------------------------------------------------------------------------
         $mform->addElement('header', 'interactionhdr', get_string('questionbehaviour', 'quiz'));
+        $this->checkDisable('interactionhdr', true);
 
         // Shuffle within questions.
         $mform->addElement('selectyesno', 'shuffleanswers', get_string('shufflewithin', 'quiz'));
+        $this->checkDisable('shuffleanswers');
+
         $mform->addHelpButton('shuffleanswers', 'shufflewithin', 'quiz');
         $mform->setAdvanced('shuffleanswers', $quizconfig->shuffleanswers_adv);
         $mform->setDefault('shuffleanswers', $quizconfig->shuffleanswers);
@@ -197,12 +220,16 @@ class mod_quiz_mod_form extends moodleform_mod {
         $behaviours = question_engine::get_behaviour_options($currentbehaviour);
         $mform->addElement('select', 'preferredbehaviour',
                 get_string('howquestionsbehave', 'question'), $behaviours);
+        $this->checkDisable('preferredbehaviour');
+
         $mform->addHelpButton('preferredbehaviour', 'howquestionsbehave', 'question');
         $mform->setDefault('preferredbehaviour', $quizconfig->preferredbehaviour);
 
         // Can redo completed questions.
         $redochoices = array(0 => get_string('no'), 1 => get_string('canredoquestionsyes', 'quiz'));
         $mform->addElement('select', 'canredoquestions', get_string('canredoquestions', 'quiz'), $redochoices);
+        $this->checkDisable('canredoquestions');
+
         $mform->addHelpButton('canredoquestions', 'canredoquestions', 'quiz');
         $mform->setAdvanced('canredoquestions', $quizconfig->canredoquestions_adv);
         $mform->setDefault('canredoquestions', $quizconfig->canredoquestions);
@@ -215,6 +242,8 @@ class mod_quiz_mod_form extends moodleform_mod {
         // Each attempt builds on last.
         $mform->addElement('selectyesno', 'attemptonlast',
                 get_string('eachattemptbuildsonthelast', 'quiz'));
+        $this->checkDisable('attemptonlast');
+
         $mform->addHelpButton('attemptonlast', 'eachattemptbuildsonthelast', 'quiz');
         $mform->setAdvanced('attemptonlast', $quizconfig->attemptonlast_adv);
         $mform->setDefault('attemptonlast', $quizconfig->attemptonlast);
@@ -242,6 +271,9 @@ class mod_quiz_mod_form extends moodleform_mod {
             foreach ($unusedoptions as $unusedoption) {
                 $mform->disabledIf($unusedoption . 'during', 'preferredbehaviour',
                         'eq', $behaviour);
+                $this->checkDisable($unusedoption . 'open');
+                $this->checkDisable($unusedoption . 'closed');
+                $this->checkDisable($unusedoption . 'immediately');
             }
         }
         $mform->disabledIf('attemptduring', 'preferredbehaviour',
@@ -249,12 +281,21 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->disabledIf('overallfeedbackduring', 'preferredbehaviour',
                 'neq', 'wontmatch');
 
+        $this->checkDisable('attempt' . 'immediately');
+        $this->checkDisable('overallfeedback' . 'immediately');
+        $this->checkDisable('attempt' . 'closed');
+        $this->checkDisable('overallfeedback' . 'closed');
+        $this->checkDisable('attempt' . 'open');
+        $this->checkDisable('overallfeedback' . 'open');
+
         // -------------------------------------------------------------------------------
         $mform->addElement('header', 'display', get_string('appearance'));
 
         // Show user picture.
         $mform->addElement('select', 'showuserpicture', get_string('showuserpicture', 'quiz'),
                 quiz_get_user_image_options());
+        $this->checkDisable('showuserpicture');
+
         $mform->addHelpButton('showuserpicture', 'showuserpicture', 'quiz');
         $mform->setAdvanced('showuserpicture', $quizconfig->showuserpicture_adv);
         $mform->setDefault('showuserpicture', $quizconfig->showuserpicture);
@@ -266,6 +307,8 @@ class mod_quiz_mod_form extends moodleform_mod {
         }
         $mform->addElement('select', 'decimalpoints', get_string('decimalplaces', 'quiz'),
                 $options);
+        $this->checkDisable('decimalpoints');
+
         $mform->addHelpButton('decimalpoints', 'decimalplaces', 'quiz');
         $mform->setAdvanced('decimalpoints', $quizconfig->decimalpoints_adv);
         $mform->setDefault('decimalpoints', $quizconfig->decimalpoints);
@@ -277,12 +320,16 @@ class mod_quiz_mod_form extends moodleform_mod {
         }
         $mform->addElement('select', 'questiondecimalpoints',
                 get_string('decimalplacesquestion', 'quiz'), $options);
+        $this->checkDisable('questiondecimalpoints');
+
         $mform->addHelpButton('questiondecimalpoints', 'decimalplacesquestion', 'quiz');
         $mform->setAdvanced('questiondecimalpoints', $quizconfig->questiondecimalpoints_adv);
         $mform->setDefault('questiondecimalpoints', $quizconfig->questiondecimalpoints);
 
         // Show blocks during quiz attempt.
         $mform->addElement('selectyesno', 'showblocks', get_string('showblocks', 'quiz'));
+        $this->checkDisable('showblocks');
+
         $mform->addHelpButton('showblocks', 'showblocks', 'quiz');
         $mform->setAdvanced('showblocks', $quizconfig->showblocks_adv);
         $mform->setDefault('showblocks', $quizconfig->showblocks);
@@ -292,6 +339,8 @@ class mod_quiz_mod_form extends moodleform_mod {
 
         // Require password to begin quiz attempt.
         $mform->addElement('passwordunmask', 'quizpassword', get_string('requirepassword', 'quiz'));
+        $this->checkDisable('quizpassword');
+
         $mform->setType('quizpassword', PARAM_TEXT);
         $mform->addHelpButton('quizpassword', 'requirepassword', 'quiz');
         $mform->setAdvanced('quizpassword', $quizconfig->password_adv);
@@ -299,6 +348,8 @@ class mod_quiz_mod_form extends moodleform_mod {
 
         // IP address.
         $mform->addElement('text', 'subnet', get_string('requiresubnet', 'quiz'));
+        $this->checkDisable('subnet', true);
+
         $mform->setType('subnet', PARAM_TEXT);
         $mform->addHelpButton('subnet', 'requiresubnet', 'quiz');
         $mform->setAdvanced('subnet', $quizconfig->subnet_adv);
@@ -307,6 +358,8 @@ class mod_quiz_mod_form extends moodleform_mod {
         // Enforced time delay between quiz attempts.
         $mform->addElement('duration', 'delay1', get_string('delay1st2nd', 'quiz'),
                 array('optional' => true));
+        $this->checkDisable('delay1');
+
         $mform->addHelpButton('delay1', 'delay1st2nd', 'quiz');
         $mform->setAdvanced('delay1', $quizconfig->delay1_adv);
         $mform->setDefault('delay1', $quizconfig->delay1);
@@ -316,6 +369,8 @@ class mod_quiz_mod_form extends moodleform_mod {
 
         $mform->addElement('duration', 'delay2', get_string('delaylater', 'quiz'),
                 array('optional' => true));
+        $this->checkDisable('delay2');
+
         $mform->addHelpButton('delay2', 'delaylater', 'quiz');
         $mform->setAdvanced('delay2', $quizconfig->delay2_adv);
         $mform->setDefault('delay2', $quizconfig->delay2);
@@ -327,6 +382,8 @@ class mod_quiz_mod_form extends moodleform_mod {
         // Browser security choices.
         $mform->addElement('select', 'browsersecurity', get_string('browsersecurity', 'quiz'),
                 quiz_access_manager::get_browser_security_choices());
+        $this->checkDisable('browsersecurity');
+
         $mform->addHelpButton('browsersecurity', 'browsersecurity', 'quiz');
         $mform->setAdvanced('browsersecurity', $quizconfig->browsersecurity_adv);
         $mform->setDefault('browsersecurity', $quizconfig->browsersecurity);

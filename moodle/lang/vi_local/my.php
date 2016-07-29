@@ -26,3 +26,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['mymoodle'] = 'Trang cá nhân';
+$string['reseteveryonesprofile'] = 'Thiết lập lại hồ sơ cho tất cả người dùng';

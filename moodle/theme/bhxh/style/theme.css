@@ -9,7 +9,9 @@ h1, h2, h3, h4, h5, h6 {
     font-family: 'Open Sans', Arial, Helvetica, sans-serif;
     color: #333;
 }
-
+td.cell.c0{
+    width: 30%;
+}
 h2.main, #pageheading {
     font-size: 1.4em;
     line-height: 35px;
@@ -25,6 +27,9 @@ h2.main, #pageheading {
     margin-left: 15px;
 }
 
+#existingcell{
+    padding-left: 150px;
+}
 #page-mod-assign-grader{
     overflow:auto;
 }
@@ -2135,10 +2140,16 @@ input[type="search"],
 input[type="tel"],
 input[type="color"],
 .uneditable-input {
-    border-color: #d9d9d9;
+    background-color: #fff;
+    border: 1px solid #ccc;
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none;
+    transition: border linear .2s, box-shadow linear .2s;
+}
+
+input[type="text"], textarea, .uneditable-input {
+    width: 213px;
 }
 
 select {
@@ -3476,4 +3487,43 @@ table#permissions tbody tr:hover > th {
     border-radius: 4px;
 }
 
+/* Css grader */
+.form-autocomplete-suggestions{
+    position:absolute;
+    background-color:white;
+    border:2px solid #eee;
+    border-radius:3px;
+    min-width:206px;
+    max-height:20em;
+    overflow:auto;
+    margin:0;
+    padding:0;
+    margin-top:-0.2em;
+    z-index:1
+}
+.form-autocomplete-suggestions li{
+    list-style-type:none;
+    padding:.2em;
+    margin:0;
+    cursor:pointer;
+    color:#333
+}
+.form-autocomplete-suggestions li:hover{
+    background-color:#337ab7;
+    color:#fff
+}
+.form-autocomplete-suggestions li[aria-selected=true]{
+    background-color:#e5e5e5;
+    color:#555
+}
+
+.alignment > a {
+    text-decoration: none;
+    color: #337ab7;
+}
+
+.alignment > a:hover {
+    text-decoration: none;
+    color: #333;
+}
 

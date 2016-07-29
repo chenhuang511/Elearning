@@ -18,16 +18,11 @@
 /**
  * Local language pack from http://192.168.1.253
  *
- * @package    tool
- * @subpackage messageinbound
+ * @package    auth
+ * @subpackage cas
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['component'] = 'Thành phần';
-$string['description'] = 'Mô tả';
-$string['enabled'] = 'Đã kích hoạt';
-$string['messageprovider:invalidrecipienthandler'] = 'Tin nhắn để xác nhận rằng tin nhắn được gửi đến từ bạn';
-$string['messageprovider:messageprocessingerror'] = 'Cảnh báo khi một thông báo gửi vào không thể được xử lý';
-$string['messageprovider:messageprocessingsuccess'] = 'Xác nhận một tin nhắn được xử lý thành công';
+$string['auth_cas_curl_ssl_version_default'] = 'Mặc định';

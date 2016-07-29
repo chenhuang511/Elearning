@@ -3351,8 +3351,9 @@ function forum_get_discussions_count($cm)
               FROM {forum_discussions} d
                    JOIN {forum_posts} p ON p.discussion = d.id
                    JOIN {user} u ON u.id = d.userid 
-             WHERE d.forum = ? AND p.parent = 0 AND d.userid IN (SELECT id FROM {user} WHERE mnethostid = ?) 
-                   $groupselect $timelimit";
+             WHERE d.forum = ? AND p.parent = 0 
+                   $groupselect $timelimit
+                   AND d.userid IN (SELECT id FROM {user} WHERE mnethostid = ?)";
 
         $prs = array();
         $i = 0;
@@ -5060,7 +5061,7 @@ function forum_update_post($post, $mform, &$message)
 
         $params['parameters[0][value]'] = $discussion->forum;
         $forum = get_remote_forum_by($params);
-        $cm = get_remote_course_module_by_instance('forum', $forum->id);
+        $cm = get_remote_course_module_by_instance('forum', $forum->id)->cm;
     } else {
         $discussion = $DB->get_record('forum_discussions', array('id' => $post->discussion));
         $forum = $DB->get_record('forum', array('id' => $discussion->forum));
@@ -5120,10 +5121,7 @@ function forum_update_post($post, $mform, &$message)
         foreach ($discussion as $key => $val) {
             if ($key != "id") {
                 $discussiondata["data[$count][name]"] = "$key";
-                if ($key == "userid" || $key == "usermodified") {
-                    $user = get_remote_mapping_user($val);
-                    $discussiondata["data[$count][value]"] = $user[0]->id;
-                } else if ($key == "course") {
+                if ($key == "course") {
                     $localcourse = $DB->get_record('course', array('id' => $val));
                     $discussiondata["data[$count][value]"] = $localcourse->remoteid;
                 } else {
@@ -5207,7 +5205,7 @@ function forum_add_discussion($discussion, $mform = null, $unused = null, $useri
             if ($key == "userid") {
                 $user = get_remote_mapping_user($val);
                 $postdata["data[$i][value]"] = $user[0]->id;
-            }  else {
+            } else {
                 $postdata["data[$i][value]"] = $val;
             }
             $i++;
@@ -5248,7 +5246,7 @@ function forum_add_discussion($discussion, $mform = null, $unused = null, $useri
             if ($key == "userid" || $key == "usermodified") {
                 $user = get_remote_mapping_user($val);
                 $discussiondata["data[$count][value]"] = $user[0]->id;
-            }  else {
+            } else {
                 $discussiondata["data[$count][value]"] = $val;
             }
             $count++;

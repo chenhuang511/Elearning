@@ -27,3 +27,4 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['messageprovider:expiry_notification'] = 'Đăng ký thủ công thông báo hết hạn';
 $string['pluginname'] = 'Đăng ký thủ công';
+$string['statusenabled'] = 'Đã kích hoạt';

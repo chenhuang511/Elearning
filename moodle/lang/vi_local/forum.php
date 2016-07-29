@@ -29,6 +29,7 @@ $string['attachmentswordcount'] = 'Đính kèm tệp và số từ';
 $string['blockafter'] = 'Ngưỡng chặn cho bài đăng';
 $string['blockperiod'] = 'Khoảng thời gian chặn';
 $string['blockperioddisabled'] = 'Không chặn';
+$string['discussionpin'] = 'Ghim lại';
 $string['discussionpinned'] = 'Ghim lại';
 $string['discussionsubscription'] = 'Đăng ký thảo luận';
 $string['displayend'] = 'Kết thúc hiển thị';

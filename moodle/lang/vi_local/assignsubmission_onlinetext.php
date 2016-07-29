@@ -25,6 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['allowonlinetextsubmissions'] = 'Đã kích hoạt';
 $string['enabled'] = 'Văn bản trực tuyến';
 $string['onlinetext'] = 'Văn bản trực tuyến';
 $string['wordlimit'] = 'Giới hạn từ';

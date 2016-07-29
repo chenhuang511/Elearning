@@ -123,7 +123,20 @@ if ($attempt->state == quiz_attempt::FINISHED) {
     $timetaken = get_string('unfinished', 'quiz');
 }
 
-// @TODO: Prepare summary informat about the whole attempt.
+// Prepare summary informat about the whole attempt.
+$summarydata = array();
+if (!$attemptobj->get_quiz()->showuserpicture && $attemptobj->get_userid() != $USER->id) {
+    // If showuserpicture is true, the picture is shown elsewhere, so don't repeat it.
+    $student = $DB->get_record('user', array('id' => $attemptobj->get_userid()));
+    $userpicture = new user_picture($student);
+    $userpicture->courseid = $attemptobj->get_courseid();
+    $summarydata['user'] = array(
+        'title'   => $userpicture,
+        'content' => new action_link(new moodle_url('/user/view.php', array(
+            'id' => $student->id, 'course' => $attemptobj->get_courseid())),
+            fullname($student, true)),
+    );
+}
 
 if ($attemptobj->has_capability('mod/quiz:viewreports')) {
     $attemptlist = $attemptobj->links_to_other_attempts($attemptobj->review_url(null, $page,
