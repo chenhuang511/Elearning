@@ -228,6 +228,8 @@ abstract class grade_object
             }
         }
         $index = 0;
+        $tables = array('grade_items', 'grade_categories', 'grade_grades');
+        $usersmapping = array();
         foreach ($params as $var => $value) {
             if (!in_array($var, $instance->required_fields) and !array_key_exists($var, $instance->optional_fields)) {
                 continue;
@@ -238,7 +240,7 @@ abstract class grade_object
             if (is_null($value)) {
                 $wheresql[] = " $var IS NULL ";
             } else {
-                if ($useremote && ($table === 'grade_items')) {
+                if ($useremote && in_array($table, $tables)) {
                     $placeholder = 'param' . $index;
                     if ($columns[$var]->meta_type === 'X') {
                         // We have a text/clob column, use the cross-db method for its comparison.
@@ -249,7 +251,9 @@ abstract class grade_object
                     }
 
                     if (strpos($var, 'userid') !== false) {
+                        $uval = intval($value);
                         $value = get_remote_mapping_user($value)[0]->id;
+                        $usersmapping[$value] = $uval;
                     } elseif (strpos($var, 'courseid') !== false) {
                         $value = get_local_course_record($value, true)->remoteid;
                     }
@@ -274,7 +278,8 @@ abstract class grade_object
             $wheresql = implode("AND", $wheresql);
         }
 
-        if ($useremote && ($table === 'grade_items')) {
+        if ($useremote && in_array($table, $tables)) {
+            $rsraw = null;
             $sql = "SELECT * FROM {" . $table . "}";
             if ($wheresql) {
                 $sql .= " WHERE $wheresql";
@@ -288,22 +293,37 @@ abstract class grade_object
                 ++$index;
             }
 
-            $rsraw = get_remote_assign_grade_items_raw_data($sql, $remoteparams);
-            foreach ($rsraw as &$data) {
-                if (isset($data->userid) && isset($params['userid'])) {
-                    $data->userid = $params['userid'];
+            if ($table === 'grade_items') {
+                $rsraw = get_remote_assign_grade_items_raw_data($sql, $remoteparams);
+                self::reset_raw_data_userid($rsraw, $usersmapping);
+                foreach ($rsraw as &$data) {
+                    if (isset($params['id'])) {
+                        $localcourse = get_local_course_record($data->courseid, false);
+                        $data->courseid = $localcourse->id;
+                    }
+                    if (isset($data->courseid) && isset($params['courseid'])) {
+                        $data->courseid = $params['courseid'];
+                    }
+
+                    $data->remoteid = $data->id; //create remoteid
+                    $data->id = $DB->get_field('grade_items', 'id', array('remoteid' => $data->remoteid));
+                    if (empty($data->id) && !empty($data->remoteid)) {
+                        $data->id = $DB->insert_record('grade_items', $data);
+                    } else {
+                        $data->gradepass = $DB->get_field('grade_items', 'gradepass', array('remoteid' => $data->remoteid));
+                    }
                 }
-                if (isset($data->courseid) && isset($params['courseid'])) {
-                    $data->courseid = $params['courseid'];
-                }
-                $data->remoteid = $data->id; //create remoteid
-                $data->id = $DB->get_field('grade_items', 'id', array('remoteid' => $data->remoteid));
-                if (empty($data->id) && !empty($data->remoteid)) {
-                    $data->id = $DB->insert_record('grade_items', $data);
-                } else {
-                    $data->gradepass = $DB->get_field('grade_items', 'gradepass', array('remoteid' => $data->remoteid));
-                }
+            } elseif ($table === 'grade_categories') {
+                $rsraw = get_remote_list_grade_categories_raw_data($sql, $remoteparams);
+                self::reset_raw_data_courseid($rsraw, $params);
+                self::reset_raw_data_userid($rsraw, $usersmapping);
+
+            } elseif ($table === 'grade_grades') {
+                $rsraw = get_remote_assign_grade_grades_raw_data($sql, $remoteparams);
+                self::reset_raw_data_courseid($rsraw, $params);
+                self::reset_raw_data_userid($rsraw, $usersmapping);
             }
+
             require_once($CFG->libdir . '/dml/json_moodle_recordset.php');
             $rs = new json_moodle_recordset($rsraw);
         } else {
@@ -326,6 +346,26 @@ abstract class grade_object
         $rs->close();
 
         return $result;
+    }
+
+    public static function reset_raw_data_courseid(&$rawdata, $params) {
+        foreach ($rawdata as &$data) {
+            if (isset($params['id'])) {
+                $localcourse = get_local_course_record($data->courseid, false);
+                $data->courseid = $localcourse->id;
+            }
+            if (isset($data->courseid) && isset($params['courseid'])) {
+                $data->courseid = $params['courseid'];
+            }
+        }
+    }
+
+    public static function reset_raw_data_userid(&$rawdata, $usersmap) {
+        foreach ($rawdata as &$data) {
+            if (isset($data->userid) && isset($usersmap[$data->userid])) {
+                $data->userid = $usersmap[$data->userid];
+            }
+        }
     }
 
     /**
