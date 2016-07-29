@@ -735,4 +735,75 @@ class local_grade_external extends external_api
             )
         );
     }
+
+    /**
+     * @return external_function_parameters
+     */
+    public function get_list_grade_categories_raw_data_parameters() {
+        return new external_function_parameters (
+            array(
+                'sql' => new external_value(PARAM_RAW, 'sql'),
+                'param' => new  external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'name'),
+                            'value' => new external_value(PARAM_RAW, 'value'),
+                        )
+                    )
+                ),
+                'pagestart' => new external_value(PARAM_INT, 'pagestart', VALUE_DEFAULT, 0),
+                'pagesize' => new external_value(PARAM_INT, 'pagesize', VALUE_DEFAULT, 0),
+            )
+        );
+    }
+
+    /**
+     * Get list grade categories as raw data
+     * @param $sql
+     * @param $param
+     * @param $pagestart
+     * @param $pagesize
+     * @return array
+     */
+    public function get_list_grade_categories_raw_data($sql, $param, $pagestart, $pagesize) {
+        global $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::get_list_grade_categories_raw_data_parameters(),
+            array('sql' => $sql, 'param' => $param, 'pagestart' => $pagestart, 'pagesize' => $pagesize));
+
+        $branch = array();
+        foreach ($params['param'] as $element) {
+            $branch[$element['name']] = $element['value'];
+        }
+
+        $rawdata = $DB->get_records_sql($params['sql'], $branch, $params['pagestart'], $params['pagesize']);
+        return $rawdata;
+    }
+
+    /**
+     * @return external_multiple_structure
+     */
+    public function get_list_grade_categories_raw_data_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'the id'),
+                    'courseid' => new external_value(PARAM_INT, 'the course id'),
+                    'parent' => new external_value(PARAM_INT, 'the parent'),
+                    'depth' => new external_value(PARAM_INT, 'the depth'),
+                    'path' => new external_value(PARAM_RAW, 'the path'),
+                    'fullname' => new external_value(PARAM_RAW, 'the fullname'),
+                    'aggregation' => new external_value(PARAM_INT, 'the keep high'),
+                    'keephigh' => new external_value(PARAM_INT, 'the depth'),
+                    'droplow' => new external_value(PARAM_INT, 'the drop low'),
+                    'aggregateonlygraded' => new external_value(PARAM_INT, 'the aggregate only graded'),
+                    'aggregateoutcomes' => new external_value(PARAM_INT, 'the aggregate out comes'),
+                    'timecreated' => new external_value(PARAM_INT, 'the time created'),
+                    'timemodified' => new external_value(PARAM_INT, 'the time modified'),
+                    'hidden' => new external_value(PARAM_INT, 'the hidden')
+                )
+            ), 'grade category'
+        );
+    }
 }

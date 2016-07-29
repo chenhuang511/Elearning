@@ -122,4 +122,12 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_grade_get_list_grade_categories_raw_data' => array(
+        'classname' => 'local_grade_external',
+        'methodname' => 'get_list_grade_categories_raw_data',
+        'classpath' => 'local/grade/externallib.php',
+        'description' => 'Get list grade categories as raw data',
+        'type' => 'read',
+        'ajax' => true
+    ),
 );
