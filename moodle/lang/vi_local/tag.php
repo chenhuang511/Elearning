@@ -25,4 +25,15 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['component'] = 'Thành phần';
+$string['defautltagcoll'] = 'Bộ sưu tập mặc định';
 $string['managestandardtags'] = 'Quản lý thẻ tiêu chuẩn';
+$string['managetagcolls'] = 'Quản lý bộ sưu tập thẻ';
+$string['searchable'] = 'Tìm kiếm';
+$string['showstandard'] = 'Sử dụng thẻ tiêu chuẩn';
+$string['standardhide'] = 'Không đề nghị';
+$string['standardsuggest'] = 'Đề nghị';
+$string['tagareaenabled'] = 'Đã kích hoạt';
+$string['tagareas'] = 'Thẻ khu vực';
+$string['tagcollection'] = 'Bộ sưu tập thẻ';
+$string['tagcollections'] = 'Bộ sưu tập thẻ';

@@ -2285,14 +2285,14 @@ class local_mod_forum_external extends external_api
 
         $fullaccess = array();
         $where = array();
-        $params = array();
+        $pars = array();
 
         foreach ($forums as $forumid => $forum) {
             $select = array();
 
             if (!$forum->viewhiddentimedposts) {
                 $select[] = "(d.userid = :userid{$forumid} OR (d.timestart < :timestart{$forumid} AND (d.timeend = 0 OR d.timeend > :timeend{$forumid})))";
-                $params = array_merge($params, array('userid'.$forumid=>$hubuserid, 'timestart'.$forumid=>$now, 'timeend'.$forumid=>$now));
+                $pars = array_merge($pars, array('userid'.$forumid=>$hubuserid, 'timestart'.$forumid=>$now, 'timeend'.$forumid=>$now));
             }
 
             $cm = $forum->cm;
@@ -2302,7 +2302,7 @@ class local_mod_forum_external extends external_api
                 && !has_capability('mod/forum:viewqandawithoutposting', $context)) {
                 if (!empty($forum->onlydiscussions)) {
                     list($discussionid_sql, $discussionid_params) = $DB->get_in_or_equal($forum->onlydiscussions, SQL_PARAMS_NAMED, 'qanda'.$forumid.'_');
-                    $params = array_merge($params, $discussionid_params);
+                    $pars = array_merge($pars, $discussionid_params);
                     $select[] = "(d.id $discussionid_sql OR p.parent = 0)";
                 } else {
                     $select[] = "p.parent = 0";
@@ -2311,14 +2311,14 @@ class local_mod_forum_external extends external_api
 
             if (!empty($forum->onlygroups)) {
                 list($groupid_sql, $groupid_params) = $DB->get_in_or_equal($forum->onlygroups, SQL_PARAMS_NAMED, 'grps'.$forumid.'_');
-                $params = array_merge($params, $groupid_params);
+                $pars = array_merge($pars, $groupid_params);
                 $select[] = "d.groupid $groupid_sql";
             }
 
             if ($select) {
                 $selects = implode(" AND ", $select);
                 $where[] = "(d.forum = :forum{$forumid} AND $selects)";
-                $params['forum'.$forumid] = $forumid;
+                $pars['forum'.$forumid] = $forumid;
             } else {
                 $fullaccess[] = $forumid;
             }
@@ -2326,7 +2326,7 @@ class local_mod_forum_external extends external_api
 
         if ($fullaccess) {
             list($fullid_sql, $fullid_params) = $DB->get_in_or_equal($fullaccess, SQL_PARAMS_NAMED, 'fula');
-            $params = array_merge($params, $fullid_params);
+            $pars = array_merge($pars, $fullid_params);
             $where[] = "(d.forum $fullid_sql)";
         }
 
@@ -2354,7 +2354,7 @@ class local_mod_forum_external extends external_api
             list($messagesearch, $msparams) = search_generate_SQL($parsearray, 'p.message', 'p.subject',
                 'p.userid', 'u.id', 'u.firstname',
                 'u.lastname', 'p.modified', 'd.forum');
-            $params = array_merge($params, $msparams);
+            $pars = array_merge($pars, $msparams);
         }
 
         $fromsql = "{forum_posts} p,
@@ -2382,12 +2382,12 @@ class local_mod_forum_external extends external_api
                    WHERE $selectsql
                 ORDER BY p.modified DESC";
 
-        $result['totalcount'] = $DB->count_records_sql($countsql, $params);
+        $result['totalcount'] = $DB->count_records_sql($countsql, $pars);
         if (!$result['totalcount']){
             $result['totalcount'] = array();
         }
 
-        $result['ret']->get_records_sql($searchsql, $params, $limitfrom, $limitnum);
+        $result['ret']->get_records_sql($searchsql, $pars, $limitfrom, $limitnum);
         if (!$result['ret']){
             $result['ret'] = array();
         }

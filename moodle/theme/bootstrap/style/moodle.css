@@ -11619,7 +11619,9 @@ textarea.path-admin .roleassigntable input[type="text"] {
     font-weight: normal;
     font-style: italic;
 }
-
+.urlselect, .graded_users_selector {
+    margin-bottom: 15px;
+}
 .section_add_menus .urlselect {
     margin-left: .4em;
 }
@@ -16310,6 +16312,8 @@ fieldset[disabled] .userprofile .header-button-group .btn.active {
 
 .page-context-header {
     overflow: hidden;
+    margin-bottom:20px;
+    padding-bottom: 15px;
 }
 
 .page-context-header:after {
@@ -18762,7 +18766,7 @@ fieldset[disabled] .path-mod-assign a.btn.active {
 .yui-skin-sam .yui-layout.path-mod-chat-gui_ajax #chat-input-area table.generaltable,
 .yui-skin-sam .yui-layout.path-mod-chat-gui_ajax #chat-input-area table.generaltable td.cell {
     border: 0;
-    padding: 3px 15px;
+    /* padding: 3px 15px; */
     white-space: nowrap;
 }
 
@@ -18775,6 +18779,7 @@ fieldset[disabled] .path-mod-assign a.btn.active {
 .yui-skin-sam .yui-layout.path-mod-chat-gui_ajax #chat-input-area table.generaltable td.cell input#input-message {
     width: 45%;
     margin: auto;
+    padding-top:5px;
 }
 
 .yui-skin-sam .yui-layout.path-mod-chat-gui_ajax #chat-input-area table.generaltable a,
@@ -22243,4 +22248,7 @@ fieldset[disabled] #page-mod-feedback-edit input[type="submit"].active {
 
 div.feedback_item_commands_left {
     text-align: right;
+}
+#fitem_id_encoding{
+    margin-top: 100px;
 }

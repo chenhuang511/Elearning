@@ -41,6 +41,7 @@ $string['decimalplaces'] = 'Số thập phân trong điểm';
 $string['decimalplacesquestion'] = 'Số chữ số thập phân trong điểm mỗi câu hỏi';
 $string['delay1st2nd'] = 'Khoảng thời gian trì hoãn giữa lần thi thứ nhất và thứ hai';
 $string['delaylater'] = 'Khoảng thời gian trì hoãn bắt buộc giữa các lần thi sau';
+$string['enabled'] = 'Đã kích hoạt';
 $string['endtest'] = 'Kết thúc bài thi';
 $string['extraattemptrestrictions'] = 'Thêm hạn chế cho bài thi';
 $string['finishattemptdots'] = 'Kết thúc bài thi';

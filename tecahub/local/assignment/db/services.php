@@ -106,6 +106,14 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_assign_count_remote_all_submission_and_grade' => array(
+		'classname'	  => 'local_mod_assign_external',
+		'methodname'  => 'count_remote_all_submission_and_grade',
+		'classpath'	  => 'local/assignment/externallib.php',
+		'description' => "Count the number of submission or grade",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 	'local_mod_assign_get_submission_by_assignid_userid_groupid' => array(
 		'classname'	  => 'local_mod_assign_external',
 		'methodname'  => 'get_submission_by_assignid_userid_groupid',

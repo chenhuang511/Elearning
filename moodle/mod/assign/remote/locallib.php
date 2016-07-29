@@ -1042,13 +1042,33 @@ function count_remote_grade_grades_by_itemid($remoteitemid, $hostip) {
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_assign_count_remote_grade_grades_by_itemid',
-            'params' => array_merge(
-                array(
+            'params' => array(
                     'gradeitemid' => $remoteitemid,
-                    'hostip' => $hostip    
-                )
+                    'hostip' => $hostip
+            )
         ), false
-    ));
+    );
     
     return $resp->count;
+}
+
+/**
+ * @param array $params        - The array parameter include:
+ *              $params['assignid'] =  The id of assignment.
+ *              $params['hostip'] =  The ip address of host.
+ *              $params['mode'] =   Mode grade or submission to count
+ * @return int $resp    - Count the number of submission or grade.
+ */
+function count_remote_all_submission_and_grade($params){
+
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_count_remote_all_submission_and_grade',
+            'params' => $params
+        ), false
+    );
+
+    return $resp;
 }

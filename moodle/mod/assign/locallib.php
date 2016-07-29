@@ -1740,11 +1740,9 @@ class assign {
         }
 
         if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-            $hostip = gethostip();
-
             //Load remote params
             $rparams['assignid'] = $this->get_instance()->remoteid;
-            $rparams['hostip'] = $hostip;
+            $rparams['hostip'] = gethostip();
 
             $result = get_remote_count_submissions_need_grading_by_host_id($rparams);
 
@@ -1786,15 +1784,23 @@ class assign {
             return 0;
         }
 
-        $currentgroup = groups_get_activity_group($this->get_course_module(), true);
-        list($esql, $params) = get_enrolled_sql($this->get_context(), 'mod/assign:submit', $currentgroup, true);
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $currentgroup = groups_get_activity_group($this->get_course_module(), true);
+            list($esql, $params) = get_enrolled_sql($this->get_context(), 'mod/assign:submit', $currentgroup, true);
 
-        $params['assignid'] = $this->get_instance()->id;
+            $params['assignid'] = $this->get_instance()->id;
 
-        $sql = 'SELECT COUNT(g.userid)
+            $sql = 'SELECT COUNT(g.userid)
                    FROM {assign_grades} g
                    JOIN(' . $esql . ') e ON e.id = g.userid
                    WHERE g.assignment = :assignid';
+        } else {
+            $rparams['assignid'] = $this->get_instance()->remoteid;
+            $rparams['hostip'] = gethostip();
+            $rparams['mode'] = 'GRADES';
+
+            return count_remote_all_submission_and_grade($rparams);
+        }
 
         return $DB->count_records_sql($sql, $params);
     }
@@ -1833,19 +1839,27 @@ class assign {
             $params['assignid'] = $this->get_instance()->id;
             $params['groupuserid'] = 0;
         } else {
-            $currentgroup = groups_get_activity_group($this->get_course_module(), true);
-            list($esql, $enrolparams) = get_enrolled_sql($this->get_context(), 'mod/assign:submit', $currentgroup, true);
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $currentgroup = groups_get_activity_group($this->get_course_module(), true);
+                list($esql, $enrolparams) = get_enrolled_sql($this->get_context(), 'mod/assign:submit', $currentgroup, true);
 
-            $params = array_merge($params, $enrolparams);
-            $params['assignid'] = $this->get_instance()->id;
+                $params = array_merge($params, $enrolparams);
+                $params['assignid'] = $this->get_instance()->id;
 
-            $sql = 'SELECT COUNT(DISTINCT s.userid)
+                $sql = 'SELECT COUNT(DISTINCT s.userid)
                        FROM {assign_submission} s
                        JOIN(' . $esql . ') e ON e.id = s.userid
                        WHERE
                             s.assignment = :assignid AND
                             s.timemodified IS NOT NULL ' .
-                            $sqlnew;
+                    $sqlnew;
+            } else {
+                $rparams['assignid'] = $this->get_instance()->remoteid;
+                $rparams['hostip'] = gethostip();
+                $rparams['mode'] = 'SUBMISSIONS';
+
+                return count_remote_all_submission_and_grade($rparams);
+            }
 
         }
 

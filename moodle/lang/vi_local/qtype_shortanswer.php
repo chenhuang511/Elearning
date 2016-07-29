@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Local language pack from http://192.168.1.252
+ * Local language pack from http://192.168.1.253
  *
  * @package    qtype
  * @subpackage shortanswer
@@ -25,8 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['answer'] = 'Câu trả lời: {$a}';
-$string['answerno'] = 'Câu trả lời: {$a}';
-$string['correctansweris'] = 'Câu trả lời đúng là: {$a}';
+$string['answerno'] = 'Câu trả lời {$a}';
 $string['correctanswers'] = 'Câu trả lời đúng';
 $string['pleaseenterananswer'] = 'Nhấn enter để trả lời';
