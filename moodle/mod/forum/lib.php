@@ -206,15 +206,13 @@ function forum_update_instance($forum, $mform)
         $forum->assesstimestart = 0;
         $forum->assesstimefinish = 0;
     }
-
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $params = array();
-        $params['parameters[0][name]'] = "id";
-        $params['parameters[0][value]'] = $forum->id;
-        $oldforum = get_remote_forum_by($params);
+        $arr = array('remoteid' => $forum->id);
     } else {
-        $oldforum = $DB->get_record('forum', array('id' => $forum->id));
+        $arr = array('id' => $forum->id);
     }
+    $oldforum = $DB->get_record('forum', $arr);
+
 
     // MDL-3942 - if the aggregation type or scale (i.e. max grade) changes then recalculate the grades for the entire forum
     // if  scale changes - do we need to recheck the ratings, if ratings higher than scale how do we want to respond?
@@ -351,20 +349,16 @@ function forum_update_instance($forum, $mform)
     }
 
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $forumdata = array();
-        $count = 0;
+        $forummapping = new stdClass();
         foreach ($forum as $key => $val) {
-            if ($key != "id") {
-                if ($key == "userid") {
-                    $user = get_remote_mapping_user($val);
-                    $forumdata["data[$count][value]"] = $user[0]->id;
-                }
-                $forumdata["data[$count][name]"] = "$key";
-                $forumdata["data[$count][value]"] = $val;
-                $count++;
+            if ($key == "id") {
+                $forummapping->$key = $oldforum->id;
+            } else {
+                $forummapping->$key = $val;
             }
-            $result = update_remote_mdl_forum("forum", $forum->id, $forumdata);
         }
+        $forummapping->remoteid = $forum->id;
+        $DB->update_record('forum', $forummapping);
     } else {
         $DB->update_record('forum', $forum);
     }
@@ -9156,5 +9150,10 @@ function forum_get_local_settings_info($coursemodule)
     $params['parameters[0][name]'] = "id";
     $params['parameters[0][value]'] = $coursemodule->instance;
     $forum = get_remote_forum_by($params);
+    $localforum = $DB->get_record('forum', array('remoteid' => $coursemodule->instance));
+    if (!$localforum) {
+        $forum->remoteid = $forum->id;
+        $DB->insert_record('forum', $forum);
+    }
     return $forum;
 }
