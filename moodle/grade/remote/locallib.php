@@ -172,3 +172,14 @@ function get_field_remote_mdl_grade($sql, $parameters)
     return $result->field;
 }
 
+function get_remote_list_grade_categories_raw_data($sql, $param, $pagestart = 0, $pagesize = 0) {
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_grade_get_list_grade_categories_raw_data',
+            'params' => array_merge(array('sql' => $sql, 'pagestart' => $pagestart, 'pagesize' => $pagesize), $param)
+        ), false
+    );
+    return $resp;
+}

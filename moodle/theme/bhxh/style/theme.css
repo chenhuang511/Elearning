@@ -28,8 +28,9 @@ h2.main, #pageheading {
 }
 
 #existingcell{
-    padding-left: 150px;
+    padding-left: 25px;
 }
+
 #page-mod-assign-grader{
     overflow:auto;
 }
@@ -1903,12 +1904,17 @@ ul#coursetabs > li.active > a, ul#coursetabs > li > a:focus, ul#coursetabs > li 
 }
 
 #footer .footer-main .foot-links ul li a {
+    height: 27px;
+    padding: 0 10px 0 10px;
     color: #fff;
-    line-height: 32px;
-    text-decoration: underline;
-    margin-left: 20px;
+    line-height: 27px;
+    font-size: 18px;
+    border-right: #f4f4f4 solid 2px;
 }
 
+li:last-child a {
+    border-right: 0 !important;
+}
 
 #footer .footer-main .foot-links ul li a:hover {
     color: #097eaf;
@@ -3156,6 +3162,10 @@ div.backup-section + form,
 }
 
 table {
+}
+
+.generaltable.generalbox.groupmanagementtable.boxaligncenter.test{
+    margin-left: 10px;
 }
 
 table.flexible thead tr th,

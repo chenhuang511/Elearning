@@ -99,8 +99,9 @@ function get_remote_course_module($cmid, $options = array())
         $info->name = strval($cm->name);
         $info->modname = strval($cm->modname);
     }
+    $result = merge_local_course_module($info);
 
-    return $info;
+    return $result;
 }
 
 function get_remote_course_thumb($courseid, $options = [])
@@ -229,4 +230,27 @@ function get_remote_cm_info($modname, $instanceid) {
     }
 
     return $modinfo;
+}
+
+function merge_local_course_module($cm){
+    global $DB;
+
+    if(!$coursemodule = $DB->get_record('course_modules', array('remoteid' => $cm->id))){
+        // Make params to insert DB local
+        $cm->remoteid = $cm->id;
+        unset($cm->id);
+
+        $transaction = $DB->start_delegated_transaction();
+        $cmidhost = $DB->insert_record('course_modules', $cm);
+        $transaction->allow_commit();
+        unset($cm->remoteid);
+
+        $coursemodule = $DB->get_record('course_modules', array('id' => $cmidhost));
+    }
+
+    // Merge course module for settings
+    $cm->id = $coursemodule->remoteid;
+    $cm->availability = $coursemodule->availability;
+
+    return $cm;
 }

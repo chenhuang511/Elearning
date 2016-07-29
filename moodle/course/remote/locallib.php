@@ -111,8 +111,8 @@ function get_remote_course_module_by_instance($modulename, $instace, $options = 
             'params' => array('module' => $modulename, 'instance' => $instace)
         )
     ));
-
-    return $resp->cm;
+    $result = merge_local_course_module($resp->cm);
+    return $result;
 }
 
 function get_remote_course_module_by_cmid($modulename, $cmid, $options = array())
@@ -125,8 +125,8 @@ function get_remote_course_module_by_cmid($modulename, $cmid, $options = array()
             'params' => array('module' => $modulename, 'id' => $cmid)
         )
     ));
-
-    return $resp->cm;
+    $result = merge_local_course_module($resp->cm);
+    return $result;
 }
 
 function get_remote_core_course_get_course_module($cmid)

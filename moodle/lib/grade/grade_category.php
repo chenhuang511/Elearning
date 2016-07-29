@@ -23,6 +23,7 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
+defined('ISREMOTE') || define('ISREMOTE', MOODLE_RUN_MODE === MOODLE_MODE_HUB);
 
 require_once(__DIR__ . '/grade_object.php');
 require_once($CFG->dirroot . '/mod/assign/remote/locallib.php');
@@ -2131,11 +2132,21 @@ class grade_category extends grade_object
             $params['parameters[0][value]'] = $localcourse->remoteid;
 
             $cats = get_remote_list_grade_categories_by($params);
+            foreach ($cats as &$cat) {
+                if (isset($cat->courseid) && isset($this->courseid)) {
+                    $cat->courseid = $this->courseid;
+                }
+            }
 
             $prs = array();
             $prs['param[0][name]='] = "courseid";
             $prs['param[0][value]='] = $localcourse->remoteid;
             $items = get_remote_assign_grade_items_raw_data("SELECT * FROM {grade_items} WHERE courseid = ?", $prs);
+            foreach ($items as &$data) {
+                if (isset($data->courseid) && isset($this->courseid)) {
+                    $data->courseid = $this->courseid;
+                }
+            }
         } else {
             $cats = $DB->get_records('grade_categories', array('courseid' => $this->courseid));
             $items = $DB->get_records('grade_items', array('courseid' => $this->courseid));

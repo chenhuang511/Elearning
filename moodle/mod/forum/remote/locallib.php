@@ -16,7 +16,7 @@ function get_remote_field_forum_by($modname, $parameters, $field = 'name')
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_field_forum_by',
             'params' => array_merge(array('modname' => $modname, 'field' => $field), $parameters),
-        )
+        ), false
     );
 
     return $result->field;
@@ -30,7 +30,7 @@ function get_remote_count_forum_by($modname, $parameters, $sort = '')
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_count_forum_by',
             'params' => array_merge(array('modname' => $modname, 'sort' => $sort), $parameters),
-        )
+        ), false
     );
 
     return $result->count;
@@ -38,16 +38,42 @@ function get_remote_count_forum_by($modname, $parameters, $sort = '')
 
 function get_remote_forum_by($parameters, $sort = '', $mustexists = FALSE)
 {
+    global $DB;
+
     $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_forum_by',
             'params' => array_merge(array('sort' => $sort, 'mustexists' => $mustexists), $parameters),
-        )
+        ), false
     );
 
-    return $result->forum;
+    $forum = $result->forum;
+    if ($forum) {
+        $localforum = $DB->get_record('forum', array('remoteid' => $forum->id));
+        if ($localforum) {
+            $info = [
+                'maxbytes',
+                'maxattachments',
+                'displaywordcount',
+                'forcesubscribe',
+                'trackingtype',
+                'blockperiod',
+                'blockafter',
+                'warnafter',
+                'assessed',
+                'assesstimestart',
+                'assesstimefinish',
+                'scale'
+            ];
+
+            foreach ($info as $key) {
+                $forum->$key = $localforum->$key;
+            }
+        }
+    }
+    return $forum;
 }
 
 function get_remote_forum_discussions_by($parameters, $sort = '', $mustexists = FALSE)
@@ -58,7 +84,7 @@ function get_remote_forum_discussions_by($parameters, $sort = '', $mustexists = 
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_forum_discussions_by',
             'params' => array_merge(array('sort' => $sort, 'mustexists' => $mustexists), $parameters),
-        )
+        ), false
     );
 
     return $result->discussion;
@@ -72,7 +98,7 @@ function get_remote_forum_discussion_subs_by($parameters, $sort = '', $mustexist
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_forum_discussion_subs_by',
             'params' => array_merge(array('sort' => $sort, 'mustexists' => $mustexists), $parameters),
-        )
+        ), false
     );
 
     return $result->sub;
@@ -86,7 +112,7 @@ function get_remote_forum_posts_by($parameters, $sort = '', $mustexists = FALSE)
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_forum_posts_by',
             'params' => array_merge(array('sort' => $sort, 'mustexists' => $mustexists), $parameters),
-        )
+        ), false
     );
 
     return $result->post;
@@ -100,7 +126,7 @@ function get_remote_forum_digests_by($parameters, $sort = '', $mustexists = FALS
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_forum_digests_by',
             'params' => array_merge(array('sort' => $sort, 'mustexists' => $mustexists), $parameters),
-        )
+        ), false
     );
 
     return $result->digest;
@@ -114,7 +140,7 @@ function get_remote_forum_track_prefs_by($parameters, $sort = '', $mustexists = 
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_forum_track_prefs_by',
             'params' => array_merge(array('sort' => $sort, 'mustexists' => $mustexists), $parameters),
-        )
+        ), false
     );
 
     return $result->track;
@@ -128,7 +154,7 @@ function get_remote_forum_subscriptions_by($parameters, $sort = '', $mustexists 
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_forum_subscriptions_by',
             'params' => array_merge(array('sort' => $sort, 'mustexists' => $mustexists), $parameters),
-        )
+        ), false
     );
 
     return $result->subscription;
@@ -142,7 +168,7 @@ function get_remote_scale_by($parameters, $sort = '', $mustexists = FALSE)
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_scale_by',
             'params' => array_merge(array('sort' => $sort, 'mustexists' => $mustexists), $parameters),
-        )
+        ), false
     );
 
     return $result->scale;
@@ -156,7 +182,7 @@ function get_remote_list_forum_by($parameters, $sort = '', $limitfrom = 0, $limi
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_list_forum_by',
             'params' => array_merge(array('sort' => $sort, 'limitfrom' => $limitfrom, 'limitnum' => $limitnum), $parameters)
-        )
+        ), false
     );
 
     $forums = array();
@@ -176,7 +202,7 @@ function get_remote_list_forum_discussions_by($parameters, $sort = '', $limitfro
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_list_forum_discussions_by',
             'params' => array_merge(array('sort' => $sort, 'limitfrom' => $limitfrom, 'limitnum' => $limitnum), $parameters)
-        )
+        ), false
     );
 
     $discussions = array();
@@ -196,7 +222,7 @@ function get_remote_list_forum_discussions_sql($parameters, $sort = '')
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_list_forum_discussions_sql',
             'params' => array_merge(array('hostip' => gethostip(), 'sort' => $sort), $parameters)
-        )
+        ), false
     );
 
     $discussions = array();
@@ -216,7 +242,7 @@ function get_remote_list_forum_discussion_subs_by($parameters, $sort = '', $limi
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_list_forum_discussion_subs_by',
             'params' => array_merge(array('sort' => $sort, 'limitfrom' => $limitfrom, 'limitnum' => $limitnum), $parameters)
-        )
+        ), false
     );
 
     $subs = array();
@@ -236,7 +262,7 @@ function get_remote_list_forum_posts_by($parameters, $sort = '', $limitfrom = 0,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_list_forum_posts_by',
             'params' => array_merge(array('sort' => $sort, 'limitfrom' => $limitfrom, 'limitnum' => $limitnum), $parameters)
-        )
+        ), false
     );
 
     $posts = array();
@@ -256,7 +282,7 @@ function get_remote_list_forum_posts_sql($parameters, $sort = '')
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_list_forum_posts_sql',
             'params' => array_merge(array('hostip' => gethostip(), 'sort' => $sort), $parameters)
-        )
+        ), false
     );
 
     $posts = array();
@@ -276,7 +302,7 @@ function get_remote_list_forum_read_by($parameters, $sort = '', $limitfrom = 0, 
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_list_forum_read_by',
             'params' => array_merge(array('sort' => $sort, 'limitfrom' => $limitfrom, 'limitnum' => $limitnum), $parameters)
-        )
+        ), false
     );
 
     $reads = array();
@@ -352,7 +378,7 @@ function check_remote_record_forum_exists($modname, $parameters)
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_check_record_forum_exists_by',
             'params' => array_merge(array('modname' => $modname), $parameters)
-        )
+        ), false
     );
 
     return $result->status;
@@ -366,7 +392,7 @@ function get_remote_forum_get_discussions_sql($postdata, $allnames, $umfields, $
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_forum_get_discussions_sql',
             'params' => array_merge(array('postdata' => $postdata, 'allnames' => $allnames, 'umfields' => $umfields, 'umtable' => $umtable, 'timelimit' => $timelimit, 'groupselect' => $groupselect, 'forumsort' => $forumsort, 'hostip' => gethostip(), 'limitfrom' => $limitfrom, 'limitnum' => $limitnum), $parameters)
-        ),false
+        ), false
     );
 
     $data = array();
@@ -386,7 +412,7 @@ function get_remote_count_forum_sql($sql, $parameters)
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_get_count_forum_sql',
             'params' => array_merge(array('sql' => $sql, 'hostip' => gethostip()), $parameters)
-        )
+        ), false
     );
 
     return $result->count;
@@ -400,7 +426,7 @@ function get_remote_forum_count_discussion_replies_sql($sql, $parameters, $limit
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_forum_count_discussion_replies_sql',
             'params' => array_merge(array('sql' => $sql, 'limitfrom' => $limitfrom, 'limitnum' => $limitnum), $parameters)
-        )
+        ), false
     );
 
     $replies = array();
@@ -419,7 +445,7 @@ function get_remote_forum_get_post_full_sql($sql, $parameters)
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_forum_get_post_full_sql',
             'params' => array_merge(array('sql' => $sql), $parameters)
-        )
+        ), false
     );
 
     return $result->post;
@@ -433,7 +459,7 @@ function get_remote_forum_get_discussion_neighbours_sql($sql, $parameters, $stri
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_forum_get_discussion_neighbours_sql',
             'params' => array_merge(array('sql' => $sql, 'strictness' => $strictness), $parameters)
-        )
+        ), false
     );
 
     return $result->neighbour;
@@ -447,7 +473,7 @@ function get_remote_forum_get_all_discussion_posts_sql($allnames, $tracking, $so
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_forum_get_all_discussion_posts_sql',
             'params' => array_merge(array('allnames' => $allnames, 'tracking' => $tracking, 'sort' => $sort, 'hostip' => $ishub ? gethostip() : ''), $parameters)
-        )
+        ), false
     );
 
     $posts = array();
@@ -467,7 +493,7 @@ function get_remote_forum_user_has_posted($sql, $parameters)
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_forum_user_has_posted',
             'params' => array_merge(array('sql' => $sql), $parameters)
-        )
+        ), false
     );
 
     return $result->status;
@@ -481,7 +507,7 @@ function get_remote_forum_user_has_posted_discussion($sql, $parameters)
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_forum_user_has_posted_discussion',
             'params' => array_merge(array('sql' => $sql), $parameters)
-        )
+        ), false
     );
 
     return $result->status;

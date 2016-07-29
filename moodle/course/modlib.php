@@ -555,9 +555,14 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
         $cm->showdescription = 0;
     }
 
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-        $DB->update_record('course_modules', $cm);
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+        // Change course_module id to update DB
+        $cmhost = get_local_course_modules_record($cm->id);
+        $cm->id = $cmhost->id;
     }
+
+    $DB->update_record('course_modules', $cm);
+
     $modcontext = context_module::instance($moduleinfo->coursemodule);
 
     // Update embedded links and save files.
@@ -614,11 +619,9 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
         set_coursemodule_visible($moduleinfo->coursemodule, $moduleinfo->visible);
     }
 
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-        if (isset($moduleinfo->cmidnumber)) { // Label.
-            // Set cm idnumber - uniqueness is already verified by form validation.
-            set_coursemodule_idnumber($moduleinfo->coursemodule, $moduleinfo->cmidnumber);
-        }
+    if (isset($moduleinfo->cmidnumber)) { // Label.
+        // Set cm idnumber - uniqueness is already verified by form validation.
+        set_coursemodule_idnumber($moduleinfo->coursemodule, $moduleinfo->cmidnumber);
     }
 
     // Update module tags.
