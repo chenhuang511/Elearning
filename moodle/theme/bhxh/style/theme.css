@@ -16,7 +16,9 @@ h2.main, #pageheading {
     color: #777;
     border-bottom: 1px solid #e1e1e1;
 }
-
+#existingcell{
+    padding-left: 150px;
+}
 #page-mod-assign-grader{
     overflow:auto;
 }

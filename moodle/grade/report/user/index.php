@@ -148,7 +148,7 @@ if (has_capability('moodle/grade:viewall', $context)) { //Teachers will see all 
             echo $OUTPUT->notification(get_string('groupusernotmember', 'error'));
         } else {
             if ($report->fill_table()) {
-                echo '<br />'.$report->print_table(true);
+                echo $report->print_table(true);
             }
         }
     }
@@ -161,7 +161,7 @@ if (has_capability('moodle/grade:viewall', $context)) { //Teachers will see all 
     print_grade_page_head($courseid, 'report', 'user', get_string('pluginname', 'gradereport_user'). ' - '.fullname($report->user));
 
     if ($report->fill_table()) {
-        echo '<br />'.$report->print_table(true);
+        echo $report->print_table(true);
     }
 }
 
