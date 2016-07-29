@@ -17,6 +17,14 @@ h2.main, #pageheading {
     border-bottom: 1px solid #e1e1e1;
 }
 
+#name,#description,#tags{
+    margin-left: 10px;
+}
+
+#recording_name,#recording_description,#recording_tags {
+    margin-left: 15px;
+}
+
 #page-mod-assign-grader{
     overflow:auto;
 }
@@ -1890,7 +1898,6 @@ ul#coursetabs > li.active > a, ul#coursetabs > li > a:focus, ul#coursetabs > li 
 }
 
 #footer .footer-main .foot-links ul li a {
-    font-size: 20px;
     color: #fff;
     line-height: 32px;
     text-decoration: underline;
@@ -2021,7 +2028,7 @@ ul#coursetabs > li.active > a, ul#coursetabs > li > a:focus, ul#coursetabs > li 
 
 label {
     padding-top: 10px;
-    margin-left: 0px;
+    margin-left: 10px;
 }
 
 legend {
