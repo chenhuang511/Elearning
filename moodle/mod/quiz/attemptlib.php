@@ -851,7 +851,12 @@ class quiz_attempt {
 
     /** @return int the id of the user this attempt belongs to. */
     public function get_userid() {
-        return $this->attempt->userid;
+        if($this->isremote){
+            $userid = get_userlocal_by_userhubid($this->attempt->userid);
+            return $userid;
+        }else{
+            return $this->attempt->userid;
+        }
     }
 
     /** @return int the current page of the attempt. */
@@ -1735,7 +1740,11 @@ class quiz_attempt {
      * @return mod_quiz_links_to_other_attempts containing array int => null|moodle_url.
      */
     public function links_to_other_attempts(moodle_url $url) {
-        $attempts = quiz_get_user_attempts($this->get_quiz()->id, $this->attempt->userid, 'all');
+        if($this->isremote){
+            $attempts = get_remote_user_attemps($this->get_quiz()->id, $this->attempt->userid, 'all', true)->attempts;
+        }else{
+            $attempts = quiz_get_user_attempts($this->get_quiz()->id, $this->attempt->userid, 'all');
+        }
         if (count($attempts) <= 1) {
             return false;
         }

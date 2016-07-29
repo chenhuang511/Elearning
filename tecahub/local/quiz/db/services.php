@@ -234,4 +234,12 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_quiz_get_userlocal_by_userhubid' => array(
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'get_userlocal_by_userhubid',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Get user email by userhub id to get userinfo in host.",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 );
