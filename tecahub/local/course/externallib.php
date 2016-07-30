@@ -659,6 +659,7 @@ class local_course_external extends external_api
     {
         return new external_value(PARAM_RAW, 'name');
     }
+
     /**
      * Get modules by id
      *
@@ -793,7 +794,7 @@ class local_course_external extends external_api
             )
         );
     }
-    
+
     public static function get_remote_course_format_options_parameters()
     {
         return new external_function_parameters(
@@ -816,9 +817,9 @@ class local_course_external extends external_api
         ));
 
         return $DB->get_records('course_format_options',
-                        array('courseid' => $courseid,
-                            'sectionid' => $sectionid
-                        ), '', 'id,name,value');
+            array('courseid' => $courseid,
+                'sectionid' => $sectionid
+            ), '', 'id,name,value');
     }
 
     public static function get_remote_course_format_options_returns()
@@ -827,9 +828,81 @@ class local_course_external extends external_api
             new external_single_structure(
                 array(
                     'id' => new external_value(PARAM_INT, 'course id'),
-                    'name'  => new external_value(PARAM_TEXT, 'course id'),
+                    'name' => new external_value(PARAM_TEXT, 'course id'),
                     'value' => new external_value(PARAM_RAW, 'longtext'),
                 )
+            )
+        );
+    }
+
+    public static function get_modules_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'sort' => new external_value(PARAM_RAW, 'sort'),
+                'mustexists' => new external_value(PARAM_BOOL, 'must exists')
+            )
+        );
+    }
+
+    public static function get_modules_by($parameters, $sort, $mustexists)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_modules_by_parameters(), array(
+            'parameters' => $parameters,
+            'sort' => $sort,
+            'mustexists' => $mustexists
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+
+        if ($params['mustexists'] === FALSE) {
+            $module = $DB->get_record("modules", $arr);
+        } else if ($params['mustexists'] === FALSE && $params['sort'] != '') {
+            $module = $DB->get_record("modules", $arr, $params['sort']);
+        } else {
+            $module = $DB->get_record("modules", $arr, '*', MUST_EXIST);
+        }
+
+        if (!$module) {
+            $module = new stdClass();
+        }
+
+        $result['module'] = $module;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    public static function get_modules_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'module' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'module id'),
+                        'name' => new external_value(PARAM_RAW, 'module name'),
+                        'cron' => new external_value(PARAM_INT, 'cron'),
+                        'lastcron' => new external_value(PARAM_INT, 'last cron'),
+                        'search' => new external_value(PARAM_RAW, 'search'),
+                        'visible' => new external_value(PARAM_INT, 'visible')
+                    )
+                ),
+                'warnings' => new external_warnings()
             )
         );
     }

@@ -121,5 +121,13 @@ $functions = array(
 		'description'   => 'Get remote course section for navigation',
 		'type'		    => 'read',
 		'ajax'		    => true
-	),	
+	),
+    'local_get_remote_modules_by' => array(
+        'classname'     => 'local_course_external',
+        'methodname'    => 'get_modules_by',
+        'classpath'     => 'local/course/externallib.php',
+        'description'   => 'Get modules by',
+        'type'		    => 'read',
+        'ajax'		    => true
+    ),
 );
