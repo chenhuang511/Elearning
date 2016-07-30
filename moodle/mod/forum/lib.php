@@ -2194,7 +2194,16 @@ function forum_get_readable_forums($userid, $courseid = 0)
     global $CFG, $DB, $USER;
     require_once($CFG->dirroot . '/course/lib.php');
 
-    if (!$forummod = $DB->get_record('modules', array('name' => 'forum'))) {
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $prs = array();
+        $prs['parameters[0][name]'] = 'name';
+        $prs['parameters[0][value]'] = 'forum';
+        $forummod = get_remote_modules_by($prs);
+    } else {
+        $forummod = $DB->get_record('modules', array('name' => 'forum'));
+    }
+
+    if (!$forummod) {
         print_error('notinstalled', 'forum');
     }
 
@@ -2224,7 +2233,7 @@ function forum_get_readable_forums($userid, $courseid = 0)
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
             $params = array();
             $params['parameters[0][name]'] = "course";
-            $params['parameters[0][value]'] = $course->id;
+            $params['parameters[0][value]'] = $course->remoteid;
             $courseforums = get_remote_list_forum_by($params);
         } else {
             $courseforums = $DB->get_records('forum', array('course' => $course->id));
@@ -2397,12 +2406,27 @@ function forum_search_posts($searchterms, $courseid = 0, $limitfrom = 0, $limitn
                AND $selectdiscussion
                    $extrasql";
 
-    $countsql = "SELECT COUNT(*)
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $prmt = array();
+        $i = 0;
+        foreach ($params as $key => $val) {
+            $prmt["parameters[$i][name]"] = $key;
+            $prmt["parameters[$i][value]"] = $val;
+            $i++;
+        }
+
+        $data = get_remote_forum_search_posts_sql($fromsql, $selectsql, $allnames, $prmt, $limitfrom, $limitnum);
+
+        $totalcount = $data->totalcount;
+        return $data->rs;
+    } else {
+
+        $countsql = "SELECT COUNT(*)
                    FROM $fromsql
                   WHERE $selectsql";
 
-    $allnames = get_all_user_name_fields(true, 'u');
-    $searchsql = "SELECT p.*,
+        $allnames = get_all_user_name_fields(true, 'u');
+        $searchsql = "SELECT p.*,
                          d.forum,
                          $allnames,
                          u.email,
@@ -2412,9 +2436,10 @@ function forum_search_posts($searchterms, $courseid = 0, $limitfrom = 0, $limitn
                    WHERE $selectsql
                 ORDER BY p.modified DESC";
 
-    $totalcount = $DB->count_records_sql($countsql, $params);
+        $totalcount = $DB->count_records_sql($countsql, $params);
 
-    return $DB->get_records_sql($searchsql, $params, $limitfrom, $limitnum);
+        return $DB->get_records_sql($searchsql, $params, $limitfrom, $limitnum);
+    }
 }
 
 /**

@@ -274,11 +274,11 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
-    'local_mod_forum_search_posts_by_hostip' => array(
+    'local_mod_forum_search_posts_sql' => array(
         'classname' => 'local_mod_forum_external',
-        'methodname' => 'forum_search_posts_by_hostip',
+        'methodname' => 'forum_search_posts',
         'classpath' => 'local/forum/externallib.php',
-        'description' => 'check forum search posts by hostip',
+        'description' => 'search forum posts',
         'type' => 'read',
         'ajax' => true
     ),

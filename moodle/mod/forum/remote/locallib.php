@@ -513,3 +513,26 @@ function get_remote_forum_user_has_posted_discussion($sql, $parameters)
     return $result->status;
 }
 
+function get_remote_forum_search_posts_sql($fromsql, $selectsql, $allnames, $parameters, $limitfrom = 0, $limitnum = 0)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_forum_search_posts_sql',
+            'params' => array_merge(array('fromsql' => $fromsql, 'selectsql' => $selectsql, 'allnames' => $allnames, 'hostip' => gethostip(), 'limitfrom' => $limitfrom, 'limitnum' => $limitnum), $parameters)
+        ), false
+    );
+    $data = new stdClass();
+    $data->totalcount = $result->totalcount;
+    $rs = array();
+
+    foreach ($result->rs_search as $r) {
+        $rs[$r->id] = $r;
+    }
+
+    $data->rs = $rs;
+
+    return $data;
+}
+

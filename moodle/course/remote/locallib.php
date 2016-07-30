@@ -212,3 +212,20 @@ function get_remote_course_format_options($courseid, $format, $sectionid, $assoc
 
     return $result;
 }
+
+function get_remote_modules_by($parameters, $sort = '', $mustexists = FALSE)
+{
+    global $DB;
+
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_get_remote_modules_by',
+            'params' => array_merge(array('sort' => $sort, 'mustexists' => $mustexists), $parameters),
+        ), false
+    );
+
+
+    return $result->module;
+}
