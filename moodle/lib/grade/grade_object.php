@@ -201,7 +201,7 @@ abstract class grade_object
         $instance = new $classname();
 
         $classvars = (array)$instance;
-        $params = (array)$params;
+        $params = json_decode(json_encode($params), true);
 
         $wheresql = array();
         $newparams = array();

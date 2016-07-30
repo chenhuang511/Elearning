@@ -49,7 +49,7 @@ class json_moodle_recordset extends moodle_recordset {
 
     private function fetch_next() {
         $this->currentIndex++;
-        return $this->data[$this->currentIndex];
+        return isset($this->data[$this->currentIndex])? $this->data[$this->currentIndex] : null;
     }
 
     public function current() {
@@ -66,7 +66,7 @@ class json_moodle_recordset extends moodle_recordset {
     }
 
     public function next() {
-        $this->fetch_next();
+        return $this->fetch_next();
     }
 
     public function valid() {
