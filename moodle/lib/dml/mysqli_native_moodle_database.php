@@ -24,9 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(__DIR__.'/moodle_database.php');
-require_once(__DIR__.'/mysqli_native_moodle_recordset.php');
-require_once(__DIR__.'/mysqli_native_moodle_temptables.php');
+require_once(__DIR__ . '/moodle_database.php');
+require_once(__DIR__ . '/mysqli_native_moodle_recordset.php');
+require_once(__DIR__ . '/mysqli_native_moodle_temptables.php');
 
 /**
  * Native mysqli class representing moodle database interface.
@@ -35,7 +35,8 @@ require_once(__DIR__.'/mysqli_native_moodle_temptables.php');
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mysqli_native_moodle_database extends moodle_database {
+class mysqli_native_moodle_database extends moodle_database
+{
 
     /** @var mysqli $mysqli */
     protected $mysqli = null;
@@ -53,7 +54,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * @return bool success
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function create_database($dbhost, $dbuser, $dbpass, $dbname, array $dboptions=null) {
+    public function create_database($dbhost, $dbuser, $dbpass, $dbname, array $dboptions = null)
+    {
         $driverstatus = $this->driver_installed();
 
         if ($driverstatus !== true) {
@@ -61,7 +63,8 @@ class mysqli_native_moodle_database extends moodle_database {
         }
 
         if (!empty($dboptions['dbsocket'])
-                and (strpos($dboptions['dbsocket'], '/') !== false or strpos($dboptions['dbsocket'], '\\') !== false)) {
+            and (strpos($dboptions['dbsocket'], '/') !== false or strpos($dboptions['dbsocket'], '\\') !== false)
+        ) {
             $dbsocket = $dboptions['dbsocket'];
         } else {
             $dbsocket = ini_get('mysqli.default_socket');
@@ -91,7 +94,7 @@ class mysqli_native_moodle_database extends moodle_database {
             $collation = 'utf8_unicode_ci';
         }
 
-        $result = $conn->query("CREATE DATABASE $dbname DEFAULT CHARACTER SET utf8 DEFAULT COLLATE ".$collation);
+        $result = $conn->query("CREATE DATABASE $dbname DEFAULT CHARACTER SET utf8 DEFAULT COLLATE " . $collation);
 
         $conn->close();
 
@@ -107,7 +110,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * Note: can be used before connect()
      * @return mixed true if ok, string if something
      */
-    public function driver_installed() {
+    public function driver_installed()
+    {
         if (!extension_loaded('mysqli')) {
             return get_string('mysqliextensionisnotpresentinphp', 'install');
         }
@@ -119,7 +123,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * Note: can be used before connect()
      * @return string db family name (mysql, postgres, mssql, oracle, etc.)
      */
-    public function get_dbfamily() {
+    public function get_dbfamily()
+    {
         return 'mysql';
     }
 
@@ -128,7 +133,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * Note: can be used before connect()
      * @return string db type mysqli, pgsql, oci, mssql, sqlsrv
      */
-    protected function get_dbtype() {
+    protected function get_dbtype()
+    {
         return 'mysqli';
     }
 
@@ -137,7 +143,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * Note: can be used before connect()
      * @return string db type pdo, native
      */
-    protected function get_dblibrary() {
+    protected function get_dblibrary()
+    {
         return 'native';
     }
 
@@ -150,7 +157,8 @@ class mysqli_native_moodle_database extends moodle_database {
      *
      * @return string or null MySQL engine name
      */
-    public function get_dbengine() {
+    public function get_dbengine()
+    {
         if (isset($this->dboptions['dbengine'])) {
             return $this->dboptions['dbengine'];
         }
@@ -223,7 +231,8 @@ class mysqli_native_moodle_database extends moodle_database {
      *
      * @return string or null MySQL collation name
      */
-    public function get_dbcollation() {
+    public function get_dbcollation()
+    {
         if (isset($this->dboptions['dbcollation'])) {
             return $this->dboptions['dbcollation'];
         }
@@ -288,7 +297,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * @param string $table
      * @return string row_format name or null if not known or table does not exist.
      */
-    public function get_row_format($table) {
+    public function get_row_format($table)
+    {
         $rowformat = null;
         $table = $this->mysqli->real_escape_string($table);
         $sql = "SELECT row_format
@@ -313,9 +323,10 @@ class mysqli_native_moodle_database extends moodle_database {
      * @param bool $cached use cached result
      * @return bool true if table can be created or changed to compressed row format.
      */
-    public function is_compressed_row_format_supported($cached = true) {
+    public function is_compressed_row_format_supported($cached = true)
+    {
         if ($cached and isset($this->compressedrowformatsupported)) {
-            return($this->compressedrowformatsupported);
+            return ($this->compressedrowformatsupported);
         }
 
         $engine = strtolower($this->get_dbengine());
@@ -338,7 +349,7 @@ class mysqli_native_moodle_database extends moodle_database {
         } else if (!$fileformat = $this->get_record_sql("SHOW VARIABLES LIKE 'innodb_file_format'")) {
             $this->compressedrowformatsupported = false;
 
-        } else  if ($fileformat->value !== 'Barracuda') {
+        } else if ($fileformat->value !== 'Barracuda') {
             $this->compressedrowformatsupported = false;
 
         } else {
@@ -354,7 +365,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * Note: can be used before connect()
      * @return string
      */
-    public function get_name() {
+    public function get_name()
+    {
         return get_string('nativemysqli', 'install');
     }
 
@@ -363,7 +375,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * Note: can be used before connect()
      * @return string
      */
-    public function get_configuration_help() {
+    public function get_configuration_help()
+    {
         return get_string('nativemysqlihelp', 'install');
     }
 
@@ -373,7 +386,8 @@ class mysqli_native_moodle_database extends moodle_database {
      *
      * @return string null means everything ok, string means problem found.
      */
-    public function diagnose() {
+    public function diagnose()
+    {
         $sloppymyisamfound = false;
         $prefix = str_replace('_', '\\_', $this->prefix);
         $sql = "SELECT COUNT('x')
@@ -412,7 +426,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * @param array $dboptions driver specific options
      * @return bool success
      */
-    public function connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, array $dboptions=null) {
+    public function connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, array $dboptions = null)
+    {
         $driverstatus = $this->driver_installed();
 
         if ($driverstatus !== true) {
@@ -424,7 +439,8 @@ class mysqli_native_moodle_database extends moodle_database {
         // dbsocket is used ONLY if host is NULL or 'localhost',
         // you can not disable it because it is always tried if dbhost is 'localhost'
         if (!empty($this->dboptions['dbsocket'])
-                and (strpos($this->dboptions['dbsocket'], '/') !== false or strpos($this->dboptions['dbsocket'], '\\') !== false)) {
+            and (strpos($this->dboptions['dbsocket'], '/') !== false or strpos($this->dboptions['dbsocket'], '\\') !== false)
+        ) {
             $dbsocket = $this->dboptions['dbsocket'];
         } else {
             $dbsocket = ini_get('mysqli.default_socket');
@@ -477,7 +493,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * and memory (especially circular memory references).
      * Do NOT use connect() again, create a new instance if needed.
      */
-    public function dispose() {
+    public function dispose()
+    {
         parent::dispose(); // Call parent dispose to write/close session and other common stuff before closing connection
         if ($this->mysqli) {
             $this->mysqli->close();
@@ -489,15 +506,17 @@ class mysqli_native_moodle_database extends moodle_database {
      * Returns database server info array
      * @return array Array containing 'description' and 'version' info
      */
-    public function get_server_info() {
-        return array('description'=>$this->mysqli->server_info, 'version'=>$this->mysqli->server_info);
+    public function get_server_info()
+    {
+        return array('description' => $this->mysqli->server_info, 'version' => $this->mysqli->server_info);
     }
 
     /**
      * Returns supported query parameter types
      * @return int bitmask of accepted SQL_PARAMS_*
      */
-    protected function allowed_param_types() {
+    protected function allowed_param_types()
+    {
         return SQL_PARAMS_QM;
     }
 
@@ -505,7 +524,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * Returns last error reported by database engine.
      * @return string error message
      */
-    public function get_last_error() {
+    public function get_last_error()
+    {
         return $this->mysqli->error;
     }
 
@@ -514,7 +534,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * @param bool $usecache if true, returns list of cached tables.
      * @return array of table names in lowercase and without prefix
      */
-    public function get_tables($usecache=true) {
+    public function get_tables($usecache = true)
+    {
         if ($usecache and $this->tables !== null) {
             return $this->tables;
         }
@@ -544,7 +565,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * @param string $table The table we want to get indexes from.
      * @return array An associative array of indexes containing 'unique' flag and 'columns' being indexed
      */
-    public function get_indexes($table) {
+    public function get_indexes($table)
+    {
         $indexes = array();
         $sql = "SHOW INDEXES FROM {$this->prefix}$table";
         $this->query_start($sql, null, SQL_QUERY_AUX);
@@ -560,9 +582,9 @@ class mysqli_native_moodle_database extends moodle_database {
                     continue;
                 }
                 if (!isset($indexes[$res->Key_name])) {
-                    $indexes[$res->Key_name] = array('unique'=>empty($res->Non_unique), 'columns'=>array());
+                    $indexes[$res->Key_name] = array('unique' => empty($res->Non_unique), 'columns' => array());
                 }
-                $indexes[$res->Key_name]['columns'][$res->Seq_in_index-1] = $res->Column_name;
+                $indexes[$res->Key_name]['columns'][$res->Seq_in_index - 1] = $res->Column_name;
             }
             $result->close();
         }
@@ -575,7 +597,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * @param bool $usecache
      * @return database_column_info[] array of database_column_info objects indexed with column names
      */
-    public function get_columns($table, $usecache=true) {
+    public function get_columns($table, $usecache = true)
+    {
         if ($usecache) {
             if ($this->temptables->is_temptable($table)) {
                 if ($data = $this->get_temp_tables_cache()->get($table)) {
@@ -593,7 +616,7 @@ class mysqli_native_moodle_database extends moodle_database {
         $sql = "SELECT column_name, data_type, character_maximum_length, numeric_precision,
                        numeric_scale, is_nullable, column_type, column_default, column_key, extra
                   FROM information_schema.columns
-                 WHERE table_name = '" . $this->prefix.$table . "'
+                 WHERE table_name = '" . $this->prefix . $table . "'
                        AND table_schema = '" . $this->dbname . "'
               ORDER BY ordinal_position";
         $this->query_start($sql, null, SQL_QUERY_AUX);
@@ -624,14 +647,19 @@ class mysqli_native_moodle_database extends moodle_database {
             }
             while ($rawcolumn = $result->fetch_assoc()) {
                 $rawcolumn = (object)array_change_key_case($rawcolumn, CASE_LOWER);
-                $rawcolumn->column_name              = $rawcolumn->field; unset($rawcolumn->field);
-                $rawcolumn->column_type              = $rawcolumn->type; unset($rawcolumn->type);
+                $rawcolumn->column_name = $rawcolumn->field;
+                unset($rawcolumn->field);
+                $rawcolumn->column_type = $rawcolumn->type;
+                unset($rawcolumn->type);
                 $rawcolumn->character_maximum_length = null;
-                $rawcolumn->numeric_precision        = null;
-                $rawcolumn->numeric_scale            = null;
-                $rawcolumn->is_nullable              = $rawcolumn->null; unset($rawcolumn->null);
-                $rawcolumn->column_default           = $rawcolumn->default; unset($rawcolumn->default);
-                $rawcolumn->column_key               = $rawcolumn->key; unset($rawcolumn->default);
+                $rawcolumn->numeric_precision = null;
+                $rawcolumn->numeric_scale = null;
+                $rawcolumn->is_nullable = $rawcolumn->null;
+                unset($rawcolumn->null);
+                $rawcolumn->column_default = $rawcolumn->default;
+                unset($rawcolumn->default);
+                $rawcolumn->column_key = $rawcolumn->key;
+                unset($rawcolumn->default);
 
                 if (preg_match('/(enum|varchar)\((\d+)\)/i', $rawcolumn->column_type, $matches)) {
                     $rawcolumn->data_type = $matches[1];
@@ -704,21 +732,22 @@ class mysqli_native_moodle_database extends moodle_database {
      * @param stdClass $rawcolumn
      * @return stdClass standardised colum info
      */
-    private function get_column_info(stdClass $rawcolumn) {
+    private function get_column_info(stdClass $rawcolumn)
+    {
         $rawcolumn = (object)$rawcolumn;
         $info = new stdClass();
-        $info->name           = $rawcolumn->column_name;
-        $info->type           = $rawcolumn->data_type;
-        $info->meta_type      = $this->mysqltype2moodletype($rawcolumn->data_type);
-        $info->default_value  = $rawcolumn->column_default;
-        $info->has_default    = !is_null($rawcolumn->column_default);
-        $info->not_null       = ($rawcolumn->is_nullable === 'NO');
-        $info->primary_key    = ($rawcolumn->column_key === 'PRI');
-        $info->binary         = false;
-        $info->unsigned       = null;
+        $info->name = $rawcolumn->column_name;
+        $info->type = $rawcolumn->data_type;
+        $info->meta_type = $this->mysqltype2moodletype($rawcolumn->data_type);
+        $info->default_value = $rawcolumn->column_default;
+        $info->has_default = !is_null($rawcolumn->column_default);
+        $info->not_null = ($rawcolumn->is_nullable === 'NO');
+        $info->primary_key = ($rawcolumn->column_key === 'PRI');
+        $info->binary = false;
+        $info->unsigned = null;
         $info->auto_increment = false;
-        $info->unique         = null;
-        $info->scale          = null;
+        $info->unique = null;
+        $info->scale = null;
 
         if ($info->meta_type === 'C') {
             $info->max_length = $rawcolumn->character_maximum_length;
@@ -726,10 +755,10 @@ class mysqli_native_moodle_database extends moodle_database {
         } else if ($info->meta_type === 'I') {
             if ($info->primary_key) {
                 $info->meta_type = 'R';
-                $info->unique    = true;
+                $info->unique = true;
             }
             // Return number of decimals, not bytes here.
-            $info->max_length    = $rawcolumn->numeric_precision;
+            $info->max_length = $rawcolumn->numeric_precision;
             if (preg_match('/([a-z]*int[a-z]*)\((\d+)\)/i', $rawcolumn->column_type, $matches)) {
                 $type = strtoupper($matches[1]);
                 if ($type === 'BIGINT') {
@@ -752,13 +781,13 @@ class mysqli_native_moodle_database extends moodle_database {
                     $info->max_length = $maxlength;
                 }
             }
-            $info->unsigned      = (stripos($rawcolumn->column_type, 'unsigned') !== false);
-            $info->auto_increment= (strpos($rawcolumn->extra, 'auto_increment') !== false);
+            $info->unsigned = (stripos($rawcolumn->column_type, 'unsigned') !== false);
+            $info->auto_increment = (strpos($rawcolumn->extra, 'auto_increment') !== false);
 
         } else if ($info->meta_type === 'N') {
-            $info->max_length    = $rawcolumn->numeric_precision;
-            $info->scale         = $rawcolumn->numeric_scale;
-            $info->unsigned      = (stripos($rawcolumn->column_type, 'unsigned') !== false);
+            $info->max_length = $rawcolumn->numeric_precision;
+            $info->scale = $rawcolumn->numeric_scale;
+            $info->unsigned = (stripos($rawcolumn->column_type, 'unsigned') !== false);
 
         } else if ($info->meta_type === 'X') {
             if ("$rawcolumn->character_maximum_length" === '4294967295') { // watch out for PHP max int limits!
@@ -767,12 +796,12 @@ class mysqli_native_moodle_database extends moodle_database {
             } else {
                 $info->max_length = $rawcolumn->character_maximum_length;
             }
-            $info->primary_key   = false;
+            $info->primary_key = false;
 
         } else if ($info->meta_type === 'B') {
-            $info->max_length    = -1;
-            $info->primary_key   = false;
-            $info->binary        = true;
+            $info->max_length = -1;
+            $info->primary_key = false;
+            $info->binary = true;
         }
 
         return $info;
@@ -784,10 +813,11 @@ class mysqli_native_moodle_database extends moodle_database {
      * @return string one character
      * @throws dml_exception
      */
-    private function mysqltype2moodletype($mysql_type) {
+    private function mysqltype2moodletype($mysql_type)
+    {
         $type = null;
 
-        switch(strtoupper($mysql_type)) {
+        switch (strtoupper($mysql_type)) {
             case 'BIT':
                 $type = 'L';
                 break;
@@ -852,7 +882,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * @param mixed $value value we are going to normalise
      * @return mixed the normalised value
      */
-    protected function normalise_value($column, $value) {
+    protected function normalise_value($column, $value)
+    {
         $this->detect_objects($value);
 
         if (is_bool($value)) { // Always, convert boolean to int
@@ -862,8 +893,8 @@ class mysqli_native_moodle_database extends moodle_database {
             if ($column->meta_type == 'I' or $column->meta_type == 'F' or $column->meta_type == 'N') {
                 $value = 0; // prevent '' problems in numeric fields
             }
-        // Any float value being stored in varchar or text field is converted to string to avoid
-        // any implicit conversion by MySQL
+            // Any float value being stored in varchar or text field is converted to string to avoid
+            // any implicit conversion by MySQL
         } else if (is_float($value) and ($column->meta_type == 'C' or $column->meta_type == 'X')) {
             $value = "$value";
         }
@@ -874,7 +905,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * Is this database compatible with utf8?
      * @return bool
      */
-    public function setup_is_unicodedb() {
+    public function setup_is_unicodedb()
+    {
         // All new tables are created with this collation, we just have to make sure it is utf8 compatible,
         // if config table already exists it has this collation too.
         $collation = $this->get_dbcollation();
@@ -900,7 +932,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * @return bool true
      * @throws ddl_change_structure_exception A DDL specific exception is thrown for any errors.
      */
-    public function change_database_structure($sql, $tablenames = null) {
+    public function change_database_structure($sql, $tablenames = null)
+    {
         $this->get_manager(); // Includes DDL exceptions classes ;-)
         if (is_array($sql)) {
             $sql = implode("\n;\n", $sql);
@@ -935,7 +968,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * Very ugly hack which emulates bound parameters in queries
      * because prepared statements do not use query cache.
      */
-    protected function emulate_bound_params($sql, array $params=null) {
+    protected function emulate_bound_params($sql, array $params = null)
+    {
         if (empty($params)) {
             return $sql;
         }
@@ -948,7 +982,7 @@ class mysqli_native_moodle_database extends moodle_database {
             } else if (is_null($param)) {
                 $return .= 'NULL';
             } else if (is_number($param)) {
-                $return .= "'".$param."'"; // we have to always use strings because mysql is using weird automatic int casting
+                $return .= "'" . $param . "'"; // we have to always use strings because mysql is using weird automatic int casting
             } else if (is_float($param)) {
                 $return .= $param;
             } else {
@@ -968,7 +1002,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * @return bool true
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function execute($sql, array $params=null) {
+    public function execute($sql, array $params = null)
+    {
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
 
         if (strpos($sql, ';') !== false) {
@@ -1007,7 +1042,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * @return moodle_recordset instance
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function get_recordset_sql($sql, array $params=null, $limitfrom=0, $limitnum=0) {
+    public function get_recordset_sql($sql, array $params = null, $limitfrom = 0, $limitnum = 0)
+    {
 
         list($limitfrom, $limitnum) = $this->normalise_limit_from_num($limitfrom, $limitnum);
 
@@ -1039,7 +1075,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * @return moodle_recordset A moodle_recordset instance {@link function get_recordset}.
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function export_table_recordset($table) {
+    public function export_table_recordset($table)
+    {
         $sql = $this->fix_table_names("SELECT * FROM {{$table}}");
 
         $this->query_start($sql, array(), SQL_QUERY_SELECT);
@@ -1050,7 +1087,8 @@ class mysqli_native_moodle_database extends moodle_database {
         return $this->create_recordset($result);
     }
 
-    protected function create_recordset($result) {
+    protected function create_recordset($result)
+    {
         return new mysqli_native_moodle_recordset($result);
     }
 
@@ -1069,7 +1107,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * @return array of objects, or empty array if no records were found
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function get_records_sql($sql, array $params=null, $limitfrom=0, $limitnum=0) {
+    public function get_records_sql($sql, array $params = null, $limitfrom = 0, $limitnum = 0)
+    {
 
         list($limitfrom, $limitnum) = $this->normalise_limit_from_num($limitfrom, $limitnum);
 
@@ -1089,9 +1128,9 @@ class mysqli_native_moodle_database extends moodle_database {
 
         $return = array();
 
-        while($row = $result->fetch_assoc()) {
+        while ($row = $result->fetch_assoc()) {
             $row = array_change_key_case($row, CASE_LOWER);
-            $id  = reset($row);
+            $id = reset($row);
             if (isset($return[$id])) {
                 $colname = key($row);
                 debugging("Did you remember to make the first column something unique in your call to get_records? Duplicate value '$id' found in column '$colname'.", DEBUG_DEVELOPER);
@@ -1111,7 +1150,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * @return array of values
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function get_fieldset_sql($sql, array $params=null) {
+    public function get_fieldset_sql($sql, array $params = null)
+    {
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
         $rawsql = $this->emulate_bound_params($sql, $params);
 
@@ -1121,7 +1161,7 @@ class mysqli_native_moodle_database extends moodle_database {
 
         $return = array();
 
-        while($row = $result->fetch_assoc()) {
+        while ($row = $result->fetch_assoc()) {
             $return[] = reset($row);
         }
         $result->close();
@@ -1139,7 +1179,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * @return bool|int true or new id
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function insert_record_raw($table, $params, $returnid=true, $bulk=false, $customsequence=false) {
+    public function insert_record_raw($table, $params, $returnid = true, $bulk = false, $customsequence = false)
+    {
         if (!is_array($params)) {
             $params = (array)$params;
         }
@@ -1158,8 +1199,8 @@ class mysqli_native_moodle_database extends moodle_database {
         }
 
         $fields = implode(',', array_keys($params));
-        $qms    = array_fill(0, count($params), '?');
-        $qms    = implode(',', $qms);
+        $qms = array_fill(0, count($params), '?');
+        $qms = implode(',', $qms);
 
         $sql = "INSERT INTO {$this->prefix}$table ($fields) VALUES($qms)";
 
@@ -1194,7 +1235,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * @return bool|int true or new id
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function insert_record($table, $dataobject, $returnid=true, $bulk=false) {
+    public function insert_record($table, $dataobject, $returnid = true, $bulk = false)
+    {
         $dataobject = (array)$dataobject;
 
         $columns = $this->get_columns($table);
@@ -1204,7 +1246,7 @@ class mysqli_native_moodle_database extends moodle_database {
 
         $cleaned = array();
 
-        foreach ($dataobject as $field=>$value) {
+        foreach ($dataobject as $field => $value) {
             if ($field === 'id') {
                 continue;
             }
@@ -1229,14 +1271,15 @@ class mysqli_native_moodle_database extends moodle_database {
      *
      * @since Moodle 2.7
      *
-     * @param string $table  The database table to be inserted into
+     * @param string $table The database table to be inserted into
      * @param array|Traversable $dataobjects list of objects to be inserted, must be compatible with foreach
      * @return void does not return new record ids
      *
      * @throws coding_exception if data objects have different structure
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function insert_records($table, $dataobjects) {
+    public function insert_records($table, $dataobjects)
+    {
         if (!is_array($dataobjects) and !$dataobjects instanceof Traversable) {
             throw new coding_exception('insert_records() passed non-traversable object');
         }
@@ -1313,10 +1356,11 @@ class mysqli_native_moodle_database extends moodle_database {
      * @param array $chunk
      * @param database_column_info[] $columns
      */
-    protected function insert_chunk($table, array $chunk, array $columns) {
-        $fieldssql = '('.implode(',', array_keys($columns)).')';
+    protected function insert_chunk($table, array $chunk, array $columns)
+    {
+        $fieldssql = '(' . implode(',', array_keys($columns)) . ')';
 
-        $valuessql = '('.implode(',', array_fill(0, count($columns), '?')).')';
+        $valuessql = '(' . implode(',', array_fill(0, count($columns), '?')) . ')';
         $valuessql = implode(',', array_fill(0, count($chunk), $valuessql));
 
         $params = array();
@@ -1345,13 +1389,14 @@ class mysqli_native_moodle_database extends moodle_database {
      * @return bool true
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function import_record($table, $dataobject) {
+    public function import_record($table, $dataobject)
+    {
         $dataobject = (array)$dataobject;
 
         $columns = $this->get_columns($table);
         $cleaned = array();
 
-        foreach ($dataobject as $field=>$value) {
+        foreach ($dataobject as $field => $value) {
             if (!isset($columns[$field])) {
                 continue;
             }
@@ -1369,7 +1414,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * @return bool true
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function update_record_raw($table, $params, $bulk=false) {
+    public function update_record_raw($table, $params, $bulk = false)
+    {
         $params = (array)$params;
 
         if (!isset($params['id'])) {
@@ -1383,7 +1429,7 @@ class mysqli_native_moodle_database extends moodle_database {
         }
 
         $sets = array();
-        foreach ($params as $field=>$value) {
+        foreach ($params as $field => $value) {
             $sets[] = "$field = ?";
         }
 
@@ -1415,13 +1461,14 @@ class mysqli_native_moodle_database extends moodle_database {
      * @return bool true
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function update_record($table, $dataobject, $bulk=false) {
+    public function update_record($table, $dataobject, $bulk = false)
+    {
         $dataobject = (array)$dataobject;
 
         $columns = $this->get_columns($table);
         $cleaned = array();
 
-        foreach ($dataobject as $field=>$value) {
+        foreach ($dataobject as $field => $value) {
             if (!isset($columns[$field])) {
                 continue;
             }
@@ -1443,7 +1490,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * @return bool true
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function set_field_select($table, $newfield, $newvalue, $select, array $params=null) {
+    public function set_field_select($table, $newfield, $newvalue, $select, array $params = null)
+    {
         if ($select) {
             $select = "WHERE $select";
         }
@@ -1483,7 +1531,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * @return bool true
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function delete_records_select($table, $select, array $params=null) {
+    public function delete_records_select($table, $select, array $params = null)
+    {
         if ($select) {
             $select = "WHERE $select";
         }
@@ -1499,11 +1548,13 @@ class mysqli_native_moodle_database extends moodle_database {
         return true;
     }
 
-    public function sql_cast_char2int($fieldname, $text=false) {
+    public function sql_cast_char2int($fieldname, $text = false)
+    {
         return ' CAST(' . $fieldname . ' AS SIGNED) ';
     }
 
-    public function sql_cast_char2real($fieldname, $text=false) {
+    public function sql_cast_char2real($fieldname, $text = false)
+    {
         // Set to 65 (max mysql 5.5 precision) with 7 as scale
         // because we must ensure at least 6 decimal positions
         // per casting given that postgres is casting to that scale (::real::).
@@ -1525,7 +1576,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * @param string $escapechar escape char for '%' and '_'
      * @return string SQL code fragment
      */
-    public function sql_like($fieldname, $param, $casesensitive = true, $accentsensitive = true, $notlike = false, $escapechar = '\\') {
+    public function sql_like($fieldname, $param, $casesensitive = true, $accentsensitive = true, $notlike = false, $escapechar = '\\')
+    {
         if (strpos($param, '%') !== false) {
             debugging('Potential SQL injection detected, sql_like() expects bound parameters (? or :named)');
         }
@@ -1539,7 +1591,11 @@ class mysqli_native_moodle_database extends moodle_database {
 
         } else if ($accentsensitive) {
             // Case insensitive and accent sensitive, we can force a binary comparison once all texts are using the same case.
-            return "LOWER($fieldname) $LIKE LOWER($param) COLLATE utf8_bin ESCAPE '$escapechar'";
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+                return "LOWER($fieldname) $LIKE LOWER($param)";
+            } else {
+                return "LOWER($fieldname) $LIKE LOWER($param) COLLATE utf8_bin ESCAPE '$escapechar'";
+            }
 
         } else {
             // Case insensitive and accent insensitive.
@@ -1561,7 +1617,8 @@ class mysqli_native_moodle_database extends moodle_database {
      *
      * @return string The concat sql
      */
-    public function sql_concat() {
+    public function sql_concat()
+    {
         $arr = func_get_args();
         $s = implode(', ', $arr);
         if ($s === '') {
@@ -1578,7 +1635,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * @param array $elements An array of items to concatenate
      * @return string The concat SQL
      */
-    public function sql_concat_join($separator="' '", $elements=array()) {
+    public function sql_concat_join($separator = "' '", $elements = array())
+    {
         $s = implode(', ', $elements);
 
         if ($s === '') {
@@ -1592,14 +1650,16 @@ class mysqli_native_moodle_database extends moodle_database {
      * @param string fieldname or expression to calculate its length in characters.
      * @return string the piece of SQL code to be used in the statement.
      */
-    public function sql_length($fieldname) {
+    public function sql_length($fieldname)
+    {
         return ' CHAR_LENGTH(' . $fieldname . ')';
     }
 
     /**
      * Does this driver support regex syntax when searching
      */
-    public function sql_regex_supported() {
+    public function sql_regex_supported()
+    {
         return true;
     }
 
@@ -1608,7 +1668,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * @param bool $positivematch
      * @return string or empty if not supported
      */
-    public function sql_regex($positivematch=true) {
+    public function sql_regex($positivematch = true)
+    {
         return $positivematch ? 'REGEXP' : 'NOT REGEXP';
     }
 
@@ -1619,7 +1680,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * @param string $fieldname The name of the field to be cast
      * @return string The piece of SQL code to be used in your statement.
      */
-    public function sql_cast_2signed($fieldname) {
+    public function sql_cast_2signed($fieldname)
+    {
         return ' CAST(' . $fieldname . ' AS SIGNED) ';
     }
 
@@ -1632,22 +1694,23 @@ class mysqli_native_moodle_database extends moodle_database {
      * @param string $fields comma-separated list of fields
      * @return string SQL query that will return only values that are present in each of selects
      */
-    public function sql_intersect($selects, $fields) {
+    public function sql_intersect($selects, $fields)
+    {
         if (count($selects) <= 1) {
             return parent::sql_intersect($selects, $fields);
         }
         $fields = preg_replace('/\s/', '', $fields);
         static $aliascnt = 0;
-        $falias = 'intsctal'.($aliascnt++);
-        $rv = "SELECT $falias.".
-            preg_replace('/,/', ','.$falias.'.', $fields).
+        $falias = 'intsctal' . ($aliascnt++);
+        $rv = "SELECT $falias." .
+            preg_replace('/,/', ',' . $falias . '.', $fields) .
             " FROM ($selects[0]) $falias";
         for ($i = 1; $i < count($selects); $i++) {
-            $alias = 'intsctal'.($aliascnt++);
-            $rv .= " JOIN (".$selects[$i].") $alias ON ".
+            $alias = 'intsctal' . ($aliascnt++);
+            $rv .= " JOIN (" . $selects[$i] . ") $alias ON " .
                 join(' AND ',
                     array_map(
-                        create_function('$a', 'return "'.$falias.'.$a = '.$alias.'.$a";'),
+                        create_function('$a', 'return "' . $falias . '.$a = ' . $alias . '.$a";'),
                         preg_split('/,/', $fields))
                 );
         }
@@ -1660,11 +1723,13 @@ class mysqli_native_moodle_database extends moodle_database {
      * @since Moodle 2.6.1
      * @return bool
      */
-    public function replace_all_text_supported() {
+    public function replace_all_text_supported()
+    {
         return true;
     }
 
-    public function session_lock_supported() {
+    public function session_lock_supported()
+    {
         return true;
     }
 
@@ -1674,10 +1739,11 @@ class mysqli_native_moodle_database extends moodle_database {
      * @param int $timeout max allowed time to wait for the lock in seconds
      * @return void
      */
-    public function get_session_lock($rowid, $timeout) {
+    public function get_session_lock($rowid, $timeout)
+    {
         parent::get_session_lock($rowid, $timeout);
 
-        $fullname = $this->dbname.'-'.$this->prefix.'-session-'.$rowid;
+        $fullname = $this->dbname . '-' . $this->prefix . '-session-' . $rowid;
         $sql = "SELECT GET_LOCK('$fullname', $timeout)";
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = $this->mysqli->query($sql);
@@ -1695,13 +1761,14 @@ class mysqli_native_moodle_database extends moodle_database {
         }
     }
 
-    public function release_session_lock($rowid) {
+    public function release_session_lock($rowid)
+    {
         if (!$this->used_for_db_sessions) {
             return;
         }
 
         parent::release_session_lock($rowid);
-        $fullname = $this->dbname.'-'.$this->prefix.'-session-'.$rowid;
+        $fullname = $this->dbname . '-' . $this->prefix . '-session-' . $rowid;
         $sql = "SELECT RELEASE_LOCK('$fullname')";
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = $this->mysqli->query($sql);
@@ -1723,7 +1790,8 @@ class mysqli_native_moodle_database extends moodle_database {
      *
      * @return bool
      */
-    protected function transactions_supported() {
+    protected function transactions_supported()
+    {
         if (!is_null($this->transactions_supported)) {
             return $this->transactions_supported;
         }
@@ -1751,7 +1819,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * this can not be used directly in code.
      * @return void
      */
-    protected function begin_transaction() {
+    protected function begin_transaction()
+    {
         if (!$this->transactions_supported()) {
             return;
         }
@@ -1772,7 +1841,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * this can not be used directly in code.
      * @return void
      */
-    protected function commit_transaction() {
+    protected function commit_transaction()
+    {
         if (!$this->transactions_supported()) {
             return;
         }
@@ -1788,7 +1858,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * this can not be used directly in code.
      * @return void
      */
-    protected function rollback_transaction() {
+    protected function rollback_transaction()
+    {
         if (!$this->transactions_supported()) {
             return;
         }

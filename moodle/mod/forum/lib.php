@@ -2406,6 +2406,8 @@ function forum_search_posts($searchterms, $courseid = 0, $limitfrom = 0, $limitn
                AND $selectdiscussion
                    $extrasql";
 
+    $allnames = get_all_user_name_fields(true, 'u');
+
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
         $prmt = array();
         $i = 0;
@@ -2425,7 +2427,6 @@ function forum_search_posts($searchterms, $courseid = 0, $limitfrom = 0, $limitn
                    FROM $fromsql
                   WHERE $selectsql";
 
-        $allnames = get_all_user_name_fields(true, 'u');
         $searchsql = "SELECT p.*,
                          d.forum,
                          $allnames,
