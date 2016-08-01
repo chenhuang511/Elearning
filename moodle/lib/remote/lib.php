@@ -254,3 +254,59 @@ function merge_local_course_module($cm){
 
     return $cm;
 }
+
+/**
+ * create new a mbl
+ *
+ * @param $branch
+ * @return false|mixed
+ */
+function save_remote_response_by_tbl($tablename, $data)
+{
+    return moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_save_response_by_mbl',
+            'params' => array_merge(array('tablename' => $tablename), $data)
+        )
+    );
+}
+
+/**
+ * create update a mbl
+ *
+ * @param $branch
+ * @return false|mixed
+ */
+function update_remote_response_by_tbl($tablename, $id, $data)
+{
+    $res = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_update_response_by_mbl',
+            'params' => array_merge(array('tablename' => $tablename, 'id' => $id), $data)
+        )
+    );
+    return $res;
+}
+
+/**
+ * delete a tbl
+ *
+ * @param $branch
+ * @return false|mixed
+ */
+function delete_remote_response_by_tbl($tablename, $select, $sort = '')
+{
+    $res = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_delete_response_by_mbl',
+            'params' => array('tablename' => $tablename, 'select' => $select, 'sort' => $sort)
+        )
+    );
+    return $res;
+}

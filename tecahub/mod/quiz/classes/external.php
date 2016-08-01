@@ -783,7 +783,13 @@ class mod_quiz_external extends external_api {
     protected static function validate_attempt($params, $checkaccessrules = true, $failifoverdue = true) {
         global $USER;
 
-        $attemptobj = quiz_attempt::create($params['attemptid'], $timeclose = true);//not check timeclose in hub
+        if($params['setting']){
+            $localsetting = array();
+            foreach ($params['setting'] as $element) {
+                $localsetting[$element['name']] = $element['value'];
+            }
+        }
+        $attemptobj = quiz_attempt::create($params['attemptid'], $localsetting);
 
         $context = context_module::instance($attemptobj->get_cm()->id);
         self::validate_context($context);
@@ -1193,7 +1199,15 @@ class mod_quiz_external extends external_api {
                             'value' => new external_value(PARAM_RAW, 'data value'),
                         )
                     ), 'Preflight required data (like passwords)', VALUE_DEFAULT, array()
-                )
+                ),
+                'setting' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHANUMEXT, 'data name'),
+                            'value' => new external_value(PARAM_RAW, 'data value'),
+                        )
+                    ), 'Local quiz setting (like: timelimit, timeopen ...)', VALUE_DEFAULT, array()
+                ),
             )
         );
     }
@@ -1209,7 +1223,7 @@ class mod_quiz_external extends external_api {
      * @return array of warnings and the attempt state after the processing
      * @since Moodle 3.1
      */
-    public static function process_attempt($attemptid, $data, $finishattempt = false, $timeup = false, $preflightdata = array()) {
+    public static function process_attempt($attemptid, $data, $finishattempt = false, $timeup = false, $preflightdata = array(), $setting = array()) {
 
         $warnings = array();
 
@@ -1219,6 +1233,7 @@ class mod_quiz_external extends external_api {
             'finishattempt' => $finishattempt,
             'timeup' => $timeup,
             'preflightdata' => $preflightdata,
+            'setting' => $setting,
         );
         $params = self::validate_parameters(self::process_attempt_parameters(), $params);
 

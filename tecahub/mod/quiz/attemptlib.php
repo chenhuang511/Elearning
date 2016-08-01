@@ -585,14 +585,11 @@ class quiz_attempt {
      * Used by {create()} and {create_from_usage_id()}.
      * @param array $conditions passed to $DB->get_record('quiz_attempts', $conditions).
      */
-    protected static function create_helper($conditions, $timeclose = false) {
+    protected static function create_helper($conditions, $localsetting = array()) {
         global $DB;
 
         $attempt = $DB->get_record('quiz_attempts', $conditions, '*', MUST_EXIST);
-        $quiz = quiz_access_manager::load_quiz_and_settings($attempt->quiz);
-        if($timeclose == true){
-            $quiz->timeclose = 0;
-        }
+        $quiz = quiz_access_manager::load_quiz_and_settings($attempt->quiz, $localsetting);
         $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
         $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id, false, MUST_EXIST);
 
@@ -608,8 +605,8 @@ class quiz_attempt {
      * @param int $attemptid the attempt id.
      * @return quiz_attempt the new quiz_attempt object
      */
-    public static function create($attemptid, $timeclose = false) {
-        return self::create_helper(array('id' => $attemptid), $timeclose);
+    public static function create($attemptid, $localsetting = array()) {
+        return self::create_helper(array('id' => $attemptid), $localsetting);
     }
 
     /**

@@ -250,12 +250,18 @@ class quiz_access_manager {
      * @param int $quizid the quiz id.
      * @return object mdl_quiz row with extra fields.
      */
-    public static function load_quiz_and_settings($quizid) {
+    public static function load_quiz_and_settings($quizid, $localsetting = array()) {
         global $DB;
 
         $rules = self::get_rule_classes();
         list($sql, $params) = self::get_load_sql($quizid, $rules, 'quiz.*');
         $quiz = $DB->get_record_sql($sql, $params, MUST_EXIST);
+        
+        if($localsetting){
+            foreach ($localsetting as $key => $value){
+                $quiz->$key = $value;
+            }
+        }
 
         foreach ($rules as $rule) {
             foreach ($rule::get_extra_settings($quizid) as $name => $value) {

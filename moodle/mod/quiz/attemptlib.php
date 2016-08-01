@@ -2069,7 +2069,18 @@ class quiz_attempt {
         $this->attempt->timemodified = $timestamp;
         $this->attempt->state = self::ABANDONED;
         $this->attempt->timecheckstate = null;
-        $DB->update_record('quiz_attempts', $this->attempt);
+        if($this->isremote){
+            $data = array();
+            $data['data[0][name]'] = 'timemodified';
+            $data['data[0][value]'] = $timestamp;
+            $data['data[1][name]'] = 'state';
+            $data['data[1][value]'] = self::ABANDONED;
+            $data['data[2][name]'] = 'timecheckstate';
+            $data['data[2][value]'] = 0;
+            update_remote_response_by_tbl('quiz_attempts', $this->get_attemptid(), $data);
+        }else{
+            $DB->update_record('quiz_attempts', $this->attempt);
+        }
 
         $this->fire_state_transition_event('\mod_quiz\event\attempt_abandoned', $timestamp);
 

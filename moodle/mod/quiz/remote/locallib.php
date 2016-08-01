@@ -62,10 +62,12 @@ function get_remote_quiz_by_id($id) {
     $local_quiz_data = $DB->get_record('quiz', array('remoteid' => $res->id), $fields);
     if(empty($local_quiz_data)){ // check data quiz in local db
         $res->remoteid = $res->id;
+        $res->settinglocal = false;
     } else {
         foreach ($local_quiz_data as $key => $value){
             $res->$key = $value;
         }
+        $res->settinglocal = true;
     }
     return $res;
 }
@@ -292,13 +294,13 @@ function get_remote_view_attempt_review($attemptid) {
     );
 }
 
-function get_mod_quiz_process_attempt($attemptid, $data, $finishattempt, $timeup) {
+function get_mod_quiz_process_attempt($attemptid, $data, $finishattempt, $timeup, $setting) {
     return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN_M,
             'function_name' => 'mod_quiz_process_attempt',
-            'params' => array_merge(array('attemptid' => $attemptid, 'finishattempt' => $finishattempt, 'timeup' => $timeup), $data)
+            'params' => array_merge(array('attemptid' => $attemptid, 'finishattempt' => $finishattempt, 'timeup' => $timeup), $data, $setting)
         ), false
     );
 }

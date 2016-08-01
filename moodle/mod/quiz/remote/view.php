@@ -93,6 +93,8 @@ if(count($unfinishedattempt) > 0 && $unfinishedattempt[0]){
     $unfinishedattemptid = $unfinishedattempt[0]->id;
     $unfinishedattempt = null; // To make it clear we do not use this again.
 }
+//echo "<pre>";
+//print_r($attempts);die;
 $numattempts = count($attempts);
 $viewobj->attempts = $attempts;
 $viewobj->attemptobjs = array();
@@ -114,7 +116,7 @@ if (!$canpreview) {
 $mygradeoverridden = false;
 $gradebookfeedback = '';
 
-//@TODO: hadle here.
+//@TODO: handle here.
 $grading_info = grade_get_grades($course->id, 'mod', 'quiz', $quiz->id, $USER->id);
 if (!empty($grading_info->items)) {
     $item = $grading_info->items[0];

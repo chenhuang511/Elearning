@@ -74,7 +74,7 @@ require_sesskey();
 
 // Check that this attempt belongs to this user.
 $user = get_remote_mapping_user();
-if ($attemptobj->get_userid() != $user[0]->id) {
+if ($attemptobj->get_userid() != $USER->id) {
     throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'notyourattempt');
 }
 
@@ -104,8 +104,24 @@ foreach ($_POST as $key => $value) {
     $i++;
 }
 
+// get quiz local setting if isset quiz->settinglocal
+if($quiz->settinglocal){
+    $setting = array();
+    $fields =  array('timeopen',
+                'timeclose',
+                'timelimit',
+                'overduehandling',
+                'graceperiod');
+    $index = 0;
+    foreach ($fields as $field){
+        $setting["setting[$index][name]"] = $field;
+        $setting["setting[$index][value]"] = $quiz->$field;
+        $index++;
+    }
+}
+
 // Process the attempt, getting the new status for the attempt.
-$status = get_mod_quiz_process_attempt($attemptid, $data, $finishattempt, $timeup);
+$status = get_mod_quiz_process_attempt($attemptid, $data, $finishattempt, $timeup, $setting);
 $status = $status->state;
 
 if ($status == quiz_attempt::OVERDUE) {
