@@ -127,6 +127,10 @@ function get_remote_course_mods($courseid)
         )
     );
 
+    foreach ($resp as $cm){
+        merge_local_course_module($cm);
+    }
+
     return change_key_by_value($resp);
 }
 
