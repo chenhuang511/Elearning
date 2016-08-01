@@ -184,7 +184,7 @@ class report_log_renderer extends plugin_renderer_base {
             // echo html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('gettheselogs')));
         }
         echo html_writer::end_div();
-        echo html_writer::start_div();
+        echo html_writer::start_div('buttom_logs');
         echo html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('gettheselogs')));
         echo html_writer::end_div();
         echo html_writer::end_tag('form');

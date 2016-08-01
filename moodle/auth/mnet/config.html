@@ -22,8 +22,8 @@ if (empty($CFG->mnet_dispatcher_mode) || $CFG->mnet_dispatcher_mode !== 'strict'
 <table cellspacing="0" cellpadding="5">
 
 <tr valign="top" class="required">
-    <td align="right"><label for="rpc_negotiation_timeout"><?php print_string('rpc_negotiation_timeout', 'auth_mnet'); ?>: </label></td>
-    <td>
+    <td class="col-md-2" align="right"><label for="rpc_negotiation_timeout"><?php print_string('rpc_negotiation_timeout', 'auth_mnet'); ?>: </label></td>
+    <td class="col-md-2">
         <input name="rpc_negotiation_timeout" id="rpc_negotiation_timeout" type="text" size="5" value="<?php echo $config->rpc_negotiation_timeout ?>" />
         <?php
 
@@ -33,7 +33,7 @@ if (empty($CFG->mnet_dispatcher_mode) || $CFG->mnet_dispatcher_mode !== 'strict'
 
         ?>
     </td>
-    <td>
+    <td class="col-md-8">
         <?php
 
         print_string('auth_mnet_rpc_negotiation_timeout', 'auth_mnet');

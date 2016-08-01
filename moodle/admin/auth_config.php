@@ -156,7 +156,7 @@ function print_auth_lock_options($auth, $user_fields, $helptext, $retrieveopts, 
         if ($retrieveopts) {
             $varname = 'field_map_' . $field;
 
-            echo '<tr valign="top"><td align="right">';
+            echo '<tr valign="top"><td class="col-md-2" align="right">';
             echo '<label for="lockconfig_'.$varname.'">'.$fieldname.'</label>';
             echo '</td><td>';
 
@@ -174,14 +174,14 @@ function print_auth_lock_options($auth, $user_fields, $helptext, $retrieveopts, 
             echo html_writer::select($lockoptions, "lockconfig_field_lock_{$field}", $pluginconfig->{"field_lock_$field"}, false);
             echo '</div>';
         } else {
-            echo '<tr valign="top"><td align="right">';
+            echo '<tr valign="top"><td class ="col-md-2" align="right">';
             echo '<label for="menulockconfig_field_lock_'.$field.'">'.$fieldname.'</label>';
             echo '</td><td>';
             echo html_writer::select($lockoptions, "lockconfig_field_lock_{$field}", $pluginconfig->{"field_lock_$field"}, false);
         }
         echo '</td>';
         if (!empty($helptext)) {
-            echo '<td rowspan="' . count($user_fields) . '">' . $helptext . '</td>';
+            echo '<td class="col-md-8" rowspan="' . count($user_fields) . '">' . $helptext . '</td>';
             $helptext = '';
         }
         echo '</tr>';
