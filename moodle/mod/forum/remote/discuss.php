@@ -288,8 +288,8 @@ $renderer = $PAGE->get_renderer('mod_forum');
 
 echo $OUTPUT->header();
 
-echo $OUTPUT->heading(format_string($forum->name), 2);
-echo $OUTPUT->heading(format_string($discussion->name), 3, 'discussionname');
+echo $OUTPUT->heading('<i class="fa fa-users" aria-hidden="true"></i> ' . format_string($forum->name), 2, array('class' => 'heading-bhxh-forum'));
+echo $OUTPUT->heading('<i class="fa fa-newspaper-o" aria-hidden="true"></i> ' . format_string($discussion->name), 3, 'discussionname');
 
 // is_guest should be used here as this also checks whether the user is a guest in the current course.
 // Guests and visitors cannot subscribe - only enrolled users.

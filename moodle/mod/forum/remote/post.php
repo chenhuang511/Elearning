@@ -1094,7 +1094,7 @@ $PAGE->set_title("$course->shortname: $strdiscussionname " . format_string($topp
 $PAGE->set_heading($course->fullname);
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($forum->name), 2);
+echo $OUTPUT->heading('<i class="fa fa-users" aria-hidden="true"></i> ' . format_string($forum->name), 2, array('class' => 'heading-bhxh-forum'));
 
 // checkup
 if (!empty($parent) && !forum_user_can_see_post($forum, $discussion, $post, null, $cm)) {
