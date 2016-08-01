@@ -139,7 +139,7 @@ forum_view($forum, $course, $cm, $context);
 echo $OUTPUT->header();
 
 
-echo $OUTPUT->heading(format_string($forum->name), 2);
+echo $OUTPUT->heading('<i class="fa fa-users" aria-hidden="true"></i> ' . format_string($forum->name), 2, array('class' => 'heading-bhxh-forum'));
 if (!empty($forum->intro) && $forum->type != 'single' && $forum->type != 'teacher') {
     echo $OUTPUT->box(format_module_intro('forum', $forum, $cm->id), 'generalbox', 'intro');
 }

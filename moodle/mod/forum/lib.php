@@ -3675,7 +3675,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost = 
     // Add a permalink.
     $permalink = new moodle_url($discussionlink);
     $permalink->set_anchor('p' . $post->id);
-    $commands[] = array('url' => $permalink, 'text' => get_string('permalink', 'forum'));
+    $commands[] = array('url' => $permalink, 'text' => get_string('permalink', 'forum'), 'icon' => '<i class="fa fa-external-link" aria-hidden="true"></i>');
 
     // SPECIAL CASE: The front page can display a news item post to non-logged in users.
     // Don't display the mark read / unread controls in this case.
@@ -3714,10 +3714,10 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost = 
     if ($forum->type == 'single' and $discussion->firstpost == $post->id) {
         if (has_capability('moodle/course:manageactivities', $modcontext)) {
             // The first post in single simple is the forum description.
-            $commands[] = array('url' => new moodle_url('/course/modedit.php', array('update' => $cm->id, 'sesskey' => sesskey(), 'return' => 1)), 'text' => $str->edit);
+            $commands[] = array('url' => new moodle_url('/course/modedit.php', array('update' => $cm->id, 'sesskey' => sesskey(), 'return' => 1)), 'text' => $str->edit, 'icon' => '<i class="fa fa-pencil-square-o" aria-hidden="true"></i>');
         }
     } else if (($ownpost && $age < $CFG->maxeditingtime) || $cm->cache->caps['mod/forum:editanypost']) {
-        $commands[] = array('url' => new moodle_url('/mod/forum/remote/post.php', array('edit' => $post->id)), 'text' => $str->edit);
+        $commands[] = array('url' => new moodle_url('/mod/forum/remote/post.php', array('edit' => $post->id)), 'text' => $str->edit, 'icon' => '<i class="fa fa-pencil-square-o" aria-hidden="true"></i>');
     }
 
     if ($cm->cache->caps['mod/forum:splitdiscussions'] && $post->parent && $forum->type != 'single') {
@@ -3727,11 +3727,11 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost = 
     if ($forum->type == 'single' and $discussion->firstpost == $post->id) {
         // Do not allow deleting of first post in single simple type.
     } else if (($ownpost && $age < $CFG->maxeditingtime && $cm->cache->caps['mod/forum:deleteownpost']) || $cm->cache->caps['mod/forum:deleteanypost']) {
-        $commands[] = array('url' => new moodle_url('/mod/forum/remote/post.php', array('delete' => $post->id)), 'text' => $str->delete);
+        $commands[] = array('url' => new moodle_url('/mod/forum/remote/post.php', array('delete' => $post->id)), 'text' => $str->delete, 'icon' => '<i class="fa fa-times" aria-hidden="true"></i>');
     }
 
     if ($reply) {
-        $commands[] = array('url' => new moodle_url('/mod/forum/remote/post.php#mformforum', array('reply' => $post->id)), 'text' => $str->reply);
+        $commands[] = array('url' => new moodle_url('/mod/forum/remote/post.php#mformforum', array('reply' => $post->id)), 'text' => $str->reply, 'icon' => '<i class="fa fa-reply" aria-hidden="true"></i>');
     }
 
     if ($CFG->enableportfolios && ($cm->cache->caps['mod/forum:exportpost'] || ($ownpost && $cm->cache->caps['mod/forum:exportownpost']))) {
@@ -3877,7 +3877,11 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost = 
     $commandhtml = array();
     foreach ($commands as $command) {
         if (is_array($command)) {
-            $commandhtml[] = html_writer::link($command['url'], $command['text']);
+            $icon = '';
+            if (isset($command['icon'])) {
+                $icon = ' ' . $command['icon'];
+            }
+            $commandhtml[] = html_writer::link($command['url'], $command['text'] . $icon);
         } else {
             $commandhtml[] = $command;
         }
@@ -4424,7 +4428,7 @@ function forum_search_form($course, $search = '')
     $output .= '<label class="accesshide" for="search" >' . get_string('search', 'forum') . '</label>';
     $output .= '<input id="search" name="search" type="text" size="18" value="' . s($search, true) . '" />';
     $output .= '<label class="accesshide" for="searchforums" >' . get_string('searchforums', 'forum') . '</label>';
-    $output .= '<input id="searchforums" value="' . get_string('searchforums', 'forum') . '" type="submit" />';
+    $output .= '<input id="searchforums" class="btn-bhxh-search" value="' . get_string('searchforums', 'forum') . '" type="submit" />';
     $output .= '<input name="id" type="hidden" value="' . $course->id . '" />';
     $output .= '</fieldset>';
     $output .= '</form>';
