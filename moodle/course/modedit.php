@@ -260,7 +260,7 @@ $mform->set_data($data);
 
 if ($mform->is_cancelled()) {
     if ($return && !empty($cm->id)) {
-        redirect("$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id");
+        redirect("$CFG->wwwroot/mod/$module->name/remote/view.php?id=$cm->id");
     } else {
         redirect(course_get_url($course, $cw->section, array('sr' => $sectionreturn)));
     }
