@@ -19,11 +19,10 @@
  * Local language pack from http://192.168.1.253
  *
  * @package    mod
- * @subpackage scorm
+ * @subpackage data
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['calculatedweight'] = 'Trọng lượng tính';
-$string['deleteselected'] = 'Xóa những lần thi được chọn';
+$string['csvfile'] = 'Tệp CSV';

@@ -26,6 +26,9 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['aggregateonlygraded'] = 'Loại trừ để trống điểm';
+$string['aggregationhintnovalue'] = '(Trống)';
+$string['contributiontocoursetotal'] = 'Đóng góp vào toàn khóa học';
+$string['edittree'] = 'Cài đặt';
 $string['externalurl'] = 'URL ngoài';
 $string['externalurl_desc'] = 'Nếu sổ điểm bên ngoài được sử dụng, URL nên được quy định ở đây.';
 $string['gradebooksetup'] = 'Thiết lập sổ điểm';
@@ -44,3 +47,4 @@ $string['overridecat'] = 'Cho phép danh mục điểm được ghi đè';
 $string['overridecat_help'] = 'Vô hiệu hóa thiết lập này làm nó không thể cho người dùng ghi đè lên danh mục điểm';
 $string['showcontributiontocoursetotal'] = 'Hiển thị sự đóng góp đến toàn khóa học';
 $string['showcontributiontocoursetotal_help'] = 'Hiển thị cột tỷ lệ phần trăm chỉ ra từng mục điểm đóng góp vào tổng tỷ lệ khóa học của người dùng như thế nào (sau khi trọng lượng được áp dụng).';
+$string['weightuc'] = 'Trọng lượng tính';
