@@ -562,3 +562,11 @@ function resource_view($resource, $course, $cm, $context)
     $completion = new completion_info($course);
     $completion->set_module_viewed($cm);
 }
+function resource_get_local_settings_info($coursemodule){
+    global $CFG, $DB;
+    require_once($CFG->dirroot . '/mod/resource/remote/locallib.php');
+    $params['parameters[0][name]'] = "id";
+    $params['parameters[0][value]'] = $coursemodule->instance;
+    $resource = get_remote_resource_by($params);
+    return $resource;
+}
