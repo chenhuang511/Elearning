@@ -489,7 +489,7 @@ function chat_get_latest_message($chatid, $groupid=0, $chatsid = null) {
     global $DB;
 
     if (MOODLE_RUN_MODE == MOODLE_MODE_HUB) {
-        return get_remote_chat_latest_messages($chatsid)[0];
+        return local_get_remote_chat_current_messages($chatsid, $groupid, $chatid);
     }
 
     $params = array('chatid' => $chatid, 'groupid' => $groupid);
