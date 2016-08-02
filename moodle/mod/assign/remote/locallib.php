@@ -38,8 +38,6 @@ function get_remote_assign_by_id($assignid){
  */
 function get_remote_assign_by_id_instanceid($assignid, $instanceid)
 {
-
-
     $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
@@ -1071,4 +1069,42 @@ function count_remote_all_submission_and_grade($params){
     );
 
     return $resp;
+}
+
+/**
+ * Get all grades for the current course of just get current grade
+ *
+ * @param int $gradeitemid     - The id of grade item
+ * @param bool $grabthelot     - If true, grabs all scores for current user on
+ *   this course, so that later ones come from cache
+ * @param int $userid          - The id of user on host
+ * @param int $courseid        - The id of course on host
+ * @return mixed
+ */
+function get_all_grade_by_userid_courseid($gradeitemid, $grabthelot, $userid, $courseid) {
+    $ruserid = get_remote_mapping_user($userid)[0]->id;
+    $rcourseid = get_local_course_record($courseid, true)->remoteid;
+    $rgradeitemid = get_local_grade_items_record($gradeitemid, true)->remoteid;
+
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_assign_get_all_grade_by_userid_courseid',
+            'params' => array(
+                'gradeitemid' => $rgradeitemid,
+                'grabthelot' => $grabthelot,
+                'userid' => $ruserid,
+                'courseid' => $rcourseid
+            )
+        ), false
+    );
+    if ($grabthelot){
+        return $resp->hasgrab;
+    } else {
+        $resp->notgrab->userid = $userid;
+        $resp->notgrab->itemid = $gradeitemid;
+
+        return $resp->notgrab;
+    }
 }

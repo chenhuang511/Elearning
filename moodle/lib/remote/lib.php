@@ -124,7 +124,7 @@ function get_remote_course_mods($courseid)
             'token' => HOST_TOKEN,
             'function_name' => 'local_get_course_mods',
             'params' => array('courseid' => $courseid)
-        )
+        ), false
     );
 
     foreach ($resp as $cm){

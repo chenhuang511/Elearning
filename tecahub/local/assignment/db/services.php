@@ -346,5 +346,13 @@ $functions = array(
         'type'		  => 'read',
         'ajax'		  => true
     ),
+    'local_mod_assign_get_all_grade_by_userid_courseid' => array(
+        'classname'	  => 'local_mod_assign_external',
+        'methodname'  => 'get_all_grade_by_userid_courseid',
+        'classpath'	  => 'local/assignment/externallib.php',
+        'description' => 'Get all grade by userid & course id',
+        'type'		  => 'read',
+        'ajax'		  => true
+    ),
 );
 
