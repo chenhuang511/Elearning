@@ -16,16 +16,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Local language pack from http://192.168.1.253
+ * Strings for component 'plugin', language 'vi', branch 'MOODLE_31_STABLE'
  *
- * @package    mod
- * @subpackage page
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   page
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['optionsheader'] = 'Hiển thị các lựa chọn';
 $string['proposecourse'] = 'Khóa học đề xuất';
 $string['completecourse'] = 'Khóa học hoàn thành';
 $string['viewall'] = 'xem tất cả';
