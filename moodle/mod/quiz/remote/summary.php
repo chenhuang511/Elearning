@@ -35,8 +35,6 @@ $quiz = get_remote_quiz_by_id($attempt->quiz);
 $course = get_local_course_record($quiz->course);
 $cm = get_remote_course_module_by_instance("quiz", $quiz->id);
 $attemptobj = new quiz_attempt($attempt, $quiz, $cm, $course, false, true);
-$summaryremote = get_remote_get_attempt_summary($attemptid);
-//var_dump($summaryremote);die;
 
 $nonajax = optional_param('nonajax', true, PARAM_BOOL);
 $context = context_module::instance($cm->id);
@@ -84,6 +82,7 @@ $displayoptions = $attemptobj->get_display_options(false);
 
 // If the attempt is now overdue, or abandoned, deal with that.
 $attemptobj->handle_if_time_expired(time(), true);
+$summaryremote = get_remote_get_attempt_summary($attemptid);
 
 // If the attempt is already closed, redirect them to the review page.
 if ($attemptobj->is_finished()) {

@@ -2231,4 +2231,109 @@ ORDER BY
             )
         );
     }
+
+    /**
+     * Hanv: 02/08/2016
+     * Check this attempt, to see if there are any state transitions that should happen automatically.
+     * This function will update the attempt checkstatetime.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function remote_handle_if_time_expired_parameters() {
+        return new external_function_parameters (
+            array(
+                'quizid' => new external_value(PARAM_INT, 'quiz instance id'),
+                'attemptid' => new external_value(PARAM_INT, 'attempt id, 0 for the user last attempt if exists'),
+                'studentisonline' => new external_value(PARAM_BOOL, 'student is online: true or false', VALUE_DEFAULT, true),
+                'setting' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHANUMEXT, 'data name'),
+                            'value' => new external_value(PARAM_RAW, 'data value'),
+                        )
+                    ), 'Local quiz setting (like: timelimit, timeopen ...)', VALUE_DEFAULT, array()
+                ),
+            )
+        );
+    }
+
+    /**
+     * Check this attempt, to see if there are any state transitions that should happen automatically.
+     * This function will update the attempt checkstatetime.
+     *
+     * @param int $quizid quiz instance id
+     * @param int $attemptid attempt id, 0 for the user last attempt if exists
+     * @return array of warnings and the access information
+     * @since Moodle 3.1
+     * @throws  moodle_quiz_exception
+     */
+    public static function remote_handle_if_time_expired($quizid, $attemptid, $studentisonline = true, $setting = array()) {
+        global $DB;
+
+        $warnings = array();
+
+        $params = array(
+            'quizid' => $quizid,
+            'attemptid' => $attemptid,
+            'studentisonline' => $studentisonline,
+            'setting' => $setting,
+        );
+        $params = self::validate_parameters(self::remote_handle_if_time_expired_parameters(), $params);
+
+        list($quiz, $course, $cm, $context) = mod_quiz_external::validate_quiz($params['quizid']);
+        $attemptobj = quiz_attempt::create($params['attemptid']);
+
+        // Access manager now.
+        if($params['setting']){
+            $localsetting = array();
+            foreach ($params['setting'] as $element) {
+                $localsetting[$element['name']] = $element['value'];
+            }
+        }
+        $quizobj = quiz::create($cm->instance, null, $localsetting);
+
+        $attempt = $attemptobj->get_attempt();
+
+        if ($attempt->state == quiz_attempt::IN_PROGRESS || $attempt->state == quiz_attempt::OVERDUE) {
+            // Check if the attempt is now overdue. In that case the state will change.
+            $quizobj->create_attempt_object($attempt)->handle_if_time_expired(time(), $studentisonline);
+        }
+        return $attempt;
+    }
+
+    /**
+     * Describes the get_attempt_access_information return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function remote_handle_if_time_expired_returns() {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'Attempt id.', VALUE_OPTIONAL),
+                'quiz' => new external_value(PARAM_INT, 'Foreign key reference to the quiz that was attempted.',
+                    VALUE_OPTIONAL),
+                'userid' => new external_value(PARAM_INT, 'Foreign key reference to the user whose attempt this is.',
+                    VALUE_OPTIONAL),
+                'attempt' => new external_value(PARAM_INT, 'Sequentially numbers this students attempts at this quiz.',
+                    VALUE_OPTIONAL),
+                'uniqueid' => new external_value(PARAM_INT, 'Foreign key reference to the question_usage that holds the
+                                                    details of the the question_attempts that make up this quiz
+                                                    attempt.', VALUE_OPTIONAL),
+                'layout' => new external_value(PARAM_RAW, 'Attempt layout.', VALUE_OPTIONAL),
+                'currentpage' => new external_value(PARAM_INT, 'Attempt current page.', VALUE_OPTIONAL),
+                'preview' => new external_value(PARAM_INT, 'Whether is a preview attempt or not.', VALUE_OPTIONAL),
+                'state' => new external_value(PARAM_ALPHA, 'The current state of the attempts. \'inprogress\',
+                                                \'overdue\', \'finished\' or \'abandoned\'.', VALUE_OPTIONAL),
+                'timestart' => new external_value(PARAM_INT, 'Time when the attempt was started.', VALUE_OPTIONAL),
+                'timefinish' => new external_value(PARAM_INT, 'Time when the attempt was submitted.
+                                                    0 if the attempt has not been submitted yet.', VALUE_OPTIONAL),
+                'timemodified' => new external_value(PARAM_INT, 'Last modified time.', VALUE_OPTIONAL),
+                'timecheckstate' => new external_value(PARAM_INT, 'Next time quiz cron should check attempt for
+                                                        state changes.  NULL means never check.', VALUE_OPTIONAL),
+                'sumgrades' => new external_value(PARAM_FLOAT, 'Total marks for this attempt.', VALUE_OPTIONAL),
+            )
+        );
+    }
 }

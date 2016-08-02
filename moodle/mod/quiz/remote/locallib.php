@@ -583,3 +583,15 @@ function get_userlocal_by_userhubid($userhubid) {
     $user = $DB->get_record('user', array('email' => $userinfo->email), 'id', MUST_EXIST);
     return $user->id;
 }
+
+function remote_handle_if_time_expired($quizid, $attemptid, $studentisonline, $setting){
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_quiz_handle_if_time_expired',
+            'params' => array_merge(array('quizid' => $quizid, 'attemptid' => $attemptid, 'studentisonline' => $studentisonline), $setting)
+        ), false
+    );
+    return $result;
+}

@@ -1758,7 +1758,6 @@ class mod_quiz_external extends external_api {
             array(
                 'quizid' => new external_value(PARAM_INT, 'quiz instance id'),
                 'attemptid' => new external_value(PARAM_INT, 'attempt id, 0 for the user last attempt if exists', VALUE_DEFAULT, 0),
-                'userid' => new external_value(PARAM_INT, 'user host mapping id'),
             )
         );
     }
@@ -1772,7 +1771,7 @@ class mod_quiz_external extends external_api {
      * @since Moodle 3.1
      * @throws  moodle_quiz_exception
      */
-    public static function get_attempt_access_information($quizid, $attemptid = 0, $userid = 0) {
+    public static function get_attempt_access_information($quizid, $attemptid = 0) {
         global $DB, $USER;
 
         $warnings = array();
@@ -1780,24 +1779,22 @@ class mod_quiz_external extends external_api {
         $params = array(
             'quizid' => $quizid,
             'attemptid' => $attemptid,
-            'userid' => $userid,
         );
         $params = self::validate_parameters(self::get_attempt_access_information_parameters(), $params);
 
         list($quiz, $course, $cm, $context) = self::validate_quiz($params['quizid']);
-        $uid = (!empty($params['userid']))?$userid:$USER->id;
 
         $attempttocheck = 0;
         if (!empty($params['attemptid'])) {
             $attemptobj = quiz_attempt::create($params['attemptid']);
-            if ($attemptobj->get_userid() != $uid) {
+            if ($attemptobj->get_userid() != $USER->id) {
                 throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'notyourattempt');
             }
             $attempttocheck = $attemptobj->get_attempt();
         }
 
         // Access manager now.
-        $quizobj = quiz::create($cm->instance, $uid);
+        $quizobj = quiz::create($cm->instance, $USER->id);
         $ignoretimelimits = has_capability('mod/quiz:ignoretimelimits', $context, null, false);
         $timenow = time();
         $accessmanager = new quiz_access_manager($quizobj, $timenow, $ignoretimelimits);

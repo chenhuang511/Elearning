@@ -129,7 +129,11 @@ class quiz {
      * @return quiz_attempt the new quiz_attempt object.
      */
     public function create_attempt_object($attemptdata) {
-        return new quiz_attempt($attemptdata, $this->quiz, $this->cm, $this->course);
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            return new quiz_attempt($attemptdata, $this->quiz, $this->cm, $this->course, false, true);
+        }else{
+            return new quiz_attempt($attemptdata, $this->quiz, $this->cm, $this->course);
+        }
     }
 
     // Functions for loading more data =========================================

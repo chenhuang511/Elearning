@@ -242,4 +242,13 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_quiz_handle_if_time_expired' => array(
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'remote_handle_if_time_expired',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Check this attempt, to see if there are any state transitions that should happen automatically.
+		 					This function will update the attempt checkstatetime.",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 );

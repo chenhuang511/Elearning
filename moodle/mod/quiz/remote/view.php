@@ -82,21 +82,46 @@ $lastfinishedattempt = end($attempts);
 $unfinished = false;
 $unfinishedattemptid = null;
 $unfinishedattempt = get_remote_user_attemps($quiz->id, $user[0]->id, 'unfinished', true)->attempts;
+
+// Get settinglocal to call API handle_if_time_expired
+if($quiz->settinglocal){
+    $setting = array();
+    $fields =  array(
+        'timeopen',
+        'timeclose',
+        'timelimit',
+        'overduehandling',
+        'graceperiod',
+        'attempts',
+        'grademethod'
+    );
+    $index = 0;
+    foreach ($fields as $field){
+        $setting["setting[$index][name]"] = $field;
+        $setting["setting[$index][value]"] = $quiz->$field;
+        $index++;
+    }
+}
 if(count($unfinishedattempt) > 0 && $unfinishedattempt[0]){
-    $attempts[] = $unfinishedattempt[0];
+    if($unfinishedattempt[0]){
+        $attempts[] = $unfinishedattempt[0];
+    }else{
+        $attempts[] = $unfinishedattempt;
+    }
 
     // If the attempt is now overdue, deal with that - and pass isonline = false.
     // We want the student notified in this case.
-    $quizobj->create_attempt_object($unfinishedattempt)->handle_if_time_expired(time(), false);
+    $unfinishedattempt = remote_handle_if_time_expired($quiz->id, $unfinishedattempt[0]->id, false, $setting);
 
-    $unfinished = $unfinishedattempt[0]->state == quiz_attempt::IN_PROGRESS ||
-        $unfinishedattempt[0]->state == quiz_attempt::OVERDUE;
+    $unfinished = $unfinishedattempt->state == quiz_attempt::IN_PROGRESS ||
+        $unfinishedattempt->state == quiz_attempt::OVERDUE;
     if (!$unfinished) {
         $lastfinishedattempt = $attempts;
     }
-    $unfinishedattemptid = $unfinishedattempt[0]->id;
+    $unfinishedattemptid = $unfinishedattempt->id;
     $unfinishedattempt = null; // To make it clear we do not use this again.
 }
+
 $numattempts = count($attempts);
 $viewobj->attempts = $attempts;
 $viewobj->attemptobjs = array();
