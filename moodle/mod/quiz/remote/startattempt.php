@@ -102,7 +102,25 @@ if ($currentattemptid) {
 
 $user = get_remote_mapping_user();
 $preview = $quizobj->is_preview_user();
-$attemptremote = get_remote_quiz_start_attempt($quiz->id, $user[0]->id, $preview);
+if($quiz->settinglocal){
+    $setting = array();
+    $fields =  array(
+        'timeopen',
+        'timeclose',
+        'timelimit',
+        'overduehandling',
+        'graceperiod',
+        'attempts',
+        'grademethod',
+    );
+    $index = 0;
+    foreach ($fields as $field){
+        $setting["setting[$index][name]"] = $field;
+        $setting["setting[$index][value]"] = $quiz->$field;
+        $index++;
+    }
+}
+$attemptremote = get_remote_quiz_start_attempt($quiz->id, $user[0]->id, $preview, $setting);
 if($attemptremote->errorcode == 'attemptstillinprogress'){
     print_error('attemptstillinprogress', 'quiz', $quizobj->view_url());
 }

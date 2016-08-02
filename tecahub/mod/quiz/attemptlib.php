@@ -104,16 +104,10 @@ class quiz {
      * @param int $userid the the userid.
      * @return quiz the new quiz object
      */
-    public static function create($quizid, $userid = null, $timeclose = false) {
+    public static function create($quizid, $userid = null, $localsetting = array()) {
         global $DB;
 
-        $quiz = quiz_access_manager::load_quiz_and_settings($quizid);
-        /**
-         * reset time close quiz for host - nccsoft
-         */
-        if($timeclose == true){
-            $quiz->timeclose = 0;
-        }
+        $quiz = quiz_access_manager::load_quiz_and_settings($quizid, $localsetting);
         $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
         $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id, false, MUST_EXIST);
 

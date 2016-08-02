@@ -107,11 +107,15 @@ foreach ($_POST as $key => $value) {
 // get quiz local setting if isset quiz->settinglocal
 if($quiz->settinglocal){
     $setting = array();
-    $fields =  array('timeopen',
-                'timeclose',
-                'timelimit',
-                'overduehandling',
-                'graceperiod');
+    $fields =  array(
+        'timeopen',
+        'timeclose',
+        'timelimit',
+        'overduehandling',
+        'graceperiod',
+        'attempts',
+        'grademethod'
+    );
     $index = 0;
     foreach ($fields as $field){
         $setting["setting[$index][name]"] = $field;

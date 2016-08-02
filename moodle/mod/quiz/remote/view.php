@@ -64,7 +64,7 @@ $accessmanager = new quiz_access_manager($quizobj, $timenow,
     has_capability('mod/quiz:ignoretimelimits', $context, null, false));
 $quiz = $quizobj->get_quiz();
 
-// Trigger course_module_viewed event and completion. @TODO chua test trigger.
+// Trigger course_module_viewed event and completion.
 get_remote_quiz_view_quiz($quiz->id);
 
 // Initialize $PAGE, compute blocks.
@@ -85,6 +85,10 @@ $unfinishedattempt = get_remote_user_attemps($quiz->id, $user[0]->id, 'unfinishe
 if(count($unfinishedattempt) > 0 && $unfinishedattempt[0]){
     $attempts[] = $unfinishedattempt[0];
 
+    // If the attempt is now overdue, deal with that - and pass isonline = false.
+    // We want the student notified in this case.
+    $quizobj->create_attempt_object($unfinishedattempt)->handle_if_time_expired(time(), false);
+
     $unfinished = $unfinishedattempt[0]->state == quiz_attempt::IN_PROGRESS ||
         $unfinishedattempt[0]->state == quiz_attempt::OVERDUE;
     if (!$unfinished) {
@@ -93,8 +97,6 @@ if(count($unfinishedattempt) > 0 && $unfinishedattempt[0]){
     $unfinishedattemptid = $unfinishedattempt[0]->id;
     $unfinishedattempt = null; // To make it clear we do not use this again.
 }
-//echo "<pre>";
-//print_r($attempts);die;
 $numattempts = count($attempts);
 $viewobj->attempts = $attempts;
 $viewobj->attemptobjs = array();

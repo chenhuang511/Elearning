@@ -704,6 +704,14 @@ ORDER BY
                     ), 'Preflight required data (like passwords)', VALUE_DEFAULT, array()
                 ),
                 'forcenew' => new external_value(PARAM_BOOL, 'Whether to force a new attempt or not.', VALUE_DEFAULT, false),
+                'setting' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHANUMEXT, 'data name'),
+                            'value' => new external_value(PARAM_RAW, 'data value'),
+                        )
+                    ), 'Local quiz setting (like: timelimit, timeopen ...)', VALUE_DEFAULT, array()
+                ),
             )
         );
     }
@@ -718,7 +726,7 @@ ORDER BY
      * @since Moodle 3.1
      * @throws moodle_quiz_exception
      */
-    public static function start_remote_attempt($quizid, $remoteuserid, $preview, $preflightdata = array(), $forcenew = false) {
+    public static function start_remote_attempt($quizid, $remoteuserid, $preview, $preflightdata = array(), $forcenew = false, $setting = array()) {
         global $DB, $USER;
 
         $warnings = array();
@@ -730,11 +738,19 @@ ORDER BY
             'preview' => $preview,
             'preflightdata' => $preflightdata,
             'forcenew' => $forcenew,
+            'setting' => $setting,
         );
         $params = self::validate_parameters(self::start_remote_attempt_parameters(), $params);
         $forcenew = $params['forcenew'];
         list($quiz, $course, $cm, $context) = mod_quiz_external::validate_quiz($params['quizid']);
-        $quizobj = quiz::create($cm->instance, $remoteuserid, $timeclose = true); // edit to reset time close quiz
+        
+        if($params['setting']){
+            $localsetting = array();
+            foreach ($params['setting'] as $element) {
+                $localsetting[$element['name']] = $element['value'];
+            }
+        }
+        $quizobj = quiz::create($cm->instance, $remoteuserid, $localsetting);
         // Check questions.
         if (!$quizobj->has_questions()) {
             throw new moodle_quiz_exception($quizobj, 'noquestionsfound');
