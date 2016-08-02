@@ -56,7 +56,7 @@ if (!defined('DB_HOSTNAME')) {
     $db_username = isset($_SERVER['OSS_RDS_USERNAME']) ? $_SERVER['OSS_RDS_USERNAME'] : 'webapp';
     define('DB_USERNAME', $db_username);
 
-    $db_password = isset($_SERVER['OSS_RDS_PASSWORD']) ? $_SERVER['OSS_RDS_PASSWORD'] : 'passw0rd';
+    $db_password = isset($_SERVER['OSS_RDS_PASSWORD']) ? $_SERVER['OSS_RDS_PASSWORD'] : '12345a@';
     define('DB_PASSWORD', $db_password);
 
     $db_name = isset($_SERVER['OSS_RDS_DB_NAME']) ? $_SERVER['OSS_RDS_DB_NAME'] : 'openslideshare';
