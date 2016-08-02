@@ -46,12 +46,15 @@
             </div>
         </div>
     </div>
-    <div class="banner">
-        <div class="banner-content css">
-            <div class="font d1">Chào mừng đến với</div>
-            <div class="font d2">TRƯỜNG ĐÀO TẠO NGHIỆP VỤ</div>
-            <div class="font d3">BẢO HIỂM XÃ HỘI VIỆT NAM</div>
-        </div>
-    </div>
+    <?php if (isloggedin() && !isguestuser()): ?>
+        <?php else: ?>
+            <div class="banner">
+                <div class="banner-content css">
+                    <div class="font d1">Chào mừng đến với</div>
+                    <div class="font d2">TRƯỜNG ĐÀO TẠO NGHIỆP VỤ</div>
+                    <div class="font d3">BẢO HIỂM XÃ HỘI VIỆT NAM</div>
+                </div>
+            </div>
+    <?php endif; ?>
 </header>
 <!--E.O.Header-->
