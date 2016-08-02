@@ -305,7 +305,7 @@ function assign_extend_settings_navigation(settings_navigation $settings, naviga
  *                        will know about (most noticeably, an icon).
  */
 function assign_get_coursemodule_info($coursemodule) {
-    global $CFG, $DB;
+    global $DB;
 
     if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
         $dbparams = array('id' => $coursemodule->instance);
@@ -314,8 +314,7 @@ function assign_get_coursemodule_info($coursemodule) {
             return false;
         }
     } else {
-        require_once($CFG->dirroot . '/mod/assign/remote/locallib.php');
-        if (!$assignment = get_remote_assign_by_id($coursemodule->instance)) {
+        if (!$assignment = generate_remote_assign_record($coursemodule)){
             return false;
         }
     }
@@ -1584,4 +1583,41 @@ function generate_output_introattachment($introattachments){
     $o .= '</div>';
 
     return $o;
+}
+
+/**
+ * Check remote assign has on host or not. If not insert to local.
+ *
+ * @param object $coursemodule  -  Information course module
+ * @return object $return       -  The assign record or false if not found.
+ */
+function generate_remote_assign_record($coursemodule)
+{
+    global $CFG, $DB;
+    require_once($CFG->dirroot . '/mod/assign/remote/locallib.php');
+
+    if (!$assignment = $DB->get_record('assign', array('remoteid' => $coursemodule->instance))) {
+        // Get remote assign
+        if (!$remoteassign = get_remote_assign_by_id($coursemodule->instance)) {
+            return false;
+        }
+        $course = get_local_course_record($coursemodule->course);
+        // Check if not exist then insert local DB
+        unset($remoteassign->id);
+        $remoteassign->course = $course->id;
+        $remoteassign->remoteid = $coursemodule->instance;
+        // From this point we make database changes, so start transaction.
+        $transaction = $DB->start_delegated_transaction();
+        $aid = $DB->insert_record('assign', $remoteassign);
+        // Insert plugin config
+        $pluginconfigs = get_remote_assign_plugin_config($coursemodule->instance);
+        foreach ($pluginconfigs as $pluginconfig) {
+            $pluginconfig->assignment = $aid;
+        }
+        $DB->insert_records('assign_plugin_config', $pluginconfigs);
+        $transaction->allow_commit();
+        $assignment = $DB->get_record('assign', array('id' => $aid));
+    }
+
+    return $assignment;
 }

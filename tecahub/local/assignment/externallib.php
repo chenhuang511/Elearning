@@ -3939,4 +3939,136 @@ class local_mod_assign_external extends external_api {
         );
     }
 
+    /**
+     * Describes the get_all_grade_by_userid_courseid parameters
+     *
+     * @return external_external_function_parameters
+     */
+    public static function get_all_grade_by_userid_courseid_parameters(){
+        return new external_function_parameters(
+            array(
+                'gradeitemid' => new external_value(PARAM_INT, 'The id of grade item'),
+                'grabthelot' => new external_value(PARAM_BOOL, 'If true, grabs all scores for current user on 
+                                        this course, so that later ones come from cache'),
+                'userid' => new external_value(PARAM_INT, 'The id of user'),
+                'courseid' => new external_value(PARAM_INT, 'The id of course')
+            )
+        );
+    }
+
+    /**
+     * Retrieve all grades for the current course of just get current grade
+     *
+     * @param int $gradeitemid     - The id of grade item
+     * @param bool $grabthelot     - If true, grabs all scores for current user on
+     *   this course, so that later ones come from cache
+     * @param int $userid          - The id of user on host
+     * @param int $courseid        - The id of course on host
+     *
+     * @return mixes
+     * @throws invalid_parameter_exception
+     */
+    public static function get_all_grade_by_userid_courseid($gradeitemid, $grabthelot, $userid, $courseid){
+        global $DB;
+
+        $result = array();
+
+        $warnings = array();
+
+        // validate params
+        $params = self::validate_parameters(self::get_all_grade_by_userid_courseid_parameters(),
+            array(
+                'gradeitemid' => $gradeitemid,
+                'grabthelot' => $grabthelot,
+                'userid' => $userid,
+                'courseid' => $courseid
+            )
+        );
+
+        if ($params['grabthelot']) {
+            $result['hasgrab'] = $DB->get_records_sql('
+                        SELECT
+                            gi.id,gg.finalgrade,gg.rawgrademin,gg.rawgrademax
+                        FROM
+                            {grade_items} gi
+                            LEFT JOIN {grade_grades} gg ON gi.id=gg.itemid AND gg.userid=?
+                        WHERE
+                            gi.courseid = ?', array($params['userid'], $params['courseid']));
+
+            if (!$result['hasgrab']) {
+                return $result['hasgrab'] = array();
+            }
+        } else {
+            $result['notgrab'] = $DB->get_record('grade_grades', array(
+                'userid' => $params['userid'], 'itemid' => $params['gradeitemid']));
+            if (!$result['notgrab']) {
+                return $result['notgrab'] = array();
+            }
+        }
+
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    /**
+     * Describes the get_all_grade_by_userid_courseid returns value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function get_all_grade_by_userid_courseid_returns(){
+        return new external_single_structure(
+            array(
+                'hasgrab' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'grade grades id', VALUE_OPTIONAL),
+                            'finalgrade' => new external_value(PARAM_FLOAT, 'finalgrade', VALUE_OPTIONAL),
+                            'rawgrademax' => new external_value(PARAM_FLOAT, 'rawgrademax', VALUE_OPTIONAL),
+                            'rawgrademin' => new external_value(PARAM_FLOAT, 'rawgrademin', VALUE_OPTIONAL),
+                        )
+                    ), 'grades grade info', VALUE_OPTIONAL
+                ),
+                'notgrab' => self::get_mod_assign_grade_grades_structure(VALUE_OPTIONAL),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
+    /**
+     * Creates a grade_grades structure.
+     *
+     * @return external_single_structure the grade_grades structure
+     */
+    private static function get_mod_assign_grade_grades_structure($required = VALUE_REQUIRED) {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'grade grades id', VALUE_OPTIONAL),
+                'itemid' => new external_value(PARAM_INT, 'itemid', VALUE_OPTIONAL),
+                'userid' => new external_value(PARAM_INT, 'userid', VALUE_OPTIONAL),
+                'rawgrade' => new external_value(PARAM_FLOAT, 'rawgrade', VALUE_OPTIONAL),
+                'rawgrademax' => new external_value(PARAM_FLOAT, 'rawgrademax', VALUE_OPTIONAL),
+                'rawgrademin' => new external_value(PARAM_FLOAT, 'rawgrademin', VALUE_OPTIONAL),
+                'rawscaleid' => new external_value(PARAM_INT, 'rawscaleid', VALUE_OPTIONAL),
+                'usermodified' => new external_value(PARAM_INT, 'usermodified', VALUE_OPTIONAL),
+                'finalgrade' => new external_value(PARAM_FLOAT, 'finalgrade', VALUE_OPTIONAL),
+                'hidden' => new external_value(PARAM_INT, 'hidden', VALUE_OPTIONAL),
+                'locked' => new external_value(PARAM_INT, 'locked', VALUE_OPTIONAL),
+                'locktime' => new external_value(PARAM_INT, 'locktime', VALUE_OPTIONAL),
+                'exported' => new external_value(PARAM_INT, 'exported', VALUE_OPTIONAL),
+                'overridden' => new external_value(PARAM_INT, 'overridden', VALUE_OPTIONAL),
+                'excluded' => new external_value(PARAM_INT, 'excluded', VALUE_OPTIONAL),
+                'feedback' => new external_value(PARAM_RAW, 'feedback', VALUE_OPTIONAL),
+                'feedbackformat' => new external_value(PARAM_INT, 'feedbackformat', VALUE_OPTIONAL),
+                'information' => new external_value(PARAM_RAW, 'information', VALUE_OPTIONAL),
+                'informationformat' => new external_value(PARAM_INT, 'informationformat', VALUE_OPTIONAL),
+                'timecreated' => new external_value(PARAM_INT, 'timecreated', VALUE_OPTIONAL),
+                'timemodified' => new external_value(PARAM_INT, 'timemodified', VALUE_OPTIONAL),
+                'aggregationstatus' => new external_value(PARAM_RAW, 'gradepaggregationstatusass', VALUE_OPTIONAL),
+                'aggregationweight' => new external_value(PARAM_FLOAT, 'aggregationweight', VALUE_OPTIONAL),
+            ), 'grades grade info', $required
+        );
+    }
+
 }

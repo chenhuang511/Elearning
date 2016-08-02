@@ -25,4 +25,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Báo cáo người chấm';
+$string['pluginname'] = 'Báo cáo chấm điểm';
+$string['preferences'] = 'Tùy chỉnh báo cáo của giáo viên';

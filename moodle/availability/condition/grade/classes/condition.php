@@ -219,7 +219,8 @@ class condition extends \core_availability\condition {
         if (!array_key_exists($gradeitemid, $cachedgrades)) {
             if ($grabthelot) {
                 // Get all grades for the current course.
-                $rs = $DB->get_recordset_sql('
+                if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+                    $rs = $DB->get_recordset_sql('
                         SELECT
                             gi.id,gg.finalgrade,gg.rawgrademin,gg.rawgrademax
                         FROM
@@ -227,6 +228,14 @@ class condition extends \core_availability\condition {
                             LEFT JOIN {grade_grades} gg ON gi.id=gg.itemid AND gg.userid=?
                         WHERE
                             gi.courseid = ?', array($userid, $courseid));
+                } else {
+                    global $CFG;
+                    require_once($CFG->dirroot . '/mod/assign/remote/locallib.php');
+                    require_once($CFG->libdir . '/dml/json_moodle_recordset.php');
+
+                    $records = get_all_grade_by_userid_courseid($gradeitemid, $grabthelot, $userid, $courseid);
+                    $rs = new \json_moodle_recordset($records);
+                }
                 foreach ($rs as $record) {
                     // This function produces division by zero error warnings when rawgrademax and rawgrademin
                     // are equal. Below change does not affect function behavior, just avoids the warning.
@@ -249,8 +258,12 @@ class condition extends \core_availability\condition {
                 }
             } else {
                 // Just get current grade.
-                $record = $DB->get_record('grade_grades', array(
-                    'userid' => $userid, 'itemid' => $gradeitemid));
+                if (MOODLE_RUN_MODE ===  MOODLE_MODE_HOST){
+                    $record = $DB->get_record('grade_grades', array(
+                        'userid' => $userid, 'itemid' => $gradeitemid));
+                } else {
+                    $record = get_all_grade_by_userid_courseid($gradeitemid, $grabthelot, $userid, $courseid);
+                }
                 // This function produces division by zero error warnings when rawgrademax and rawgrademin
                 // are equal. Below change does not affect function behavior, just avoids the warning.
                 if ($record && !is_null($record->finalgrade) && $record->rawgrademax != $record->rawgrademin) {

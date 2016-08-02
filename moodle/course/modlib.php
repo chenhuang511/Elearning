@@ -565,13 +565,15 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
 
     $modcontext = context_module::instance($moduleinfo->coursemodule);
 
-    // Update embedded links and save files.
-    if (plugin_supports('mod', $moduleinfo->modulename, FEATURE_MOD_INTRO, true)) {
-        $moduleinfo->intro = file_save_draft_area_files($moduleinfo->introeditor['itemid'], $modcontext->id,
-                                                      'mod_'.$moduleinfo->modulename, 'intro', 0,
-                                                      array('subdirs'=>true), $moduleinfo->introeditor['text']);
-        $moduleinfo->introformat = $moduleinfo->introeditor['format'];
-        unset($moduleinfo->introeditor);
+    if (MOODLE_RUN_MODE === MOODLE_RUN_MODE) {
+        // Update embedded links and save files.
+        if (plugin_supports('mod', $moduleinfo->modulename, FEATURE_MOD_INTRO, true)) {
+            $moduleinfo->intro = file_save_draft_area_files($moduleinfo->introeditor['itemid'], $modcontext->id,
+                'mod_'.$moduleinfo->modulename, 'intro', 0,
+                array('subdirs'=>true), $moduleinfo->introeditor['text']);
+            $moduleinfo->introformat = $moduleinfo->introeditor['format'];
+            unset($moduleinfo->introeditor);
+        }
     }
 
     // Get the a copy of the grade_item before it is modified incase we need to scale the grades.

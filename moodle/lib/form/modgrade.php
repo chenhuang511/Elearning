@@ -190,7 +190,16 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
                     $choices);
                 $rescalegradesselect->setHiddenLabel = false;
                 $rescalegradesselectid = $this->generate_modgrade_subelement_id('modgrade_rescalegrades');
-                $rescalegradesselect->updateAttributes(array('id' => $rescalegradesselectid));
+                if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                    $rescalegradesselect->updateAttributes(array('id' => $rescalegradesselectid));
+                } else {
+                    $rescalegradesselect->updateAttributes(array(
+                            'id' => $rescalegradesselectid,
+                            'disabled' => 'disabled'
+                        )
+                    );
+
+                }
             }
         }
 
