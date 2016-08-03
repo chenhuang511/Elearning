@@ -159,17 +159,17 @@ class local_mod_chat_external extends external_api {
         $par = array('chatid' => $params['chatid'], 'groupid' => $params['groupid']);
 
         if ($params['groupid']) {
-            $groupselect = "AND (groupid=:groupid OR groupid=0)";
+            $groupselect = " AND (groupid= ".$params['groupid']." OR groupid=0)";
         } else {
             $groupselect = "";
         }
 
-        $sql = "SELECT *
-        FROM {chat_messages_current} WHERE chatid = :chatid $groupselect
+        $select = "chatid = ".$params['chatid'].$groupselect."
         ORDER BY timestamp DESC";
 
         // Return the lastest one message.
-        return $DB->get_record_sql($sql, $par, true);
+        $response =  $DB->get_record_select('chat_messages_current', $select);
+        return $response;
     }
 
     public static function get_chat_current_messages_returns() {

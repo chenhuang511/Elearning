@@ -189,6 +189,7 @@ class mod_chat_external extends external_api {
 
             $returnedusers[] = array(
                 'id' => $user->id,
+                'groupid' => $chatuser->groupid,
 				'chatid' => $chatuser->chatid,
                 'fullname' => fullname($user),
                 'profileimageurl' => $profileimageurl
@@ -215,6 +216,7 @@ class mod_chat_external extends external_api {
                         array(
                             'id' => new external_value(PARAM_INT, 'user id'),
 							'chatid' => new external_value(PARAM_INT, 'chat id'),
+							'groupid' => new external_value(PARAM_INT, 'group id'),
                             'fullname' => new external_value(PARAM_NOTAGS, 'user full name'),
                             'profileimageurl' => new external_value(PARAM_URL, 'user picture URL'),
                         )
