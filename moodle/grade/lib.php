@@ -21,7 +21,7 @@
  * @copyright 2009 Petr Skoda and Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+defined('ISREMOTE') || define('ISREMOTE', MOODLE_RUN_MODE === MOODLE_MODE_HUB);
 require_once($CFG->libdir . '/gradelib.php');
 require_once($CFG->dirroot . '/grade/export/lib.php');
 
@@ -1627,11 +1627,15 @@ class grade_structure
             return null;
         }
 
-        if (!array_key_exists($itemmodule, $hasgradephp)) {
-            if (file_exists($CFG->dirroot . '/mod/' . $itemmodule . '/grade.php')) {
-                $hasgradephp[$itemmodule] = true;
-            } else {
-                $hasgradephp[$itemmodule] = false;
+        if (ISREMOTE) {
+            $hasgradephp[$itemmodule] = false;
+        } else {
+            if (!array_key_exists($itemmodule, $hasgradephp)) {
+                if (file_exists($CFG->dirroot . '/mod/' . $itemmodule . '/grade.php')) {
+                    $hasgradephp[$itemmodule] = true;
+                } else {
+                    $hasgradephp[$itemmodule] = false;
+                }
             }
         }
 
@@ -1643,7 +1647,11 @@ class grade_structure
             }
             return new moodle_url('/mod/' . $itemmodule . '/grade.php', $args);
         } else {
-            return new moodle_url('/mod/' . $itemmodule . '/view.php', array('id' => $cm->id));
+            if (ISREMOTE) {
+                return new moodle_url('/mod/' . $itemmodule . '/remote/view.php', array('id' => $cm->id));
+            } else {
+                return new moodle_url('/mod/' . $itemmodule . '/view.php', array('id' => $cm->id));
+            }
         }
     }
 
