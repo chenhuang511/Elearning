@@ -48,6 +48,7 @@ class mod_resource_mod_form extends moodleform_mod {
         //-------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
         $mform->addElement('text', 'name', get_string('name'), array('size'=>'48'));
+        $this->checkDisable('name');
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);
         } else {
@@ -67,12 +68,13 @@ class mod_resource_mod_form extends moodleform_mod {
         $filemanager_options['mainfile'] = true;
 
         $mform->addElement('filemanager', 'files', get_string('selectfiles'), null, $filemanager_options);
-
+        $this->checkDisable('files');
         // add legacy files flag only if used
         if (isset($this->current->legacyfiles) and $this->current->legacyfiles != RESOURCELIB_LEGACYFILES_NO) {
             $options = array(RESOURCELIB_LEGACYFILES_DONE   => get_string('legacyfilesdone', 'resource'),
                              RESOURCELIB_LEGACYFILES_ACTIVE => get_string('legacyfilesactive', 'resource'));
             $mform->addElement('select', 'legacyfiles', get_string('legacyfiles', 'resource'), $options);
+            $this->checkDisable('legacyfiles');
         }
 
         //-------------------------------------------------------
@@ -92,18 +94,22 @@ class mod_resource_mod_form extends moodleform_mod {
         } else {
             $mform->addElement('select', 'display', get_string('displayselect', 'resource'), $options);
             $mform->setDefault('display', $config->display);
+            $this->checkDisable('display');
             $mform->addHelpButton('display', 'displayselect', 'resource');
         }
 
         $mform->addElement('checkbox', 'showsize', get_string('showsize', 'resource'));
         $mform->setDefault('showsize', $config->showsize);
         $mform->addHelpButton('showsize', 'showsize', 'resource');
+        $this->checkDisable('showsize');
         $mform->addElement('checkbox', 'showtype', get_string('showtype', 'resource'));
         $mform->setDefault('showtype', $config->showtype);
         $mform->addHelpButton('showtype', 'showtype', 'resource');
+        $this->checkDisable('showtype');
         $mform->addElement('checkbox', 'showdate', get_string('showdate', 'resource'));
         $mform->setDefault('showdate', $config->showdate);
         $mform->addHelpButton('showdate', 'showdate', 'resource');
+        $this->checkDisable('showdate');
 
         if (array_key_exists(RESOURCELIB_DISPLAY_POPUP, $options)) {
             $mform->addElement('text', 'popupwidth', get_string('popupwidth', 'resource'), array('size'=>3));
@@ -132,12 +138,14 @@ class mod_resource_mod_form extends moodleform_mod {
             $mform->disabledIf('printintro', 'display', 'eq', RESOURCELIB_DISPLAY_OPEN);
             $mform->disabledIf('printintro', 'display', 'eq', RESOURCELIB_DISPLAY_NEW);
             $mform->setDefault('printintro', $config->printintro);
+            $this->checkDisable('printintro');
         }
 
         $options = array('0' => get_string('none'), '1' => get_string('allfiles'), '2' => get_string('htmlfilesonly'));
         $mform->addElement('select', 'filterfiles', get_string('filterfiles', 'resource'), $options);
         $mform->setDefault('filterfiles', $config->filterfiles);
         $mform->setAdvanced('filterfiles', true);
+        $this->checkDisable('filterfiles');
 
         //-------------------------------------------------------
         $this->standard_coursemodule_elements();

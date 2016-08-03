@@ -50,151 +50,59 @@ class core_remote_renderer extends plugin_renderer_base
 
     public function render_enrol_course($courses)
     {
+        global $CFG;
+        require_once($CFG->libdir . '/remote/lib.php');
+
+        // start - enrol course list
         $content = html_writer::start_tag('div', array('id' => 'enrol-course-list', 'class' => 'container'));
 
-        $chelper = new coursecat_helper();
-
-        $coursecount = 0;
-
+        // start - container avaiable course
         $content .= html_writer::start_tag('div', array('class' => 'container-available-course col-sm-9'));
-        $content .= html_writer::tag('div', 'khóa học của tôi', array('class' => 'block-title'));
+
+        $tabnames = array('Chương trình học', 'Tiến độ khóa học', 'Khóa học đã hoàn thành');
+        // div coursetabs
+        $content .= html_writer::start_tag('ul', array('id' => 'enroltabs', 'class' => 'nav nav-tabs', 'role' => 'tablist'));
+        $content .= $this->render_tabs($tabnames);
+        $content .= html_writer::end_tag('ul'); // the end coursetabs
+        $content .= html_writer::start_tag('div', array('id' => 'courseTabContent', 'class' => 'tab-content'));
+
+        $mylearningplan = '';
         foreach ($courses as $course) {
-            $coursecount++;
-            $classes = 'coursebox';
+            $classes = 'coursebox clearfix';
 
-            // .coursebox
-            $content .= html_writer::start_tag('div', array('class' => $classes, 'data-courseid' => $course->id,));
-
-            //$classes = trim('coursebox clearfix ');
-            if ($chelper->get_show_courses() >= core_course_renderer::COURSECAT_SHOW_COURSES_EXPANDED) {
-                $nametag = 'h3';
-            } else {
-                $nametag = 'div';
-            }
-
-            // thumbnail
-            global $CFG;
-            require_once($CFG->libdir . '/remote/lib.php');
             $thumbOjb = get_remote_course_thumb($course->remoteid);
             if ($thumbOjb) {
-                $thumbnail = $thumbOjb[0]->thumbnail_image;
-
-                if ($thumbnail) {
-                    $imgthumb = html_writer::empty_tag('img', array('class' => 'course-img', 'src' => $thumbOjb[0]->thumbnail_image));
-                    $thumblink = html_writer::link($this->get_view_course_url($course),
-                        $imgthumb, array('class' => $course->visible ? '' : 'course-thumbnail'));
-
-                    $content .= html_writer::tag('div', $thumblink, array('class' => 'course-image col-sm-3'));
-                }
-            }
-            $content .= html_writer::start_tag('div', array('class' => 'course-content col-sm-9')); // start tag course_content
-
-            // course name
-            $coursename = $course->fullname;
-            $coursenamelink = html_writer::link($this->get_view_course_url($course),
-                $coursename, array('class' => $course->visible ? '' : 'dimmed'));
-            $content .= html_writer::tag($nametag, $coursenamelink, array('class' => 'coursename col-sm-12'));
-
-            $content .= html_writer::start_tag('div', array('class' => 'sum-btn col-sm-12')); // start tag summary-button
-            // display course summary
-            if (isset($course->summary) && !empty($course->summary)) {
-                $content .= html_writer::start_tag('div', array('class' => 'summary col-sm-9')); //start tag summary
-                $content .= remote_render_helper::token_truncate($course->summary, 200);
-                $content .= html_writer::end_tag('div'); // .summary
+                $course->thumbnail = $thumbOjb[0]->thumbnail_image;
             }
 
-            // display button
-            $content .= html_writer::start_tag('div', array('class' => 'btn-register col-sm-3')); //start tag button
-            $buttonname = 'Học ngay';
-            $buttonlink = html_writer::link($this->get_view_course_url($course),
-                $buttonname, array('class' => $course->visible ? '' : 'button'));
-            $content .= html_writer::tag($buttonname, $buttonlink, array('class' => 'btn-reg-now'));
-            $content .= html_writer::end_tag('div'); // end button
-            $content .= html_writer::end_tag('div'); //end tag sum-btn
-            $content .= html_writer::end_tag('div'); //end tag course_content
-
-            $content .= html_writer::end_tag('div');
+            $mylearningplan .= $this->format_course($course, $classes);
         }
+
+        $tabcontents = array($mylearningplan, 'Tien do hoc', 'khoa hoc hoan thanh');
+        // them cac content tab tai day
+        $content .= $this->render_tab_content($tabnames, $tabcontents);
         $content .= html_writer::end_tag('div');
+        // end tabs
+
+        $content .= html_writer::end_tag('div'); // end -container available course
 
         $content .= html_writer::start_tag('div', array('class' => 'right-block col-sm-3'));
 
-        $content .= html_writer::start_tag('div', array('class' => 'container-block'));
+        $proposecourses = array_slice($courses, 0, 3);
+        $content .= $this->render_navigation_course($proposecourses, 'Khóa học đề xuất');
 
-        $content .= html_writer::tag('div', 'khóa học đề xuất', array('class' => 'block-title'));
-        $course3 = array_slice($courses,0,3);
-        foreach ($course3 as $course) {
-            $coursecount++;
-            $classes = 'coursebox col-sm-12';
-            $thumbOjb = get_remote_course_thumb($course->remoteid);
-
-            // .coursebox
-            $content .= html_writer::start_tag('div', array('class' => $classes, 'data-courseid' => $course->id,));
-            if ($thumbOjb) {
-                $thumbnail = $thumbOjb[0]->thumbnail_image;
-
-                if ($thumbnail) {
-                    $imgthumb = html_writer::empty_tag('img', array('class' => 'course-img', 'src' => $thumbnail));
-                    $thumblink = html_writer::link($this->get_view_course_url($course),
-                        $imgthumb, array('class' => $course->visible ? '' : 'course-thumbnail'));
-
-                    $content .= html_writer::tag('div', $thumblink, array('class' => 'course-image col-sm-4'));
-                }
-            }
-
-            $content .= html_writer::start_tag('div', array('class' => 'course_content col-sm-8')); // start tag course_content
-            // course name
-            $coursename = $course->fullname;
-            $coursenamelink = html_writer::link($this->get_view_course_url($course),
-                $coursename, array('class' => $course->visible ? '' : 'dimmed'));
-            $content .= html_writer::tag($nametag, $coursenamelink, array('class' => 'coursename'));
-            $content .= html_writer::end_tag('div'); //end tag course_content
-            $content .= html_writer::end_tag('div'); //end tag coursebox
-        }
-        $content .= html_writer::tag('button', 'Đọc thêm', array('class' => 'btn-readmore'));
-        $content .= html_writer::end_tag('div');
-
-        $content .= html_writer::start_tag('div', array('class' => 'container-block'));
-
-        $content .= html_writer::tag('div', 'khóa học hoàn thành', array('class' => 'block-title'));
-        $course3 = array_slice($courses,0,3);
-        foreach ($course3 as $course) {
-            $coursecount++;
-            $classes = 'coursebox col-sm-12';
-            $thumbOjb = get_remote_course_thumb($course->remoteid);
-
-            // .coursebox
-            $content .= html_writer::start_tag('div', array('class' => $classes, 'data-courseid' => $course->id,));
-            if ($thumbOjb) {
-                $thumbnail = $thumbOjb[0]->thumbnail_image;
-
-                if ($thumbnail) {
-                    $imgthumb = html_writer::empty_tag('img', array('class' => 'course-img', 'src' => $thumbnail));
-                    $thumblink = html_writer::link($this->get_view_course_url($course),
-                        $imgthumb, array('class' => $course->visible ? '' : 'course-thumbnail'));
-
-                    $content .= html_writer::tag('div', $thumblink, array('class' => 'course-image col-sm-4'));
-                }
-            }
-
-            $content .= html_writer::start_tag('div', array('class' => 'course-content col-sm-8')); // start tag course_content
-            // course name
-            $coursename = $course->fullname;
-            $coursenamelink = html_writer::link($this->get_view_course_url($course),
-                $coursename, array('class' => $course->visible ? '' : 'dimmed'));
-            $content .= html_writer::tag($nametag, $coursenamelink, array('class' => 'coursename'));
-            $content .= html_writer::end_tag('div'); //end tag course_content
-            $content .= html_writer::end_tag('div'); //end tag coursebox
-        }
-        $content .= html_writer::tag('button', 'Đọc thêm', array('class' => 'btn-readmore'));
-        $content .= html_writer::end_tag('div');
-        $content .= html_writer::end_tag('div');
-        $content .= html_writer::end_tag('div');
+        $completecourses = array_slice($courses, 0, 3);
+        $content .= $this->render_navigation_course($completecourses, 'Khóa học hoàn thành');
+        $content .= html_writer::end_tag('div'); // end - right-block
+        $content .= html_writer::end_tag('div'); // end - enrol course list
         echo $content;
     }
 
     public function render_available_course($courses)
     {
+        global $CFG;
+        require_once($CFG->libdir . '/remote/lib.php');
+
         // Wrap frontpage course list in div container.
         $content = html_writer::start_tag('div', array('id' => 'frontpage-course-list', 'class' => 'container'));
         $content .= html_writer::start_tag('div', array('class' => 'row'));
@@ -226,8 +134,6 @@ class core_remote_renderer extends plugin_renderer_base
                 'data-courseid' => $course->id,
             ));
             // thumbnail
-            global $CFG;
-            require_once($CFG->libdir . '/remote/lib.php');
             $thumbOjb = get_remote_course_thumb($course->remoteid);
             if ($thumbOjb) {
                 $thumbnail = $thumbOjb[0]->thumbnail_image;
@@ -304,6 +210,93 @@ class core_remote_renderer extends plugin_renderer_base
         echo $content;
     }
 
+    private function format_course($course, $classes)
+    {
+        $html = '';
+
+        // begin course box
+        $html .= html_writer::start_tag('article', array('class' => $classes, 'data-courseid' => $course->id));
+        $html .= html_writer::start_tag('header', array('class' => 'coursename'));
+        // course name
+        $coursename = $course->fullname;
+        $coursenamelink = html_writer::link($this->get_view_course_url($course),
+            $coursename, array('class' => $course->visible ? '' : 'dimmed'));
+        $progress = html_writer::span('80%', 'badge bhxh-badge');
+        $html .= html_writer::tag('h3', $coursenamelink . $progress);
+
+        $html .= html_writer::end_tag('header'); // end header
+
+        $html .= html_writer::start_tag('section', array('class' => 'row'));
+        // thumbnail
+        if (isset($course->thumbnail) && $course->thumbnail) {
+            $imgthumb = html_writer::empty_tag('img', array('class' => 'course-img', 'src' => $course->thumbnail));
+            $thumblink = html_writer::link($this->get_view_course_url($course),
+                $imgthumb, array('class' => $course->visible ? '' : 'course-thumbnail'));
+
+            $html .= html_writer::tag('div', $thumblink, array('class' => 'course-image col-sm-3'));
+        }
+
+        // display course summary
+        $html .= html_writer::start_tag('div', array('class' => 'summary col-sm-9')); //start tag summary
+        if (isset($course->summary) && !empty($course->summary)) {
+            $html .= html_writer::tag('p',remote_render_helper::token_truncate($course->summary, 200));
+        }
+        // display button
+        $html .= html_writer::link($this->get_view_course_url($course),
+            'Học ngay', array('class' => 'btn btn-primary btn-bhxh-reg'));
+        $html .= html_writer::end_tag('div'); // .summary
+
+        $html .= html_writer::end_tag('section'); // end section
+        $html .= html_writer::end_tag('article'); // end course box
+
+        return $html;
+    }
+
+    private function render_navigation_course($courses, $heading)
+    {
+        $html = '';
+        $i = 0;
+        $html .= html_writer::start_div('bhxh-sidebar');
+        $html .= html_writer::tag('h3', $heading, array('class' => 'bhxh-sidebar-heading'));
+        foreach ($courses as $course) {
+            $i++;
+            $classes = 'coursebox';
+            $thumbOjb = get_remote_course_thumb($course->remoteid);
+
+            // start article - coursebox
+            $html .= html_writer::start_tag('article', array('class' => $classes, 'data-courseid' => $course->id));
+            // start section block
+            $html .= html_writer::start_tag('section');
+
+            // course name
+            $coursename = $course->fullname;
+            $coursenamelink = html_writer::link($this->get_view_course_url($course),
+                $coursename, array('class' => $course->visible ? '' : 'dimmed'));
+            $html .= html_writer::tag('div', $coursenamelink, array('class' => 'coursename'));
+
+            // thumbnail
+            if ($thumbOjb) {
+                $thumbnail = $thumbOjb[0]->thumbnail_image;
+
+                if ($thumbnail) {
+                    $imgthumb = html_writer::empty_tag('img', array('class' => 'course-img', 'src' => $thumbnail));
+                    $thumblink = html_writer::link($this->get_view_course_url($course),
+                        $imgthumb, array('class' => $course->visible ? '' : 'course-thumbnail'));
+
+                    $html .= html_writer::tag('div', $thumblink, array('class' => 'course-image'));
+                }
+            }
+
+            $html .= html_writer::end_tag('section');
+            $html .= html_writer::end_tag('article'); //end tag coursebox
+        }
+        $html .= html_writer::start_div('bhxh-buttons'); // buttons
+        $html .= html_writer::link(new moodle_url('course.php'), 'xem tất cả ' . '<i class="fa fa-angle-right" aria-hidden="true"></i>', array('class' => 'bhxh-viewall'));
+        $html .= html_writer::end_div(); // end buttons
+        $html .= html_writer::end_div();
+        return $html;
+    }
+
     private function render_tabs($tabnames)
     {
         $html = '';
@@ -352,7 +345,7 @@ class core_remote_renderer extends plugin_renderer_base
     private function render_courseware($course)
     {
         global $CFG;
-        
+
         $html = html_writer::start_tag('div', array('class' => 'courseware-block'));
         $html .= html_writer::start_tag('div', array('class' => 'section-courseware'));
         $html .= html_writer::start_tag('div', array('class' => 'col-sm-3 courseware-menu'));
@@ -438,7 +431,8 @@ class core_remote_renderer extends plugin_renderer_base
 
 class remote_render_helper
 {
-    public static function token_truncate($string, $width) {
+    public static function token_truncate($string, $width)
+    {
         $string = strip_tags($string);
         $parts = preg_split('/([\s\n\r]+)/', $string, null, PREG_SPLIT_DELIM_CAPTURE);
         $parts_count = count($parts);
@@ -447,7 +441,9 @@ class remote_render_helper
         $last_part = 0;
         for (; $last_part < $parts_count; ++$last_part) {
             $length += strlen($parts[$last_part]);
-            if ($length > $width) { break; }
+            if ($length > $width) {
+                break;
+            }
         }
 
         $retval = implode(array_slice($parts, 0, $last_part));

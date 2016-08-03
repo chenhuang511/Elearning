@@ -11,7 +11,7 @@ function get_remote_chat_latest_messages($chatsid)
             'token' => HOST_TOKEN_M,
             'function_name' => 'mod_chat_get_chat_latest_messages',
             'params' => array('chatsid' => $chatsid)
-        ),false
+        ), false
     );
     return $lastmessage->messages;
 }
@@ -76,6 +76,18 @@ function local_get_remote_chat_user($groupingjoin, $groupselect, $data)
                 'data[groupingid]' => $data['groupingid'],
             )
         )
+    );
+    return $res;
+}
+
+function local_get_remote_chat_current_messages($chatsid, $groupid, $chatid)
+{
+    $res = moodle_webservice_client(array(
+        'domain' => HUB_URL,
+        'token' => HOST_TOKEN,
+        'function_name' => 'local_mod_chat_get_chat_current_messages',
+        'params' => array('chatsid' => $chatsid, 'groupid' => $groupid, 'chatid' => $chatid)
+        ), false
     );
     return $res;
 }

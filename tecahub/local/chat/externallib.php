@@ -46,13 +46,6 @@ class local_mod_chat_external extends external_api {
         return $DB->get_record("chat", array('id' => $id), "*", MUST_EXIST);
     }
 
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
-     */
     public static function get_chat_by_id_returns() {
         return new external_single_structure(
 			array(
@@ -69,6 +62,14 @@ class local_mod_chat_external extends external_api {
 			)
 		);
     }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.9 Options available
+     * @since Moodle 2.2
+     */
 
     public static function local_mod_get_chat_users_parameters() {
         return new external_function_parameters(
@@ -98,20 +99,13 @@ class local_mod_chat_external extends external_api {
             )
         );
 
-        return $DB->get_records_sql("SELECT DISTINCT u.id,u.picture,u.firstname,u.lastname,u.firstnamephonetic,u.lastnamephonetic,u.middlename,u.alternatename,u.imagealt,u.email, c.lastmessageping as lastmessageping, c.firstping as firstping
+        return $DB->get_records_sql("SELECT DISTINCT u.id,u.picture,u.firstname,u.lastname,c.groupid, u.firstnamephonetic,u.lastnamephonetic,u.middlename,u.alternatename,u.imagealt,u.email, c.lastmessageping as lastmessageping, c.firstping as firstping
                                FROM {chat_users} c
                                JOIN {user} u ON u.id = c.userid". $params['groupingjoin']."
                               WHERE c.chatid = :chatid " .$params['groupselect'] . "
                            ORDER BY c.firstping ASC", $params['data']);
     }
 
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.9 Options available
-     * @since Moodle 2.2
-     */
     public static function local_mod_get_chat_users_returns() {
         return new external_multiple_structure(
              new external_single_structure(
@@ -127,9 +121,70 @@ class local_mod_chat_external extends external_api {
                     'imagealt' => new external_value(PARAM_TEXT, 'user picture'),
                     'email' => new external_value(PARAM_TEXT, 'user picture'),
                     'lastmessageping'  => new external_value(PARAM_INT, 'last message ping'),
-                    'firstping' => new external_value(PARAM_INT, 'first ping')
+                    'firstping' => new external_value(PARAM_INT, 'first ping'),
+                    'groupid' => new external_value(PARAM_INT, 'group id'),
                 )
              )
+        );
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.9 Options available
+     * @since Moodle 2.2
+     */
+    public static function get_chat_current_messages_parameters() {
+        return new external_function_parameters(
+            array(
+                'chatsid' => new external_value(PARAM_RAW, ' the chats id'),
+                'groupid' => new external_value(PARAM_RAW, ' the group id'),
+                'chatid' => new external_value(PARAM_RAW, ' the chat id'),
+            )
+        );
+    }
+
+    public static function get_chat_current_messages($chatsid, $groupid, $chatid) {
+        global $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::get_chat_current_messages_parameters(),
+            array(
+                'chatsid' => $chatsid,
+                'groupid' => $groupid,
+                'chatid'  => $chatid,
+            )
+        );
+        $par = array('chatid' => $params['chatid'], 'groupid' => $params['groupid']);
+
+        if ($params['groupid']) {
+            $groupselect = "AND (groupid=:groupid OR groupid=0)";
+        } else {
+            $groupselect = "";
+        }
+
+        $sql = "SELECT *
+        FROM {chat_messages_current} WHERE chatid = :chatid $groupselect
+        ORDER BY timestamp DESC";
+
+        // Return the lastest one message.
+        return $DB->get_record_sql($sql, $par, true);
+    }
+
+    public static function get_chat_current_messages_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'id'),
+                    'chatid' => new external_value(PARAM_INT, 'user picture'),
+                    'userid' => new external_value(PARAM_INT, 'user picture'),
+                    'groupid' => new external_value(PARAM_INT, 'user picture'),
+                    'system' => new external_value(PARAM_INT, 'user picture'),
+                    'message' => new external_value(PARAM_TEXT, 'user picture'),
+                    'timestamp' => new external_value(PARAM_INT, 'user picture'),
+                )
+            )
         );
     }
 }

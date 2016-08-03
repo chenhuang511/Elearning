@@ -253,8 +253,12 @@ function merge_local_course_module($cm){
     }
 
     // Merge course module for settings
-    $cm->id = $coursemodule->remoteid;
-    $cm->availability = $coursemodule->availability;
+    $cm->id                         = $coursemodule->remoteid;
+    $cm->availability               = $coursemodule->availability;
+    $cm->completion                 = $coursemodule->completion;
+    $cm->completionview             = $coursemodule->completionview;
+    $cm->completionexpected         = $coursemodule->completionexpected;
+    $cm->completiongradeitemnumber  = $coursemodule->completiongradeitemnumber;
 
     return $cm;
 }

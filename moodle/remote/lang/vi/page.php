@@ -15,15 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
+ * Strings for component 'page', language 'vi', branch 'MOODLE_20_STABLE'
  *
- * @package    auth_webservice
- * @copyright  2011 Petr Skoda (http://skodak.org)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   page
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version   = 2016052302;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2016051900;        // Requires this Moodle version
-$plugin->component = 'local_chat';			// Full name of the plugin (used for diagnostics)
+$string['proposecourse'] = 'Khóa học đề xuất';
+$string['completecourse'] = 'Khóa học hoàn thành';
+$string['viewall'] = 'xem tất cả';

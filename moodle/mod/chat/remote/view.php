@@ -151,10 +151,6 @@ if (has_capability('mod/chat:chat', $context)) {
     $link = new moodle_url('/mod/chat/gui_basic/index.php', $params);
     $action = new popup_action('click', $link, "chat{$course->id}_{$chat->id}{$groupparam}",
                                array('height' => 500, 'width' => 700));
-    echo '<p class="link-basic">';
-    echo $OUTPUT->action_link($link, get_string('noframesjs', 'message'), $action,
-                              array('title' => get_string('modulename', 'chat')));
-    echo '</p>';
 
     if ($chat->studentlogs or has_capability('mod/chat:readlog', $context)) {
         if ($msg = $DB->get_records_select('chat_messages', "chatid = ? $groupselect", array($chat->id))) {

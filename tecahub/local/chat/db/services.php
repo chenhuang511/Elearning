@@ -51,4 +51,13 @@ $functions = array(
         'type'		  => 'read',
         'ajax'		  => true
     ),
+
+    'local_mod_chat_get_chat_current_messages' => array(
+        'classname'	  => 'local_mod_chat_external',
+        'methodname'  => 'get_chat_current_messages',
+        'classpath'	  => 'local/chat/externallib.php',
+        'description' => "Get chat current messages",
+        'type'		  => 'read',
+        'ajax'		  => true
+    ),
 );

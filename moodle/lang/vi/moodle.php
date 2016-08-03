@@ -2030,3 +2030,7 @@ $string['yourself'] = 'chính bạn';
 $string['yourteacher'] = '{$a} của bạn';
 $string['yourwordforx'] = 'Từ ngữ bạn dùng thay cho \'{$a}\'';
 $string['zippingbackup'] = 'Nén bản sao lưu';
+
+$string['proposecourse'] = 'Khóa học đề xuất';
+$string['completecourse'] = 'Khóa học hoàn thành';
+$string['viewall'] = 'xem tất cả';
