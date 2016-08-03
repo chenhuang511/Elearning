@@ -511,7 +511,6 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
     if (isset($moduleinfo->groupingid)) {
         $cm->groupingid = $moduleinfo->groupingid;
     }
-
     $completion = new completion_info($course);
     if ($completion->is_enabled()) {
         // Completion settings that would affect users who have already completed
@@ -565,15 +564,13 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
 
     $modcontext = context_module::instance($moduleinfo->coursemodule);
 
-    if (MOODLE_RUN_MODE === MOODLE_RUN_MODE) {
         // Update embedded links and save files.
-        if (plugin_supports('mod', $moduleinfo->modulename, FEATURE_MOD_INTRO, true)) {
-            $moduleinfo->intro = file_save_draft_area_files($moduleinfo->introeditor['itemid'], $modcontext->id,
-                'mod_'.$moduleinfo->modulename, 'intro', 0,
-                array('subdirs'=>true), $moduleinfo->introeditor['text']);
-            $moduleinfo->introformat = $moduleinfo->introeditor['format'];
-            unset($moduleinfo->introeditor);
-        }
+    if (plugin_supports('mod', $moduleinfo->modulename, FEATURE_MOD_INTRO, true)) {
+        $moduleinfo->intro = file_save_draft_area_files($moduleinfo->introeditor['itemid'], $modcontext->id,
+            'mod_' . $moduleinfo->modulename, 'intro', 0,
+            array('subdirs' => true), $moduleinfo->introeditor['text']);
+        $moduleinfo->introformat = $moduleinfo->introeditor['format'];
+        unset($moduleinfo->introeditor);
     }
 
     // Get the a copy of the grade_item before it is modified incase we need to scale the grades.
@@ -637,9 +634,8 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
         $completion->reset_all_state($cm);
     }
     $cm->name = $moduleinfo->name;
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-        \core\event\course_module_updated::create_from_cm($cm, $modcontext)->trigger();
-    }
+
+    \core\event\course_module_updated::create_from_cm($cm, $modcontext)->trigger();
 
     $moduleinfo = edit_module_post_actions($moduleinfo, $course);
 

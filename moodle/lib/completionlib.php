@@ -798,9 +798,12 @@ class completion_info {
      */
     public function delete_all_state($cm) {
         global $DB;
-
         // Delete from database
-        $DB->delete_records('course_modules_completion', array('coursemoduleid'=>$cm->id));
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $DB->delete_records('course_modules_completion', array('coursemoduleid'=>$cm->id));
+        } else {
+            delete_remote_course_modules_completion($cm->id);
+        }
 
         // Check if there is an associated course completion criteria
         $criteria = $this->get_criteria(COMPLETION_CRITERIA_TYPE_ACTIVITY);
@@ -843,7 +846,13 @@ class completion_info {
             return;
         }
         // Get current list of users with completion state
-        $rs = $DB->get_recordset('course_modules_completion', array('coursemoduleid'=>$cm->id), '', 'userid');
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $rs = $DB->get_recordset('course_modules_completion', array('coursemoduleid'=>$cm->id), '', 'userid');
+        } else {
+            $records = get_remote_course_modules_completion($cm->id, 'userid');
+            $rs = new \json_moodle_recordset($records);
+        }
+
         $keepusers = array();
         foreach ($rs as $rec) {
             $keepusers[] = $rec->userid;

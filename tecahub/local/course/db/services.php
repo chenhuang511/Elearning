@@ -130,4 +130,20 @@ $functions = array(
         'type'		    => 'read',
         'ajax'		    => true
     ),
+    'local_delete_remote_course_modules_completion_by_cmid_hostip' => array(
+        'classname'     => 'local_course_external',
+        'methodname'    => 'delete_remote_course_modules_completion_by_cmid_hostip',
+        'classpath'     => 'local/course/externallib.php',
+        'description'   => 'Delete remote course modules completion',
+        'type'		    => 'write',
+        'ajax'		    => true
+    ),
+    'local_get_remote_course_modules_completion_by_cmid_hostip' => array(
+        'classname'     => 'local_course_external',
+        'methodname'    => 'get_remote_course_modules_completion_by_cmid_hostip',
+        'classpath'     => 'local/course/externallib.php',
+        'description'   => 'Get remote course modules completion',
+        'type'		    => 'write',
+        'ajax'		    => true
+    ),
 );

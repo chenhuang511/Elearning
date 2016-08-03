@@ -130,8 +130,8 @@ function get_local_course_modules_record($cmid, $useid = false) {
         return $cmid;
     }
     $idfield = ((int)$cmid === 1 || $useid) ? "id" : "remoteid";
-    $assign = $DB->get_record("course_modules", array($idfield => $cmid), "*");
-    return $assign;
+    $coursemodule = $DB->get_record("course_modules", array($idfield => $cmid), "*");
+    return $coursemodule;
 }
 
 function convert_remote_grade_items_record(&$grade, $userid = false) {

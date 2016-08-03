@@ -906,4 +906,141 @@ class local_course_external extends external_api
             )
         );
     }
+
+    /**
+     * Describes the parameters for delete_remote_course_modules_completion_by_cmid_hostip
+     *
+     * @return external_external_function_parameters
+     */
+    public static function delete_remote_course_modules_completion_by_cmid_hostip_parameters() {
+        return new external_function_parameters(
+            array(
+                'coursemoduleid' => new external_value(PARAM_INT, 'The id of course module'),
+                'hostip' => new external_value(PARAM_TEXT, 'The ip address on host')
+            )
+        );
+    }
+
+    /**
+     * Delete tbl course_modules_completetion by cmid and hostip
+     *
+     * @param int $coursemoduleid  - The id of course modules
+     * @param string $hostip       - The ip_address on host
+     *
+     * @return bool $result true if success
+     */
+    public static function delete_remote_course_modules_completion_by_cmid_hostip($coursemoduleid, $hostip)
+    {
+        global $DB;
+
+        $params = self::validate_parameters(self::delete_remote_course_modules_completion_by_cmid_hostip_parameters(), array(
+            'coursemoduleid' => $coursemoduleid,
+            'hostip' => $hostip,
+        ));
+
+        $sql = 'SELECT u.id 
+                FROM {user} u 
+                JOIN {mnet_host} mh 
+                ON u.mnethostid = mh.id 
+                WHERE mh.ip_address = ?';
+
+        $result = $DB->delete_records_select('course_modules_completion', 'coursemoduleid = ? AND userid IN(' . $sql . ')',
+                        array($params['coursemoduleid'], $params['hostip']));
+
+        return $result;
+    }
+
+    /**
+     * Describes the delete_remote_course_modules_completion_by_cmid_hostip returns value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function delete_remote_course_modules_completion_by_cmid_hostip_returns()
+    {
+        return new external_value(PARAM_INT, 'true if success');
+    }
+
+    /**
+     * Describes the parameters for get_remote_course_modules_completion_by_cmid_hostip
+     *
+     * @return external_external_function_parameters
+     */
+    public static function get_remote_course_modules_completion_by_cmid_hostip_parameters() {
+        return new external_function_parameters(
+            array(
+                'coursemoduleid' => new external_value(PARAM_INT, 'The id of course module'),
+                'hostip' => new external_value(PARAM_TEXT, 'The ip address on host'),
+                'field' => new external_value(PARAM_TEXT, 'The field of table to get')
+            )
+        );
+    }
+
+    /**
+     * Get records tbl course_modules_completetion by cmid and hostip
+     *
+     * @param int $coursemoduleid  - The id of course modules
+     * @param string $hostip       - The ip_address on host
+     * @param string $field        - The field of table to get
+     *
+     * @return mixed $result list records table and warnings
+     */
+    public static function get_remote_course_modules_completion_by_cmid_hostip($coursemoduleid, $hostip, $field)
+    {
+        global $DB;
+
+        $warnings = array();
+
+        $result = array();
+
+        $params = self::validate_parameters(self::get_remote_course_modules_completion_by_cmid_hostip_parameters(), array(
+            'coursemoduleid' => $coursemoduleid,
+            'hostip' => $hostip,
+            'field' => $field,
+        ));
+
+        $sql = 'SELECT u.id 
+                FROM {user} u 
+                JOIN {mnet_host} mh 
+                ON u.mnethostid = mh.id 
+                WHERE mh.ip_address = ?';
+
+        $result['cmc'] = $DB->get_records_select('course_modules_completion', 'coursemoduleid = ? AND userid IN(' . $sql . ')',
+                                    array($params['coursemoduleid'], $params['hostip']), '', $params['field']);
+
+        if (!$result['cmc']){
+            $result['cmc'] =  array();
+        }
+        $result['warnings'] = array();
+        return $result;
+    }
+
+    /**
+     * Describes the get_remote_course_modules_completion_by_cmid_hostip returns value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function get_remote_course_modules_completion_by_cmid_hostip_returns()
+    {
+        return new external_single_structure(
+            array(
+                'cmc' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'The id of course module completion', VALUE_OPTIONAL),
+                            'coursemoduleid' => new external_value(PARAM_INT, 'The id of course module', VALUE_OPTIONAL),
+                            'userid' => new external_value(PARAM_INT, 'The id of user', VALUE_OPTIONAL),
+                            'completionstate' => new external_value(PARAM_INT, 'Completion state', VALUE_OPTIONAL),
+                            'viewed' => new external_value(PARAM_INT, 'View', VALUE_OPTIONAL),
+                            'timemodified' => new external_value(PARAM_INT, 'Time viewer', VALUE_OPTIONAL)
+                        )
+                    ),'information course module completion', VALUE_OPTIONAL
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+
 }

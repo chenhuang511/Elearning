@@ -867,7 +867,7 @@ class local_mod_assign_external extends external_api {
     public static function update_onlinetext_submission_returns(){
         return new external_single_structure(
             array(
-                'bool' =>  new external_value(PARAM_INT, 'Check if success'),
+                'bool' =>  new external_value(PARAM_INT, 'True if success'),
                 'warnings' => new external_warnings()
             )
         );
