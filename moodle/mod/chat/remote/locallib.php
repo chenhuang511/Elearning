@@ -85,7 +85,7 @@ function local_get_remote_chat_current_messages($chatsid, $groupid, $chatid)
     $res = moodle_webservice_client(array(
         'domain' => HUB_URL,
         'token' => HOST_TOKEN,
-        'function_name' => 'local_mod_chat_current_messages',
+        'function_name' => 'local_mod_chat_get_chat_current_messages',
         'params' => array('chatsid' => $chatsid, 'groupid' => $groupid, 'chatid' => $chatid)
         ), false
     );
