@@ -99,7 +99,7 @@ class local_mod_chat_external extends external_api {
             )
         );
 
-        return $DB->get_records_sql("SELECT DISTINCT u.id,u.picture,u.firstname,u.lastname,u.firstnamephonetic,u.lastnamephonetic,u.middlename,u.alternatename,u.imagealt,u.email, c.lastmessageping as lastmessageping, c.firstping as firstping
+        return $DB->get_records_sql("SELECT DISTINCT u.id,u.picture,u.firstname,u.lastname,c.groupid, u.firstnamephonetic,u.lastnamephonetic,u.middlename,u.alternatename,u.imagealt,u.email, c.lastmessageping as lastmessageping, c.firstping as firstping
                                FROM {chat_users} c
                                JOIN {user} u ON u.id = c.userid". $params['groupingjoin']."
                               WHERE c.chatid = :chatid " .$params['groupselect'] . "
@@ -121,7 +121,8 @@ class local_mod_chat_external extends external_api {
                     'imagealt' => new external_value(PARAM_TEXT, 'user picture'),
                     'email' => new external_value(PARAM_TEXT, 'user picture'),
                     'lastmessageping'  => new external_value(PARAM_INT, 'last message ping'),
-                    'firstping' => new external_value(PARAM_INT, 'first ping')
+                    'firstping' => new external_value(PARAM_INT, 'first ping'),
+                    'groupid' => new external_value(PARAM_INT, 'group id'),
                 )
              )
         );
