@@ -50,7 +50,7 @@ class core_remote_renderer extends plugin_renderer_base
 
     public function render_enrol_course($courses)
     {
-        global $CFG;
+        global $CFG, $USER;
         require_once($CFG->libdir . '/remote/lib.php');
 
         // start - enrol course list
@@ -59,7 +59,11 @@ class core_remote_renderer extends plugin_renderer_base
         // start - container avaiable course
         $content .= html_writer::start_tag('div', array('class' => 'container-available-course col-sm-9'));
 
-        $tabnames = array('Chương trình học', 'Tiến độ khóa học', 'Khóa học đã hoàn thành');
+        // profile block
+        $content .= $this->render_profile_info($USER);
+        //profile block
+
+        $tabnames = array('Chương trình học', 'Khóa học đã hoàn thành');
         // div coursetabs
         $content .= html_writer::start_tag('ul', array('id' => 'enroltabs', 'class' => 'nav nav-tabs', 'role' => 'tablist'));
         $content .= $this->render_tabs($tabnames);
@@ -78,7 +82,7 @@ class core_remote_renderer extends plugin_renderer_base
             $mylearningplan .= $this->format_course($course, $classes);
         }
 
-        $tabcontents = array($mylearningplan, 'Tien do hoc', 'khoa hoc hoan thanh');
+        $tabcontents = array($mylearningplan, 'khoa hoc hoan thanh');
         // them cac content tab tai day
         $content .= $this->render_tab_content($tabnames, $tabcontents);
         $content .= html_writer::end_tag('div');
@@ -210,6 +214,28 @@ class core_remote_renderer extends plugin_renderer_base
         echo $content;
     }
 
+    private function render_profile_info($user)
+    {
+        $html = '';
+        // start profile block
+        $html .= html_writer::start_div('bhxh-profile-block clearfix');
+        $html .= html_writer::start_div('col-sm-7 col-md-7 bhxh-profile-info');
+        $html .= html_writer::label($user->username, '', true, array('class' => 'profile-info-username'));
+        $html .= html_writer::link(new moodle_url("/user/edit.php", array('userid' => $user->id, 'returnto' => 'profile')), '<i class="fa fa-pencil-square-o" aria-hidden="true"></i>' . 'Chỉnh sửa thông tin cá nhân', array('class' => 'profile-info-link'));
+        $html .= html_writer::end_div(); // end profile info
+        $html .= html_writer::start_div('col-sm-5 col-md-5 bhxh-certificate');
+        $html .= html_writer::empty_tag('img', array('class' => 'certificate-img', 'src' => 'theme/bhxh/pix/certificate_icon.png'));
+        $html .= html_writer::start_div('certificate-info');
+        $cername = '<strong>MVA Founders Club</strong>';
+        $cerpoint = '<br> 55 Legacy Points';
+        $cerhelp = html_writer::link(new moodle_url('#'), ' <i class="fa fa-info-circle" aria-hidden="true"></i>');
+        $html .= html_writer::tag('p', $cername . $cerpoint . $cerhelp);
+        $html .= html_writer::end_div(); // end certificate info
+        $html .= html_writer::end_div(); // end profile certificate
+        $html .= html_writer::end_div(); // end profile block
+        return $html;
+    }
+
     private function format_course($course, $classes)
     {
         $html = '';
@@ -239,7 +265,7 @@ class core_remote_renderer extends plugin_renderer_base
         // display course summary
         $html .= html_writer::start_tag('div', array('class' => 'summary col-sm-9')); //start tag summary
         if (isset($course->summary) && !empty($course->summary)) {
-            $html .= html_writer::tag('p',remote_render_helper::token_truncate($course->summary, 200));
+            $html .= html_writer::tag('p', remote_render_helper::token_truncate($course->summary, 200));
         }
         // display button
         $html .= html_writer::link($this->get_view_course_url($course),

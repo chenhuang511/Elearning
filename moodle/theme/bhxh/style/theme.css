@@ -3798,6 +3798,46 @@ ul#enroltabs > li.active > a, ul#enroltabs > li > a:focus, ul#enroltabs > li > a
     float: left;
     margin-top: 5px;
 }
+
 .container-available-course #courseTabContent {
     margin-top: 25px;
+}
+
+#enrol-course-list .container-available-course .bhxh-profile-block {
+    background-color: #eee;
+    border-radius: 2px;
+    padding: 10px 0;
+    margin-bottom: 20px;
+}
+
+#enrol-course-list .container-available-course .bhxh-profile-block .bhxh-profile-info label,
+#enrol-course-list .container-available-course .bhxh-profile-block .bhxh-profile-info a {
+    display: block;
+}
+
+#enrol-course-list .container-available-course .bhxh-profile-block .bhxh-profile-info label {
+    margin-left: 0;
+    text-transform: uppercase !important;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+#enrol-course-list .container-available-course .bhxh-profile-block .bhxh-certificate {
+    display: table;
+    position: relative;
+    text-align: right;
+}
+
+#enrol-course-list .container-available-course .bhxh-profile-block .bhxh-certificate .certificate-img,
+#enrol-course-list .container-available-course .bhxh-profile-block .bhxh-certificate .certificate-info {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+#enrol-course-list .container-available-course .bhxh-profile-block .bhxh-certificate .certificate-img {
+    float: right;
+}
+
+#enrol-course-list .container-available-course .bhxh-profile-block .bhxh-certificate .certificate-info {
+    text-align: left;
 }
