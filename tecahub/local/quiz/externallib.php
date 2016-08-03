@@ -2242,19 +2242,19 @@ ORDER BY
      */
     public static function remote_handle_if_time_expired_parameters() {
         return new external_function_parameters (
-            array(
-                'quizid' => new external_value(PARAM_INT, 'quiz instance id'),
-                'attemptid' => new external_value(PARAM_INT, 'attempt id, 0 for the user last attempt if exists'),
-                'studentisonline' => new external_value(PARAM_BOOL, 'student is online: true or false', VALUE_DEFAULT, true),
-                'setting' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_ALPHANUMEXT, 'data name'),
-                            'value' => new external_value(PARAM_RAW, 'data value'),
-                        )
-                    ), 'Local quiz setting (like: timelimit, timeopen ...)', VALUE_DEFAULT, array()
-                ),
-            )
+                array(
+                    'quizid' => new external_value(PARAM_INT, 'quiz instance id'),
+                    'attemptid' => new external_value(PARAM_INT, 'attempt id, 0 for the user last attempt if exists'),
+                    'studentisonline' => new external_value(PARAM_BOOL, 'student is online: true or false', VALUE_DEFAULT, true),
+                    'setting' => new external_multiple_structure(
+                        new external_single_structure(
+                            array(
+                                'name' => new external_value(PARAM_ALPHANUMEXT, 'data name'),
+                                'value' => new external_value(PARAM_RAW, 'data value'),
+                            )
+                        ), 'Local quiz setting (like: timelimit, timeopen ...)', VALUE_DEFAULT, array()
+                    ),
+                )
         );
     }
 
@@ -2270,8 +2270,6 @@ ORDER BY
      */
     public static function remote_handle_if_time_expired($quizid, $attemptid, $studentisonline = true, $setting = array()) {
         global $DB;
-
-        $warnings = array();
 
         $params = array(
             'quizid' => $quizid,

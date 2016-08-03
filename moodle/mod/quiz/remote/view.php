@@ -77,15 +77,16 @@ $viewobj->canreviewmine = $canreviewmine;
 
 // Get this user's attempts. User should map from host to hub
 $user = get_remote_mapping_user();
-$attempts = get_remote_user_attemps($quiz->id, $user[0]->id, 'finished', true)->attempts;
+$attempts = get_remote_user_attemps($quiz->id, $user[0]->id, 'finished', true);
 $lastfinishedattempt = end($attempts);
 $unfinished = false;
 $unfinishedattemptid = null;
-$unfinishedattempt = get_remote_user_attemps($quiz->id, $user[0]->id, 'unfinished', true)->attempts;
+$unfinishedremote = get_remote_user_attemps($quiz->id, $user[0]->id, 'unfinished', true);
+$unfinishedattempt = array_shift($unfinishedremote);
 
 // Get settinglocal to call API handle_if_time_expired
+$setting = array();
 if($quiz->settinglocal){
-    $setting = array();
     $fields =  array(
         'timeopen',
         'timeclose',
@@ -102,26 +103,22 @@ if($quiz->settinglocal){
         $index++;
     }
 }
-if(count($unfinishedattempt) > 0 && $unfinishedattempt[0]){
-    if($unfinishedattempt[0]){
-        $attempts[] = $unfinishedattempt[0];
-    }else{
-        $attempts[] = $unfinishedattempt;
-    }
+if(!empty($unfinishedattempt)){
+//    $attempts[] = $unfinishedattempt;
 
     // If the attempt is now overdue, deal with that - and pass isonline = false.
     // We want the student notified in this case.
-    $unfinishedattempt = remote_handle_if_time_expired($quiz->id, $unfinishedattempt[0]->id, false, $setting);
-
+    $unfinishedattempt = remote_handle_if_time_expired($quiz->id, $unfinishedattempt->id, false, $setting);
+    $attempts[] = $unfinishedattempt;
     $unfinished = $unfinishedattempt->state == quiz_attempt::IN_PROGRESS ||
         $unfinishedattempt->state == quiz_attempt::OVERDUE;
+
     if (!$unfinished) {
         $lastfinishedattempt = $attempts;
     }
     $unfinishedattemptid = $unfinishedattempt->id;
     $unfinishedattempt = null; // To make it clear we do not use this again.
 }
-
 $numattempts = count($attempts);
 $viewobj->attempts = $attempts;
 $viewobj->attemptobjs = array();

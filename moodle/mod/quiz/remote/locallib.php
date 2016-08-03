@@ -73,7 +73,7 @@ function get_remote_quiz_by_id($id) {
 }
 
 function get_remote_user_attemps($quizid, $userid, $status, $includepreviews) {
-    return moodle_webservice_client(
+    $remote_attempts = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN_M,
@@ -81,6 +81,11 @@ function get_remote_user_attemps($quizid, $userid, $status, $includepreviews) {
             'params' => array('quizid' => $quizid, 'userid' => $userid, 'status' => $status, 'includepreviews' => $includepreviews)
         ), false
     );
+    $result = array();
+    foreach ($remote_attempts->attempts as $attempt){
+        $result[$attempt->id] = $attempt;
+    }
+    return $result;
 }
 
 function get_remote_quiz_access_information($quizid) {
@@ -155,7 +160,7 @@ function quiz_remote_validate_new_attempt(quiz $quizobj, quiz_access_manager $ac
     // Look for an existing attempt.
     //get user mapping
     $user = get_remote_mapping_user();
-    $attempts = get_remote_user_attemps($quizobj->get_quizid(), $user[0]->id, 'all', true)->attempts;
+    $attempts = get_remote_user_attemps($quizobj->get_quizid(), $user[0]->id, 'all', true);
     $lastattempt = end($attempts);
 
     $attemptnumber = null;

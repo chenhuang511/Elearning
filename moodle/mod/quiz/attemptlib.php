@@ -1745,7 +1745,7 @@ class quiz_attempt {
      */
     public function links_to_other_attempts(moodle_url $url) {
         if($this->isremote){
-            $attempts = get_remote_user_attemps($this->get_quiz()->id, $this->attempt->userid, 'all', true)->attempts;
+            $attempts = get_remote_user_attemps($this->get_quiz()->id, $this->attempt->userid, 'all', true);
         }else{
             $attempts = quiz_get_user_attempts($this->get_quiz()->id, $this->attempt->userid, 'all');
         }
