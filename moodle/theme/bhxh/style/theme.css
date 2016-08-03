@@ -1513,7 +1513,6 @@ ul#coursetabs > li.active > a, ul#coursetabs > li > a:focus, ul#coursetabs > li 
     #enrol-course-list .container-available-course .coursebox header.coursename
     h3 {
         height: 40px;
-        line-height: 40px;
     }
 }
 
