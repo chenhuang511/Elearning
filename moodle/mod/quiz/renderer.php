@@ -141,9 +141,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @param int $page contains the current page number
      */
     public function review_summary_table($summarydata, $page) {
-        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-            $summarydata = $this->filter_review_summary_table($summarydata, $page);
-        }
+        $summarydata = $this->filter_review_summary_table($summarydata, $page);
 
         if (empty($summarydata)) {
             return '';

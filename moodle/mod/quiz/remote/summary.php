@@ -80,9 +80,28 @@ if ($accessmanager->is_preflight_check_required($attemptobj->get_attemptid())) {
 
 $displayoptions = $attemptobj->get_display_options(false);
 
+$setting = array();
+if($quiz->settinglocal){
+    $fields =  array(
+        'timeopen',
+        'timeclose',
+        'timelimit',
+        'overduehandling',
+        'graceperiod',
+        'attempts',
+        'grademethod',
+    );
+    $index = 0;
+    foreach ($fields as $field){
+        $setting["setting[$index][name]"] = $field;
+        $setting["setting[$index][value]"] = $quiz->$field;
+        $index++;
+    }
+}
+$summaryremote = get_remote_get_attempt_summary($attemptid, null, $setting);
 // If the attempt is now overdue, or abandoned, deal with that.
-$attemptobj->handle_if_time_expired(time(), true);
-$summaryremote = get_remote_get_attempt_summary($attemptid);
+//$attemptobj->handle_if_time_expired(time(), true);
+$attempt = remote_handle_if_time_expired($quiz->id, $attempt->id, true, $setting);
 
 // If the attempt is already closed, redirect them to the review page.
 if ($attemptobj->is_finished()) {
@@ -106,9 +125,6 @@ $PAGE->set_heading($attemptobj->get_course()->fullname);
 echo $output->summary_page($attemptobj, $displayoptions, $summaryremote);
 
 // Trigger the attempt summary viewed event.
-if (MOODLE_MODE_HOST === MOODLE_MODE_HOST){
-    $attemptobj->fire_attempt_summary_viewed_event();
-}else{
-    get_remote_quiz_view_attempt_summary($attemptid);
-}
+get_remote_quiz_view_attempt_summary($attemptid);
+
 

@@ -1348,9 +1348,15 @@ function quiz_question_preview_button($quiz, $question, $label = false, $variant
  */
 function quiz_get_flag_option($attempt, $context) {
     global $USER;
+    if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+        $userid = get_userlocal_by_userhubid($attempt->userid);
+    }else{
+        $userid = $attempt->userid;
+    }
+
     if (!has_capability('moodle/question:flag', $context)) {
         return question_display_options::HIDDEN;
-    } else if ($attempt->userid == $USER->id) {
+    } else if ($userid == $USER->id) {
         return question_display_options::EDITABLE;
     } else {
         return question_display_options::VISIBLE;

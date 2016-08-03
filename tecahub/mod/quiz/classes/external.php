@@ -1038,7 +1038,15 @@ class mod_quiz_external extends external_api {
                             'value' => new external_value(PARAM_RAW, 'data value'),
                         )
                     ), 'Preflight required data (like passwords)', VALUE_DEFAULT, array()
-                )
+                ),
+                'setting' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHANUMEXT, 'data name'),
+                            'value' => new external_value(PARAM_RAW, 'data value'),
+                        )
+                    ), 'Local quiz setting (like: timelimit, timeopen ...)', VALUE_DEFAULT, array()
+                ),
             )
         );
     }
@@ -1051,13 +1059,14 @@ class mod_quiz_external extends external_api {
      * @return array of warnings and the attempt summary data for each question
      * @since Moodle 3.1
      */
-    public static function get_attempt_summary($attemptid, $preflightdata = array()) {
+    public static function get_attempt_summary($attemptid, $preflightdata = array(), $setting = array()) {
 
         $warnings = array();
 
         $params = array(
             'attemptid' => $attemptid,
             'preflightdata' => $preflightdata,
+            'setting' => $setting,
         );
         $params = self::validate_parameters(self::get_attempt_summary_parameters(), $params);
 
@@ -1238,7 +1247,7 @@ class mod_quiz_external extends external_api {
         $params = self::validate_parameters(self::process_attempt_parameters(), $params);
 
         // Do not check access manager rules.
-        list($attemptobj, $messages) = self::validate_attempt($params, false);
+        list($attemptobj, $messages) = self::validate_attempt($params, false, false);
 
         // Create the $_POST object required by the question engine.
         $_POST = array();

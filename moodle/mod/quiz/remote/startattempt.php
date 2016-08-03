@@ -102,8 +102,9 @@ if ($currentattemptid) {
 
 $user = get_remote_mapping_user();
 $preview = $quizobj->is_preview_user();
+
+$setting = array();
 if($quiz->settinglocal){
-    $setting = array();
     $fields =  array(
         'timeopen',
         'timeclose',
