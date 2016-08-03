@@ -3841,3 +3841,14 @@ ul#enroltabs > li.active > a, ul#enroltabs > li > a:focus, ul#enroltabs > li > a
 #enrol-course-list .container-available-course .bhxh-profile-block .bhxh-certificate .certificate-info {
     text-align: left;
 }
+
+#courseTabContent article.coursebox header.coursename h3 {
+    display: table;
+    width: 100%;
+}
+
+#courseTabContent article.coursebox header.coursename a,
+#courseTabContent article.coursebox header.coursename span {
+    display: table-cell;
+    vertical-align: middle;
+}
