@@ -707,7 +707,7 @@ ORDER BY
                 'setting' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'name' => new external_value(PARAM_ALPHANUMEXT, 'data name'),
+                            'name' => new external_value(PARAM_RAW, 'data name'),
                             'value' => new external_value(PARAM_RAW, 'data value'),
                         )
                     ), 'Local quiz setting (like: timelimit, timeopen ...)', VALUE_DEFAULT, array()
@@ -2249,7 +2249,7 @@ ORDER BY
                     'setting' => new external_multiple_structure(
                         new external_single_structure(
                             array(
-                                'name' => new external_value(PARAM_ALPHANUMEXT, 'data name'),
+                                'name' => new external_value(PARAM_RAW, 'data name'),
                                 'value' => new external_value(PARAM_RAW, 'data value'),
                             )
                         ), 'Local quiz setting (like: timelimit, timeopen ...)', VALUE_DEFAULT, array()

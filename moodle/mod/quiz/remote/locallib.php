@@ -311,13 +311,13 @@ function get_mod_quiz_process_attempt($attemptid, $data, $finishattempt, $timeup
     );
 }
 
-function get_remote_get_attempt_summary($attemptid, $preflightdata = null, $setting) {
+function get_remote_get_attempt_summary($attemptid, $settinglocal) {
     return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN_M,
             'function_name' => 'mod_quiz_get_attempt_summary',
-            'params' => array_merge(array('attemptid' => $attemptid, 'preflightdata' => array()), $setting)
+            'params' => array_merge(array('attemptid' => $attemptid, 'preflightdata' => array()), $settinglocal)
         ), false
     );
 }

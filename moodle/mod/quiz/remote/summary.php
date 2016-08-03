@@ -80,7 +80,7 @@ if ($accessmanager->is_preflight_check_required($attemptobj->get_attemptid())) {
 
 $displayoptions = $attemptobj->get_display_options(false);
 
-$setting = array();
+$settinglocal = array();
 if($quiz->settinglocal){
     $fields =  array(
         'timeopen',
@@ -93,15 +93,15 @@ if($quiz->settinglocal){
     );
     $index = 0;
     foreach ($fields as $field){
-        $setting["setting[$index][name]"] = $field;
-        $setting["setting[$index][value]"] = $quiz->$field;
+        $settinglocal["setting[$index][name]"] = $field;
+        $settinglocal["setting[$index][value]"] = $quiz->$field;
         $index++;
     }
 }
-$summaryremote = get_remote_get_attempt_summary($attemptid, null, $setting);
+$summaryremote = get_remote_get_attempt_summary($attemptobj->get_attemptid(), $settinglocal);
 // If the attempt is now overdue, or abandoned, deal with that.
 //$attemptobj->handle_if_time_expired(time(), true);
-$attempt = remote_handle_if_time_expired($quiz->id, $attempt->id, true, $setting);
+$attempt = remote_handle_if_time_expired($quiz->id, $attempt->id, true, $settinglocal);
 
 // If the attempt is already closed, redirect them to the review page.
 if ($attemptobj->is_finished()) {

@@ -1042,7 +1042,7 @@ class mod_quiz_external extends external_api {
                 'setting' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'name' => new external_value(PARAM_ALPHANUMEXT, 'data name'),
+                            'name' => new external_value(PARAM_RAW, 'data name'),
                             'value' => new external_value(PARAM_RAW, 'data value'),
                         )
                     ), 'Local quiz setting (like: timelimit, timeopen ...)', VALUE_DEFAULT, array()
@@ -1212,7 +1212,7 @@ class mod_quiz_external extends external_api {
                 'setting' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'name' => new external_value(PARAM_ALPHANUMEXT, 'data name'),
+                            'name' => new external_value(PARAM_RAW, 'data name'),
                             'value' => new external_value(PARAM_RAW, 'data value'),
                         )
                     ), 'Local quiz setting (like: timelimit, timeopen ...)', VALUE_DEFAULT, array()
