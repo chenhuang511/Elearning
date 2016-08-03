@@ -43,7 +43,7 @@ h2.main, #pageheading {
 }
 
 .quizattemptcounts a, .resourceworkaround a, .introattachments-image div a, .box a, .assignment-info-fix a, .lastcol a, .noti-content a {
-    color: #337ab7;
+    color: #059A54;
 }
 
 .submitbtns a {
@@ -215,7 +215,7 @@ a:focus {
 
 .forumpost .subject-single {
     margin-left: 20px;
-    color: #337ab7;
+    color: #396;
 
 }
 
@@ -226,20 +226,22 @@ a:focus {
 }
 
 .forumpost .author-forum a {
-    color: #337ab7;
+    color: #396;
 }
 
 .forumpost .content-no-overflow {
     margin-left: 37px;
 }
 
+.noti-content-main .commands
+a
 .noti-content-main .box {
     margin-bottom: 10px;
 }
 
 .noti-content-main .commands a {
     font-size: 13px;
-    color: #337ab7;
+    color: #396;
 }
 
 .icon-bxh {
@@ -1900,7 +1902,7 @@ ul#coursetabs > li.active > a, ul#coursetabs > li > a:focus, ul#coursetabs > li 
 }
 
 #footer .footer-main {
-    background: #187cb2;
+    background: #3A9A6A;
     padding: 30px 0;
 }
 
@@ -2124,6 +2126,10 @@ legend + * {
 .breadcrumb > li {
     color: #828282;
     text-shadow: none;
+}
+
+.breadcrumb > li a {
+    color: #059A54;
 }
 
 .breadcrumb > li > .divider {
@@ -3217,7 +3223,7 @@ table.flexible thead tr th,
 table.rolecap thead tr th,
 .forumheaderlist thead tr th {
     color: #fff;
-    background: #097eaf;
+    background: #339966;
 }
 
 table.flexible thead th img,
@@ -3256,6 +3262,28 @@ table.rolecap tr th,
 .forumheaderlist tr th,
 table.rolecap tr td {
     padding: 4px;
+}
+
+table.forumheaderlist > thead > tr > th {
+    font-weight: 500;
+}
+
+table.forumheaderlist > thead > tr > th:first-child {
+    border-top-left-radius: 2px;
+}
+
+table.forumheaderlist > thead > tr > th:last-child {
+    border-top-right-radius: 2px;
+}
+
+table.forumheaderlist > tbody > tr > td > a {
+    color: #2d2d2d;
+}
+
+table.forumheaderlist > tbody > tr > td > a.active,
+table.forumheaderlist > tbody > tr > td > a:focus,
+table.forumheaderlist > tbody > tr > td > a:hover {
+    color: #396;
 }
 
 table#explaincaps tbody > tr:nth-child(2n+1) > td,
@@ -3618,7 +3646,7 @@ table#permissions tbody tr:hover > th {
 }
 
 .bhxh-link-chat .btn-primary:hover {
-    background: #1D2939;
+    background: #339966;
 }
 
 .introdesc > #fitem_id_intro > .fitemtitle > .fstaticlabel {
@@ -3679,19 +3707,21 @@ table#permissions tbody tr:hover > th {
 
 .btn-bhxh-search {
     padding: 6px 10px !important;
+    background-color: #339966 !important;
+    font-weight: normal !important;
 }
 
 .heading-bhxh-forum {
     text-transform: uppercase !important;
-    border-bottom: solid 1px #337ab7;
+    border-bottom: solid 1px #339966;
     padding-bottom: 8px;
     font-size: 27px;
     font-weight: 600;
-    color: #337ab7;
+    color: #339966;
 }
 
 a.pre-bhxh-link, a.next-bhxh-link {
-    color: #337ab7;
+    color: #396;
     font-size: 14px;
 }
 
@@ -3723,7 +3753,7 @@ a.pre-bhxh-link:focus, a.pre-bhxh-link:hover, a.next-bhxh-link:focus, a.next-bhx
     margin-top: 0;
     padding-bottom: 6px;
     text-transform: uppercase;
-    color: #0076b4;
+    color: #059A54;
     text-align: left;
     border-bottom: solid 1px #ddd;
     font-size: 20px;
@@ -3749,7 +3779,7 @@ a.pre-bhxh-link:focus, a.pre-bhxh-link:hover, a.next-bhxh-link:focus, a.next-bhx
 
 .bhxh-sidebar article.coursebox .coursename a:focus,
 .bhxh-sidebar article.coursebox .coursename a:hover {
-    color: #0076b4;
+    color: #059A54;
 }
 
 .bhxh-sidebar article.coursebox .course-image img {
@@ -3781,12 +3811,12 @@ ul#enroltabs > li > a {
 ul#enroltabs > li.active > a, ul#enroltabs > li > a:focus, ul#enroltabs > li > a:hover {
     color: #111;
     background-color: #fff;
-    border-bottom: solid 2px #126f9a;
+    border-bottom: solid 2px #059A54;
 }
 
 .bhxh-badge {
     float: right;
-    background-color: #0076b4;
+    background-color: #339966;
     padding: 18px 12px;
     border-radius: 50%;
     font-size: 13px;
@@ -3796,6 +3826,13 @@ ul#enroltabs > li.active > a, ul#enroltabs > li > a:focus, ul#enroltabs > li > a
     color: #fff !important;
     float: left;
     margin-top: 5px;
+    background-color: #339966;
+    border-color: #059A54;
+}
+
+.btn-bhxh-reg:hover, .btn-bhxh-reg:focus {
+    background-color: #059A54;
+    border-color: #3A9A6A;
 }
 
 .container-available-course #courseTabContent {
@@ -3851,3 +3888,70 @@ ul#enroltabs > li.active > a, ul#enroltabs > li > a:focus, ul#enroltabs > li > a
     display: table-cell;
     vertical-align: middle;
 }
+
+/*  START - FORUM STYLESHEET */
+#forummenu input[type="submit"], .pindiscussion > .action-form > form input[type="submit"] {
+    font-weight: normal;
+    background-color: #396;
+    border-color: #059A54;
+}
+
+#forummenu input[type="submit"]:focus, #forummenu input[type="submit"]:hover {
+    background-color: #296f4c;
+    border-color: #396;
+}
+
+form#mformforum #fgroup_id_buttonar .fgroup input[name="submitbutton"],
+form#mformforum #fgroup_id_buttonar .fgroup input[name="cancel"] {
+    font-weight: normal;
+}
+
+form#mformforum #fgroup_id_buttonar .fgroup input[name="submitbutton"] {
+    background-color: #396;
+    border-color: #059A54;
+}
+
+form#mformforum #fgroup_id_buttonar .fgroup input[name="submitbutton"]:focus,
+form#mformforum #fgroup_id_buttonar .fgroup input[name="submitbutton"]:hover {
+    background-color: #296f4c;
+    border-color: #396;
+}
+
+form#mformforum #fgroup_id_buttonar .fgroup input[name="cancel"] {
+    background-color: #d9534f;
+    border-color: #d43f3a;
+}
+
+form#mformforum #fgroup_id_buttonar .fgroup input[name="cancel"]:focus,
+form#mformforum #fgroup_id_buttonar .fgroup input[name="cancel"]:hover {
+    background-color: #c9302c;
+    border-color: #ac2925;
+}
+
+.forumaddnew > form input[type="submit"] {
+    background-color: #339966;
+    border-color: #059A54;
+    font-weight: 500;
+}
+
+.forumaddnew > form input[type="submit"]:focus, .forumaddnew > form input[type="submit"]:hover {
+    background-color: #059A54;
+    border-color: #339966;
+}
+
+/* END - FORUM STYLESHEET*/
+
+/* START - QUIZ STYLESHEET */
+.quizstartbuttondiv > form input[type="submit"] {
+    background-color: #396;
+    border-color: #059A54;
+    font-weight: normal;
+}
+
+.quizstartbuttondiv > form input[type="submit"]:focus,
+.quizstartbuttondiv > form input[type="submit"]:hover {
+    background-color: #296f4c;
+    border-color: #396;
+}
+
+/* END - QUIZ STYLESHEET */

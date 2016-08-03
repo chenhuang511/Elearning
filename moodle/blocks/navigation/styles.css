@@ -8,8 +8,8 @@
 .block_navigation .block_tree .tree_item.branch {padding-left: 21px;}
 .block_navigation .block_tree .active_tree_node {font-weight:bold;}
 
-.block_navigation .block_tree [aria-expanded="true"] {background-image: url('[[pix:t/expanded]]');}
-.block_navigation .block_tree [aria-expanded="false"] {background-image: url('[[pix:t/collapsed]]');}
+.block_navigation .block_tree [aria-expanded="true"]:before {content: '\f0d7';font-family: FontAwesome;font-style: normal;  font-weight: normal;  text-decoration: inherit;color: #059A54; margin-right: 5px;}
+.block_navigation .block_tree [aria-expanded="false"]:before {content: '\f0da';font-family: FontAwesome;font-style: normal;  font-weight: normal;  text-decoration: inherit;color: #059A54; margin-right: 5px;}
 .block_navigation .block_tree [aria-expanded="true"].emptybranch  {background-image: url('[[pix:t/collapsed_empty]]');}
 .block_navigation .block_tree [aria-expanded="false"].loading  {background-image: url('[[pix:i/loading_small]]');}
 .block_navigation .block_tree [aria-hidden="false"] {display: block;}

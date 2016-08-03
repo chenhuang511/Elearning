@@ -95,8 +95,6 @@ class core_remote_renderer extends plugin_renderer_base
         $proposecourses = array_slice($courses, 0, 3);
         $content .= $this->render_navigation_course($proposecourses, 'Khóa học đề xuất');
 
-        $completecourses = array_slice($courses, 0, 3);
-        $content .= $this->render_navigation_course($completecourses, 'Khóa học hoàn thành');
         $content .= html_writer::end_tag('div'); // end - right-block
         $content .= html_writer::end_tag('div'); // end - enrol course list
         echo $content;

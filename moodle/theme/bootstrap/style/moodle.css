@@ -9054,15 +9054,33 @@ a.autolink.glossary:hover {
     text-align: right;
 }
 
+.collapsible-actions .collapseexpand:before {
+    content: "\f0da";
+    font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: inherit;
+    margin-right: 8px;
+    color: #396;
+}
+
 .collapsible-actions .collapseexpand {
     padding-left: 20px;
-    background-image: url([[pix:t/collapsed]]);
     background-position: left;
     background-repeat: no-repeat;
 }
 
+.collapsible-actions .collapse-all:before {
+    content: "\f0d7";
+    font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: inherit;
+    margin-right: 8px;
+    color: #396;
+}
+
 .collapsible-actions .collapse-all {
-    background-image: url([[pix:t/expanded]]);
 }
 
 .yui-overlay .yui-widget-bd {
@@ -17711,16 +17729,33 @@ textarea.mform .fitem .felement textarea {
     border: 1px solid #ebccd1;
 }
 
+.mform fieldset.collapsible legend a.fheader:before {
+    content: '\f0d7';
+    font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: inherit;
+    margin-right: 8px;
+    color: #396;
+}
+
 .mform fieldset.collapsible legend a.fheader {
     padding: 0 5px 0 20px;
     margin-left: -20px;
-    background-image: url([[pix:t/expanded]]);
     background-repeat: no-repeat;
     background-position: left;
 }
 
+.mform fieldset.collapsed legend a.fheader:before {
+    content: '\f0da';
+    font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: inherit;
+    color: #396;
+}
+
 .mform fieldset.collapsed legend a.fheader {
-    background-image: url([[pix:t/collapsed]]);
 }
 
 .jsenabled .mform .collapsed .fcontainer {
