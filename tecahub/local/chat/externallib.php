@@ -155,9 +155,9 @@ class local_mod_chat_external extends external_api {
                 'chatid'  => $chatid,
             )
         );
-        $par = array('chatid' => $chatid, 'groupid' => $groupid);
+        $par = array('chatid' => $params['chatid'], 'groupid' => $params['groupid']);
 
-        if ($groupid) {
+        if ($params['groupid']) {
             $groupselect = "AND (groupid=:groupid OR groupid=0)";
         } else {
             $groupselect = "";

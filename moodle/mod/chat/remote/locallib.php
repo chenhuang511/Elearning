@@ -87,7 +87,7 @@ function local_get_remote_chat_current_messages($chatsid, $groupid, $chatid)
         'token' => HOST_TOKEN,
         'function_name' => 'local_mod_chat_current_messages',
         'params' => array('chatsid' => $chatsid, 'groupid' => $groupid, 'chatid' => $chatid)
-        ), fasle
+        ), false
     );
     return $res;
 }
