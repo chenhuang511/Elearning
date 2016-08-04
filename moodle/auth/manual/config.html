@@ -47,7 +47,7 @@
                 <?php print_string('expiration', 'auth_manual') ?>
             </label>
         </td>
-        <td class="col-md-2">
+        <td class="col-md-2" style="padding-left:0px;">
             <?php echo html_writer::select($expirationoptions, 'expiration', $config->expiration, false) ?>
         </td>
         <td class="col-md-8"><?php print_string('expiration_desc', 'auth_manual') ?></td>
@@ -58,7 +58,7 @@
                 <?php print_string('passwdexpiretime', 'auth_manual') ?>
             </label>
         </td>
-        <td class="col-md-2">
+        <td class="col-md-2" style="padding-left:0px;>
             <?php echo html_writer::select($expirationtimeoptions, 'expirationtime', $config->expirationtime, false) ?>
         </td>
         <td class="col-md-8"><?php print_string('passwdexpiretime_desc', 'auth_manual') ?></td>
@@ -69,7 +69,7 @@
                 <?php print_string('expiration_warning', 'auth_manual') ?>
             </label>
         </td>
-        <td class="col-md-2">
+        <td class="col-md-2" style="padding-left:0px;>
             <?php echo html_writer::select($expirationwarningoptions, 'expiration_warning', $config->expiration_warning, false) ?>
         </td>
         <td class="col-md-8"><?php print_string('expiration_warning_desc', 'auth_manual') ?></td>
