@@ -103,7 +103,8 @@ if ($redirect && !course_get_format($course)->has_view_page() &&
 if ($redirect) {
     // coming from course page or url index page
     // this redirect trick solves caching problems when tracking views ;-)
-    //redirect($file->url);
+    $fullurl = $file->url;
+    redirect($fullurl);
 }
 
 remote_resource_print_workaround($resource, $cm, $course, $file);

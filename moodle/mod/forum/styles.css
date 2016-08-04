@@ -130,11 +130,21 @@ span.unread {
 }
 .dir-rtl.path-mod-forum .discussion-nav .next-discussion:after,
 .path-mod-forum .discussion-nav .prev-discussion:before {
-    content: ' ◄ ';
+    content: '\f0d9';
+    font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: inherit;
+    margin-right: 8px;
 }
 .dir-rtl.path-mod-forum .discussion-nav .prev-discussion:before,
 .path-mod-forum .discussion-nav .next-discussion:after {
-    content: ' ► ';
+    content: '\f0da';
+    font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: inherit;
+    margin-left: 8px;
 }
 .dir-rtl.path-mod-forum .discussion-nav .prev-discussion,
 .path-mod-forum .discussion-nav .next-discussion {

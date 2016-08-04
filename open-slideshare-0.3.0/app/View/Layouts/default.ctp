@@ -50,8 +50,8 @@ $cakeDescription = __d('cake_dev', 'OpenSlideshare');
         <meta name="msapplication-TileColor" content="#ffffff">
         <meta name="msapplication-TileImage" content="/favicon/ms-icon-144x144.png">
         <meta name="theme-color" content="#ffffff">
-        <link rel="alternate" type="application/rss+xml" title="RSS 2.0 (<?php echo __('Latest Slides'); ?>)" href="http://localhost/open-slideshare-0.3.0/slides/latest.rss" />
-        <link rel="alternate" type="application/rss+xml" title="RSS 2.0 (<?php echo __('Popular Slides'); ?>)" href="http://localhost/open-slideshare-0.3.0/slides/popular.rss" />
+        <link rel="alternate" type="application/rss+xml" title="RSS 2.0 (<?php echo __('Latest Slides'); ?>)" href="/slides/latest.rss" />
+        <link rel="alternate" type="application/rss+xml" title="RSS 2.0 (<?php echo __('Popular Slides'); ?>)" href="/slides/popular.rss" />
         <title><?php echo $cakeDescription ?>:<?php echo $this->fetch('title'); ?></title>
         <?php echo $this->fetch('meta') . "\n"; ?>
         <?php echo $this->fetch('css') . "\n"; ?>
@@ -67,7 +67,7 @@ $cakeDescription = __d('cake_dev', 'OpenSlideshare');
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="http://localhost/open-slideshare-0.3.0/slides/index"><span class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp;<?php echo $cakeDescription; ?></a>
+                    <a class="navbar-brand" href="/slides/index"><span class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp;<?php echo $cakeDescription; ?></a>
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-left">
@@ -75,14 +75,14 @@ $cakeDescription = __d('cake_dev', 'OpenSlideshare');
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><?php echo __('Category'); ?><span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
                             <?php foreach ($category as $cat): ?>
-                            <li><a href="http://localhost/open-slideshare-0.3.0/categories/view/<?php echo $cat["Category"]["id"]; ?>"><?php echo $cat["Category"]["name"]; ?></a></li>
+                            <li><a href="/categories/view/<?php echo $cat["Category"]["id"]; ?>"><?php echo $cat["Category"]["name"]; ?></a></li>
                             <?php endforeach; ?>
                             </ul>
                         </li>
                     </ul>
                     <ul class="nav navbar-nav navbar-left">
-                    <li><a href="http://localhost/open-slideshare-0.3.0/slides/popular"><?php echo __('Popular'); ?></a></li>
-                    <li><a href="http://localhost/open-slideshare-0.3.0/slides/latest"><?php echo __('Latest'); ?></a></li>
+                    <li><a href="/slides/popular"><?php echo __('Popular'); ?></a></li>
+                    <li><a href="/slides/latest"><?php echo __('Latest'); ?></a></li>
                     <li><a href="#" id="open_search_form_"><?php echo __('Search'); ?></a></li>
                     </ul>
                     <?php if (AuthComponent::user('username')): ?>
@@ -90,26 +90,26 @@ $cakeDescription = __d('cake_dev', 'OpenSlideshare');
                         <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;<?php echo h(AuthComponent::user('username')); ?><span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
-                            <li><a href="http://localhost/open-slideshare-0.3.0/slides/add"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>&nbsp;<?php echo __('Upload'); ?>!!</a></li>
-                            <li><a href="http://localhost/open-slideshare-0.3.0/users/index"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>&nbsp;<?php echo __('My Slides'); ?></a></li>
-                            <li><a href="http://localhost/open-slideshare-0.3.0/users/statistics"><span class="glyphicon glyphicon-signal" aria-hidden="true"></span>&nbsp;<?php echo __('My Statistics'); ?></a></li>
-                            <li><a href="http://localhost/open-slideshare-0.3.0/users/edit/<?php echo AuthComponent::user('id'); ?>"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;<?php echo __('My Account'); ?></a></li>
+                            <li><a href="/slides/add"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>&nbsp;<?php echo __('Upload'); ?>!!</a></li>
+                            <li><a href="/users/index"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>&nbsp;<?php echo __('My Slides'); ?></a></li>
+                            <li><a href="/users/statistics"><span class="glyphicon glyphicon-signal" aria-hidden="true"></span>&nbsp;<?php echo __('My Statistics'); ?></a></li>
+                            <li><a href="/users/edit/<?php echo AuthComponent::user('id'); ?>"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;<?php echo __('My Account'); ?></a></li>
                             <?php if (AuthComponent::user('admin') === true): ?>
                             <li class="divider"></li>
-                            <li><a href="http://localhost/open-slideshare-0.3.0/admin/managements/dashboard"><span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>&nbsp;<?php echo __('Admin Dashboard'); ?></a></li>
+                            <li><a href="/admin/managements/dashboard"><span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>&nbsp;<?php echo __('Admin Dashboard'); ?></a></li>
                             <?php endif; ?>
                             <li class="divider"></li>
-                            <li><a href="http://localhost/open-slideshare-0.3.0/users/logout?return_url=<?php echo $_SERVER["REQUEST_URI"]; ?>"><?php echo __('Logout'); ?>&nbsp;</a></li>
+                            <li><a href="/users/logout?return_url=<?php echo $_SERVER["REQUEST_URI"]; ?>"><?php echo __('Logout'); ?>&nbsp;</a></li>
                             </ul>
                         </li>
                     </ul>
                     <?php else: ?>
                     <ul class="nav navbar-nav navbar-right">
                         <?php if (isset($config["signup_enabled"]) && $config["signup_enabled"] === "1"): ?>
-                    <li><a href="http://localhost/open-slideshare-0.3.0/users/signup"><?php echo __('Signup'); ?></a></li>
+                    <li><a href="/users/signup"><?php echo __('Signup'); ?></a></li>
                     <?php endif; ?>
                     <?php if (isset($config["display_login_link"]) && $config["display_login_link"] === "1"): ?>
-                    <li><a href="http://localhost/open-slideshare-0.3.0/users/login"><?php echo __('Signin'); ?></a></li>
+                    <li><a href="/users/login"><?php echo __('Signin'); ?></a></li>
                     <?php endif; ?>
                     </ul>
                     <?php endif; ?>
