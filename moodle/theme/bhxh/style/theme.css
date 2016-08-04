@@ -725,12 +725,13 @@ a
 }
 
 .loginpanel .btn-login {
+    color: #fff;
+    background: #339966;
     margin: 0;
 }
 
 .loginpanel .btn-login:hover {
-    background: #339966;
-    color: #fff;
+    background: #059A54;
 }
 
 .loginpanel .forgetpass {
