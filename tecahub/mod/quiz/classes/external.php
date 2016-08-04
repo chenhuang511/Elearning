@@ -897,7 +897,7 @@ class mod_quiz_external extends external_api {
      * @param  mixed  $page  string 'all' or integer page number
      * @return array array of questions including data
      */
-    private static function get_attempt_questions_data(quiz_attempt $attemptobj, $review, $page = 'all', $grading = null) {
+    private static function get_attempt_questions_data(quiz_attempt $attemptobj, $review, $page = 'all', $grading = false) {
         global $PAGE;
 
         $questions = array();
@@ -950,6 +950,14 @@ class mod_quiz_external extends external_api {
                             'value' => new external_value(PARAM_RAW, 'data value'),
                         )
                     ), 'Preflight required data (like passwords)', VALUE_DEFAULT, array()
+                ),
+                'setting' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'data name'),
+                            'value' => new external_value(PARAM_RAW, 'data value'),
+                        )
+                    ), 'Local quiz setting (like: timelimit, timeopen ...)', VALUE_DEFAULT, array()
                 )
             )
         );
@@ -965,7 +973,7 @@ class mod_quiz_external extends external_api {
      * @since Moodle 3.1
      * @throws moodle_quiz_exceptions
      */
-    public static function get_attempt_data($attemptid, $page = -1, $preflightdata = array()) {
+    public static function get_attempt_data($attemptid, $page = -1, $preflightdata = array(), $setting = array()) {
 
         $warnings = array();
 
@@ -973,6 +981,7 @@ class mod_quiz_external extends external_api {
             'attemptid' => $attemptid,
             'page' => $page,
             'preflightdata' => $preflightdata,
+            'setting' => $setting,
         );
         $params = self::validate_parameters(self::get_attempt_data_parameters(), $params);
 
@@ -1342,6 +1351,7 @@ class mod_quiz_external extends external_api {
         $params = array(
             'attemptid' => $attemptid,
             'page' => $page,
+            'grading' => $grading
         );
         $params = self::validate_parameters(self::get_attempt_review_parameters(), $params);
 

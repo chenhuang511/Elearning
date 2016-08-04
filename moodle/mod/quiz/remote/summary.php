@@ -100,7 +100,6 @@ if($quiz->settinglocal){
 }
 $summaryremote = get_remote_get_attempt_summary($attemptobj->get_attemptid(), $settinglocal);
 // If the attempt is now overdue, or abandoned, deal with that.
-//$attemptobj->handle_if_time_expired(time(), true);
 $attempt = remote_handle_if_time_expired($quiz->id, $attempt->id, true, $settinglocal);
 
 // If the attempt is already closed, redirect them to the review page.

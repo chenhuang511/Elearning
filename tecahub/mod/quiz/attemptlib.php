@@ -1483,7 +1483,7 @@ class quiz_attempt {
      * @param moodle_url $thispageurl the URL of the page this question is being printed on.
      * @return string HTML for the question in its current state.
      */
-    public function render_question($slot, $reviewing, mod_quiz_renderer $renderer, $thispageurl = null, $grading = null) {
+    public function render_question($slot, $reviewing, mod_quiz_renderer $renderer, $thispageurl = null, $grading = false) {
         if ($this->is_blocked_by_previous_question($slot)) {
             $placeholderqa = $this->make_blocked_question_placeholder($slot);
 
@@ -1510,7 +1510,7 @@ class quiz_attempt {
      * @param int|null $seq the seq number of the past state to display.
      * @return string HTML fragment.
      */
-    protected function render_question_helper($slot, $reviewing, $thispageurl, mod_quiz_renderer $renderer, $seq, $grading = null) {
+    protected function render_question_helper($slot, $reviewing, $thispageurl, mod_quiz_renderer $renderer, $seq, $grading = false) {
         $originalslot = $this->get_original_slot($slot);
         $number = $this->get_question_number($originalslot);
         $displayoptions = $this->get_display_options_with_edit_link($reviewing, $slot, $thispageurl);
@@ -1533,7 +1533,7 @@ class quiz_attempt {
             }
         }
 
-        if($grading){
+        if($grading === true){
             $displayoptions->hide_all_feedback();
             $displayoptions->rightanswer = question_display_options::VISIBLE;
             $displayoptions->history = question_display_options::HIDDEN;
