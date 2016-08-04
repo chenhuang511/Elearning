@@ -27,6 +27,7 @@ if (isset($_SERVER['OSS_DEBUG'])) {
 } else {
     $debug = 0;
 }
+$debug = 2;
 Configure::write('debug', $debug);
 
 // @TODO It must be removed after CakeDC/tag library fixes the issue
