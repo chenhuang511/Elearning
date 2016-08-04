@@ -818,12 +818,12 @@ class mod_quiz_external extends external_api {
             }
         }
 
-        // Attempt closed?.
-        if ($attemptobj->is_finished()) {
-            throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'attemptalreadyclosed');
-        } else if ($failifoverdue && $attemptobj->get_state() == quiz_attempt::OVERDUE) {
-            throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'stateoverdue');
-        }
+        // Attempt closed?. Hanv: nếu attempt closed vẫn lấy thông tin attempt trả về. Nếu để get_attempt_summary khi hết overdue sẽ lỗi.
+//        if ($attemptobj->is_finished()) {
+//            throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'attemptalreadyclosed');
+//        } else if ($failifoverdue && $attemptobj->get_state() == quiz_attempt::OVERDUE) {
+//            throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'stateoverdue');
+//        }
 
         // User submitted data (like the quiz password).
         if ($accessmanager->is_preflight_check_required($attemptobj->get_attemptid())) {

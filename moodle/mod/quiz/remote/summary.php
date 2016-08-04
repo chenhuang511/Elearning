@@ -98,12 +98,14 @@ if($quiz->settinglocal){
         $index++;
     }
 }
-$summaryremote = get_remote_get_attempt_summary($attemptobj->get_attemptid(), $settinglocal);
+
 // If the attempt is now overdue, or abandoned, deal with that.
 $attempt = remote_handle_if_time_expired($quiz->id, $attempt->id, true, $settinglocal);
+$summaryremote = get_remote_get_attempt_summary($attemptobj->get_attemptid(), $settinglocal);
 
 // If the attempt is already closed, redirect them to the review page.
-if ($attemptobj->is_finished()) {
+//$attempt->state == quiz_attempt::FINISHED || $attempt->state == quiz_attempt::ABANDONED;
+if ($attempt->state == quiz_attempt::FINISHED || $attempt->state == quiz_attempt::ABANDONED) {
     redirect($attemptobj->review_url());
 }
 
