@@ -1913,16 +1913,16 @@ ul#coursetabs > li.active > a, ul#coursetabs > li > a:focus, ul#coursetabs > li 
     margin: 0;
 }
 
-#footer .footer-main .foot-links ul li {
+#footer .footer-main .foot-links ul li:focus,
+#footer .footer-main .foot-links ul li:hover {
+    background: transparent;
 }
 
 #footer .footer-main .foot-links ul li a {
-    height: 27px;
     padding: 0 10px 0 10px;
-    color: #fff;
-    line-height: 27px;
-    font-size: 18px;
-    border-right: #f4f4f4 solid 2px;
+    color: #eee;
+    font-size: 14px;
+    border-right: #ddd solid 1px;
 }
 
 li:last-child a {
@@ -1930,8 +1930,7 @@ li:last-child a {
 }
 
 #footer .footer-main .foot-links ul li a:hover {
-    color: #097eaf;
-    text-decoration: none;
+    text-decoration: underline;
 }
 
 #footer .footer-main .contact-info {
