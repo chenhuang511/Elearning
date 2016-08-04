@@ -1914,8 +1914,10 @@ ul#coursetabs > li.active > a, ul#coursetabs > li > a:focus, ul#coursetabs > li 
 }
 
 #footer .footer-main .foot-links ul li:focus,
-#footer .footer-main .foot-links ul li:hover {
-    background: transparent;
+#footer .footer-main .foot-links ul li:hover,
+#footer .footer-main .foot-links ul li a:focus,
+#footer .footer-main .foot-links ul li a:hover {
+    background: none;
 }
 
 #footer .footer-main .foot-links ul li a {
@@ -3996,4 +3998,5 @@ table.flexible > thead > tr > th:last-child {
 .btn-viewallresponse {
     color: #fff !important;
 }
+
 /* END - QUESTIONNAIRE*/
