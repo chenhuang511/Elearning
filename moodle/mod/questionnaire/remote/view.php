@@ -61,7 +61,7 @@ if($CFG->nonajax == true ){
     echo $OUTPUT->header();
 }
 
-echo $OUTPUT->heading(format_text($questionnaire->name));
+echo $OUTPUT->heading(format_text($questionnaire->name), 3, array('class' => 'heading-bhxh-quiz'));
 
 // Print the main part of the page.
 if ($questionnaire->intro) {
@@ -211,7 +211,7 @@ if ($questionnaire->can_view_all_responses($usernumresp)) {
     $argstr = 'instance='.$questionnaire->id.'&group='.$currentgroupid;
     if($CFG->nonajax == true){
         echo '<a href="'.$CFG->wwwroot.htmlspecialchars('/mod/questionnaire/report.php?'.
-                $argstr).'&nonajax=1">'.get_string('viewallresponses', 'questionnaire').'</a>';
+                $argstr).'&nonajax=1" class="btn btn-viewallresponse">'.get_string('viewallresponses', 'questionnaire').'</a>';
     } else {
         echo '<a class="sublink get-remote-content remote-link-action" data-module=\'';
         echo json_encode(array('url' => $CFG->wwwroot . '/mod/questionnaire/report.php?'.

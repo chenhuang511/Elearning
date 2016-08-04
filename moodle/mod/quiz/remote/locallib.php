@@ -267,13 +267,13 @@ function get_remote_get_sections_by_quizid($quizid) {
     );
 }
 
-function get_remote_get_attempt_data($attemptid, $page = null) {
+function get_remote_get_attempt_data($attemptid, $page = null, $setting) {
     return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN_M,
             'function_name' => 'mod_quiz_get_attempt_data',
-            'params' => array('attemptid' => $attemptid, 'page' => $page)
+            'params' => array_merge(array('attemptid' => $attemptid, 'page' => $page), $setting)
         ), false
     );
 }

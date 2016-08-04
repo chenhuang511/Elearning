@@ -105,8 +105,8 @@ foreach ($_POST as $key => $value) {
 }
 
 // get quiz local setting if isset quiz->settinglocal
+$setting = array();
 if($quiz->settinglocal){
-    $setting = array();
     $fields =  array(
         'timeopen',
         'timeclose',
