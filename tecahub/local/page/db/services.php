@@ -36,7 +36,7 @@
 $functions = array(
 	'local_mod_page_get_page_by_id' => array(
 		'classname'	  => 'local_mod_page_external',
-		'methodname'  => 'local_mod_page_by_id',
+		'methodname'  => 'get_mod_page_by_id',
 		'classpath'	  => 'local/page/externallib.php',
 		'description' => "Get page by page id or by page identify",
 		'type'		  => 'read',
