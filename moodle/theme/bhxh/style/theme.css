@@ -580,8 +580,8 @@ a
 }
 
 .navbar-nav > li > .Log.in {
-    background: #126f9a;
-    border: 1px solid #006495;
+    background: #396;
+    border: 1px solid #059A54;
     border-radius: 3px;
     padding: 10px 20px;
     color: #fff;
@@ -611,7 +611,7 @@ a
 }
 
 .banner-content.css {
-    background-color: #297fae;
+    background-color: #3A9A6A;
 
 }
 
@@ -729,7 +729,7 @@ a
 }
 
 .loginpanel .btn-login:hover {
-    background: #13a9e8;
+    background: #339966;
     color: #fff;
 }
 
@@ -1113,7 +1113,7 @@ section#discussion-container.discussion.container div.discussion-body div#discus
     border-top: solid 1px #bebebe;
     border-left: solid 1px #bebebe;
     border-right: solid 1px #bebebe;
-    border-bottom: solid 2px #126f9a;
+    border-bottom: solid 2px #3A9A6A;
     min-height: 365px;
     height: 365px;
 }
@@ -1131,7 +1131,7 @@ section#discussion-container.discussion.container div.discussion-body div#discus
 }
 
 #frontpage-course-list .coursebox .coursename a {
-    color: #0078bf;
+    color: #396;
     font-weight: 600;
     font-size: 16px;
 }
@@ -3715,7 +3715,7 @@ a.pre-bhxh-link:focus, a.pre-bhxh-link:hover, a.next-bhxh-link:focus, a.next-bhx
 }
 
 .bhxh-sidebar {
-    background-color: #eee;
+    background-color: #ececec;
     padding: 15px;
     margin-bottom: 15px;
     border-radius: 2px;
@@ -3812,7 +3812,7 @@ ul#enroltabs > li.active > a, ul#enroltabs > li > a:focus, ul#enroltabs > li > a
 }
 
 #enrol-course-list .container-available-course .bhxh-profile-block {
-    background-color: #eee;
+    background-color: #ececec;
     border-radius: 2px;
     padding: 10px 0;
     margin-bottom: 20px;
