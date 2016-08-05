@@ -1028,7 +1028,7 @@ function get_array_of_activities($course) {
         // First check and correct obvious mismatches between course_sections.sequence and course_modules.section.
         if ($errormessages = course_integrity_check($course->id, $rawmods, $sections)) {
             debugging(join('<br>', $errormessages));
-            $rawmods = get_course_mods($courseid);
+            $rawmods = get_course_mods($course->remoteid);
             $sections = get_remote_course_sections($courseid, 'id');
         }
         // Build array of activities.
