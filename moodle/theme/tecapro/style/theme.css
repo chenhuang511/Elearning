@@ -3984,7 +3984,7 @@ a.qnbutton.notyetanswered {
     font-weight: normal;
 }
 
-    /* END - QUIZ STYLESHEET */
+/* END - QUIZ STYLESHEET */
 
 /*  START - ASSIGN STYLESHEET */
 .btn-grade {
@@ -4019,3 +4019,37 @@ table.flexible > thead > tr > th:last-child {
 }
 
 /* END - QUESTIONNAIRE*/
+
+/* TECA PRO STYLE SHEET */
+.block_navigation .block_tree [aria-expanded="true"]:before {
+    color: #059A54;
+}
+
+.block_navigation .block_tree [aria-expanded="false"]:before {
+    color: #059A54;
+}
+
+.block_settings .block_tree [aria-expanded="true"]:before {
+    color: #059A54;
+}
+
+.block_settings .block_tree [aria-expanded="false"]:before {
+    color: #059A54;
+}
+
+.mform fieldset.collapsible legend a.fheader:before {
+    color: #059A54;
+}
+
+.collapsible-actions .collapseexpand:before {
+    color: #059A54;
+}
+
+.activity img.activityicon, .block_navigation .block_tree p.hasicon img {
+    background-color: #396;
+    border-radius: 50%;
+}
+
+.type_setting.depth_2 p.hasicon img {
+    background-color: transparent;
+}
