@@ -849,7 +849,7 @@ class completion_info {
         if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
             $rs = $DB->get_recordset('course_modules_completion', array('coursemoduleid'=>$cm->id), '', 'userid');
         } else {
-            $records = get_remote_course_modules_completion($cm->id, 'userid');
+            $records = get_remote_course_modules_completion_by_mode($cm->id, 'normal', 'userid');
             $rs = new \json_moodle_recordset($records);
         }
 
@@ -868,7 +868,6 @@ class completion_info {
             $keepusers[] = $trackeduser->id;
         }
         $keepusers = array_unique($keepusers);
-
         // Recalculate state for each kept user
         foreach ($keepusers as $keepuser) {
             $this->update_state($cm, COMPLETION_UNKNOWN, $keepuser);
@@ -919,14 +918,18 @@ class completion_info {
         // Not there, get via SQL
         if ($usecache && $wholecourse) {
             // Get whole course data for cache
-            $alldatabycmc = $DB->get_records_sql("
-    SELECT
-        cmc.*
-    FROM
-        {course_modules} cm
-        INNER JOIN {course_modules_completion} cmc ON cmc.coursemoduleid=cm.id
-    WHERE
-        cm.course=? AND cmc.userid=?", array($this->course->id, $userid));
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+                $alldatabycmc = $DB->get_records_sql("
+            SELECT
+                cmc.*
+            FROM
+                {course_modules} cm
+                INNER JOIN {course_modules_completion} cmc ON cmc.coursemoduleid=cm.id
+            WHERE
+                cm.course=? AND cmc.userid=?", array($this->course->id, $userid));
+            } else {
+                $alldatabycmc = get_remote_course_modules_completion_by_mode($cm->id, 'wholecourse', '*', $userid);
+            }
 
             // Reindex by cm id
             $alldata = array();
@@ -962,7 +965,11 @@ class completion_info {
 
         } else {
             // Get single record
-            $data = $DB->get_record('course_modules_completion', array('coursemoduleid'=>$cm->id, 'userid'=>$userid));
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $data = $DB->get_record('course_modules_completion', array('coursemoduleid'=>$cm->id, 'userid'=>$userid));
+            } else {
+                $data = get_remote_course_modules_completion_by_mode($cm->id, 'notwhole', '*', $userid);
+            }
             if ($data == false) {
                 // Row not present counts as 'not complete'
                 $data = new StdClass;

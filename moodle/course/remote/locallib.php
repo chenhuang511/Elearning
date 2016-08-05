@@ -246,22 +246,47 @@ function delete_remote_course_modules_completion($cmid) {
     return $result;
 }
 
-function get_remote_course_modules_completion($cmid, $field = '*') {
+function change_email_to_userid($email){
+    global $DB;
+
+    return $DB->get_record('user', array('id'=>$email), 'id')->id;
+}
+
+function get_remote_course_modules_completion_by_mode($cmid, $mode = 'normal', $field = '*', $userid = -1) {
     $hostip = gethostip();
-    $rcmid = get_local_course_modules_record($cmid, true)->remoteid;
+    $rcm = get_local_course_modules_record($cmid, true);
+
+    if ($userid != -1) {
+        $ruser = get_remote_mapping_user($userid)[0]->id;
+    }
 
     $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
-            'function_name' => 'local_get_remote_course_modules_completion_by_cmid_hostip',
+            'function_name' => 'local_get_remote_course_modules_completion',
             'params' => array(
-                'coursemoduleid' => $rcmid,
+                'coursemoduleid' => $rcm->remoteid,
+                'courseid' => $rcm->courseid,
                 'hostip' => $hostip,
-                'field' => $field
+                'field' => $field,
+                'mode' => $mode,
+                'userid' => $ruser
             ),
         ), false
     );
 
-    return $result->cmc;
+    if (isset($result->cmc)){
+        foreach ($result->cmc as $cmc){
+            $cmc->userid = change_email_to_userid($cmc->email);
+            unset($cmc->email);
+        }
+        return $result->cmc;
+    } else if (isset($result->scmc)) {
+        $result->scmc->userid = change_email_to_userid($result->scmc->email);
+        unset($result->scmc->email);
+        return $result->scmc;
+    } else {
+        return false;
+    }
 }

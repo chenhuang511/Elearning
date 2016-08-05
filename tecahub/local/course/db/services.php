@@ -138,12 +138,12 @@ $functions = array(
         'type'		    => 'write',
         'ajax'		    => true
     ),
-    'local_get_remote_course_modules_completion_by_cmid_hostip' => array(
+    'local_get_remote_course_modules_completion' => array(
         'classname'     => 'local_course_external',
-        'methodname'    => 'get_remote_course_modules_completion_by_cmid_hostip',
+        'methodname'    => 'get_remote_course_modules_completion',
         'classpath'     => 'local/course/externallib.php',
         'description'   => 'Get remote course modules completion',
-        'type'		    => 'write',
+        'type'		    => 'read',
         'ajax'		    => true
     ),
 );
