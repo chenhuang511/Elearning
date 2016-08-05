@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Moodle's bhxh theme, an example of how to make a Bootstrap theme
+ * Moodle's tecapro theme, an example of how to make a Bootstrap theme
  *
  * DO NOT MODIFY THIS THEME!
  * COPY IT FIRST, THEN RENAME THE COPY AND MODIFY IT INSTEAD.
@@ -23,13 +23,13 @@
  * For full information about creating Moodle themes, see:
  * http://docs.moodle.org/dev/Themes_2.0
  *
- * @package   theme_bhxh
+ * @package   theme_tecapro
  * @copyright 2015 Nephzat Dev Team, nephzat.com
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 // Get the HTML for the settings bits.
-$html = theme_bhxh_get_html_for_settings($OUTPUT, $PAGE);
+$html = theme_tecapro_get_html_for_settings($OUTPUT, $PAGE);
 
 if (right_to_left()) {
     $regionbsid = 'region-bs-main-and-post';
@@ -55,18 +55,17 @@ echo $OUTPUT->doctype() ?>
 
 <div class="container-fluid">
    <?php
-         $toggleslideshow = theme_bhxh_get_setting('toggleslideshow');
+         $toggleslideshow = theme_tecapro_get_setting('toggleslideshow');
         if ($toggleslideshow == 1) {
             require_once(dirname(__FILE__) . '/includes/slideshow.php');
         }else{
 								    echo "<br/><br/>";
-								}
+								} 
         ?>
 </div>
 <!--Slider-->
 
-<div id="page" class="container-fluid">
-
+<div id="page">
     <header id="page-header" class="clearfix">
         <?php echo $html->heading; ?>
         <div id="page-navbar" class="clearfix">
@@ -77,15 +76,15 @@ echo $OUTPUT->doctype() ?>
             <?php echo $OUTPUT->course_header(); ?>
         </div>
     </header>
-    <div id="page-content" class="row">
-        <?php echo $OUTPUT->blocks('side-pre', 'col-md-3'); ?>
-        <div id="<?php echo $regionbsid ?>" class="col-md-9">
+    <div id="page-content" class="clearfix">
+        <div id="<?php echo $regionbsid ?>" class="some-class-here">
             <?php
-            echo $OUTPUT->course_content_header();
-            echo $OUTPUT->main_content();
-            echo $OUTPUT->course_content_footer();
+                echo $OUTPUT->course_content_header();
+                echo $OUTPUT->main_content();
+                echo $OUTPUT->course_content_footer();
             ?>
         </div>
+
     </div>
 
 </div>

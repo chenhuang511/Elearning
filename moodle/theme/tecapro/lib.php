@@ -23,7 +23,7 @@
  * For full information about creating Moodle themes, see:
  * http://docs.moodle.org/dev/Themes_2.0
  *
- * @package   theme_bhxh
+ * @package   theme_tecapro
  * @copyright 2016 NCCSOFT VIETNAM, nccsoft.vn
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -44,10 +44,10 @@
 	* Load the our theme js file
 	*
  */
-function theme_bhxh_page_init(moodle_page $page) {
+function theme_tecapro_page_init(moodle_page $page) {
     $page->requires->jquery();
 	   $page->requires->jquery_plugin('migrate');
-				$page->requires->js('/theme/bhxh/javascript/theme.js');
+				$page->requires->js('/theme/tecapro/javascript/theme.js');
 }
 
 /**
@@ -59,11 +59,11 @@ function theme_bhxh_page_init(moodle_page $page) {
 	* @return string
  */	
 	
-function theme_bhxh_process_css($css, $theme) {
+function theme_tecapro_process_css($css, $theme) {
 
     // Set the background image for the logo.
     $logo = $theme->setting_file_url('logo', 'logo');
-    $css = theme_bhxh_set_logo($css, $logo);
+    $css = theme_tecapro_set_logo($css, $logo);
 
     // Set custom CSS.
     if (!empty($theme->settings->customcss)) {
@@ -71,9 +71,9 @@ function theme_bhxh_process_css($css, $theme) {
     } else {
         $customcss = null;
     }
-    $css = theme_bhxh_set_customcss($css, $customcss);
+    $css = theme_tecapro_set_customcss($css, $customcss);
 		
-		$css = theme_bhxh_set_fontwww($css);
+		$css = theme_tecapro_set_fontwww($css);
 
     return $css;
 }
@@ -85,7 +85,7 @@ function theme_bhxh_process_css($css, $theme) {
  * @param string $logo The URL of the logo.
  * @return string The parsed CSS
  */
-function theme_bhxh_set_logo($css, $logo) {
+function theme_tecapro_set_logo($css, $logo) {
     $tag = '[[setting:logo]]';
     $replacement = $logo;
     if (is_null($replacement)) {
@@ -109,18 +109,18 @@ function theme_bhxh_set_logo($css, $logo) {
  * @param array $options
  * @return bool
  */
-function theme_bhxh_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
+function theme_tecapro_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
     static $theme;
 
     if (empty($theme)) {
-        $theme = theme_config::load('bhxh');
+        $theme = theme_config::load('tecapro');
     }
     if ($context->contextlevel == CONTEXT_SYSTEM) {
 								
         if ($filearea === 'logo') {
             return $theme->setting_file_serve('logo', $args, $forcedownload, $options);
         } else if ($filearea === 'style') {
-            theme_bhxh_serve_css($args[1]);
+            theme_tecapro_serve_css($args[1]);
         } else if ($filearea === 'pagebackground') {
             return $theme->setting_file_serve('pagebackground', $args, $forcedownload, $options);
         } else if (preg_match("/slide[1-9][0-9]*image/", $filearea) !== false) {
@@ -139,12 +139,12 @@ function theme_bhxh_pluginfile($course, $cm, $context, $filearea, $args, $forced
  * @param string $filename
 	* @return string
  */
-function theme_bhxh_serve_css($filename) {
+function theme_tecapro_serve_css($filename) {
     global $CFG;
     if (!empty($CFG->themedir)) {
-        $thestylepath = $CFG->themedir . '/bhxh/style/';
+        $thestylepath = $CFG->themedir . '/tecapro/style/';
     } else {
-        $thestylepath = $CFG->dirroot . '/theme/bhxh/style/';
+        $thestylepath = $CFG->dirroot . '/theme/tecapro/style/';
     }
     $thesheet = $thestylepath . $filename;
 
@@ -160,13 +160,13 @@ function theme_bhxh_serve_css($filename) {
     $etagheader = (isset($_SERVER['HTTP_IF_NONE_MATCH']) ? trim($_SERVER['HTTP_IF_NONE_MATCH']) : false);
 
     if ((($ifmodifiedsince) && (strtotime($ifmodifiedsince) == $lastmodified)) || $etagheader == $etagfile) {
-        theme_bhxh_send_unmodified($lastmodified, $etagfile);
+        theme_tecapro_send_unmodified($lastmodified, $etagfile);
     }
-    theme_bhxh_send_cached_css($thestylepath, $filename, $lastmodified, $etagfile);
+    theme_tecapro_send_cached_css($thestylepath, $filename, $lastmodified, $etagfile);
 }
 
 // Set browser cache used in php header
-function theme_bhxh_send_unmodified($lastmodified, $etag) {
+function theme_tecapro_send_unmodified($lastmodified, $etag) {
     $lifetime = 60 * 60 * 24 * 60;
     header('HTTP/1.1 304 Not Modified');
     header('Expires: ' . gmdate('D, d M Y H:i:s', time() + $lifetime) . ' GMT');
@@ -180,7 +180,7 @@ function theme_bhxh_send_unmodified($lastmodified, $etag) {
 }
 
 // Cached css
-function theme_bhxh_send_cached_css($path, $filename, $lastmodified, $etag) {
+function theme_tecapro_send_cached_css($path, $filename, $lastmodified, $etag) {
     global $CFG;
     require_once($CFG->dirroot . '/lib/configonlylib.php'); // For min_enable_zlib_compression().
     // 60 days only - the revision may get incremented quite often.
@@ -210,7 +210,7 @@ function theme_bhxh_send_cached_css($path, $filename, $lastmodified, $etag) {
  * @param string $customcss The custom CSS to add.
  * @return string The CSS which now contains our custom CSS.
  */
-function theme_bhxh_set_customcss($css, $customcss) {
+function theme_tecapro_set_customcss($css, $customcss) {
     $tag = '[[setting:customcss]]';
     $replacement = $customcss;
     if (is_null($replacement)) {
@@ -235,7 +235,7 @@ function theme_bhxh_set_customcss($css, $customcss) {
  *      - heading HTML to use for the heading. A logo if one is selected or the default heading.
  *      - footnote HTML to use as a footnote. By default ''.
  */
-function theme_bhxh_get_html_for_settings(renderer_base $output, moodle_page $page) {
+function theme_tecapro_get_html_for_settings(renderer_base $output, moodle_page $page) {
     global $CFG;
     $return = new stdClass;
 
@@ -264,7 +264,7 @@ function theme_bhxh_get_html_for_settings(renderer_base $output, moodle_page $pa
  * @param $css
 	* @return string
  */
-function theme_bhxh_set_fontwww($css) {
+function theme_tecapro_set_fontwww($css) {
     global $CFG, $PAGE;
     if(empty($CFG->themewww)){
         $themewww = $CFG->wwwroot."/theme";
@@ -274,9 +274,9 @@ function theme_bhxh_set_fontwww($css) {
 
     $tag = '[[setting:fontwww]]';
 
-    $theme = theme_config::load('bhxh');
+    $theme = theme_config::load('tecapro');
    
-   	$css = str_replace($tag, $themewww.'/bhxh/fonts/', $css);
+   	$css = str_replace($tag, $themewww.'/tecapro/fonts/', $css);
    
     return $css;
 
@@ -297,7 +297,7 @@ if (!function_exists('get_logo_url'))
 								static $theme;
 								if(empty($theme))
 								{
-												$theme = theme_config::load('bhxh');
+												$theme = theme_config::load('tecapro');
 								}
 								
 								$logo = $theme->setting_file_url('logo', 'logo');
@@ -307,16 +307,16 @@ if (!function_exists('get_logo_url'))
 }
 
 
-function theme_bhxh_render_slideimg($p,$sliname)
+function theme_tecapro_render_slideimg($p,$sliname)
 {
 				global $PAGE, $OUTPUT;
 					
-    $nos = theme_bhxh_get_setting('numberofslides');
+    $nos = theme_tecapro_get_setting('numberofslides');
     $i = $p%3;
     $slideimage = $OUTPUT->pix_url('home/slide'.$i, 'theme');
 				
 				// Get slide image or fallback to default
-    if (theme_bhxh_get_setting($sliname)) {
+    if (theme_tecapro_get_setting($sliname)) {
         $slideimage = $PAGE->theme->setting_file_url($sliname , $sliname);
     }
   
@@ -325,12 +325,12 @@ function theme_bhxh_render_slideimg($p,$sliname)
 }
 
 
-function theme_bhxh_get_setting($setting, $format = false) {
+function theme_tecapro_get_setting($setting, $format = false) {
     global $CFG;
     require_once($CFG->dirroot . '/lib/weblib.php');
     static $theme;
     if (empty($theme)) {
-        $theme = theme_config::load('bhxh');
+        $theme = theme_config::load('tecapro');
     }
     if (empty($theme->settings->$setting)) {
         return false;

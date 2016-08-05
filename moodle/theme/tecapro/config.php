@@ -17,13 +17,13 @@
 /**
  * Version details
  *
- * @package    theme_bhxh
+ * @package    theme_tecapro
  * @copyright  2016 NCCSOFT VIETNAM , nccsoft.vn
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  */
 	
-$THEME->name = 'bhxh';
+$THEME->name = 'tecapro';
 
 $THEME->doctype = 'html5';
 $THEME->parents = array('bootstrap');
@@ -34,7 +34,7 @@ $THEME->enable_dock = true;
 $THEME->editor_sheets = array();
 
 $THEME->rendererfactory = 'theme_overridden_renderer_factory';
-$THEME->csspostprocess = 'theme_bhxh_process_css';
+$THEME->csspostprocess = 'theme_tecapro_process_css';
 
 $THEME->layouts = array(
 	// The site home page.

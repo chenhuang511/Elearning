@@ -23,7 +23,7 @@
  * For full information about creating Moodle themes, see:
  * http://docs.moodle.org/dev/Themes_2.0
  *
- * @package    theme_bhxh
+ * @package    theme_tecapro
  * @copyright  2016 NCCSOFT VIETNAM, nccsoft.vn
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -34,7 +34,7 @@ $plugin->version   = 2015122500;
 $plugin->maturity = MATURITY_STABLE; // this version's maturity level.
 $plugin->release = 'Moodle 3.0.1 (Build: 20151221)';
 $plugin->requires  = 2013111800;
-$plugin->component = 'theme_bhxh';
+$plugin->component = 'theme_tecapro';
 $plugin->dependencies = array(
     'theme_bootstrap'  => 2013110500,
 );

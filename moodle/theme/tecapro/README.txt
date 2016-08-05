@@ -1,11 +1,11 @@
-About BHXH Moodle theme
+About TECAPRO Moodle theme
 =========================
 
 This is Responsive Bootstrapbase Moodle Theme
 
 
 
-* package   Moodle BHXH Theme
+* package   Moodle TECAPRO Theme
 
 * copyright 2015 onwards www.lmsthemes.com
 
@@ -27,14 +27,14 @@ IE9+
 Recent versions of all modern browsers
 
 
-Bhxh theme - Installation steps
+Tecapro theme - Installation steps
 ================================
 
-1) On your download pacakge, you will find theme_bhxh.zip
+1) On your download pacakge, you will find theme_tecapro.zip
 
-2) Unzip - theme_bhxh.zip, you will get folder 'bhxh'
+2) Unzip - theme_tecapro.zip, you will get folder 'tecapro'
 
-3) Copy folder 'bhxh' and put into theme folder of your moodle system
+3) Copy folder 'tecapro' and put into theme folder of your moodle system
 
 4) Next login as Site administrator
 
@@ -44,11 +44,11 @@ Bhxh theme - Installation steps
 
 7) You will get success message once the plugins installed successfully.
 
-8) By clicking "Continue" button on success page , you will get options to change the bhxh theme settings.
+8) By clicking "Continue" button on success page , you will get options to change the tecapro theme settings.
    You can modify the settings later too :-)
 
 
-Steps to set bhxh theme as default theme for your moodle system
+Steps to set tecapro theme as default theme for your moodle system
 ==================================================================
 
 1) Login as site administrator
@@ -60,7 +60,7 @@ Steps to set bhxh theme as default theme for your moodle system
 
 4) It will list all the available themes for "Default device"
 
-5) Then click "Use theme" button on "BHXH theme"
+5) Then click "Use theme" button on "TECAPRO theme"
 
 6) Next click the "Continue" button ,thats it. 
 

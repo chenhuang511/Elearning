@@ -17,13 +17,13 @@
 /**
  * The two column layout.
  *
- * @package   theme_bhxh
+ * @package   theme_tecapro
  * @copyright 2015 Nephzat Dev Team,nephzat.com
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 // Get the HTML for the settings bits.
-$html = theme_bhxh_get_html_for_settings($OUTPUT, $PAGE);
+$html = theme_tecapro_get_html_for_settings($OUTPUT, $PAGE);
 
 $left = (!right_to_left());  // To know if to add 'pull-right' and 'desktop-first-column' classes in the layout for LTR.
 echo $OUTPUT->doctype() ?>

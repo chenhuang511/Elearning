@@ -1,15 +1,15 @@
 <?php
-$footnote = theme_bhxh_get_setting('footnote', 'format_html');
+$footnote = theme_tecapro_get_setting('footnote', 'format_html');
 
-$fburl = theme_bhxh_get_setting('fburl');
-$pinurl = theme_bhxh_get_setting('pinurl');
-$twurl = theme_bhxh_get_setting('twurl');
-$gpurl = theme_bhxh_get_setting('gpurl');
+$fburl = theme_tecapro_get_setting('fburl');
+$pinurl = theme_tecapro_get_setting('pinurl');
+$twurl = theme_tecapro_get_setting('twurl');
+$gpurl = theme_tecapro_get_setting('gpurl');
 
-$address = theme_bhxh_get_setting('address');
-$emailid = theme_bhxh_get_setting('emailid');
-$phoneno = theme_bhxh_get_setting('phoneno');
-$copyright_footer = theme_bhxh_get_setting('copyright_footer');
+$address = theme_tecapro_get_setting('address');
+$emailid = theme_tecapro_get_setting('emailid');
+$phoneno = theme_tecapro_get_setting('phoneno');
+$copyright_footer = theme_tecapro_get_setting('copyright_footer');
 
 ?>
     <footer id="footer">
@@ -29,11 +29,11 @@ $copyright_footer = theme_bhxh_get_setting('copyright_footer');
                         <div class="logo-footer logo">
                             <a href="<?php echo $CFG->wwwroot; ?>">
                                 <div class="logo-section">
-                                    <img src="<?php echo get_logo_url(); ?>" class="site-logo-img" alt="bhxh">
+                                    <img src="<?php echo get_logo_url(); ?>" class="site-logo-img" alt="tecapro">
                                 </div>
                                 <div class="logo-section">
                                     <div class="logo-title">
-                                        <?php echo get_string('configtitle', 'theme_bhxh'); ?>
+                                        <?php echo get_string('configtitle', 'theme_tecapro'); ?>
                                     </div>
                                 </div>
                             </a>

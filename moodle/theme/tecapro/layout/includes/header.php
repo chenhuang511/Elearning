@@ -7,11 +7,11 @@
                     <div class="logo">
                         <a href="<?php echo $CFG->wwwroot; ?>">
                             <div class="logo-section">
-                                <img src="<?php echo get_logo_url(); ?>" class="site-logo-img" alt="bhxh">
+                                <img src="<?php echo get_logo_url(); ?>" class="site-logo-img" alt="tecapro">
                             </div>
                             <div class="logo-section">
                                 <div class="logo-title">
-                                    <?php echo get_string('configtitle', 'theme_bhxh'); ?>
+                                    <?php echo get_string('configtitle', 'theme_tecapro'); ?>
                                 </div>
                             </div>
                         </a>

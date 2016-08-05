@@ -15,15 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The secure layout.
+ * The maintenance layout.
  *
- * @package   theme_bhxh
- * @copyright 2013 Moodle, moodle.org
+ * @package   theme_tecapro
+ * @copyright 2015 Nephzat Dev Team,nephzat.com
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 // Get the HTML for the settings bits.
-$html = theme_bhxh_get_html_for_settings($OUTPUT, $PAGE);
+$html = theme_tecapro_get_html_for_settings($OUTPUT, $PAGE);
 
 echo $OUTPUT->doctype() ?>
 <html <?php echo $OUTPUT->htmlattributes(); ?>>
@@ -39,26 +39,6 @@ echo $OUTPUT->doctype() ?>
 
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
 
-<header role="banner" class="navbar navbar-fixed-top moodle-has-zindex">
-    <nav role="navigation" class="navbar-inner">
-        <div class="container-fluid">
-            <a class="brand" href="<?php echo $CFG->wwwroot;?>"><?php echo
-                format_string($SITE->shortname, true, array('context' => context_course::instance(SITEID)));
-                ?></a>
-            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </a>
-            <div class="nav-collapse collapse">
-                <ul class="nav pull-right">
-                    <li><?php echo $OUTPUT->page_heading_menu(); ?></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-</header>
-
 <div id="page" class="container-fluid">
 
     <header id="page-header" class="clearfix">
@@ -66,16 +46,16 @@ echo $OUTPUT->doctype() ?>
     </header>
 
     <div id="page-content" class="row-fluid">
-        <div id="region-bs-main-and-pre" class="span9">
-            <div class="row-fluid">
-                <section id="region-main" class="span8 pull-right">
-                    <?php echo $OUTPUT->main_content(); ?>
-                </section>
-                <?php echo $OUTPUT->blocks('side-pre', 'span4 desktop-first-column'); ?>
-            </div>
-        </div>
-        <?php echo $OUTPUT->blocks('side-post', 'span3'); ?>
+        <section id="region-main" class="span12">
+            <?php echo $OUTPUT->main_content(); ?>
+        </section>
     </div>
+
+    <footer id="page-footer">
+        <?php
+        echo $OUTPUT->standard_footer_html();
+        ?>
+    </footer>
 
     <?php echo $OUTPUT->standard_end_of_body_html() ?>
 

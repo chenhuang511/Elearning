@@ -16,12 +16,12 @@
 
 /**
  *
- * @package     theme_bhxh
+ * @package     theme_tecapro
  * @copyright   2016 NCCSOFT VIETNAMW,nccsoft.vn
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$numberofslides = theme_bhxh_get_setting('numberofslides');
+$numberofslides = theme_tecapro_get_setting('numberofslides');
 
 if ($numberofslides) { ?>
 
@@ -41,10 +41,10 @@ if ($numberofslides) { ?>
          
      <?php for($s1=1;$s1<=$numberofslides;$s1++): 
 															$cls_txt2 = ($s1=="1")?' active':'';
-															$slidecaption = theme_bhxh_get_setting('slide' . $s1 . 'caption', true);
-															$slidedesc = theme_bhxh_get_setting('slide' . $s1 . 'desc','format_html');
+															$slidecaption = theme_tecapro_get_setting('slide' . $s1 . 'caption', true);
+															$slidedesc = theme_tecapro_get_setting('slide' . $s1 . 'desc','format_html');
 
-															$slideimg = theme_bhxh_render_slideimg($s1,'slide' . $s1 . 'image');
+															$slideimg = theme_tecapro_render_slideimg($s1,'slide' . $s1 . 'image');
 															
 					?>
       <div class="item<?php echo $cls_txt2; ?>" style="background-image: url(<?php echo $slideimg; ?>);">

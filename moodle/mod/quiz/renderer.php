@@ -1055,7 +1055,7 @@ class mod_quiz_renderer extends plugin_renderer_base
         $output = '';
 
         // Print quiz name and description.
-        $output .= $this->heading('<i class="fa fa-check-square-o" aria-hidden="true"></i>' . format_string($quiz->name),3, array('class' => 'heading-bhxh-quiz'));
+        $output .= $this->heading('<i class="fa fa-check-square-o" aria-hidden="true"></i>' . format_string($quiz->name),3, array('class' => 'el-heading'));
         $output .= $this->quiz_intro($quiz, $cm);
 
         // Output any access messages.

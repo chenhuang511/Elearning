@@ -61,7 +61,7 @@ if($CFG->nonajax == true ){
     echo $OUTPUT->header();
 }
 
-echo $OUTPUT->heading(format_text($questionnaire->name), 3, array('class' => 'heading-bhxh-quiz'));
+echo $OUTPUT->heading(format_text($questionnaire->name), 3, array('class' => 'el-heading'));
 
 // Print the main part of the page.
 if ($questionnaire->intro) {

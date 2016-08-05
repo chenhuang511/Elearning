@@ -17,7 +17,7 @@
 /**
  * The embedded layout.
  *
- * @package   theme_bhxh
+ * @package   theme_tecapro
  * @copyright 2015 Nephzat Dev Team,nephzat.com
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

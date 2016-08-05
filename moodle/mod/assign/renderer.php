@@ -256,7 +256,7 @@ class mod_assign_renderer extends plugin_renderer_base
         }
 
         $heading = format_string($header->assign->name, false, array('context' => $header->context));
-        $o .= $this->output->heading($heading, 2, array('class' => 'heading-bhxh-quiz'));
+        $o .= $this->output->heading($heading, 2, array('class' => 'el-heading'));
         if ($header->preface) {
             $o .= $header->preface;
         }

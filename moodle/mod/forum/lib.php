@@ -4428,7 +4428,7 @@ function forum_search_form($course, $search = '')
     $output .= '<label class="accesshide" for="search" >' . get_string('search', 'forum') . '</label>';
     $output .= '<input id="search" name="search" type="text" size="18" value="' . s($search, true) . '" />';
     $output .= '<label class="accesshide" for="searchforums" >' . get_string('searchforums', 'forum') . '</label>';
-    $output .= '<input id="searchforums" class="btn-bhxh-search" value="' . get_string('searchforums', 'forum') . '" type="submit" />';
+    $output .= '<input id="searchforums" class="el-btn-search" value="' . get_string('searchforums', 'forum') . '" type="submit" />';
     $output .= '<input name="id" type="hidden" value="' . $course->id . '" />';
     $output .= '</fieldset>';
     $output .= '</form>';

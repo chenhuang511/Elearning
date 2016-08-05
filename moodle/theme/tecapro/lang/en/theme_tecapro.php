@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'theme_bhxh', language 'en'
+ * Strings for component 'theme_tecapro', language 'en'
  *
- * @package   theme_bhxh
+ * @package   theme_tecapro
  * @copyright 2016 NCCSOFT VIETNAM, nccsoft.vn
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,10 +27,10 @@ $string['aboutus'] = 'About Us';
 $string['address'] = 'Address';
 $string['calendar'] = 'Calendar';
 $string['choosereadme'] = '<div class="clearfix"><div class="theme_screenshot">
-<img class=img-polaroid src="bhxh/pix/screenshot.jpg" />
+<img class=img-polaroid src="tecapro/pix/screenshot.jpg" />
 <h3>Theme Credits</h3>
 <p>
-<h3>Moodle BHXH theme</h3>
+<h3>Moodle TECAPRO theme</h3>
 <p>
 This theme is based on the Bootstrap Moodle theme.
 </p>
@@ -130,7 +130,7 @@ $string['phoneno'] = 'Phone No';
 $string['pinurl'] = 'Pinterest';
 $string['pinurl_default'] = 'https://in.pinterest.com/yourpinterestname/';
 $string['pinurldesc'] = 'The Pinterest url of your organisation.';
-$string['pluginname'] = 'bhxh';
+$string['pluginname'] = 'tecapro';
 $string['readmore'] = 'Read More';
 $string['region-side-post'] = 'Right';
 $string['region-side-pre'] = 'Left';

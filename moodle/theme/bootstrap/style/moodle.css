@@ -9266,7 +9266,7 @@ form.popupform div {
     -webkit-overflow-scrolling: touch;
 }
 
-.bhxh-managetemplates > .no-overflow {
+.el-managetemplates > .no-overflow {
     clear: both;
 }
 
@@ -16141,18 +16141,18 @@ body.path-question-type .mform fieldset.hidden {
     column-gap: 30px;
 }
 
-.userprofile .bhxh-category {
+.userprofile .el-category {
     border: 1px solid #ddd;
     padding-left: 20px;
     height: 210px;
 
 }
 
-.userprofile .bhxh-category:nth-child(3n) {
+.userprofile .el-category:nth-child(3n) {
     border: 1px solid #ddd;
 }
 
-.userprofile .bhxh-category:nth-child(1) .node a {
+.userprofile .el-category:nth-child(1) .node a {
     color: #00A8B3;
 }
 
@@ -16161,7 +16161,7 @@ body.path-question-type .mform fieldset.hidden {
     width: 100%;
 }
 
-.userprofile .bhxh-category {
+.userprofile .el-category {
     margin-bottom: 30px;
 }
 
@@ -16247,13 +16247,13 @@ fieldset[disabled] .userprofile .header-button-group .btn.active {
     text-decoration: none;
 }
 
-.userprofile .bhxh-category ul li a {
+.userprofile .el-category ul li a {
     margin-left: 5px;
 }
 
 .
 
-.userprofile .bhxh-category ul li:nth-last-child(1) {
+.userprofile .el-category ul li:nth-last-child(1) {
     height: 20px;
 
 }
@@ -16293,12 +16293,12 @@ fieldset[disabled] .userprofile .header-button-group .btn.active {
     list-style-type: none;
 }
 
-#page-user-profile .bhxh-category li {
+#page-user-profile .el-category li {
 
     margin-left: 10px;
 }
 
-#page-user-profile .bhxh-category li:not(.node)::before {
+#page-user-profile .el-category li:not(.node)::before {
     content: '';
     display: inline-block;
     width: 5px;
@@ -16318,7 +16318,7 @@ fieldset[disabled] .userprofile .header-button-group .btn.active {
     display: block;
 }
 
-.path-user .bhxh-category:first-child li span {
+.path-user .el-category:first-child li span {
     display: inline;
 }
 
@@ -16386,7 +16386,7 @@ fieldset[disabled] .userprofile .header-button-group .btn.active {
 
     }
 
-    .bhxh-category h3 {
+    .el-category h3 {
         font-size: 18px;
     }
 
