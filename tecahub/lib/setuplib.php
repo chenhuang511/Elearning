@@ -843,11 +843,7 @@ function initialise_fullme() {
     }
 
     $rurl = setup_get_remote_url();
-    if (isset($CFG->wwwrootnet)) {
-        $wwwroot = parse_url($CFG->wwwrootnet.'/');
-    } else {
-        $wwwroot = parse_url($CFG->wwwroot.'/');
-    }
+    $wwwroot = parse_url($CFG->wwwroot.'/');
 
     if (empty($rurl['host'])) {
         // missing host in request header, probably not a real browser, let's ignore them
