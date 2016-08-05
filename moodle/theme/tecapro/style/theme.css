@@ -3925,7 +3925,8 @@ input[type="submit"].stop-reset-form:hover {
 }
 
 .forumaddnew > form input[type="submit"],
-.quizattempt .continuebutton form input[type="submit"].stop-reset-form {
+.quizattempt .continuebutton form input[type="submit"].stop-reset-form,
+form#personsearch input[type="submit"] {
     background-color: #339966;
     border-color: #059A54;
     font-weight: 500;
@@ -3933,7 +3934,9 @@ input[type="submit"].stop-reset-form:hover {
 
 .forumaddnew > form input[type="submit"]:focus, .forumaddnew > form input[type="submit"]:hover,
 .quizattempt .continuebutton form input[type="submit"].stop-reset-form:focus,
-.quizattempt .continuebutton form input[type="submit"].stop-reset-form:hover {
+.quizattempt .continuebutton form input[type="submit"].stop-reset-form:hover,
+form#personsearch input[type="submit"]:focus,
+form#personsearch input[type="submit"]:hover {
     background-color: #296f4c;
     border-color: #339966;
 }
@@ -4052,4 +4055,8 @@ table.flexible > thead > tr > th:last-child {
 
 .type_setting.depth_2 p.hasicon img {
     background-color: transparent;
+}
+
+form#personsearch input[type="submit"] {
+    padding: 6px 11px;
 }
