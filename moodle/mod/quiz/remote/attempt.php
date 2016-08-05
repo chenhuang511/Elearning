@@ -25,7 +25,7 @@ if ($id = optional_param('id', 0, PARAM_INT)) {
     if (!$cm = get_coursemodule_from_instance('quiz', $qid)) {
         print_error('invalidquizid', 'quiz');
     }
-    redirect(new moodle_url('/mod/quiz/startattempt.php',
+    redirect(new moodle_url('/mod/quiz/remote/startattempt.php',
         array('cmid' => $cm->id, 'sesskey' => sesskey())));
 }
 

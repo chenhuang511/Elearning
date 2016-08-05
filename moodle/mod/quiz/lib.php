@@ -1689,7 +1689,7 @@ function quiz_extend_settings_navigation($settings, $quiznode) {
     }
 
     if (has_capability('mod/quiz:preview', $PAGE->cm->context)) {
-        $url = new moodle_url('/mod/quiz/startattempt.php',
+        $url = new moodle_url((MOODLE_RUN_MODE === MOODLE_MODE_HUB)?'/mod/quiz/remote/startattempt.php':'/mod/quiz/startattempt.php',
                 array('cmid'=>$PAGE->cm->id, 'sesskey'=>sesskey()));
         $node = navigation_node::create(get_string('preview', 'quiz'), $url,
                 navigation_node::TYPE_SETTING, null, 'mod_quiz_preview',

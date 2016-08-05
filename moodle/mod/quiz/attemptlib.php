@@ -389,7 +389,7 @@ class quiz {
         if ($page) {
             $params['page'] = $page;
         }
-        return new moodle_url($this->isremote?'/mod/quiz/remote/startattempt.php':'/mod/quiz/startattempt.php', $params);
+        return new moodle_url((MOODLE_RUN_MODE === MOODLE_MODE_HUB)?'/mod/quiz/remote/startattempt.php':'/mod/quiz/startattempt.php', $params);
     }
 
     /**
