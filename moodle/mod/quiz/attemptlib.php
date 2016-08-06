@@ -305,22 +305,6 @@ class quiz {
     }
 
     /**
-     * hanv
-     * Return quiz_access_manager and instance of the quiz_access_manager class
-     * for this quiz at this time.
-     * @param int $timenow the current time as a unix timestamp.
-     * @return quiz_access_manager and instance of the quiz_access_manager class
-     *      for this quiz at this time.
-     */
-    public function get_remote_access_manager($timenow) {
-        if (is_null($this->accessmanager)) {
-            $this->accessmanager = new quiz_access_manager($this, $timenow,
-                false);
-        }
-        return $this->accessmanager;
-    }
-
-    /**
      * Wrapper round the has_capability funciton that automatically passes in the quiz context.
      */
     public function has_capability($capability, $userid = null, $doanything = true) {
@@ -359,22 +343,8 @@ class quiz {
      */
     public function attempt_url($attemptid, $page = 0) {
         global $CFG;
-        $url = $CFG->wwwroot . '/mod/quiz/attempt.php?attempt=' . $attemptid;
-        if ($page) {
-            $url .= '&page=' . $page;
-        }
-        return $url;
-    }
-
-    /**
-     * hanv 06/06/2016
-     * @param int $attemptid the id of an attempt.
-     * @param int $page optional page number to go to in the attempt.
-     * @return string the URL of that attempt.
-     */
-    public function attempt_remote_url($attemptid, $page = 0, $nonajax = true) {
-        global $CFG;
-        $url = $CFG->wwwroot . '/mod/quiz/remote/attempt.php?attempt=' . $attemptid . '&nonajax=' . $nonajax;
+        $remoteurl = (MOODLE_RUN_MODE === MOODLE_MODE_HUB)?'/mod/quiz/remote/attempt.php?attempt=':'/mod/quiz/attempt.php?attempt=';
+        $url = $CFG->wwwroot . $remoteurl . $attemptid;
         if ($page) {
             $url .= '&page=' . $page;
         }

@@ -318,3 +318,22 @@ function delete_remote_response_by_tbl($tablename, $select, $sort = '')
     );
     return $res;
 }
+
+/**
+ * set_field a mbl
+ *
+ * @param $branch
+ * @return false|mixed
+ */
+function setfield_remote_response_by_tbl($tablename, $field, $value, $data)
+{
+    $res = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_setfield_response_by_mbl',
+            'params' => array_merge(array('tablename' => $tablename, 'field' => $field, 'value' => $value), $data)
+        ), false
+    );
+    return $res;
+}

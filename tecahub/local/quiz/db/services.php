@@ -251,4 +251,12 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_setfield_response_by_mbl' => array(
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'setfield_response_by_mbl',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "set one field response by table name.",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 );
