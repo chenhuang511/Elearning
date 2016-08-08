@@ -547,6 +547,7 @@ class completion_info {
         // the possible result of this change. If the change is to COMPLETE and the
         // current value is one of the COMPLETE_xx subtypes, ignore that as well
         $current = $this->get_data($cm, false, $userid);
+
         if ($possibleresult == $current->completionstate ||
             ($possibleresult == COMPLETION_COMPLETE &&
                 ($current->completionstate == COMPLETION_COMPLETE_PASS ||
@@ -968,7 +969,7 @@ class completion_info {
             if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
                 $data = $DB->get_record('course_modules_completion', array('coursemoduleid'=>$cm->id, 'userid'=>$userid));
             } else {
-                $data = get_remote_course_modules_completion_by_mode($cm->id, 'notwhole', '*', $userid);
+                $data = get_remote_course_modules_completion_by_mode($cm->id, 'singlerc', '*', $userid);
             }
             if ($data == false) {
                 // Row not present counts as 'not complete'
@@ -1007,15 +1008,32 @@ class completion_info {
         $transaction = $DB->start_delegated_transaction();
         if (!$data->id) {
             // Check there isn't really a row
-            $data->id = $DB->get_field('course_modules_completion', 'id',
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $data->id = $DB->get_field('course_modules_completion', 'id',
                     array('coursemoduleid'=>$data->coursemoduleid, 'userid'=>$data->userid));
+            } else {
+                if(!$cmc = get_remote_course_modules_completion_by_mode($data->coursemoduleid, 'singlerc', 'id', $data->userid)){
+                    $data->id = 0;
+                } else {
+                    $data->id = $cmc->id;
+                }
+            }
         }
         if (!$data->id) {
             // Didn't exist before, needs creating
-            $data->id = $DB->insert_record('course_modules_completion', $data);
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $data->id = $DB->insert_record('course_modules_completion', $data);
+            } else {
+                $data->id = create_remote_course_modules_completion($data);
+            }
+
         } else {
             // Has real (nonzero) id meaning that a database row exists, update
-            $DB->update_record('course_modules_completion', $data);
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $DB->update_record('course_modules_completion', $data);
+            } else {
+                update_remote_course_modules_completion($data);
+            }
         }
         $transaction->allow_commit();
 
