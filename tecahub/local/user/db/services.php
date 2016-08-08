@@ -42,4 +42,12 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+    'local_get_user_by_id' => array(
+        'classname'	  => 'local_user_external',
+        'methodname'  => 'get_user_by_id',
+        'classpath'	  => 'local/user/externallib.php',
+        'description' => "get user by id",
+        'type'		  => 'read',
+        'ajax'		  => true
+    ),
 );

@@ -216,13 +216,13 @@ class core_remote_renderer extends plugin_renderer_base
     {
         $html = '';
         // start profile block
-        $html .= html_writer::start_div('bhxh-profile-block clearfix');
-        $html .= html_writer::start_div('col-sm-7 col-md-7 bhxh-profile-info');
+        $html .= html_writer::start_div('el-profile-block clearfix');
+        $html .= html_writer::start_div('col-sm-7 col-md-7 el-profile-info');
         $html .= html_writer::label($user->username, '', true, array('class' => 'profile-info-username'));
         $html .= html_writer::link(new moodle_url("/user/edit.php", array('userid' => $user->id, 'returnto' => 'profile')), '<i class="fa fa-pencil-square-o" aria-hidden="true"></i>' . 'Chỉnh sửa thông tin cá nhân', array('class' => 'profile-info-link'));
         $html .= html_writer::end_div(); // end profile info
-        $html .= html_writer::start_div('col-sm-5 col-md-5 bhxh-certificate');
-        $html .= html_writer::empty_tag('img', array('class' => 'certificate-img', 'src' => 'theme/bhxh/pix/certificate_icon.png'));
+        $html .= html_writer::start_div('col-sm-5 col-md-5 el-certificate');
+        $html .= html_writer::empty_tag('img', array('class' => 'certificate-img', 'src' => 'theme/tecapro/pix/certificate_icon.png'));
         $html .= html_writer::start_div('certificate-info');
         $cername = '<strong>MVA Founders Club</strong>';
         $cerpoint = '<br> 55 Legacy Points';
@@ -245,7 +245,7 @@ class core_remote_renderer extends plugin_renderer_base
         $coursename = $course->fullname;
         $coursenamelink = html_writer::link($this->get_view_course_url($course),
             $coursename, array('class' => $course->visible ? '' : 'dimmed'));
-        $progress = html_writer::span('80%', 'badge bhxh-badge');
+        $progress = html_writer::span('80%', 'badge el-badge');
         $html .= html_writer::tag('h3', $coursenamelink . $progress);
 
         $html .= html_writer::end_tag('header'); // end header
@@ -267,7 +267,7 @@ class core_remote_renderer extends plugin_renderer_base
         }
         // display button
         $html .= html_writer::link($this->get_view_course_url($course),
-            'Học ngay', array('class' => 'btn btn-primary btn-bhxh-reg'));
+            'Học ngay', array('class' => 'btn btn-primary btn-el-reg'));
         $html .= html_writer::end_tag('div'); // .summary
 
         $html .= html_writer::end_tag('section'); // end section
@@ -280,8 +280,8 @@ class core_remote_renderer extends plugin_renderer_base
     {
         $html = '';
         $i = 0;
-        $html .= html_writer::start_div('bhxh-sidebar');
-        $html .= html_writer::tag('h3', $heading, array('class' => 'bhxh-sidebar-heading'));
+        $html .= html_writer::start_div('el-sidebar');
+        $html .= html_writer::tag('h3', $heading, array('class' => 'el-sidebar-heading'));
         foreach ($courses as $course) {
             $i++;
             $classes = 'coursebox';
@@ -314,8 +314,8 @@ class core_remote_renderer extends plugin_renderer_base
             $html .= html_writer::end_tag('section');
             $html .= html_writer::end_tag('article'); //end tag coursebox
         }
-        $html .= html_writer::start_div('bhxh-buttons'); // buttons
-        $html .= html_writer::link(new moodle_url('course.php'), 'xem tất cả ' . '<i class="fa fa-angle-right" aria-hidden="true"></i>', array('class' => 'bhxh-viewall'));
+        $html .= html_writer::start_div('el-buttons'); // buttons
+        $html .= html_writer::link(new moodle_url('course.php'), 'xem tất cả ' . '<i class="fa fa-angle-right" aria-hidden="true"></i>', array('class' => 'el-viewall'));
         $html .= html_writer::end_div(); // end buttons
         $html .= html_writer::end_div();
         return $html;
@@ -445,8 +445,8 @@ class core_remote_renderer extends plugin_renderer_base
         $context = context_course::instance($course->id, MUST_EXIST);
 
         if (isset($CFG->nonajax) && !has_capability('moodle/course:manageactivities', $context)) {
-            $CFG->nonajax = false;
-            return new moodle_url($CFG->loginredir . '/?', array('id' => $course->id));
+            if ($CFG->nonajax == false)
+                return new moodle_url($CFG->loginredir . '/?', array('id' => $course->id));
         }
 
         return new moodle_url($CFG->wwwroot . '/course/view.php', array('id' => $course->id));

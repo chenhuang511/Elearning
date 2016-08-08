@@ -47,7 +47,7 @@ class theme_bootstrap_core_course_renderer extends core_course_renderer
         if ($chelper->get_show_courses() < self::COURSECAT_SHOW_COURSES_EXPANDED) {
             $classes .= ' collapsed';
         }
-        $classes .= ' bhxh-content';
+        $classes .= ' el-content';
         // Start .coursebox div.
         $content .= html_writer::start_tag('div', array(
             'class' => $classes,

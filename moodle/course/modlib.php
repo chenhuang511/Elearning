@@ -562,6 +562,11 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
 
     $DB->update_record('course_modules', $cm);
 
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+        // Get back remote id for course module
+        $cm->id = $cmhost->remoteid;
+    }
+
     $modcontext = context_module::instance($moduleinfo->coursemodule);
 
         // Update embedded links and save files.

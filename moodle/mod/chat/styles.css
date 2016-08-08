@@ -16,15 +16,15 @@
 }
 
 /** styles for view.php **/
-.bhxh-image img{
+.tecapro-image img{
     margin-right: 70px;
 }
 #page-mod-chat-view .chatcurrentusers .chatuserdetails {vertical-align: middle;}
 .table-user p{font-weight: bold; color: rgb(24, 124, 178);}
 .table-user  span{color: rgb(204, 204, 204); font-style: italic;}
-.bhxh-chat-spansss {margin-top: 29px;}
-.bhxh-chat-spansss .no-overflow {margin-left: -6px; }
-.bhxh-link-chat {margin-top: 16px;}
+.tecapro-chat-span {margin-top: 29px;}
+.tecapro-chat-span .no-overflow {margin-left: -6px; }
+.tecapro-link-chat {margin-top: 16px;}
 
 /** Styles for basic chat **/
 #page-mod-chat-gui_basic #participants ul {margin:0;padding:0;list-style-type:none;}

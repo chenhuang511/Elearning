@@ -173,7 +173,7 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
     <td class="col-md-2" align="right">
         <label for="ldapencoding"><?php print_string('auth_ldap_ldap_encoding_key', 'auth_ldap') ?></label>
     </td>
-    <td class="col-md-8">
+    <td class="col-md-2">
         <input id="ldapencoding" name="ldapencoding" type="text" value="<?php echo $config->ldapencoding ?>" />
         <?php if (isset($err['ldapencoding'])) { echo $OUTPUT->error_text($err['ldapencoding']); } ?>
     </td>

@@ -25,7 +25,7 @@ if ($id = optional_param('id', 0, PARAM_INT)) {
     if (!$cm = get_coursemodule_from_instance('quiz', $qid)) {
         print_error('invalidquizid', 'quiz');
     }
-    redirect(new moodle_url('/mod/quiz/startattempt.php',
+    redirect(new moodle_url('/mod/quiz/remote/startattempt.php',
         array('cmid' => $cm->id, 'sesskey' => sesskey())));
 }
 
@@ -34,14 +34,32 @@ $isremote = (MOODLE_RUN_MODE == MOODLE_MODE_HUB)?true:false;
 $attemptid = required_param('attempt', PARAM_INT);
 $page = optional_param('page', 0, PARAM_INT);
 
-$attemptremote = get_remote_get_attempt_data($attemptid);
-
 $attempt = get_remote_attempt_by_attemptid($attemptid);
 $quiz = get_remote_quiz_by_id($attempt->quiz);
 $course = get_local_course_record($quiz->course);
 $cm = get_remote_course_module_by_instance("quiz", $quiz->id);
 $attemptobj = new quiz_attempt($attempt, $quiz, $cm, $course, false, true);
 $context = context_module::instance($cm->id);
+
+$setting = array();
+if($quiz->settinglocal){
+    $fields =  array(
+        'timeopen',
+        'timeclose',
+        'timelimit',
+        'overduehandling',
+        'graceperiod',
+        'attempts',
+        'grademethod'
+    );
+    $index = 0;
+    foreach ($fields as $field){
+        $setting["setting[$index][name]"] = $field;
+        $setting["setting[$index][value]"] = $quiz->$field;
+        $index++;
+    }
+}
+$attemptremote = get_remote_get_attempt_data($attemptid, null, $setting);
 
 $nonajax = optional_param('nonajax', true, PARAM_BOOL);
 if (!has_capability('moodle/course:manageactivities', $context) && $nonajax == false) {

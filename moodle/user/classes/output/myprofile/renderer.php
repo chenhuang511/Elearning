@@ -60,9 +60,9 @@ class renderer extends \plugin_renderer_base {
     public function render_category(category $category) {
         $classes = $category->classes;
         if (empty($classes)) {
-            $return = \html_writer::start_tag('section', array('class' => 'node_category bhxh-category'));
+            $return = \html_writer::start_tag('section', array('class' => 'node_category el-category'));
         } else {
-            $return = \html_writer::start_tag('section', array('class' => 'node_category bhxh-category' . $classes));
+            $return = \html_writer::start_tag('section', array('class' => 'node_category el-category' . $classes));
         }
         $return .= \html_writer::tag('h3', $category->title);
         $nodes = $category->nodes;

@@ -762,10 +762,11 @@ ORDER BY
 
         // Validate permissions for creating a new attempt and start a new preview attempt if required.
         list($currentattemptid, $attemptnumber, $lastattempt, $messages, $page) =
-            quiz_validate_new_attempt($quizobj, $accessmanager, $forcenew, -1, false, $remoteuserid);
+            quiz_validate_new_attempt($quizobj, $accessmanager, $forcenew, -1, false, $remoteuserid, $preview);
 
         // Check access.
-        if (!$quizobj->is_preview_user() && $messages) {
+        $ispreview = ($preview === true)?$preview:$quizobj->is_preview_user();
+        if (!$ispreview && $messages) {
             // Create warnings with the exact messages.
             foreach ($messages as $message) {
                 $warnings[] = array(
@@ -2331,6 +2332,84 @@ ORDER BY
                 'timecheckstate' => new external_value(PARAM_INT, 'Next time quiz cron should check attempt for
                                                         state changes.  NULL means never check.', VALUE_OPTIONAL),
                 'sumgrades' => new external_value(PARAM_FLOAT, 'Total marks for this attempt.', VALUE_OPTIONAL),
+            )
+        );
+    }
+
+    /**
+     * Hanv: 06/08/2016
+     * setfield response
+     */
+    public static function setfield_response_by_mbl_parameters()
+    {
+        return new external_function_parameters (
+            array(
+                'tablename' => new external_value(PARAM_TEXT, ' the table name'),
+                'field' => new external_value(PARAM_RAW, 'field'),
+                'value' => new external_value(PARAM_RAW, 'value'),
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'data name'),
+                            'value' => new external_value(PARAM_RAW, 'data value'),
+                        )
+                    ), 'the data to be saved'
+                )
+            )
+        );
+    }
+
+    /**
+     * create new a response
+     *
+     * @param $data
+     * @return array
+     * @throws invalid_parameter_exception
+     */
+    public static function setfield_response_by_mbl($tablename, $field, $value, $data)
+    {
+        global $DB;
+
+        $warnings = array();
+
+        $params = array(
+            'tablename' => $tablename,
+            'field' => $field,
+            'value' => $value,
+            'data' => $data
+        );
+
+        $params = self::validate_parameters(self::setfield_response_by_mbl_parameters(), $params);
+
+        $result = array();
+
+        $conditions = array();
+        foreach ($params['data'] as $element) {
+            $conditions[$element['name']] = $element['value'];
+        }
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $DB->set_field($tablename, $field, $value, $conditions);
+
+        $transaction->allow_commit();
+
+        $result['status'] = true;
+
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
+    public static function setfield_response_by_mbl_returns()
+    {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
             )
         );
     }

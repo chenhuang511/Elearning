@@ -26,7 +26,6 @@ require_once($CFG->dirroot.'/mod/quiz/remote/locallib.php');
 $id = required_param('cmid', PARAM_INT); // Course module id
 $forcenew = optional_param('forcenew', false, PARAM_BOOL); // Used to force a new preview
 $page = optional_param('page', -1, PARAM_INT); // Page to jump to in the attempt.
-$nonajax = optional_param('nonajax', true, PARAM_BOOL);
 
 if (!$cm = get_remote_course_module_by_cmid("quiz", $id)) {
     print_error('invalidcoursemodule');
@@ -46,17 +45,25 @@ require_sesskey();
 $PAGE->set_heading($quizobj->get_course()->fullname);
 
 // Check questions.
-if (!$quizobj->has_questions()) {
+if (!$quizobj->has_questions($quiz->id)) {
     print_error('cannotstartnoquestions', 'quiz', $quizobj->view_url());
 }
 
 // Create an object to manage all the other (non-roles) access rules.
 $timenow = time();
-$accessmanager = $quizobj->get_remote_access_manager($timenow);
+$accessmanager = $quizobj->get_access_manager($timenow);
+
+$nonajax = optional_param('nonajax', true, PARAM_BOOL);
+$context = context_module::instance($cm->id);
+if (!has_capability('moodle/course:manageactivities', $context) && $nonajax == false) {
+    $CFG->nonajax = false;
+} else {
+    $CFG->nonajax = true;
+}
 
 // Validate permissions for creating a new attempt and start a new preview attempt if required.
 list($currentattemptid, $attemptnumber, $lastattempt, $messages, $page) =
-    quiz_remote_validate_new_attempt($quizobj, $accessmanager, $forcenew, $page, true);
+    quiz_validate_new_attempt($quizobj, $accessmanager, $forcenew, $page, true);
 
 // Check access.
 if (!$quizobj->is_preview_user() && $messages) {
@@ -96,7 +103,7 @@ if ($currentattemptid) {
     if ($lastattempt->state == quiz_attempt::OVERDUE) {
         redirect($quizobj->summary_url($lastattempt->id));
     } else {
-        redirect($quizobj->attempt_remote_url($currentattemptid, $page, $nonajax));
+        redirect($quizobj->attempt_url($currentattemptid, $page));
     }
 }
 
@@ -122,9 +129,6 @@ if($quiz->settinglocal){
     }
 }
 $attemptremote = get_remote_quiz_start_attempt($quiz->id, $user[0]->id, $preview, $setting);
-if($attemptremote->errorcode == 'attemptstillinprogress'){
-    print_error('attemptstillinprogress', 'quiz', $quizobj->view_url());
-}
 $attempt = $attemptremote->attempt;
 // Redirect to the attempt page.
-redirect($quizobj->attempt_remote_url($attempt->id, $page, $nonajax));
+redirect($quizobj->attempt_url($attempt->id, $page));

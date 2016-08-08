@@ -2180,22 +2180,23 @@ function quiz_view($quiz, $course, $cm, $context) {
  * @throws moodle_quiz_exception
  * @since Moodle 3.1
  */
-function quiz_validate_new_attempt(quiz $quizobj, quiz_access_manager $accessmanager, $forcenew, $page, $redirect, $userid = null) {
+function quiz_validate_new_attempt(quiz $quizobj, quiz_access_manager $accessmanager, $forcenew, $page, $redirect, $userid = null, $preview = false) {
     global $DB, $USER;
     $timenow = time();
     $userid = ($userid)?$userid:$USER->id;
+    $ispreview = ($preview === true)?$preview:$quizobj->is_preview_user($userid);
 
-    if ($quizobj->is_preview_user($userid) && $forcenew) {
+    if ($ispreview && $forcenew) {
         $accessmanager->current_attempt_finished();
     }
 
     // Check capabilities.
-    if (!$quizobj->is_preview_user($userid)) {
+    if (!$ispreview) {
         $quizobj->require_capability('mod/quiz:attempt', $userid);
     }
 
     // Check to see if a new preview was requested.
-    if ($quizobj->is_preview_user($userid) && $forcenew) {
+    if ($ispreview && $forcenew) {
         // To force the creation of a new preview, we mark the current attempt (if any)
         // as finished. It will then automatically be deleted below.
         $DB->set_field('quiz_attempts', 'state', quiz_attempt::FINISHED,

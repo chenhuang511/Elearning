@@ -962,16 +962,19 @@ class local_course_external extends external_api
     }
 
     /**
-     * Describes the parameters for get_remote_course_modules_completion_by_cmid_hostip
+     * Describes the parameters for get_remote_course_modules_completion
      *
      * @return external_external_function_parameters
      */
-    public static function get_remote_course_modules_completion_by_cmid_hostip_parameters() {
+    public static function get_remote_course_modules_completion_parameters() {
         return new external_function_parameters(
             array(
                 'coursemoduleid' => new external_value(PARAM_INT, 'The id of course module'),
+                'courseid' => new external_value(PARAM_INT, 'The id of course'),
                 'hostip' => new external_value(PARAM_TEXT, 'The ip address on host'),
-                'field' => new external_value(PARAM_TEXT, 'The field of table to get')
+                'field' => new external_value(PARAM_TEXT, 'The field of table to get'),
+                'mode' => new external_value(PARAM_TEXT, 'The mode to operate. Current: singlerc, wholecourse, normal'),
+                'userid' => new external_value(PARAM_INT, 'The id of user')
             )
         );
     }
@@ -980,12 +983,15 @@ class local_course_external extends external_api
      * Get records tbl course_modules_completetion by cmid and hostip
      *
      * @param int $coursemoduleid  - The id of course modules
+     * @param int $courseid        - The id of course
      * @param string $hostip       - The ip_address on host
      * @param string $field        - The field of table to get
+     * @param string $mode         - The mode to operate. Current: singlerc, wholecourse, normal
+     * @param string $userid       - The id of user
      *
      * @return mixed $result list records table and warnings
      */
-    public static function get_remote_course_modules_completion_by_cmid_hostip($coursemoduleid, $hostip, $field)
+    public static function get_remote_course_modules_completion($coursemoduleid, $courseid, $hostip, $field, $mode, $userid)
     {
         global $DB;
 
@@ -993,54 +999,244 @@ class local_course_external extends external_api
 
         $result = array();
 
-        $params = self::validate_parameters(self::get_remote_course_modules_completion_by_cmid_hostip_parameters(), array(
+        $params = self::validate_parameters(self::get_remote_course_modules_completion_parameters(), array(
             'coursemoduleid' => $coursemoduleid,
+            'courseid' => $courseid,
             'hostip' => $hostip,
             'field' => $field,
+            'mode' => $mode,
+            'userid' => $userid,
         ));
 
-        $sql = 'SELECT u.id 
+        $sql = "SELECT u.id
                 FROM {user} u 
                 JOIN {mnet_host} mh 
-                ON u.mnethostid = mh.id 
-                WHERE mh.ip_address = ?';
+                ON u.mnethostid = mh.id AND mh.ip_address = ?";
 
-        $result['cmc'] = $DB->get_records_select('course_modules_completion', 'coursemoduleid = ? AND userid IN(' . $sql . ')',
-                                    array($params['coursemoduleid'], $params['hostip']), '', $params['field']);
-
-        if (!$result['cmc']){
-            $result['cmc'] =  array();
+        switch($params['mode']){
+            case 'normal':
+                $result['cmc'] = $DB->get_records_select('course_modules_completion', 'coursemoduleid = ? AND userid IN(' . $sql .')',
+                    array($params['coursemoduleid'], $params['hostip']), '', $params['field']);
+                // If result false return empty array
+                if (!$result['cmc']){
+                    $result['cmc'] =  array();
+                } else {
+                    foreach ($result['cmc'] as $cmc){
+                        $cmc->email = self::change_userid_to_email($cmc->userid);
+                    }
+                }
+                break;
+            case 'wholecourse':
+                $result['cmc'] = $DB->get_records_sql("
+                    SELECT
+                        cmc.*
+                    FROM
+                        {course_modules} cm
+                        INNER JOIN {course_modules_completion} cmc ON cmc.coursemoduleid=cm.id
+                    WHERE
+                        cm.course=? AND cmc.userid=?",
+                            array($params['courseid'], $params['userid']), '', $params['field']);
+                // If result false return empty array
+                if (!$result['cmc']){
+                    $result['cmc'] =  array();
+                } else {
+                    foreach ($result['cmc'] as $cmc){
+                        $cmc->email = self::change_userid_to_email($cmc->userid);
+                    }
+                }
+                break;
+            case 'singlerc':
+                $result['scmc'] = $DB->get_record_select('course_modules_completion', 'coursemoduleid = ? AND userid = ?',
+                    array($params['coursemoduleid'], $params['userid']), $params['field']);
+                // If result false return empty array
+                if (!$result['scmc']){
+                    $result['scmc'] =  array();
+                } else {
+                    $result['scmc']->email = self::change_userid_to_email($result['scmc']->userid);
+                }
+                break;
+            default: break;
         }
+
         $result['warnings'] = array();
         return $result;
     }
 
     /**
-     * Describes the get_remote_course_modules_completion_by_cmid_hostip returns value.
+     * Describes the get_remote_course_modules_completion returns value.
      *
      * @return external_single_structure
      * @since Moodle 3.1
      */
-    public static function get_remote_course_modules_completion_by_cmid_hostip_returns()
+    public static function get_remote_course_modules_completion_returns()
     {
         return new external_single_structure(
             array(
                 'cmc' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'id' => new external_value(PARAM_INT, 'The id of course module completion', VALUE_OPTIONAL),
-                            'coursemoduleid' => new external_value(PARAM_INT, 'The id of course module', VALUE_OPTIONAL),
-                            'userid' => new external_value(PARAM_INT, 'The id of user', VALUE_OPTIONAL),
-                            'completionstate' => new external_value(PARAM_INT, 'Completion state', VALUE_OPTIONAL),
-                            'viewed' => new external_value(PARAM_INT, 'View', VALUE_OPTIONAL),
-                            'timemodified' => new external_value(PARAM_INT, 'Time viewer', VALUE_OPTIONAL)
-                        )
-                    ),'information course module completion', VALUE_OPTIONAL
-                ),
+                    self::get_course_module_completion_structure(VALUE_OPTIONAL), 'course module completion', VALUE_OPTIONAL),
+                'scmc' => self::get_course_module_completion_structure(VALUE_OPTIONAL),
                 'warnings' => new external_warnings()
             )
         );
     }
 
+
+    /**
+     * Creates a couse_module_completion structure.
+     *
+     * @return external_single_structure the grade_grades structure
+     */
+    private static function get_course_module_completion_structure($required = VALUE_REQUIRED) {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'The id of course module completion', VALUE_OPTIONAL),
+                'coursemoduleid' => new external_value(PARAM_INT, 'The id of course module', VALUE_OPTIONAL),
+                'userid' => new external_value(PARAM_INT, 'The id of user', VALUE_OPTIONAL),
+                'email' => new external_value(PARAM_TEXT, 'The email of user', VALUE_OPTIONAL),
+                'completionstate' => new external_value(PARAM_INT, 'Completion state', VALUE_OPTIONAL),
+                'viewed' => new external_value(PARAM_INT, 'View', VALUE_OPTIONAL),
+                'timemodified' => new external_value(PARAM_INT, 'Time viewer', VALUE_OPTIONAL)
+            ), 'course module completion', $required
+        );
+    }
+
+    /**
+     * Change userid to email user serve to send data on host
+     *
+     * @param int $userid - The id of user
+     * @return string     - The email of user
+     */
+    public static function change_userid_to_email($userid){
+        global $DB;
+
+        return $DB->get_record('user', array('id'=>$userid), 'email')->email;
+    }
+
+    /**
+     * Describes the parameters for create_remote_course_modules_completion
+     *
+     * @return external_external_function_parameters
+     */
+    public static function create_remote_course_modules_completion_parameters() {
+        return new external_function_parameters(
+            array(
+                'coursemoduleid'  => new external_value(PARAM_INT, 'The id of course module'),
+                'userid'          => new external_value(PARAM_INT, 'The id of user'),
+                'completionstate' => new external_value(PARAM_INT, 'Completion state'),
+                'viewed'          => new external_value(PARAM_INT, 'View'),
+                'timemodified'    => new external_value(PARAM_INT, 'Time viewer')
+            )
+        );
+    }
+
+    /**
+     * Insert table "course_modules_completion" on hub
+     *
+     * @param int $coursemoduleid  - The id of course modules
+     * @param int $userid          - The id of user on hub
+     * @param int $completionstate - The state of completion
+     * @param int $viewed          - The state of viewed
+     * @param int $timemodified    - The time modified
+     *
+     * @return int $result         - The id of course modules completion
+     */
+    public static function create_remote_course_modules_completion($coursemoduleid, $userid, $completionstate, $viewed, $timemodified)
+    {
+        global $DB;
+
+        $params = self::validate_parameters(self::create_remote_course_modules_completion_parameters(), array(
+            'coursemoduleid' => $coursemoduleid,
+            'userid' => $userid,
+            'completionstate' => $completionstate,
+            'viewed' => $viewed,
+            'timemodified' => $timemodified,
+        ));
+
+        $params = (object)$params;
+
+        $trans = $DB->start_delegated_transaction();
+
+        $result = $DB->insert_record('course_modules_completion', $params);
+
+        $trans->allow_commit();
+
+        return $result;
+    }
+
+    /**
+     * Describes the create_remote_course_modules_completion returns value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function create_remote_course_modules_completion_returns()
+    {
+        return new external_value(PARAM_INT, 'The id of course module');
+    }
+
+    /**
+     * Describes the parameters for update_remote_course_modules_completion_parameters
+     *
+     * @return external_external_function_parameters
+     */
+    public static function update_remote_course_modules_completion_parameters() {
+        return new external_function_parameters(
+            array(
+                'id'              => new external_value(PARAM_INT, 'The id of course module completion'),
+                'coursemoduleid'  => new external_value(PARAM_INT, 'The id of course module'),
+                'userid'          => new external_value(PARAM_INT, 'The id of user'),
+                'completionstate' => new external_value(PARAM_INT, 'Completion state'),
+                'viewed'          => new external_value(PARAM_INT, 'View'),
+                'timemodified'    => new external_value(PARAM_INT, 'Time viewer')
+            )
+        );
+    }
+
+    /**
+     * Update table "course_modules_completion" on hub
+     *
+     * @param int $id              - The id of course modules completion
+     * @param int $coursemoduleid  - The id of course modules
+     * @param int $userid          - The id of user on hub
+     * @param int $completionstate - The state of completion
+     * @param int $viewed          - The state of viewed
+     * @param int $timemodified    - The time modified
+     *
+     * @return int $result         - The id of course modules completion
+     */
+    public static function update_remote_course_modules_completion($id, $coursemoduleid, $userid, $completionstate, $viewed, $timemodified)
+    {
+        global $DB;
+
+        $params = self::validate_parameters(self::update_remote_course_modules_completion_parameters(), array(
+            'id' => $id,
+            'coursemoduleid' => $coursemoduleid,
+            'userid' => $userid,
+            'completionstate' => $completionstate,
+            'viewed' => $viewed,
+            'timemodified' => $timemodified,
+        ));
+
+        $params = (object)$params;
+
+        $trans = $DB->start_delegated_transaction();
+
+        $result = $DB->update_record('course_modules_completion', $params);
+
+        $trans->allow_commit();
+
+        return $result;
+    }
+
+    /**
+     * Describes the update_remote_course_modules_completion returns value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function update_remote_course_modules_completion_returns()
+    {
+        return new external_value(PARAM_INT, 'True(1) if success');
+    }
 
 }

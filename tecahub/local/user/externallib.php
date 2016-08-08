@@ -29,24 +29,27 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
-class local_user_external extends external_api {
-	
-    public static function get_remote_mapping_user_parameters() {
+class local_user_external extends external_api
+{
+
+    public static function get_remote_mapping_user_parameters()
+    {
         return new external_function_parameters(
             array('ipaddress' => new external_value(PARAM_TEXT, 'Host IP address'),
                 'username' => new external_value(PARAM_TEXT, 'username'),
-				'email' => new external_value(PARAM_TEXT, 'user email'))
+                'email' => new external_value(PARAM_TEXT, 'user email'))
         );
     }
 
-    public static function get_remote_mapping_user($ipaddress, $username, $email) {
+    public static function get_remote_mapping_user($ipaddress, $username, $email)
+    {
         global $CFG, $DB;
 
         //validate parameter
         $params = self::validate_parameters(self::get_remote_mapping_user_parameters(),
             array('ipaddress' => $ipaddress, 'username' => $username, 'email' => $email));
 
-		return $DB->get_records_sql("SELECT u.id,u.username,u.email,u.auth FROM {user} u
+        return $DB->get_records_sql("SELECT u.id,u.username,u.email,u.auth FROM {user} u
 									WHERE u.mnethostid = (SELECT id FROM {mnet_host} m 
 									WHERE m.ip_address=?) AND u.username=?",
             array('ip_address' => $params['ipaddress'], 'username' => $params['username'], 'email' => $email));
@@ -59,15 +62,63 @@ class local_user_external extends external_api {
      * @since Moodle 2.9 Options available
      * @since Moodle 2.2
      */
-    public static function get_remote_mapping_user_returns() {
+    public static function get_remote_mapping_user_returns()
+    {
         return new external_multiple_structure (
-			new external_single_structure(
-				array(
-					'id' => new external_value(PARAM_INT, 'user id'),
-					'username' => new external_value(PARAM_TEXT, 'username'),
-					'email' => new external_value(PARAM_TEXT, 'user email'),
-					'auth' => new external_value(PARAM_TEXT, 'auth method'),					
-				)
-			));
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'user id'),
+                    'username' => new external_value(PARAM_TEXT, 'username'),
+                    'email' => new external_value(PARAM_TEXT, 'user email'),
+                    'auth' => new external_value(PARAM_TEXT, 'auth method'),
+                )
+            ));
+    }
+
+    public static function get_user_by_id_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'userid' => new external_value(PARAM_INT, 'the user id')
+            )
+        );
+    }
+
+    public static function get_user_by_id($userid)
+    {
+        global $DB;
+        $warnings = array();
+        $params = self::validate_parameters(self::get_user_by_id_parameters(), array(
+            'userid' => $userid
+        ));
+
+        $result = array();
+        $user = $DB->get_record('user', array('id' => $params['userid']), 'id, username, email, auth', MUST_EXIST);
+
+        if(!$user) {
+            $user = new stdClass();
+        }
+
+        $result['user'] = $user;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_user_by_id_returns()
+    {
+        return new external_single_structure(
+            array(
+                'user' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'user id'),
+                        'username' => new external_value(PARAM_TEXT, 'username'),
+                        'email' => new external_value(PARAM_TEXT, 'user email'),
+                        'auth' => new external_value(PARAM_TEXT, 'auth method')
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
     }
 }

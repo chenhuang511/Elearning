@@ -121,14 +121,14 @@ if ($currentgroup) {
 echo $OUTPUT->heading(format_string($chat->name), 2);
 
 if ($chat->intro) {
-    echo $OUTPUT->box(format_module_intro('chat', $chat, $cm->id), 'generalbox  bhxh-chat-span', 'intro');
+    echo $OUTPUT->box(format_module_intro('chat', $chat, $cm->id), 'generalbox  tecapro-chat-span', 'intro');
 }
 
 groups_print_activity_menu($cm, $CFG->wwwroot . "/mod/chat/remote/view.php?id=$cm->id");
 
 if (has_capability('mod/chat:chat', $context)) {
     // Print the main part of the page.
-    echo $OUTPUT->box_start('generalbox  bhxh-link-chat', 'enterlink');
+    echo $OUTPUT->box_start('generalbox  tecapro-link-chat', 'enterlink');
 
     $now = time();
     $span = $chat->chattime - $now;

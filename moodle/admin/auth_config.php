@@ -161,7 +161,7 @@ function print_auth_lock_options($auth, $user_fields, $helptext, $retrieveopts, 
             echo '</td><td>';
 
             echo "<input id=\"lockconfig_{$varname}\" name=\"lockconfig_{$varname}\" type=\"text\" size=\"30\" value=\"{$pluginconfig->$varname}\" />";
-            echo '<div style="text-align: right">';
+            // echo '<div style="text-align: right">';
             echo '<label for="menulockconfig_field_updatelocal_'.$field.'">'.get_string('auth_updatelocal', 'auth') . '</label>&nbsp;';
             echo html_writer::select($updatelocaloptions, "lockconfig_field_updatelocal_{$field}", $pluginconfig->{"field_updatelocal_$field"}, false);
             echo '<br />';
@@ -172,7 +172,7 @@ function print_auth_lock_options($auth, $user_fields, $helptext, $retrieveopts, 
             }
             echo '<label for="menulockconfig_field_lock_'.$field.'">'.get_string('auth_fieldlock', 'auth') . '</label>&nbsp;';
             echo html_writer::select($lockoptions, "lockconfig_field_lock_{$field}", $pluginconfig->{"field_lock_$field"}, false);
-            echo '</div>';
+            // echo '</div>';
         } else {
             echo '<tr valign="top"><td class ="col-md-2" align="right">';
             echo '<label for="menulockconfig_field_lock_'.$field.'">'.$fieldname.'</label>';

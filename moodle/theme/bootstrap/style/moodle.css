@@ -9061,7 +9061,6 @@ a.autolink.glossary:hover {
     font-weight: normal;
     text-decoration: inherit;
     margin-right: 8px;
-    color: #396;
 }
 
 .collapsible-actions .collapseexpand {
@@ -9266,7 +9265,7 @@ form.popupform div {
     -webkit-overflow-scrolling: touch;
 }
 
-.bhxh-managetemplates > .no-overflow {
+.el-managetemplates > .no-overflow {
     clear: both;
 }
 
@@ -9854,22 +9853,16 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd,
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd.yui3-widget-hd {
     margin: 0;
-    padding: 2px 5px;
-    font-size: 12px;
-    font-weight: normal;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: 500;
     letter-spacing: 1px;
     color: #333;
     text-align: center;
     text-shadow: 1px 1px 1px #fff;
     border-radius: 10px 10px 0 0;
-    border-bottom: 1px solid #bbb;
-    background: #ccc;
-    background-image: -webkit-linear-gradient(top, #ffffff 0%, #cccccc 100%);
-    background-image: -o-linear-gradient(top, #ffffff 0%, #cccccc 100%);
-    background-image: linear-gradient(to bottom, #ffffff 0%, #cccccc 100%);
-    background-repeat: repeat-x;
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#ffcccccc', GradientType=0);
-    filter: 0;
+    border-bottom: 1px solid #e5e5e5;
+    background: transparent;
 }
 
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd h1 {
@@ -16147,18 +16140,18 @@ body.path-question-type .mform fieldset.hidden {
     column-gap: 30px;
 }
 
-.userprofile .bhxh-category {
+.userprofile .el-category {
     border: 1px solid #ddd;
     padding-left: 20px;
     height: 210px;
 
 }
 
-.userprofile .bhxh-category:nth-child(3n) {
+.userprofile .el-category:nth-child(3n) {
     border: 1px solid #ddd;
 }
 
-.userprofile .bhxh-category:nth-child(1) .node a {
+.userprofile .el-category:nth-child(1) .node a {
     color: #00A8B3;
 }
 
@@ -16167,7 +16160,7 @@ body.path-question-type .mform fieldset.hidden {
     width: 100%;
 }
 
-.userprofile .bhxh-category {
+.userprofile .el-category {
     margin-bottom: 30px;
 }
 
@@ -16253,13 +16246,13 @@ fieldset[disabled] .userprofile .header-button-group .btn.active {
     text-decoration: none;
 }
 
-.userprofile .bhxh-category ul li a {
+.userprofile .el-category ul li a {
     margin-left: 5px;
 }
 
 .
 
-.userprofile .bhxh-category ul li:nth-last-child(1) {
+.userprofile .el-category ul li:nth-last-child(1) {
     height: 20px;
 
 }
@@ -16299,12 +16292,12 @@ fieldset[disabled] .userprofile .header-button-group .btn.active {
     list-style-type: none;
 }
 
-#page-user-profile .bhxh-category li {
+#page-user-profile .el-category li {
 
     margin-left: 10px;
 }
 
-#page-user-profile .bhxh-category li:not(.node)::before {
+#page-user-profile .el-category li:not(.node)::before {
     content: '';
     display: inline-block;
     width: 5px;
@@ -16324,7 +16317,7 @@ fieldset[disabled] .userprofile .header-button-group .btn.active {
     display: block;
 }
 
-.path-user .bhxh-category:first-child li span {
+.path-user .el-category:first-child li span {
     display: inline;
 }
 
@@ -16392,7 +16385,7 @@ fieldset[disabled] .userprofile .header-button-group .btn.active {
 
     }
 
-    .bhxh-category h3 {
+    .el-category h3 {
         font-size: 18px;
     }
 
@@ -17736,7 +17729,6 @@ textarea.mform .fitem .felement textarea {
     font-weight: normal;
     text-decoration: inherit;
     margin-right: 8px;
-    color: #396;
 }
 
 .mform fieldset.collapsible legend a.fheader {
@@ -18686,26 +18678,6 @@ div#dock {
 
 .path-mod-assign a.btn {
     color: #ffffff;
-    background-color: #097eaf;
-    border-color: #cccccc;
-    font-weight: bold;
-}
-
-.path-mod-assign a.btn:focus,
-.path-mod-assign a.btn.focus {
-    color: #333333;
-    background-color: #e6e6e6;
-    border-color: #8c8c8c;
-}
-
-.path-mod-assign a.btn-primary {
-    background-color: #F53434;
-}
-
-.path-mod-assign a.btn:hover {
-    color: #ffffff;
-    background-color: #6E6C6C;
-    border-color: #adadad;
 }
 
 .path-mod-assign a.btn:active,

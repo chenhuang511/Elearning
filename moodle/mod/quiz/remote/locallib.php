@@ -132,82 +132,6 @@ function get_remote_question($quizid) {
     );
 }
 
-
-/**
- * Validate permissions for creating a new attempt and start a new preview attempt if required.
- *
- * @param  quiz $quizobj quiz object
- * @param  quiz_access_manager $accessmanager quiz access manager
- * @param  bool $forcenew whether was required to start a new preview attempt
- * @param  int $page page to jump to in the attempt
- * @param  bool $redirect whether to redirect or throw exceptions (for web or ws usage)
- * @return array an array containing the attempt information, access error messages and the page to jump to in the attempt
- * @throws moodle_quiz_exception
- * @since Moodle 3.1
- */
-function quiz_remote_validate_new_attempt(quiz $quizobj, quiz_access_manager $accessmanager, $forcenew, $page, $redirect) {
-    $timenow = time();
-
-    if ($quizobj->is_preview_user() && $forcenew) {
-        $accessmanager->current_attempt_finished();
-    }
-
-    // Check capabilities.
-    if (!$quizobj->is_preview_user()) {
-        $quizobj->require_capability('mod/quiz:attempt');
-    }
-
-    // Look for an existing attempt.
-    //get user mapping
-    $user = get_remote_mapping_user();
-    $attempts = get_remote_user_attemps($quizobj->get_quizid(), $user[0]->id, 'all', true);
-    $lastattempt = end($attempts);
-
-    $attemptnumber = null;
-    // If an in-progress attempt exists, check password then redirect to it.
-    if ($lastattempt && ($lastattempt->state == quiz_attempt::IN_PROGRESS ||
-            $lastattempt->state == quiz_attempt::OVERDUE)) {
-        $currentattemptid = $lastattempt->id;
-        $messages = $accessmanager->prevent_access();
-
-        // And, if the attempt is now no longer in progress, redirect to the appropriate place.
-        if ($lastattempt->state == quiz_attempt::ABANDONED || $lastattempt->state == quiz_attempt::FINISHED) {
-            if ($redirect) {
-                redirect($quizobj->review_url($lastattempt->id));
-            } else {
-                throw new moodle_quiz_exception($quizobj, 'attemptalreadyclosed');
-            }
-        }
-
-        // If the page number was not explicitly in the URL, go to the current page.
-        if ($page == -1) {
-            $page = $lastattempt->currentpage;
-        }
-
-    } else {
-        while ($lastattempt && $lastattempt->preview) {
-            $lastattempt = array_pop($attempts);
-        }
-
-        // Get number for the next or unfinished attempt.
-        if ($lastattempt) {
-            $attemptnumber = $lastattempt->attempt + 1;
-        } else {
-            $lastattempt = false;
-            $attemptnumber = 1;
-        }
-        $currentattemptid = null;
-
-        $messages = $accessmanager->prevent_access() +
-            $accessmanager->prevent_new_attempt(count($attempts), $lastattempt);
-
-        if ($page == -1) {
-            $page = 0;
-        }
-    }
-    return array($currentattemptid, $attemptnumber, $lastattempt, $messages, $page);
-}
-
 // Sử dụng API có sẵn mod_quiz_start_attempt để thay thế cho hàm xử lý quiz_prepare_and_start_new_attempt trong startattempt.php
 function get_remote_quiz_start_attempt($quizid, $remoteuserid, $preview, $setting) {
     return moodle_webservice_client(
@@ -267,13 +191,13 @@ function get_remote_get_sections_by_quizid($quizid) {
     );
 }
 
-function get_remote_get_attempt_data($attemptid, $page = null) {
+function get_remote_get_attempt_data($attemptid, $page = null, $setting) {
     return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN_M,
             'function_name' => 'mod_quiz_get_attempt_data',
-            'params' => array('attemptid' => $attemptid, 'page' => $page)
+            'params' => array_merge(array('attemptid' => $attemptid, 'page' => $page), $setting)
         ), false
     );
 }

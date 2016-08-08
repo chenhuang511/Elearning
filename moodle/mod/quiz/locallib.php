@@ -2188,6 +2188,9 @@ function quiz_view($quiz, $course, $cm, $context) {
  */
 function quiz_validate_new_attempt(quiz $quizobj, quiz_access_manager $accessmanager, $forcenew, $page, $redirect) {
     global $DB, $USER;
+    $isremote = (MOODLE_RUN_MODE === MOODLE_MODE_HUB)?true:false;
+    //get user mapping
+    $user = get_remote_mapping_user();
     $timenow = time();
 
     if ($quizobj->is_preview_user() && $forcenew) {
@@ -2203,12 +2206,24 @@ function quiz_validate_new_attempt(quiz $quizobj, quiz_access_manager $accessman
     if ($quizobj->is_preview_user() && $forcenew) {
         // To force the creation of a new preview, we mark the current attempt (if any)
         // as finished. It will then automatically be deleted below.
-        $DB->set_field('quiz_attempts', 'state', quiz_attempt::FINISHED,
+        if($isremote){
+            $data = array();
+            $data['data[0][name]'] = 'quiz';
+            $data['data[0][value]'] = $quizobj->get_quizid();
+            $data['data[1][name]'] = 'userid';
+            $data['data[1][value]'] = $user[0]->id;
+            setfield_remote_response_by_tbl('quiz_attempts', 'state', quiz_attempt::FINISHED, $data);
+        }else{
+            $DB->set_field('quiz_attempts', 'state', quiz_attempt::FINISHED,
                 array('quiz' => $quizobj->get_quizid(), 'userid' => $USER->id));
+        }
     }
-
     // Look for an existing attempt.
-    $attempts = quiz_get_user_attempts($quizobj->get_quizid(), $USER->id, 'all', true);
+    if($isremote){
+        $attempts = get_remote_user_attemps($quizobj->get_quizid(), $user[0]->id, 'all', true);
+    }else{
+        $attempts = quiz_get_user_attempts($quizobj->get_quizid(), $USER->id, 'all', true);
+    }
     $lastattempt = end($attempts);
 
     $attemptnumber = null;
@@ -2219,7 +2234,30 @@ function quiz_validate_new_attempt(quiz $quizobj, quiz_access_manager $accessman
         $messages = $accessmanager->prevent_access();
 
         // If the attempt is now overdue, deal with that.
-        $quizobj->create_attempt_object($lastattempt)->handle_if_time_expired($timenow, true);
+        if($isremote){
+            $setting = array();
+            $quiz = $quizobj->get_quiz();
+            if($quiz->settinglocal){
+                $fields =  array(
+                    'timeopen',
+                    'timeclose',
+                    'timelimit',
+                    'overduehandling',
+                    'graceperiod',
+                    'attempts',
+                    'grademethod'
+                );
+                $index = 0;
+                foreach ($fields as $field){
+                    $setting["setting[$index][name]"] = $field;
+                    $setting["setting[$index][value]"] = $quiz->$field;
+                    $index++;
+                }
+            }
+            $lastattempt = remote_handle_if_time_expired($quiz->id, $lastattempt->id, false, $setting);
+        }else{
+            $quizobj->create_attempt_object($lastattempt)->handle_if_time_expired($timenow, true);
+        }
 
         // And, if the attempt is now no longer in progress, redirect to the appropriate place.
         if ($lastattempt->state == quiz_attempt::ABANDONED || $lastattempt->state == quiz_attempt::FINISHED) {
