@@ -1205,8 +1205,8 @@ class mod_assign_renderer extends plugin_renderer_base
                 $icon = $this->output->pix_icon('t/preview', $previewstr);
 
                 $expandstr = get_string('viewfull', 'assign');
-                $options = array('class' => 'expandsummaryicon expand_' . $classsuffix);
-                $o .= '<i class="fa fa-plus-square" aria-hidden="true"></i>';
+                $optionsclass = 'expandsummaryicon expand_' . $classsuffix;
+                $o .= '<i class="fa fa-plus-square ' . $optionsclass . '" aria-hidden="true"></i>';
 
                 $jsparams = array($submissionplugin->plugin->get_subtype(),
                     $submissionplugin->plugin->get_type(),
@@ -1235,7 +1235,7 @@ class mod_assign_renderer extends plugin_renderer_base
             if ($showviewlink) {
                 $o .= $this->output->box_start('boxaligncenter hidefull full_' . $classsuffix);
                 $classes = 'expandsummaryicon contract_' . $classsuffix;
-                $o .= '<i class="fa fa-minus-square" aria-hidden="true"></i>';
+                $o .= '<i class="fa fa-minus-square ' . $classes . '" aria-hidden="true"></i>';
                 $o .= $submissionplugin->plugin->view($submissionplugin->submission);
                 $o .= $this->output->box_end();
             }
@@ -1308,8 +1308,8 @@ class mod_assign_renderer extends plugin_renderer_base
                 $icon = $this->output->pix_icon('t/preview', $previewstr);
 
                 $expandstr = get_string('viewfull', 'assign');
-                $options = array('class' => 'expandsummaryicon expand_' . $classsuffix);
-                $o .= '<i class="fa fa-plus-square" aria-hidden="true"></i>';
+                $optionsclass = 'expandsummaryicon expand_' . $classsuffix;
+                $o .= '<i class="fa fa-plus-square '. $optionsclass .'" aria-hidden="true"></i>';
 
                 $jsparams = array($feedbackplugin->plugin->get_subtype(),
                     $feedbackplugin->plugin->get_type(),
@@ -1335,7 +1335,7 @@ class mod_assign_renderer extends plugin_renderer_base
             if ($showviewlink) {
                 $o .= $this->output->box_start('boxaligncenter hidefull full_' . $classsuffix);
                 $classes = 'expandsummaryicon contract_' . $classsuffix;
-                $o .= '<i class="fa fa-minus-square" aria-hidden="true"></i>';
+                $o .= '<i class="fa fa-minus-square '. $classes . '" aria-hidden="true"></i>';
                 $o .= $feedbackplugin->plugin->view($feedbackplugin->grade);
                 $o .= $this->output->box_end();
             }
