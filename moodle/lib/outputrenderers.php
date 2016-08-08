@@ -4120,7 +4120,7 @@ EOD;
      */
     public function render_preferences_group(preferences_group $renderable) {
         $html = '';
-        $html .= html_writer::start_tag('div', array('class' => 'span4 preferences-group'));
+        $html .= html_writer::start_tag('div', array('class' => 'col-md-3 preferences-group'));
         $html .= $this->heading($renderable->title, 3);
         $html .= html_writer::start_tag('ul');
         foreach ($renderable->nodes as $node) {
