@@ -105,7 +105,7 @@ function resource_add_instance($data, $mform) {
     resource_set_display_options($data);
 
     $link = get_url_file_resource($cmid);
-    if(strpos($data->intro, $link) !== false) {
+    if(strpos($data->intro, $link) === false) {
         $data->intro = $data->intro . '<p><a href="' . $link . '">' . $link . '</a></p>';
     }
     $data->id = $DB->insert_record('resource', $data);
@@ -132,7 +132,7 @@ function resource_update_instance($data, $mform) {
     resource_set_display_options($data);
 
     $link = get_url_file_resource($data->coursemodule);
-    if(strpos($data->intro, $link) !== false) {
+    if(strpos($data->intro, $link) === false) {
         $data->intro = $data->intro . '<p><a href="' . $link . '">' . $link . '</a></p>';
     }
     $DB->update_record('resource', $data);
