@@ -46,7 +46,7 @@ class mod_certificate_mod_form extends moodleform_mod {
             $mform->setType('name', PARAM_CLEAN);
         }
         $mform->addRule('name', null, 'required', null, 'client');
-        $this->checkDisable('name');
+        $this->checkDisable('name', true);
 
         if($isremote){
             $this->standard_intro_elements(get_string('intro', 'certificate'));
