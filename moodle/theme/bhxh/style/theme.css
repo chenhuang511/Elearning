@@ -13,7 +13,9 @@ h1, h2, h3, h4, h5, h6 {
 /* td.cell.c0 {
     width: 30%;
 } */
-
+.menulockconfig_field_lock_firstname{
+    margin-bottom: 5px;
+}
 h2.main, #pageheading {
     font-size: 16px;
     line-height: 35px;
