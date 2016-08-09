@@ -43,7 +43,7 @@ Contact: info@nephzat.com<br>
 Website: <a href="http://www.nephzat.com">www.nephzat.com</a><br>
 </p>';
 
-$string['configtitle'] = 'Trường Đào Tạo Nghiệp Vụ Bảo Hiểm Xã Hội Việt Nam';
+$string['configtitle'] = 'Hệ thống đào tạo trực tuyến Tekapro Việt Nam';
 $string['connectus'] = 'Contact with us';
 $string['contact'] = 'Contact';
 $string['copyright_footer'] = 'Copyright';
