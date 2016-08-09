@@ -1974,6 +1974,7 @@ class local_mod_forum_external extends external_api
         return new external_function_parameters(
             array(
                 'sql' => new external_value(PARAM_RAW, 'the query sql'),
+                'hostip' => new external_value(PARAM_HOST, 'the ip of host'),
                 'parameters' => new external_multiple_structure(
                     new external_single_structure(
                         array(
@@ -1987,20 +1988,27 @@ class local_mod_forum_external extends external_api
         );
     }
 
-    public static function forum_get_discussion_neighbours_sql($sql, $parameters, $strictness)
+    public static function forum_get_discussion_neighbours_sql($sql, $hostip, $parameters, $strictness)
     {
         global $DB;
         $warnings = array();
 
         $params = self::validate_parameters(self::forum_get_discussion_neighbours_sql_parameters(), array(
             'sql' => $sql,
+            'hostip' => $hostip,
             'parameters' => $parameters,
             'strictness' => $strictness
         ));
 
+        $hostid = $DB->get_field('mnet_host', 'id', array('ip_address' => $params['hostip']));
+
         $arr = array();
         foreach ($params['parameters'] as $p) {
             $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        if ($hostid) {
+            $arr = array_merge($arr, array('mnethostid' => $hostid));
         }
 
         $result = array();
