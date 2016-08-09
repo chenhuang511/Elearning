@@ -104,6 +104,10 @@ function resource_add_instance($data, $mform) {
 
     resource_set_display_options($data);
 
+    $link = get_url_file_resource($cmid);
+    if(strpos($data->intro, $link) !== false) {
+        $data->intro = $data->intro . '<p><a href="' . $link . '">' . $link . '</a></p>';
+    }
     $data->id = $DB->insert_record('resource', $data);
 
     // we need to use context now, so we need to make sure all needed info is already in db
@@ -127,6 +131,10 @@ function resource_update_instance($data, $mform) {
 
     resource_set_display_options($data);
 
+    $link = get_url_file_resource($data->coursemodule);
+    if(strpos($data->intro, $link) !== false) {
+        $data->intro = $data->intro . '<p><a href="' . $link . '">' . $link . '</a></p>';
+    }
     $DB->update_record('resource', $data);
     resource_set_mainfile($data);
     return true;
@@ -522,3 +530,23 @@ function resource_view($resource, $course, $cm, $context) {
     $completion = new completion_info($course);
     $completion->set_module_viewed($cm);
 }
+
+function get_url_file_resource($cmid) {
+    $context = context_module::instance($cmid);
+
+    $fs = get_file_storage();
+    $files = $fs->get_area_files($context->id, 'mod_resource', 'content', 0, 'sortorder DESC, id ASC', false); // TODO: this is not very efficient!!
+
+    $file = reset($files);
+    $url = moodle_url::make_pluginfile_url(
+        $file->get_contextid(),
+        $file->get_component(),
+        $file->get_filearea(),
+        $file->get_itemid(),
+        $file->get_filepath(),
+        $file->get_filename(),
+        true
+    );
+    return explode('?', $url->out())[0];
+}
+
