@@ -25,4 +25,17 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['conditiontitle'] = 'Trường thông tin người dùng';
+$string['description'] = 'Kiểm soát truy cập dựa trên các trường trong hồ sơ học viên.';
 $string['pluginname'] = 'Hạn chế bởi hồ sơ';
+$string['requires_contains'] = '<strong>{$a->field}</strong> của bạn chứa <strong>{$a->value}</strong>';
+$string['requires_doesnotcontain'] = '<strong>{$a->field}</strong> của bạn không chứa <strong>{$a->value}</strong>';
+$string['requires_endswith'] = '<strong>{$a->field}</strong> của bạn kết thúc với <strong>{$a->value}</strong>';
+$string['requires_isempty'] = '<strong>{$a->field}</strong> của bạn được để trống';
+$string['requires_isequalto'] = '<strong>{$a->field}</strong> của bạn là <strong>{$a->value}</strong>';
+$string['requires_isnotempty'] = '<strong>{$a->field}</strong> của bạn không được để trống';
+$string['requires_notendswith'] = '<strong>{$a->field}</strong> của bạn không được kết thúc với <strong>{$a->value}</strong>';
+$string['requires_notisequalto'] = '<strong>{$a->field}</strong> của bạn không là <strong>{$a->value}</strong>';
+$string['requires_notstartswith'] = '<strong>{$a->field}</strong> của bạn không được bắt đầu với <strong>{$a->value}</strong>';
+$string['requires_startswith'] = '<strong>{$a->field}</strong> của bạn bắt đầu với <strong>{$a->value}</strong>';
+$string['title'] = 'Hồ sơ người dùng';

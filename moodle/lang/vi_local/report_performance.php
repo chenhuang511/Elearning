@@ -25,5 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['edit'] = 'Chỉnh sửa';
 $string['enabled'] = 'Đã kích hoạt';
 $string['pluginname'] = 'Tổng quan về hiệu năng';

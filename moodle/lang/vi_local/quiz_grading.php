@@ -25,4 +25,13 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['alldoneredirecting'] = 'Tất cả những lần thi đã được chấm điểm. Quay trở lại danh sách các câu hỏi.';
+$string['alreadygraded'] = 'Đã chấm điểm';
+$string['alsoshowautomaticallygraded'] = 'Hiển thị những câu hỏi đã được chấm điểm tự động';
+$string['gradeall'] = 'lần chấm tất cả';
+$string['questionname'] = 'Tên câu hỏi';
+$string['questionsthatneedgrading'] = 'Những câu hỏi cần chấm điểm';
 $string['saveandnext'] = 'Lưu và đi đến trang tiếp theo';
+$string['tograde'] = 'Để chấm điểm';
+$string['total'] = 'Tổng cộng';
+$string['updategrade'] = 'cập nhật điểm';

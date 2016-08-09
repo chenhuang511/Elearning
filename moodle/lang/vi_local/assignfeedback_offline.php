@@ -25,6 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['downloadgrades'] = 'Tải về bảng điểm';
 $string['enabled'] = 'Bảng chấm điểm ẩn';
 $string['pluginname'] = 'Bảng chấm điểm ẩn';
 $string['updaterecord'] = 'Cập nhận bản ghi';
+$string['uploadgrades'] = 'Tải lên bảng điểm';

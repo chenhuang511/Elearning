@@ -1213,12 +1213,14 @@ function questionnaire_get_local_settings_info($coursemodule){
     global $CFG, $DB;
     require_once($CFG->dirroot . '/mod/questionnaire/remote/locallib.php');
     $questionnaire = get_remote_questionnaire_by_id($coursemodule->instance);
-    $id = $DB->get_field('questionnaire', 'id', array('remoteid' => $coursemodule->instance));
+    $local_questionaire = $DB->get_record('questionnaire', array('remoteid' => $coursemodule->instance));
     if(empty($id)){ // check data questionnaire in local db
         $questionnaire->id = $DB->insert_record('questionnaire', $questionnaire, true);
     } else {
-        $questionnaire->id = $id;
+        $questionnaire->id = $local_questionaire->id;
     }
+    // Merge setting local with hub
+    $questionnaire->completionsubmit = $local_questionaire->completionsubmit;
     return $questionnaire;
 }
 

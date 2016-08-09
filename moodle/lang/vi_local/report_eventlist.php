@@ -26,4 +26,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['component'] = 'Thành phần';
+$string['dname'] = 'Tên';
 $string['filter'] = 'Bộ lọc';
+$string['name'] = 'Tên';

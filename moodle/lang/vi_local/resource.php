@@ -25,5 +25,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['clicktoopen2'] = 'Ấn {$a} để xem tập tin.';
+$string['clicktoopen2'] = 'Nhấn {$a} để xem tập tin.';
 $string['optionsheader'] = 'Hiển thị các lựa chọn';

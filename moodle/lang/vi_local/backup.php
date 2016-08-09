@@ -35,3 +35,4 @@ $string['jumptofinalstep'] = 'Chuyển đến bước cuối cùng';
 $string['module'] = 'Mô-đun';
 $string['rootsettingcompetencies'] = 'Bao gồm các năng lực';
 $string['rootsettinggroups'] = 'Bao gồm các nhóm';
+$string['setting_keep_groups_and_groupings'] = 'Giữ các nhóm và tổ hiện tại';

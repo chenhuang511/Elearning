@@ -26,3 +26,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['options'] = 'Tùy chọn';
+$string['questionname'] = 'Tên câu hỏi';

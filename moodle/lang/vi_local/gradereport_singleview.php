@@ -27,3 +27,5 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['entrypage'] = 'Chấm điểm cho người dùng hoặc chấm điểm cho mục';
 $string['pluginname'] = 'Xem đơn lẻ';
+$string['selectgrade'] = 'Chọn mục điểm...';
+$string['selectuser'] = 'Chọn người dùng...';

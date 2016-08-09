@@ -26,5 +26,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['allcohorts'] = 'Tất cả các đoàn thể';
+$string['preview'] = 'Xem trước';
 $string['systemcohorts'] = 'Hệ thống đoàn thể';
 $string['uploadcohorts'] = 'Tải lên các đoàn thể';

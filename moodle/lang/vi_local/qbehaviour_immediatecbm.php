@@ -25,4 +25,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['pleaseselectacertainty'] = 'Hãy chọn một điều chắc chắn';
 $string['pluginname'] = 'Phản hồi ngay lập tức với CBM';

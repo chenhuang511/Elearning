@@ -26,3 +26,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['displaydescription'] = 'Mô tả';
+$string['pluginname'] = 'Loại tập tin';

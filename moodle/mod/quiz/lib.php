@@ -1930,5 +1930,8 @@ function quiz_get_local_settings_info($coursemodule){
     if(empty($local_quiz_data)){ // check data quiz in local db
         $quiz->id = $DB->insert_record('quiz', $quiz, true);
     }
+    // Merge setting local with hub
+    $quiz->completionpass = $local_quiz_data->completionpass;
+    $quiz->completionattemptsexhausted = $local_quiz_data->completionattemptsexhausted;
     return $quiz;
 }

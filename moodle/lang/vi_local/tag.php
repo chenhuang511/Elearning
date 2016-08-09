@@ -34,6 +34,7 @@ $string['showstandard'] = 'Sử dụng thẻ tiêu chuẩn';
 $string['standardhide'] = 'Không đề nghị';
 $string['standardsuggest'] = 'Đề nghị';
 $string['tagareaenabled'] = 'Đã kích hoạt';
+$string['tagareaname'] = 'Tên';
 $string['tagareas'] = 'Thẻ khu vực';
 $string['tagcollection'] = 'Bộ sưu tập thẻ';
 $string['tagcollections'] = 'Bộ sưu tập thẻ';

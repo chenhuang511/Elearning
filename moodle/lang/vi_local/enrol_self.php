@@ -25,4 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['customwelcomemessage'] = 'Chỉnh sửa thông điệp chào mừng';
 $string['messageprovider:expiry_notification'] = 'Tự ghi thông báo hết hạn';
+$string['pluginname'] = 'Tự ghi danh';

@@ -25,4 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['certainty1'] = 'C=1 (Không chắc chắn: <67%)';
+$string['certainty2'] = 'C=2 (Vừa vừa: >67%)';
+$string['certainty3'] = 'C=3 (Khá chắc chắn: >80%)';
+$string['howcertainareyou'] = 'Điều chắc chắn {$a->help}: {$a->choices}';
 $string['pluginname'] = 'Phản hồi đã hoãn với CBM';

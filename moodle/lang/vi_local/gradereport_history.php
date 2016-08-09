@@ -25,6 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['allgradeitems'] = 'Tất cả các mục điểm';
 $string['allgraders'] = 'Tất cả điểm';
 $string['datefrom'] = 'Tù ngày';
 $string['dateto'] = 'Đến ngày';
@@ -34,4 +35,5 @@ $string['historyperpage_help'] = 'Thiết lập này xác định lịch sử s�
 $string['pluginname'] = 'Lịch sử điểm';
 $string['revisedonly'] = 'Chỉ xem lại điểm';
 $string['selectedusers'] = 'Chọn người dùng';
+$string['selectuser'] = 'Chọn người dùng';
 $string['selectusers'] = 'Lựa chọn người dùng';

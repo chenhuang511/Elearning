@@ -131,7 +131,7 @@ function get_remote_course_module_by_cmid($modulename, $cmid, $options = array()
 
 function get_remote_core_course_get_course_module($cmid)
 {
-    $result = moodle_webservice_client(
+    $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN_M,
@@ -140,7 +140,8 @@ function get_remote_core_course_get_course_module($cmid)
         )
     );
 
-    return $result->cm;
+    $result = merge_local_course_module($resp->cm);
+    return $result;
 }
 
 function get_remote_course_info($courseid, $options = array())
@@ -262,7 +263,9 @@ function delete_remote_course_modules_completion($cmid) {
 function change_email_to_userid($email){
     global $DB;
 
-    return $DB->get_record('user', array('email'=>$email), 'id')->id;
+    $userid = $DB->get_record('user', array('email'=>$email))->id;
+
+    return $userid;
 }
 
 /**
@@ -300,13 +303,18 @@ function get_remote_course_modules_completion_by_mode($cmid, $mode = 'normal', $
 
     if (isset($result->cmc) && !empty($result->cmc)){
         foreach ($result->cmc as $cmc){
+            if (!isset($cmc->email)){
+                continue;
+            }
             $cmc->userid = change_email_to_userid($cmc->email);
             unset($cmc->email);
         }
         return $result->cmc;
     } else if (isset($result->scmc) && !empty($result->scmc)) {
-        $result->scmc->userid = change_email_to_userid($result->scmc->email);
-        unset($result->scmc->email);
+        if (isset($result->scmc->email)) {
+            $result->scmc->userid = change_email_to_userid($result->scmc->email);
+            unset($result->scmc->email);
+        }
         return $result->scmc;
     } else {
         return 0;
@@ -374,6 +382,6 @@ function update_remote_course_modules_completion($cmc){
         ), false
     );
 
-    return $result->id;
+    return $result;
 
 }

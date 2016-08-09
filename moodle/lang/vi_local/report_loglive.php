@@ -26,7 +26,9 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['eventcomponent'] = 'Thành phần';
+$string['eventcontext'] = 'Phạm vị sự kiện';
 $string['eventorigin'] = 'Nguồn gốc';
 $string['eventrelatedfullnameuser'] = 'Người dùng ảnh hưởng';
+$string['eventreportviewed'] = 'Xem báo cáo bản ghi trực tiếp';
 $string['pause'] = 'Tạm dừng cập nhật trực tiếp';
 $string['pluginname'] = 'Bản ghi trực tiếp';

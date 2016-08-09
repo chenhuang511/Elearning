@@ -25,6 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['config_general'] = 'Cấu hình chung';
 $string['email_body_notification_meeting_description'] = 'Mô tả';
 $string['index_enabled'] = 'đã kích hoạt';
 $string['index_heading_actions'] = 'Hành động';
@@ -32,13 +33,26 @@ $string['index_heading_group'] = 'Nhóm';
 $string['index_heading_recording'] = 'Ghi lại';
 $string['index_heading_users'] = 'Người dùng';
 $string['mod_form_block_general'] = 'Cài đặt chung';
+$string['mod_form_block_participants'] = 'Thành viên';
 $string['mod_form_field_intro'] = 'Mô tả';
 $string['mod_form_field_name'] = 'Tên lớp học ảo';
+$string['mod_form_field_notification'] = 'Gửi thông báo';
+$string['mod_form_field_participant_list'] = 'Danh sách người tham gia';
+$string['mod_form_field_participant_list_action_add'] = 'Thêm';
+$string['mod_form_field_participant_list_type_all'] = 'Tất cả người dùng đã ghi danh';
+$string['mod_form_field_record'] = 'Buổi học có thể được ghi lại';
+$string['mod_form_field_recordingtagging'] = 'Giao diện gắn thẻ kích hoạt';
+$string['mod_form_field_wait'] = 'Chờ người điều hành';
+$string['mod_form_field_welcome'] = 'Thông điệp chào mừng';
 $string['predefined_profile_default'] = 'Mặc định';
 $string['view_conference_action_join'] = 'Tham gia buổi học';
 $string['view_message_conference_not_started'] = 'Buổi học này chưa bắt đầu.';
 $string['view_message_conference_room_ready'] = 'Phòng học đã sẵn sàng. Bạn có thể tham gia buổi học bây giờ';
 $string['view_message_conference_wait_for_moderator'] = 'Chờ một người điều phối tham gia';
+$string['view_message_hour'] = 'giờ';
+$string['view_message_hours'] = 'giờ';
+$string['view_message_minute'] = 'phút';
+$string['view_message_minutes'] = 'phút';
 $string['view_message_norecordings'] = 'Không có ghi âm cho cuộc họp này';
 $string['view_message_users'] = 'người dùng';
 $string['view_recording'] = 'ghi lại';

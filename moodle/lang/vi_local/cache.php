@@ -26,3 +26,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['actions'] = 'Hành động';
+$string['cachedef_completion'] = 'Tình trạng hoàn thành các hoạt đông';

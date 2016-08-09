@@ -25,5 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['creategroupinselectedgrouping'] = 'Tạo nhóm trong tổ';
+$string['defaultgroupingname'] = 'Tổ';
 $string['nogroup'] = 'Không phân nhóm';
 $string['notingrouplist'] = '[Không có trong một nhóm]';
