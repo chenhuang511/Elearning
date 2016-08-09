@@ -1085,7 +1085,7 @@ abstract class moodleform_mod extends moodleform {
             if($freeze){
                 $mform->freeze($name);
             } else {
-                $mform->disabledIf($name);
+                $mform->disabledIf($name, '', '', '');
             }
         }
     }
