@@ -9211,5 +9211,9 @@ function forum_get_local_settings_info($coursemodule)
         $forum->remoteid = $forum->id;
         $DB->insert_record('forum', $forum);
     }
+    // Merge setting local with hub
+    $forum->completionposts = $localforum->completionposts;
+    $forum->completiondiscussions = $localforum->completiondiscussions;
+    $forum->completionreplies = $localforum->completionreplies;
     return $forum;
 }
