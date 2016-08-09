@@ -193,6 +193,28 @@ function get_remote_mapping_user($user = null)
     );
 }
 
+function get_remote_mapping_localuserid($userid) {
+    global $DB;
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_get_user_by_id',
+            'params' => array('userid' => $userid)
+        )
+    );
+
+    $hubuser = $result->user;
+
+    $localuserid = 0;
+
+    if($hubuser) {
+        $localuserid = $DB->get_field('user','id',array('username' => $hubuser->username, 'email' => $hubuser->email));
+    }
+
+    return $localuserid;
+}
+
 function remote_assign_role_to_user($roleid, $userid, $courseid)
 {
     global $DB;

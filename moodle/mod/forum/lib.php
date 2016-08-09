@@ -3178,6 +3178,19 @@ function forum_get_discussion_neighbours($cm, $discussion, $forum)
                    ORDER BY CASE WHEN d.pinned = :pinnedstate3 THEN 1 ELSE 0 END DESC, $orderbyasc, d.id ASC";
 
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+
+        $prevsql = $sql . " AND ( (($comparefield < $comparevalue) AND :pinnedstate1 = d.pinned)
+                         OR ($comparefield = $comparevalue2 AND (d.pinned = 0 OR d.pinned = :pinnedstate4) AND d.id < :discid2)
+                         OR (d.pinned = 0 AND d.pinned <> :pinnedstate2))
+                         AND d.userid IN (SELECT id FROM {user} WHERE mnethostid = :mnethostid)
+                   ORDER BY CASE WHEN d.pinned = :pinnedstate3 THEN 1 ELSE 0 END DESC, $orderbydesc, d.id DESC";
+
+        $nextsql = $sql . " AND ( (($comparefield > $comparevalue) AND :pinnedstate1 = d.pinned)
+                         OR ($comparefield = $comparevalue2 AND (d.pinned = 1 OR d.pinned = :pinnedstate4) AND d.id > :discid2)
+                         OR (d.pinned = 1 AND d.pinned <> :pinnedstate2))
+                         AND d.userid IN (SELECT id FROM {user} WHERE mnethostid = :mnethostid)
+                   ORDER BY CASE WHEN d.pinned = :pinnedstate3 THEN 1 ELSE 0 END DESC, $orderbyasc, d.id ASC";
+
         $prs = array();
         $i = 0;
         foreach ($params as $key => $val) {
@@ -4164,10 +4177,17 @@ function forum_print_discussion_header(&$post, $forum, $group = -1, $datestring 
                                        $canviewhiddentimedposts = false)
 {
 
-    global $COURSE, $USER, $CFG, $OUTPUT, $PAGE;
+    global $COURSE, $USER, $CFG, $OUTPUT, $PAGE, $DB;
 
     static $rowcount;
     static $strmarkalldread;
+
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $localcourseid = $DB->get_field('course', 'id', array('remoteid' => $forum->course));
+        if ($localcourseid) {
+            $forum->course = $localcourseid;
+        }
+    }
 
     if (empty($modcontext)) {
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
@@ -5329,7 +5349,7 @@ function forum_delete_discussion($discussion, $fulldelete, $course, $cm, $forum)
         $params = array();
         $params['parameters[0][name]'] = "discussion";
         $params['parameters[0][value]'] = $discussion->id;
-        $posts = get_remote_list_forum_posts_sql($params);
+        $posts = get_remote_list_forum_posts_by($params);
     } else {
         $posts = $DB->get_records("forum_posts", array("discussion" => $discussion->id));
     }
@@ -5523,7 +5543,7 @@ function forum_count_replies($post, $children = true)
             $params = array();
             $params['parameters[0][name]'] = "parent";
             $params['parameters[0][value]'] = $post->id;
-            $childposts = get_remote_count_forum_by("forum_posts", $params);
+            $childposts = get_remote_list_forum_posts_by($params);
         } else {
             $childposts = $DB->get_records('forum_posts', array('parent' => $post->id));
         }
@@ -6250,7 +6270,7 @@ function forum_user_can_see_post($forum, $discussion, $post, $user = NULL, $cm =
 function forum_print_latest_discussions($course, $forum, $maxdiscussions = -1, $displayformat = 'plain', $sort = '',
                                         $currentgroup = -1, $groupmode = -1, $page = -1, $perpage = 100, $cm = null)
 {
-    global $CFG, $USER, $OUTPUT;
+    global $CFG, $USER, $OUTPUT, $DB;
 
     if (!$cm) {
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
@@ -6454,6 +6474,11 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions = -1, $
     }
 
     foreach ($discussions as $discussion) {
+        $localuserid = get_remote_mapping_localuserid($discussion->userid);
+        if ($localuserid) {
+            $discussion->userid = $discussion->usermodified = $localuserid;
+        }
+
         if ($forum->type == 'qanda' && !has_capability('mod/forum:viewqandawithoutposting', $context) &&
             !forum_user_has_posted($forum->id, $discussion->discussion, $USER->id)
         ) {
@@ -6988,7 +7013,7 @@ function forum_change_discussionid($postid, $discussionid)
         $params = array();
         $params['parameters[0][name]'] = "parent";
         $params['parameters[0][value]'] = $postid;
-        $posts = get_remote_list_forum_posts_sql($params);
+        $posts = get_remote_list_forum_posts_by($params);
     } else {
         $posts = $DB->get_records('forum_posts', array('parent' => $postid));
     }
@@ -7736,8 +7761,17 @@ function forum_discussion_update_last_post($discussionid)
              WHERE discussion=?
              ORDER BY modified DESC";
 
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $prs = array();
+        $prs['parameters[0][name]'] = "discussion";
+        $prs['parameters[0][value]'] = $discussionid;
+        $lastposts = get_remote_list_forum_posts_by($prs, '', 0, 1);
+    } else {
+        $lastposts = $DB->get_records_sql($sql, array($discussionid), 0, 1);
+    }
+
 // Lets go find the last post
-    if (($lastposts = $DB->get_records_sql($sql, array($discussionid), 0, 1))) {
+    if ($lastposts) {
         $lastpost = reset($lastposts);
         $discussionobject = new stdClass();
         $discussionobject->id = $discussionid;
@@ -7750,15 +7784,7 @@ function forum_discussion_update_last_post($discussionid)
             foreach ($discussionobject as $key => $val) {
                 if ($key != "id") {
                     $discussionobjectdata["data[$i][name]"] = "$key";
-                    if ($key == "userid" || $key == "usermodified") {
-                        $user = get_remote_mapping_user($val);
-                        $discussionobjectdata["data[$i][value]"] = $user[0]->id;
-                    } else if ($key == "course") {
-                        $localcourse = $DB->get_record('course', array('id' => $val));
-                        $discussionobjectdata["data[$i][value]"] = $localcourse->remoteid;
-                    } else {
-                        $discussionobjectdata["data[$i][value]"] = $val;
-                    }
+                    $discussionobjectdata["data[$i][value]"] = $val;
                     $i++;
                 }
             }

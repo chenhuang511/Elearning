@@ -96,7 +96,8 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read string $title The title that should go in the <head> section of the HTML of this page.
  * @property-read moodle_url $url The moodle url object for this page.
  */
-class moodle_page {
+class moodle_page
+{
 
     /** The state of the page before it has printed the header **/
     const STATE_BEFORE_HEADER = 0;
@@ -350,7 +351,8 @@ class moodle_page {
      * and its friends like print_header, to check that everything is working as
      * expected. Also accessible as $PAGE->state.
      */
-    protected function magic_get_state() {
+    protected function magic_get_state()
+    {
         return $this->_state;
     }
 
@@ -358,7 +360,8 @@ class moodle_page {
      * Please do not call this method directly, use the ->headerprinted syntax. {@link moodle_page::__get()}.
      * @return bool has the header already been printed?
      */
-    protected function magic_get_headerprinted() {
+    protected function magic_get_headerprinted()
+    {
         return $this->_state >= self::STATE_IN_BODY;
     }
 
@@ -368,7 +371,8 @@ class moodle_page {
      * course table. (Also available as $COURSE global.) If we are not inside
      * an actual course, this will be the site course.
      */
-    protected function magic_get_course() {
+    protected function magic_get_course()
+    {
         global $SITE;
         if (is_null($this->_course)) {
             return $SITE;
@@ -383,7 +387,8 @@ class moodle_page {
      * by get_coursemodule_from_id or get_coursemodule_from_instance,
      * so the extra modname and name fields are present.
      */
-    protected function magic_get_cm() {
+    protected function magic_get_cm()
+    {
         return $this->_cm;
     }
 
@@ -393,7 +398,8 @@ class moodle_page {
      * the forum or quiz table) that this page belongs to. Will be null
      * if this page is not within a module.
      */
-    protected function magic_get_activityrecord() {
+    protected function magic_get_activityrecord()
+    {
         if (is_null($this->_module) && !is_null($this->_cm)) {
             $this->load_activity_record();
         }
@@ -405,7 +411,8 @@ class moodle_page {
      * @return string the The type of activity we are in, for example 'forum' or 'quiz'.
      * Will be null if this page is not within a module.
      */
-    protected function magic_get_activityname() {
+    protected function magic_get_activityname()
+    {
         if (is_null($this->_cm)) {
             return null;
         }
@@ -417,7 +424,8 @@ class moodle_page {
      * @return stdClass the category that the page course belongs to. If there isn't one
      * (that is, if this is the front page course) returns null.
      */
-    protected function magic_get_category() {
+    protected function magic_get_category()
+    {
         $this->ensure_category_loaded();
         if (!empty($this->_categories)) {
             return reset($this->_categories);
@@ -433,7 +441,8 @@ class moodle_page {
      * the top-level category. This may be the empty array if we are in the
      * front page course.
      */
-    protected function magic_get_categories() {
+    protected function magic_get_categories()
+    {
         $this->ensure_categories_loaded();
         return $this->_categories;
     }
@@ -442,7 +451,8 @@ class moodle_page {
      * Please do not call this method directly, use the ->context syntax. {@link moodle_page::__get()}.
      * @return context the main context to which this page belongs.
      */
-    protected function magic_get_context() {
+    protected function magic_get_context()
+    {
         global $CFG;
         if (is_null($this->_context)) {
             if (CLI_SCRIPT or NO_MOODLE_COOKIES) {
@@ -451,11 +461,11 @@ class moodle_page {
             } else if (AJAX_SCRIPT && $CFG->debugdeveloper) {
                 // Throw exception inside AJAX script in developer mode, otherwise the debugging message may be missed.
                 throw new coding_exception('$PAGE->context was not set. You may have forgotten '
-                    .'to call require_login() or $PAGE->set_context()');
+                    . 'to call require_login() or $PAGE->set_context()');
             } else {
                 debugging('Coding problem: $PAGE->context was not set. You may have forgotten '
-                    .'to call require_login() or $PAGE->set_context(). The page may not display '
-                    .'correctly as a result');
+                    . 'to call require_login() or $PAGE->set_context(). The page may not display '
+                    . 'correctly as a result');
             }
             $this->_context = context_system::instance();
         }
@@ -466,7 +476,8 @@ class moodle_page {
      * Please do not call this method directly, use the ->pagetype syntax. {@link moodle_page::__get()}.
      * @return string e.g. 'my-index' or 'mod-quiz-attempt'.
      */
-    protected function magic_get_pagetype() {
+    protected function magic_get_pagetype()
+    {
         global $CFG;
         if (is_null($this->_pagetype) || isset($CFG->pagepath)) {
             $this->initialise_default_pagetype();
@@ -478,8 +489,9 @@ class moodle_page {
      * Please do not call this method directly, use the ->pagetype syntax. {@link moodle_page::__get()}.
      * @return string The id to use on the body tag, uses {@link magic_get_pagetype()}.
      */
-    protected function magic_get_bodyid() {
-        return 'page-'.$this->pagetype;
+    protected function magic_get_bodyid()
+    {
+        return 'page-' . $this->pagetype;
     }
 
     /**
@@ -487,7 +499,8 @@ class moodle_page {
      * @return string the general type of page this is. For example 'standard', 'popup', 'home'.
      *      Allows the theme to display things differently, if it wishes to.
      */
-    protected function magic_get_pagelayout() {
+    protected function magic_get_pagelayout()
+    {
         return $this->_pagelayout;
     }
 
@@ -495,7 +508,8 @@ class moodle_page {
      * Please do not call this method directly, use the ->layout_options syntax. {@link moodle_page::__get()}.
      * @return array returns arrays with options for layout file
      */
-    protected function magic_get_layout_options() {
+    protected function magic_get_layout_options()
+    {
         if (!is_array($this->_layout_options)) {
             $this->_layout_options = $this->_theme->pagelayout_options($this->pagelayout);
         }
@@ -506,7 +520,8 @@ class moodle_page {
      * Please do not call this method directly, use the ->subpage syntax. {@link moodle_page::__get()}.
      * @return string The subpage identifier, if any.
      */
-    protected function magic_get_subpage() {
+    protected function magic_get_subpage()
+    {
         return $this->_subpage;
     }
 
@@ -514,7 +529,8 @@ class moodle_page {
      * Please do not call this method directly, use the ->bodyclasses syntax. {@link moodle_page::__get()}.
      * @return string the class names to put on the body element in the HTML.
      */
-    protected function magic_get_bodyclasses() {
+    protected function magic_get_bodyclasses()
+    {
         return implode(' ', array_keys($this->_bodyclasses));
     }
 
@@ -522,7 +538,8 @@ class moodle_page {
      * Please do not call this method directly, use the ->title syntax. {@link moodle_page::__get()}.
      * @return string the title that should go in the <head> section of the HTML of this page.
      */
-    protected function magic_get_title() {
+    protected function magic_get_title()
+    {
         return $this->_title;
     }
 
@@ -530,7 +547,8 @@ class moodle_page {
      * Please do not call this method directly, use the ->heading syntax. {@link moodle_page::__get()}.
      * @return string the main heading that should be displayed at the top of the <body>.
      */
-    protected function magic_get_heading() {
+    protected function magic_get_heading()
+    {
         return $this->_heading;
     }
 
@@ -538,7 +556,8 @@ class moodle_page {
      * Please do not call this method directly, use the ->heading syntax. {@link moodle_page::__get()}.
      * @return string The menu (or actions) to display in the heading
      */
-    protected function magic_get_headingmenu() {
+    protected function magic_get_headingmenu()
+    {
         return $this->_headingmenu;
     }
 
@@ -546,7 +565,8 @@ class moodle_page {
      * Please do not call this method directly, use the ->docspath syntax. {@link moodle_page::__get()}.
      * @return string the path to the Moodle docs for this page.
      */
-    protected function magic_get_docspath() {
+    protected function magic_get_docspath()
+    {
         if (is_string($this->_docspath)) {
             return $this->_docspath;
         } else {
@@ -559,10 +579,11 @@ class moodle_page {
      * @return moodle_url the clean URL required to load the current page. (You
      * should normally use this in preference to $ME or $FULLME.)
      */
-    protected function magic_get_url() {
+    protected function magic_get_url()
+    {
         global $FULLME;
         if (is_null($this->_url)) {
-            debugging('This page did not call $PAGE->set_url(...). Using '.s($FULLME), DEBUG_DEVELOPER);
+            debugging('This page did not call $PAGE->set_url(...). Using ' . s($FULLME), DEBUG_DEVELOPER);
             $this->_url = new moodle_url($FULLME);
             // Make sure the guessed URL cannot lead to dangerous redirects.
             $this->_url->remove_params('sesskey');
@@ -574,7 +595,8 @@ class moodle_page {
      * The list of alternate versions of this page.
      * @return array mime type => object with ->url and ->title.
      */
-    protected function magic_get_alternateversions() {
+    protected function magic_get_alternateversions()
+    {
         return $this->_alternateversions;
     }
 
@@ -582,7 +604,8 @@ class moodle_page {
      * Please do not call this method directly, use the ->blocks syntax. {@link moodle_page::__get()}.
      * @return block_manager the blocks manager object for this page.
      */
-    protected function magic_get_blocks() {
+    protected function magic_get_blocks()
+    {
         global $CFG;
         if (is_null($this->_blocks)) {
             if (!empty($CFG->blockmanagerclass)) {
@@ -602,7 +625,8 @@ class moodle_page {
      * Please do not call this method directly, use the ->requires syntax. {@link moodle_page::__get()}.
      * @return page_requirements_manager tracks the JavaScript, CSS files, etc. required by this page.
      */
-    protected function magic_get_requires() {
+    protected function magic_get_requires()
+    {
         if (is_null($this->_requires)) {
             $this->_requires = new page_requirements_manager();
         }
@@ -613,7 +637,8 @@ class moodle_page {
      * Please do not call this method directly, use the ->cacheable syntax. {@link moodle_page::__get()}.
      * @return bool can this page be cached by the user's browser.
      */
-    protected function magic_get_cacheable() {
+    protected function magic_get_cacheable()
+    {
         return $this->_cacheable;
     }
 
@@ -621,7 +646,8 @@ class moodle_page {
      * Please do not call this method directly, use the ->focuscontrol syntax. {@link moodle_page::__get()}.
      * @return string the id of the HTML element to be focused when the page has loaded.
      */
-    protected function magic_get_focuscontrol() {
+    protected function magic_get_focuscontrol()
+    {
         return $this->_focuscontrol;
     }
 
@@ -629,7 +655,8 @@ class moodle_page {
      * Please do not call this method directly, use the ->button syntax. {@link moodle_page::__get()}.
      * @return string the HTML to go where the Turn editing on button normally goes.
      */
-    protected function magic_get_button() {
+    protected function magic_get_button()
+    {
         return $this->_button;
     }
 
@@ -637,7 +664,8 @@ class moodle_page {
      * Please do not call this method directly, use the ->theme syntax. {@link moodle_page::__get()}.
      * @return theme_config the initialised theme for this page.
      */
-    protected function magic_get_theme() {
+    protected function magic_get_theme()
+    {
         if (is_null($this->_theme)) {
             $this->initialise_theme_and_output();
         }
@@ -650,7 +678,8 @@ class moodle_page {
      * @since Moodle 2.5.1 2.6
      * @return bool|array
      */
-    protected function magic_get_blockmanipulations() {
+    protected function magic_get_blockmanipulations()
+    {
         if (!right_to_left()) {
             return false;
         }
@@ -664,7 +693,8 @@ class moodle_page {
      * Please do not call this method directly, use the ->devicetypeinuse syntax. {@link moodle_page::__get()}.
      * @return string The device type being used.
      */
-    protected function magic_get_devicetypeinuse() {
+    protected function magic_get_devicetypeinuse()
+    {
         if (empty($this->_devicetypeinuse)) {
             $this->_devicetypeinuse = core_useragent::get_user_device_type();
         }
@@ -676,7 +706,8 @@ class moodle_page {
      * {@link moodle_page::__get()}
      * @return int The periodic refresh delay to use with meta refresh
      */
-    protected function magic_get_periodicrefreshdelay() {
+    protected function magic_get_periodicrefreshdelay()
+    {
         return $this->_periodicrefreshdelay;
     }
 
@@ -685,7 +716,8 @@ class moodle_page {
      * @return xhtml_container_stack tracks XHTML tags on this page that have been opened but not closed.
      *      mainly for internal use by the rendering code.
      */
-    protected function magic_get_opencontainers() {
+    protected function magic_get_opencontainers()
+    {
         if (is_null($this->_opencontainers)) {
             $this->_opencontainers = new xhtml_container_stack();
         }
@@ -696,7 +728,8 @@ class moodle_page {
      * Return the navigation object
      * @return global_navigation
      */
-    protected function magic_get_navigation() {
+    protected function magic_get_navigation()
+    {
         if ($this->_navigation === null) {
             $this->_navigation = new global_navigation($this);
         }
@@ -707,7 +740,8 @@ class moodle_page {
      * Return a navbar object
      * @return navbar
      */
-    protected function magic_get_navbar() {
+    protected function magic_get_navbar()
+    {
         if ($this->_navbar === null) {
             $this->_navbar = new navbar($this);
         }
@@ -718,7 +752,8 @@ class moodle_page {
      * Returns the settings navigation object
      * @return settings_navigation
      */
-    protected function magic_get_settingsnav() {
+    protected function magic_get_settingsnav()
+    {
         if ($this->_settingsnav === null) {
             $this->_settingsnav = new settings_navigation($this);
             $this->_settingsnav->initialise();
@@ -731,7 +766,8 @@ class moodle_page {
      *
      * @return string IP address or null if unknown
      */
-    protected function magic_get_requestip() {
+    protected function magic_get_requestip()
+    {
         return getremoteaddr(null);
     }
 
@@ -742,7 +778,8 @@ class moodle_page {
      *
      * @return string 'web', 'ws', 'cli', 'restore', etc.
      */
-    protected function magic_get_requestorigin() {
+    protected function magic_get_requestorigin()
+    {
         if (class_exists('restore_controller', false) && restore_controller::is_executing()) {
             return 'restore';
         }
@@ -767,7 +804,8 @@ class moodle_page {
      * @return mixed
      * @throws coding_exception
      */
-    public function __get($name) {
+    public function __get($name)
+    {
         $getmethod = 'magic_get_' . $name;
         if (method_exists($this, $getmethod)) {
             return $this->$getmethod();
@@ -789,7 +827,8 @@ class moodle_page {
      * @return void Throws exception if field not defined in page class
      * @throws coding_exception
      */
-    public function __set($name, $value) {
+    public function __set($name, $value)
+    {
         if (method_exists($this, 'set_' . $name)) {
             throw new coding_exception('Invalid attempt to modify page object', "Use \$PAGE->set_$name() instead.");
         } else {
@@ -807,7 +846,8 @@ class moodle_page {
      * @param string $target one of rendering target constants
      * @return renderer_base
      */
-    public function get_renderer($component, $subtype = null, $target = null) {
+    public function get_renderer($component, $subtype = null, $target = null)
+    {
         if ($this->pagelayout === 'maintenance') {
             // If the page is using the maintenance layout then we're going to force target to maintenance.
             // This leads to a special core renderer that is designed to block access to API's that are likely unavailable for this
@@ -822,7 +862,8 @@ class moodle_page {
      *
      * @return bool true if there are, false if not
      */
-    public function has_navbar() {
+    public function has_navbar()
+    {
         if ($this->_navbar === null) {
             $this->_navbar = new navbar($this);
         }
@@ -834,9 +875,10 @@ class moodle_page {
      * capture all necessary JavaScript to display a chunk of HTML such as an mform. This is for use
      * by the get_fragment() web service and not for use elsewhere.
      */
-    public function start_collecting_javascript_requirements() {
+    public function start_collecting_javascript_requirements()
+    {
         global $CFG;
-        require_once($CFG->libdir.'/outputfragmentrequirementslib.php');
+        require_once($CFG->libdir . '/outputfragmentrequirementslib.php');
 
         // Check that the requirements manager has not already been switched.
         if (get_class($this->_requires) == 'fragment_requirements_manager') {
@@ -858,7 +900,8 @@ class moodle_page {
      * editing mode.
      * @return bool
      */
-    public function user_is_editing() {
+    public function user_is_editing()
+    {
         global $USER;
         return !empty($USER->editing) && $this->user_allowed_editing();
     }
@@ -867,7 +910,8 @@ class moodle_page {
      * Does the user have permission to edit blocks on this page.
      * @return bool
      */
-    public function user_can_edit_blocks() {
+    public function user_can_edit_blocks()
+    {
         return has_capability($this->_blockseditingcap, $this->_context);
     }
 
@@ -875,7 +919,8 @@ class moodle_page {
      * Does the user have permission to see this page in editing mode.
      * @return bool
      */
-    public function user_allowed_editing() {
+    public function user_allowed_editing()
+    {
         return has_any_capability($this->all_editing_caps(), $this->_context);
     }
 
@@ -883,15 +928,16 @@ class moodle_page {
      * Get a description of this page. Normally displayed in the footer in developer debug mode.
      * @return string
      */
-    public function debug_summary() {
+    public function debug_summary()
+    {
         $summary = '';
         $summary .= 'General type: ' . $this->pagelayout . '. ';
         if (!during_initial_install()) {
             $summary .= 'Context ' . $this->context->get_context_name() . ' (context id ' . $this->_context->id . '). ';
         }
-        $summary .= 'Page type ' . $this->pagetype .  '. ';
+        $summary .= 'Page type ' . $this->pagetype . '. ';
         if ($this->subpage) {
-            $summary .= 'Sub-page ' . $this->subpage .  '. ';
+            $summary .= 'Sub-page ' . $this->subpage . '. ';
         }
         return $summary;
     }
@@ -906,10 +952,11 @@ class moodle_page {
      * @param int $state The new state.
      * @throws coding_exception
      */
-    public function set_state($state) {
+    public function set_state($state)
+    {
         if ($state != $this->_state + 1 || $state > self::STATE_DONE) {
             throw new coding_exception('Invalid state passed to moodle_page::set_state. We are in state ' .
-                    $this->_state . ' and state ' . $state . ' was requested.');
+                $this->_state . ' and state ' . $state . ' was requested.');
         }
 
         if ($state == self::STATE_PRINTING_HEADER) {
@@ -932,7 +979,8 @@ class moodle_page {
      * @param stdClass $course the course to set as the global course.
      * @throws coding_exception
      */
-    public function set_course($course) {
+    public function set_course($course)
+    {
         global $COURSE, $PAGE, $CFG, $SITE;
 
         if (empty($course->id)) {
@@ -958,9 +1006,9 @@ class moodle_page {
 
         // Notify course format that this page is set for the course.
         if ($this->_course->id != $SITE->id) {
-            require_once($CFG->dirroot.'/course/lib.php');
+            require_once($CFG->dirroot . '/course/lib.php');
             $courseformat = course_get_format($this->_course);
-            $this->add_body_class('format-'. $courseformat->get_format());
+            $this->add_body_class('format-' . $courseformat->get_format());
             $courseformat->page_set_course($this);
         } else {
             $this->add_body_class('format-site');
@@ -972,7 +1020,8 @@ class moodle_page {
      *
      * @param context $context a context object. You normally get this with context_xxxx::instance().
      */
-    public function set_context($context) {
+    public function set_context($context)
+    {
         if ($context === null) {
             // Extremely ugly hack which sets context to some value in order to prevent warnings,
             // use only for core error handling!!!!
@@ -987,7 +1036,8 @@ class moodle_page {
             if ($current == CONTEXT_SYSTEM or $current == CONTEXT_COURSE) {
                 // Hmm - not ideal, but it might produce too many warnings due to the design of require_login.
             } else if ($current == CONTEXT_MODULE and ($parentcontext = $context->get_parent_context()) and
-                $this->_context->id == $parentcontext->id) {
+                $this->_context->id == $parentcontext->id
+            ) {
                 // Hmm - most probably somebody did require_login() and after that set the block context.
             } else {
                 // We do not want devs to do weird switching of context levels on the fly because we might have used
@@ -1008,16 +1058,17 @@ class moodle_page {
      * @return void
      * @throws coding_exception
      */
-    public function set_cm($cm, $course = null, $module = null) {
+    public function set_cm($cm, $course = null, $module = null)
+    {
         global $DB, $CFG, $SITE;
 
         if (!isset($cm->id) || !isset($cm->course)) {
             throw new coding_exception('Invalid $cm. It has to be instance of cm_info or record from the course_modules table.');
         }
-        
+
         if (!$this->_course || $this->_course->id != get_course_id_by_remote_id($cm->course)) {
             if (!$course) {
-                $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+                $course = $DB->get_record('course', array(MOODLE_RUN_MODE === MOODLE_MODE_HUB ? 'remoteid' : 'id' => $cm->course), '*', MUST_EXIST);
             }
             if ($course->id != $cm->course && $course->id != get_course_id_by_remote_id($cm->course)) {
                 throw new coding_exception('The course you passed to $PAGE->set_cm does not correspond to the $cm.');
@@ -1045,7 +1096,7 @@ class moodle_page {
 
         // Notify course format that this page is set for the course module.
         if ($this->_course->id != $SITE->id) {
-            require_once($CFG->dirroot.'/course/lib.php');
+            require_once($CFG->dirroot . '/course/lib.php');
             course_get_format($this->_course)->page_set_cm($this);
         }
     }
@@ -1058,7 +1109,8 @@ class moodle_page {
      * @param stdClass $module A row from the main database table for the module that this page belongs to.
      * @throws coding_exception
      */
-    public function set_activity_record($module) {
+    public function set_activity_record($module)
+    {
         if (is_null($this->_cm)) {
             throw new coding_exception('You cannot call $PAGE->set_activity_record until after $PAGE->cm has been set.');
         }
@@ -1079,7 +1131,8 @@ class moodle_page {
      *
      * @param string $pagetype e.g. 'my-index' or 'mod-quiz-attempt'.
      */
-    public function set_pagetype($pagetype) {
+    public function set_pagetype($pagetype)
+    {
         $this->_pagetype = $pagetype;
     }
 
@@ -1102,7 +1155,8 @@ class moodle_page {
      *
      * @param string $pagelayout the page layout this is. For example 'popup', 'home'.
      */
-    public function set_pagelayout($pagelayout) {
+    public function set_pagelayout($pagelayout)
+    {
         global $SESSION;
 
         if (!empty($SESSION->forcepagelayout)) {
@@ -1122,7 +1176,8 @@ class moodle_page {
      * @param string $subpage an arbitrary identifier that, along with context->id
      *      and pagetype, uniquely identifies this page.
      */
-    public function set_subpage($subpage) {
+    public function set_subpage($subpage)
+    {
         if (empty($subpage)) {
             $this->_subpage = '';
         } else {
@@ -1136,7 +1191,8 @@ class moodle_page {
      * @param string $class add this class name ot the class attribute on the body tag.
      * @throws coding_exception
      */
-    public function add_body_class($class) {
+    public function add_body_class($class)
+    {
         if ($this->_state > self::STATE_BEFORE_HEADER) {
             throw new coding_exception('Cannot call moodle_page::add_body_class after output has been started.');
         }
@@ -1148,7 +1204,8 @@ class moodle_page {
      *
      * @param array $classes this utility method calls add_body_class for each array element.
      */
-    public function add_body_classes($classes) {
+    public function add_body_classes($classes)
+    {
         foreach ($classes as $class) {
             $this->add_body_class($class);
         }
@@ -1160,7 +1217,8 @@ class moodle_page {
      *
      * @param string $title the title that should go in the <head> section of the HTML of this page.
      */
-    public function set_title($title) {
+    public function set_title($title)
+    {
         $title = format_string($title);
         $title = strip_tags($title);
         $title = str_replace('"', '&quot;', $title);
@@ -1173,7 +1231,8 @@ class moodle_page {
      *
      * @param string $heading the main heading that should be displayed at the top of the <body>.
      */
-    public function set_heading($heading) {
+    public function set_heading($heading)
+    {
         $this->_heading = format_string($heading);
     }
 
@@ -1182,7 +1241,8 @@ class moodle_page {
      *
      * @param string $menu The menu/content to show in the heading
      */
-    public function set_headingmenu($menu) {
+    public function set_headingmenu($menu)
+    {
         $this->_headingmenu = $menu;
     }
 
@@ -1197,7 +1257,8 @@ class moodle_page {
      * @param int $categoryid The id of the category to set.
      * @throws coding_exception
      */
-    public function set_category_by_id($categoryid) {
+    public function set_category_by_id($categoryid)
+    {
         global $SITE;
         if (!is_null($this->_course)) {
             throw new coding_exception('Course has already been set. You cannot change the category now.');
@@ -1220,7 +1281,8 @@ class moodle_page {
      *
      * @param string $path the path to use at the end of the moodle docs URL.
      */
-    public function set_docs_path($path) {
+    public function set_docs_path($path)
+    {
         $this->_docspath = $path;
     }
 
@@ -1237,7 +1299,8 @@ class moodle_page {
      * @param array $params parameters to add to the URL
      * @throws coding_exception
      */
-    public function set_url($url, array $params = null) {
+    public function set_url($url, array $params = null)
+    {
         global $CFG;
 
         if (is_string($url) && strpos($url, 'http') !== 0) {
@@ -1274,7 +1337,8 @@ class moodle_page {
      * @param string $param the name of the parameter to make sure is not in the
      * page URL.
      */
-    public function ensure_param_not_in_url($param) {
+    public function ensure_param_not_in_url($param)
+    {
         $this->_url->remove_params($param);
     }
 
@@ -1290,7 +1354,8 @@ class moodle_page {
      * @param string $mimetype The mime-type of the alternate version.
      * @throws coding_exception
      */
-    public function add_alternate_version($title, $url, $mimetype) {
+    public function add_alternate_version($title, $url, $mimetype)
+    {
         if ($this->_state > self::STATE_BEFORE_HEADER) {
             throw new coding_exception('Cannot call moodle_page::add_alternate_version after output has been started.');
         }
@@ -1305,7 +1370,8 @@ class moodle_page {
      *
      * @param string $controlid the id of the HTML element to be focused.
      */
-    public function set_focuscontrol($controlid) {
+    public function set_focuscontrol($controlid)
+    {
         $this->_focuscontrol = $controlid;
     }
 
@@ -1314,7 +1380,8 @@ class moodle_page {
      *
      * @param string $html the HTML to display there.
      */
-    public function set_button($html) {
+    public function set_button($html)
+    {
         $this->_button = $html;
     }
 
@@ -1327,7 +1394,8 @@ class moodle_page {
      *
      * @param string $capability a capability.
      */
-    public function set_blocks_editing_capability($capability) {
+    public function set_blocks_editing_capability($capability)
+    {
         $this->_blockseditingcap = $capability;
     }
 
@@ -1338,7 +1406,8 @@ class moodle_page {
      *
      * @param string|array $capability either a capability, or an array of capabilities.
      */
-    public function set_other_editing_capability($capability) {
+    public function set_other_editing_capability($capability)
+    {
         if (is_array($capability)) {
             $this->_othereditingcaps = array_unique($this->_othereditingcaps + $capability);
         } else {
@@ -1351,7 +1420,8 @@ class moodle_page {
      *
      * @param bool $cacheable can this page be cached by the user's browser.
      */
-    public function set_cacheable($cacheable) {
+    public function set_cacheable($cacheable)
+    {
         $this->_cacheable = $cacheable;
     }
 
@@ -1364,7 +1434,8 @@ class moodle_page {
      * @param int $delay Sets the delay before refreshing the page, if set to null refresh is cancelled.
      * @throws coding_exception
      */
-    public function set_periodic_refresh_delay($delay = null) {
+    public function set_periodic_refresh_delay($delay = null)
+    {
         if ($this->_state > self::STATE_BEFORE_HEADER) {
             throw new coding_exception('You cannot set a periodic refresh delay after the header has been printed');
         }
@@ -1383,7 +1454,8 @@ class moodle_page {
      *
      * @param string $themename the name of the theme to use.
      */
-    public function force_theme($themename) {
+    public function force_theme($themename)
+    {
         $this->ensure_theme_not_set();
         $this->_theme = theme_config::load($themename);
     }
@@ -1394,7 +1466,8 @@ class moodle_page {
      * This is used when we need to reset settings
      * because they are now double cached in theme.
      */
-    public function reload_theme() {
+    public function reload_theme()
+    {
         if (!is_null($this->_theme)) {
             $this->_theme = theme_config::load($this->_theme->name);
         }
@@ -1409,7 +1482,8 @@ class moodle_page {
      * @return void
      * @throws coding_exception
      */
-    public function https_required() {
+    public function https_required()
+    {
         global $CFG;
 
         if (!is_null($this->_url)) {
@@ -1433,7 +1507,8 @@ class moodle_page {
      * @return void (may redirect to https://self)
      * @throws coding_exception
      */
-    public function verify_https_required() {
+    public function verify_https_required()
+    {
         global $CFG, $FULLME;
 
         if (is_null($this->_url)) {
@@ -1476,7 +1551,8 @@ class moodle_page {
      * This method is called when the page first moves out of the STATE_BEFORE_HEADER
      * state. This is our last change to initialise things.
      */
-    protected function starting_output() {
+    protected function starting_output()
+    {
         global $CFG;
 
         if (!during_initial_install()) {
@@ -1493,8 +1569,8 @@ class moodle_page {
         // If maintenance mode is on, change the page header.
         if (!empty($CFG->maintenance_enabled)) {
             $this->set_button('<a href="' . $CFG->wwwroot . '/' . $CFG->admin .
-                    '/settings.php?section=maintenancemode">' . get_string('maintenancemode', 'admin') .
-                    '</a> ' . $this->button);
+                '/settings.php?section=maintenancemode">' . get_string('maintenancemode', 'admin') .
+                '</a> ' . $this->button);
 
             $title = $this->title;
             if ($title) {
@@ -1519,7 +1595,8 @@ class moodle_page {
      *
      * @return void
      */
-    public function initialise_theme_and_output() {
+    public function initialise_theme_and_output()
+    {
         global $OUTPUT, $PAGE, $SITE, $CFG;
 
         if (!empty($this->_wherethemewasinitialised)) {
@@ -1567,7 +1644,8 @@ class moodle_page {
      *
      * @return string the name of the theme that should be used on this page.
      */
-    public function reset_theme_and_output() {
+    public function reset_theme_and_output()
+    {
         global $COURSE, $SITE;
 
         $COURSE = clone($SITE);
@@ -1586,7 +1664,8 @@ class moodle_page {
      *
      * @return string the name of the theme that should be used on this page.
      */
-    protected function resolve_theme() {
+    protected function resolve_theme()
+    {
         global $CFG, $USER, $SESSION;
 
         if (empty($CFG->themeorder)) {
@@ -1599,7 +1678,7 @@ class moodle_page {
 
         $mnetpeertheme = '';
         if (isloggedin() and isset($CFG->mnet_localhost_id) and $USER->mnethostid != $CFG->mnet_localhost_id) {
-            require_once($CFG->dirroot.'/mnet/peer.php');
+            require_once($CFG->dirroot . '/mnet/peer.php');
             $mnetpeer = new mnet_peer();
             $mnetpeer->set_id($USER->mnethostid);
             if ($mnetpeer->force_theme == 1 && $mnetpeer->theme != '') {
@@ -1619,7 +1698,7 @@ class moodle_page {
                     if (!empty($CFG->allowcoursethemes) && !empty($this->_course->theme) && !$hascustomdevicetheme) {
                         return $this->_course->theme;
                     }
-                break;
+                    break;
 
                 case 'category':
                     if (!empty($CFG->allowcategorythemes) && !$hascustomdevicetheme) {
@@ -1630,13 +1709,13 @@ class moodle_page {
                             }
                         }
                     }
-                break;
+                    break;
 
                 case 'session':
                     if (!empty($SESSION->theme)) {
                         return $SESSION->theme;
                     }
-                break;
+                    break;
 
                 case 'user':
                     if (!empty($CFG->allowuserthemes) && !empty($USER->theme) && !$hascustomdevicetheme) {
@@ -1646,7 +1725,7 @@ class moodle_page {
                             return $USER->theme;
                         }
                     }
-                break;
+                    break;
 
                 case 'site':
                     if ($mnetpeertheme) {
@@ -1681,12 +1760,13 @@ class moodle_page {
      * If legacy code has set $CFG->pagepath that will be used instead, and a
      * developer warning issued.
      */
-    protected function initialise_default_pagetype($script = null) {
+    protected function initialise_default_pagetype($script = null)
+    {
         global $CFG, $SCRIPT;
 
         if (isset($CFG->pagepath)) {
             debugging('Some code appears to have set $CFG->pagepath. That was a horrible deprecated thing. ' .
-                    'Don\'t do it! Try calling $PAGE->set_pagetype() instead.');
+                'Don\'t do it! Try calling $PAGE->set_pagetype() instead.');
             $script = $CFG->pagepath;
             unset($CFG->pagepath);
         }
@@ -1723,7 +1803,8 @@ class moodle_page {
      *    - Pagelayout
      * These are commonly used in CSS to target specific types of pages.
      */
-    protected function initialise_standard_body_classes() {
+    protected function initialise_standard_body_classes()
+    {
         global $CFG, $USER;
 
         $pagetype = $this->pagetype;
@@ -1810,7 +1891,8 @@ class moodle_page {
      * For instance if {@link moodle_page::$_cm} is a forum then a row from the
      * forum table will be loaded.
      */
-    protected function load_activity_record() {
+    protected function load_activity_record()
+    {
         global $DB;
         if (is_null($this->_cm)) {
             return;
@@ -1825,7 +1907,8 @@ class moodle_page {
      * @return void
      * @throws coding_exception
      */
-    protected function ensure_category_loaded() {
+    protected function ensure_category_loaded()
+    {
         if (is_array($this->_categories)) {
             return; // Already done.
         }
@@ -1845,7 +1928,8 @@ class moodle_page {
      * @param int $categoryid
      * @throws moodle_exception
      */
-    protected function load_category($categoryid) {
+    protected function load_category($categoryid)
+    {
         global $DB;
         $category = $DB->get_record('course_categories', array('id' => $categoryid));
         if (!$category) {
@@ -1865,7 +1949,8 @@ class moodle_page {
      *
      * @return void
      */
-    protected function ensure_categories_loaded() {
+    protected function ensure_categories_loaded()
+    {
         global $DB;
         $this->ensure_category_loaded();
         if (!is_null(end($this->_categories))) {
@@ -1884,7 +1969,8 @@ class moodle_page {
      *
      * @throws coding_exception
      */
-    protected function ensure_theme_not_set() {
+    protected function ensure_theme_not_set()
+    {
         // This is explicitly allowed for webservices though which may process many course contexts in a single request.
         if (WS_SERVER) {
             return;
@@ -1892,9 +1978,9 @@ class moodle_page {
 
         if (!is_null($this->_theme)) {
             throw new coding_exception('The theme has already been set up for this page ready for output. ' .
-                    'Therefore, you can no longer change the theme, or anything that might affect what ' .
-                    'the current theme is, for example, the course.',
-                    'Stack trace when the theme was set up: ' . format_backtrace($this->_wherethemewasinitialised));
+                'Therefore, you can no longer change the theme, or anything that might affect what ' .
+                'the current theme is, for example, the course.',
+                'Stack trace when the theme was set up: ' . format_backtrace($this->_wherethemewasinitialised));
         }
     }
 
@@ -1905,7 +1991,8 @@ class moodle_page {
      * @param string $url
      * @return string
      */
-    protected function url_to_class_name($url) {
+    protected function url_to_class_name($url)
+    {
         $bits = parse_url($url);
         $class = str_replace('.', '-', $bits['host']);
         if (!empty($bits['port'])) {
@@ -1926,7 +2013,8 @@ class moodle_page {
      *
      * @return array
      */
-    protected function all_editing_caps() {
+    protected function all_editing_caps()
+    {
         $caps = $this->_othereditingcaps;
         $caps[] = $this->_blockseditingcap;
         return $caps;
@@ -1937,8 +2025,9 @@ class moodle_page {
      *
      * @return bool
      */
-    public function has_set_url() {
-        return ($this->_url!==null);
+    public function has_set_url()
+    {
+        return ($this->_url !== null);
     }
 
     /**
@@ -1946,7 +2035,8 @@ class moodle_page {
      *
      * @param bool $setting
      */
-    public function set_block_actions_done($setting = true) {
+    public function set_block_actions_done($setting = true)
+    {
         $this->_block_actions_done = $setting;
     }
 
@@ -1956,7 +2046,8 @@ class moodle_page {
      *
      * @return bool true if popup notifications may be displayed
      */
-    public function get_popup_notification_allowed() {
+    public function get_popup_notification_allowed()
+    {
         return $this->_popup_notification_allowed;
     }
 
@@ -1965,7 +2056,8 @@ class moodle_page {
      *
      * @param bool $allowed true if notifications are allowed. False if not allowed. They are allowed by default.
      */
-    public function set_popup_notification_allowed($allowed) {
+    public function set_popup_notification_allowed($allowed)
+    {
         $this->_popup_notification_allowed = $allowed;
     }
 
@@ -1976,7 +2068,8 @@ class moodle_page {
      * @param string $region
      * @return string
      */
-    public function apply_theme_region_manipulations($region) {
+    public function apply_theme_region_manipulations($region)
+    {
         if ($this->blockmanipulations && isset($this->blockmanipulations[$region])) {
             $regionwas = $region;
             $regionnow = $this->blockmanipulations[$region];
@@ -1996,13 +2089,14 @@ class moodle_page {
      * @param int $userid The user ID that we are looking to add this report node to.
      * @param array $nodeinfo Name and url of the final node that we are creating.
      */
-    public function add_report_nodes($userid, $nodeinfo) {
+    public function add_report_nodes($userid, $nodeinfo)
+    {
         global $USER;
         // Try to find the specific user node.
         $newusernode = $this->navigation->find('user' . $userid, null);
         $reportnode = null;
         $navigationnodeerror =
-                'Could not find the navigation node requested. Please check that the node you are looking for exists.';
+            'Could not find the navigation node requested. Please check that the node you are looking for exists.';
         if ($userid != $USER->id) {
             // Check that we have a valid node.
             if (empty($newusernode)) {

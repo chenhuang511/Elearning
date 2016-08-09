@@ -459,13 +459,13 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     if (!$post = forum_get_post_full($prune)) {
         print_error('invalidpostid', 'forum');
     }
-    $param = array();
-    $param['parameters[0][name]'] = 'id';
-    $param['parameters[0][value]'] = $post->discussion;
+    $params = array();
+    $params['parameters[0][name]'] = 'id';
+    $params['parameters[0][value]'] = $post->discussion;
     if (!$discussion = get_remote_forum_discussions_by($params)) {
         print_error('notpartofdiscussion', 'forum');
     }
-    $param['parameters[0][value]'] = $discussion->forum;
+    $params['parameters[0][value]'] = $discussion->forum;
     if (!$forum = get_remote_forum_by($params)) {
         print_error('invalidforumid', 'forum');
     }
@@ -510,12 +510,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         $icount = 0;
         foreach ($newdiscussion as $key => $val) {
             $data["data[$icount][name]"] = "$key";
-            if ($key == "userid" || $key == "usermodified") {
-                $user = get_remote_mapping_user($post->userid);
-                $data["data[$icount][value]"] = $user[0]->id;
-            } else {
-                $data["data[$icount][value]"] = $val;
-            }
+            $data["data[$icount][value]"] = $val;
             $icount++;
         }
 
@@ -585,8 +580,10 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         $PAGE->set_title(format_string($discussion->name) . ": " . format_string($post->subject));
         $PAGE->set_heading($course->fullname);
         echo $OUTPUT->header();
-        echo $OUTPUT->heading(format_string($forum->name), 2);
+        echo html_writer::start_div('container');
+        echo $OUTPUT->heading(format_string($forum->name), 2, array('class' => 'el-heading'));
         echo $OUTPUT->heading(get_string('pruneheading', 'forum'), 3);
+        echo html_writer::end_div();
 
         $prunemform->display();
 

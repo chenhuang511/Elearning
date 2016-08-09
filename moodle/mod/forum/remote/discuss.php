@@ -362,7 +362,7 @@ if ($forum->type != 'single'
         $prs = array();
         // Check forum types and eliminate simple discussions.
         $prs['parameters[0][name]'] = "course";
-        $prs['parameters[0][value]'] = $course->id;
+        $prs['parameters[0][value]'] = $course->remoteid;
         $forumcheck = get_remote_list_forum_by($prs);
         //$forumcheck = $DB->get_records('forum', array('course' => $course->id),'', 'id, type');
         foreach ($modinfo->instances['forum'] as $forumcm) {
