@@ -26,6 +26,12 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['actions'] = 'Hành động';
+$string['edit'] = 'Chỉnh sửa';
 $string['enabled'] = 'Đã kích hoạt';
+$string['groupoverrides'] = 'Ghi đè nhóm';
+$string['groupoverridesdeleted'] = 'Ghi đè nhóm đã xóa';
 $string['messageprovider:graded_essay'] = 'Thông báo đã chấm điểm bài luận trong bài học';
+$string['preview'] = 'Xem trước';
+$string['previewlesson'] = 'Xem trước {$a}';
+$string['removeallgroupoverrides'] = 'Xóa tất cả các ghi đè nhóm';
 $string['truefalse'] = 'Đúng/Sai';

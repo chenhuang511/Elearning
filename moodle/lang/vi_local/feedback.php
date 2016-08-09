@@ -27,9 +27,12 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['add_item'] = 'Thêm câu hỏi';
 $string['dropdown_values'] = 'Đáp án';
+$string['line_values'] = 'Đánh giá';
 $string['messageprovider:message'] = 'Phản hồi lời nhắc nhở';
 $string['messageprovider:submission'] = 'Thông báo phản hồi';
 $string['multichoice'] = 'Nhiều lựa chọn';
+$string['name'] = 'Tên';
 $string['next_page'] = 'Trang tiếp theo';
+$string['preview'] = 'Xem trước';
 $string['previous_page'] = 'Trang trước';
 $string['search:activity'] = 'Phản hồi - thông tin hoạt động';

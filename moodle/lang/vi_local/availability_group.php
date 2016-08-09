@@ -25,5 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['description'] = 'Cho phép chỉ những học viên thuộc vào một nhóm cụ thể hoặc tất cả các nhóm.';
 $string['pluginname'] = 'Hạn chế bằng nhóm';
+$string['requires_anygroup'] = 'Bạn thuộc bất kỳ nhóm nào';
+$string['requires_group'] = 'Bạn thuộc về <strong>{$a}</strong>';
 $string['title'] = 'Nhóm';

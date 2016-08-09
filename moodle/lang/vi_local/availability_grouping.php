@@ -25,4 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['description'] = 'Chỉ cho phép những học viên thuộc một nhóm trong một tổ xác định.';
 $string['pluginname'] = 'Hạn chế bằng việc phân nhóm';
+$string['requires_grouping'] = 'Bạn thuộc một nhóm trong <strong>{$a}</strong>';
+$string['title'] = 'Tổ';

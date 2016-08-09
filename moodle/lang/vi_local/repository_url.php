@@ -26,3 +26,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['configplugin'] = 'Cấu hình loại kho lưu trữ URL';
+$string['rename'] = 'Tên';

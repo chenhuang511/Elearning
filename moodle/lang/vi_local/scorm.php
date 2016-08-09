@@ -25,5 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['browse'] = 'Xem trước';
 $string['calculatedweight'] = 'Trọng lượng tính';
 $string['deleteselected'] = 'Xóa những lần thi được chọn';
+$string['scormopen'] = 'Có hiệu lực từ';

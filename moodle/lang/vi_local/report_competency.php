@@ -27,3 +27,4 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['competency'] = 'Năng lực';
 $string['pluginname'] = 'Phân tích năng lực';
+$string['rating'] = 'Đánh giá';

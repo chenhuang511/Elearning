@@ -29,6 +29,7 @@ $string['allowdeletes'] = 'Cho phép xóa';
 $string['allowrenames'] = 'Cho phép đổi tên';
 $string['allowresets'] = 'Cho phép thiết lập lại';
 $string['coursefile'] = 'Tệp';
+$string['coursestotal'] = 'Tổng khóa học: {$a}';
 $string['createall'] = 'Tạo tất cả, tăng tên ngắn nếu cần thiết';
 $string['createnew'] = 'Chỉ tạo những khóa học mới, bỏ qua khóa học đã có';
 $string['createorupdate'] = 'Tạo các khóa học mới, hoặc cập nhật những cái hiện có';

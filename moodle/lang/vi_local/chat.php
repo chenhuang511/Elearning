@@ -25,5 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['generalconfig'] = 'Cấu hình chung';
 $string['idle'] = 'Không hoạt động';
 $string['search:activity'] = 'Trò chuyện - thông tin hoạt động';

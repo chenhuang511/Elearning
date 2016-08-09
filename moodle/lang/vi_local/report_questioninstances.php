@@ -25,4 +25,4 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['totalquestions'] = 'Tổng';
+$string['totalquestions'] = 'Tổng cộng';

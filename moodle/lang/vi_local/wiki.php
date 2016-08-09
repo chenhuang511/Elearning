@@ -25,6 +25,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['edit'] = 'Chỉnh sửa';
+$string['editsection'] = 'chỉnh sửa';
+$string['rating'] = 'Đánh giá';
 $string['uploadactions'] = 'Hành động';
 $string['wikiexternalurl'] = 'URL ngoài';
 $string['wikiintro'] = 'Mô tả';

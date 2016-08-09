@@ -26,6 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['deleteselected'] = 'Xóa những lần thi được chọn';
+$string['nogradepermission'] = 'Bạn không được phép chấm bài thi này.';
 $string['optonlyregradedattempts'] = 'Được chấm lại / được đánh dấu cần thiết cho chấm lại';
 $string['preferencessave'] = 'Hiển thị báo cáo';
 $string['regradeselected'] = 'Chấm lại những lần thi được chọn';

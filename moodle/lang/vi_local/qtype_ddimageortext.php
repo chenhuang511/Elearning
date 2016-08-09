@@ -26,3 +26,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['infinite'] = 'Không giới hạn';
+$string['previewareaheader'] = 'Xem trước';

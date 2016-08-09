@@ -25,9 +25,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['checkin'] = 'Lưu các chuỗi đến gói ngôn ngữ';
 $string['checkout'] = 'Mở gói ngôn ngữ chỉnh sửa';
 $string['checkoutdone'] = 'Gói ngôn ngữ đã tải lên';
 $string['checkoutinprogress'] = 'Đang tải gói ngôn ngữ';
+$string['confirmcheckin'] = 'Bạn muốn lưu những sửa đổi đến gói ngôn ngữ của bạn. Điều này sẽ xuất các chuỗi đã chỉnh sửa từ người dịch thành dữ liệu của Moodle và Moodle sẽ bắt đầu sử dụng các chuỗi đã sửa. Nhấn "Tiếp tục" để tiến hành lưu.';
 $string['filter'] = 'Bộ lọc chuỗi';
 $string['filtercomponent'] = 'Thành phần chứa chuỗi hiển thị';
 $string['filtercustomized'] = 'Chỉ được tùy chỉnh';
@@ -42,6 +44,7 @@ $string['headingstandard'] = 'Văn bản chuẩn';
 $string['headingstringid'] = 'Chuỗi';
 $string['modifiedno'] = 'Không có chuỗi sửa đổi nào được lưu';
 $string['modifiednum'] = 'Có {$a} chuỗi được sửa. Bạn có muốn lưu những thay đổi này đến gói ngôn ngữ của bạn';
+$string['nostringsfound'] = 'Không tìm thấy chuỗi, xin vui lòng thay đổi các thiết lập bộ lọc';
 $string['pluginname'] = 'Chỉnh ngôn ngữ';
 $string['savecheckin'] = 'Lưu những thay đổi đến gói ngôn ngữ';
 $string['savecontinue'] = 'Nộp thay đổi và tiếp tục chỉnh sửa';

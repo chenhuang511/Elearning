@@ -27,4 +27,12 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['component'] = 'Thành phần';
 $string['default'] = 'Mặc định';
+$string['faildelay'] = 'Lỗi chậm trễ';
+$string['lastruntime'] = 'Chạy lần cuối';
+$string['nextruntime'] = 'Chạy lần tiếp theo';
 $string['scheduledtasks'] = 'Lịch trình công việc';
+$string['taskscheduleday'] = 'Ngày';
+$string['taskscheduledayofweek'] = 'Ngày trong tuần';
+$string['taskschedulehour'] = 'Giờ';
+$string['taskscheduleminute'] = 'Phút';
+$string['taskschedulemonth'] = 'Tháng';

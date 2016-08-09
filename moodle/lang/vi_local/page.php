@@ -26,6 +26,3 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['optionsheader'] = 'Hiển thị các lựa chọn';
-$string['proposecourse'] = 'Khóa học đề xuất';
-$string['completecourse'] = 'Khóa học hoàn thành';
-$string['viewall'] = 'xem tất cả';

@@ -18,21 +18,11 @@
 /**
  * Local language pack from http://192.168.1.253
  *
- * @package    availability
- * @subpackage date
+ * @package    qtype
+ * @subpackage ddmarker
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['description'] = 'Ngăn chặn truy cập cho đến khi (hoặc từ khi) một ngày tháng và thời gian cụ thể.';
-$string['direction_before'] = 'Ngày tháng';
-$string['full_from'] = 'Đó là sau <strong>{$a}</strong>';
-$string['full_until'] = 'Đó là trước <strong>{$a}</strong>';
-$string['full_until_date'] = 'Đó là trước khi kết thúc <strong>{$a}</strong>';
-$string['pluginname'] = 'Hạn chế bằng ngày';
-$string['short_from'] = 'Có hiệu lực từ <strong>{$a}</strong>';
-$string['short_from_date'] = 'Có hiệu lực từ <strong>{$a}</strong>';
-$string['short_until'] = 'Có hiệu lực cho đến <strong>{$a}</strong>';
-$string['short_until_date'] = 'Có hiệu lực cho đến khi kết thúc <strong>{$a}</strong>';
-$string['title'] = 'Ngày tháng';
+$string['previewareaheader'] = 'Xem trước';

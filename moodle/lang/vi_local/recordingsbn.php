@@ -25,4 +25,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['config_general'] = 'Cấu hình chung';
 $string['view_head_description'] = 'Mô tả';

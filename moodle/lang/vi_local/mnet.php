@@ -26,3 +26,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['options'] = 'Tùy chọn';
+$string['sslverification'] = 'Xác minh SSL';
