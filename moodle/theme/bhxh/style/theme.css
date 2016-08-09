@@ -13,9 +13,11 @@ h1, h2, h3, h4, h5, h6 {
 /* td.cell.c0 {
     width: 30%;
 } */
-
+.menulockconfig_field_lock_firstname{
+    margin-bottom: 5px;
+}
 h2.main, #pageheading {
-    font-size: 16em;
+    font-size: 16px;
     line-height: 35px;
     color: #777;
     border-bottom: 1px solid #e1e1e1;
@@ -187,7 +189,7 @@ a:focus {
 
 .forumpost .subject-single {
     margin-left: 20px;
-    color: #396;
+    color: #167ac6;
 
 }
 
@@ -198,7 +200,7 @@ a:focus {
 }
 
 .forumpost .author-forum a {
-    color: #396;
+    color: #167ac6;
 }
 
 .forumpost .content-no-overflow {
@@ -213,7 +215,7 @@ a
 
 .noti-content-main .commands a {
     font-size: 13px;
-    color: #396;
+    color: #167ac6;
 }
 
 .icon-bxh {

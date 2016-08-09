@@ -196,7 +196,8 @@ function groups_get_grouping($groupingid, $fields='*', $strictness=IGNORE_MISSIN
  * @param string $fields
  * @return array Returns an array of the group objects (userid field returned if array in $userid)
  */
-function groups_get_all_groups($courseid, $userid=0, $groupingid=0, $fields='g.*') {
+function groups_get_all_groups($courseid, $userid=0, $groupingid=0, $fields='g.*')
+{
     global $DB;
 
     // We need to check that we each field in the fields list belongs to the group table and that it has not being
@@ -268,7 +269,6 @@ function groups_get_all_groups($courseid, $userid=0, $groupingid=0, $fields='g.*
                                   WHERE g.courseid = ? $userwhere $groupingwhere
                                ORDER BY name ASC", $params);
 }
-
 
 /**
  * Gets array of all groups in current user.

@@ -325,7 +325,7 @@ function delete_remote_mdl_forum($modname, $parameters)
         )
     );
 
-    return $result->post;
+    return $result->status;
 }
 
 function save_remote_mdl_forum($modname, $data)
@@ -458,7 +458,7 @@ function get_remote_forum_get_discussion_neighbours_sql($sql, $parameters, $stri
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_forum_get_discussion_neighbours_sql',
-            'params' => array_merge(array('sql' => $sql, 'strictness' => $strictness), $parameters)
+            'params' => array_merge(array('sql' => $sql, 'hostip' => gethostip(), 'strictness' => $strictness), $parameters)
         ), false
     );
 

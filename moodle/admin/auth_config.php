@@ -170,7 +170,7 @@ function print_auth_lock_options($auth, $user_fields, $helptext, $retrieveopts, 
                 echo html_writer::select($updateextoptions, "lockconfig_field_updateremote_{$field}", $pluginconfig->{"field_updateremote_$field"}, false);
                 echo '<br />';
             }
-            echo '<label for="menulockconfig_field_lock_'.$field.'">'.get_string('auth_fieldlock', 'auth') . '</label>&nbsp;';
+            echo '<label for="menulockconfig_field_lock_'.$field.'">'.get_string('auth_fieldlock', 'auth') . '</label>&nbsp;'; echo "<br />";
             echo html_writer::select($lockoptions, "lockconfig_field_lock_{$field}", $pluginconfig->{"field_lock_$field"}, false);
             // echo '</div>';
         } else {
