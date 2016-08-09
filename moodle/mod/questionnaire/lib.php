@@ -1156,12 +1156,21 @@ function questionnaire_get_completion_state($course, $cm, $userid, $type) {
     global $DB;
 
     // Get questionnaire details.
-    $questionnaire = $DB->get_record('questionnaire', array('id' => $cm->instance), '*', MUST_EXIST);
+    if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        $questionnaire = $DB->get_record('questionnaire', array('id' => $cm->instance), '*', MUST_EXIST);
+    } else {
+        $questionnaire = get_remote_questionnaire_by_id($cm->instance);
+    }
 
     // If completion option is enabled, evaluate it and return true/false.
     if ($questionnaire->completionsubmit) {
         $params = array('userid' => $userid, 'qid' => $questionnaire->id);
-        return $DB->record_exists('questionnaire_attempts', $params);
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            return $DB->record_exists('questionnaire_attempts', $params);
+        } else {
+            $condition = ' userid = ' . $userid . ' AND qid' . $questionnaire->id;
+            return get_remote_questionnaire_attempts($condition);
+        }
     } else {
         // Completion option is not enabled so just return $type.
         return $type;
