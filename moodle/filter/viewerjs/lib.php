@@ -55,11 +55,15 @@ class filter_viewerjs_media_player extends core_media_player {
         if (count($urls) !== 1) {
             return '';
         }
-
-        $file_url            = new moodle_url($urls[0]);
-        $viewerjs_player_url = new moodle_url('/filter/viewerjs/lib/viewerjs');
-        // we assume the filter/viewerjs/lib/viewerjs directory will be four directories away from the initial public directory
-        $viewerjs_player_url->set_anchor('../../../..' . $file_url->out_as_local_url());
+        $link = false;
+        if(strpos(HUB_URL, $urls[0]->get_host()) !== false) {
+            $link = $urls[0]->get_scheme() . '://' . $urls[0]->get_host() . $urls[0]->get_path();
+        } else {
+            $file_url            = new moodle_url($urls[0]);
+            $viewerjs_player_url = new moodle_url('/filter/viewerjs/lib/viewerjs');
+            // we assume the filter/viewerjs/lib/viewerjs directory will be four directories away from the initial public directory
+            $viewerjs_player_url->set_anchor('../../../..' . $file_url->out_as_local_url());
+        }
 
         if (!$width) {
             $width = '100%';
@@ -69,7 +73,7 @@ class filter_viewerjs_media_player extends core_media_player {
         }
 
         $output = html_writer::tag('iframe', '', array(
-            'src'                   => $viewerjs_player_url->out(),
+            'src'                   => $link ? $link : $viewerjs_player_url->out(),
             'width'                 => $width,
             'height'                => $height,
             'webkitallowfullscreen' => 'webkitallowfullscreen',
@@ -85,7 +89,6 @@ class filter_viewerjs_media_player extends core_media_player {
             'pdf',
             'ods',
             'odp',
-            'pptx',
             'odt'
         );
     }
@@ -104,12 +107,12 @@ class filter_viewerjs_media_player extends core_media_player {
         $extensions = $this->get_supported_extensions();
         $result = array();
         foreach ($urls as $url) {
-            try {
-                $url->out_as_local_url();
-            }
-            catch (coding_exception $e) {
-                continue;
-            }
+//            try {
+//                $url->out_as_local_url();
+//            }
+//            catch (coding_exception $e) {
+//                continue;
+//            }
             if (in_array(core_media::get_extension($url), $extensions)) {
                 $result[] = $url;
             }
