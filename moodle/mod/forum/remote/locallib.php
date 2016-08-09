@@ -22,6 +22,20 @@ function get_remote_field_forum_by($modname, $parameters, $field = 'name')
     return $result->field;
 }
 
+function get_remote_field_forum_sql($sql, $parameters)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_field_forum_sql',
+            'params' => array_merge(array('sql' => $sql), $parameters),
+        ), false
+    );
+
+    return $result->field;
+}
+
 function get_remote_count_forum_by($modname, $parameters, $sort = '')
 {
     $result = moodle_webservice_client(
