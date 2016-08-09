@@ -545,8 +545,17 @@ WHERE
     fp.userid=:userid AND fd.forum=:forumid";
 
     if ($forum->completiondiscussions) {
-        $value = $forum->completiondiscussions <=
-            $DB->count_records('forum_discussions', array('forum' => $forum->id, 'userid' => $userid));
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $params = array();
+            $params['parameters[0][name]'] = "userid";
+            $params['parameters[0][value]'] = $userid;
+            $params['parameters[1][name]'] = "forum";
+            $params['parameters[1][value]'] = $forum->id;
+            $value = $forum->completiondiscussions <= get_remote_count_forum_by("forum_discussions", $params);
+        } else {
+            $value = $forum->completiondiscussions <=
+                $DB->count_records('forum_discussions', array('forum' => $forum->id, 'userid' => $userid));
+        }
         if ($type == COMPLETION_AND) {
             $result = $result && $value;
         } else {
@@ -554,8 +563,17 @@ WHERE
         }
     }
     if ($forum->completionreplies) {
-        $value = $forum->completionreplies <=
-            $DB->get_field_sql($postcountsql . ' AND fp.parent<>0', $postcountparams);
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $prs = array();
+            $prs['parameters[0][name]'] = "userid";
+            $prs['parameters[0][value]'] = $userid;
+            $prs['parameters[1][name]'] = "forum";
+            $prs['parameters[1][value]'] = $forum->id;
+            $value = $forum->completionreplies <= get_remote_field_forum_sql($postcountsql . ' AND fp.parent<>0', $prs);
+        } else {
+            $value = $forum->completionreplies <=
+                $DB->get_field_sql($postcountsql . ' AND fp.parent<>0', $postcountparams);
+        }
         if ($type == COMPLETION_AND) {
             $result = $result && $value;
         } else {
@@ -563,7 +581,16 @@ WHERE
         }
     }
     if ($forum->completionposts) {
-        $value = $forum->completionposts <= $DB->get_field_sql($postcountsql, $postcountparams);
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $prs = array();
+            $prs['parameters[0][name]'] = "userid";
+            $prs['parameters[0][value]'] = $userid;
+            $prs['parameters[1][name]'] = "forum";
+            $prs['parameters[1][value]'] = $forum->id;
+            $value = $forum->completionposts <= get_remote_field_forum_sql($postcountsql, $prs);
+        } else {
+            $value = $forum->completionposts <= $DB->get_field_sql($postcountsql, $postcountparams);
+        }
         if ($type == COMPLETION_AND) {
             $result = $result && $value;
         } else {

@@ -194,6 +194,14 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_get_field_forum_sql' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'get_field_forum_sql',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'Get field of forum sql',
+        'type' => 'read',
+        'ajax' => true
+    ),
     'local_mod_get_count_forum_by' => array(
         'classname' => 'local_mod_forum_external',
         'methodname' => 'get_count_forum_by',

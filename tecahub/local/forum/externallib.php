@@ -1511,6 +1511,57 @@ class local_mod_forum_external extends external_api
         );
     }
 
+    public static function get_field_forum_sql_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'sql' => new external_value(PARAM_RAW, 'mod name'),
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                )
+            )
+        );
+    }
+
+    public static function get_field_forum_sql($sql, $parameters)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_field_forum_sql_parameters(), array(
+            'sql' => $sql,
+            'parameters' => $parameters
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $result = array();
+
+        $f = $DB->get_field_sql($params['sql'], $arr);
+
+        if (!$f) {
+            $f = 0;
+        }
+
+        $result['field'] = $f;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_field_forum_sql_returns()
+    {
+        return self::get_field_forum_by_returns();
+    }
+
     public static function get_count_forum_by_parameters()
     {
         return new external_function_parameters(
