@@ -296,8 +296,9 @@ abstract class grade_object
             if ($table === 'grade_items') {
                 $rsraw = get_remote_assign_grade_items_raw_data($sql, $remoteparams);
                 self::reset_raw_data_userid($rsraw, $usersmapping);
+
                 foreach ($rsraw as &$data) {
-                    if (isset($params['id'])) {
+                    if (isset($params['id']) && isset($params['itemtype']) && $params['itemtype'] == 'course' ) {
                         $localcourse = get_local_course_record($data->courseid, false);
                         $data->courseid = $localcourse->id;
                     }
