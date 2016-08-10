@@ -3796,9 +3796,10 @@ ul#enroltabs > li.active > a, ul#enroltabs > li > a:focus, ul#enroltabs > li > a
 .el-badge {
     float: right;
     background-color: #339966;
-    padding: 18px 12px;
+    padding: 18px 0;
     border-radius: 50%;
     font-size: 13px;
+    text-align: center;
 }
 
 .btn-el-reg {
