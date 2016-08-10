@@ -1869,7 +1869,6 @@ class local_mod_forum_external extends external_api
     {
         return new external_function_parameters(
             array(
-                'sql' => new external_value(PARAM_RAW, 'the query sql'),
                 'parameters' => new external_multiple_structure(
                     new external_single_structure(
                         array(
@@ -1879,21 +1878,26 @@ class local_mod_forum_external extends external_api
                     ), 'the params'
                 ),
                 'limitfrom' => new external_value(PARAM_INT, 'the limit from'),
-                'limitnum' => new external_value(PARAM_INT, 'the limit num')
+                'limitnum' => new external_value(PARAM_INT, 'the limit num'),
+                'forumsort' => new external_value(PARAM_RAW, 'the forum sort'),
+                'orderby' => new external_value(PARAM_RAW, 'the order by'),
+                'groupby' => new external_value(PARAM_RAW, 'the group by')
             )
         );
     }
 
-    public static function forum_count_discussion_replies_sql($sql, $parameters, $limitfrom, $limitnum)
+    public static function forum_count_discussion_replies_sql($parameters, $limitfrom, $limitnum, $forumsort, $orderby, $groupby)
     {
         global $DB;
         $warnings = array();
 
         $params = self::validate_parameters(self::forum_count_discussion_replies_sql_parameters(), array(
-            'sql' => $sql,
             'parameters' => $parameters,
             'limitfrom' => $limitfrom,
-            'limitnum' => $limitnum
+            'limitnum' => $limitnum,
+            'forumsort' => $forumsort,
+            'orderby' => $orderby,
+            'groupby' => $groupby
         ));
 
         $arr = array();
@@ -1902,12 +1906,26 @@ class local_mod_forum_external extends external_api
         }
 
         $result = array();
+        if (($params['limitfrom'] == 0 and $params['limitnum'] == 0) or $params['forumsort'] == "") {
+            $sql = "SELECT p.discussion, COUNT(p.id) AS replies, MAX(p.id) AS lastpostid
+                  FROM {forum_posts} p
+                       JOIN {forum_discussions} d ON p.discussion = d.id
+                 WHERE p.parent > 0 AND d.forum = ?
+              GROUP BY p.discussion";
 
-        if ($params['limitfrom'] == 0 && $params['limitnum'] == 0) {
-            $replies = $DB->get_records_sql($params['sql'], $arr);
+            $replies = $DB->get_records_sql($sql, $arr);
         } else {
-            $replies = $DB->get_records_sql($params['sql'], $arr, $params['limitfrom'], $params['limitnum']);
+            $groupby_field = $params['groupby'];
+            $orderby_field = $params['orderby'];
+            $sql = "SELECT p.discussion, (COUNT(p.id) - 1) AS replies, MAX(p.id) AS lastpostid
+                  FROM {forum_posts} p
+                       JOIN {forum_discussions} d ON p.discussion = d.id
+                 WHERE d.forum = ?
+              GROUP BY p.discussion $groupby_field $orderby_field";
+
+            $replies = $DB->get_records_sql($sql, $arr, $params['limitfrom'], $params['limitnum']);
         }
+
 
         if (!$replies) {
             $replies = array();
