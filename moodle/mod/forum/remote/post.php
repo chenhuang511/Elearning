@@ -524,8 +524,11 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         $dt = array();
         $i = 0;
         foreach ($newpost as $key => $val) {
-            $dt["data[$i][name]"] = "$key";
-            $dt["data[$i][value]"] = $val;
+            if ($key != "id") {
+                $dt["data[$i][name]"] = "$key";
+                $dt["data[$i][value]"] = $val;
+                $i++;
+            }
         }
 
         $result = update_remote_mdl_forum('forum_posts', $newpost->id, $dt);
