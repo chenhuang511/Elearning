@@ -78,11 +78,18 @@ echo $OUTPUT->doctype() ?>
         </div>
     </header>
     <div id="page-content" class="row">
-        <div class="col-sm-12">
-            <div class="nav-tab-course">
+        <?php
+        $isstudent = false;
+        if ($isstudent) { ?>
+            <div class="col-sm-12">
+                <div class="nav-tab-course">
                 nav here
+                </div>
             </div>
-        </div>
+        <?php
+        }
+        ?>
+
         <?php echo $OUTPUT->blocks('side-pre', 'col-md-3'); ?>
         <div id="<?php echo $regionbsid ?>" class="col-md-9">
             <?php
