@@ -1734,7 +1734,7 @@ class local_mod_forum_external extends external_api
                    JOIN {forum_posts} p ON p.discussion = d.id
                    JOIN {user} u ON p.userid = u.id
                    $umtable_field
-             WHERE d.forum = ? AND p.parent IS NOT NULL 
+             WHERE d.forum = ? AND p.parent IS NOT NULL
                    $timelimit_field $groupselect_field
                    AND p.userid IN (SELECT id FROM {user} WHERE mnethostid = ?)
           ORDER BY $forumsort_field, d.id DESC";
@@ -2150,13 +2150,11 @@ class local_mod_forum_external extends external_api
             $arr = array_merge($arr, array($p['value']));
         }
 
-        if ($params['hostip'] != '') {
-            $host = $DB->get_record('mnet_host', array('ip_address' => $params['hostip']), '*', MUST_EXIST);
-        }
+        $hostid = $DB->get_field('mnet_host', 'id', array('ip_address' => $params['hostip']));
 
-        if (isset($host) && $host) {
+        if ($hostid) {
             $sql .= " AND p.userid IN (SELECT id FROM {user} WHERE mnethostid = ?)";
-            $arr = array_merge($arr, array($host->id));
+            $arr = array_merge($arr, array($hostid));
         }
 
         $sql .= " ORDER BY $sort_field";
