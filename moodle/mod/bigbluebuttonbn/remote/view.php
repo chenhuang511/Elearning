@@ -22,14 +22,14 @@ if ($id) {
     if (!$cm = get_remote_course_module_by_cmid('bigbluebuttonbn', $id)) {
         print_error('invalidcoursemodule');
     }
-    if (!$course = get_local_course_record($cm->course)) {
+    if (!$course = get_local_course_record($cm->course, true)) {
         print_error('coursemisconf');
     }
 
     $bigbluebuttonbn = get_remote_bigbluebuttonbn_by_id($cm->instance);
 } elseif ($b) {
     $bigbluebuttonbn = get_remote_bigbluebuttonbn_by_id($b);
-    if (!$course = get_local_course_record($quiz->course)) {
+    if (!$course = get_local_course_record($bigbluebuttonbn->course)) {
         print_error('invalidcourseid');
     }
     if (!$cm = get_remote_course_module_by_instance('bigbluebuttonbn', $b)) {

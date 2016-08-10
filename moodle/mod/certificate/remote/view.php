@@ -34,7 +34,7 @@ $edit = optional_param('edit', -1, PARAM_BOOL);
 if (!$cm = get_remote_course_module_by_cmid('certificate', $id)) {
     print_error('Course Module ID was incorrect');
 }
-if (!$course = get_local_course_record($cm->course)) {
+if (!$course = get_local_course_record($cm->course, true)) {
     print_error('course is misconfigured');
 }
 

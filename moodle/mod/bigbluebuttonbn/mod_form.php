@@ -31,7 +31,7 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
                 $bigbluebuttonbn = $DB->get_record('bigbluebuttonbn', array('id' => $cm->instance), '*', MUST_EXIST);
             } else {
                 $cm = get_remote_course_module_by_cmid('bigbluebuttonbn', $course_module_id);
-                $course = get_local_course_record($cm->course);
+                $course = get_local_course_record($cm->course, true);
                 $bigbluebuttonbn = get_remote_bigbluebuttonbn_by_id($cm->instance);
             }
         }

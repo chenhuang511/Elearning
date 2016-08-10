@@ -116,7 +116,7 @@ class api {
             if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
                 $modinfo = get_fast_modinfo($cm->course);
             } else {
-                $course = get_local_course_record($cm->course);
+                $course = get_local_course_record($cm->course, true);
                 $modinfo = get_fast_modinfo($course);
             }
             $cm = $modinfo->get_cm($cm->id);

@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/mod/lesson/remote/locallib.php');
 $id = required_param('id', PARAM_INT);
 
 $cm = get_remote_course_module_by_cmid('lesson', $id);
-$course = get_local_course_record($cm->course);
+$course = get_local_course_record($cm->course, true);
 $params = array();
 $params['parameters[0][name]'] = "id";
 $params['parameters[0][value]'] = $cm->instance;

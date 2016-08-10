@@ -29,7 +29,7 @@ if ($id) {
         if (!$cm = get_remote_course_module_by_cmid('bigbluebuttonbn', $id)) {
             print_error('invalidcoursemodule');
         }
-        if (!$course = get_local_course_record($cm->course)) {
+        if (!$course = get_local_course_record($cm->course, true)) {
             print_error('coursemisconf');
         }
 
@@ -41,11 +41,11 @@ if ($id) {
         $course = $DB->get_record('course', array('id' => $bigbluebuttonbn->course), '*', MUST_EXIST);
         $cm = get_coursemodule_from_instance('bigbluebuttonbn', $bigbluebuttonbn->id, $course->id, false, MUST_EXIST);
     } else {
-        $bigbluebuttonbn = get_remote_bigbluebuttonbn_by_id($b);
-        if (!$course = get_local_course_record($quiz->course)) {
+        $bigbluebuttonbn = get_remote_bigbluebuttonbn_by_id($bn);
+        if (!$course = get_local_course_record($bigbluebuttonbn->course)) {
             print_error('invalidcourseid');
         }
-        if (!$cm = get_remote_course_module_by_instance('bigbluebuttonbn', $b)) {
+        if (!$cm = get_remote_course_module_by_instance('bigbluebuttonbn', $bn)) {
             print_error('invalidcoursemodule');
         }
     }

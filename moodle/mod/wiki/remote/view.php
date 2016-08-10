@@ -67,7 +67,7 @@ if ($id) {
     }
 
     // Checking course instance
-    $course = get_local_course_record($cm->course);
+    $course = get_local_course_record($cm->course, true);
 
     require_login($course, false, $cm);
 

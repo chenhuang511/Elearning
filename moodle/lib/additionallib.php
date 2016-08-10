@@ -119,7 +119,7 @@ function get_local_assign_record($assignid, $useid = false) {
         return $assignid;
     }
     $idfield = ((int)$assignid === 1 || $useid) ? "id" : "remoteid";
-    $assign = $DB->get_record("assign", array($idfield => $assignid), "*");
+    $assign = $DB->get_record("assign", array($idfield => $assignid), "*", MUST_EXIST);
     return $assign;
 }
 
@@ -130,7 +130,7 @@ function get_local_course_modules_record($cmid, $useid = false) {
         return $cmid;
     }
     $idfield = ((int)$cmid === 1 || $useid) ? "id" : "remoteid";
-    $coursemodule = $DB->get_record("course_modules", array($idfield => $cmid), "*");
+    $coursemodule = $DB->get_record("course_modules", array($idfield => $cmid), "*", MUST_EXIST);
     return $coursemodule;
 }
 

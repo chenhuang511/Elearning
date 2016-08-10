@@ -237,7 +237,6 @@ function get_remote_modules_by($parameters, $sort = '', $mustexists = FALSE)
  */
 function delete_remote_course_modules_completion($cmid) {
     $hostip = gethostip();
-    $rcmid = get_local_course_modules_record($cmid, true)->remoteid;
 
     $result = moodle_webservice_client(
         array(
@@ -245,7 +244,7 @@ function delete_remote_course_modules_completion($cmid) {
             'token' => HOST_TOKEN,
             'function_name' => 'local_delete_remote_course_modules_completion_by_cmid_hostip',
             'params' => array(
-                'coursemoduleid' => $rcmid,
+                'coursemoduleid' => $cmid,
                 'hostip' => $hostip
             ),
         ), false
@@ -282,7 +281,7 @@ function get_remote_course_modules_completion_by_mode($cmid, $mode = 'normal', $
     $rcm = get_local_course_modules_record($cmid);
 
     if ($userid != -1) {
-        $ruser = get_remote_mapping_user($userid)[0]->id;
+        $userid = get_remote_mapping_user($userid)[0]->id;
     }
 
     $result = moodle_webservice_client(
@@ -296,7 +295,7 @@ function get_remote_course_modules_completion_by_mode($cmid, $mode = 'normal', $
                 'hostip' => $hostip,
                 'field' => $field,
                 'mode' => $mode,
-                'userid' => $ruser
+                'userid' => $userid
             ),
         ), false
     );

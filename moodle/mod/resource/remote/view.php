@@ -56,7 +56,7 @@ if ($r) {
     $resource = get_remote_resource_by($params, '', true);
 }
 
-$course = get_local_course_record($cm->course);
+$course = get_local_course_record($cm->course, true);
 
 require_course_login($course, true, $cm);
 $context = context_module::instance($cm->id);

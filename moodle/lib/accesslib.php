@@ -1469,7 +1469,7 @@ function get_context_info_array($contextid)
         } else {
             $cm = get_remote_course_module($context->instanceid);
         }
-        $course = get_local_course_record($cm->course);
+        $course = get_local_course_record($cm->course, true);
 
     } else if ($context->contextlevel == CONTEXT_BLOCK) {
         $parent = $context->get_parent_context();
@@ -1482,7 +1482,7 @@ function get_context_info_array($contextid)
             } else {
                 $cm = get_remote_course_module($parent->instanceid);
             }
-            $course = get_local_course_record($cm->course);
+            $course = get_local_course_record($cm->course, true);
         }
     }
 

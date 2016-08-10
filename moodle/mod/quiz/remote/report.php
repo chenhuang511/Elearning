@@ -20,7 +20,7 @@ if ($id) {
     if (!$cm = get_remote_course_module_by_cmid('quiz', $id)) {
         print_error('invalidcoursemodule');
     }
-    if (!$course = get_local_course_record($cm->course)) {
+    if (!$course = get_local_course_record($cm->course, true)) {
         print_error('coursemisconf');
     }
 

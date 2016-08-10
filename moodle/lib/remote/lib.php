@@ -261,9 +261,12 @@ function get_remote_cm_info($modname, $instanceid) {
 function merge_local_course_module($cm){
     global $DB;
 
+    $localcourseid = get_local_course_record($cm->course)->id;
+
     if(!$coursemodule = $DB->get_record('course_modules', array('remoteid' => $cm->id))){
         // Make params to insert DB local
         $cm->remoteid = $cm->id;
+        $cm->course = $localcourseid;
         unset($cm->id);
 
         $transaction = $DB->start_delegated_transaction();
@@ -276,6 +279,7 @@ function merge_local_course_module($cm){
 
     // Merge course module for settings
     $cm->id                         = $coursemodule->remoteid;
+    $cm->course                     = $localcourseid;
     $cm->availability               = $coursemodule->availability;
     $cm->completion                 = $coursemodule->completion;
     $cm->completionview             = $coursemodule->completionview;

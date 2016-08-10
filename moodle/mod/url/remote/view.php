@@ -43,7 +43,7 @@ if (!$url = get_remote_url_by_id($cm->instance)) {
     print_error('invalidurl');
 }
 
-if (!$course = get_local_course_record($cm->course)) {
+if (!$course = get_local_course_record($cm->course, true)) {
     print_error('invalidcourse');
 }
 

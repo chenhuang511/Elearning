@@ -130,12 +130,12 @@ if (!empty($add)) {
     if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
         // Check the course module exists.
         $cm = get_coursemodule_from_id('', $update, 0, false, MUST_EXIST);
-        // Check the course exists.
-        $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
     } else {
         $cm = get_remote_course_module($update);
-        $course = get_local_course_record($cm->course);
     }
+
+    // Check the course exists.
+    $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
 
     // require_login
     require_login($course, false, $cm); // needed to setup proper $COURSE

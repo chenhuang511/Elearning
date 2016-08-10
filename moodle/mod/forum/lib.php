@@ -400,7 +400,7 @@ function forum_delete_instance($id)
         if (!$cm = get_remote_course_module_by_instance('forum', $forum->id)) {
             return false;
         }
-        if (!$course = get_local_course_record($cm->course)) {
+        if (!$course = get_local_course_record($cm->course, true)) {
             return false;
         }
     } else {

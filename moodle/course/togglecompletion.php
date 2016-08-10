@@ -140,11 +140,11 @@ switch ($targetstate) {
 // Get course-modules entry
 if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
     $cm = get_remote_core_course_get_course_module($cmid);
-    $course = get_local_course_record($cm->course);
 } else {
     $cm = get_coursemodule_from_id(null, $cmid, null, true, MUST_EXIST);
-    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 }
+
+$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
 // Check user is logged in
 require_login($course, false, $cm);

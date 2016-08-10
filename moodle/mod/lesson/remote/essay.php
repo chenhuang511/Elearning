@@ -35,7 +35,7 @@ $id = required_param('id', PARAM_INT);             // Course Module ID
 $mode = optional_param('mode', 'display', PARAM_ALPHA);
 
 $cm = get_remote_course_module_by_cmid('lesson', $id);
-$course = get_local_course_record($cm->course);
+$course = get_local_course_record($cm->course, true);
 
 $params = array();
 $params['parameters[0][name]'] = "id";
