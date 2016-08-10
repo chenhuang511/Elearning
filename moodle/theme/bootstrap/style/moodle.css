@@ -22259,3 +22259,6 @@ div.feedback_item_commands_left {
 #fitem_id_encoding{
     margin-top: 100px;
 }
+.menuselectsortby, .menuresortcategoriesby, .menuresortcoursesby{
+    margin-bottom: 5px;
+}

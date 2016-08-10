@@ -3441,13 +3441,14 @@ class admin_setting_configtime extends admin_setting
 
         $return = '<div class="form-time defaultsnext">';
         $return .= '<label class="accesshide" for="' . $this->get_id() . 'h">' . get_string('hours') . '</label>';
-        $return .= '<select id="' . $this->get_id() . 'h" name="' . $this->get_full_name() . '[h]">';
+        $return .= '<select class="col-md-4" id="' . $this->get_id() . 'h" name="' . $this->get_full_name() . '[h]">';
         for ($i = 0; $i < 24; $i++) {
             $return .= '<option value="' . $i . '"' . ($i == $data['h'] ? ' selected="selected"' : '') . '>' . $i . '</option>';
         }
-        $return .= '</select>:';
+        $return .= '</select>';
+        $return .= '<span class="col-md-1">:</span>';
         $return .= '<label class="accesshide" for="' . $this->get_id() . 'm">' . get_string('minutes') . '</label>';
-        $return .= '<select id="' . $this->get_id() . 'm" name="' . $this->get_full_name() . '[m]">';
+        $return .= '<select class="col-md-4" id="' . $this->get_id() . 'm" name="' . $this->get_full_name() . '[m]">';
         for ($i = 0; $i < 60; $i += 5) {
             $return .= '<option value="' . $i . '"' . ($i == $data['m'] ? ' selected="selected"' : '') . '>' . $i . '</option>';
         }
@@ -7954,7 +7955,7 @@ function format_admin_setting($setting, $title = '', $form = '', $description = 
     if (!empty($defaults)) {
         $defaultinfo = implode(', ', $defaults);
         $defaultinfo = highlight($query, nl2br(s($defaultinfo)));
-        $defaultinfo = '<div class="form-defaultinfo">' . get_string('defaultsettinginfo', 'admin', $defaultinfo) . '</div>';
+        $defaultinfo = '<div style=" float: left; margin-left:20px;" class="form-defaultinfo">' . get_string('defaultsettinginfo', 'admin', $defaultinfo) . '</div>';
     }
 
 
