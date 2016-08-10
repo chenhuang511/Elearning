@@ -3411,7 +3411,7 @@ function forum_get_discussions_count($cm)
               FROM {forum_discussions} d
                    JOIN {forum_posts} p ON p.discussion = d.id
                    JOIN {user} u ON u.id = d.userid 
-             WHERE d.forum = ? AND p.parent = 0 
+             WHERE d.forum = ? AND p.parent IS NOT NULL 
                    $groupselect $timelimit
                    AND d.userid IN (SELECT id FROM {user} WHERE mnethostid = ?)";
 
