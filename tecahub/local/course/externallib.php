@@ -1290,7 +1290,7 @@ class local_course_external extends external_api
             }
         }
 
-        $result['completion'] = $completion;
+        $result['completion'] = intval($completion);
         $result['warnings'] = $warnings;
         return $result;
     }
