@@ -1491,6 +1491,11 @@ ul#coursetabs > li.active > a, ul#coursetabs > li > a:focus, ul#coursetabs > li 
     h3 {
         height: 40px;
     }
+
+    .el-badge {
+        width: 50px;
+        height: 50px;
+    }
 }
 
 @media (min-width: 1200px) {
@@ -3793,9 +3798,10 @@ ul#enroltabs > li.active > a, ul#enroltabs > li > a:focus, ul#enroltabs > li > a
 .el-badge {
     float: right;
     background-color: #167ac6;
-    padding: 18px 12px;
+    padding: 18px 0;
     border-radius: 50%;
     font-size: 13px;
+    text-align: center;
 }
 
 .btn-el-reg {

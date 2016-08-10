@@ -53,6 +53,14 @@ class core_remote_renderer extends plugin_renderer_base
         global $CFG, $USER;
         require_once($CFG->libdir . '/remote/lib.php');
 
+        $hubuserid = $USER->id;
+
+        $hubuser = get_remote_mapping_user($hubuserid);
+
+        if ($hubuser) {
+            $hubuserid = $hubuser[0]->id;
+        }
+
         // start - enrol course list
         $content = html_writer::start_tag('div', array('id' => 'enrol-course-list', 'class' => 'container'));
 
@@ -72,6 +80,7 @@ class core_remote_renderer extends plugin_renderer_base
 
         $mylearningplan = '';
         foreach ($courses as $course) {
+            $course->completion = get_remote_course_completion($course->remoteid, $hubuserid);
             $classes = 'coursebox clearfix';
 
             $thumbOjb = get_remote_course_thumb($course->remoteid);
@@ -245,7 +254,7 @@ class core_remote_renderer extends plugin_renderer_base
         $coursename = $course->fullname;
         $coursenamelink = html_writer::link($this->get_view_course_url($course),
             $coursename, array('class' => $course->visible ? '' : 'dimmed'));
-        $progress = html_writer::span('80%', 'badge el-badge');
+        $progress = html_writer::span($course->completion . '%', 'badge el-badge');
         $html .= html_writer::tag('h3', $coursenamelink . $progress);
 
         $html .= html_writer::end_tag('header'); // end header
