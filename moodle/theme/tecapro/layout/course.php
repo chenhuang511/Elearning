@@ -79,25 +79,71 @@ echo $OUTPUT->doctype() ?>
     </header>
     <div id="page-content" class="row">
         <?php
-        $isstudent = false;
+        $context = context_module::instance($COURSE->id);
+        $isstudent = !has_capability('moodle/course:manageactivities', $context);
         if ($isstudent) { ?>
             <div class="col-sm-12">
-                <div class="nav-tab-course">
-                nav here
+                <div class="tab-course-container container">
+                    <ul id="coursetabs" class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active">
+                            <a id="coursewaretab" role="tab" data-toggle="tab" aria-controls="tab-content-1" aria-expanded="true" href="#tab-content-1">Tổng quan</a>
+                        </li>
+                        <li role="presentation" class="">
+                            <a id="courseinfotab" role="tab" data-toggle="tab" aria-controls="tab-content-2" aria-expanded="false" href="#tab-content-2">Thông tin</a>
+                        </li>
+                        <li role="presentation" class="">
+                            <a id="forumtab" role="tab" data-toggle="tab" aria-controls="tab-content-3" aria-expanded="false" href="#tab-content-3">Diễn đàn</a>
+                        </li>
+                        <li role="presentation" class="">
+                            <a id="wikitab" role="tab" data-toggle="tab" aria-controls="tab-content-4" aria-expanded="false" href="#tab-content-4">Wiki</a>
+                        </li>
+                        <li role="presentation" class="">
+                            <a id="chattab" role="tab" data-toggle="tab" aria-controls="tab-content-5" aria-expanded="false" href="#tab-content-5">Chat</a>
+                        </li>
+                        <li role="presentation" class="">
+                            <a id="processtab" role="tab" data-toggle="tab" aria-controls="tab-content-6" aria-expanded="false" href="#tab-content-6">Tiến độ học</a>
+                        </li>
+                    </ul>
+                    <div id="courseTabContent" class="tab-content">
+                        <div role="tabpanel" id="tab-content-1" class="tab-pane fade active in" aria-labelledby="coursewaretab-tab">
+                            <div class="courseware-block">
+                                <div class="row">
+                                    <div class="col-sm-3 courseware-menu">
+                                        menu
+                                    </div>
+                                    <div id="<?php echo $regionbsid ?>" class="col-md-9">
+                                        <?php
+                                        echo $OUTPUT->course_content_header();
+                                        echo $OUTPUT->main_content();
+                                        echo $OUTPUT->course_content_footer();
+                                        ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" id="tab-content-2" class="tab-pane fade">content</div>
+                        <div role="tabpanel" id="tab-content-3" class="tab-pane fade">content</div>
+                        <div role="tabpanel" id="tab-content-4" class="tab-pane fade">content</div>
+                        <div role="tabpanel" id="tab-content-5" class="tab-pane fade">content</div>
+                        <div role="tabpanel" id="tab-content-6" class="tab-pane fade">content</div>
+                    </div>
                 </div>
             </div>
         <?php
+        } else {
+            ?>
+
+            <?php echo $OUTPUT->blocks('side-pre', 'col-md-3'); ?>
+            <div id="<?php echo $regionbsid ?>" class="col-md-9">
+                <?php
+                echo $OUTPUT->course_content_header();
+                echo $OUTPUT->main_content();
+                echo $OUTPUT->course_content_footer();
+                ?>
+            </div>
+            <?php
         }
         ?>
-
-        <?php echo $OUTPUT->blocks('side-pre', 'col-md-3'); ?>
-        <div id="<?php echo $regionbsid ?>" class="col-md-9">
-            <?php
-            echo $OUTPUT->course_content_header();
-            echo $OUTPUT->main_content();
-            echo $OUTPUT->course_content_footer();
-            ?>
-        </div>
     </div>
 
 </div>
