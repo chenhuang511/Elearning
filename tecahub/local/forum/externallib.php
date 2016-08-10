@@ -1734,7 +1734,7 @@ class local_mod_forum_external extends external_api
                    JOIN {forum_posts} p ON p.discussion = d.id
                    JOIN {user} u ON p.userid = u.id
                    $umtable_field
-             WHERE d.forum = ? AND p.parent IS NOT NULL
+             WHERE d.forum = ? AND p.parent = 0
                    $timelimit_field $groupselect_field
                    AND p.userid IN (SELECT id FROM {user} WHERE mnethostid = ?)
           ORDER BY $forumsort_field, d.id DESC";
