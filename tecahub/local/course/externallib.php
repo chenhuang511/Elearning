@@ -912,7 +912,8 @@ class local_course_external extends external_api
      *
      * @return external_external_function_parameters
      */
-    public static function delete_remote_course_modules_completion_by_cmid_hostip_parameters() {
+    public static function delete_remote_course_modules_completion_by_cmid_hostip_parameters()
+    {
         return new external_function_parameters(
             array(
                 'coursemoduleid' => new external_value(PARAM_INT, 'The id of course module'),
@@ -924,8 +925,8 @@ class local_course_external extends external_api
     /**
      * Delete tbl course_modules_completetion by cmid and hostip
      *
-     * @param int $coursemoduleid  - The id of course modules
-     * @param string $hostip       - The ip_address on host
+     * @param int $coursemoduleid - The id of course modules
+     * @param string $hostip - The ip_address on host
      *
      * @return bool $result true if success
      */
@@ -945,7 +946,7 @@ class local_course_external extends external_api
                 WHERE mh.ip_address = ?';
 
         $result = $DB->delete_records_select('course_modules_completion', 'coursemoduleid = ? AND userid IN(' . $sql . ')',
-                        array($params['coursemoduleid'], $params['hostip']));
+            array($params['coursemoduleid'], $params['hostip']));
 
         return $result;
     }
@@ -966,7 +967,8 @@ class local_course_external extends external_api
      *
      * @return external_external_function_parameters
      */
-    public static function get_remote_course_modules_completion_parameters() {
+    public static function get_remote_course_modules_completion_parameters()
+    {
         return new external_function_parameters(
             array(
                 'coursemoduleid' => new external_value(PARAM_INT, 'The id of course module'),
@@ -982,12 +984,12 @@ class local_course_external extends external_api
     /**
      * Get records tbl course_modules_completetion by cmid and hostip
      *
-     * @param int $coursemoduleid  - The id of course modules
-     * @param int $courseid        - The id of course
-     * @param string $hostip       - The ip_address on host
-     * @param string $field        - The field of table to get
-     * @param string $mode         - The mode to operate. Current: singlerc, wholecourse, normal
-     * @param string $userid       - The id of user
+     * @param int $coursemoduleid - The id of course modules
+     * @param int $courseid - The id of course
+     * @param string $hostip - The ip_address on host
+     * @param string $field - The field of table to get
+     * @param string $mode - The mode to operate. Current: singlerc, wholecourse, normal
+     * @param string $userid - The id of user
      *
      * @return mixed $result list records table and warnings
      */
@@ -1013,15 +1015,15 @@ class local_course_external extends external_api
                 JOIN {mnet_host} mh 
                 ON u.mnethostid = mh.id AND mh.ip_address = ?";
 
-        switch($params['mode']){
+        switch ($params['mode']) {
             case 'normal':
-                $result['cmc'] = $DB->get_records_select('course_modules_completion', 'coursemoduleid = ? AND userid IN(' . $sql .')',
+                $result['cmc'] = $DB->get_records_select('course_modules_completion', 'coursemoduleid = ? AND userid IN(' . $sql . ')',
                     array($params['coursemoduleid'], $params['hostip']), '', $params['field']);
                 // If result false return empty array
-                if (!$result['cmc']){
-                    $result['cmc'] =  array();
+                if (!$result['cmc']) {
+                    $result['cmc'] = array();
                 } else {
-                    foreach ($result['cmc'] as $cmc){
+                    foreach ($result['cmc'] as $cmc) {
                         $cmc->email = self::change_userid_to_email($cmc->userid);
                     }
                 }
@@ -1035,12 +1037,12 @@ class local_course_external extends external_api
                         INNER JOIN {course_modules_completion} cmc ON cmc.coursemoduleid=cm.id
                     WHERE
                         cm.course=? AND cmc.userid=?",
-                            array($params['courseid'], $params['userid']), '', $params['field']);
+                    array($params['courseid'], $params['userid']), '', $params['field']);
                 // If result false return empty array
-                if (!$result['cmc']){
-                    $result['cmc'] =  array();
+                if (!$result['cmc']) {
+                    $result['cmc'] = array();
                 } else {
-                    foreach ($result['cmc'] as $cmc){
+                    foreach ($result['cmc'] as $cmc) {
                         $cmc->email = self::change_userid_to_email($cmc->userid);
                     }
                 }
@@ -1049,13 +1051,14 @@ class local_course_external extends external_api
                 $result['scmc'] = $DB->get_record_select('course_modules_completion', 'coursemoduleid = ? AND userid = ?',
                     array($params['coursemoduleid'], $params['userid']), $params['field']);
                 // If result false return empty array
-                if (!$result['scmc']){
-                    $result['scmc'] =  array();
+                if (!$result['scmc']) {
+                    $result['scmc'] = array();
                 } else {
                     $result['scmc']->email = self::change_userid_to_email($result['scmc']->userid);
                 }
                 break;
-            default: break;
+            default:
+                break;
         }
 
         $result['warnings'] = array();
@@ -1086,7 +1089,8 @@ class local_course_external extends external_api
      *
      * @return external_single_structure the grade_grades structure
      */
-    private static function get_course_module_completion_structure($required = VALUE_REQUIRED) {
+    private static function get_course_module_completion_structure($required = VALUE_REQUIRED)
+    {
         return new external_single_structure(
             array(
                 'id' => new external_value(PARAM_INT, 'The id of course module completion', VALUE_OPTIONAL),
@@ -1106,10 +1110,11 @@ class local_course_external extends external_api
      * @param int $userid - The id of user
      * @return string     - The email of user
      */
-    public static function change_userid_to_email($userid){
+    public static function change_userid_to_email($userid)
+    {
         global $DB;
 
-        return $DB->get_record('user', array('id'=>$userid), 'email')->email;
+        return $DB->get_record('user', array('id' => $userid), 'email')->email;
     }
 
     /**
@@ -1117,14 +1122,15 @@ class local_course_external extends external_api
      *
      * @return external_external_function_parameters
      */
-    public static function create_remote_course_modules_completion_parameters() {
+    public static function create_remote_course_modules_completion_parameters()
+    {
         return new external_function_parameters(
             array(
-                'coursemoduleid'  => new external_value(PARAM_INT, 'The id of course module'),
-                'userid'          => new external_value(PARAM_INT, 'The id of user'),
+                'coursemoduleid' => new external_value(PARAM_INT, 'The id of course module'),
+                'userid' => new external_value(PARAM_INT, 'The id of user'),
                 'completionstate' => new external_value(PARAM_INT, 'Completion state'),
-                'viewed'          => new external_value(PARAM_INT, 'View'),
-                'timemodified'    => new external_value(PARAM_INT, 'Time viewer')
+                'viewed' => new external_value(PARAM_INT, 'View'),
+                'timemodified' => new external_value(PARAM_INT, 'Time viewer')
             )
         );
     }
@@ -1132,11 +1138,11 @@ class local_course_external extends external_api
     /**
      * Insert table "course_modules_completion" on hub
      *
-     * @param int $coursemoduleid  - The id of course modules
-     * @param int $userid          - The id of user on hub
+     * @param int $coursemoduleid - The id of course modules
+     * @param int $userid - The id of user on hub
      * @param int $completionstate - The state of completion
-     * @param int $viewed          - The state of viewed
-     * @param int $timemodified    - The time modified
+     * @param int $viewed - The state of viewed
+     * @param int $timemodified - The time modified
      *
      * @return int $result         - The id of course modules completion
      */
@@ -1179,15 +1185,16 @@ class local_course_external extends external_api
      *
      * @return external_external_function_parameters
      */
-    public static function update_remote_course_modules_completion_parameters() {
+    public static function update_remote_course_modules_completion_parameters()
+    {
         return new external_function_parameters(
             array(
-                'id'              => new external_value(PARAM_INT, 'The id of course module completion'),
-                'coursemoduleid'  => new external_value(PARAM_INT, 'The id of course module'),
-                'userid'          => new external_value(PARAM_INT, 'The id of user'),
+                'id' => new external_value(PARAM_INT, 'The id of course module completion'),
+                'coursemoduleid' => new external_value(PARAM_INT, 'The id of course module'),
+                'userid' => new external_value(PARAM_INT, 'The id of user'),
                 'completionstate' => new external_value(PARAM_INT, 'Completion state'),
-                'viewed'          => new external_value(PARAM_INT, 'View'),
-                'timemodified'    => new external_value(PARAM_INT, 'Time viewer')
+                'viewed' => new external_value(PARAM_INT, 'View'),
+                'timemodified' => new external_value(PARAM_INT, 'Time viewer')
             )
         );
     }
@@ -1195,12 +1202,12 @@ class local_course_external extends external_api
     /**
      * Update table "course_modules_completion" on hub
      *
-     * @param int $id              - The id of course modules completion
-     * @param int $coursemoduleid  - The id of course modules
-     * @param int $userid          - The id of user on hub
+     * @param int $id - The id of course modules completion
+     * @param int $coursemoduleid - The id of course modules
+     * @param int $userid - The id of user on hub
      * @param int $completionstate - The state of completion
-     * @param int $viewed          - The state of viewed
-     * @param int $timemodified    - The time modified
+     * @param int $viewed - The state of viewed
+     * @param int $timemodified - The time modified
      *
      * @return int $result         - The id of course modules completion
      */
@@ -1239,4 +1246,62 @@ class local_course_external extends external_api
         return new external_value(PARAM_INT, 'True(1) if success');
     }
 
+    public static function get_course_completion_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, ' the id of course'),
+                'userid' => new external_value(PARAM_INT, ' the id of course')
+            )
+        );
+    }
+
+    public static function get_course_completion($courseid, $userid)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_course_completion_parameters(), array(
+            'courseid' => $courseid,
+            'userid' => $userid
+        ));
+
+        $result = array();
+
+        $sql = "SELECT COUNT(*) FROM {course_modules_completion} cmc
+                LEFT JOIN {course_modules} cm
+                ON cmc.coursemoduleid = cm.id
+                WHERE cm.course = :courseid AND cmc.userid = :userid";
+
+        $arr = array();
+        $arr['courseid'] = $params['courseid'];
+        $arr['userid'] = $params['userid'];
+
+        $totalcount = $DB->count_records_sql($sql, $arr);
+
+        $completion = $totalcount;
+
+        if ($completion > 0) {
+            $sql .= " AND completionstate = 1";
+            $completioncount = $DB->count_records_sql($sql, $arr);
+
+            if ($completioncount > 0) {
+                $completion = ($completioncount * 100) / $totalcount;
+            }
+        }
+
+        $result['completion'] = $completion;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    public static function get_course_completion_returns()
+    {
+        return new external_single_structure(
+            array(
+                'completion' => new external_value(PARAM_TEXT, 'the completion'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

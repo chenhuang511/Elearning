@@ -162,4 +162,12 @@ $functions = array(
         'type'		    => 'write',
         'ajax'		    => true
     ),
+    'local_get_course_completion' => array(
+        'classname'     => 'local_course_external',
+        'methodname'    => 'get_course_completion',
+        'classpath'     => 'local/course/externallib.php',
+        'description'   => 'get course completion',
+        'type'		    => 'write',
+        'ajax'		    => true
+    ),
 );
