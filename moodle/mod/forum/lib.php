@@ -6726,11 +6726,10 @@ function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode,
  * @param array $posts
  * @return void
  */
-function forum_print_posts_flat($course, &$cm, $forum, $discussion, $post, $mode, $reply, $forumtracked, $posts)
-{
+function forum_print_posts_flat($course, &$cm, $forum, $discussion, $post, $mode, $reply, $forumtracked, $posts) {
     global $USER, $CFG;
 
-    $link = false;
+    $link  = false;
 
     if ($mode == FORUM_MODE_FLATNEWEST) {
         $sort = "ORDER BY created DESC";
@@ -6747,8 +6746,8 @@ function forum_print_posts_flat($course, &$cm, $forum, $discussion, $post, $mode
 
         $postread = !empty($post->postread);
 
-        forum_print_post($post, $discussion, $forum, $cm, $course, $ownpost, $reply, $link,
-            '', '', $postread, true, $forumtracked);
+//        forum_print_post($post, $discussion, $forum, $cm, $course, $ownpost, $reply, $link,
+//            '', '', $postread, true, $forumtracked);
     }
 }
 
