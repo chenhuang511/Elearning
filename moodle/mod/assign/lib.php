@@ -1601,7 +1601,7 @@ function generate_remote_assign_record($coursemodule)
         if (!$remoteassign = get_remote_assign_by_id($coursemodule->instance)) {
             return false;
         }
-        $course = get_local_course_record($coursemodule->course);
+        $course = get_local_course_record($coursemodule->course, true);
         // Check if not exist then insert local DB
         unset($remoteassign->id);
         $remoteassign->course = $course->id;

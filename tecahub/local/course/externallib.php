@@ -1305,6 +1305,117 @@ class local_course_external extends external_api
         );
     }
 
+    /**
+     * Describes the parameters for delete_remote_course_completions
+     *
+     * @return external_external_function_parameters
+     */
+    public static function delete_remote_course_completions_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'The id of course'),
+                'hostip' => new external_value(PARAM_TEXT, 'The ip address on host')
+            )
+        );
+    }
+
+    /**
+     * Delete tbl course_completions by cmid and hostip
+     *
+     * @param int $courseid - The id of course
+     * @param string $hostip - The ip_address on host
+     *
+     * @return bool $result true if success
+     */
+    public static function delete_remote_course_completions($courseid, $hostip)
+    {
+        global $DB;
+
+        $params = self::validate_parameters(self::delete_remote_course_completions_parameters(), array(
+            'courseid' => $courseid,
+            'hostip' => $hostip,
+        ));
+
+        $sql = 'SELECT u.id 
+                FROM {user} u 
+                JOIN {mnet_host} mh 
+                ON u.mnethostid = mh.id 
+                WHERE mh.ip_address = ?';
+
+        $result = $DB->delete_records_select('course_completions', 'course = ? AND userid IN(' . $sql . ')',
+            array($params['courseid'], $params['hostip']));
+
+        return $result;
+    }
+
+    /**
+     * Describes the delete_remote_course_completions returns value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function delete_remote_course_completions_returns()
+    {
+        return new external_value(PARAM_INT, 'true if success');
+    }
+
+    /**
+     * Describes the parameters for delete_remote_course_completion_crit_compl
+     *
+     * @return external_external_function_parameters
+     */
+    public static function delete_remote_course_completion_crit_compl_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'The id of course'),
+                'hostip' => new external_value(PARAM_TEXT, 'The ip address on host')
+            )
+        );
+    }
+
+    /**
+     * Delete tbl course_completion_crit_compl by cmid and hostip
+     *
+     * @param int $courseid  - The id of course
+     * @param string $hostip - The ip_address on host
+     *
+     * @return bool $result true if success
+     */
+    public static function delete_remote_course_completion_crit_compl($courseid, $hostip)
+    {
+        global $DB;
+
+        $params = self::validate_parameters(self::delete_remote_course_completion_crit_compl_parameters(), array(
+            'courseid' => $courseid,
+            'hostip' => $hostip,
+        ));
+
+        $sql = 'SELECT u.id 
+                FROM {user} u 
+                JOIN {mnet_host} mh 
+                ON u.mnethostid = mh.id 
+                WHERE mh.ip_address = ?';
+
+        $result = $DB->delete_records_select('course_completion_crit_compl', 'course = ? AND userid IN(' . $sql . ')',
+            array($params['courseid'], $params['hostip']));
+
+        return $result;
+    }
+
+    /**
+     * Describes the delete_remote_course_completion_crit_compl returns value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function delete_remote_course_completion_crit_compl_returns()
+    {
+        return new external_value(PARAM_INT, 'true if success');
+    }
+
+
     public static function get_list_course_completion_parameters()
     {
         return new external_function_parameters(
