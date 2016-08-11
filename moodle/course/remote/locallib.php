@@ -467,3 +467,29 @@ function delete_remote_course_completion_crit_compl($courseid)
 
     return $result;
 }
+
+/**
+ * Determines how much completion data exists for an activity. This is used when
+ * deciding whether completion information should be 'locked' in the module
+ * editing form.
+ *
+ * @param int $coursemoduleid    - The id of course module
+ * @return int $result           - Count user id
+ */
+function count_remote_user_data_completion($coursemoduleid)
+{
+    $hostip = gethostip();
+
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_get_course_completion_count_user_data',
+            'params' => array(
+                'coursemoduleid' => $coursemoduleid,
+                'hostip' => $hostip),
+        ), false
+    );
+
+    return $result;
+}

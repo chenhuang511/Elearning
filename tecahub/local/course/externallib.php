@@ -1470,4 +1470,68 @@ class local_course_external extends external_api
             )
         );
     }
+
+    /**
+     * Describes the parameters for count_remote_user_data_completion
+     *
+     * @return external_external_function_parameters
+     */
+    public static function count_remote_user_data_completion_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'coursemoduleid' => new external_value(PARAM_INT, 'The id of course module'),
+                'hostip' => new external_value(PARAM_TEXT, 'The ip address on host')
+            )
+        );
+    }
+
+    /**
+     * Determines how much completion data exists for an activity. This is used when
+     * deciding whether completion information should be 'locked' in the module
+     * editing form.
+     *
+     * @param int $courseid  - The id of course
+     * @param string $hostip - The ip_address on host
+     *
+     * @return bool $result true if success
+     */
+    public static function count_remote_user_data_completion($coursemoduleid, $hostip)
+    {
+        global $DB;
+
+        $params = self::validate_parameters(self::count_remote_user_data_completion_parameters(), array(
+            'coursemoduleid' => $coursemoduleid,
+            'hostip' => $hostip,
+        ));
+
+        $sql = 'SELECT u.id 
+                FROM {user} u 
+                JOIN {mnet_host} mh 
+                ON u.mnethostid = mh.id 
+                WHERE mh.ip_address = ?';
+
+        $result = $DB->get_field_sql("
+                SELECT
+                    COUNT(1)
+                FROM
+                    {course_modules_completion}
+                WHERE
+                    coursemoduleid=? AND completionstate<>0 AND userid IN(" . $sql . ") ",
+                        array($params['coursemoduleid'], $params['hostip']));;
+
+        return $result;
+    }
+
+    /**
+     * Describes the count_remote_user_data_completion returns value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function count_remote_user_data_completion_returns()
+    {
+        return new external_value(PARAM_INT, 'count user data completion');
+    }
+
 }

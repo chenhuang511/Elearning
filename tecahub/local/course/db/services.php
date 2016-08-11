@@ -194,4 +194,12 @@ $functions = array(
         'type'		    => 'write',
         'ajax'		    => true
     ),
+    'local_get_course_completion_count_user_data' => array(
+        'classname'     => 'local_course_external',
+        'methodname'    => 'count_remote_user_data_completion',
+        'classpath'     => 'local/course/externallib.php',
+        'description'   => 'Count user data completion',
+        'type'		    => 'read',
+        'ajax'		    => true
+    ),
 );
