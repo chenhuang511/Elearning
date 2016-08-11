@@ -1940,8 +1940,8 @@ function quiz_get_local_settings_info($coursemodule){
     global $CFG, $DB;
     require_once($CFG->dirroot . '/mod/quiz/remote/locallib.php');
     $quiz = get_remote_quiz_by_id($coursemodule->instance);
-    $local_quiz_data = $DB->get_record('quiz', array('remoteid' => $coursemodule->instance), 'id');
-    if(empty($local_quiz_data)){ // check data quiz in local db
+    $local_quiz_data = $DB->get_record('quiz', array('remoteid' => $coursemodule->instance));
+    if(!$local_quiz_data){ // check data quiz in local db
         $quiz->id = $DB->insert_record('quiz', $quiz, true);
     }
     // Merge setting local with hub
