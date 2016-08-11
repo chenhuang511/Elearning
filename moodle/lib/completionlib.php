@@ -1032,7 +1032,8 @@ class completion_info {
             if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
                 $DB->update_record('course_modules_completion', $data);
             } else {
-                update_remote_course_modules_completion($data);
+                $cmcdata = (array)$data;
+                update_remote_course_modules_completion($cmcdata);
             }
         }
         $transaction->allow_commit();
