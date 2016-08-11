@@ -765,8 +765,14 @@ class completion_info {
     public function delete_course_completion_data() {
         global $DB;
 
-        $DB->delete_records('course_completions', array('course' => $this->course_id));
-        $DB->delete_records('course_completion_crit_compl', array('course' => $this->course_id));
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $DB->delete_records('course_completions', array('course' => $this->course_id));
+            $DB->delete_records('course_completion_crit_compl', array('course' => $this->course_id));
+        } else {
+            delete_remote_course_completions($this->course_id);
+            delete_remote_course_completion_crit_compl($this->course_id);
+        }
+
 
         // Difficult to find affected users, just purge all completion cache.
         cache::make('core', 'completion')->purge();

@@ -85,7 +85,12 @@ class completion_criteria_activity extends completion_criteria {
 
             foreach (array_keys($data->criteria_activity) as $activity) {
 
-                $module = $DB->get_record('course_modules', array('id' => $activity));
+                if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                    $module = $DB->get_record('course_modules', array('id' => $activity));
+                } else {
+                    $module = get_remote_course_module($activity);
+                }
+
                 $this->module = self::get_mod_name($module->module);
                 $this->moduleinstance = $activity;
                 $this->id = NULL;

@@ -384,9 +384,14 @@ function update_remote_course_modules_completion($cmc)
     );
 
     return $result;
-
 }
 
+/**
+ * Get course completion on hub
+ * @param int $courseid   - The id of course
+ * @param int $userid     - The id of user
+ * @return mixed $result  - The information of course completion
+ */
 function get_remote_course_completion($courseid, $userid)
 {
     $result = moodle_webservice_client(
@@ -413,4 +418,52 @@ function get_remote_list_course_completion($userid)
     );
 
     return $result->completions;
+}
+
+/**
+ * Detele tbl course_completions by courseid & userid on host
+ *
+ * @param int $courseid    - The id of course
+ * @return bool $result    - True if success
+ */
+function delete_remote_course_completions($courseid)
+{
+    $hostip = gethostip();
+
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_detele_course_completions_by_courseid_hostip',
+            'params' => array(
+                'courseid' => $courseid,
+                'hostip' => $hostip),
+        ), false
+    );
+
+    return $result;
+}
+
+/**
+ * Detele tbl course_completion_crit_compl by courseid & userid on host
+ *
+ * @param int $courseid    - The id of course
+ * @return bool $result    - True if success
+ */
+function delete_remote_course_completion_crit_compl($courseid)
+{
+    $hostip = gethostip();
+
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_delete_course_completion_crit_compl_by_courseid_hostip',
+            'params' => array(
+                'courseid' => $courseid,
+                'hostip' => $hostip),
+        ), false
+    );
+
+    return $result;
 }
