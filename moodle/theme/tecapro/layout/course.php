@@ -109,7 +109,63 @@ echo $OUTPUT->doctype() ?>
                             <div class="courseware-block">
                                 <div class="row">
                                     <div class="col-sm-3 courseware-menu">
-                                        menu
+                                        <?php
+                                        $course = get_remote_course_content($COURSE->remoteid);
+                                        ?>
+                                        <div class="panel-group" id="section-menu" role="tablist" aria-multiselectable="true">
+                                            <?php
+                                            global $CFG; ?>
+
+                                            <?php foreach ($course['content'] as $key => $section) {
+                                                $heading = 'mod-' . $section->id;
+                                                $collapse = 'collapseMod' . $section->id;
+                                                ?>
+
+                                                <?php if ($section->modules) {
+                                                    ?>
+                                                    <div class="panel panel-default">
+                                                        <div class="panel-heading" role="tab" id="<?php echo $heading ?>">
+                                                            <h4 class="panel-title">
+                                                                <a id="csec-<?php echo $section->id ?>" role="button" data-toggle="collapse"
+                                                                   data-parent="#section-menu"
+                                                                   href="#<?php echo $collapse ?>"
+                                                                   aria-expanded="false" aria-controls="<?php echo $collapse ?>"
+                                                                   class="collapsed'" data-summary="<?php echo htmlspecialchars($section->summary) ?>">
+                                                                    <i class="fa fa-caret-right" aria-hidden="true"></i> <?php echo $section->name ?> </a>
+                                                            </h4>
+                                                        </div>
+                                                        <div id="<?php echo $collapse ?>" class="panel-collapse collapse" role="tabpanel"
+                                                             aria-labelledby="<?php echo $heading ?>"
+                                                             aria-expanded="false">
+                                                            <div class="panel-body">
+                                                                <?php foreach ($section->modules as $keymod => $module) {
+                                                                    if ($module->modname !== 'forum' && $module->modname !== 'wiki') {
+                                                                        if ($module->modname === 'label') {
+                                                                            ?>
+                                                                            <a id="mlabel-<?php echo $module->id ?>" class="sublink"
+                                                                               href="#mlabel-<?php echo $module->id ?>"
+                                                                               data-description="<?php echo htmlspecialchars($module->description) ?>">
+                                                                                <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                                                                <?php echo $module->name ?>
+                                                                            </a>
+                                                                            <?php
+                                                                        } else { ?>
+                                                                            <a class="sublink"
+                                                                               href="<?php echo $CFG->wwwroot . '/mod/' . $module->modname . '/remote/view.php?id=' . $module->id; ?>"
+                                                                               >
+                                        <span
+                                            class="icon-bxh icon-<?php echo $module->modname; ?>"></span><?php echo $module->name; ?>
+                                                                            </a>
+                                                                        <?php } ?>
+                                                                    <?php }
+                                                                } ?>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                <?php }
+                                            } ?>
+                                        </div>
+
                                     </div>
                                     <div id="<?php echo $regionbsid ?>" class="col-md-9">
                                         <?php
