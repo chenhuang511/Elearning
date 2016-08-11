@@ -400,3 +400,17 @@ function get_remote_course_completion($courseid, $userid)
 
     return $result->completion;
 }
+
+function get_remote_list_course_completion($userid)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_get_list_course_completion',
+            'params' => array('userid' => $userid),
+        ), false
+    );
+
+    return $result->completions;
+}

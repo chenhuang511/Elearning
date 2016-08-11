@@ -52,13 +52,22 @@ class core_remote_renderer extends plugin_renderer_base
     {
         global $CFG, $USER;
         require_once($CFG->libdir . '/remote/lib.php');
+        require_once($CFG->dirroot . '/course/remote/locallib.php');
 
         $hubuserid = $USER->id;
+
+        $mycoursecompletion = '';
 
         $hubuser = get_remote_mapping_user($hubuserid);
 
         if ($hubuser) {
             $hubuserid = $hubuser[0]->id;
+        }
+
+        $coursecompletionids = get_remote_list_course_completion($hubuserid);
+
+        if (!$coursecompletionids) {
+            $mycoursecompletion = 'Bạn chưa hoàn thành khóa học nào';
         }
 
         // start - enrol course list
@@ -79,8 +88,10 @@ class core_remote_renderer extends plugin_renderer_base
         $content .= html_writer::start_tag('div', array('id' => 'courseTabContent', 'class' => 'tab-content'));
 
         $mylearningplan = '';
+
         foreach ($courses as $course) {
             $course->completion = get_remote_course_completion($course->remoteid, $hubuserid);
+
             $classes = 'coursebox clearfix';
 
             $thumbOjb = get_remote_course_thumb($course->remoteid);
@@ -89,9 +100,17 @@ class core_remote_renderer extends plugin_renderer_base
             }
 
             $mylearningplan .= $this->format_course($course, $classes);
+
+            if ($coursecompletionids) {
+                foreach ($coursecompletionids as $completion) {
+                    if ($course->remoteid == $completion->course) {
+                        $mycoursecompletion .= $this->format_course($course, $classes);
+                    }
+                }
+            }
         }
 
-        $tabcontents = array($mylearningplan, 'khoa hoc hoan thanh');
+        $tabcontents = array($mylearningplan, $mycoursecompletion);
         // them cac content tab tai day
         $content .= $this->render_tab_content($tabnames, $tabcontents);
         $content .= html_writer::end_tag('div');
