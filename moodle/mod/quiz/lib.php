@@ -1862,19 +1862,33 @@ function quiz_get_navigation_options() {
 function quiz_get_completion_state($course, $cm, $userid, $type) {
     global $DB;
     global $CFG;
+    $isremote = (MOODLE_RUN_MODE === MOODLE_MODE_HUB)?true:false;
 
-    $quiz = $DB->get_record('quiz', array('id' => $cm->instance), '*', MUST_EXIST);
+    if($isremote){
+        $quiz = get_remote_quiz_by_id($cm->instance);
+    }else{
+        $quiz = $DB->get_record('quiz', array('id' => $cm->instance), '*', MUST_EXIST);
+    }
     if (!$quiz->completionattemptsexhausted && !$quiz->completionpass) {
         return $type;
     }
 
     // Check if the user has used up all attempts.
     if ($quiz->completionattemptsexhausted) {
-        $attempts = quiz_get_user_attempts($quiz->id, $userid, 'finished', true);
+        if($isremote){
+            $user = get_remote_mapping_user();
+            $attempts = get_remote_user_attemps($quiz->id, $user[0]->id, 'finished', true);
+        }else{
+            $attempts = quiz_get_user_attempts($quiz->id, $userid, 'finished', true);
+        }
         if ($attempts) {
             $lastfinishedattempt = end($attempts);
             $context = context_module::instance($cm->id);
-            $quizobj = quiz::create($quiz->id, $userid);
+            if($isremote){
+                $quizobj = new quiz($quiz, $cm, $course, true, true);
+            }else{
+                $quizobj = quiz::create($quiz->id, $userid);
+            }
             $accessmanager = new quiz_access_manager($quizobj, time(),
                     has_capability('mod/quiz:ignoretimelimits', $context, $userid, false));
             if ($accessmanager->is_finished(count($attempts), $lastfinishedattempt)) {
