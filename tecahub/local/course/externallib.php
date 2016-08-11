@@ -1304,4 +1304,59 @@ class local_course_external extends external_api
             )
         );
     }
+
+    public static function get_list_course_completion_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'userid' => new external_value(PARAM_INT, 'the id of user')
+            )
+        );
+    }
+
+    public static function get_list_course_completion($userid)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_list_course_completion_parameters(), array(
+            'userid' => $userid
+        ));
+
+        $result = array();
+
+        $sql = "SELECT cc.course FROM {course} c 
+                LEFT JOIN {course_completions} cc ON c.id = cc.course
+                WHERE cc.userid = :userid";
+
+        $arr = array();
+        $arr['userid'] = $params['userid'];
+
+        $completions = $DB->get_field_sql($sql, $arr);
+
+        if(!$completions) {
+            $completions = array();
+        }
+
+        $result['completions'] = $completions;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_list_course_completion_returns()
+    {
+        return new external_single_structure(
+            array(
+                'completions' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'course' => new external_value(PARAM_INT, 'the id of course')
+                        )
+                    ), 'the id'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }
