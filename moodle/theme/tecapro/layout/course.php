@@ -150,17 +150,8 @@ echo $OUTPUT->doctype() ?>
                                                              aria-expanded="false">
                                                             <div class="panel-body">
                                                                 <?php foreach ($section->modules as $keymod => $module) {
-                                                                    if ($module->modname !== 'forum' && $module->modname !== 'wiki') {
-                                                                        if ($module->modname === 'label') {
-                                                                            ?>
-                                                                            <a id="mlabel-<?php echo $module->id ?>" class="sublink"
-                                                                               href="#mlabel-<?php echo $module->id ?>"
-                                                                               data-description="<?php echo htmlspecialchars($module->description) ?>">
-                                                                                <i class="fa fa-info-circle" aria-hidden="true"></i>
-                                                                                <?php echo $module->name ?>
-                                                                            </a>
-                                                                            <?php
-                                                                        } else { ?>
+                                                                        if ($module->modname != 'label' && $module->modname != 'url') {
+                                                                             ?>
                                                                             <a class="sublink<?php
                                                                             if($module->id == $keynode) {
                                                                                 echo ' sublink-active';
@@ -173,7 +164,7 @@ echo $OUTPUT->doctype() ?>
                                             class="icon-bxh icon-<?php echo $module->modname; ?>"></span><?php echo $module->name; ?>
                                                                             </a>
                                                                         <?php } ?>
-                                                                    <?php }
+                                                                    <?php
                                                                 } ?>
                                                             </div>
                                                         </div>
