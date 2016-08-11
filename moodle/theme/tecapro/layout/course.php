@@ -82,6 +82,11 @@ echo $OUTPUT->doctype() ?>
         $context = context_module::instance($COURSE->id);
         $isstudent = !has_capability('moodle/course:manageactivities', $context);
         if ($isstudent) { ?>
+            <?php
+            $activenode = $PAGE->navigation->find_active_node();
+            $keynode = $activenode->key;
+            $keyparentnode = $activenode->parent->key;
+        ?>
             <div class="col-sm-12">
                 <div class="tab-course-container container">
                     <ul id="coursetabs" class="nav nav-tabs" role="tablist">
@@ -134,7 +139,13 @@ echo $OUTPUT->doctype() ?>
                                                                     <i class="fa fa-caret-right" aria-hidden="true"></i> <?php echo $section->name ?> </a>
                                                             </h4>
                                                         </div>
-                                                        <div id="<?php echo $collapse ?>" class="panel-collapse collapse" role="tabpanel"
+                                                        <div id="<?php echo $collapse ?>" class="panel-collapse collapse
+                                                        <?php
+                                                        if($section->id == $keyparentnode){
+                                                            echo 'in';
+                                                        }
+                                                        ?>
+                                                        " role="tabpanel"
                                                              aria-labelledby="<?php echo $heading ?>"
                                                              aria-expanded="false">
                                                             <div class="panel-body">
@@ -150,7 +161,12 @@ echo $OUTPUT->doctype() ?>
                                                                             </a>
                                                                             <?php
                                                                         } else { ?>
-                                                                            <a class="sublink"
+                                                                            <a class="sublink<?php
+                                                                            if($module->id == $keynode) {
+                                                                                echo ' sublink-active';
+                                                                            }
+                                                                            ?>
+                                                                            "
                                                                                href="<?php echo $CFG->wwwroot . '/mod/' . $module->modname . '/remote/view.php?id=' . $module->id; ?>"
                                                                                >
                                         <span
