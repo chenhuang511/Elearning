@@ -259,4 +259,44 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_quiz_get_statistic_attempt_counts_and_averages' => array(
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'get_statistic_attempt_counts_and_averages',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Calculating count and mean of marks for first and ALL attempts by students.",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_quiz_get_statistic_median_mark' => array(
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'get_statistic_median_mark',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Get statistic median mark.",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_quiz_get_statistic_sum_of_powers' => array(
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'get_statistic_sum_of_powers',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Fetch the sum of squared, cubed and to the power 4 differences between sumgrade and it's mean.",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_quiz_get_ques_by_category' => array(
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'get_ques_by_category',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Get id, category, createdby from question table by category.",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_quiz_db_get_record' => array(
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'db_get_record',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Get a single database record as an object where all the given conditions met.",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 );

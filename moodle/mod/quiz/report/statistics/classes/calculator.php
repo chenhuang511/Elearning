@@ -56,13 +56,13 @@ class calculator {
      * @param float $sumofmarkvariance sum of mark variance, calculated as part of question statistics
      * @return calculated $quizstats The statistics for overall attempt scores.
      */
-    public function calculate($quizid, $whichattempts, $groupstudents, $p, $sumofmarkvariance) {
+    public function calculate($quizid, $whichattempts, $groupstudents, $p, $sumofmarkvariance, $usermaps = null) {
 
         $this->progress->start_progress('', 3);
 
         $quizstats = new calculated($whichattempts);
 
-        $countsandaverages = $this->attempt_counts_and_averages($quizid, $groupstudents);
+        $countsandaverages = $this->attempt_counts_and_averages($quizid, $groupstudents, $usermaps);
         $this->progress->progress(1);
 
         foreach ($countsandaverages as $propertyname => $value) {
@@ -74,7 +74,7 @@ class calculator {
 
             // Recalculate sql again this time possibly including test for first attempt.
             list($fromqa, $whereqa, $qaparams) =
-                quiz_statistics_attempts_sql($quizid, $groupstudents, $whichattempts);
+                quiz_statistics_attempts_sql($quizid, $groupstudents, $whichattempts, false, $usermaps);
 
             $quizstats->median = $this->median($s, $fromqa, $whereqa, $qaparams);
             $this->progress->progress(2);
@@ -206,16 +206,27 @@ class calculator {
      * @param array $groupstudents
      * @return \stdClass with properties with count and avg with prefixes firstattempts, highestattempts, etc.
      */
-    protected function attempt_counts_and_averages($quizid, $groupstudents) {
+    protected function attempt_counts_and_averages($quizid, $groupstudents, $usermaps = null) {
         global $DB;
 
         $attempttotals = new \stdClass();
         foreach (array_keys(quiz_get_grading_options()) as $which) {
 
-            list($fromqa, $whereqa, $qaparams) = quiz_statistics_attempts_sql($quizid, $groupstudents, $which);
+            list($fromqa, $whereqa, $qaparams) = quiz_statistics_attempts_sql($quizid, $groupstudents, $which, false, $usermaps);
 
-            $fromdb = $DB->get_record_sql("SELECT COUNT(*) AS rcount, AVG(sumgrades) AS average FROM $fromqa WHERE $whereqa",
-                                            $qaparams);
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+                $index1 = 0;
+                foreach ($qaparams as $key =>$value) {
+                    $paramdata["param[$index1][name]"] = $key;
+                    $paramdata["param[$index1][value]"]= $value;
+                    $index1++;
+                }
+                $fromdb = get_statistic_attempt_counts_and_averages($fromqa, $whereqa, $paramdata);
+            }else{
+                $fromdb = $DB->get_record_sql("SELECT COUNT(*) AS rcount, AVG(sumgrades) AS average FROM $fromqa WHERE $whereqa",
+                    $qaparams);
+            }
+
             $fieldprefix = static::using_attempts_string_id($which);
             $attempttotals->{$fieldprefix.'avg'} = $fromdb->average;
             $attempttotals->{$fieldprefix.'count'} = $fromdb->rcount;
@@ -250,7 +261,17 @@ class calculator {
                 WHERE $whereqa
                 ORDER BY sumgrades";
 
-        $medianmarks = $DB->get_records_sql_menu($sql, $qaparams, $limitoffset, $limit);
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $index1 = 0;
+            foreach ($qaparams as $key =>$value) {
+                $paramdata["param[$index1][name]"] = $key;
+                $paramdata["param[$index1][value]"]= $value;
+                $index1++;
+            }
+            $medianmarks = get_statistic_median_mark($sql, $limitoffset, $limit, $paramdata);
+        }else{
+            $medianmarks = $DB->get_records_sql_menu($sql, $qaparams, $limitoffset, $limit);
+        }
 
         return array_sum($medianmarks) / count($medianmarks);
     }
@@ -267,7 +288,7 @@ class calculator {
      * @param $qaparams
      * @return object with properties power2, power3, power4
      */
-    protected function sum_of_powers_of_difference_to_mean($mean, $fromqa, $whereqa, $qaparams) {
+    protected function sum_of_powers_of_difference_to_mean($mean, $fromqa, $whereqa, $qaparams) {//@TODO: handle here
         global $DB;
 
         $sql = "SELECT
@@ -278,7 +299,17 @@ class calculator {
                     WHERE $whereqa";
         $params = array('mean1' => $mean, 'mean2' => $mean, 'mean3' => $mean) + $qaparams;
 
-        return $DB->get_record_sql($sql, $params, MUST_EXIST);
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $index1 = 0;
+            foreach ($params as $key =>$value) {
+                $paramdata["param[$index1][name]"] = $key;
+                $paramdata["param[$index1][value]"]= $value;
+                $index1++;
+            }
+            return get_statistic_sum_of_powers($sql, $paramdata);
+        }else{
+            return $DB->get_record_sql($sql, $params, MUST_EXIST);
+        }
     }
 
 }

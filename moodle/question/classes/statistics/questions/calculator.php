@@ -90,8 +90,6 @@ class calculator {
      * @return all_calculated_for_qubaid_condition The calculated stats.
      */
     public function calculate($qubaids) {
-        //@TODO:  Đã lấy được $lateststeps từ API nhưng trong quá trình xử lý caculator-> không lấy được giá trị highestattemptscount khi gọi s().
-        //@TODO: chưa hiểu các trường của statistic cần dùng.
 
         $this->progress->start_progress('', 6);
 
@@ -385,7 +383,6 @@ class calculator {
         if (!$stats->get_variants() || !$stats->break_down_by_variant()) {
             $stats->clear_variants();
         }
-
         foreach ($stats->get_variants() as $variant) {
             $this->initial_question_walker($stats->variantstats[$variant]);
         }

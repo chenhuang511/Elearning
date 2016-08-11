@@ -2413,4 +2413,343 @@ ORDER BY
             )
         );
     }
+
+    /**
+     * Hanv 09/08/2016
+     * Calculating count and mean of marks for first and ALL attempts by students.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     *
+     */
+    public static function get_statistic_attempt_counts_and_averages_parameters() {
+        return new external_function_parameters (
+            array(
+                'from' => new external_value(PARAM_RAW, 'from'),
+                'where' => new external_value(PARAM_RAW, 'where'),
+                'param' => new  external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'name'),
+                            'value' => new external_value(PARAM_RAW, 'value'),
+                        )
+                    )
+                ),
+            )
+        );
+    }
+
+    /**
+     * Calculating count and mean of marks for first and ALL attempts by students.
+     *
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function get_statistic_attempt_counts_and_averages($from, $where, $param) {
+        global $CFG, $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::get_statistic_attempt_counts_and_averages_parameters(),
+            array('from' => $from, 'where' => $where, 'param' => $param));
+
+        $r_param = array();
+        foreach ($params['param'] as $element) {
+            $r_param[$element['name']] = $element['value'];
+        }
+
+        $fromdb = $DB->get_record_sql("SELECT COUNT(*) AS rcount, AVG(sumgrades) AS average FROM $from WHERE $where",
+            $r_param);
+        return $fromdb;
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function get_statistic_attempt_counts_and_averages_returns() {
+        return new external_single_structure(
+            array(
+                'rcount' => new external_value(PARAM_INT, 'rcount'),
+                'average' => new external_value(PARAM_FLOAT, 'average'),
+            )
+        );
+    }
+
+
+    /**
+     * Hanv 09/08/2016
+     * Get statistic median mark.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     *
+     */
+    public static function get_statistic_median_mark_parameters() {
+        return new external_function_parameters (
+            array(
+                'sql' => new external_value(PARAM_RAW, 'sql'),
+                'limitoffset' => new external_value(PARAM_FLOAT, 'limitoffset'),
+                'limit' => new external_value(PARAM_INT, 'limit'),
+                'param' => new  external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'name'),
+                            'value' => new external_value(PARAM_RAW, 'value'),
+                        )
+                    )
+                ),
+            )
+        );
+    }
+
+    /**
+     * Get statistic median mark.
+     *
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function get_statistic_median_mark($sql, $limitoffset, $limit, $param) {
+        global $CFG, $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::get_statistic_median_mark_parameters(),
+            array('sql' => $sql, 'limitoffset' => $limitoffset, 'limit' => $limit, 'param' => $param));
+
+        $r_param = array();
+        foreach ($params['param'] as $element) {
+            $r_param[$element['name']] = $element['value'];
+        }
+
+        $records = $DB->get_records_sql_menu($sql, $r_param, $limitoffset, $limit);
+        $results = array();
+        $i = 0;
+        foreach ($records as $key => $value) {
+            $results[$i]['key']   = $key;
+            $results[$i]['value'] = $value;
+            $i++;
+        }
+        return $results;
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function get_statistic_median_mark_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'key' => new external_value(PARAM_INT, 'key'),
+                    'value' => new external_value(PARAM_FLOAT, 'value'),
+                )
+            )
+        );
+    }
+
+    /**
+     * Hanv 09/08/2016
+     * Fetch the sum of squared, cubed and to the power 4 differences between sumgrade and it's mean.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     *
+     */
+    public static function get_statistic_sum_of_powers_parameters() {
+        return new external_function_parameters (
+            array(
+                'sql' => new external_value(PARAM_RAW, 'sql'),
+                'param' => new  external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'name'),
+                            'value' => new external_value(PARAM_RAW, 'value'),
+                        )
+                    )
+                ),
+            )
+        );
+    }
+
+    /**
+     * Fetch the sum of squared, cubed and to the power 4 differences between sumgrade and it's mean.
+     *
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function get_statistic_sum_of_powers($sql, $param) {
+        global $CFG, $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::get_statistic_sum_of_powers_parameters(),
+            array('sql' => $sql, 'param' => $param));
+
+        $r_param = array();
+        foreach ($params['param'] as $element) {
+            $r_param[$element['name']] = $element['value'];
+        }
+        $records = $DB->get_record_sql($sql, $r_param);
+
+        $results = array();
+        $i = 0;
+        foreach ($records as $key => $value) {
+            $results[$i]['key']   = $key;
+            $results[$i]['value'] = $value;
+            $i++;
+        }
+        return $results;
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function get_statistic_sum_of_powers_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'key' => new external_value(PARAM_RAW, 'key'),
+                    'value' => new external_value(PARAM_RAW, 'value'),
+                )
+            )
+        );
+    }
+
+    /**
+     * Hanv 10/08/2016
+     * Get id, category, createdby from question table by category.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     *
+     */
+    public static function get_ques_by_category_parameters() {
+        return new external_function_parameters (
+            array(
+                'category' => new external_value(PARAM_INT, 'category'),
+            )
+        );
+    }
+
+    /**
+     * Get id, category, createdby from question table by category.
+     *
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function get_ques_by_category($category) {
+        global $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::get_ques_by_category_parameters(),
+            array('category' => $category));
+
+        $records = $DB->get_records('question', array('category' => $params['category']), '', 'id,category,createdby');
+        return $records;
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function get_ques_by_category_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'question id'),
+                    'category' => new external_value(PARAM_INT, 'question category'),
+                    'createdby' => new external_value(PARAM_INT, 'createdby'),
+                )
+            )
+        );
+    }
+
+    /**
+     * Hanv 10/08/2016
+     * Get a single database record as an object where all the given conditions met.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     *
+     */
+    public static function db_get_record_parameters() {
+        return new external_function_parameters (
+            array(
+                'table' => new external_value(PARAM_RAW, 'table'),
+                'fields' => new external_value(PARAM_RAW, 'fields', VALUE_DEFAULT, '*'),
+                'strictness' => new external_value(PARAM_INT, 'strictness', VALUE_DEFAULT, 0),
+                'conditions' => new  external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'name'),
+                            'value' => new external_value(PARAM_RAW, 'value'),
+                        )
+                    )
+                ),
+            )
+        );
+    }
+
+    /**
+     * Get a single database record as an object where all the given conditions met.
+     *
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function db_get_record($table, $fields, $strictness, $conditions) {
+        global $CFG, $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::db_get_record_parameters(),
+            array('table' => $table, 'fields' => $fields, 'strictness' => $strictness, 'conditions' => $conditions));
+
+        $r_conditions = array();
+        foreach ($params['conditions'] as $element) {
+            $r_conditions[$element['name']] = $element['value'];
+        }
+        $records = $DB->get_record($table, $r_conditions, $fields, $strictness);
+        $results = array();
+        $i = 0;
+        foreach ($records as $key => $value) {
+            $results[$i]['key']   = $key;
+            $results[$i]['value'] = $value;
+            $i++;
+        }
+        return $results;
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function db_get_record_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'key' => new external_value(PARAM_RAW, 'key'),
+                    'value' => new external_value(PARAM_RAW, 'value'),
+                )
+            )
+        );
+    }
+
 }

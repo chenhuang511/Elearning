@@ -1293,6 +1293,7 @@ class context_to_string_translator{
  */
 function question_has_capability_on($question, $cap, $cachecat = -1) {
     global $USER, $DB;
+    $isremote = (MOODLE_RUN_MODE === MOODLE_MODE_HUB)?true:false;
 
     // these are capabilities on existing questions capabilties are
     //set per category. Each of these has a mine and all version. Append 'mine' and 'all'
@@ -1301,7 +1302,12 @@ function question_has_capability_on($question, $cap, $cachecat = -1) {
     static $categories = array();
     static $cachedcat = array();
     if ($cachecat != -1 && array_search($cachecat, $cachedcat) === false) {
-        $questions += $DB->get_records('question', array('category' => $cachecat), '', 'id,category,createdby');
+        if($isremote){
+            $res = get_remote_ques_by_category($cachecat);
+            $questions += $res;
+        }else{
+            $questions += $DB->get_records('question', array('category' => $cachecat), '', 'id,category,createdby');
+        }
         $cachedcat[] = $cachecat;
     }
     if (!is_object($question)) {
@@ -1318,27 +1324,42 @@ function question_has_capability_on($question, $cap, $cachecat = -1) {
         // take the place of a deleted question.
         return false;
     }
+
     if (!isset($categories[$question->category])) {
-        if (!$categories[$question->category] = $DB->get_record('question_categories',
-                array('id'=>$question->category))) {
+        if($isremote){
+            $cond = array();
+            $cond['conditions[0][name]'] = 'id';
+            $cond['conditions[0][value]'] = $question->category;
+            $category = remote_db_get_record('question_categories', null, null, $cond);
+        }else{
+            $category = $DB->get_record('question_categories', array('id'=>$question->category));
+        }
+        if (!$categories[$question->category] = $category) {
             print_error('invalidcategory', 'question');
         }
     }
-    $category = $categories[$question->category];
-    $context = context::instance_by_id($category->contextid);
 
-    if (array_search($cap, $question_questioncaps)!== false) {
-        if (!has_capability('moodle/question:' . $cap . 'all', $context)) {
-            if ($question->createdby == $USER->id) {
-                return has_capability('moodle/question:' . $cap . 'mine', $context);
+    $category = $categories[$question->category];
+
+    //@TODO: handle context here. hardcode return true for show statistic Quiz structure analysis.
+    if($isremote){
+        return true;
+    }else{
+        $context = context::instance_by_id($category->contextid);
+
+        if (array_search($cap, $question_questioncaps)!== false) {
+            if (!has_capability('moodle/question:' . $cap . 'all', $context)) {
+                if ($question->createdby == $USER->id) {
+                    return has_capability('moodle/question:' . $cap . 'mine', $context);
+                } else {
+                    return false;
+                }
             } else {
-                return false;
+                return true;
             }
         } else {
-            return true;
+            return has_capability('moodle/question:' . $cap, $context);
         }
-    } else {
-        return has_capability('moodle/question:' . $cap, $context);
     }
 
 }

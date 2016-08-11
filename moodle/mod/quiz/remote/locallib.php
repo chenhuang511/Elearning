@@ -524,3 +524,81 @@ function remote_handle_if_time_expired($quizid, $attemptid, $studentisonline, $s
     );
     return $result;
 }
+
+function get_statistic_attempt_counts_and_averages($from, $where, $param){
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_quiz_get_statistic_attempt_counts_and_averages',
+            'params' => array_merge(array('from' => $from, 'where' => $where), $param)
+        ), false
+    );
+    return $result;
+}
+
+function get_statistic_median_mark($sql, $limitoffset, $limit, $param){
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_quiz_get_statistic_median_mark',
+            'params' => array_merge(array('sql' => $sql, 'limitoffset' => $limitoffset, 'limit' => $limit), $param)
+        ), false
+    );
+    $res = array();
+    foreach($result as $element){
+        $res[$element->key] = $element->value;
+    }
+    return $res;
+}
+
+function get_statistic_sum_of_powers($sql, $param){
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_quiz_get_statistic_sum_of_powers',
+            'params' => array_merge(array('sql' => $sql), $param)
+        ), false
+    );
+    $res = array();
+    foreach($result as $element){
+        $res[$element->key] = $element->value;
+    }
+    return $res;
+}
+
+function get_remote_ques_by_category($category){
+    $results = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_quiz_get_ques_by_category',
+            'params' => array('category' => $category)
+        ), false
+    );
+    $data = array();
+    foreach($results as $result){
+        $data[$result->id] = $result;
+    }
+    return $data;
+}
+
+function remote_db_get_record($table,  $fields, $strictness, $conditions){
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_quiz_db_get_record',
+            'params' => array_merge(array('table' => $table, 'fields' => $fields, 'strictness' => $strictness), $conditions)
+        ), false
+    );
+
+    $res = new stdClass();
+    foreach($result as $element){
+        $key = $element->key;
+        $res->$key= $element->value;
+    }
+    return $res;
+}

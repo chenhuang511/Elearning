@@ -38,12 +38,21 @@ require_once($CFG->dirroot . '/mod/quiz/report/statistics/statisticslib.php');
 $quizid = required_param('quizid', PARAM_INT);
 $currentgroup = required_param('currentgroup', PARAM_INT);
 $whichattempts = required_param('whichattempts', PARAM_INT);
+$isremote = (MOODLE_RUN_MODE === MOODLE_MODE_HUB)?true:false;
 
-$quiz = $DB->get_record('quiz', array('id' => $quizid), '*', MUST_EXIST);
-$cm = get_coursemodule_from_instance('quiz', $quiz->id);
+if($isremote){
+    $quiz = get_remote_quiz_by_id($quizid);
+    $cm = $cm = get_remote_course_module_by_instance("quiz", $quiz->id);
+    $course = get_local_course_record($quiz->course);
+    // Check access.
+    require_login($course, false, $cm);
+}else{
+    $quiz = $DB->get_record('quiz', array('id' => $quizid), '*', MUST_EXIST);
+    $cm = get_coursemodule_from_instance('quiz', $quiz->id);
+    // Check access.
+    require_login($quiz->course, false, $cm);
+}
 
-// Check access.
-require_login($quiz->course, false, $cm);
 $modcontext = context_module::instance($cm->id);
 require_capability('quiz/statistics:view', $modcontext);
 
@@ -62,10 +71,29 @@ if (empty($currentgroup)) {
     $groupstudents = get_users_by_capability($modcontext, array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),
                                              '', '', '', '', $currentgroup, '', false);
 }
-$qubaids = quiz_statistics_qubaids_condition($quizid, $groupstudents, $whichattempts);
+
+if($isremote){
+    $users = get_users_by_capability($modcontext,
+        array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), '', '', '', '',
+        $currentgroup, '', false);
+    // list userids (mapping hub) in this course.
+    $usermaps = array();
+    foreach ($users as $user){
+        $usermaps[] = get_remote_mapping_user($user->id)[0]->id;
+    }
+}
+$qubaids = quiz_statistics_qubaids_condition($quiz->id, $groupstudents, $whichattempts, false, $usermaps);
 
 // Load the rest of the required data.
-$questions = quiz_report_get_significant_questions($quiz);
+if($isremote){
+    $r_questions = get_remote_significant_questions($quiz->id);
+    $questions = array();
+    foreach ($r_questions as $key => $value){
+        $questions[$value->slot] = $value;
+    }
+}else{
+    $questions = quiz_report_get_significant_questions($quiz);
+}
 
 // Only load main question not sub questions.
 $questionstatistics = $DB->get_records_select('question_statistics', 'hashcode = ? AND slot IS NOT NULL',
