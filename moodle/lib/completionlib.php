@@ -1029,12 +1029,14 @@ class completion_info {
                 }
             }
         }
+
         if (!$data->id) {
             // Didn't exist before, needs creating
             if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
                 $data->id = $DB->insert_record('course_modules_completion', $data);
             } else {
-                $data->id = create_remote_course_modules_completion($data);
+                $cmcdata = (array)$data;
+                $data->id = create_remote_course_modules_completion($cmcdata);
             }
 
         } else {

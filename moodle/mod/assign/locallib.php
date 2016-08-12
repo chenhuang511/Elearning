@@ -1253,7 +1253,11 @@ class assign {
                 $this->instance = $DB->get_record('assign', $params, '*', MUST_EXIST);
             } else {
                 // Get instance remote
-                $instanceremote = get_remote_assign_by_id_instanceid($params['id'], $this->get_context()->instanceid);
+                if (!isset($this->get_context()->instanceid)){
+                    $instanceremote = get_remote_assign_by_id_instanceid($params['id'], $this->get_context()->instanceid);
+                } else {
+                    $instanceremote = get_remote_assign_by_id($params['id']);
+                }
                 // Get instance host
                 $this->instance = get_local_assign_record($this->get_course_module()->instance);
                 // Merge 2 instance
@@ -3190,7 +3194,7 @@ class assign {
 
             $submission->assignment   = $this->get_instance()->id;
             $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid, 'groupid'=>0);
-            
+
             $submission->timecreated = time();
             $submission->timemodified = $submission->timecreated;
             $submission->status = ASSIGN_SUBMISSION_STATUS_NEW;
@@ -3326,7 +3330,7 @@ class assign {
         $submission = null;
 
         $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid);
-        
+
         if ($attemptnumber < 0 || $create) {
             // Make sure this grade matches the latest submission attempt.
             if ($this->get_instance()->teamsubmission) {
@@ -3510,7 +3514,7 @@ class assign {
 
         // Warning if required.
         $allsubmissions = $this->get_all_submissions($userid);
-        
+
         if ($attemptnumber != -1 && ($attemptnumber + 1) != count($allsubmissions)) {
             $params = array('attemptnumber' => $attemptnumber + 1,
                             'totalattempts' => count($allsubmissions));
@@ -4655,7 +4659,7 @@ class assign {
 
         $gradingstatus = $this->get_grading_status($user->id);
         $usergroups = $this->get_all_groups($user->id);
-        
+
         $submissionstatus = new assign_submission_status($instance->allowsubmissionsfromdate,
                                                           $instance->alwaysshowdescription,
                                                           $submission,
@@ -4704,8 +4708,8 @@ class assign {
 
         $instance = $this->get_instance();
         $grade = $this->get_user_grade($user->id, false);
-        $gradingstatus = $this->get_grading_status($user->id);   
-        
+        $gradingstatus = $this->get_grading_status($user->id);
+
         if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
             $gradinginfo = grade_get_grades($this->get_course()->id,
                 'mod',
@@ -4718,7 +4722,7 @@ class assign {
                 $this->get_course_module()->id,
                 array($user->id));
         }
-        
+
         $gradingitem = null;
         $gradebookgrade = null;
         if (isset($gradinginfo->items[0])) {
@@ -4896,7 +4900,7 @@ class assign {
         }
 
         $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid);
-       
+
         if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
             $grades = $DB->get_records('assign_grades', $params, 'attemptnumber ASC');
         } else {
@@ -4952,7 +4956,7 @@ class assign {
             }
 
         }
-                   
+
         return $grades;
     }
 
@@ -6800,28 +6804,27 @@ class assign {
             }
         }
 
-        // @TODO: Logging for host??
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
-            // Logging.
-            if (isset($data->submissionstatement) && ($userid == $USER->id)) {
-                \mod_assign\event\statement_accepted::create_from_submission($this, $submission)->trigger();
-            }
+        // Logging.
+        if (isset($data->submissionstatement) && ($userid == $USER->id)) {
+            \mod_assign\event\statement_accepted::create_from_submission($this, $submission)->trigger();
+        }
 
-            $complete = COMPLETION_INCOMPLETE;
-            if ($submission->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
-                $complete = COMPLETION_COMPLETE;
-            }
-            $completion = new completion_info($this->get_course());
-            if ($completion->is_enabled($this->get_course_module()) && $instance->completionsubmit) {
-                $completion->update_state($this->get_course_module(), $complete, $userid);
-            }
+        $complete = COMPLETION_INCOMPLETE;
+        if ($submission->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
+            $complete = COMPLETION_COMPLETE;
+        }
+        $completion = new completion_info($this->get_course());
+        if ($completion->is_enabled($this->get_course_module()) && $instance->completionsubmit) {
+            $completion->update_state($this->get_course_module(), $complete, $userid);
+        }
 
+//        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
             if (!$instance->submissiondrafts) {
                 $this->notify_student_submission_receipt($submission);
                 $this->notify_graders($submission);
                 \mod_assign\event\assessable_submitted::create_from_submission($this, $submission, true)->trigger();
             }
-        }
+//        }
 
         return true;
     }
@@ -8062,7 +8065,7 @@ class assign {
 
         // Set the status of the new attempt to reopened.
         $newsubmission->status = ASSIGN_SUBMISSION_STATUS_REOPENED;
-        
+
         // Give each submission plugin a chance to process the add_attempt.
         $plugins = $this->get_submission_plugins();
         foreach ($plugins as $plugin) {
@@ -8175,7 +8178,8 @@ class assign {
             $cm = get_coursemodule_from_instance('assign', $assignid, 0, false, MUST_EXIST);
         }
         else{
-            $cm = get_remote_course_module_by_instance('assign', $assignid);
+            $rassignid = get_local_assign_record($assignid, true)->remoteid;
+            $cm = get_remote_course_module_by_instance('assign', $rassignid);
         }
         $context = context_module::instance($cm->id);
 

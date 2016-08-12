@@ -336,14 +336,11 @@ function get_remote_course_modules_completion_by_mode($cmid, $mode = 'normal', $
  */
 function create_remote_course_modules_completion($cmc)
 {
-    if (isset($cmc->id)) {
-        unset($cmc->id);
+    if (isset($cmc['id'])) {
+        unset($cmc['id']);
     }
-    //Convert userid on hub
-    $userid = $cmc->userid;
-    $cmc->userid = get_remote_mapping_user($userid)[0]->id;
 
-    $cmc = (array)$cmc;
+    $cmc['userid'] = get_remote_mapping_user($cmc['userid'])[0]->id;
 
     $result = moodle_webservice_client(
         array(
