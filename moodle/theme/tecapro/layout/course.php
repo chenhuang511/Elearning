@@ -54,14 +54,14 @@ echo $OUTPUT->doctype() ?>
 <?php  require_once(dirname(__FILE__) . '/includes/header.php');  ?>
 
 <div class="container-fluid">
-   <?php
-         $toggleslideshow = theme_tecapro_get_setting('toggleslideshow');
-        if ($toggleslideshow == 1) {
-            require_once(dirname(__FILE__) . '/includes/slideshow.php');
-        }else{
-								    echo "<br/><br/>";
-								}
-        ?>
+    <?php
+    $toggleslideshow = theme_tecapro_get_setting('toggleslideshow');
+    if ($toggleslideshow == 1) {
+        require_once(dirname(__FILE__) . '/includes/slideshow.php');
+    }else{
+        echo "<br/><br/>";
+    }
+    ?>
 </div>
 <!--Slider-->
 
@@ -86,7 +86,7 @@ echo $OUTPUT->doctype() ?>
             $activenode = $PAGE->navigation->find_active_node();
             $keynode = $activenode->key;
             $keyparentnode = $activenode->parent->key;
-        ?>
+            ?>
             <div class="col-sm-12">
                 <div class="tab-course-container container">
                     <ul id="coursetabs" class="nav nav-tabs" role="tablist">
@@ -150,30 +150,21 @@ echo $OUTPUT->doctype() ?>
                                                              aria-expanded="false">
                                                             <div class="panel-body">
                                                                 <?php foreach ($section->modules as $keymod => $module) {
-                                                                    if ($module->modname !== 'forum' && $module->modname !== 'wiki') {
-                                                                        if ($module->modname === 'label') {
-                                                                            ?>
-                                                                            <a id="mlabel-<?php echo $module->id ?>" class="sublink"
-                                                                               href="#mlabel-<?php echo $module->id ?>"
-                                                                               data-description="<?php echo htmlspecialchars($module->description) ?>">
-                                                                                <i class="fa fa-info-circle" aria-hidden="true"></i>
-                                                                                <?php echo $module->name ?>
-                                                                            </a>
-                                                                            <?php
-                                                                        } else { ?>
-                                                                            <a class="sublink<?php
-                                                                            if($module->id == $keynode) {
-                                                                                echo ' sublink-active';
-                                                                            }
-                                                                            ?>
+                                                                    if ($module->modname != 'label' && $module->modname != 'url') {
+                                                                        ?>
+                                                                        <a class="sublink<?php
+                                                                        if($module->id == $keynode) {
+                                                                            echo ' sublink-active';
+                                                                        }
+                                                                        ?>
                                                                             "
-                                                                               href="<?php echo $CFG->wwwroot . '/mod/' . $module->modname . '/remote/view.php?id=' . $module->id; ?>"
-                                                                               >
+                                                                           href="<?php echo $CFG->wwwroot . '/mod/' . $module->modname . '/remote/view.php?id=' . $module->id; ?>"
+                                                                        >
                                         <span
                                             class="icon-bxh icon-<?php echo $module->modname; ?>"></span><?php echo $module->name; ?>
-                                                                            </a>
-                                                                        <?php } ?>
-                                                                    <?php }
+                                                                        </a>
+                                                                    <?php } ?>
+                                                                    <?php
                                                                 } ?>
                                                             </div>
                                                         </div>
@@ -201,7 +192,7 @@ echo $OUTPUT->doctype() ?>
                     </div>
                 </div>
             </div>
-        <?php
+            <?php
         } else {
             ?>
 
