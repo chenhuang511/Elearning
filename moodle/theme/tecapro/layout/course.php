@@ -84,8 +84,13 @@ echo $OUTPUT->doctype() ?>
         if ($isstudent) { ?>
             <?php
             $activenode = $PAGE->navigation->find_active_node();
-            $keynode = $activenode->key;
-            $keyparentnode = $activenode->parent->key;
+            if(!is_int($activenode->parent->key)){
+                $keyparentnode = isset($activenode->parent->parent->includesectionnum) ? $activenode->parent->parent->includesectionnum : 1;
+                $keynode = null;
+            } else {
+                $keynode = $activenode->key;
+                $keyparentnode = $activenode->parent->key;
+            }
         ?>
             <div class="col-sm-12">
                 <div class="tab-course-container container">
@@ -113,15 +118,19 @@ echo $OUTPUT->doctype() ?>
                         <div role="tabpanel" id="tab-content-1" class="tab-pane fade active in" aria-labelledby="coursewaretab-tab">
                             <div class="courseware-block">
                                 <div class="row">
+                                    <?php
+                                    $course = get_remote_course_content($COURSE->remoteid);
+                                    $renderer = $PAGE->get_renderer('format_weeks');
+                                    ?>
                                     <div class="col-sm-3 courseware-menu">
-                                        <?php
-                                        $course = get_remote_course_content($COURSE->remoteid);
-                                        ?>
                                         <div class="panel-group" id="section-menu" role="tablist" aria-multiselectable="true">
                                             <?php
                                             global $CFG; ?>
 
                                             <?php foreach ($course['content'] as $key => $section) {
+                                                if($key == 0) {
+                                                    continue;
+                                                }
                                                 $heading = 'mod-' . $section->id;
                                                 $collapse = 'collapseMod' . $section->id;
                                                 ?>
@@ -135,13 +144,17 @@ echo $OUTPUT->doctype() ?>
                                                                    data-parent="#section-menu"
                                                                    href="#<?php echo $collapse ?>"
                                                                    aria-expanded="false" aria-controls="<?php echo $collapse ?>"
-                                                                   class="collapsed'" data-summary="<?php echo htmlspecialchars($section->summary) ?>">
-                                                                    <i class="fa fa-caret-right" aria-hidden="true"></i> <?php echo $section->name ?> </a>
+                                                                   class="collapsed toggle-down" data-summary="<?php echo htmlspecialchars($section->summary) ?>">
+                                                                    <i class="fa
+                                                                     <?php
+                                                                        echo $section->id == $keyparentnode || $key == $keyparentnode ? 'fa-caret-down' : 'fa-caret-right';
+                                                                    ?>
+                                                                     icon" aria-hidden="true"></i></a><a href="<?php echo $CFG->wwwroot.'/course/view.php?id=' . $COURSE->id . '&section='. $key ?>">&nbsp;<?php echo $section->name ?> </a>
                                                             </h4>
                                                         </div>
                                                         <div id="<?php echo $collapse ?>" class="panel-collapse collapse
                                                         <?php
-                                                        if($section->id == $keyparentnode){
+                                                        if($section->id == $keyparentnode || $key == $keyparentnode){
                                                             echo 'in';
                                                         }
                                                         ?>
@@ -184,8 +197,35 @@ echo $OUTPUT->doctype() ?>
                                 </div>
                             </div>
                         </div>
-                        <div role="tabpanel" id="tab-content-2" class="tab-pane fade">content</div>
-                        <div role="tabpanel" id="tab-content-3" class="tab-pane fade">content</div>
+                        <div role="tabpanel" id="tab-content-2" class="tab-pane fade">
+                            <?php
+                                $courseinfo = get_remote_course_info($COURSE->remoteid);
+                            ?>
+                            <section class="container-course-info">
+                                <div class="info-wrapper">
+                                    <section class="updates col-sm-8">
+                                        <h1>
+                                            Course Updates &amp; News
+                                        </h1>
+                                        <section>
+                                            <article>
+                                                <p><?php echo $courseinfo->courseinfo?></p>
+                                            </article>
+                                        </section>
+                                    </section>
+                                    <section class="title col-sm-4">
+                                        <h1><?php echo $courseinfo->coursename ?></h1>
+                                        <p></p>
+                                    </section>
+                                </div>
+                            </section>
+                        </div>
+
+                        <div role="tabpanel" id="tab-content-3" class="tab-pane fade">
+                            <?php
+                            $renderer->print_single_section_page_student($COURSE, null, null, null, null, 0, false);
+                            ?>
+                        </div>
                         <div role="tabpanel" id="tab-content-4" class="tab-pane fade">content</div>
                         <div role="tabpanel" id="tab-content-5" class="tab-pane fade">content</div>
                         <div role="tabpanel" id="tab-content-6" class="tab-pane fade">content</div>
@@ -212,5 +252,54 @@ echo $OUTPUT->doctype() ?>
 </div>
 
 <?php  require_once(dirname(__FILE__) . '/includes/footer.php');  ?>
+<script>
+    (function ($) {
+
+        var sections = $('a[id^="csec-"]');
+        var changeContent = function (element, cnt) {
+            window.sectionTimeout = setTimeout(function () {
+                $(loading).hide();
+            }, 2000);
+            // remove now content
+            element.empty();
+            // add new content
+            element.html(cnt);
+        };
+
+        var changeIcon = function (el) {
+            $.each(sections, function (index, element) {
+                if (sections[index] != el) {
+                    var ico = $(this).find('i');
+                    if (ico.hasClass('fa-caret-down')) {
+                        ico.removeClass('fa-caret-down');
+                        ico.addClass('fa-caret-right');
+                    }
+                }
+            });
+        };
+
+        if (sections) {
+            $.each(sections, function (index, element) {
+                $(sections[index]).on('click', function () {
+
+                    changeIcon(sections[index]);
+
+                    var ico = $(this).find('i');
+
+                    if (ico.hasClass('fa-caret-right')) {
+                        ico.removeClass('fa-caret-right');
+                        ico.addClass('fa-caret-down');
+                    } else {
+                        if (ico.hasClass('fa-caret-down')) {
+                            ico.removeClass('fa-caret-down');
+                            ico.addClass('fa-caret-right');
+                        }
+                    }
+                });
+            });
+        }
+
+    })(jQuery)
+</script>
 </body>
 </html>

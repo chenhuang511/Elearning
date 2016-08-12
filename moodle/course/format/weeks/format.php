@@ -45,10 +45,14 @@ if(!is_remote_course($course)) {
 }
 $renderer = $PAGE->get_renderer('format_weeks');
 
-if (!empty($displaysection)) {
-    $renderer->print_single_section_page($course, null, null, null, null, $displaysection);
+if($isstudent){
+    $renderer->print_single_section_page_student($course, null, null, null, null, $section);
 } else {
-    $renderer->print_multiple_section_page($course, null, null, null, null);
+    if (!empty($displaysection)) {
+        $renderer->print_single_section_page($course, null, null, null, null, $displaysection);
+    } else {
+        $renderer->print_multiple_section_page($course, null, null, null, null);
+    }
 }
 
 $PAGE->requires->js('/course/format/weeks/format.js');

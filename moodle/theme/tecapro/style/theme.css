@@ -4069,3 +4069,7 @@ form#personsearch input[type="submit"] {
 .sublink-active {
     font-weight: 700;
 }
+.tab-pane ul.weeks {
+    list-style-type: none;
+    margin-left: 0;
+}
