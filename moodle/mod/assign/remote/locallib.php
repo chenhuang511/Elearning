@@ -681,6 +681,8 @@ function get_remote_assign_grades_get_grades($courseid, $component, $activityid,
  * @return stdClass $resp - Returns student course total grade and grades for activities
  */
 function core_grades_update_grades($source, $courseid, $component, $activityid, $itemnumber, $rgrades, $itemdetails){
+
+
     $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
@@ -697,6 +699,10 @@ function core_grades_update_grades($source, $courseid, $component, $activityid, 
             ),
         ), false
     );
+
+    // Difficult to find affected users, just purge all completion cache.
+    cache::make('core', 'completion')->purge();
+
     return $resp;
 }
 
@@ -723,13 +729,15 @@ function mod_remote_assign_submit_grading_form($args){
 }
 
 function update_remote_user_flags($assignmentid, $userflags) {
+    $rassignid = get_local_assign_record($assignmentid, true)->remoteid;
+
     $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN_M,
             'function_name' => 'mod_assign_set_user_flags',
             'params' => array(
-                'assignmentid' => $assignmentid,
+                'assignmentid' => $rassignid,
                 'userflags' => $userflags,
             ),
         ), false

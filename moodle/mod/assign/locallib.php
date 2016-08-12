@@ -2188,7 +2188,7 @@ class assign {
         }
         if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
             $result = $DB->update_record('assign_user_flags', $flags);
-        } elseif (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        } else{
             $ruser = get_remote_mapping_user($flags->userid);
             $uid = $ruser[0]->id;
             $aflags = json_decode(json_encode($flags), true);
@@ -5708,7 +5708,11 @@ class assign {
             $info->username = fullname($userfrom, true);
         }
         $info->assignment = format_string($assignmentname, true, array('context'=>$context));
-        $info->url = $CFG->wwwroot.'/mod/assign/view.php?id='.$coursemodule->id;
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $info->url = $CFG->wwwroot.'/mod/assign/view.php?id='.$coursemodule->id;
+        } else {
+            $info->url = $CFG->wwwroot.'/mod/assign/remote/view.php?id='.$coursemodule->id;
+        }
         $info->timeupdated = userdate($updatetime, get_string('strftimerecentfull'));
 
         $postsubject = get_string($messagetype . 'small', 'assign', $info);
@@ -6680,32 +6684,29 @@ class assign {
             return false;
         }
 
-        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-            \mod_assign\event\submission_duplicated::create_from_submission($this, $submission)->trigger();
+        \mod_assign\event\submission_duplicated::create_from_submission($this, $submission)->trigger();
 
-            $complete = COMPLETION_INCOMPLETE;
-            if ($submission->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
-                $complete = COMPLETION_COMPLETE;
-            }
-            $completion = new completion_info($this->get_course());
-            if ($completion->is_enabled($this->get_course_module()) && $instance->completionsubmit) {
-                $completion->update_state($this->get_course_module(), $complete, $USER->id);
-            }
-
-            if (!$instance->submissiondrafts) {
-                // There is a case for not notifying the student about the submission copy,
-                // but it provides a record of the event and if they then cancel editing it
-                // is clear that the submission was copied.
-                $this->notify_student_submission_copied($submission);
-                $this->notify_graders($submission);
-
-                // The same logic applies here - we could not notify teachers,
-                // but then they would wonder why there are submitted assignments
-                // and they haven't been notified.
-                \mod_assign\event\assessable_submitted::create_from_submission($this, $submission, true)->trigger();
-            }
+        $complete = COMPLETION_INCOMPLETE;
+        if ($submission->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
+            $complete = COMPLETION_COMPLETE;
         }
-        return true;
+        $completion = new completion_info($this->get_course());
+        if ($completion->is_enabled($this->get_course_module()) && $instance->completionsubmit) {
+            $completion->update_state($this->get_course_module(), $complete, $USER->id);
+        }
+
+        if (!$instance->submissiondrafts) {
+            // There is a case for not notifying the student about the submission copy,
+            // but it provides a record of the event and if they then cancel editing it
+            // is clear that the submission was copied.
+            $this->notify_student_submission_copied($submission);
+            $this->notify_graders($submission);
+
+            // The same logic applies here - we could not notify teachers,
+            // but then they would wonder why there are submitted assignments
+            // and they haven't been notified.
+            \mod_assign\event\assessable_submitted::create_from_submission($this, $submission, true)->trigger();
+        }
     }
 
     /**
@@ -6818,13 +6819,11 @@ class assign {
             $completion->update_state($this->get_course_module(), $complete, $userid);
         }
 
-//        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-            if (!$instance->submissiondrafts) {
-                $this->notify_student_submission_receipt($submission);
-                $this->notify_graders($submission);
-                \mod_assign\event\assessable_submitted::create_from_submission($this, $submission, true)->trigger();
-            }
-//        }
+        if (!$instance->submissiondrafts) {
+            $this->notify_student_submission_receipt($submission);
+            $this->notify_graders($submission);
+            \mod_assign\event\assessable_submitted::create_from_submission($this, $submission, true)->trigger();
+        }
 
         return true;
     }
@@ -7710,10 +7709,8 @@ class assign {
 
         // Note the default if not provided for this option is true (e.g. webservices).
         // This is for backwards compatibility.
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-            if (!isset($formdata->sendstudentnotifications) || $formdata->sendstudentnotifications) {
-                $this->notify_grade_modified($grade, true);
-            }
+        if (!isset($formdata->sendstudentnotifications) || $formdata->sendstudentnotifications) {
+            $this->notify_grade_modified($grade, true);
         }
     }
 
@@ -7885,7 +7882,7 @@ class assign {
         if ($rownum == count($useridlist) - 1) {
             $last = true;
         }
-                     echo 123;die;
+
         $data = new stdClass();
 
         $gradeformparams = array('rownum' => $rownum,
