@@ -4073,3 +4073,10 @@ form#personsearch input[type="submit"] {
     list-style-type: none;
     margin-left: 0;
 }
+.student-navigation {
+    padding-left: 0 !important;
+}
+.student-navigation h3.sectionname {
+    text-align: left;
+    margin-top: 0;
+}
