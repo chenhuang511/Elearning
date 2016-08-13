@@ -25,5 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['advancedoverride'] = 'Ghi đè vai trò nâng cao';
 $string['localroles'] = 'Vai trò được bổ nhiệm';
 $string['permissions'] = 'Quyền hạn';
