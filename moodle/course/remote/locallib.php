@@ -336,14 +336,11 @@ function get_remote_course_modules_completion_by_mode($cmid, $mode = 'normal', $
  */
 function create_remote_course_modules_completion($cmc)
 {
-    if (isset($cmc->id)) {
-        unset($cmc->id);
+    if (isset($cmc['id'])) {
+        unset($cmc['id']);
     }
-    //Convert userid on hub
-    $userid = $cmc->userid;
-    $cmc->userid = get_remote_mapping_user($userid)[0]->id;
 
-    $cmc = (array)$cmc;
+    $cmc['userid'] = get_remote_mapping_user($cmc['userid'])[0]->id;
 
     $result = moodle_webservice_client(
         array(
@@ -372,11 +369,7 @@ function create_remote_course_modules_completion($cmc)
  */
 function update_remote_course_modules_completion($cmc)
 {
-    //Convert userid on hub
-    $userid = $cmc->userid;
-    $cmc->userid = get_remote_mapping_user($userid)[0]->id;
-
-    $cmc = (array)$cmc;
+    $cmc['userid'] = get_remote_mapping_user($cmc['userid'])[0]->id;
 
     $result = moodle_webservice_client(
         array(
@@ -388,9 +381,14 @@ function update_remote_course_modules_completion($cmc)
     );
 
     return $result;
-
 }
 
+/**
+ * Get course completion on hub
+ * @param int $courseid   - The id of course
+ * @param int $userid     - The id of user
+ * @return mixed $result  - The information of course completion
+ */
 function get_remote_course_completion($courseid, $userid)
 {
     $result = moodle_webservice_client(
@@ -403,4 +401,92 @@ function get_remote_course_completion($courseid, $userid)
     );
 
     return $result->completion;
+}
+
+function get_remote_list_course_completion($userid)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_get_list_course_completion',
+            'params' => array('userid' => $userid),
+        ), false
+    );
+
+    return $result->completions;
+}
+
+/**
+ * Detele tbl course_completions by courseid & userid on host
+ *
+ * @param int $courseid    - The id of course
+ * @return bool $result    - True if success
+ */
+function delete_remote_course_completions($courseid)
+{
+    $hostip = gethostip();
+
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_detele_course_completions_by_courseid_hostip',
+            'params' => array(
+                'courseid' => $courseid,
+                'hostip' => $hostip),
+        ), false
+    );
+
+    return $result;
+}
+
+/**
+ * Detele tbl course_completion_crit_compl by courseid & userid on host
+ *
+ * @param int $courseid    - The id of course
+ * @return bool $result    - True if success
+ */
+function delete_remote_course_completion_crit_compl($courseid)
+{
+    $hostip = gethostip();
+
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_delete_course_completion_crit_compl_by_courseid_hostip',
+            'params' => array(
+                'courseid' => $courseid,
+                'hostip' => $hostip),
+        ), false
+    );
+
+    return $result;
+}
+
+/**
+ * Determines how much completion data exists for an activity. This is used when
+ * deciding whether completion information should be 'locked' in the module
+ * editing form.
+ *
+ * @param int $coursemoduleid    - The id of course module
+ * @return int $result           - Count user id
+ */
+function count_remote_user_data_completion($coursemoduleid)
+{
+    $hostip = gethostip();
+
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_get_course_completion_count_user_data',
+            'params' => array(
+                'coursemoduleid' => $coursemoduleid,
+                'hostip' => $hostip),
+        ), false
+    );
+
+    return $result;
 }

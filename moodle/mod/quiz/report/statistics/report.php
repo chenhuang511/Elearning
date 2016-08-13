@@ -135,7 +135,7 @@ class quiz_statistics_report extends quiz_default_report {
         $qubaids = quiz_statistics_qubaids_condition($quiz->id, $groupstudents, $whichattempts, false, $usermaps);
 
         // If recalculate was requested, handle that.
-        if ($recalculate && confirm_sesskey()) {
+        if ($recalculate && confirm_sesskey()) { //@TODO: handle here if recaculate
             $this->clear_cached_data($qubaids);
             redirect($reporturl);
         }
@@ -579,7 +579,7 @@ class quiz_statistics_report extends quiz_default_report {
             $progress->progress(1);
 
             $quizstats = $quizcalc->calculate($quiz->id, $whichattempts, $groupstudents, count($questions),
-                                              $qcalc->get_sum_of_mark_variance());
+                                              $qcalc->get_sum_of_mark_variance(), $usermaps);
             $progress->progress(2);
         } else {
             $quizstats = $quizcalc->get_cached($qubaids);

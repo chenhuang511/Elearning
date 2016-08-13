@@ -2152,7 +2152,7 @@ function forum_get_all_discussion_posts($discussionid, $sort, $tracking = false)
             $prs["parameters[$i][value]"] = $val;
             $i++;
         }
-        if (!$posts = get_remote_forum_get_all_discussion_posts_sql($allnames, $tracking ? 1 : 0, $sort, false, $prs)) {
+        if (!$posts = get_remote_forum_get_all_discussion_posts_sql($allnames, $tracking ? 1 : 0, $sort, $prs)) {
             return array();
         }
     } else {
@@ -2772,38 +2772,37 @@ function forum_count_discussion_replies($forumid, $forumsort = "", $limit = -1, 
     }
 
     if (($limitfrom == 0 and $limitnum == 0) or $forumsort == "") {
-        $sql = "SELECT p.discussion, COUNT(p.id) AS replies, MAX(p.id) AS lastpostid
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $prs = array();
+            $prs['parameters[0][name]'] = "forum";
+            $prs['parameters[0][value]'] = $forumid;
+
+            $replies = get_remote_forum_count_discussion_replies_sql($prs, $limitfrom, $limitnum, $forumsort, $orderby, $groupby);
+            return $replies;
+        } else {
+            $sql = "SELECT p.discussion, COUNT(p.id) AS replies, MAX(p.id) AS lastpostid
                   FROM {forum_posts} p
                        JOIN {forum_discussions} d ON p.discussion = d.id
                  WHERE p.parent > 0 AND d.forum = ?
               GROUP BY p.discussion";
 
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            $prs = array();
-            $prs['parameters[0][name]'] = "forum";
-            $prs['parameters[0][value]'] = $forumid;
-
-            $replies = get_remote_forum_count_discussion_replies_sql($sql, $prs);
-            return $replies;
-        } else {
             return $DB->get_records_sql($sql, array($forumid));
         }
 
     } else {
-        $sql = "SELECT p.discussion, (COUNT(p.id) - 1) AS replies, MAX(p.id) AS lastpostid
-                  FROM {forum_posts} p
-                       JOIN {forum_discussions} d ON p.discussion = d.id
-                 WHERE d.forum = ?
-              GROUP BY p.discussion $groupby $orderby";
-
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
             $prs = array();
             $prs['parameters[0][name]'] = "forum";
             $prs['parameters[0][value]'] = $forumid;
 
-            $replies = get_remote_forum_count_discussion_replies_sql($sql, $prs, $limitfrom, $limitnum);
+            $replies = get_remote_forum_count_discussion_replies_sql($prs, $limitfrom, $limitnum, $forumsort, $orderby, $groupby);
             return $replies;
         } else {
+            $sql = "SELECT p.discussion, (COUNT(p.id) - 1) AS replies, MAX(p.id) AS lastpostid
+                  FROM {forum_posts} p
+                       JOIN {forum_discussions} d ON p.discussion = d.id
+                 WHERE d.forum = ?
+              GROUP BY p.discussion $groupby $orderby";
             return $DB->get_records_sql($sql, array($forumid), $limitfrom, $limitnum);
         }
     }
@@ -3411,7 +3410,7 @@ function forum_get_discussions_count($cm)
               FROM {forum_discussions} d
                    JOIN {forum_posts} p ON p.discussion = d.id
                    JOIN {user} u ON u.id = d.userid 
-             WHERE d.forum = ? AND p.parent IS NOT NULL 
+             WHERE d.forum = ? AND p.parent = 0 
                    $groupselect $timelimit
                    AND d.userid IN (SELECT id FROM {user} WHERE mnethostid = ?)";
 
@@ -6726,10 +6725,11 @@ function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode,
  * @param array $posts
  * @return void
  */
-function forum_print_posts_flat($course, &$cm, $forum, $discussion, $post, $mode, $reply, $forumtracked, $posts) {
+function forum_print_posts_flat($course, &$cm, $forum, $discussion, $post, $mode, $reply, $forumtracked, $posts)
+{
     global $USER, $CFG;
 
-    $link  = false;
+    $link = false;
 
     if ($mode == FORUM_MODE_FLATNEWEST) {
         $sort = "ORDER BY created DESC";
@@ -6746,8 +6746,8 @@ function forum_print_posts_flat($course, &$cm, $forum, $discussion, $post, $mode
 
         $postread = !empty($post->postread);
 
-//        forum_print_post($post, $discussion, $forum, $cm, $course, $ownpost, $reply, $link,
-//            '', '', $postread, true, $forumtracked);
+        forum_print_post($post, $discussion, $forum, $cm, $course, $ownpost, $reply, $link,
+            '', '', $postread, true, $forumtracked);
     }
 }
 
@@ -7791,7 +7791,7 @@ function forum_discussion_update_last_post($discussionid)
         $prs = array();
         $prs['parameters[0][name]'] = "discussion";
         $prs['parameters[0][value]'] = $discussionid;
-        $lastposts = get_remote_list_forum_posts_by($prs, '', 0, 1);
+        $lastposts = get_remote_list_forum_posts_by($prs, 'modified DESC', 0, 1);
     } else {
         $lastposts = $DB->get_records_sql($sql, array($discussionid), 0, 1);
     }

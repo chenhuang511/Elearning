@@ -138,6 +138,22 @@ $functions = array(
         'type'		    => 'write',
         'ajax'		    => true
     ),
+    'local_detele_course_completions_by_courseid_hostip' => array(
+        'classname'     => 'local_course_external',
+        'methodname'    => 'delete_remote_course_completions',
+        'classpath'     => 'local/course/externallib.php',
+        'description'   => 'Delete remote course completions',
+        'type'		    => 'write',
+        'ajax'		    => true
+    ),
+    'local_delete_course_completion_crit_compl_by_courseid_hostip' => array(
+        'classname'     => 'local_course_external',
+        'methodname'    => 'delete_remote_course_completion_crit_compl',
+        'classpath'     => 'local/course/externallib.php',
+        'description'   => 'Delete remote course completion crit compl',
+        'type'		    => 'write',
+        'ajax'		    => true
+    ),
     'local_get_remote_course_modules_completion' => array(
         'classname'     => 'local_course_external',
         'methodname'    => 'get_remote_course_modules_completion',
@@ -168,6 +184,22 @@ $functions = array(
         'classpath'     => 'local/course/externallib.php',
         'description'   => 'get course completion',
         'type'		    => 'write',
+        'ajax'		    => true
+    ),
+    'local_get_list_course_completion' => array(
+        'classname'     => 'local_course_external',
+        'methodname'    => 'get_list_course_completion',
+        'classpath'     => 'local/course/externallib.php',
+        'description'   => 'get list id of course completion',
+        'type'		    => 'write',
+        'ajax'		    => true
+    ),
+    'local_get_course_completion_count_user_data' => array(
+        'classname'     => 'local_course_external',
+        'methodname'    => 'count_remote_user_data_completion',
+        'classpath'     => 'local/course/externallib.php',
+        'description'   => 'Count user data completion',
+        'type'		    => 'read',
         'ajax'		    => true
     ),
 );

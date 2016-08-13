@@ -65,7 +65,9 @@ $accessmanager = new quiz_access_manager($quizobj, $timenow,
 $quiz = $quizobj->get_quiz();
 
 // Trigger course_module_viewed event and completion.
-get_remote_quiz_view_quiz($quiz->id);
+//get_remote_quiz_view_quiz($quiz->id);
+// Trigger course_module_viewed event and completion.
+quiz_view($quiz, $course, $cm, $context);
 
 // Initialize $PAGE, compute blocks.
 $PAGE->set_url('/mod/quiz/remote/view.php', array('id' => $cm->id));
