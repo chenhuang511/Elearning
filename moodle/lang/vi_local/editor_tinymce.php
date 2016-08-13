@@ -25,12 +25,15 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['advlink_dlg:langcode'] = 'Mã ngôn ngữ';
 $string['advlink_dlg:popup_opts'] = 'Tùy chọn';
 $string['advlist:def'] = 'Mặc định';
+$string['fullpage_dlg:langcode'] = 'Mã ngôn ngữ';
 $string['fullpage_dlg:name'] = 'Tên';
 $string['media_dlg:enabled'] = 'Đã kích hoạt';
 $string['media_dlg:name'] = 'Tên';
 $string['pluginname'] = 'Trình soạn thảo TinyMCE HTML';
 $string['settings'] = 'Cài đặt chung';
 $string['table_dlg:frame_groups'] = 'các nhóm';
+$string['table_dlg:langcode'] = 'Mã ngôn ngữ';
 $string['template_dlg:preview'] = 'Xem trước';

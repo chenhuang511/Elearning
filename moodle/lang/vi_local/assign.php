@@ -103,7 +103,7 @@ $string['numberofsubmittedassignments'] = 'Bài đã nộp';
 $string['numberofteams'] = 'Số nhóm';
 $string['outof'] = '{$a->current} trên {$a->total}';
 $string['overdue'] = '<font color="red">Bài tập đã quá hạn nộp: {$a}</font>';
-$string['pluginadministration'] = 'Quản trị bài tập';
+$string['pluginadministration'] = 'Quản lý bài tập';
 $string['pluginname'] = 'Bài tập';
 $string['preventsubmissionnotingroup'] = 'Yêu cầu nộp bài theo nhóm';
 $string['preventsubmissions'] = 'Ngăn chặn người dùng tạo thêm lần nộp đến bài tập này';

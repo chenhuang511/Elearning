@@ -25,4 +25,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['noprolbems'] = 'Không tìm thấy sự phân công vai trò không được hỗ trợ.';
 $string['pluginname'] = 'Sự phân công vai trò không được hỗ trợ';

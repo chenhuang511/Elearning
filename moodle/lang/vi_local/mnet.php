@@ -25,5 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['noaclentries'] = 'Không đầu vào trong danh sách kiểm soát truy cập SSO';
 $string['options'] = 'Tùy chọn';
 $string['sslverification'] = 'Xác minh SSL';

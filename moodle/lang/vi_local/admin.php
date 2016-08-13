@@ -29,6 +29,7 @@ $string['availablesearchareas'] = 'Khu vực sẵn sàng cho tìm kiếm';
 $string['configpathtodu'] = 'Đường dẫn đến du';
 $string['configtempdatafoldercleanup'] = 'Gỡ bỏ các tập tin dữ liệu tạm thời từ thư mục dữ liệu đã quá thời gian lựa chọn.';
 $string['enableglobalsearch'] = 'Kích hoạt tìm kiếm toàn bộ';
+$string['enableglobalsearch_desc'] = 'Nếu được kích hoạt, dữ liệu sẽ được lập chỉ mục và đồng bộ bởi một nhiệm vụ theo lịch trình.';
 $string['enablesearchareas'] = 'Kích hoạt khu vực tìm kiếm';
 $string['frontpagesettings'] = 'Cài đặt trang chủ';
 $string['globalsearchmanage'] = 'Quản lý tìm kiếm toàn bộ';

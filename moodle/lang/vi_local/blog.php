@@ -26,3 +26,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['blogssite'] = 'Ý kiến đánh giá';
+$string['publishtosite'] = 'Bất kỳ ai trên trang này';
