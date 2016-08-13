@@ -95,8 +95,10 @@ $bbbsession['userlimit'] = intval($bigbluebuttonbn->userlimit);
 $bbbsession['voicebridge'] = ($bigbluebuttonbn->voicebridge > 0)? 70000 + $bigbluebuttonbn->voicebridge: $bigbluebuttonbn->voicebridge;
 $bbbsession['wait'] = $bigbluebuttonbn->wait;
 $bbbsession['record'] = $bigbluebuttonbn->record;
-if( $bigbluebuttonbn->record )
-    $bbbsession['welcome'] .= '<br><br>'.get_string('bbbrecordwarning', 'bigbluebuttonbn');
+
+//if( $bigbluebuttonbn->record )
+//    $bbbsession['welcome'] .= '<br><br>'.get_string('bbbrecordwarning', 'bigbluebuttonbn');
+
 $bbbsession['tagging'] = $bigbluebuttonbn->tagging;
 
 $bbbsession['openingtime'] = $bigbluebuttonbn->openingtime;
