@@ -174,9 +174,9 @@ class navigation_node implements renderable
             $this->icon = $properties['icon'];
             if ($this->icon instanceof pix_icon) {
                 if (empty($this->icon->attributes['class'])) {
-                    $this->icon->attributes['class'] = 'navicon';
+                    $this->icon->attributes['class'] = 'navicon circle-icon-bhxh';
                 } else {
-                    $this->icon->attributes['class'] .= ' navicon';
+                    $this->icon->attributes['class'] .= ' navicon circle-icon-bhxh';
                 }
             }
             if (array_key_exists('type', $properties)) {

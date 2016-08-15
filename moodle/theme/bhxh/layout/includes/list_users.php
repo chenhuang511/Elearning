@@ -26,6 +26,9 @@ $tableheaders[] = get_string('lastcourseaccess');
 $table = new flexible_table('user-index-participants-' . $COURSE->id);
 $table->define_columns($tablecolumns);
 $table->define_headers($tableheaders);
+$baseurl = new moodle_url('/course/view.php', array(
+    'id' => $COURSE->id));
+$table->define_baseurl($baseurl->out());
 
 $table->sortable(true, 'lastaccess', SORT_DESC);
 
@@ -132,7 +135,8 @@ if ($userlist) {
         $profilelink = '<strong>' . fullname($user) . '</strong>';
 
         $data = array();
-        $data[] = $OUTPUT->user_picture($user, array('size' => 35, 'courseid' => $COURSE->id));
+        var_dump($OUTPUT->user_picture($user, array('size' => 35)));
+        $data[] = $OUTPUT->user_picture($user, array('size' => 35));
         $data[] = $profilelink;
 
         $data[] = $user->city;
