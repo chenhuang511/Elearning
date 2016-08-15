@@ -97,11 +97,11 @@ echo $OUTPUT->doctype() ?>
             <div class="col-sm-12">
                 <div class="tab-course-container container">
                     <ul id="coursetabs" class="nav nav-tabs" role="tablist">
-                        <li role="presentation" class="active">
-                            <a id="coursewaretab" role="tab" data-toggle="tab" aria-controls="tab-content-1" aria-expanded="true" href="#tab-content-1">Tổng quan</a>
-                        </li>
                         <li role="presentation" class="">
-                            <a id="courseinfotab" role="tab" data-toggle="tab" aria-controls="tab-content-2" aria-expanded="false" href="#tab-content-2">Thông tin</a>
+                            <a id="coursewaretab" role="tab" data-toggle="tab" aria-controls="tab-content-1" aria-expanded="false" href="#tab-content-1">Tổng quan</a>
+                        </li>
+                        <li role="presentation" class="active">
+                            <a id="courseinfotab" role="tab" data-toggle="tab" aria-controls="tab-content-2" aria-expanded="true" href="#tab-content-2">Thông tin</a>
                         </li>
                         <li role="presentation" class="">
                             <a id="forumtab" role="tab" data-toggle="tab" aria-controls="tab-content-3" aria-expanded="false" href="#tab-content-3">Diễn đàn</a>
@@ -114,7 +114,7 @@ echo $OUTPUT->doctype() ?>
                         </li>
                     </ul>
                     <div id="courseTabContent" class="tab-content">
-                        <div role="tabpanel" id="tab-content-1" class="tab-pane fade active in" aria-labelledby="coursewaretab-tab">
+                        <div role="tabpanel" id="tab-content-1" class="tab-pane fade" aria-labelledby="coursewaretab-tab">
                             <div class="courseware-block">
                                 <div class="row">
                                     <?php
@@ -196,7 +196,7 @@ echo $OUTPUT->doctype() ?>
                                 </div>
                             </div>
                         </div>
-                        <div role="tabpanel" id="tab-content-2" class="tab-pane fade">
+                        <div role="tabpanel" id="tab-content-2" class="tab-pane fade active in">
                             <?php
                             $courseinfo = get_remote_course_info($COURSE->remoteid);
                             ?>
