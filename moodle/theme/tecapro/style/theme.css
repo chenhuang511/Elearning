@@ -43,7 +43,7 @@ h2.main, #pageheading {
 }
 
 .quizattemptcounts a, .resourceworkaround a, .introattachments-image div a, .box a, .assignment-info-fix a, .lastcol a, .noti-content a {
-    color: #059A54;
+    /*color: #059A54;*/
 }
 
 .submitbtns a {
@@ -51,14 +51,18 @@ h2.main, #pageheading {
 }
 
 .mdl-align a, .row-fluid a, .othernav-mcboy, .endtestlink {
-    color: #337ab7;
+    /*color: #337ab7;*/
 }
 
 /* .cell {
     color: #FF0C0C;
 } */
+.btn-success{
+    color: #ffffff !important;
+}
+
 a {
-    color: #337ab7;
+    /*color: #ffffff;*/
 }
 
 a:hover,
@@ -3097,7 +3101,7 @@ div.backup-section + form,
 }
 
 #coursesearch .searchCourse1 {
-    margin-left: -20px;
+    /*margin-left: -20px;*/
     width: 300px;
     height: 50px;
 
@@ -3677,7 +3681,7 @@ table#permissions tbody tr:hover > th {
 
 .alignment > a {
     text-decoration: none;
-    color: #337ab7;
+    /*color: #337ab7;*/
 }
 
 .alignment > a:hover {

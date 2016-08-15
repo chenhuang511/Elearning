@@ -3098,7 +3098,7 @@ div.backup-section + form,
 }
 
 #coursesearch .searchCourse1 {
-    margin-left: -20px;
+    /*margin-left: -20px;*/
     width: 300px;
     height: 50px;
 
@@ -3204,7 +3204,7 @@ table.flexible thead tr th,
 table.rolecap thead tr th,
 .forumheaderlist thead tr th {
     color: #fff;
-    background: #167ac6;
+    background: #3099d2;
 }
 
 table.flexible thead th img,
@@ -3915,8 +3915,8 @@ form#responseform .im-controls input[type="submit"]:hover, form#responseform .su
 .btn-viewallresponse:focus, .btn-viewallresponse:hover,
 input[type="submit"].stop-reset-form:focus,
 input[type="submit"].stop-reset-form:hover {
-    background-color: #10578e;
-    border-color: #0b4979;
+    background-color: #3099d2;
+    border-color: #3099d2;
 }
 
 #fgroup_id_buttonar .fgroup input[name="cancel"],
