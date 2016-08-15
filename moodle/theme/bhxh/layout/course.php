@@ -186,7 +186,7 @@ echo $OUTPUT->doctype() ?>
                                         </div>
 
                                     </div>
-                                    <div id="<?php echo $regionbsid ?>" class="col-md-9">
+                                    <div id="<?php echo $regionbsid ?>" class="col-md-9 course-content-block">
                                         <?php
                                         echo $OUTPUT->course_content_header();
                                         echo $OUTPUT->main_content();
