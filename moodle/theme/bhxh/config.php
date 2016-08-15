@@ -56,12 +56,12 @@ $THEME->layouts = array(
         'defaultregion' => 'side-pre',
     ),
     'incourse' => array(
-        'file' => 'frontpage.php',
+        'file' => 'course.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-pre',
     ),
     'course' => array(
-        'file' => 'frontpage.php',
+        'file' => 'course.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-pre',
         'options' => array('langmenu' => true),
