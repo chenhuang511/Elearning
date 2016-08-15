@@ -49,7 +49,10 @@ echo $OUTPUT->doctype() ?>
 
 <body <?php echo $OUTPUT->body_attributes(); ?>>
 
-<?php echo $OUTPUT->standard_top_of_body_html() ?>
+<?php
+    echo $OUTPUT->standard_top_of_body_html();
+    $context = context_module::instance($COURSE->id);
+?>
 
 <?php  require_once(dirname(__FILE__) . '/includes/header.php');  ?>
 
@@ -79,7 +82,6 @@ echo $OUTPUT->doctype() ?>
     </header>
     <div id="page-content" class="row">
         <?php
-        $context = context_module::instance($COURSE->id);
         $isstudent = !has_capability('moodle/course:manageactivities', $context);
         if ($isstudent) { ?>
             <?php
@@ -105,13 +107,10 @@ echo $OUTPUT->doctype() ?>
                             <a id="forumtab" role="tab" data-toggle="tab" aria-controls="tab-content-3" aria-expanded="false" href="#tab-content-3">Diễn đàn</a>
                         </li>
                         <li role="presentation" class="">
-                            <a id="wikitab" role="tab" data-toggle="tab" aria-controls="tab-content-4" aria-expanded="false" href="#tab-content-4">Wiki</a>
+                            <a id="wikitab" role="tab" data-toggle="tab" aria-controls="tab-content-4" aria-expanded="false" href="#tab-content-4">Danh sách sinh viên</a>
                         </li>
                         <li role="presentation" class="">
-                            <a id="chattab" role="tab" data-toggle="tab" aria-controls="tab-content-5" aria-expanded="false" href="#tab-content-5">Chat</a>
-                        </li>
-                        <li role="presentation" class="">
-                            <a id="processtab" role="tab" data-toggle="tab" aria-controls="tab-content-6" aria-expanded="false" href="#tab-content-6">Tiến độ học</a>
+                            <a id="chattab" role="tab" data-toggle="tab" aria-controls="tab-content-5" aria-expanded="false" href="#tab-content-5">Huy hiệu</a>
                         </li>
                     </ul>
                     <div id="courseTabContent" class="tab-content">
@@ -226,9 +225,17 @@ echo $OUTPUT->doctype() ?>
                             $renderer->print_single_section_page_student($COURSE, null, null, null, null, 0, false);
                             ?>
                         </div>
-                        <div role="tabpanel" id="tab-content-4" class="tab-pane fade">content</div>
-                        <div role="tabpanel" id="tab-content-5" class="tab-pane fade">content</div>
-                        <div role="tabpanel" id="tab-content-6" class="tab-pane fade">content</div>
+                        <div role="tabpanel" id="tab-content-4" class="tab-pane fade">
+<!--                            list user-->
+                            <?php
+                                include_once ('includes/list_users.php');
+                            ?>
+                        </div>
+                        <div role="tabpanel" id="tab-content-5" class="tab-pane fade">
+                            <?php
+                            include_once ('includes/list_badges.php');
+                            ?>
+                        </div>
                     </div>
                 </div>
             </div>
