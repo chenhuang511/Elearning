@@ -4072,3 +4072,18 @@ form#personsearch input[type="submit"] {
 div#enterlink a{
     color: white;
 }
+
+.sublink-active {
+    font-weight: 700;
+}
+.tab-pane ul.weeks {
+    list-style-type: none;
+    margin-left: 0;
+}
+.student-navigation {
+    padding-left: 0 !important;
+}
+.student-navigation h3.sectionname {
+    text-align: left;
+    margin-top: 0;
+}
