@@ -4090,3 +4090,15 @@ div#enterlink a{
     text-align: left;
     margin-top: 0;
 }
+.tab-content-course {
+    padding: 20px;
+}
+.tab-content-course > h2 {
+    margin-top: 0;
+}
+.menu-link-bhxh a{
+    color: #0a538b;
+}
+.course-content .current {
+    background-color: #fff;
+}

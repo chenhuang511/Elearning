@@ -116,12 +116,12 @@ echo $OUTPUT->doctype() ?>
                     <div id="courseTabContent" class="tab-content">
                         <div role="tabpanel" id="tab-content-1" class="tab-pane fade active in" aria-labelledby="coursewaretab-tab">
                             <div class="courseware-block">
-                                <div class="row">
+                                <div class="section-courseware">
                                     <?php
                                     $course = get_remote_course_content($COURSE->remoteid);
                                     $renderer = $PAGE->get_renderer('format_weeks');
                                     ?>
-                                    <div class="col-sm-3 courseware-menu">
+                                    <div class="col-sm-3 courseware-menu menu-link-bhxh">
                                         <div class="panel-group" id="section-menu" role="tablist" aria-multiselectable="true">
                                             <?php
                                             global $CFG; ?>
@@ -221,20 +221,26 @@ echo $OUTPUT->doctype() ?>
                         </div>
 
                         <div role="tabpanel" id="tab-content-3" class="tab-pane fade">
-                            <?php
-                            $renderer->print_single_section_page_student($COURSE, null, null, null, null, 0, false);
-                            ?>
+                            <div class="courseware-block tab-content-course">
+                                <?php
+                                    $renderer->print_single_section_page_student($COURSE, null, null, null, null, 0, false);
+                                ?>
+                            </div>
                         </div>
                         <div role="tabpanel" id="tab-content-4" class="tab-pane fade">
 <!--                            list user-->
-                            <?php
-                                include_once ('includes/list_users.php');
-                            ?>
+                            <div class="courseware-block tab-content-course">
+                                <?php
+                                    include_once ('includes/list_users.php');
+                                ?>
+                            </div>
                         </div>
                         <div role="tabpanel" id="tab-content-5" class="tab-pane fade">
-                            <?php
-                            include_once ('includes/list_badges.php');
-                            ?>
+                            <div class="courseware-block tab-content-course">
+                                <?php
+                                    include_once ('includes/list_badges.php');
+                                ?>
+                            </div>
                         </div>
                     </div>
                 </div>

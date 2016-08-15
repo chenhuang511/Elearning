@@ -30,8 +30,6 @@ $baseurl = new moodle_url('/course/view.php', array(
     'id' => $COURSE->id));
 $table->define_baseurl($baseurl->out());
 
-$table->sortable(true, 'lastaccess', SORT_DESC);
-
 $table->setup();
 
 list($esql, $params) = get_enrolled_sql($context, null, $currentgroup, true);
@@ -79,8 +77,6 @@ if ($table->get_sql_sort()) {
     $sort = '';
 }
 
-$table->initialbars(true);
-
 // List of users at the current visible page - paging makes it relatively short.
 $userlist = $DB->get_recordset_sql("$select $from $where $sort", $params);
 // If there are multiple Roles in the course, then show a drop down menu for switching.
@@ -99,7 +95,6 @@ $strnever = get_string('never');
 
 $countries = get_string_manager()->get_list_of_countries();
 
-$countrysort = (strpos($sort, 'country') !== false);
 $timeformat = get_string('strftimedate');
 
 if ($userlist) {
@@ -123,11 +118,7 @@ if ($userlist) {
             $country = '';
 
         } else {
-            if ($countrysort) {
-                $country = '(' . $user->country . ') ' . $countries[$user->country];
-            } else {
-                $country = $countries[$user->country];
-            }
+            $country = $countries[$user->country];
         }
 
         $usercontext = context_user::instance($user->id);
