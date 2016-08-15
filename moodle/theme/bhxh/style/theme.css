@@ -217,7 +217,10 @@ a
     font-size: 13px;
     color: #167ac6;
 }
-
+.circle-icon-bhxh {
+    background-color: #187cb2 !important;
+    border-radius: 50% !important;
+}
 .icon-bxh {
     display: inline-block;
     width: 16px;
@@ -227,79 +230,79 @@ a
 }
 
 .icon-bxh.icon-bigbluebuttonbn {
-    background: transparent url([[pix:theme|img-menu/icon-bigbluebutton]]) no-repeat center center;
+    background: transparent url([[pix:bigbluebuttonbn|iconhost]]) no-repeat center center;
 }
 
 .icon-bxh.icon-questionnaire {
-    background: transparent url([[pix:theme|img-menu/icon-questionnaire]]) no-repeat center center;
+    background: transparent url([[pix:questionnaire|iconhost]]) no-repeat center center;
 }
 
 .icon-bxh.icon-scheduler {
-    background: transparent url([[pix:theme|img-menu/icon-scheduler]]) no-repeat center center;
+    background: transparent url([[pix:scheduler|iconhost]]) no-repeat center center;
 }
 
 .icon-bxh.icon-certificate {
-    background: transparent url([[pix:theme|img-menu/icon-certificate]]) no-repeat center center;
+    background: transparent url([[pix:certificate|iconhost]]) no-repeat center center;
 }
 
 .icon-bxh.icon-assign {
-    background: transparent url([[pix:theme|img-menu/icon-assignment]]) no-repeat center center;
+    background: transparent url([[pix:assign|iconhost]]) no-repeat center center;
 }
 
 .icon-bxh.icon-chat {
-    background: transparent url([[pix:theme|img-menu/icon-chat]]) no-repeat center center;
+    background: transparent url([[pix:chat|iconhost]]) no-repeat center center;
 }
 
 .icon-bxh.icon-data {
-    background: transparent url([[pix:theme|img-menu/icon-data]]) no-repeat center center;
+    background: transparent url([[pix:data|iconhost]]) no-repeat center center;
 }
 
 .icon-bxh.icon-forum {
-    background: transparent url([[pix:theme|img-menu/icon-forum]]) no-repeat center center;
+    background: transparent url([[pix:forum|iconhost]]) no-repeat center center;
 }
 
 .icon-bxh.icon-glossary {
-    background: transparent url([[pix:theme|img-menu/icon-glossary]]) no-repeat center center;
+    background: transparent url([[pix:glossary|iconhost]]) no-repeat center center;
 }
 
 .icon-bxh.icon-page {
-    background: transparent url([[pix:theme|img-menu/icon-page]]) no-repeat center center;
+    background: transparent url([[pix:page|iconhost]]) no-repeat center center;
 }
 
 .icon-bxh.icon-quiz {
-    background: transparent url([[pix:theme|img-menu/icon-quiz]]) no-repeat center center;
+    background: transparent url([[pix:quiz|iconhost]]) no-repeat center center;
 }
 
 .icon-bxh.icon-resource {
-    background: transparent url([[pix:theme|img-menu/icon-resource]]) no-repeat center center;
+    background: transparent url([[pix:resource|iconhost]]) no-repeat center center;
 }
 
 .icon-bxh.icon-lesson {
-    background: transparent url([[pix:theme|img-menu/icon-lesson]]) no-repeat center center;
+    background: transparent url([[pix:lesson|iconhost]]) no-repeat center center;
 }
 
 .icon-bxh.icon-choice {
-    background: transparent url([[pix:theme|img-menu/icon-choice]]) no-repeat center center;
+    background: transparent url([[pix:choice|iconhost]]) no-repeat center center;
 }
 
 .icon-bxh.icon-scorm {
-    background: transparent url([[pix:theme|img-menu/icon-scorm]]) no-repeat center center;
+    background: transparent url([[pix:scorm|iconhost]]) no-repeat center center;
 }
 
 .icon-bxh.icon-survey {
-    background: transparent url([[pix:theme|img-menu/icon-survey]]) no-repeat center center;
+    background: transparent url([[pix:survey|iconhost]]) no-repeat center center;
 }
 
 .icon-bxh.icon-workshop {
-    background: transparent url([[pix:theme|img-menu/icon-workshop]]) no-repeat center center;
+    background: transparent url([[pix:workshop|iconhost]]) no-repeat center center;
 }
 
 .icon-bxh.icon-feedback {
-    background: transparent url([[pix:theme|img-menu/icon-feedback]]) no-repeat center center;
+    background: transparent url([[pix:feedback|iconhost]]) no-repeat center center;
 }
 
 .icon-bxh.icon-url {
-    background: transparent url([[pix:theme|img-menu/icon-url]]) no-repeat center center;
+    background: transparent url([[pix:url|iconhost]]) no-repeat center center;
 }
 
 #header {

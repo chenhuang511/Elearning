@@ -173,7 +173,7 @@ echo $OUTPUT->doctype() ?>
                                                                            href="<?php echo $CFG->wwwroot . '/mod/' . $module->modname . '/remote/view.php?id=' . $module->id; ?>"
                                                                         >
                                         <span
-                                            class="icon-bxh icon-<?php echo $module->modname; ?>"></span><?php echo $module->name; ?>
+                                            class="circle-icon-bhxh icon-bxh icon-<?php echo $module->modname; ?>"></span><?php echo $module->name; ?>
                                                                         </a>
                                                                     <?php } ?>
                                                                     <?php

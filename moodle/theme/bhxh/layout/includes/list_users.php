@@ -129,11 +129,7 @@ if ($userlist) {
 
         $usercontext = context_user::instance($user->id);
 
-        if ($piclink = ($USER->id == $user->id || has_capability('moodle/user:viewdetails', $context) || has_capability('moodle/user:viewdetails', $usercontext))) {
-            $profilelink = '<strong><a href="' . $CFG->wwwroot . '/user/view.php?id=' . $user->id . '&amp;course=' . $COURSE->id . '">' . fullname($user) . '</a></strong>';
-        } else {
-            $profilelink = '<strong>' . fullname($user) . '</strong>';
-        }
+        $profilelink = '<strong>' . fullname($user) . '</strong>';
 
         $data = array();
         $data[] = $OUTPUT->user_picture($user, array('size' => 35, 'courseid' => $COURSE->id));
