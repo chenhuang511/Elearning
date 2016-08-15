@@ -2387,6 +2387,7 @@ div.backup-section + form,
 .block_navigation .block_tree .type_activity > p.tree_item.active_tree_node img,
 .block_navigation .block_tree li > p.hasicon img,
 .block_settings .block_tree li.item_with_icon > p img {
+    background-color: initial;
     top: 5px;
 }
 
