@@ -298,7 +298,12 @@ $displaysection = $section;
 if (!is_remote_course($course)) {
     $course->format = 'weeks'; // hardcode for admin view
 }
-
+// set selection default for student
+$context = context_module::instance($COURSE->id);
+$isstudent = !has_capability('moodle/course:manageactivities', $context);
+if($isstudent){
+    $section = optional_param('section', 1, PARAM_INT);
+}
 // Include the actual course format.
 require($CFG->dirroot . '/course/format/' . $course->format . '/format.php');
 // Content wrapper end.
