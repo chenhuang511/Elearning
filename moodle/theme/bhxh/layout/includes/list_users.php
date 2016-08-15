@@ -135,7 +135,6 @@ if ($userlist) {
         $profilelink = '<strong>' . fullname($user) . '</strong>';
 
         $data = array();
-        var_dump($OUTPUT->user_picture($user, array('size' => 35)));
         $data[] = $OUTPUT->user_picture($user, array('size' => 35));
         $data[] = $profilelink;
 
