@@ -4071,3 +4071,17 @@ table.flexible > thead > tr > th:last-child {
 form#personsearch input[type="submit"] {
     padding: 6px 11px;
 }
+.sublink-active {
+    font-weight: 700;
+}
+.tab-pane ul.weeks {
+    list-style-type: none;
+    margin-left: 0;
+}
+.student-navigation {
+    padding-left: 0 !important;
+}
+.student-navigation h3.sectionname {
+    text-align: left;
+    margin-top: 0;
+}
