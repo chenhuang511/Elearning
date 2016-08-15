@@ -95,7 +95,7 @@ echo $OUTPUT->doctype() ?>
             }
             ?>
             <div class="col-sm-12">
-                <div class="tab-course-container container">
+                <div class="student-content-bhxh tab-course-container container">
                     <ul id="coursetabs" class="nav nav-tabs" role="tablist">
                         <li role="presentation" class="active">
                             <a id="coursewaretab" role="tab" data-toggle="tab" aria-controls="tab-content-1" aria-expanded="true" href="#tab-content-1">Tổng quan</a>
@@ -148,7 +148,7 @@ echo $OUTPUT->doctype() ?>
                                                                      <?php
                                                                     echo $section->id == $keyparentnode || $key == $keyparentnode ? 'fa-caret-down' : 'fa-caret-right';
                                                                     ?>
-                                                                     icon" aria-hidden="true"></i></a><a href="<?php echo $CFG->wwwroot.'/course/view.php?id=' . $COURSE->id . '&section='. $key ?>">&nbsp;<?php echo $section->name ?> </a>
+                                                                     icon" aria-hidden="true"></i></a><a href="<?php echo $CFG->wwwroot.'/course/view.php?id=' . $COURSE->id . '&section='. $key ?>&nonajax=1">&nbsp;<?php echo $section->name ?> </a>
                                                             </h4>
                                                         </div>
                                                         <div id="<?php echo $collapse ?>" class="panel-collapse collapse
@@ -170,7 +170,7 @@ echo $OUTPUT->doctype() ?>
                                                                         }
                                                                         ?>
                                                                             "
-                                                                           href="<?php echo $CFG->wwwroot . '/mod/' . $module->modname . '/remote/view.php?id=' . $module->id; ?>"
+                                                                           href="<?php echo $CFG->wwwroot . '/mod/' . $module->modname . '/remote/view.php?id=' . $module->id . '&nonajax=1'; ?>"
                                                                         >
                                         <span
                                             class="circle-icon-bhxh icon-bxh icon-<?php echo $module->modname; ?>"></span><?php echo $module->name; ?>

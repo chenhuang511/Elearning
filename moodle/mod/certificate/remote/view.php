@@ -142,7 +142,7 @@ if (empty($action)) { // Not displaying PDF
     echo html_writer::tag('div', $OUTPUT->render($button));
      // echo html_writer::tag('div', $OUTPUT->render($button), array('style' => 'text-align:center'));
     if($CFG->nonajax == true){
-        echo $OUTPUT->footer($course);
+        echo $OUTPUT->footer();
     }
     exit;
 } else { // Output to pdf
