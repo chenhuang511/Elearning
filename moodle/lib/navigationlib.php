@@ -172,11 +172,14 @@ class navigation_node implements renderable
                 $properties['icon'] = new pix_icon('i/navigationitem', '');
             }
             $this->icon = $properties['icon'];
+            if (!isset($properties['type']) || $properties['type'] !=  self::TYPE_SETTING){
+                $this->icon->attributes['class'] .= ' circle-icon-bhxh';
+            }
             if ($this->icon instanceof pix_icon) {
                 if (empty($this->icon->attributes['class'])) {
-                    $this->icon->attributes['class'] = 'navicon circle-icon-bhxh';
+                    $this->icon->attributes['class'] = 'navicon';
                 } else {
-                    $this->icon->attributes['class'] .= ' navicon circle-icon-bhxh';
+                    $this->icon->attributes['class'] .= ' navicon';
                 }
             }
             if (array_key_exists('type', $properties)) {
