@@ -3524,8 +3524,10 @@ EOD;
                 $attributes['class'] = 'dimmed_text';
             }
             $content = html_writer::tag('span', $content, array('itemprop' => 'title'));
-            $content = html_writer::link($item->action, $content, $attributes);
-
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HUB && $item->type != navigation_node::TYPE_CATEGORY){
+                $content = html_writer::link($item->action, $content, $attributes);
+            }
+            
             $attributes = array();
             $attributes['itemscope'] = '';
             $attributes['itemtype'] = 'http://data-vocabulary.org/Breadcrumb';
