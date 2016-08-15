@@ -3446,7 +3446,7 @@ class admin_setting_configtime extends admin_setting
             $return .= '<option value="' . $i . '"' . ($i == $data['h'] ? ' selected="selected"' : '') . '>' . $i . '</option>';
         }
         $return .= '</select>';
-        $return .= '<span class="col-md-1">:</span>';
+        $return .= '<span class="col-md-1" style="text-align: center">:</span>';
         $return .= '<label class="accesshide" for="' . $this->get_id() . 'm">' . get_string('minutes') . '</label>';
         $return .= '<select class="col-md-4" id="' . $this->get_id() . 'm" name="' . $this->get_full_name() . '[m]">';
         for ($i = 0; $i < 60; $i += 5) {
