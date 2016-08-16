@@ -157,6 +157,8 @@ if ($attemptobj->is_last_page($page)) {
     $nextpage = $page + 1;
 }
 // check student
+context_helper::preload_course($COURSE->id);
+$context = context_course::instance($COURSE->id, MUST_EXIST);
 $isstudent = !has_capability('moodle/course:manageactivities', $context);
 $extendcontent = '';
 if($isstudent){
