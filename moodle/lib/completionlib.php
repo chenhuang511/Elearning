@@ -489,6 +489,26 @@ class completion_info {
     }
 
     /**
+     * Fetch all setting from hub
+     */
+    public function fetch_setting_from_hub() {
+        global $DB;
+
+        $data_comp_crit = array();
+        $data_comp_aggr_methd = array();
+
+        $data_comp_crit = get_remote_completion_fetch_all_helper('course_completion_criteria', $this->course_id);
+        $data_comp_aggr_methd = get_remote_completion_fetch_all_helper('course_completion_aggr_methd', $this->course_id);
+
+        if ($data_comp_crit){
+            $DB->insert_records('course_completion_criteria', $data_comp_crit);
+        }
+        if ($data_comp_aggr_methd){
+            $DB->insert_records('course_completion_aggr_methd', $data_comp_aggr_methd);
+        }
+    }
+
+    /**
      * Has the supplied user completed this course
      *
      * @param int $user_id User's id
