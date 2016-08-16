@@ -1000,7 +1000,7 @@ function get_array_of_activities($course) {
     global $CFG, $DB;
 
     if (MOODLE_RUN_MODE == MOODLE_MODE_HUB) {
-        if (!isset($course->remoteid) || $course->remoteid == null) {
+        if (!isset($course->remoteid) || $course->remoteid == null || $course->id === SITEID) {
             $id = $course->id;
             $useid = true;
         } else {
