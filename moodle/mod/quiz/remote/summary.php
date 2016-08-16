@@ -125,7 +125,7 @@ $PAGE->set_heading($attemptobj->get_course()->fullname);
 // Display the page.
 echo $output->summary_page($attemptobj, $displayoptions, $summaryremote);
 
-// Trigger the attempt summary viewed event.
-get_remote_quiz_view_attempt_summary($attemptid);
+// Log this page view.
+$attemptobj->fire_attempt_summary_viewed_event();
 
 

@@ -65,8 +65,6 @@ $accessmanager = new quiz_access_manager($quizobj, $timenow,
 $quiz = $quizobj->get_quiz();
 
 // Trigger course_module_viewed event and completion.
-//get_remote_quiz_view_quiz($quiz->id);
-// Trigger course_module_viewed event and completion.
 quiz_view($quiz, $course, $cm, $context);
 
 // Initialize $PAGE, compute blocks.
@@ -106,8 +104,6 @@ if($quiz->settinglocal){
     }
 }
 if(!empty($unfinishedattempt)){
-//    $attempts[] = $unfinishedattempt;
-
     // If the attempt is now overdue, deal with that - and pass isonline = false.
     // We want the student notified in this case.
     $unfinishedattempt = remote_handle_if_time_expired($quiz->id, $unfinishedattempt->id, false, $setting);
@@ -142,7 +138,6 @@ if (!$canpreview) {
 $mygradeoverridden = false;
 $gradebookfeedback = '';
 
-//@TODO: handle here.
 $grading_info = grade_get_grades($course->id, 'mod', 'quiz', $quiz->id, $USER->id);
 if (!empty($grading_info->items)) {
     $item = $grading_info->items[0];

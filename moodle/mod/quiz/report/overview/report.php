@@ -47,7 +47,7 @@ class quiz_overview_report extends quiz_attempts_report {
         $isremote = (MOODLE_RUN_MODE == MOODLE_MODE_HUB)?true:false;
         $options = new quiz_overview_options('overview', $quiz, $cm, $course);
 
-        if ($fromform = $this->form->get_data()) { //TODO : waitting test...
+        if ($fromform = $this->form->get_data()) {
             $options->process_settings_from_form($fromform);
 
         } else {
@@ -65,11 +65,7 @@ class quiz_overview_report extends quiz_attempts_report {
 
         // Load the required questions.
         if($isremote){
-            $r_questions = get_remote_significant_questions($quiz->id);
-            $questions = array();
-            foreach ($r_questions as $key => $value){
-                $questions[$value->slot] = $value;
-            }
+            $questions = get_remote_significant_questions($quiz->id);
         }else{
             $questions = quiz_report_get_significant_questions($quiz);
         }
@@ -160,7 +156,6 @@ class quiz_overview_report extends quiz_attempts_report {
             if (!$table->is_downloading()) {
                 // Output the regrade buttons.
                 if (has_capability('mod/quiz:regrade', $this->context)) {
-                    // @TODO: not handle here(dont handle and test with group...)
                     $regradesneeded = $this->count_question_attempts_needing_regrade(
                             $quiz, $groupstudents);
                     if ($currentgroup) {
