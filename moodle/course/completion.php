@@ -76,6 +76,15 @@ if ($form->is_cancelled()){
 } else if ($data = $form->get_data()) {
     $completion = new completion_info($course);
 
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        if (!empty($data->fetchsettingcompletion)) {
+            $completion->clear_criteria();
+            $completion->fetch_setting_from_hub();
+
+            redirect($PAGE->url);
+        }
+    }
+
     // Process criteria unlocking if requested.
     if (!empty($data->settingsunlock)) {
         $completion->delete_course_completion_data();

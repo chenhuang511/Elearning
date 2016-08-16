@@ -276,6 +276,11 @@ class course_completion_form extends moodleform {
             $mform->addElement('static', 'noroles', '', get_string('err_noroles', 'completion'));
         }
 
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $mform->addElement('header', 'completionhubheader', 'Synchronization Hub');
+            $mform->addElement('submit', 'fetchsettingcompletion', 'Fetch setting course completion on hub');
+        }
+
         // Add common action buttons.
         $this->add_action_buttons();
 
