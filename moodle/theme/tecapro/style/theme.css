@@ -2367,6 +2367,14 @@ div.backup-section + form,
     padding-top: 18px;
 }
 
+.userselector div label{
+    display: inline !important;
+}
+
+#userselector_options p{
+    padding-top: 10px;
+}
+
 .block .content {
     padding: 10px 18px;
 }
