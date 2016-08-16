@@ -131,6 +131,9 @@ function quiz_update_instance($quiz, $mform) {
     // Update the database.
     $quiz->id = $oldquiz->id;
 
+    if (!$quiz->completionpass) {
+        $quiz->completionattemptsexhausted = 0;
+    }
     $DB->update_record('quiz', $quiz);
 
     // Do the processing required after an add or an update.
