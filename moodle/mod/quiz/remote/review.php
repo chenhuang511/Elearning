@@ -250,7 +250,14 @@ $output = $PAGE->get_renderer('mod_quiz');
 $navbc = $attemptobj->get_navigation_panel($output, 'quiz_review_nav_panel', $page, $showall, $reviewobj);
 $regions = $PAGE->blocks->get_regions();
 $PAGE->blocks->add_fake_block($navbc, reset($regions));
-echo $output->review_page($attemptobj, $slots, $page, $showall, $lastpage, $options, $summarydata,$reviewobj);
+// check student
+$isstudent = !has_capability('moodle/course:manageactivities', $context);
+$extendcontent = '';
+if($isstudent){
+    $extendcontent = '<div class="student-extend-box">' . $navbc->content . '</div>';
+}
+
+echo $output->review_page($attemptobj, $slots, $page, $showall, $lastpage, $options, $summarydata,$reviewobj, $extendcontent);
 
 // Trigger an event for this review.
 get_remote_view_attempt_review($attempt->id);
