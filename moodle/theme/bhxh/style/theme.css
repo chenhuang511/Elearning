@@ -108,6 +108,39 @@ a:focus {
     width: auto;
 }
 
+.reporttable .selectitems .singleselect{
+    padding-bottom: 10px !important;
+}
+
+.profileeditor .singleselect{
+    display: inline-block;
+    padding-right: 10px;
+}
+
+.profileeditor .singlebutton{
+    display: inline-block;
+    padding: 10px;
+}
+
+form#searchcohortquery label{
+    margin-left: 0;
+    padding-right: 10px;
+}
+
+form#searchcohortquery{
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.noti-content-main ul.nav-tabs{
+    margin: 0;
+}
+
+.userselector select{
+    overflow: scroll !important;
+    max-width: 400px !important;
+}
+
 /***********/
 
 .userprofile .el-category:nth-child(3n) {
