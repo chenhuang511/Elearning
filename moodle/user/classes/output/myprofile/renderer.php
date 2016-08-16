@@ -41,7 +41,7 @@ class renderer extends \plugin_renderer_base {
      * @return string
      */
     public function render_tree(tree $tree) {
-        $return = \html_writer::start_tag('div', array('class' => 'profile_tree container'));
+        $return = \html_writer::start_tag('div', array('class' => 'profile_tree equal-div'));
         $categories = $tree->categories;
         foreach ($categories as $category) {
             $return .= $this->render($category);
