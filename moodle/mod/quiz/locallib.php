@@ -2160,14 +2160,16 @@ function quiz_add_random_questions($quiz, $addonpage, $categoryid, $number,
  */
 function quiz_view($quiz, $course, $cm, $context) {
 
-    $params = array(
-        'objectid' => $quiz->id,
-        'context' => $context
-    );
+    if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        $params = array(
+            'objectid' => $quiz->id,
+            'context' => $context
+        );
 
-    $event = \mod_quiz\event\course_module_viewed::create($params);
-    $event->add_record_snapshot('quiz', $quiz);
-    $event->trigger();
+        $event = \mod_quiz\event\course_module_viewed::create($params);
+        $event->add_record_snapshot('quiz', $quiz);
+        $event->trigger();
+    }
 
     // Completion.
     $completion = new completion_info($course);

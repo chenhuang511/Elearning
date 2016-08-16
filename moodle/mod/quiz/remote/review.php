@@ -260,4 +260,4 @@ if($isstudent){
 echo $output->review_page($attemptobj, $slots, $page, $showall, $lastpage, $options, $summarydata,$reviewobj, $extendcontent);
 
 // Trigger an event for this review.
-get_remote_view_attempt_review($attempt->id);
+$attemptobj->fire_attempt_reviewed_event();

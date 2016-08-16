@@ -58,10 +58,15 @@ function get_remote_quiz_by_id($id) {
                 attempts,
                 grademethod,
                 timecreated,
-                timemodified';
+                timemodified,
+                completionpass,
+                completionattemptsexhausted';
     $local_quiz_data = $DB->get_record('quiz', array('remoteid' => $res->id), $fields);
     if(empty($local_quiz_data)){ // check data quiz in local db
         $res->remoteid = $res->id;
+        //not get completion setting from hub
+        $res->completionpass = 0;
+        $res->completionattemptsexhausted = 0;
         $res->settinglocal = false;
     } else {
         foreach ($local_quiz_data as $key => $value){

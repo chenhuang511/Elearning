@@ -113,7 +113,18 @@ $line->y_format['allusers'] = array(
     'shadow_offset' => 1,
     'legend' => get_string('allparticipants')
 );
-$line->y_data['allusers'] = quiz_report_grade_bands($bandwidth, $bands, $quizid, $groupusers);
+
+if($isremote){
+    $users = get_users_by_capability($modcontext,
+        array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), '', '', '', '',
+        $currentgroup, '', false);
+    // list userids (mapping hub) in this course.
+    $usermaps = array();
+    foreach ($users as $user){
+        $usermaps[] = get_remote_mapping_user($user->id)[0]->id;
+    }
+}
+$line->y_data['allusers'] = quiz_report_grade_bands($bandwidth, $bands, $quizid, $groupusers, $usermaps);
 
 $line->y_order = array('allusers');
 
