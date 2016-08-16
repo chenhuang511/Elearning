@@ -172,7 +172,7 @@ class navigation_node implements renderable
                 $properties['icon'] = new pix_icon('i/navigationitem', '');
             }
             $this->icon = $properties['icon'];
-            if (!isset($properties['type']) || $properties['type'] !=  self::TYPE_SETTING){
+            if (!isset($properties['type']) || $properties['type'] ==  self::TYPE_ACTIVITY){
                 $this->icon->attributes['class'] .= ' circle-icon-bhxh';
             }
             if ($this->icon instanceof pix_icon) {
