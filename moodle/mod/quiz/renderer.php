@@ -48,7 +48,7 @@ class mod_quiz_renderer extends plugin_renderer_base
      */
     public function review_page(quiz_attempt $attemptobj, $slots, $page, $showall,
                                 $lastpage, mod_quiz_display_options $displayoptions,
-                                $summarydata, $reviewobj = null)
+                                $summarydata, $reviewobj = null, $extendcontent = '')
     {
         global $CFG;
 
@@ -56,7 +56,14 @@ class mod_quiz_renderer extends plugin_renderer_base
         if ($CFG->nonajax == true) {
             $output .= $this->header();
         }
+
+        $output .= '<div class="student-top-quiz clearfix">';
+
+        $output .= $extendcontent;
+
         $output .= $this->review_summary_table($summarydata, $page);
+        $output .= '</div>';
+
         $output .= $this->review_form($page, $showall, $displayoptions,
             $this->questions($attemptobj, true, $slots, $page, $showall, $displayoptions, $reviewobj),
             $attemptobj);
@@ -482,7 +489,7 @@ class mod_quiz_renderer extends plugin_renderer_base
      * @param int $nextpage The number of the next page
      */
     public function attempt_page($attemptobj, $page, $accessmanager, $messages, $slots, $id,
-                                 $nextpage, $attemptremote = null)
+                                 $nextpage, $attemptremote = null, $extendcontent = '')
     {
         global $CFG;
 
@@ -490,6 +497,8 @@ class mod_quiz_renderer extends plugin_renderer_base
         if ($CFG->nonajax == true) {
             $output .= $this->header();
         }
+        //custom box
+        $output .= $extendcontent;
         $output .= $this->quiz_notices($messages);
         $output .= $this->attempt_form($attemptobj, $page, $slots, $id, $nextpage, $attemptremote);
         if ($CFG->nonajax == true) {

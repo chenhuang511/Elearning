@@ -159,5 +159,12 @@ if ($attemptobj->is_last_page($page)) {
 } else {
     $nextpage = $page + 1;
 }
+// check student
+$isstudent = !has_capability('moodle/course:manageactivities', $context);
+$extendcontent = '';
+if($isstudent){
+    $extendcontent = '<div class="student-top-quiz clearfix">';
+    $extendcontent .= '<div class="student-extend-box">' . $navbc->content . '</div></div>';
+}
 
-echo $output->attempt_page($attemptobj, $page, $accessmanager, $messages, $slots, $id, $nextpage, $attemptremote);
+echo $output->attempt_page($attemptobj, $page, $accessmanager, $messages, $slots, $id, $nextpage, $attemptremote, $extendcontent);
