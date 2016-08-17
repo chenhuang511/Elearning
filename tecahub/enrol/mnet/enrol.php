@@ -69,6 +69,7 @@ class enrol_mnet_mnetservice_enrol {
                        c.sortorder, c.startdate, cat.id AS cat_id, cat.name AS cat_name,
                        cat.description AS cat_description, cat.descriptionformat AS cat_descriptionformat,
                        e.cost, e.currency, e.roleid AS defaultroleid, r.name AS defaultrolename,
+                       c.showgrades,
                        e.customint1
                   FROM {enrol} e
             INNER JOIN {course} c ON c.id = e.courseid
