@@ -90,7 +90,7 @@ class core_remote_renderer extends plugin_renderer_base
         $mylearningplan = '';
 
         foreach ($courses as $course) {
-            $course->completion = get_remote_course_completion($course->remoteid, $hubuserid);
+            $course->completion = get_remote_course_completion($course, $hubuserid);
 
             $classes = 'coursebox clearfix';
 
@@ -273,8 +273,10 @@ class core_remote_renderer extends plugin_renderer_base
         $coursename = $course->fullname;
         $coursenamelink = html_writer::link($this->get_view_course_url($course),
             $coursename, array('class' => $course->visible ? '' : 'dimmed'));
-        $progress = html_writer::span($course->completion . '%', 'badge el-badge');
-        $html .= html_writer::tag('h3', $coursenamelink . $progress);
+        if (isset($course->enablecompletion) && $course->enablecompletion != 0) {
+            $progress = html_writer::span($course->completion . '%', 'badge el-badge');
+            $html .= html_writer::tag('h3', $coursenamelink . $progress);
+        }
 
         $html .= html_writer::end_tag('header'); // end header
 

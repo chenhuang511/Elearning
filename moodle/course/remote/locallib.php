@@ -389,14 +389,22 @@ function update_remote_course_modules_completion($cmc)
  * @param int $userid     - The id of user
  * @return mixed $result  - The information of course completion
  */
-function get_remote_course_completion($courseid, $userid)
+function get_remote_course_completion($course, $userid)
 {
+    global $DB;
+    $sql = "SELECT COUNT(*) FROM  {course_modules}
+                WHERE course = :courseid AND completion <> 0";
+
+    $params = array('courseid' => $course->id);
+
+    $totalmoduletracking = $DB->count_records_sql($sql, $params);
+
     $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_get_course_completion',
-            'params' => array('courseid' => $courseid, 'userid' => $userid),
+            'params' => array('courseid' => $course->remoteid, 'userid' => $userid, 'totalmoduletracking' => $totalmoduletracking),
         ), false
     );
 
