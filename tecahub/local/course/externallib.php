@@ -1251,42 +1251,41 @@ class local_course_external extends external_api
         return new external_function_parameters(
             array(
                 'courseid' => new external_value(PARAM_INT, ' the id of course'),
-                'userid' => new external_value(PARAM_INT, ' the id of course')
+                'userid' => new external_value(PARAM_INT, ' the id of course'),
+                'totalmoduletracking' => new external_value(PARAM_INT, 'the total count of couse module is tracking')
             )
         );
     }
 
-    public static function get_course_completion($courseid, $userid)
+    public static function get_course_completion($courseid, $userid, $totalmoduletracking)
     {
         global $DB;
         $warnings = array();
 
         $params = self::validate_parameters(self::get_course_completion_parameters(), array(
             'courseid' => $courseid,
-            'userid' => $userid
+            'userid' => $userid,
+            'totalmoduletracking' => $totalmoduletracking
         ));
 
         $result = array();
-
-        $sql = "SELECT COUNT(*) FROM {course_modules_completion} cmc
-                LEFT JOIN {course_modules} cm
-                ON cmc.coursemoduleid = cm.id
-                WHERE cm.course = :courseid AND cmc.userid = :userid";
 
         $arr = array();
         $arr['courseid'] = $params['courseid'];
         $arr['userid'] = $params['userid'];
 
-        $totalcount = $DB->count_records_sql($sql, $arr);
 
-        $completion = $totalcount;
+        $completion = $params['totalmoduletracking'];
 
         if ($completion > 0) {
-            $sql .= " AND completionstate = 1";
+            $sql = "SELECT COUNT(*) FROM {course_modules_completion} cmc
+                LEFT JOIN {course_modules} cm
+                ON cmc.coursemoduleid = cm.id
+                WHERE cm.course = :courseid AND cmc.userid = :userid AND cm.completion <> 0 AND cmc.completionstate <> 0";
             $completioncount = $DB->count_records_sql($sql, $arr);
 
             if ($completioncount > 0) {
-                $completion = ($completioncount * 100) / $totalcount;
+                $completion = ($completioncount * 100) / $totalmoduletracking;
             }
         }
 
