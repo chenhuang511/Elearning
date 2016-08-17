@@ -12,3 +12,5 @@ moodle/config.php
 **/node_modules/*
 .vs/Elearning/v14/.suo
 Elearning.phpproj
+/mahara/config.php
+/mahara/.idea/*
