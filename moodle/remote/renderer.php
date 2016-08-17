@@ -90,7 +90,7 @@ class core_remote_renderer extends plugin_renderer_base
         $mylearningplan = '';
 
         foreach ($courses as $course) {
-            $course->completion = get_remote_course_completion($course->remoteid, $hubuserid);
+            $course->completion = get_remote_course_completion($course, $hubuserid);
 
             $classes = 'coursebox clearfix';
 
