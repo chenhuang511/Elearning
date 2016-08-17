@@ -141,6 +141,27 @@ form#searchcohortquery{
     max-width: 400px !important;
 }
 
+form p#chooseusersubmit{
+    margin: 0;
+    padding-top: 10px;
+}
+
+div#capabilitysearchui{
+    padding-bottom: 10px;
+}
+
+select#id_capability{
+    overflow: scroll;
+    min-width: 400px;
+}
+
+.capabilitysearchui label{
+    padding-right: 10px;
+}
+
+.mod_quiz-next-nav{
+    font-weight: bold;
+}
 /***********/
 
 .userprofile .el-category:nth-child(3n) {
@@ -2116,6 +2137,7 @@ li:last-child a {
 }
 
 label {
+    padding-right: 10px;
     padding-top: 10px;
     margin-left: 10px;
 }
@@ -4190,4 +4212,8 @@ div#enterlink a{
 .student-content-bhxh .student-extend-box {
     float: left;
     margin-right: 2em;
+}
+.student-content-bhxh .profile_tree {
+    width: auto;
+    padding: 0;
 }

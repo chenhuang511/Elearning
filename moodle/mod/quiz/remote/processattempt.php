@@ -128,6 +128,12 @@ if($quiz->settinglocal){
 $status = get_mod_quiz_process_attempt($attemptid, $data, $finishattempt, $timeup, $setting);
 $status = $status->state;
 
+// update completion state if done this attempt
+if(($status == quiz_attempt::FINISHED) || ($status == quiz_attempt::ABANDONED)){
+    $completion = new completion_info($course);
+    $completion->update_state($cm);
+}
+
 if ($status == quiz_attempt::OVERDUE) {
     redirect($attemptobj->summary_url());
 } else if ($status == quiz_attempt::IN_PROGRESS) {
