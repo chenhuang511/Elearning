@@ -108,6 +108,39 @@ a:focus {
     width: auto;
 }
 
+.reporttable .selectitems .singleselect{
+    padding-bottom: 10px !important;
+}
+
+.profileeditor .singleselect{
+    display: inline-block;
+    padding-right: 10px;
+}
+
+.profileeditor .singlebutton{
+    display: inline-block;
+    padding: 10px;
+}
+
+form#searchcohortquery label{
+    margin-left: 0;
+    padding-right: 10px;
+}
+
+form#searchcohortquery{
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.noti-content-main ul.nav-tabs{
+    margin: 0;
+}
+
+.userselector select{
+    overflow: scroll !important;
+    max-width: 400px !important;
+}
+
 /***********/
 
 .userprofile .el-category:nth-child(3n) {
@@ -4122,9 +4155,16 @@ div#enterlink a{
 .course-content .current {
     background-color: #fff;
 }
+
+.student-content-bhxh #quiz-timer {
+    text-align: center;
+}
 .student-content-bhxh .noti-content-main {
     margin-bottom: 1em;
     margin-top: 1em;
+}
+.student-content-bhxh .student-extend-box .othernav #quiz-timer {
+    text-align: left;
 }
 .student-content-bhxh .student-extend-box .othernav #quiz-timer, .student-content-bhxh .student-extend-box .othernav {
     margin-bottom: 0;
@@ -4134,6 +4174,9 @@ div#enterlink a{
     display: inline-block;
     color: #fff;
     margin-top: 0;
+}
+.student-extend-box #user-picture > a {
+    margin-right: 5px;
 }
 .student-content-bhxh .student-top-quiz {
     clear: both;
@@ -4147,4 +4190,8 @@ div#enterlink a{
 .student-content-bhxh .student-extend-box {
     float: left;
     margin-right: 2em;
+}
+.student-content-bhxh .profile_tree {
+    width: auto;
+    padding: 0;
 }

@@ -110,7 +110,11 @@ class completion_criteria_activity extends completion_criteria {
 
         if (!is_array($types)) {
             global $DB;
-            $types = $DB->get_records('modules');
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $types = $DB->get_records('modules');
+            } else {
+                $types = get_remote_modules();
+            }
         }
 
         return $types[$type]->name;
