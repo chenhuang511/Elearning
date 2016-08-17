@@ -4195,3 +4195,7 @@ div#enterlink a{
     width: auto;
     padding: 0;
 }
+.modtype_resource .mod-indent-outer {
+    display: block;
+    width: 50%;
+}
