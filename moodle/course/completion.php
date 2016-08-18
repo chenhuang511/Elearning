@@ -81,6 +81,7 @@ if ($form->is_cancelled()){
             $completion->clear_criteria();
             $completion->fetch_setting_from_hub();
 
+            // Return to form
             redirect($PAGE->url);
         }
     }

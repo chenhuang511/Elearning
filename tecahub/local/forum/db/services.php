@@ -290,4 +290,12 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_delete_mdl_forum_select' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'delete_mdl_forum_select',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'Delete forum object',
+        'type' => 'read',
+        'ajax' => true
+    ),
 );

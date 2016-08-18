@@ -1253,6 +1253,55 @@ class local_mod_forum_external extends external_api
         );
     }
 
+    public static function delete_mdl_forum_select_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'modname' => new external_value(PARAM_RAW, 'the mod name'),
+                'select' => new external_value(PARAM_RAW, 'the select'),
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                )
+            )
+        );
+    }
+
+    public static function delete_mdl_forum_select($modname, $select, $parameters)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::delete_mdl_forum_select_parameters(), array(
+            'modname' => $modname,
+            'select' => $select,
+            'parameters' => $parameters
+        ));
+
+        $result = array();
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $transaction = $DB->start_delegated_transaction();
+        $result['status'] = $DB->delete_records_select($params['modname'], $params['select'], $arr);
+        $transaction->allow_commit();
+
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function delete_mdl_forum_select_returns()
+    {
+        return self::delete_mdl_forum_returns();
+    }
+
     public static function save_mdl_forum_parameters()
     {
         return new external_function_parameters(
