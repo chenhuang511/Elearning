@@ -65,8 +65,10 @@ class core_remote_renderer extends plugin_renderer_base
         }
 
         $coursecompletionids = get_remote_list_course_completion($hubuserid);
+        $countcompletion = 0;
 
         if (!$coursecompletionids) {
+            $countcompletion = count($coursecompletionids);
             $mycoursecompletion = 'Bạn chưa hoàn thành khóa học nào';
         }
 
@@ -77,7 +79,7 @@ class core_remote_renderer extends plugin_renderer_base
         $content .= html_writer::start_tag('div', array('class' => 'container-available-course col-sm-9'));
 
         // profile block
-        $content .= $this->render_profile_info($USER);
+        $content .= $this->render_profile_info($USER, $countcompletion);
         //profile block
 
         $tabnames = array('Chương trình học', 'Khóa học đã hoàn thành');
@@ -244,7 +246,7 @@ class core_remote_renderer extends plugin_renderer_base
         echo $content;
     }
 
-    private function render_profile_info($user)
+    private function render_profile_info($user, $countcompletion)
     {
         // start create block instance connect to mahara
         global $CFG;
@@ -262,9 +264,13 @@ class core_remote_renderer extends plugin_renderer_base
         $html .= html_writer::start_div('col-sm-5 col-md-5 el-certificate');
         $html .= html_writer::empty_tag('img', array('class' => 'certificate-img', 'src' => 'theme/tecapro/pix/certificate_icon.png'));
         $html .= html_writer::start_div('certificate-info');
-        $cername = '<strong>MVA Founders Club</strong>';
-        $cerpoint = '<br> 55 Legacy Points';
-        $cerhelp = html_writer::link(new moodle_url('#'), ' <i class="fa fa-info-circle" aria-hidden="true"></i>');
+        $cername = '<strong>Thông tin chung</strong>';
+        if($countcompletion > 0) {
+        $cerpoint = '<br> ' . $countcompletion . ' khóa học đã hoàn thành';
+        } else {
+            $cerpoint = '<br> ' . 'Chưa có khóa học hoàn thành';
+        }
+        $cerhelp = '';
         // create link connect mahara
         if (!empty($mahara = $block->get_content(false, 'mahara', false)->items)) {
             foreach ($mahara as $link) {
