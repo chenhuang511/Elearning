@@ -242,6 +242,12 @@ class core_remote_renderer extends plugin_renderer_base
 
     private function render_profile_info($user)
     {
+        // start create block instance connect to mahara
+        global $CFG;
+        require_once $CFG->dirroot . "/blocks/moodleblock.class.php";
+        require_once $CFG->dirroot . "/blocks/mnet_hosts/block_mnet_hosts.php";
+        $block = new block_mnet_hosts;
+        // end
         $html = '';
         // start profile block
         $html .= html_writer::start_div('el-profile-block clearfix');
@@ -255,6 +261,13 @@ class core_remote_renderer extends plugin_renderer_base
         $cername = '<strong>MVA Founders Club</strong>';
         $cerpoint = '<br> 55 Legacy Points';
         $cerhelp = html_writer::link(new moodle_url('#'), ' <i class="fa fa-info-circle" aria-hidden="true"></i>');
+        // create link connect mahara
+        if(!empty($mahara = $block->get_content(false, 'mahara', false)->items)) {
+            foreach ($mahara as $link) {
+                $cerhelp .= '</br>' . $link;
+            }
+        }
+        //end
         $html .= html_writer::tag('p', $cername . $cerpoint . $cerhelp);
         $html .= html_writer::end_div(); // end certificate info
         $html .= html_writer::end_div(); // end profile certificate

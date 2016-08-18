@@ -39,7 +39,7 @@ class block_mnet_hosts extends block_list {
         }
     }
 
-    function get_content() {
+    function get_content($notype = true, $typename = '', $icon = true) {
         global $CFG, $USER, $DB, $OUTPUT;
 
         // shortcut -  only for logged in users!
@@ -97,6 +97,10 @@ class block_mnet_hosts extends block_list {
             return $this->content;
         }
 
+        $where = '';
+        if($notype == false){
+            $where = ' AND a.name = \'' . $typename . '\'';
+        }
         // TODO: Test this query - it's appropriate? It works?
         // get the hosts and whether we are doing SSO with them
         $sql = "
@@ -125,13 +129,12 @@ class block_mnet_hosts extends block_list {
                  h.id = h2s_SP.hostid AND
                  h2s_SP.serviceid = s_SP.id AND
                  s_SP.name = 'sso_idp' AND
-                 h2s_SP.publish = '1'
+                 h2s_SP.publish = '1'" . $where . "
              ORDER BY
                  a.display_name,
                  h.name";
 
         $hosts = $DB->get_records_sql($sql, array($CFG->mnet_localhost_id, $CFG->mnet_all_hosts_id));
-
         $this->content = new stdClass();
         $this->content->items = array();
         $this->content->icons = array();
@@ -139,8 +142,12 @@ class block_mnet_hosts extends block_list {
 
         if ($hosts) {
             foreach ($hosts as $host) {
-                $icon  = '<img src="'.$OUTPUT->pix_url('i/'.$host->application.'_host') . '"'.
-                         ' class="icon" alt="'.get_string('server', 'block_mnet_hosts').'" />&nbsp;';
+                if($icon) {
+                    $icon  = '<img src="'.$OUTPUT->pix_url('i/'.$host->application.'_host') . '"'.
+                        ' class="icon" alt="'.get_string('server', 'block_mnet_hosts').'" />&nbsp;';
+                } else {
+                    $icon = '';
+                }
 
                 if ($host->id == $USER->mnethostid) {
                     $this->content->items[]="<a title=\"" .s($host->name).
