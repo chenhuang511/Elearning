@@ -65,8 +65,10 @@ class core_remote_renderer extends plugin_renderer_base
         }
 
         $coursecompletionids = get_remote_list_course_completion($hubuserid);
+        $countcompletion = 0;
 
         if (!$coursecompletionids) {
+            $countcompletion = count($coursecompletionids);
             $mycoursecompletion = 'Bạn chưa hoàn thành khóa học nào';
         }
 
@@ -77,7 +79,7 @@ class core_remote_renderer extends plugin_renderer_base
         $content .= html_writer::start_tag('div', array('class' => 'container-available-course col-sm-9'));
 
         // profile block
-        $content .= $this->render_profile_info($USER);
+        $content .= $this->render_profile_info($USER, $countcompletion);
         //profile block
 
         $tabnames = array('Chương trình học', 'Khóa học đã hoàn thành');
@@ -90,6 +92,7 @@ class core_remote_renderer extends plugin_renderer_base
         $mylearningplan = '';
 
         foreach ($courses as $course) {
+            $course->iscompletion = 0; // default course
             $course->completion = get_remote_course_completion($course, $hubuserid);
 
             $classes = 'coursebox clearfix';
@@ -99,14 +102,17 @@ class core_remote_renderer extends plugin_renderer_base
                 $course->thumbnail = $thumbOjb[0]->thumbnail_image;
             }
 
-            $mylearningplan .= $this->format_course($course, $classes);
-
             if ($coursecompletionids) {
                 foreach ($coursecompletionids as $completion) {
                     if ($course->remoteid == $completion->course) {
+                        $course->iscompletion = 1;
                         $mycoursecompletion .= $this->format_course($course, $classes);
                     }
                 }
+            }
+
+            if (isset($course->iscompletion) && $course->iscompletion === 0) {
+                $mylearningplan .= $this->format_course($course, $classes);
             }
         }
 
@@ -240,7 +246,7 @@ class core_remote_renderer extends plugin_renderer_base
         echo $content;
     }
 
-    private function render_profile_info($user)
+    private function render_profile_info($user, $countcompletion)
     {
         // start create block instance connect to mahara
         global $CFG;
@@ -252,17 +258,21 @@ class core_remote_renderer extends plugin_renderer_base
         // start profile block
         $html .= html_writer::start_div('el-profile-block clearfix');
         $html .= html_writer::start_div('col-sm-7 col-md-7 el-profile-info');
-        $html .= html_writer::label($user->username, '', true, array('class' => 'profile-info-username'));
+        $html .= html_writer::label($user->firstname . ' ' . $user->lastname, '', true, array('class' => 'profile-info-username'));
         $html .= html_writer::link(new moodle_url("/user/edit.php", array('userid' => $user->id, 'returnto' => 'profile')), '<i class="fa fa-pencil-square-o" aria-hidden="true"></i>' . 'Chỉnh sửa thông tin cá nhân', array('class' => 'profile-info-link'));
         $html .= html_writer::end_div(); // end profile info
         $html .= html_writer::start_div('col-sm-5 col-md-5 el-certificate');
         $html .= html_writer::empty_tag('img', array('class' => 'certificate-img', 'src' => 'theme/tecapro/pix/certificate_icon.png'));
         $html .= html_writer::start_div('certificate-info');
-        $cername = '<strong>MVA Founders Club</strong>';
-        $cerpoint = '<br> 55 Legacy Points';
-        $cerhelp = html_writer::link(new moodle_url('#'), ' <i class="fa fa-info-circle" aria-hidden="true"></i>');
+        $cername = '<strong>Thông tin chung</strong>';
+        if ($countcompletion > 0) {
+            $cerpoint = '<br> ' . $countcompletion . ' khóa học đã hoàn thành';
+        } else {
+            $cerpoint = '<br> ' . 'Chưa có khóa học hoàn thành';
+        }
+        $cerhelp = '';
         // create link connect mahara
-        if(!empty($mahara = $block->get_content(false, 'mahara', false)->items)) {
+        if (!empty($mahara = $block->get_content(false, 'mahara', false)->items)) {
             foreach ($mahara as $link) {
                 $cerhelp .= '</br>' . $link;
             }
@@ -278,7 +288,6 @@ class core_remote_renderer extends plugin_renderer_base
     private function format_course($course, $classes)
     {
         $html = '';
-
         // begin course box
         $html .= html_writer::start_tag('article', array('class' => $classes, 'data-courseid' => $course->id));
         $html .= html_writer::start_tag('header', array('class' => 'coursename'));
@@ -286,7 +295,7 @@ class core_remote_renderer extends plugin_renderer_base
         $coursename = $course->fullname;
         $coursenamelink = html_writer::link($this->get_view_course_url($course),
             $coursename, array('class' => $course->visible ? '' : 'dimmed'));
-        if (isset($course->enablecompletion) && $course->enablecompletion != 0) {
+        if ((isset($course->enablecompletion) && $course->enablecompletion != 0) && (isset($course->iscompletion) && $course->iscompletion == 0)) {
             $progress = html_writer::span($course->completion . '%', 'badge el-badge');
             $html .= html_writer::tag('h3', $coursenamelink . $progress);
         } else {
@@ -311,8 +320,10 @@ class core_remote_renderer extends plugin_renderer_base
             $html .= html_writer::tag('p', remote_render_helper::token_truncate($course->summary, 200));
         }
         // display button
-        $html .= html_writer::link($this->get_view_course_url($course),
-            'Học ngay', array('class' => 'btn btn-primary btn-el-reg'));
+        if (!$course->iscompletion) {
+            $html .= html_writer::link($this->get_view_course_url($course),
+                'Học ngay', array('class' => 'btn btn-primary btn-el-reg'));
+        }
         $html .= html_writer::end_tag('div'); // .summary
 
         $html .= html_writer::end_tag('section'); // end section
