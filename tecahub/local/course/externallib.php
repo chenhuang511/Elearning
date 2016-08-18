@@ -1251,42 +1251,41 @@ class local_course_external extends external_api
         return new external_function_parameters(
             array(
                 'courseid' => new external_value(PARAM_INT, ' the id of course'),
-                'userid' => new external_value(PARAM_INT, ' the id of course')
+                'userid' => new external_value(PARAM_INT, ' the id of course'),
+                'totalmoduletracking' => new external_value(PARAM_INT, 'the total count of couse module is tracking')
             )
         );
     }
 
-    public static function get_course_completion($courseid, $userid)
+    public static function get_course_completion($courseid, $userid, $totalmoduletracking)
     {
         global $DB;
         $warnings = array();
 
         $params = self::validate_parameters(self::get_course_completion_parameters(), array(
             'courseid' => $courseid,
-            'userid' => $userid
+            'userid' => $userid,
+            'totalmoduletracking' => $totalmoduletracking
         ));
 
         $result = array();
-
-        $sql = "SELECT COUNT(*) FROM {course_modules_completion} cmc
-                LEFT JOIN {course_modules} cm
-                ON cmc.coursemoduleid = cm.id
-                WHERE cm.course = :courseid AND cmc.userid = :userid";
 
         $arr = array();
         $arr['courseid'] = $params['courseid'];
         $arr['userid'] = $params['userid'];
 
-        $totalcount = $DB->count_records_sql($sql, $arr);
 
-        $completion = $totalcount;
+        $completion = 0;
 
-        if ($completion > 0) {
-            $sql .= " AND completionstate = 1";
+        if ($params['totalmoduletracking'] > 0) {
+            $sql = "SELECT COUNT(*) FROM {course_modules_completion} cmc
+                LEFT JOIN {course_modules} cm
+                ON cmc.coursemoduleid = cm.id
+                WHERE cm.course = :courseid AND cmc.userid = :userid AND cmc.completionstate <> 0";
             $completioncount = $DB->count_records_sql($sql, $arr);
 
             if ($completioncount > 0) {
-                $completion = ($completioncount * 100) / $totalcount;
+                $completion = ($completioncount * 100) / $totalmoduletracking;
             }
         }
 
@@ -1378,7 +1377,7 @@ class local_course_external extends external_api
     /**
      * Delete tbl course_completion_crit_compl by cmid and hostip
      *
-     * @param int $courseid  - The id of course
+     * @param int $courseid - The id of course
      * @param string $hostip - The ip_address on host
      *
      * @return bool $result true if success
@@ -1438,14 +1437,11 @@ class local_course_external extends external_api
 
         $sql = "SELECT cc.course FROM {course} c 
                 LEFT JOIN {course_completions} cc ON c.id = cc.course
-                WHERE cc.userid = :userid";
+                WHERE cc.userid = ?";
 
-        $arr = array();
-        $arr['userid'] = $params['userid'];
+        $completions = $DB->get_records_sql($sql, array($params['userid']));
 
-        $completions = $DB->get_field_sql($sql, $arr);
-
-        if(!$completions) {
+        if (!$completions) {
             $completions = array();
         }
 
@@ -1462,9 +1458,9 @@ class local_course_external extends external_api
                 'completions' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'course' => new external_value(PARAM_INT, 'the id of course')
+                            'course' => new external_value(PARAM_INT, 'the course id'),
                         )
-                    ), 'the id'
+                    ), 'the course id'
                 ),
                 'warnings' => new external_warnings()
             )
@@ -1491,7 +1487,7 @@ class local_course_external extends external_api
      * deciding whether completion information should be 'locked' in the module
      * editing form.
      *
-     * @param int $courseid  - The id of course
+     * @param int $courseid - The id of course
      * @param string $hostip - The ip_address on host
      *
      * @return bool $result true if success
@@ -1518,7 +1514,7 @@ class local_course_external extends external_api
                     {course_modules_completion}
                 WHERE
                     coursemoduleid=? AND completionstate<>0 AND userid IN(" . $sql . ") ",
-                        array($params['coursemoduleid'], $params['hostip']));;
+            array($params['coursemoduleid'], $params['hostip']));;
 
         return $result;
     }
@@ -1532,6 +1528,161 @@ class local_course_external extends external_api
     public static function count_remote_user_data_completion_returns()
     {
         return new external_value(PARAM_INT, 'count user data completion');
+    }
+
+    /**
+     * Describes the parameters for get_remote_completion_fetch_all_helper
+     *
+     * @return external_external_function_parameters
+     */
+    public static function get_remote_completion_fetch_all_helper_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'table' => new external_value(PARAM_TEXT, 'The name of table to get'),
+                'course' => new external_value(PARAM_INT, 'The id of course'),
+            )
+        );
+    }
+
+    /**
+     * Factory method - uses the parameters to retrieve all matching instances from the DB.
+     *
+     * @final
+     * @param string $table The table name to fetch from
+     * @param string $classname The class that you want the result instantiated as
+     * @param array $params Any params required to select the desired row
+     * @return mixed array of object instances or false if not found
+     */
+    public static function get_remote_completion_fetch_all_helper($table, $course)
+    {
+        global $DB, $CFG;
+
+        $result = array();
+
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_remote_completion_fetch_all_helper_parameters(), array(
+            'table' => $table,
+            'course' => $course,
+        ));
+
+        $result[$table] = $DB->get_records($table, array('course' => $params['course']));
+
+        if (!$result[$table]) {
+            $result[$table] = array();
+        }
+
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the get_remote_completion_fetch_all_helper returns value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function get_remote_completion_fetch_all_helper_returns()
+    {
+        return new external_single_structure(
+            array(
+                'course_completion_criteria' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'course' => new external_value(PARAM_INT, 'The id of course', VALUE_OPTIONAL),
+                            'criteriatype' => new external_value(PARAM_INT, 'The criteria types integer constant', VALUE_OPTIONAL),
+                            'module' => new external_value(PARAM_TEXT, 'The name of the module', VALUE_OPTIONAL),
+                            'moduleinstance' => new external_value(PARAM_INT, 'The id of the activity/resource module or role', VALUE_OPTIONAL),
+                            'courseinstance' => new external_value(PARAM_INT, 'The id of course', VALUE_OPTIONAL),
+                            'enrolperiod' => new external_value(PARAM_INT, 'The number of seconds after enrolment', VALUE_OPTIONAL),
+                            'timeend' => new external_value(PARAM_INT, 'The timestamp of the date for course completion', VALUE_OPTIONAL),
+                            'gradepass' => new external_value(PARAM_FLOAT, 'The course grade required to complete this criteria', VALUE_OPTIONAL),
+                            'role' => new external_value(PARAM_INT, 'The role id that can mark \'student\'s as complete in the course', VALUE_OPTIONAL),
+                        )
+                    )
+                    , 'Information table completion_criteria', VALUE_OPTIONAL),
+                'course_completion_aggr_methd' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'course' => new external_value(PARAM_INT, 'The id of the course that the course completion aggregation relates to', VALUE_OPTIONAL),
+                            'criteriatype' => new external_value(PARAM_INT, 'The criteria type\'s integer constant (\'role\', \'activity\') or null if \'overall\' course aggregation.', VALUE_OPTIONAL),
+                            'method' => new external_value(PARAM_INT, '\'1\'=\'all\', \'2\'=\'any\', \'3\'=\'fraction\', \'4\'=\'unit\'', VALUE_OPTIONAL),
+                            'value' => new external_value(PARAM_INT, 'null for \'all\' and \'any\', 0..1 for \'fraction\', int > 0 for \'unit\'', VALUE_OPTIONAL),
+                        )
+                    )
+                    , 'Information table completion_aggregation', VALUE_OPTIONAL),
+                'course_completions' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'The id of tbl completion_completion', VALUE_OPTIONAL),
+                            'userid' => new external_value(PARAM_INT, 'The id of the user who has completed the course', VALUE_OPTIONAL),
+                            'course' => new external_value(PARAM_INT, 'The id of the completed course', VALUE_OPTIONAL),
+                            'timeenrolled' => new external_value(PARAM_INT, 'Timestamp when the user was enrolled in the course. In the case of multiple enrollments, the earliest timestamp for a current enrollment is used. If this is reported as 0, the current time is used instead.', VALUE_OPTIONAL),
+                            'timestarted' => new external_value(PARAM_INT, 'Timestamp when the user first made progress in the course', VALUE_OPTIONAL),
+                            'timecompleted' => new external_value(PARAM_INT, 'Timestamp when the user completed the course', VALUE_OPTIONAL),
+                            'reaggregate' => new external_value(PARAM_INT, 'Re aggregate', VALUE_OPTIONAL),
+                        )
+                    )
+                    , 'Information table completion_completion', VALUE_OPTIONAL),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    /**
+     * Describes the parameters for get_remote_modules
+     *
+     * @return external_external_function_parameters
+     */
+    public static function get_remote_modules_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'fields' => new external_value(PARAM_TEXT, 'The fields to get')
+            )
+        );
+    }
+
+    /**
+     * Get all information about modules.
+     *
+     * @params string $fields  - The fields of table modules to get
+     *
+     * @return array $return   - The information tbl modules
+     */
+    public static function get_remote_modules($fields)
+    {
+        global $DB;
+
+        $params = self::validate_parameters(self::get_remote_modules_parameters(), array(
+            'fields' => $fields,
+        ));
+        $result = $DB->get_records('modules', array(), '', $params['fields']);
+
+        return $result;
+    }
+
+    /**
+     * Describes the get_remote_modules returns value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function get_remote_modules_returns()
+    {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'The id of modules', VALUE_OPTIONAL),
+                    'name' => new external_value(PARAM_TEXT, 'The name of modules', VALUE_OPTIONAL),
+                    'cron' => new external_value(PARAM_INT, 'The cron', VALUE_OPTIONAL),
+                    'lastcron' => new external_value(PARAM_INT, 'The last cron', VALUE_OPTIONAL),
+                    'search' => new external_value(PARAM_TEXT, 'The string to search', VALUE_OPTIONAL),
+                    'visible' => new external_value(PARAM_INT, 'The visible to see', VALUE_OPTIONAL),
+                )
+            )
+        );
     }
 
 }

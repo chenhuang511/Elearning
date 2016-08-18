@@ -37,6 +37,12 @@ $THEME->rendererfactory = 'theme_overridden_renderer_factory';
 $THEME->csspostprocess = 'theme_bhxh_process_css';
 
 $THEME->layouts = array(
+	// Most backwards compatible layout without the blocks - this is the layout used by default
+	'standard' => array(
+		'file' => 'frontpage.php',
+		'regions' => array('side-pre', 'side-post'),
+		'defaultregion' => 'side-pre',
+	),
 	// The site home page.
 	'frontpage' => array(
 			'file' => 'frontpage.php',
@@ -50,11 +56,6 @@ $THEME->layouts = array(
 		'defaultregion' => 'side-pre',
 		'options' => array('fluid' => true),
 	),
-	'standard' => array(
-        'file' => 'frontpage.php',
-        'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-pre',
-    ),
     'incourse' => array(
         'file' => 'course.php',
         'regions' => array('side-pre', 'side-post'),

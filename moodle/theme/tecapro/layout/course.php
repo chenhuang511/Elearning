@@ -50,8 +50,8 @@ echo $OUTPUT->doctype() ?>
 <body <?php echo $OUTPUT->body_attributes(); ?>>
 
 <?php
-    echo $OUTPUT->standard_top_of_body_html();
-    $context = context_module::instance($COURSE->id);
+echo $OUTPUT->standard_top_of_body_html();
+$context = context_module::instance($COURSE->id);
 ?>
 
 <?php  require_once(dirname(__FILE__) . '/includes/header.php');  ?>
@@ -82,6 +82,8 @@ echo $OUTPUT->doctype() ?>
     </header>
     <div id="page-content" class="row">
         <?php
+        context_helper::preload_course($COURSE->id);
+        $context = context_course::instance($COURSE->id, MUST_EXIST);
         $isstudent = !has_capability('moodle/course:manageactivities', $context);
         if ($isstudent) { ?>
             <?php
@@ -226,9 +228,9 @@ echo $OUTPUT->doctype() ?>
                             ?>
                         </div>
                         <div role="tabpanel" id="tab-content-4" class="tab-pane fade">
-<!--                            list user-->
+                            <!--                            list user-->
                             <?php
-                                include_once ('includes/list_users.php');
+                            include_once ('includes/list_users.php');
                             ?>
                         </div>
                         <div role="tabpanel" id="tab-content-5" class="tab-pane fade">

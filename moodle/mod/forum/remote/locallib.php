@@ -342,6 +342,20 @@ function delete_remote_mdl_forum($modname, $parameters)
     return $result->status;
 }
 
+function delete_remote_mdl_forum_select($modname, $select, $parameters)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_delete_mdl_forum_select',
+            'params' => array_merge(array('modname' => $modname, 'select' => $select), $parameters),
+        )
+    );
+
+    return $result->status;
+}
+
 function save_remote_mdl_forum($modname, $data)
 {
     $result = moodle_webservice_client(

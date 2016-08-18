@@ -202,4 +202,20 @@ $functions = array(
         'type'		    => 'read',
         'ajax'		    => true
     ),
+    'local_get_remote_completion_fetch_all_helper' => array(
+        'classname'     => 'local_course_external',
+        'methodname'    => 'get_remote_completion_fetch_all_helper',
+        'classpath'     => 'local/course/externallib.php',
+        'description'   => 'Get remote completion',
+        'type'		    => 'read',
+        'ajax'		    => true
+    ),
+    'local_get_tbl_modules' => array(
+        'classname'     => 'local_course_external',
+        'methodname'    => 'get_remote_modules',
+        'classpath'     => 'local/course/externallib.php',
+        'description'   => 'Get information tbl modules',
+        'type'		    => 'read',
+        'ajax'		    => true
+    ),
 );

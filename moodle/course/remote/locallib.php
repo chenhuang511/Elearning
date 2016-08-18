@@ -389,18 +389,28 @@ function update_remote_course_modules_completion($cmc)
  * @param int $userid     - The id of user
  * @return mixed $result  - The information of course completion
  */
-function get_remote_course_completion($courseid, $userid)
+function get_remote_course_completion($course, $userid)
 {
+    global $DB;
+    $completion = new completion_info($course);
+    $activities = $completion->get_activities();
+    $totalmoduletracking = count($activities);
+
     $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_get_course_completion',
-            'params' => array('courseid' => $courseid, 'userid' => $userid),
+            'params' => array('courseid' => $course->remoteid, 'userid' => $userid, 'totalmoduletracking' => $totalmoduletracking),
         ), false
     );
 
-    return $result->completion;
+    if (isset($result->completion) && $result->completion) {
+        return $result->completion;
+    } else {
+        return 0;
+    }
+
 }
 
 function get_remote_list_course_completion($userid)
@@ -487,6 +497,78 @@ function count_remote_user_data_completion($coursemoduleid)
                 'hostip' => $hostip),
         ), false
     );
+
+    return $result;
+}
+
+/**
+ * Factory method - uses the parameters to retrieve all matching instances from the DB.
+ *
+ * @final
+ * @param string $table The table name to fetch from
+ * @param int $courseid The id of course
+ * @return mixed array of object instances or false if not found
+ */
+function get_remote_completion_fetch_all_helper($table, $courseid)
+{
+    $rcourseid = get_local_course_record($courseid, true)->remoteid;
+
+
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_get_remote_completion_fetch_all_helper',
+            'params' => array(
+                'table' => $table,
+                'course' => $rcourseid,
+            ),
+        ), false
+    );
+
+    if ($table == 'course_completion_aggr_methd') {
+        if ($result->course_completion_aggr_methd){
+            foreach ($result->course_completion_aggr_methd as $element){
+                $element->course = $courseid;
+            }
+            return $result->course_completion_aggr_methd;
+        } else {
+            return false;
+        }
+    } else if($table == 'course_completion_criteria') {
+        if ($result->course_completion_criteria){
+            foreach ($result->course_completion_criteria as $element){
+                $element->course = $courseid;
+            }
+            return $result->course_completion_criteria;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+}
+
+/**
+ * Get all information about modules
+ *
+ * @params string $fields  - The fields of table modules to get
+ *
+ * @return array $return   - The information tbl modules
+ */
+function get_remote_modules($fields = '*') {
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_get_tbl_modules',
+            'params' => array(
+                'fields' => $fields
+            )
+        )
+    );
+
+    $result =  change_key_by_value($result);
 
     return $result;
 }

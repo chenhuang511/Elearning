@@ -424,9 +424,19 @@ function forum_delete_instance($id)
     $result = true;
 
     // Delete digest and subscription preferences.
-    $DB->delete_records('forum_digests', array('forum' => $forum->id));
-    $DB->delete_records('forum_subscriptions', array('forum' => $forum->id));
-    $DB->delete_records('forum_discussion_subs', array('forum' => $forum->id));
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $prs = array();
+        $prs['parameters[0][name]'] = "forum";
+        $prs['parameters[0][value]'] = $forum->id;
+
+        $result = delete_remote_mdl_forum("forum_digests", $prs);
+        $result = delete_remote_mdl_forum("forum_subscriptions", $prs);
+        $result = delete_remote_mdl_forum("forum_discussion_subs", $prs);
+    } else {
+        $DB->delete_records('forum_digests', array('forum' => $forum->id));
+        $DB->delete_records('forum_subscriptions', array('forum' => $forum->id));
+        $DB->delete_records('forum_discussion_subs', array('forum' => $forum->id));
+    }
 
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
         $params = array();
@@ -518,6 +528,16 @@ function forum_get_completion_state($course, $cm, $userid, $type)
 {
     global $CFG, $DB;
 
+    $hubuserid = $userid;
+
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $user = get_remote_mapping_user($userid);
+
+        if ($user[0]) {
+            $hubuserid = $user[0]->id;
+        }
+    }
+
     // Get forum details
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
         $params = array();
@@ -534,7 +554,7 @@ function forum_get_completion_state($course, $cm, $userid, $type)
 
     $result = $type; // Default return value
 
-    $postcountparams = array('userid' => $userid, 'forumid' => $forum->id);
+    $postcountparams = array('userid' => $hubuserid, 'forumid' => $forum->id);
     $postcountsql = "
 SELECT
     COUNT(1)
@@ -548,7 +568,7 @@ WHERE
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
             $params = array();
             $params['parameters[0][name]'] = "userid";
-            $params['parameters[0][value]'] = $userid;
+            $params['parameters[0][value]'] = $hubuserid;
             $params['parameters[1][name]'] = "forum";
             $params['parameters[1][value]'] = $forum->id;
             $value = $forum->completiondiscussions <= get_remote_count_forum_by("forum_discussions", $params);
@@ -566,7 +586,7 @@ WHERE
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
             $prs = array();
             $prs['parameters[0][name]'] = "userid";
-            $prs['parameters[0][value]'] = $userid;
+            $prs['parameters[0][value]'] = $hubuserid;
             $prs['parameters[1][name]'] = "forum";
             $prs['parameters[1][value]'] = $forum->id;
             $value = $forum->completionreplies <= get_remote_field_forum_sql($postcountsql . ' AND fp.parent<>0', $prs);
@@ -584,7 +604,7 @@ WHERE
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
             $prs = array();
             $prs['parameters[0][name]'] = "userid";
-            $prs['parameters[0][value]'] = $userid;
+            $prs['parameters[0][value]'] = $hubuserid;
             $prs['parameters[1][name]'] = "forum";
             $prs['parameters[1][value]'] = $forum->id;
             $value = $forum->completionposts <= get_remote_field_forum_sql($postcountsql, $prs);
@@ -7483,7 +7503,20 @@ function forum_tp_delete_read_records($userid = -1, $postid = -1, $discussionid 
     if ($select == '') {
         return false;
     } else {
-        return $DB->delete_records_select('forum_read', $select, $params);
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $prs = array();
+            $i = 0;
+            foreach ($params as $key => $val) {
+                $prs["parameters[$i][name]"] = $key;
+                $prs["parameters[$i][value]"] = $val;
+                $i++;
+            }
+
+            $result = delete_remote_mdl_forum_select("forum_read", $select, $prs);
+            return $result;
+        } else {
+            return $DB->delete_records_select('forum_read', $select, $params);
+        }
     }
 }
 

@@ -194,7 +194,7 @@ function quiz_report_grade_method_sql($grademethod, $quizattemptsalias = 'quiza'
  * @param array $userids list of user ids.
  * @return array band number => number of users with scores in that band.
  */
-function quiz_report_grade_bands($bandwidth, $bands, $quizid, $userids = array()) {
+function quiz_report_grade_bands($bandwidth, $bands, $quizid, $userids = array(), $usermaps = null) {
     global $DB;
     if (!is_int($bands)) {
         debugging('$bands passed to quiz_report_grade_bands must be an integer. (' .
@@ -204,6 +204,9 @@ function quiz_report_grade_bands($bandwidth, $bands, $quizid, $userids = array()
 
     if ($userids) {
         list($usql, $params) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'u');
+        $usql = "qg.userid $usql AND";
+    } elseif($usermaps) {
+        list($usql, $params) = $DB->get_in_or_equal(array_values($usermaps), SQL_PARAMS_NAMED, 'u');
         $usql = "qg.userid $usql AND";
     } else {
         $usql = '';
