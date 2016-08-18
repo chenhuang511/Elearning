@@ -7503,7 +7503,20 @@ function forum_tp_delete_read_records($userid = -1, $postid = -1, $discussionid 
     if ($select == '') {
         return false;
     } else {
-        return $DB->delete_records_select('forum_read', $select, $params);
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $prs = array();
+            $i = 0;
+            foreach ($params as $key => $val) {
+                $prs["parameters[$i][name]"] = $key;
+                $prs["parameters[$i][value]"] = $val;
+                $i++;
+            }
+
+            $result = delete_remote_mdl_forum_select("forum_read", $select, $prs);
+            return $result;
+        } else {
+            return $DB->delete_records_select('forum_read', $select, $params);
+        }
     }
 }
 
