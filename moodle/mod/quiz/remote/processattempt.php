@@ -129,9 +129,16 @@ $status = get_mod_quiz_process_attempt($attemptid, $data, $finishattempt, $timeu
 $status = $status->state;
 
 // update completion state if done this attempt
-if(($status == quiz_attempt::FINISHED) || ($status == quiz_attempt::ABANDONED)){
+if($status == quiz_attempt::FINISHED){
     $completion = new completion_info($course);
-    $completion->update_state($cm);
+    if ($completion->is_enabled()) {
+        if($cm->completion != COMPLETION_TRACKING_MANUAL){
+            $data = $completion->get_data($cm, false);
+            $data->viewed = COMPLETION_VIEWED;
+            $completion->internal_set_data($cm, $data);
+            $completion->update_state($cm, COMPLETION_COMPLETE);
+        }
+    }
 }
 
 if ($status == quiz_attempt::OVERDUE) {
