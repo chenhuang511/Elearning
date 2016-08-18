@@ -265,8 +265,8 @@ class core_remote_renderer extends plugin_renderer_base
         $html .= html_writer::empty_tag('img', array('class' => 'certificate-img', 'src' => 'theme/tecapro/pix/certificate_icon.png'));
         $html .= html_writer::start_div('certificate-info');
         $cername = '<strong>Thông tin chung</strong>';
-        if($countcompletion > 0) {
-        $cerpoint = '<br> ' . $countcompletion . ' khóa học đã hoàn thành';
+        if ($countcompletion > 0) {
+            $cerpoint = '<br> ' . $countcompletion . ' khóa học đã hoàn thành';
         } else {
             $cerpoint = '<br> ' . 'Chưa có khóa học hoàn thành';
         }
@@ -320,8 +320,10 @@ class core_remote_renderer extends plugin_renderer_base
             $html .= html_writer::tag('p', remote_render_helper::token_truncate($course->summary, 200));
         }
         // display button
-        $html .= html_writer::link($this->get_view_course_url($course),
-            'Học ngay', array('class' => 'btn btn-primary btn-el-reg'));
+        if (!$course->iscompletion) {
+            $html .= html_writer::link($this->get_view_course_url($course),
+                'Học ngay', array('class' => 'btn btn-primary btn-el-reg'));
+        }
         $html .= html_writer::end_tag('div'); // .summary
 
         $html .= html_writer::end_tag('section'); // end section
