@@ -405,7 +405,7 @@ function get_remote_course_completion($course, $userid)
         ), false
     );
 
-    if (isset($result->completion) && !$result->completion) {
+    if (isset($result->completion) && $result->completion) {
         return $result->completion;
     } else {
         return 0;
@@ -424,7 +424,7 @@ function get_remote_list_course_completion($userid)
         ), false
     );
 
-    if (isset($result->completion) && !$result->completion) {
+    if (isset($result->completion) && $result->completion) {
         return $result->completion;
     } else {
         return 0;
