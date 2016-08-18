@@ -1281,7 +1281,7 @@ class local_course_external extends external_api
             $sql = "SELECT COUNT(*) FROM {course_modules_completion} cmc
                 LEFT JOIN {course_modules} cm
                 ON cmc.coursemoduleid = cm.id
-                WHERE cm.course = :courseid AND cmc.userid = :userid AND cm.completion <> 0 AND cmc.completionstate <> 0";
+                WHERE cm.course = :courseid AND cmc.userid = :userid AND cmc.completionstate <> 0";
             $completioncount = $DB->count_records_sql($sql, $arr);
 
             if ($completioncount > 0) {
