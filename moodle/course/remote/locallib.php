@@ -392,12 +392,9 @@ function update_remote_course_modules_completion($cmc)
 function get_remote_course_completion($course, $userid)
 {
     global $DB;
-    $sql = "SELECT COUNT(*) FROM  {course_modules}
-                WHERE course = :courseid AND completion <> 0";
-
-    $params = array('courseid' => $course->id);
-
-    $totalmoduletracking = $DB->count_records_sql($sql, $params);
+    $completion = new completion_info($course);
+    $activities = $completion->get_activities();
+    $totalmoduletracking = count($activities);
 
     $result = moodle_webservice_client(
         array(
@@ -408,7 +405,12 @@ function get_remote_course_completion($course, $userid)
         ), false
     );
 
-    return $result->completion;
+    if (isset($result->completion) && !$result->completion) {
+        return $result->completion;
+    } else {
+        return 0;
+    }
+
 }
 
 function get_remote_list_course_completion($userid)
@@ -422,7 +424,11 @@ function get_remote_list_course_completion($userid)
         ), false
     );
 
-    return $result->completions;
+    if (isset($result->completion) && !$result->completion) {
+        return $result->completion;
+    } else {
+        return 0;
+    }
 }
 
 /**
