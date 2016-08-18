@@ -1377,7 +1377,7 @@ class local_course_external extends external_api
     /**
      * Delete tbl course_completion_crit_compl by cmid and hostip
      *
-     * @param int $courseid  - The id of course
+     * @param int $courseid - The id of course
      * @param string $hostip - The ip_address on host
      *
      * @return bool $result true if success
@@ -1437,14 +1437,11 @@ class local_course_external extends external_api
 
         $sql = "SELECT cc.course FROM {course} c 
                 LEFT JOIN {course_completions} cc ON c.id = cc.course
-                WHERE cc.userid = :userid";
+                WHERE cc.userid = ?";
 
-        $arr = array();
-        $arr['userid'] = $params['userid'];
+        $completions = $DB->get_field_sql($sql, array($params['userid']));
 
-        $completions = $DB->get_field_sql($sql, $arr);
-
-        if(!$completions) {
+        if (!$completions) {
             $completions = array();
         }
 
@@ -1461,9 +1458,9 @@ class local_course_external extends external_api
                 'completions' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'course' => new external_value(PARAM_INT, 'the id of course')
+                            'course' => new external_value(PARAM_INT, 'the course id'),
                         )
-                    ), 'the id'
+                    ), 'the course id'
                 ),
                 'warnings' => new external_warnings()
             )
@@ -1490,7 +1487,7 @@ class local_course_external extends external_api
      * deciding whether completion information should be 'locked' in the module
      * editing form.
      *
-     * @param int $courseid  - The id of course
+     * @param int $courseid - The id of course
      * @param string $hostip - The ip_address on host
      *
      * @return bool $result true if success
@@ -1517,7 +1514,7 @@ class local_course_external extends external_api
                     {course_modules_completion}
                 WHERE
                     coursemoduleid=? AND completionstate<>0 AND userid IN(" . $sql . ") ",
-                        array($params['coursemoduleid'], $params['hostip']));;
+            array($params['coursemoduleid'], $params['hostip']));;
 
         return $result;
     }
@@ -1572,7 +1569,7 @@ class local_course_external extends external_api
 
         $result[$table] = $DB->get_records($table, array('course' => $params['course']));
 
-        if(!$result[$table]) {
+        if (!$result[$table]) {
             $result[$table] = array();
         }
 
@@ -1604,7 +1601,7 @@ class local_course_external extends external_api
                             'role' => new external_value(PARAM_INT, 'The role id that can mark \'student\'s as complete in the course', VALUE_OPTIONAL),
                         )
                     )
-                    ,'Information table completion_criteria', VALUE_OPTIONAL),
+                    , 'Information table completion_criteria', VALUE_OPTIONAL),
                 'course_completion_aggr_methd' => new external_multiple_structure(
                     new external_single_structure(
                         array(
@@ -1614,7 +1611,7 @@ class local_course_external extends external_api
                             'value' => new external_value(PARAM_INT, 'null for \'all\' and \'any\', 0..1 for \'fraction\', int > 0 for \'unit\'', VALUE_OPTIONAL),
                         )
                     )
-                    ,'Information table completion_aggregation', VALUE_OPTIONAL),
+                    , 'Information table completion_aggregation', VALUE_OPTIONAL),
                 'course_completions' => new external_multiple_structure(
                     new external_single_structure(
                         array(
