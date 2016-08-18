@@ -289,6 +289,8 @@ class core_remote_renderer extends plugin_renderer_base
         if (isset($course->enablecompletion) && $course->enablecompletion != 0) {
             $progress = html_writer::span($course->completion . '%', 'badge el-badge');
             $html .= html_writer::tag('h3', $coursenamelink . $progress);
+        } else {
+            $html .= html_writer::tag('h3', $coursenamelink);
         }
 
         $html .= html_writer::end_tag('header'); // end header

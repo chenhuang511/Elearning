@@ -160,7 +160,11 @@ select#id_capability{
 }
 
 .mod_quiz-next-nav{
-    font-weight: bold;
+    font-weight: bold !important;
+}
+
+select#id_realname_op{
+    margin-right: 10px;
 }
 /***********/
 
