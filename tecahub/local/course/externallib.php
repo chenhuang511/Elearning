@@ -1275,9 +1275,9 @@ class local_course_external extends external_api
         $arr['userid'] = $params['userid'];
 
 
-        $completion = $params['totalmoduletracking'];
+        $completion = 0;
 
-        if ($completion > 0) {
+        if ($params['totalmoduletracking'] > 0) {
             $sql = "SELECT COUNT(*) FROM {course_modules_completion} cmc
                 LEFT JOIN {course_modules} cm
                 ON cmc.coursemoduleid = cm.id
