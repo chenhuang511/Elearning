@@ -289,7 +289,7 @@ class core_remote_renderer extends plugin_renderer_base
         $coursename = $course->fullname;
         $coursenamelink = html_writer::link($this->get_view_course_url($course),
             $coursename, array('class' => $course->visible ? '' : 'dimmed'));
-        if ((isset($course->enablecompletion) && $course->enablecompletion != 0) || (isset($course->iscompletion) && $course->iscompletion != 1)) {
+        if ((isset($course->enablecompletion) && $course->enablecompletion != 0) && (isset($course->iscompletion) && $course->iscompletion == 0)) {
             $progress = html_writer::span($course->completion . '%', 'badge el-badge');
             $html .= html_writer::tag('h3', $coursenamelink . $progress);
         } else {
