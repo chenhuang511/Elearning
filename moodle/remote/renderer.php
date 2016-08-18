@@ -99,14 +99,17 @@ class core_remote_renderer extends plugin_renderer_base
                 $course->thumbnail = $thumbOjb[0]->thumbnail_image;
             }
 
-            $mylearningplan .= $this->format_course($course, $classes);
-
             if ($coursecompletionids) {
                 foreach ($coursecompletionids as $completion) {
                     if ($course->remoteid == $completion->course) {
+                        $course->iscompletion = 1;
                         $mycoursecompletion .= $this->format_course($course, $classes);
+                    } else {
+                        $mylearningplan .= $this->format_course($course, $classes);
                     }
                 }
+            } else {
+                $mylearningplan .= $this->format_course($course, $classes);
             }
         }
 
@@ -262,7 +265,7 @@ class core_remote_renderer extends plugin_renderer_base
         $cerpoint = '<br> 55 Legacy Points';
         $cerhelp = html_writer::link(new moodle_url('#'), ' <i class="fa fa-info-circle" aria-hidden="true"></i>');
         // create link connect mahara
-        if(!empty($mahara = $block->get_content(false, 'mahara', false)->items)) {
+        if (!empty($mahara = $block->get_content(false, 'mahara', false)->items)) {
             foreach ($mahara as $link) {
                 $cerhelp .= '</br>' . $link;
             }
@@ -286,7 +289,7 @@ class core_remote_renderer extends plugin_renderer_base
         $coursename = $course->fullname;
         $coursenamelink = html_writer::link($this->get_view_course_url($course),
             $coursename, array('class' => $course->visible ? '' : 'dimmed'));
-        if (isset($course->enablecompletion) && $course->enablecompletion != 0) {
+        if ((isset($course->enablecompletion) && $course->enablecompletion != 0) || !isset($course->iscompletion)) {
             $progress = html_writer::span($course->completion . '%', 'badge el-badge');
             $html .= html_writer::tag('h3', $coursenamelink . $progress);
         } else {
