@@ -258,7 +258,7 @@ class core_remote_renderer extends plugin_renderer_base
         // start profile block
         $html .= html_writer::start_div('el-profile-block clearfix');
         $html .= html_writer::start_div('col-sm-7 col-md-7 el-profile-info');
-        $html .= html_writer::label($user->username, '', true, array('class' => 'profile-info-username'));
+        $html .= html_writer::label($user->firstname . ' ' . $user->lastname, '', true, array('class' => 'profile-info-username'));
         $html .= html_writer::link(new moodle_url("/user/edit.php", array('userid' => $user->id, 'returnto' => 'profile')), '<i class="fa fa-pencil-square-o" aria-hidden="true"></i>' . 'Chỉnh sửa thông tin cá nhân', array('class' => 'profile-info-link'));
         $html .= html_writer::end_div(); // end profile info
         $html .= html_writer::start_div('col-sm-5 col-md-5 el-certificate');
