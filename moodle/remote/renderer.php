@@ -93,7 +93,7 @@ class core_remote_renderer extends plugin_renderer_base
 
         foreach ($courses as $course) {
             $course->iscompletion = 0; // default course
-            $course->completion = get_remote_course_completion($course, $hubuserid);
+            $course->completion = get_remote_course_completion_progress($course, $hubuserid);
 
             $classes = 'coursebox clearfix';
 

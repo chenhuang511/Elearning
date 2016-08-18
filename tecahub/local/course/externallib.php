@@ -1246,7 +1246,7 @@ class local_course_external extends external_api
         return new external_value(PARAM_INT, 'True(1) if success');
     }
 
-    public static function get_course_completion_parameters()
+    public static function get_course_completion_progress_parameters()
     {
         return new external_function_parameters(
             array(
@@ -1257,12 +1257,12 @@ class local_course_external extends external_api
         );
     }
 
-    public static function get_course_completion($courseid, $userid, $totalmoduletracking)
+    public static function get_course_completion_progress($courseid, $userid, $totalmoduletracking)
     {
         global $DB;
         $warnings = array();
 
-        $params = self::validate_parameters(self::get_course_completion_parameters(), array(
+        $params = self::validate_parameters(self::get_course_completion_progress_parameters(), array(
             'courseid' => $courseid,
             'userid' => $userid,
             'totalmoduletracking' => $totalmoduletracking
@@ -1294,7 +1294,7 @@ class local_course_external extends external_api
         return $result;
     }
 
-    public static function get_course_completion_returns()
+    public static function get_course_completion_progress_returns()
     {
         return new external_single_structure(
             array(
@@ -1683,6 +1683,73 @@ class local_course_external extends external_api
                 )
             )
         );
+    }
+
+    /**
+     * Describes the parameters for update_remote_course_completions
+     *
+     * @return external_external_function_parameters
+     */
+    public static function update_remote_course_completions_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'userid' => new external_value(PARAM_INT, 'The id of user'),
+                'course' => new external_value(PARAM_INT, 'The id of course'),
+                'timeenrolled' => new external_value(PARAM_INT, 'The enrolled time course completion'),
+                'timestarted' => new external_value(PARAM_INT, 'The started time course completion'),
+                'timecompleted' => new external_value(PARAM_INT, 'The completed time course completion', VALUE_DEFAULT, NULL),
+                'reaggregate' => new external_value(PARAM_INT, 'Reaggregate')
+            )
+        );
+    }
+
+    /**
+     * Get all information about modules.
+     *
+     * @params int $userid          - The id of user
+     * @params int $course          - The id of course
+     * @params int $timeenrolled    - The enrolled time course completion
+     * @params int $timestarted     - The started time course completion
+     * @params int $timecompleted   - The completed time course completion
+     * @params int $reaggregate     - Reaggregate
+     *
+     * @return bool $return         - True if update success
+     */
+    public static function update_remote_course_completions($userid, $course, $timeenrolled, $timestarted, $timecompleted, $arrgregate)
+    {
+        global $DB;
+
+        $params = self::validate_parameters(self::update_remote_course_completions_parameters(), array(
+            'userid' => $userid,
+            'course' => $course,
+            'timeenrolled' => $timeenrolled,
+            'timestarted' => $timestarted,
+            'timecompleted' => $timecompleted,
+            'reaggregate' => $arrgregate,
+        ));
+
+        $data = (object)$params;
+        $cc = $DB->get_record('course_completions', array('userid'=>$params['userid'], 'course'=>$params['course']));
+        if (!$cc) {
+            $result = $DB->insert_record('course_completions', $data);
+        } else {
+            $data->id = $cc->id;
+            $result = $DB->update_record('course_completions', $data);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Describes the update_remote_course_completions returns value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function update_remote_course_completions_returns()
+    {
+        return new external_value(PARAM_INT, 'Return true if success');
     }
 
 }
