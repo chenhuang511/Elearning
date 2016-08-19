@@ -1437,7 +1437,7 @@ class local_course_external extends external_api
 
         $sql = "SELECT cc.course FROM {course} c 
                 LEFT JOIN {course_completions} cc ON c.id = cc.course
-                WHERE cc.userid = ?";
+                WHERE cc.timecompleted IS NOT NULL AND cc.userid = ?";
 
         $completions = $DB->get_records_sql($sql, array($params['userid']));
 
