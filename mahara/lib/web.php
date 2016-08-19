@@ -713,6 +713,8 @@ EOF;
     }
 
     // ---------- sideblock stuff ----------
+	$extraconfig['sidebars'] = false; //config sideber
+		
     $sidebars = !isset($extraconfig['sidebars']) || $extraconfig['sidebars'] !== false;
     if ($sidebars && !defined('INSTALLER') && (!defined('MENUITEM') || substr(MENUITEM, 0, 5) != 'admin')) {
         if (get_config('installed') && !$adminsection) {
