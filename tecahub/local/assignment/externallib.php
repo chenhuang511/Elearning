@@ -951,7 +951,7 @@ class local_mod_assign_external extends external_api {
             array(
                 'id' => new external_value(PARAM_INT, 'the grade id'),
                 'assignment' => new external_value(PARAM_INT, 'the assign id'),
-                'grade' => new external_value(PARAM_INT, 'the grade id'),
+                'grade' => new external_value(PARAM_FLOAT, 'the grade id'),
                 'commenttext' => new external_value(PARAM_RAW, 'the content of commenttext'),
                 'commentformat' => new external_value(PARAM_INT, 'the format of commenttext'),
             )
@@ -1022,7 +1022,7 @@ class local_mod_assign_external extends external_api {
         return new external_function_parameters(
             array(
                 'assignment' => new external_value(PARAM_INT, 'the assign id'),
-                'grade' => new external_value(PARAM_INT, 'the grade id'),
+                'grade' => new external_value(PARAM_FLOAT, 'the grade id'),
                 'commenttext' => new external_value(PARAM_RAW, 'the content of commenttext'),
                 'commentformat' => new external_value(PARAM_INT, 'the format of commenttext'),
             )
