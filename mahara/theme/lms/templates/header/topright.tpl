@@ -1,13 +1,7 @@
 <div class="clearfix">
-    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-responsive-collapse" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-    </button>
     <ul class="nav pull-right usermenu loggedin" role="menubar"><li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="student 253" aria-expanded="false">
-                <span class="username hidden-sm">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="{$USER|display_default_name}" aria-expanded="false">
+                <span class="username">
                     <span class="icon icon-user" role="presentation" aria-hidden="true"></span>
                     {$USER|display_default_name}
                 </span>

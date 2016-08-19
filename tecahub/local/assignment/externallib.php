@@ -951,7 +951,7 @@ class local_mod_assign_external extends external_api {
             array(
                 'id' => new external_value(PARAM_INT, 'the grade id'),
                 'assignment' => new external_value(PARAM_INT, 'the assign id'),
-                'grade' => new external_value(PARAM_INT, 'the grade id'),
+                'grade' => new external_value(PARAM_FLOAT, 'the grade id'),
                 'commenttext' => new external_value(PARAM_RAW, 'the content of commenttext'),
                 'commentformat' => new external_value(PARAM_INT, 'the format of commenttext'),
             )
@@ -1022,7 +1022,7 @@ class local_mod_assign_external extends external_api {
         return new external_function_parameters(
             array(
                 'assignment' => new external_value(PARAM_INT, 'the assign id'),
-                'grade' => new external_value(PARAM_INT, 'the grade id'),
+                'grade' => new external_value(PARAM_FLOAT, 'the grade id'),
                 'commenttext' => new external_value(PARAM_RAW, 'the content of commenttext'),
                 'commentformat' => new external_value(PARAM_INT, 'the format of commenttext'),
             )
@@ -2974,7 +2974,7 @@ class local_mod_assign_external extends external_api {
                     'timesubmitted' => new external_value(PARAM_INT, 'timesubmitted', VALUE_OPTIONAL),
                     'attemptnumber' => new external_value(PARAM_INT, 'attemptnumber', VALUE_OPTIONAL),
                     'gradeid' => new external_value(PARAM_INT, 'gradeid', VALUE_OPTIONAL),
-                    'grade' => new external_value(PARAM_INT, 'grade', VALUE_OPTIONAL),
+                    'grade' => new external_value(PARAM_FLOAT, 'grade', VALUE_OPTIONAL),
                     'timemarked' => new external_value(PARAM_INT, 'timemarked', VALUE_OPTIONAL),
                     'firstmarked' => new external_value(PARAM_INT, 'firstmarked', VALUE_OPTIONAL),
                     'mailed' => new external_value(PARAM_INT, 'mailed', VALUE_OPTIONAL),
@@ -3046,7 +3046,7 @@ class local_mod_assign_external extends external_api {
             new external_single_structure(
                 array(
                     'userid' => new external_value(PARAM_INT, 'userid', VALUE_OPTIONAL),
-                    'grade' => new external_value(PARAM_INT, 'grade', VALUE_OPTIONAL),
+                    'grade' => new external_value(PARAM_FLOAT, 'grade', VALUE_OPTIONAL),
                     'lastmodified' => new external_value(PARAM_INT, 'lastmodified', VALUE_OPTIONAL),
                     'workflowstate' => new external_value(PARAM_RAW, 'workflowstate', VALUE_OPTIONAL),
                     'allocatedmarker' => new external_value(PARAM_INT, 'allocatedmarker', VALUE_OPTIONAL),
