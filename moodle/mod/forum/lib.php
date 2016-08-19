@@ -455,9 +455,17 @@ function forum_delete_instance($id)
     }
 
     forum_tp_delete_read_records(-1, -1, -1, $forum->id);
-
-    if (!$DB->delete_records('forum', array('id' => $forum->id))) {
-        $result = false;
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $prs = array();
+        $prs['parameters[0][name]'] = "id";
+        $prs['parameters[0][value]'] = $forum->id;
+        if (!delete_remote_mdl_forum("forum", $prs)) {
+            $result = false;
+        }
+    } else {
+        if (!$DB->delete_records('forum', array('id' => $forum->id))) {
+            $result = false;
+        }
     }
 
     forum_grade_item_delete($forum);
@@ -1190,7 +1198,14 @@ function forum_cron()
 
     // Delete any really old ones (normally there shouldn't be any)
     $weekago = $timenow - (7 * 24 * 3600);
-    $DB->delete_records_select('forum_queue', "timemodified < ?", array($weekago));
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $params = array();
+        $params['parameters[0][name]'] = "0";
+        $params['parameters[0][value]'] = $weekago;
+        $result = delete_remote_mdl_forum_select("forum_queue", "timemodified < ?", $params);
+    } else {
+        $DB->delete_records_select('forum_queue', "timemodified < ?", array($weekago));
+    }
     mtrace('Cleaned old digest records');
 
     if ($CFG->digestmailtimelast < $digesttime and $timenow > $digesttime) {
@@ -5413,9 +5428,20 @@ function forum_delete_discussion($discussion, $fulldelete, $course, $cm, $forum)
     forum_tp_delete_read_records(-1, -1, $discussion->id);
 
     // Discussion subscriptions must be removed before discussions because of key constraints.
-    $DB->delete_records('forum_discussion_subs', array('discussion' => $discussion->id));
-    if (!$DB->delete_records("forum_discussions", array("id" => $discussion->id))) {
-        $result = false;
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $params = array();
+        $params['parameters[0][name]'] = "discussion";
+        $params['parameters[0][value]'] = $discussion->id;
+        $rs = delete_remote_mdl_forum("forum_discussion_subs", $params);
+        $params['parameters[0][name]'] = "id";
+        if (!delete_remote_mdl_forum("forum_discussions", $params)) {
+            $result = false;
+        }
+    } else {
+        $DB->delete_records('forum_discussion_subs', array('discussion' => $discussion->id));
+        if (!$DB->delete_records("forum_discussions", array("id" => $discussion->id))) {
+            $result = false;
+        }
     }
 
     // Update completion state if we are tracking completion based on number of posts
@@ -7699,7 +7725,27 @@ function forum_tp_start_tracking($forumid, $userid = false)
         $userid = $USER->id;
     }
 
-    return $DB->delete_records('forum_track_prefs', array('userid' => $userid, 'forumid' => $forumid));
+    $huduserid = $userid;
+
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $hubuser = get_remote_mapping_user($userid);
+
+        if ($hubuser) {
+            $huduserid = $hubuser[0]->id;
+        }
+
+        $params = array();
+        $params['parameters[0][name]'] = "userid";
+        $params['parameters[0][value]'] = $huduserid;
+        $params['parameters[1][name]'] = "forumid";
+        $params['parameters[1][value]'] = $forumid;
+
+        $result = delete_remote_mdl_forum("forum_track_prefs", $params);
+        return $result;
+
+    } else {
+        return $DB->delete_records('forum_track_prefs', array('userid' => $userid, 'forumid' => $forumid));
+    }
 }
 
 /**
@@ -8960,7 +9006,16 @@ function forum_set_user_maildigest($forum, $maildigest, $user = null)
     // Create or Update the existing maildigest setting.
     if ($subscription) {
         if ($maildigest == -1) {
-            $DB->delete_records('forum_digests', array('forum' => $forum->id, 'userid' => $user->id));
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+                $prs = array();
+                $prs['parameters[0][name]'] = "forum";
+                $prs['parameters[0][value]'] = $forum->id;
+                $prs['parameters[1][name]'] = "userid";
+                $prs['parameters[1][value]'] = $user->id;
+                $result = delete_remote_mdl_forum("forum_digests", $prs);
+            } else {
+                $DB->delete_records('forum_digests', array('forum' => $forum->id, 'userid' => $user->id));
+            }
         } else if ($maildigest !== $subscription->maildigest) {
             // Only update the maildigest setting if it's changed.
 
