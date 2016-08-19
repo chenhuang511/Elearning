@@ -282,6 +282,7 @@ function get_remote_course_modules_completion_by_mode($cmid, $mode = 'normal', $
 {
     $hostip = gethostip();
     $rcm = get_local_course_modules_record($cmid);
+    $rcourseid = get_local_course_record($rcm->course, true)->remoteid;
 
     if ($userid != -1) {
         $userid = get_remote_mapping_user($userid)[0]->id;
@@ -294,7 +295,7 @@ function get_remote_course_modules_completion_by_mode($cmid, $mode = 'normal', $
             'function_name' => 'local_get_remote_course_modules_completion',
             'params' => array(
                 'coursemoduleid' => $rcm->remoteid,
-                'courseid' => $rcm->course,
+                'courseid' => $rcourseid,
                 'hostip' => $hostip,
                 'field' => $field,
                 'mode' => $mode,
