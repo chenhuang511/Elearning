@@ -313,6 +313,17 @@ abstract class grade_object
                     } else {
                         $data->gradepass = $DB->get_field('grade_items', 'gradepass', array('remoteid' => $data->remoteid));
                     }
+                    $acceptedmodules = array('assign', 'quiz');
+                    if (in_array($data->itemmodule, $acceptedmodules)) {
+                        try {
+                            $localgrademax = $DB->get_field($data->itemmodule, 'grade', array('remoteid' => $data->iteminstance));
+                            if ($localgrademax !== false) {
+                                $data->grademax = $localgrademax;
+                            }
+                        } catch (\Exception $e) {
+
+                        }
+                    }
                 }
             } elseif ($table === 'grade_categories') {
                 $rsraw = get_remote_list_grade_categories_raw_data($sql, $remoteparams);

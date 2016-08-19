@@ -178,9 +178,9 @@ $functions = array(
         'type'		    => 'write',
         'ajax'		    => true
     ),
-    'local_get_course_completion' => array(
+    'local_get_course_completion_progress' => array(
         'classname'     => 'local_course_external',
-        'methodname'    => 'get_course_completion',
+        'methodname'    => 'get_course_completion_progress',
         'classpath'     => 'local/course/externallib.php',
         'description'   => 'get course completion',
         'type'		    => 'write',
@@ -216,6 +216,14 @@ $functions = array(
         'classpath'     => 'local/course/externallib.php',
         'description'   => 'Get information tbl modules',
         'type'		    => 'read',
+        'ajax'		    => true
+    ),
+    'local_update_course_completions' => array(
+        'classname'     => 'local_course_external',
+        'methodname'    => 'update_remote_course_completions',
+        'classpath'     => 'local/course/externallib.php',
+        'description'   => 'Update tbl course completions',
+        'type'		    => 'write',
         'ajax'		    => true
     ),
 );

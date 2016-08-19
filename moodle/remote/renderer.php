@@ -93,7 +93,7 @@ class core_remote_renderer extends plugin_renderer_base
 
         foreach ($courses as $course) {
             $course->iscompletion = 0; // default course
-            $course->completion = get_remote_course_completion($course, $hubuserid);
+            $course->completion = get_remote_course_completion_progress($course, $hubuserid);
 
             $classes = 'coursebox clearfix';
 
@@ -371,7 +371,7 @@ class core_remote_renderer extends plugin_renderer_base
             $html .= html_writer::end_tag('article'); //end tag coursebox
         }
         $html .= html_writer::start_div('el-buttons'); // buttons
-        $html .= html_writer::link(new moodle_url('course.php'), 'xem tất cả ' . '<i class="fa fa-angle-right" aria-hidden="true"></i>', array('class' => 'el-viewall'));
+//        $html .= html_writer::link(new moodle_url('course.php'), 'xem tất cả ' . '<i class="fa fa-angle-right" aria-hidden="true"></i>', array('class' => 'el-viewall'));
         $html .= html_writer::end_div(); // end buttons
         $html .= html_writer::end_div();
         return $html;
