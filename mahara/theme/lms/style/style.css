@@ -6298,8 +6298,16 @@ a.user-icon:hover {
 /*start cutomize bhxh*/
 .f-nav {
     position: fixed !important;
-    animation-duration: 3s;
 }
+@media (max-width: 768px) {
+    .f-nav {
+        position: inherit !important;
+    }
+    .main-nav .nav li a {
+        border: none;
+    }
+}
+
 .f-nav .logo-area {
     padding: 3px 0;
 }
