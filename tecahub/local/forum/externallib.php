@@ -848,29 +848,29 @@ class local_mod_forum_external extends external_api
             'sort' => $sort
         ));
 
-        $sql = "SELECT fd.* FROM {forum_discussions} fd 
-                LEFT JOIN {user} u ON u.id = fd.userid ";
+        $sql = "SELECT md.* FROM {forum_discussions} md 
+                LEFT JOIN {user} u ON md.userid = u.id WHERE";
 
-        $host = $DB->get_record('mnet_host', array('ip_address' => $params['hostip']), '*', MUST_EXIST);
+        $hostid = $DB->get_field('mnet_host', 'id', array('ip_address' => $params['hostip']));
 
-        if (!$host) {
+        if (!$hostid) {
             $warnings['message'] = "not found host";
         }
 
         $arr = array();
         foreach ($params['parameters'] as $p) {
-            $columnname = "fd." . $p['name'];
-            $sql .= "WHERE $columnname = ? AND ";
+            $columnname = "md." . $p['name'];
+            $sql .= " $columnname = ? AND ";
             $arr = array_merge($arr, array($p['value']));
         }
 
-        $arr = array_merge($arr, array($host->id));
+        $arr = array_merge($arr, array($hostid));
 
-        $sql .= " fd.userid IN (SELECT id FROM {user} WHERE mnethostid = ?)";
+        $sql .= " md.userid IN (SELECT id FROM {user} WHERE mnethostid = ?)";
 
         if ($params['sort'] != '') {
             $orderby = $params['sort'];
-            $sql .= " ORDER BY $orderby";
+            $sql .= " ORDER BY md.$orderby";
         }
 
 
