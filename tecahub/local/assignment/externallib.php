@@ -2974,7 +2974,7 @@ class local_mod_assign_external extends external_api {
                     'timesubmitted' => new external_value(PARAM_INT, 'timesubmitted', VALUE_OPTIONAL),
                     'attemptnumber' => new external_value(PARAM_INT, 'attemptnumber', VALUE_OPTIONAL),
                     'gradeid' => new external_value(PARAM_INT, 'gradeid', VALUE_OPTIONAL),
-                    'grade' => new external_value(PARAM_INT, 'grade', VALUE_OPTIONAL),
+                    'grade' => new external_value(PARAM_FLOAT, 'grade', VALUE_OPTIONAL),
                     'timemarked' => new external_value(PARAM_INT, 'timemarked', VALUE_OPTIONAL),
                     'firstmarked' => new external_value(PARAM_INT, 'firstmarked', VALUE_OPTIONAL),
                     'mailed' => new external_value(PARAM_INT, 'mailed', VALUE_OPTIONAL),
