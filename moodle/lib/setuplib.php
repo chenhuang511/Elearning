@@ -354,8 +354,8 @@ class file_serving_exception extends moodle_exception {
 
 /**
  * Default exception handler.
- *
- * @param Exception $ex
+ *$ex
+ * @param Exception
  * @return void -does not return. Terminates execution!
  */
 function default_exception_handler($ex) {

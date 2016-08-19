@@ -7989,10 +7989,13 @@ function forum_check_throttling($forum, $cm = null)
     // Get the number of posts in the last period we care about.
     $timenow = time();
     $timeafter = $timenow - $forum->blockperiod;
-    $numposts = $DB->count_records_sql('SELECT COUNT(p.id) FROM {forum_posts} p
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+    } else {
+        $numposts = $DB->count_records_sql('SELECT COUNT(p.id) FROM {forum_posts} p
                                         JOIN {forum_discussions} d
                                         ON p.discussion = d.id WHERE d.forum = ?
                                         AND p.userid = ? AND p.created > ?', array($forum->id, $USER->id, $timeafter));
+    }
 
     $a = new stdClass();
     $a->blockafter = $forum->blockafter;
