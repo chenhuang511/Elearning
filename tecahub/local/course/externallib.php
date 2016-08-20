@@ -1118,11 +1118,11 @@ class local_course_external extends external_api
     }
 
     /**
-     * Describes the parameters for create_remote_course_modules_completion
+     * Describes the parameters for create_update_remote_course_modules_completion
      *
      * @return external_external_function_parameters
      */
-    public static function create_remote_course_modules_completion_parameters()
+    public static function create_update_remote_course_modules_completion_parameters()
     {
         return new external_function_parameters(
             array(
@@ -1136,7 +1136,7 @@ class local_course_external extends external_api
     }
 
     /**
-     * Insert table "course_modules_completion" on hub
+     * Update & create table "course_modules_completion" on hub
      *
      * @param int $coursemoduleid - The id of course modules
      * @param int $userid - The id of user on hub
@@ -1146,11 +1146,11 @@ class local_course_external extends external_api
      *
      * @return int $result         - The id of course modules completion
      */
-    public static function create_remote_course_modules_completion($coursemoduleid, $userid, $completionstate, $viewed, $timemodified)
+    public static function create_update_remote_course_modules_completion($coursemoduleid, $userid, $completionstate, $viewed, $timemodified)
     {
         global $DB;
 
-        $params = self::validate_parameters(self::create_remote_course_modules_completion_parameters(), array(
+        $params = self::validate_parameters(self::create_update_remote_course_modules_completion_parameters(), array(
             'coursemoduleid' => $coursemoduleid,
             'userid' => $userid,
             'completionstate' => $completionstate,
@@ -1158,11 +1158,19 @@ class local_course_external extends external_api
             'timemodified' => $timemodified,
         ));
 
+        $cmc = $DB->get_record('course_modules_completion', array('coursemoduleid' => $params['coursemoduleid'],
+            'userid' => $params['userid']));
+
         $params = (object)$params;
 
         $trans = $DB->start_delegated_transaction();
 
-        $result = $DB->insert_record('course_modules_completion', $params);
+        if (!$cmc){
+            $result = $DB->insert_record('course_modules_completion', $params);
+        } else {
+            $params->id = $cmc->id;
+            $result = $DB->update_record('course_modules_completion', $params);
+        }
 
         $trans->allow_commit();
 
@@ -1170,78 +1178,12 @@ class local_course_external extends external_api
     }
 
     /**
-     * Describes the create_remote_course_modules_completion returns value.
+     * Describes the create_update_remote_course_modules_completion returns value.
      *
      * @return external_single_structure
      * @since Moodle 3.1
      */
-    public static function create_remote_course_modules_completion_returns()
-    {
-        return new external_value(PARAM_INT, 'The id of course module');
-    }
-
-    /**
-     * Describes the parameters for update_remote_course_modules_completion_parameters
-     *
-     * @return external_external_function_parameters
-     */
-    public static function update_remote_course_modules_completion_parameters()
-    {
-        return new external_function_parameters(
-            array(
-                'id' => new external_value(PARAM_INT, 'The id of course module completion'),
-                'coursemoduleid' => new external_value(PARAM_INT, 'The id of course module'),
-                'userid' => new external_value(PARAM_INT, 'The id of user'),
-                'completionstate' => new external_value(PARAM_INT, 'Completion state'),
-                'viewed' => new external_value(PARAM_INT, 'View'),
-                'timemodified' => new external_value(PARAM_INT, 'Time viewer')
-            )
-        );
-    }
-
-    /**
-     * Update table "course_modules_completion" on hub
-     *
-     * @param int $id - The id of course modules completion
-     * @param int $coursemoduleid - The id of course modules
-     * @param int $userid - The id of user on hub
-     * @param int $completionstate - The state of completion
-     * @param int $viewed - The state of viewed
-     * @param int $timemodified - The time modified
-     *
-     * @return int $result         - The id of course modules completion
-     */
-    public static function update_remote_course_modules_completion($id, $coursemoduleid, $userid, $completionstate, $viewed, $timemodified)
-    {
-        global $DB;
-
-        $params = self::validate_parameters(self::update_remote_course_modules_completion_parameters(), array(
-            'id' => $id,
-            'coursemoduleid' => $coursemoduleid,
-            'userid' => $userid,
-            'completionstate' => $completionstate,
-            'viewed' => $viewed,
-            'timemodified' => $timemodified,
-        ));
-
-        $params = (object)$params;
-
-        $trans = $DB->start_delegated_transaction();
-
-        $result = $DB->update_record('course_modules_completion', $params);
-
-        $trans->allow_commit();
-
-        return $result;
-    }
-
-    /**
-     * Describes the update_remote_course_modules_completion returns value.
-     *
-     * @return external_single_structure
-     * @since Moodle 3.1
-     */
-    public static function update_remote_course_modules_completion_returns()
+    public static function create_update_remote_course_modules_completion_returns()
     {
         return new external_value(PARAM_INT, 'True(1) if success');
     }

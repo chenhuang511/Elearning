@@ -162,19 +162,11 @@ $functions = array(
         'type'		    => 'read',
         'ajax'		    => true
     ),
-    'local_create_remote_course_modules_completion' => array(
+    'local_create_update_remote_course_modules_completion' => array(
         'classname'     => 'local_course_external',
-        'methodname'    => 'create_remote_course_modules_completion',
+        'methodname'    => 'create_update_remote_course_modules_completion',
         'classpath'     => 'local/course/externallib.php',
-        'description'   => 'Create remote course modules completion',
-        'type'		    => 'write',
-        'ajax'		    => true
-    ),
-    'local_update_remote_course_modules_completion' => array(
-        'classname'     => 'local_course_external',
-        'methodname'    => 'update_remote_course_modules_completion',
-        'classpath'     => 'local/course/externallib.php',
-        'description'   => 'Update remote course modules completion',
+        'description'   => 'Update create remote course modules completion',
         'type'		    => 'write',
         'ajax'		    => true
     ),
