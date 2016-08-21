@@ -854,7 +854,7 @@ class completion_info {
             $DB->delete_records('course_completion_crit_compl', array('course' => $this->course_id, 'criteriaid' => $acriteria->id));
             $DB->delete_records('course_completions', array('course' => $this->course_id));
             if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-                delete_remote_course_completions($this->course_id)
+                delete_remote_course_completions($this->course_id);
             }
         }
 
