@@ -793,10 +793,10 @@ class completion_info {
     public function delete_course_completion_data() {
         global $DB;
 
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-            $DB->delete_records('course_completions', array('course' => $this->course_id));
-            $DB->delete_records('course_completion_crit_compl', array('course' => $this->course_id));
-        } else {
+        $DB->delete_records('course_completions', array('course' => $this->course_id));
+        $DB->delete_records('course_completion_crit_compl', array('course' => $this->course_id));
+
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
             delete_remote_course_completions($this->course_id);
             delete_remote_course_completion_crit_compl($this->course_id);
         }
@@ -950,6 +950,7 @@ class completion_info {
         // Not there, get via SQL
         if ($usecache && $wholecourse) {
             // Get whole course data for cache
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
                 $alldatabycmc = $DB->get_records_sql("
             SELECT
                 cmc.*
@@ -958,6 +959,16 @@ class completion_info {
                 INNER JOIN {course_modules_completion} cmc ON cmc.coursemoduleid=cm.id
             WHERE
                 cm.course=? AND cmc.userid=?", array($this->course->id, $userid));
+            } else {
+                $alldatabycmc = $DB->get_records_sql("
+            SELECT
+                cmc.*
+            FROM
+                {course_modules} cm
+                INNER JOIN {course_modules_completion} cmc ON cmc.coursemoduleid=cm.remoteid
+            WHERE
+                cm.course=? AND cmc.userid=?", array($this->course->id, $userid));
+            }
 
             // Reindex by cm id
             $alldata = array();

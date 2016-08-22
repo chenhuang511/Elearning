@@ -186,6 +186,9 @@ class completion_completion extends data_object {
             $data['timeenrolled'] = $this->timeenrolled;
             $data['timestarted'] = $this->timestarted;
             $data['timecompleted'] = $this->timecompleted;
+            if (!$this->reaggregate){
+                $this->reaggregate = 0;
+            }
             $data['reaggregate'] = $this->reaggregate;
         }
 

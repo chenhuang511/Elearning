@@ -362,6 +362,9 @@ define(["libs/backbone",
 			 * @param {Event} e
 			 */
 			manualMoveX: function(e) {
+                if (isNaN(e.target.value)) {
+                    e.target.value = this._prevPos.x;
+                }
 				return this.model.setInt("x", e.target.value);
 			},
 
@@ -371,6 +374,9 @@ define(["libs/backbone",
 			 * @param {Event} e
 			 */
 			manualMoveY: function(e) {
+                if (isNaN(e.target.value)) {
+                    e.target.value = this._prevPos.y;
+                }
 				return this.model.setInt("y", e.target.value);
 			},
 
