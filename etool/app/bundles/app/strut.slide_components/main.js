@@ -2,10 +2,12 @@ define(['./view/ComponentButton',
 	'./view/ImportingComponentButton',
 	'./model/Image',
 	'./model/TextBox',
+	'./model/FormulaBox',
 	'./model/WebFrame',
 	'./model/Video',
 	'./view/ImageView',
 	'./view/TextBoxView',
+	'./view/FormulaBoxView',
 	'./view/WebFrameView',
 	'./view/VideoView',
 	'./ComponentFactory',
@@ -18,10 +20,12 @@ define(['./view/ComponentButton',
 			 ImportingComponentButton,
 			 Image,
 			 TextBox,
+			 FormulaBox,
 			 WebFrame,
 			 Video,
 			 ImageView,
 			 TextBoxView,
+			 FormulaBoxView,
 			 WebFrameView,
 			 VideoView,
 			 ComponentFactory,
@@ -39,6 +43,13 @@ define(['./view/ComponentButton',
 					componentType: 'TextBox',
 					icon: 'icon-text-width',
 					name: lang.text,
+					editorModel: editorModel
+				}));
+
+				buttons.push(new Button({
+					componentType: 'FormulaBox',
+					icon: 'icon-text-width',
+					name: 'FormualBox',
 					editorModel: editorModel
 				}));
 
@@ -107,6 +118,13 @@ define(['./view/ComponentButton',
 				}, TextBox);
 
 				registry.register({
+					interfaces : 'strut.ComponentModel',
+					meta : {
+						type : 'FormulaBox'
+					}
+				}, FormulaBox);
+
+				registry.register({
 					interfaces: 'strut.ComponentModel',
 					meta: {
 						type: 'WebFrame'
@@ -140,6 +158,7 @@ define(['./view/ComponentButton',
 						type: 'TextBox'
 					}
 				}, TextBoxView);
+
 
 				registry.register({
 					interfaces: 'strut.ComponentView',
