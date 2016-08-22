@@ -354,7 +354,7 @@ function get_remote_list_course_completion($userid)
 function delete_remote_course_completions($courseid)
 {
     $hostip = gethostip();
-    $rcourseid = get_local_course_record($courseid, true);
+    $rcourseid = get_local_course_record($courseid, true)->remoteid;
 
     $result = moodle_webservice_client(
         array(
@@ -379,7 +379,7 @@ function delete_remote_course_completions($courseid)
 function delete_remote_course_completion_crit_compl($courseid)
 {
     $hostip = gethostip();
-    $rcourseid = get_local_course_record($courseid, true);
+    $rcourseid = get_local_course_record($courseid, true)->remoteid;
 
     $result = moodle_webservice_client(
         array(
