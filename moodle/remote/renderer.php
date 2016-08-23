@@ -93,7 +93,7 @@ class core_remote_renderer extends plugin_renderer_base
 
         foreach ($courses as $course) {
             $course->iscompletion = 0; // default course
-            $course->completion = get_remote_course_completion($course, $hubuserid);
+            $course->completion = get_remote_course_completion_progress($course, $hubuserid);
 
             $classes = 'coursebox clearfix';
 
@@ -258,7 +258,7 @@ class core_remote_renderer extends plugin_renderer_base
         // start profile block
         $html .= html_writer::start_div('el-profile-block clearfix');
         $html .= html_writer::start_div('col-sm-7 col-md-7 el-profile-info');
-        $html .= html_writer::label($user->username, '', true, array('class' => 'profile-info-username'));
+        $html .= html_writer::label($user->firstname . ' ' . $user->lastname, '', true, array('class' => 'profile-info-username'));
         $html .= html_writer::link(new moodle_url("/user/edit.php", array('userid' => $user->id, 'returnto' => 'profile')), '<i class="fa fa-pencil-square-o" aria-hidden="true"></i>' . 'Chỉnh sửa thông tin cá nhân', array('class' => 'profile-info-link'));
         $html .= html_writer::end_div(); // end profile info
         $html .= html_writer::start_div('col-sm-5 col-md-5 el-certificate');
@@ -371,7 +371,7 @@ class core_remote_renderer extends plugin_renderer_base
             $html .= html_writer::end_tag('article'); //end tag coursebox
         }
         $html .= html_writer::start_div('el-buttons'); // buttons
-        $html .= html_writer::link(new moodle_url('course.php'), 'xem tất cả ' . '<i class="fa fa-angle-right" aria-hidden="true"></i>', array('class' => 'el-viewall'));
+//        $html .= html_writer::link(new moodle_url('course.php'), 'xem tất cả ' . '<i class="fa fa-angle-right" aria-hidden="true"></i>', array('class' => 'el-viewall'));
         $html .= html_writer::end_div(); // end buttons
         $html .= html_writer::end_div();
         return $html;

@@ -626,7 +626,11 @@ class completion_info {
 
         // Modname hopefully is provided in $cm but just in case it isn't, let's grab it
         if (!isset($cm->modname)) {
-            $cm->modname = $DB->get_field('modules', 'name', array('id'=>$cm->module));
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+                $cm->modname = $DB->get_field('modules', 'name', array('id'=>$cm->module));
+            } else {
+                $cm->modname = get_remote_modules_by_id($cm->module)->name;
+            }
         }
 
         $newstate = COMPLETION_COMPLETE;
@@ -789,10 +793,10 @@ class completion_info {
     public function delete_course_completion_data() {
         global $DB;
 
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-            $DB->delete_records('course_completions', array('course' => $this->course_id));
-            $DB->delete_records('course_completion_crit_compl', array('course' => $this->course_id));
-        } else {
+        $DB->delete_records('course_completions', array('course' => $this->course_id));
+        $DB->delete_records('course_completion_crit_compl', array('course' => $this->course_id));
+
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
             delete_remote_course_completions($this->course_id);
             delete_remote_course_completion_crit_compl($this->course_id);
         }
@@ -830,9 +834,8 @@ class completion_info {
     public function delete_all_state($cm) {
         global $DB;
         // Delete from database
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-            $DB->delete_records('course_modules_completion', array('coursemoduleid'=>$cm->id));
-        } else {
+        $DB->delete_records('course_modules_completion', array('coursemoduleid'=>$cm->id));
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
             delete_remote_course_modules_completion($cm->id);
         }
 
@@ -850,6 +853,9 @@ class completion_info {
             // Delete all criteria completions relating to this activity
             $DB->delete_records('course_completion_crit_compl', array('course' => $this->course_id, 'criteriaid' => $acriteria->id));
             $DB->delete_records('course_completions', array('course' => $this->course_id));
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+                delete_remote_course_completions($this->course_id);
+            }
         }
 
         // Difficult to find affected users, just purge all completion cache.
@@ -877,12 +883,7 @@ class completion_info {
             return;
         }
         // Get current list of users with completion state
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-            $rs = $DB->get_recordset('course_modules_completion', array('coursemoduleid'=>$cm->id), '', 'userid');
-        } else {
-            $records = get_remote_course_modules_completion_by_mode($cm->id, 'normal', 'userid');
-            $rs = new \json_moodle_recordset($records);
-        }
+        $rs = $DB->get_recordset('course_modules_completion', array('coursemoduleid'=>$cm->id), '', 'userid');
 
         $keepusers = array();
         foreach ($rs as $rec) {
@@ -949,7 +950,7 @@ class completion_info {
         // Not there, get via SQL
         if ($usecache && $wholecourse) {
             // Get whole course data for cache
-            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
                 $alldatabycmc = $DB->get_records_sql("
             SELECT
                 cmc.*
@@ -959,7 +960,14 @@ class completion_info {
             WHERE
                 cm.course=? AND cmc.userid=?", array($this->course->id, $userid));
             } else {
-                $alldatabycmc = get_remote_course_modules_completion_by_mode($cm->id, 'wholecourse', '*', $userid);
+                $alldatabycmc = $DB->get_records_sql("
+            SELECT
+                cmc.*
+            FROM
+                {course_modules} cm
+                INNER JOIN {course_modules_completion} cmc ON cmc.coursemoduleid=cm.remoteid
+            WHERE
+                cm.course=? AND cmc.userid=?", array($this->course->id, $userid));
             }
 
             // Reindex by cm id
@@ -996,11 +1004,8 @@ class completion_info {
 
         } else {
             // Get single record
-            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-                $data = $DB->get_record('course_modules_completion', array('coursemoduleid'=>$cm->id, 'userid'=>$userid));
-            } else {
-                $data = get_remote_course_modules_completion_by_mode($cm->id, 'singlerc', '*', $userid);
-            }
+            $data = $DB->get_record('course_modules_completion', array('coursemoduleid'=>$cm->id, 'userid'=>$userid));
+
             if ($data == false) {
                 // Row not present counts as 'not complete'
                 $data = new StdClass;
@@ -1036,36 +1041,26 @@ class completion_info {
         global $USER, $DB;
 
         $transaction = $DB->start_delegated_transaction();
+
         if (!$data->id) {
             // Check there isn't really a row
-            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-                $data->id = $DB->get_field('course_modules_completion', 'id',
+            $data->id = $DB->get_field('course_modules_completion', 'id',
                     array('coursemoduleid'=>$data->coursemoduleid, 'userid'=>$data->userid));
-            } else {
-                if(!$cmc = get_remote_course_modules_completion_by_mode($data->coursemoduleid, 'singlerc', 'id', $data->userid)){
-                    $data->id = 0;
-                } else {
-                    $data->id = $cmc->id;
-                }
-            }
         }
 
         if (!$data->id) {
             // Didn't exist before, needs creating
-            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-                $data->id = $DB->insert_record('course_modules_completion', $data);
-            } else {
+            $data->id = $DB->insert_record('course_modules_completion', $data);
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
                 $cmcdata = (array)$data;
-                $data->id = create_remote_course_modules_completion($cmcdata);
+                create_update_remote_course_modules_completion($cmcdata);
             }
-
         } else {
             // Has real (nonzero) id meaning that a database row exists, update
-            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-                $DB->update_record('course_modules_completion', $data);
-            } else {
+            $DB->update_record('course_modules_completion', $data);
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
                 $cmcdata = (array)$data;
-                update_remote_course_modules_completion($cmcdata);
+                create_update_remote_course_modules_completion($cmcdata);
             }
         }
         $transaction->allow_commit();

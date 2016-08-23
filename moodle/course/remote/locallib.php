@@ -270,93 +270,7 @@ function change_email_to_userid($email)
 }
 
 /**
- * Get course module completion by mode and course module id
- *
- * @param int $cmid - The id of course module
- * @param string $mode - The mode to get data. 3 mode: normal, singlerc, wholecourse
- * @param string $field - The field to get data.
- * @param int $userid - The id of user
- * @return mixed $result   - The information of course module completion
- */
-function get_remote_course_modules_completion_by_mode($cmid, $mode = 'normal', $field = '*', $userid = -1)
-{
-    $hostip = gethostip();
-    $rcm = get_local_course_modules_record($cmid);
-
-    if ($userid != -1) {
-        $userid = get_remote_mapping_user($userid)[0]->id;
-    }
-
-    $result = moodle_webservice_client(
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_get_remote_course_modules_completion',
-            'params' => array(
-                'coursemoduleid' => $rcm->remoteid,
-                'courseid' => $rcm->course,
-                'hostip' => $hostip,
-                'field' => $field,
-                'mode' => $mode,
-                'userid' => $userid
-            ),
-        ), false
-    );
-
-    if (isset($result->cmc) && !empty($result->cmc)) {
-        foreach ($result->cmc as $cmc) {
-            if (!isset($cmc->email)) {
-                continue;
-            }
-            $cmc->userid = change_email_to_userid($cmc->email);
-            unset($cmc->email);
-        }
-        return $result->cmc;
-    } else if (isset($result->scmc) && !empty($result->scmc)) {
-        if (isset($result->scmc->email)) {
-            $result->scmc->userid = change_email_to_userid($result->scmc->email);
-            unset($result->scmc->email);
-        }
-        return $result->scmc;
-    } else {
-        return 0;
-    }
-}
-
-/**
- * Insert table "course_modules_completion"  on hub
- *
- * @param array $cmc - The information course modules completion to insert $DB
- *        int   $cmc['coursemoduleid']    - The id of course module
- *        int   $cmc['userid']            - The id of user
- *        int   $cmc['completionstate']   - The completion state
- *        int   $cmc['viewed']            - The view state
- *        int   $cmc['timemodified']      - The time modified
- * @return mixed
- */
-function create_remote_course_modules_completion($cmc)
-{
-    if (isset($cmc['id'])) {
-        unset($cmc['id']);
-    }
-
-    $cmc['userid'] = get_remote_mapping_user($cmc['userid'])[0]->id;
-
-    $result = moodle_webservice_client(
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_create_remote_course_modules_completion',
-            'params' => $cmc,
-        ), false
-    );
-
-    return $result;
-
-}
-
-/**
- * Update table "course_modules_completion"  on hub
+ * Update & create table "course_modules_completion"  on hub
  *
  * @param array $cmc - The information course modules completion to insert $DB
  *        int   $cmc['id']                - The id of course module completion
@@ -367,15 +281,19 @@ function create_remote_course_modules_completion($cmc)
  *        int   $cmc['timemodified']      - The time modified
  * @return mixed
  */
-function update_remote_course_modules_completion($cmc)
+function create_update_remote_course_modules_completion($cmc)
 {
+    if (isset($cmc['id'])){
+        unset($cmc['id']);
+    }
+
     $cmc['userid'] = get_remote_mapping_user($cmc['userid'])[0]->id;
 
     $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
-            'function_name' => 'local_update_remote_course_modules_completion',
+            'function_name' => 'local_create_update_remote_course_modules_completion',
             'params' => $cmc,
         ), false
     );
@@ -389,7 +307,7 @@ function update_remote_course_modules_completion($cmc)
  * @param int $userid     - The id of user
  * @return mixed $result  - The information of course completion
  */
-function get_remote_course_completion($course, $userid)
+function get_remote_course_completion_progress($course, $userid)
 {
     global $DB;
     $completion = new completion_info($course);
@@ -400,7 +318,7 @@ function get_remote_course_completion($course, $userid)
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
-            'function_name' => 'local_get_course_completion',
+            'function_name' => 'local_get_course_completion_progress',
             'params' => array('courseid' => $course->remoteid, 'userid' => $userid, 'totalmoduletracking' => $totalmoduletracking),
         ), false
     );
@@ -436,6 +354,7 @@ function get_remote_list_course_completion($userid)
 function delete_remote_course_completions($courseid)
 {
     $hostip = gethostip();
+    $rcourseid = get_local_course_record($courseid, true)->remoteid;
 
     $result = moodle_webservice_client(
         array(
@@ -443,7 +362,7 @@ function delete_remote_course_completions($courseid)
             'token' => HOST_TOKEN,
             'function_name' => 'local_detele_course_completions_by_courseid_hostip',
             'params' => array(
-                'courseid' => $courseid,
+                'courseid' => $rcourseid,
                 'hostip' => $hostip),
         ), false
     );
@@ -460,6 +379,7 @@ function delete_remote_course_completions($courseid)
 function delete_remote_course_completion_crit_compl($courseid)
 {
     $hostip = gethostip();
+    $rcourseid = get_local_course_record($courseid, true)->remoteid;
 
     $result = moodle_webservice_client(
         array(
@@ -467,7 +387,7 @@ function delete_remote_course_completion_crit_compl($courseid)
             'token' => HOST_TOKEN,
             'function_name' => 'local_delete_course_completion_crit_compl_by_courseid_hostip',
             'params' => array(
-                'courseid' => $courseid,
+                'courseid' => $rcourseid,
                 'hostip' => $hostip),
         ), false
     );
@@ -568,7 +488,29 @@ function get_remote_modules($fields = '*') {
         )
     );
 
-    $result =  change_key_by_value($result);
+    $result = change_key_by_value($result);
+
+    return $result;
+}
+
+/**
+ * Update course completion on hub with data
+ *
+ * @param array $data - Data for update tbl course_completions
+ * @return bool $result - Return true if success
+ */
+function update_remote_course_completions($data) {
+    $data['userid'] = get_remote_mapping_user($data['userid'])[0]->id;
+    $data['course'] = get_local_course_record($data['course'], true)->remoteid;
+
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_update_course_completions',
+            'params' => $data
+        ), false
+    );
 
     return $result;
 }

@@ -179,8 +179,24 @@ class completion_completion extends data_object {
             $this->timeenrolled = 0;
         }
 
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $data = array();
+            $data['userid'] = $this->userid;
+            $data['course'] = $this->course;
+            $data['timeenrolled'] = $this->timeenrolled;
+            $data['timestarted'] = $this->timestarted;
+            $data['timecompleted'] = $this->timecompleted;
+            if (!$this->reaggregate){
+                $this->reaggregate = 0;
+            }
+            $data['reaggregate'] = $this->reaggregate;
+        }
+
         // Save record
         if ($this->id) {
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+                update_remote_course_completions($data);
+            }
             return $this->update();
         } else {
             // Make sure reaggregate field is not null
@@ -192,7 +208,9 @@ class completion_completion extends data_object {
             if (!$this->timestarted) {
                 $this->timestarted = 0;
             }
-
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+                update_remote_course_completions($data);
+            }
             return $this->insert();
         }
     }

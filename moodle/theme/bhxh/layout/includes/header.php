@@ -51,8 +51,8 @@
             <div class="banner">
                 <div class="banner-content css">
                     <div class="font d1">Chào mừng đến với</div>
-                    <div class="font d2">TRƯỜNG ĐÀO TẠO NGHIỆP VỤ</div>
-                    <div class="font d3">BẢO HIỂM XÃ HỘI VIỆT NAM</div>
+                    <div class="font d2">HỆ THỐNG ĐÀO TẠO TRỰC TUYẾN</div>
+                    <div class="font d3">HƯỚNG DỊCH VỤ SOA</div>
                 </div>
             </div>
     <?php endif; ?>

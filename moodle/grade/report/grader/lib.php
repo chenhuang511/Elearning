@@ -22,8 +22,12 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('ISREMOTE') || define('ISREMOTE', MOODLE_RUN_MODE === MOODLE_MODE_HUB);
+
 require_once($CFG->dirroot . '/grade/report/lib.php');
 require_once($CFG->libdir.'/tablelib.php');
+require_once($CFG->libdir . '/additionallib.php');
+require_once($CFG->libdir . '/remote/lib.php');
 
 /**
  * Class providing an API for the grader report building and displaying.
@@ -543,7 +547,30 @@ class grade_report_grader extends grade_report {
 
         $userids = array_keys($this->users);
 
-        if ($grades = $DB->get_records_sql($sql, $params)) {
+        $grades = null;
+        if (ISREMOTE) {
+            $remoteparams = array();
+            $newparams = array();
+            $usersmapping = array();
+
+            $remoteparams['param[0][name]='] = 'courseid';
+            $remoteparams['param[0][value]='] = get_local_course_record($this->courseid, true)->remoteid;
+            $index = 1;
+            foreach ($this->userselect_params as $paramu => $paramv) {
+                $remoteid = intval(get_remote_mapping_user($paramv)[0]->id);
+                $usersmapping[$remoteid] = intval($paramv);
+                $remoteparams['param[' . $index . '][name]='] = $paramu;
+                $remoteparams['param[' . $index . '][value]='] = $remoteid;
+                ++$index;
+            }
+            $grades = get_remote_assign_grade_grades_raw_data($sql, $remoteparams);
+            $this->reset_raw_data_userid($grades, $usersmapping);
+            $this->reset_raw_data_courseid($grades, array('courseid' => $this->courseid));
+        } else {
+            $grades = $DB->get_records_sql($sql, $params);
+        }
+
+        if ($grades) {
             foreach ($grades as $graderec) {
                 $grade = new grade_grade($graderec, false);
                 $this->allgrades[$graderec->userid][$graderec->itemid] = $grade;
@@ -565,6 +592,26 @@ class grade_report_grader extends grade_report {
 
                     $this->allgrades[$userid][$itemid] = $this->grades[$userid][$itemid];
                 }
+            }
+        }
+    }
+
+    public function reset_raw_data_courseid(&$rawdata, $params) {
+        foreach ($rawdata as &$data) {
+            if (isset($params['id'])) {
+                $localcourse = get_local_course_record($data->courseid, false);
+                $data->courseid = $localcourse->id;
+            }
+            if (isset($data->courseid) && isset($params['courseid'])) {
+                $data->courseid = $params['courseid'];
+            }
+        }
+    }
+
+    public function reset_raw_data_userid(&$rawdata, $usersmap) {
+        foreach ($rawdata as &$data) {
+            if (isset($data->userid) && isset($usersmap[$data->userid])) {
+                $data->userid = $usersmap[$data->userid];
             }
         }
     }
