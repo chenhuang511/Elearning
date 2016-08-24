@@ -1,6 +1,6 @@
-<a class="btn logo btn-plast dropdown-toggle" data-toggle="dropdown">
-	<span class="logo-bg"></span>
-    <span class="caret"></span>
-</a>
+<button class="btn btn-success act"><i class="icon-hdd icon-white"/> SAVE</button>
+<button class="btn dropdown-toggle btn-success" data-toggle="dropdown">
+  <span class="caret whiteCaret"></span>
+</button>
 <ul class="dropdown-menu">
 </ul>
