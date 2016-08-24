@@ -1754,4 +1754,74 @@ class local_course_external extends external_api
             )
         );
     }
+
+    public static function update_mdl_course_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'modname' => new external_value(PARAM_RAW, 'the mod name'),
+                'id' => new external_value(PARAM_INT, 'the id'),
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the data saved'
+                )
+            )
+        );
+    }
+
+    public static function update_mdl_course($modname, $id, $data)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::update_mdl_course_parameters(), array(
+            'modname' => $modname,
+            'id' => $id,
+            'data' => $data
+        ));
+
+        $result = array();
+
+        $obj = $DB->get_record($params['modname'], array("id" => $params['id']));
+
+        if (!$obj) {
+            $warnings['message'] = "Not found data record";
+            $result['id'] = 0;
+            $result['warnings'] = $warnings;
+            return $result;
+        }
+
+        foreach ($params['data'] as $element) {
+            if ($element['name'] == "availability" && $element['value'] == "") {
+                $obj->$element['name'] = null;
+            } else {
+                $obj->$element['name'] = $element['value'];
+            }
+        }
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $cid = $DB->update_record($params['modname'], $obj);
+
+        $transaction->allow_commit();
+
+        $result['id'] = $cid;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function update_mdl_course_returns()
+    {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'the id'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

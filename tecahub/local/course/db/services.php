@@ -226,4 +226,12 @@ $functions = array(
         'type'		    => 'write',
         'ajax'		    => true
     ),
+    'local_update_mdl_course' => array(
+        'classname'     => 'local_course_external',
+        'methodname'    => 'update_mdl_course',
+        'classpath'     => 'local/course/externallib.php',
+        'description'   => 'update data course_',
+        'type'		    => 'write',
+        'ajax'		    => true
+    ),
 );
