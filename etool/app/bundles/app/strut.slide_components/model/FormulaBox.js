@@ -24,7 +24,7 @@ define(['strut/deck/Component'],
 		return Component.extend({
 			initialize: function() {
 				Component.prototype.initialize.apply(this, arguments);
-				this.set('type', 'TextBox');
+				this.set('type', 'FormulaBox');
 				if (!this.get('text')) {
 					var text = getInitialText(this._opts && this._opts.fontStyles);
 					if (this._opts && this._opts.fontStyles.size)
