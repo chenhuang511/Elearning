@@ -49,7 +49,7 @@ define(['./view/ComponentButton',
 				buttons.push(new Button({
 					componentType: 'FormulaBox',
 					icon: 'icon-text-width',
-					name: 'FormualBox',
+					name: 'FormulaBox',
 					editorModel: editorModel
 				}));
 
@@ -96,7 +96,7 @@ define(['./view/ComponentButton',
 		return {
 			initialize: function(registry) {
 				// Register each component as a service
-				// so it can be picked up by the ComponentFactory
+				// so it can be picked up by the ComponeTextntFactory
 				// If 3rd parties want to add components
 				// then they just add their components to the registry as well.
 				registry.register({

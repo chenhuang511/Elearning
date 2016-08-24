@@ -93,7 +93,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<a class=\"btn logo btn-plast dropdown-toggle\" data-toggle=\"dropdown\">\n	<span class=\"logo-bg\"></span>\n    <span class=\"caret\"></span>\n</a>\n<ul class=\"dropdown-menu\">\n</ul>";
+  return "<button class=\"btn btn-success act\"><i class=\"icon-hdd icon-white\"/> SAVE</button>\n<button class=\"btn dropdown-toggle btn-success\" data-toggle=\"dropdown\">\n  <span class=\"caret whiteCaret\"></span>\n</button>\n<ul class=\"dropdown-menu\">\n</ul>\n";
   });
 
 this["JST"]["strut.presentation_generator.bespoke/BespokeTemplate"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
