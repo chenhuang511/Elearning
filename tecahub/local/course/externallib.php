@@ -1165,7 +1165,7 @@ class local_course_external extends external_api
 
         $trans = $DB->start_delegated_transaction();
 
-        if (!$cmc){
+        if (!$cmc) {
             $result = $DB->insert_record('course_modules_completion', $params);
         } else {
             $params->id = $cmc->id;
@@ -1672,7 +1672,7 @@ class local_course_external extends external_api
         ));
 
         $data = (object)$params;
-        $cc = $DB->get_record('course_completions', array('userid'=>$params['userid'], 'course'=>$params['course']));
+        $cc = $DB->get_record('course_completions', array('userid' => $params['userid'], 'course' => $params['course']));
         if (!$cc) {
             $result = $DB->insert_record('course_completions', $data);
         } else {
@@ -1724,7 +1724,11 @@ class local_course_external extends external_api
         $obj = new stdClass();
 
         foreach ($params['data'] as $element) {
-            $obj->$element['name'] = $element['value'];
+            if ($element['name'] == "availability" && $element['value'] == "") {
+                $obj->$element['name'] = null;
+            } else {
+                $obj->$element['name'] = $element['value'];
+            }
         }
 
         $result = array();
