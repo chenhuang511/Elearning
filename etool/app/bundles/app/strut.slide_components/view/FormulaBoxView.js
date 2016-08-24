@@ -201,7 +201,7 @@ define(["./ComponentView", "libs/etch",
 
 
 					//console.log(element);
-					console.log(this.$textEl.text());
+					//console.log(this.$textEl.text());
 					katex.render(this.$textEl.text(), this.formula);
 					//console.log(this.$el[0]);
 
