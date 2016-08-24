@@ -65,12 +65,13 @@ class core_remote_renderer extends plugin_renderer_base
         }
 
         $coursecompletionids = get_remote_list_course_completion($hubuserid);
-        $countcompletion = 0;
+        $countcompletion = count($coursecompletionids);
 
         if (!$coursecompletionids) {
-            $countcompletion = count($coursecompletionids);
             $mycoursecompletion = 'Bạn chưa hoàn thành khóa học nào';
         }
+
+
 
         // start - enrol course list
         $content = html_writer::start_tag('div', array('id' => 'enrol-course-list', 'class' => 'container'));
