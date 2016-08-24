@@ -193,9 +193,18 @@ define(["./ComponentView", "libs/etch",
 				} else {
 					var cmd = ComponentCommands.Text(this._initialText, this.model);
 					undoHistory.push(cmd);
+					var element = this.$el[0];
+					if (this.formula == undefined){
+						this.formula = document.createElement("div");
+						element.appendChild(this.formula);
+					}
 
-					katex.render("c = \\pm\\sqrt{a^2 + b^2}", this.$el[0]);
-					console.log(this.$el[0]);
+
+					//console.log(element);
+					//console.log(this.$textEl.text());
+					katex.render(this.$textEl.text(), this.formula);
+					//console.log(this.$el[0]);
+
 					//console.log(this.$el);
 					this.model.set("text", text);
 					window.getSelection().removeAllRanges();
