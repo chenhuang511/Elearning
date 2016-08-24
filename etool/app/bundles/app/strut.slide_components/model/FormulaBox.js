@@ -3,6 +3,7 @@ define(['strut/deck/Component'],
 		'use strict';
 
 		function getInitialText(attrs) {
+
 			if (!attrs)
 				return 'Text';
 			else {
@@ -15,6 +16,7 @@ define(['strut/deck/Component'],
 				}
 				return text + '>Text</font>'
 			}
+
 		}
 
 		/**

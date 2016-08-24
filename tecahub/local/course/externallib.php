@@ -1694,4 +1694,60 @@ class local_course_external extends external_api
         return new external_value(PARAM_INT, 'Return true if success');
     }
 
+    public static function save_mdl_course_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'modname' => new external_value(PARAM_RAW, 'the mod name'),
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the data saved'
+                )
+            )
+        );
+    }
+
+    public static function save_mdl_course($modname, $data)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::save_mdl_course_parameters(), array(
+            'modname' => $modname,
+            'data' => $data
+        ));
+
+        $obj = new stdClass();
+
+        foreach ($params['data'] as $element) {
+            $obj->$element['name'] = $element['value'];
+        }
+
+        $result = array();
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $newid = $DB->insert_record($params['modname'], $obj);
+
+        $transaction->allow_commit();
+
+        $result['newid'] = $newid;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function save_mdl_course_returns()
+    {
+        return new external_single_structure(
+            array(
+                'newid' => new external_value(PARAM_INT, 'the new id'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

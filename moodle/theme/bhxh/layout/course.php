@@ -95,6 +95,9 @@ echo $OUTPUT->doctype() ?>
                 $keynode = $activenode->key;
                 $keyparentnode = $activenode->parent->key;
             }
+            $modinfo = get_fast_modinfo($COURSE->id);
+            $sectioninfoall = $modinfo->get_section_info_all();
+            $cms = $modinfo->get_cms();
             ?>
             <div class="col-sm-12">
                 <div class="student-content-bhxh tab-course-container container">
@@ -120,7 +123,6 @@ echo $OUTPUT->doctype() ?>
                             <div class="courseware-block">
                                 <div class="section-courseware">
                                     <?php
-                                    $course = get_remote_course_content($COURSE->remoteid);
                                     $renderer = $PAGE->get_renderer('format_weeks');
                                     ?>
                                     <div class="col-sm-3 courseware-menu menu-link-bhxh">
@@ -128,7 +130,7 @@ echo $OUTPUT->doctype() ?>
                                             <?php
                                             global $CFG; ?>
 
-                                            <?php foreach ($course['content'] as $key => $section) {
+                                            <?php foreach ($sectioninfoall as $key => $section) {
                                                 if($key == 0) {
                                                     continue;
                                                 }
@@ -136,8 +138,6 @@ echo $OUTPUT->doctype() ?>
                                                 $collapse = 'collapseMod' . $section->id;
                                                 ?>
 
-                                                <?php if ($section->modules) {
-                                                    ?>
                                                     <div class="panel panel-default">
                                                         <div class="panel-heading" role="tab" id="<?php echo $heading ?>">
                                                             <h4 class="panel-title">
@@ -150,7 +150,7 @@ echo $OUTPUT->doctype() ?>
                                                                      <?php
                                                                     echo $section->id == $keyparentnode || $key == $keyparentnode ? 'fa-caret-down' : 'fa-caret-right';
                                                                     ?>
-                                                                     icon" aria-hidden="true"></i></a><a href="<?php echo $CFG->wwwroot.'/course/view.php?id=' . $COURSE->id . '&section='. $key ?>&nonajax=1">&nbsp;<?php echo $section->name ?> </a>
+                                                                     icon" aria-hidden="true"></i></a><a href="<?php echo $CFG->wwwroot.'/course/view.php?id=' . $COURSE->id . '&section='. $key ?>&nonajax=1">&nbsp;<?php echo get_section_name($section->course, $section->section); ?> </a>
                                                             </h4>
                                                         </div>
                                                         <div id="<?php echo $collapse ?>" class="panel-collapse collapse
@@ -163,19 +163,21 @@ echo $OUTPUT->doctype() ?>
                                                              aria-labelledby="<?php echo $heading ?>"
                                                              aria-expanded="false">
                                                             <div class="panel-body">
-                                                                <?php foreach ($section->modules as $keymod => $module) {
-                                                                    if ($module->modname != 'label' && $module->modname != 'url') {
+                                                                <?php foreach ($section->modinfo->get_sections()[$section->section] as $keymod => $module) {
+                                                                    if ($cms[$module]->modname != 'label' && $cms[$module]->modname != 'url' && $cms[$module]->uservisible) {
+                                                                        if($cms[$module]->modname == 'forum') {
+                                                                        }
+
                                                                         ?>
                                                                         <a class="sublink<?php
-                                                                        if($module->id == $keynode) {
+                                                                        if ($cms[$module]->id == $keynode) {
                                                                             echo ' sublink-active';
                                                                         }
                                                                         ?>
                                                                             "
-                                                                           href="<?php echo $CFG->wwwroot . '/mod/' . $module->modname . '/remote/view.php?id=' . $module->id . '&nonajax=1'; ?>"
+                                                                           href="<?php echo $CFG->wwwroot . '/mod/' . $cms[$module]->modname . '/remote/view.php?id=' . $cms[$module]->id . '&nonajax=1'; ?>"
                                                                         >
-                                        <span
-                                            class="circle-icon-bhxh icon-bxh icon-<?php echo $module->modname; ?>"></span><?php echo $module->name; ?>
+                                                                        <span class="circle-icon-bhxh icon-bxh icon-<?php echo $cms[$module]->modname; ?>"></span><?php echo $cms[$module]->name; ?>
                                                                         </a>
                                                                     <?php } ?>
                                                                     <?php
@@ -183,7 +185,7 @@ echo $OUTPUT->doctype() ?>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                <?php }
+                                                <?php
                                             } ?>
                                         </div>
 
