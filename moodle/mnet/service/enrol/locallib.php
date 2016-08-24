@@ -119,9 +119,13 @@ class mnetservice_enrol {
      * @todo the name of the service should be changed to the name of this plugin
      * @return array
      */
-    public function get_remote_publishers() {
+    public function get_remote_publishers($typename = false) {
         global $DB;
 
+        $where = '';
+        if($typename){
+            $where = ' AND a.name = \'' . $typename . '\'';
+        }
         if (is_null($this->cachepublishers)) {
             $sql = "SELECT DISTINCT h.id, h.name AS hostname, h.wwwroot AS hosturl,
                            a.display_name AS appname
@@ -131,7 +135,7 @@ class mnetservice_enrol {
                       JOIN {mnet_application} a ON h.applicationid = a.id
                      WHERE s.name = 'mnet_enrol'
                            AND h.deleted = 0
-                           AND hs.subscribe = 1";
+                           AND hs.subscribe = 1" . $where;
             $this->cachepublishers = $DB->get_records_sql($sql);
         }
 

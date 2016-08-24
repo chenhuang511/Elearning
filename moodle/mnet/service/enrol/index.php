@@ -49,7 +49,7 @@ if (empty($roamingusers)) {
 unset($roamingusers);
 
 // remote hosts that may publish remote enrolment service and we are subscribed to it
-$hosts = $service->get_remote_publishers();
+$hosts = $service->get_remote_publishers('moodle');
 
 if (empty($hosts)) {
     echo $OUTPUT->box(get_string('nopublishers', 'mnetservice_enrol'), 'noticebox');
