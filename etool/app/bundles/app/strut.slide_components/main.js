@@ -49,7 +49,7 @@ define(['./view/ComponentButton',
 				buttons.push(new Button({
 					componentType: 'FormulaBox',
 					icon: 'icon-text-width',
-					name: 'FormualBox',
+					name: 'FormulaBox',
 					editorModel: editorModel
 				}));
 
@@ -159,6 +159,12 @@ define(['./view/ComponentButton',
 					}
 				}, TextBoxView);
 
+				registry.register({
+					interfaces: 'strut.ComponentView',
+					meta: {
+						type: 'FormulaBox'
+					}
+				}, FormulaBoxView);
 
 				registry.register({
 					interfaces: 'strut.ComponentView',

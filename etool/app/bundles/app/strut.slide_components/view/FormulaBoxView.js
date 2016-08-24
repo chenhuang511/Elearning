@@ -9,11 +9,11 @@ define(["./ComponentView", "libs/etch",
 		styles = ["family", "size", "weight", "style", "color", "decoration", "align"];
 
 		/**
-		 * @class TextBoxView
+		 * @class FormulaBoxView
 		 * @augments ComponentView
 		 */
 		return ComponentView.extend({
-			className: "component textBox",
+			className: "component formulaBox",
 			tagName: "div",
 
 			/**
