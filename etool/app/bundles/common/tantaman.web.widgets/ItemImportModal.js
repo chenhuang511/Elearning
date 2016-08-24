@@ -22,8 +22,7 @@ function(Backbone, Imgup) {
 			"click .ok": "okClicked",
 			"click div[data-option='browse']": "browseClicked",
 			"change input[type='file']": "fileChosen",
-			"keyup input[name='itemUrl']": "urlChanged",
-			"paste input[name='itemUrl']": "urlChanged",
+			"input input[name='itemUrl']": "urlChanged",
 			"hidden": "hidden"
 		},
 		initialize: function() {
@@ -63,7 +62,6 @@ function(Backbone, Imgup) {
 				_this.$input.val('Failed to upload image to imgur');
 			});
 
-			
 			// reader = new FileReader();
 			// reader.onload = function(e) {
 			//   _this.$input.val(e.target.result);

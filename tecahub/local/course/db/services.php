@@ -218,4 +218,12 @@ $functions = array(
         'type'		    => 'write',
         'ajax'		    => true
     ),
+    'local_save_mdl_course' => array(
+        'classname'     => 'local_course_external',
+        'methodname'    => 'save_mdl_course',
+        'classpath'     => 'local/course/externallib.php',
+        'description'   => 'save course_',
+        'type'		    => 'write',
+        'ajax'		    => true
+    ),
 );
