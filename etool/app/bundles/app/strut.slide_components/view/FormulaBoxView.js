@@ -194,6 +194,9 @@ define(["./ComponentView", "libs/etch",
 					var cmd = ComponentCommands.Text(this._initialText, this.model);
 					undoHistory.push(cmd);
 
+					katex.render("c = \\pm\\sqrt{a^2 + b^2}", this.$el[0]);
+					console.log(this.$el[0]);
+					//console.log(this.$el);
 					this.model.set("text", text);
 					window.getSelection().removeAllRanges();
 					this.$textEl.attr("contenteditable", false);
