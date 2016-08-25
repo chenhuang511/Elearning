@@ -1878,7 +1878,7 @@ class local_course_external extends external_api
                 'section' => new external_single_structure(
                     array(
                         'id' => new external_value(PARAM_INT, 'the id'),
-                        'courseid' => new external_value(PARAM_INT, 'the course id'),
+                        'course' => new external_value(PARAM_INT, 'the course id'),
                         'section' => new external_value(PARAM_INT, 'the section'),
                         'name' => new external_value(PARAM_RAW, 'the name'),
                         'summary' => new external_value(PARAM_RAW, 'the summary'),
