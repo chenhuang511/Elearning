@@ -234,4 +234,12 @@ $functions = array(
         'type'		    => 'write',
         'ajax'		    => true
     ),
+    'local_get_course_sections_by' => array(
+        'classname'     => 'local_course_external',
+        'methodname'    => 'get_course_sections_by',
+        'classpath'     => 'local/course/externallib.php',
+        'description'   => 'get course sections obejct',
+        'type'		    => 'write',
+        'ajax'		    => true
+    ),
 );
