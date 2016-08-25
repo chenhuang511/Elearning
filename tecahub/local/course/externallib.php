@@ -1892,4 +1892,85 @@ class local_course_external extends external_api
             )
         );
     }
+
+    public static function get_course_modules_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'strictness' => new external_value(PARAM_BOOL, 'the strictness')
+            )
+        );
+    }
+
+    public static function get_course_modules_by($parameters, $strictness)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_course_modules_by_parameters(), array(
+            'parameters' => $parameters,
+            'strictness' => $strictness
+        ));
+
+        $result = array();
+        $arr = array();
+
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $cm = $DB->get_record('course_modules', $arr, '*', $params['strictness']);
+
+        if (!$cm) {
+            $cm = new stdClass();
+        }
+
+        $result['cm'] = $cm;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_course_modules_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'cm' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'The course module id'),
+                        'course' => new external_value(PARAM_INT, 'The course id'),
+                        'module' => new external_value(PARAM_INT, 'The module type id'),
+                        'name' => new external_value(PARAM_RAW, 'The activity name'),
+                        'modname' => new external_value(PARAM_COMPONENT, 'The module component name (forum, assign, etc..)'),
+                        'instance' => new external_value(PARAM_INT, 'The activity instance id'),
+                        'section' => new external_value(PARAM_INT, 'The module section id'),
+                        'sectionnum' => new external_value(PARAM_INT, 'The module section number'),
+                        'groupmode' => new external_value(PARAM_INT, 'Group mode'),
+                        'groupingid' => new external_value(PARAM_INT, 'Grouping id'),
+                        'completion' => new external_value(PARAM_INT, 'If completion is enabled'),
+                        'idnumber' => new external_value(PARAM_RAW, 'Module id number', VALUE_OPTIONAL),
+                        'added' => new external_value(PARAM_INT, 'Time added', VALUE_OPTIONAL),
+                        'score' => new external_value(PARAM_INT, 'Score', VALUE_OPTIONAL),
+                        'indent' => new external_value(PARAM_INT, 'Indentation', VALUE_OPTIONAL),
+                        'visible' => new external_value(PARAM_INT, 'If visible', VALUE_OPTIONAL),
+                        'visibleold' => new external_value(PARAM_INT, 'Visible old', VALUE_OPTIONAL),
+                        'completiongradeitemnumber' => new external_value(PARAM_INT, 'Completion grade item', VALUE_OPTIONAL),
+                        'completionview' => new external_value(PARAM_INT, 'Completion view setting', VALUE_OPTIONAL),
+                        'completionexpected' => new external_value(PARAM_INT, 'Completion time expected', VALUE_OPTIONAL),
+                        'showdescription' => new external_value(PARAM_INT, 'If the description is showed', VALUE_OPTIONAL),
+                        'availability' => new external_value(PARAM_RAW, 'Availability settings', VALUE_OPTIONAL),
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }
