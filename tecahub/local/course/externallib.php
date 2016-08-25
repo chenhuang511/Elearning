@@ -1837,7 +1837,7 @@ class local_course_external extends external_api
                         )
                     ), 'the params'
                 ),
-                'strictness' => new external_value(PARAM_BOOL, 'the strictness')
+                'strictness' => new external_value(PARAM_INT, 'the strictness')
             )
         );
     }
@@ -1905,7 +1905,7 @@ class local_course_external extends external_api
                         )
                     ), 'the params'
                 ),
-                'strictness' => new external_value(PARAM_BOOL, 'the strictness')
+                'strictness' => new external_value(PARAM_INT, 'the strictness')
             )
         );
     }
