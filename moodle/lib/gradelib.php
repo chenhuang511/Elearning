@@ -33,6 +33,7 @@ require_once($CFG->libdir . '/grade/grade_grade.php');
 require_once($CFG->libdir . '/grade/grade_scale.php');
 require_once($CFG->libdir . '/grade/grade_outcome.php');
 require_once($CFG->dirroot . '/grade/remote/locallib.php');
+require_once($CFG->libdir . '/additionallib.php');
 
 /////////////////////////////////////////////////////////////////////
 ///// Start of public API for communication with modules/blocks /////
@@ -667,11 +668,13 @@ function grade_get_setting($courseid, $name, $default = null, $resetcache = fals
 
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
         $params = array();
+        $remotecourseid = get_local_course_record($courseid, true)->remoteid;
         $params['parameters[0][name]'] = "courseid";
-        $params['parameters[0][value]'] = $courseid;
+        $params['parameters[0][value]'] = $remotecourseid;
         $params['parameters[1][name]'] = "name";
         $params['parameters[1][value]'] = $name;
         $data = get_remote_grade_settings_by($params);
+        $data->courseid = $courseid;
     } else {
         $data = $DB->get_record('grade_settings', array('courseid' => $courseid, 'name' => $name));
     }
