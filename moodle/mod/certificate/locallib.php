@@ -935,7 +935,7 @@ function certificate_get_grade($certificate, $course, $userid = null, $valueonly
                     $strprefix = get_string('coursegrade', 'certificate') . ': ';
                 }
 
-                $grade = new grade_grade(array('itemid' => $course_item->id, 'userid' => $userid));
+                $grade = new grade_grade(array('itemid' => $course_item->remoteid, 'userid' => $userid));
                 $course_item->gradetype = GRADE_TYPE_VALUE;
                 $coursegrade = new stdClass;
                 $coursegrade->points = grade_format_gradevalue($grade->finalgrade, $course_item, true, GRADE_DISPLAY_TYPE_REAL, $decimals = 2);
