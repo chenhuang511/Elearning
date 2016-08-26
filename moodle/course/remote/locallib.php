@@ -120,14 +120,14 @@ function get_remote_course_module_by_instance($modulename, $instace, $options = 
     return $result;
 }
 
-function get_remote_course_module_by_cmid($modulename = '', $cmid, $courseid = 0, $iscache = true)
+function get_remote_course_module_by_cmid($modulename = '', $cmid, $courseid = 0, $validate = true, $iscache = true)
 {
     $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_get_course_module_by_cmid',
-            'params' => array('modulename' => $modulename, 'cmid' => $cmid, 'courseid' => $courseid,)
+            'params' => array('modulename' => $modulename, 'cmid' => $cmid, 'courseid' => $courseid, 'validate' => $validate)
         ), $iscache
     );
     $result = merge_local_course_module($resp->cm);
