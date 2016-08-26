@@ -3690,6 +3690,7 @@ function cron_clean_internal_activity_notifications() {
  * Cronjob to check Launchpad for the latest Mahara version
  */
 function cron_check_for_updates() {
+    return false; // fixed not check update version
     $request = array(
         CURLOPT_URL => 'https://launchpad.net/mahara/+download',
     );
