@@ -34,7 +34,6 @@ define(function() {
 
       scaleChangeObjectEmbed: function(model, size) {
           this.$object.attr(size);
-          this.$embed.attr(size);
           this.$el.css(size);
       },
 

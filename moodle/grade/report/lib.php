@@ -21,8 +21,9 @@
  * @copyright 2007 Moodle Pty Ltd (http://moodle.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+defined('ISREMOTE') || define('ISREMOTE', MOODLE_RUN_MODE === MOODLE_MODE_HUB);
 require_once($CFG->libdir.'/gradelib.php');
+require_once($CFG->libdir.'/remote/lib.php');
 
 /**
  * An abstract class containing variables and methods used by all or most reports.
@@ -432,8 +433,11 @@ abstract class grade_report {
 
         // If we're dealing with multiple courses we need to know when we've moved on to a new course.
         static $previous_courseid = null;
-
-        $coursegradegrade = grade_grade::fetch(array('userid'=>$this->user->id, 'itemid'=>$course_item->id));
+        if (ISREMOTE) {
+            $coursegradegrade = grade_grade::fetch(array('userid'=>$this->user->id, 'itemid'=>$course_item->remoteid));
+        } else {
+            $coursegradegrade = grade_grade::fetch(array('userid'=>$this->user->id, 'itemid'=>$course_item->id));
+        }
         $grademin = $course_item->grademin;
         $grademax = $course_item->grademax;
         if ($coursegradegrade) {
@@ -469,12 +473,49 @@ abstract class grade_report {
         if (!$hiding_affected) {
             $items = grade_item::fetch_all(array('courseid'=>$courseid));
             $grades = array();
-            $sql = "SELECT g.*
+
+            $gradesrecords = null;
+            if (ISREMOTE) {
+                $sql = "SELECT g.*
+                      FROM {grade_grades} g
+                      JOIN {grade_items} gi ON gi.id = g.itemid
+                     WHERE g.userid = :userid AND gi.courseid = :courseid";
+                $remoteparams = array();
+                $remoteuserid = get_remote_mapping_user($this->user->id)[0]->id;
+                $remotecourseid = get_local_course_record($courseid, true)->remoteid;
+                $remoteparams['param[0][name]='] = 'userid';
+                $remoteparams['param[0][value]='] = $remoteuserid;
+                $remoteparams['param[1][name]='] = 'courseid';
+                $remoteparams['param[1][value]='] = $remotecourseid;
+                $gradesrecords = get_remote_assign_grade_grades_raw_data($sql, $remoteparams);
+                if ($gradesrecords) {
+                    foreach ($gradesrecords as &$rec) {
+                        if (isset($rec->courseid)) {
+                            $rec->courseid = $courseid;
+                        }
+                        if (isset($rec->userid)) {
+                            $rec->userid = $this->user->id;
+                        }
+                    }
+                    unset($rec);
+                }
+            } else {
+                $sql = "SELECT g.*
                       FROM {grade_grades} g
                       JOIN {grade_items} gi ON gi.id = g.itemid
                      WHERE g.userid = {$this->user->id} AND gi.courseid = {$courseid}";
-            if ($gradesrecords = $DB->get_records_sql($sql)) {
+                $gradesrecords = $DB->get_records_sql($sql);
+            }
+            if ($gradesrecords) {
                 foreach ($gradesrecords as $grade) {
+                    if (ISREMOTE) {
+                        foreach ($items as $itemid => $gitems) {
+                            if ($grade->itemid == $gitems->remoteid) {
+                                $grade->itemid = $itemid;
+                                break;
+                            }
+                        }
+                    }
                     $grades[$grade->itemid] = new grade_grade($grade, false);
                 }
                 unset($gradesrecords);

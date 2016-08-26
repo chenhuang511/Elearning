@@ -78,6 +78,19 @@ echo $OUTPUT->doctype() ?>
         </div>
     </header>
     <div id="page-content" class="row">
+        <?php
+        context_helper::preload_course($COURSE->id);
+        $context = context_course::instance($COURSE->id, MUST_EXIST);
+        $isstudent = !has_capability('moodle/course:manageactivities', $context);
+        if ($isstudent) { ?>
+            <div id="<?php echo $regionbsid ?>" class="container">
+                <?php
+                echo $OUTPUT->course_content_header();
+                echo $OUTPUT->main_content();
+                echo $OUTPUT->course_content_footer();
+                ?>
+            </div>
+        <?php } else {?>
         <?php echo $OUTPUT->blocks('side-pre', 'col-md-3'); ?>
         <div id="<?php echo $regionbsid ?>" class="col-md-9">
             <?php
@@ -86,6 +99,7 @@ echo $OUTPUT->doctype() ?>
             echo $OUTPUT->course_content_footer();
             ?>
         </div>
+        <?php } ?>
     </div>
 
 </div>

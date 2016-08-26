@@ -3,6 +3,7 @@ define(['strut/deck/Component'],
 		'use strict';
 
 		function getInitialText(attrs) {
+
 			if (!attrs)
 				return 'Text';
 			else {
@@ -13,8 +14,9 @@ define(['strut/deck/Component'],
 
 					text += style + '="' + attrs[style] + '"';
 				}
-				return text + '>Text</font>'
+				return text + '>FormulaBox</font>'
 			}
+
 		}
 
 		/**
@@ -24,7 +26,7 @@ define(['strut/deck/Component'],
 		return Component.extend({
 			initialize: function() {
 				Component.prototype.initialize.apply(this, arguments);
-				this.set('type', 'TextBox');
+				this.set('type', 'FormulaBox');
 				if (!this.get('text')) {
 					var text = getInitialText(this._opts && this._opts.fontStyles);
 					if (this._opts && this._opts.fontStyles.size)

@@ -20,7 +20,7 @@ function get_remote_certificate_by_id($id) {
             'token' => HOST_TOKEN,
             'function_name' => 'local_certificate_get_certificate_by_id',
             'params' => array('id' => $id)
-        )
+        ), false
     );
     /**
      *  override certificate setting hub

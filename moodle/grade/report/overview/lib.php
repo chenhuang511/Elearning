@@ -21,7 +21,7 @@
  * @copyright 2007 Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+defined('ISREMOTE') || define('ISREMOTE', MOODLE_RUN_MODE === MOODLE_MODE_HUB);
 require_once($CFG->dirroot . '/grade/report/lib.php');
 require_once($CFG->libdir.'/tablelib.php');
 
@@ -219,7 +219,12 @@ class grade_report_overview extends grade_report {
                 $course_item = grade_item::fetch_course_item($course->id);
 
                 // Get the stored grade
-                $course_grade = new grade_grade(array('itemid'=>$course_item->id, 'userid'=>$this->user->id));
+                $course_grade = new stdClass();
+                if (ISREMOTE) {
+                    $course_grade = new grade_grade(array('itemid'=>$course_item->remoteid, 'userid'=>$this->user->id));
+                } else {
+                    $course_grade = new grade_grade(array('itemid'=>$course_item->id, 'userid'=>$this->user->id));
+                }
                 $course_grade->grade_item =& $course_item;
                 $finalgrade = $course_grade->finalgrade;
 

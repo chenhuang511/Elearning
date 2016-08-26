@@ -103,6 +103,12 @@ define(["./ComponentView", "libs/etch",
 			dblclicked: function(e) {
 				this.$el.addClass("editable");
 				this.$textEl.attr("contenteditable", true);
+				var element = this.$el[0];
+
+				var content = element.getElementsByClassName("content-scale")[0];
+				console.log(content);
+				content.style.display = "inline";
+
 				if (e != null) {
 					this._initialText = this.$textEl.html();
 					etch.editableInit.call(this, e, this.model.get("y") * this.dragScale + 35);
@@ -193,7 +199,23 @@ define(["./ComponentView", "libs/etch",
 				} else {
 					var cmd = ComponentCommands.Text(this._initialText, this.model);
 					undoHistory.push(cmd);
+					var element = this.$el[0];
 
+					var content = element.getElementsByClassName("content-scale")[0];
+					console.log(content);
+					content.style.display = "none";
+					if (this.formula == undefined){
+						this.formula = document.createElement("div");
+						element.appendChild(this.formula);
+					}
+
+
+					//console.log(element);
+					//console.log(this.$textEl.text());
+					katex.render(this.$textEl.text(), this.formula);
+					//console.log(this.$el[0]);
+
+					//console.log(this.$el);
 					this.model.set("text", text);
 					window.getSelection().removeAllRanges();
 					this.$textEl.attr("contenteditable", false);

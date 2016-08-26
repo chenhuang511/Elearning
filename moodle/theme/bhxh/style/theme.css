@@ -166,6 +166,36 @@ select#id_capability{
 select#id_realname_op{
     margin-right: 10px;
 }
+
+.form-autocomplete-downarrow {
+    color: #333;
+    position: relative;
+    top: -2.3em !important;
+    left: 10.5em !important;
+    cursor: pointer;
+}
+
+.fautocomplete{
+    margin-bottom: 20px;
+}
+
+.advancedoverride{
+    padding-bottom: 10px;
+}
+
+input#input-message{
+    padding-bottom: 0px;
+    padding-top: 0px !important;
+}
+
+input#button-send{
+    padding-top: 8px;
+    padding-bottom: 7px;
+}
+
+.mnetaddtoaclform form#mnetaddtoacl input{
+    margin-top: 10px;
+}
 /***********/
 
 .userprofile .el-category:nth-child(3n) {
