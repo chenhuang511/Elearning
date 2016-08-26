@@ -493,43 +493,30 @@ class local_course_external extends external_api
     {
         return new external_function_parameters(
             array(
-                'module' => new external_value(PARAM_COMPONENT, 'The module name'),
-                'id' => new external_value(PARAM_INT, 'The module id'),
-                'options' => new external_multiple_structure (
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_ALPHANUM,
-                                'The expected keys (value format) are:
-                                                excludemodules (bool) Do not return modules, return only the sections structure
-                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
-                                                sectionid (int) Return only this section
-                                                sectionnumber (int) Return only this section with number (order)
-                                                cmid (int) Return only this module information (among the whole sections structure)
-                                                modname (string) Return only modules with this name "label, forum, etc..."
-                                                modid (int) Return only the module with this id (to be used with modname'),
-                            'value' => new external_value(PARAM_RAW, 'the value of the option,
-                                                                    this param is personaly validated in the external function.')
-                        )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+                'modulename' => new external_value(PARAM_RAW, 'The module name'),
+                'cmid' => new external_value(PARAM_INT, 'The module id'),
+                'courseid' => new external_value(PARAM_INT, 'The course id'),
+                'sectionnum' => new external_value(PARAM_BOOL, 'The section number'),
+                'strictness' => new external_value(PARAM_INT, 'The section number'),
+
             )
         );
     }
 
-    /**
-     * @description Get course by module name and id of course module
-     * @param $module
-     * @param $id
-     * @param array $options
-     * @return array
-     * @throws invalid_parameter_exception
-     */
-    public static function get_course_module_by_cmid($module, $id, $options = array())
+
+    public static function get_course_module_by_cmid($modulename, $cmid, $courseid, $sectionnum, $strictness)
     {
         //validate parameter
         $params = self::validate_parameters(self::get_course_module_by_cmid_parameters(),
-            array('module' => $module, 'id' => $id, 'options' => $options));
+            array(
+                'modulename' => $modulename,
+                'cmid' => $cmid,
+                'courseid' => $courseid,
+                'sectionnum' => $sectionnum,
+                'strictness' => $strictness
+            ));
         $warnings = array();
-        $cm = get_coursemodule_from_id($params['module'], $params['id'], 0, false, MUST_EXIST);
+        $cm = get_coursemodule_from_id($params['modulename'], $params['cmid'], $params['courseid'], $params['sectionnum'], $params['strictness']);
 
         return core_course_external::get_course_module($cm->id);
     }
