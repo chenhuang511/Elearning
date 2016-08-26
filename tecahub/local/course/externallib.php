@@ -517,14 +517,9 @@ class local_course_external extends external_api
             ));
         $warnings = array();
         $cm = get_coursemodule_from_id($params['modulename'], $params['cmid'], $params['courseid'], $params['sectionnum'], $params['strictness']);
-        $context = context_module::instance($cm->id);
-        self::validate_context($context);
-        $info = $cm;
-        // Format name.
-        $info->name = external_format_string($cm->name, $context->id);
 
         $result = array();
-        $result['cm'] = $info;
+        $result['cm'] = $cm;
         $result['warnings'] = $warnings;
         return $result;
     }
