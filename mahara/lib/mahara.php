@@ -176,7 +176,7 @@ function ensure_install_sanity() {
     if (is_mysql() && !mysql_has_trigger_privilege()) {
         throw new ConfigSanityException(get_string('mysqlnotriggerprivilege', 'error'));
     }
-    if (!file_exists(get_config('docroot') . 'theme/raw/style/style.css')) {
+    if (!file_exists(get_config('docroot') . 'theme/lms/style/style.css')) {
         $e = new ConfigSanityException(get_string('cssnotpresent', 'error'));
         $e->set_log_off();
         throw $e;
@@ -199,7 +199,7 @@ function ensure_upgrade_sanity() {
     if (is_postgres() && !postgres_create_language('plpgsql')) {
         throw new ConfigSanityException(get_string('plpgsqlnotavailable', 'error'));
     }
-    if (!file_exists(get_config('docroot') . 'theme/raw/style/style.css')) {
+    if (!file_exists(get_config('docroot') . 'theme/lms/style/style.css')) {
         $e = new ConfigSanityException(get_string('cssnotpresent', 'error'));
         $e->set_log_off();
         throw $e;

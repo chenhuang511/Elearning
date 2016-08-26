@@ -9,6 +9,6 @@ Version:    2.0.9
 Licence:    MIT License (see: https://silktide.com/tools/cookie-consent/docs/license/)
 
 Modifications:
-- renamed 'dark-bottom.css' to 'cookieconsent.scss' and copied/moved it to htdocs/theme/raw/sass
+- renamed 'dark-bottom.css' to 'cookieconsent.scss' and copied/moved it to htdocs/theme/lms/sass
 - removed the url target '_blank' for security reasons
 - wrapped a protocol-relative URL in cookieconsent.scss in single-quotes for better SASS compatibility

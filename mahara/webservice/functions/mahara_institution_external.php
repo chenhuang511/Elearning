@@ -507,4 +507,40 @@ class mahara_institution_external extends external_api {
                         )
                     );
     }
+    /**
+     * get slide by user
+     * cus api
+     */
+    public static function get_slide_by_id_parameters() {
+        new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_NUMBER, 'ID of the user'),
+            )
+        );
+    }
+
+    /**
+     * Check if OAuth is enabled and reject
+     * @throws Exception
+     */
+    private static function get_slide_by_id($id) {
+
+        $params = self::validate_parameters(self::get_slide_by_id_parameters(), array('id'=>$id));
+        // start sql
+        return array('id' => $params['id']);
+    }
+
+    /**
+     * parameter definition for output of get_requests method
+     *
+     * Returns description of method result value
+     * @return external_multiple_structure
+     */
+    public static function get_slide_by_id_returns() {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_NUMBER, 'ID of the user'),
+            )
+        );
+    }
 }
