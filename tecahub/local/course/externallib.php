@@ -496,15 +496,12 @@ class local_course_external extends external_api
                 'modulename' => new external_value(PARAM_RAW, 'The module name'),
                 'cmid' => new external_value(PARAM_INT, 'The module id'),
                 'courseid' => new external_value(PARAM_INT, 'The course id'),
-                'sectionnum' => new external_value(PARAM_BOOL, 'The section number'),
-                'strictness' => new external_value(PARAM_INT, 'The section number'),
-
             )
         );
     }
 
 
-    public static function get_course_module_by_cmid($modulename, $cmid, $courseid, $sectionnum, $strictness)
+    public static function get_course_module_by_cmid($modulename, $cmid, $courseid)
     {
         //validate parameter
         $params = self::validate_parameters(self::get_course_module_by_cmid_parameters(),
@@ -512,13 +509,19 @@ class local_course_external extends external_api
                 'modulename' => $modulename,
                 'cmid' => $cmid,
                 'courseid' => $courseid,
-                'sectionnum' => $sectionnum,
-                'strictness' => $strictness
             ));
         $warnings = array();
-        $cm = get_coursemodule_from_id($params['modulename'], $params['cmid'], $params['courseid'], $params['sectionnum'], $params['strictness']);
+        $cm = get_coursemodule_from_id($params['modulename'], $params['cmid'], $params['courseid'], true, MUST_EXIST);
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+        $info = $cm;
+        // Format name.
+        $info->name = external_format_string($cm->name, $context->id);
 
-        return core_course_external::get_course_module($cm->id);
+        $result = array();
+        $result['cm'] = $info;
+        $result['warnings'] = $warnings;
+        return $result;
     }
 
     /**
