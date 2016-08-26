@@ -14,7 +14,7 @@ define(['strut/deck/Component'],
 
 					text += style + '="' + attrs[style] + '"';
 				}
-				return text + '>Text</font>'
+				return text + '>FormulaBox</font>'
 			}
 
 		}

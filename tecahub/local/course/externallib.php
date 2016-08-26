@@ -1754,4 +1754,203 @@ class local_course_external extends external_api
             )
         );
     }
+
+    public static function update_mdl_course_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'modname' => new external_value(PARAM_RAW, 'the mod name'),
+                'id' => new external_value(PARAM_INT, 'the id'),
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the data saved'
+                )
+            )
+        );
+    }
+
+    public static function update_mdl_course($modname, $id, $data)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::update_mdl_course_parameters(), array(
+            'modname' => $modname,
+            'id' => $id,
+            'data' => $data
+        ));
+
+        $result = array();
+
+        $obj = $DB->get_record($params['modname'], array("id" => $params['id']));
+
+        if (!$obj) {
+            $warnings['message'] = "Not found data record";
+            $result['id'] = 0;
+            $result['warnings'] = $warnings;
+            return $result;
+        }
+
+        foreach ($params['data'] as $element) {
+            if ($element['name'] == "availability" && $element['value'] == "") {
+                $obj->$element['name'] = null;
+            } else {
+                $obj->$element['name'] = $element['value'];
+            }
+        }
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $cid = $DB->update_record($params['modname'], $obj);
+
+        $transaction->allow_commit();
+
+        $result['id'] = $cid;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function update_mdl_course_returns()
+    {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'the id'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_course_sections_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'strictness' => new external_value(PARAM_INT, 'the strictness')
+            )
+        );
+    }
+
+    public static function get_course_sections_by($parameters, $strictness)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_course_sections_by_parameters(), array(
+            'parameters' => $parameters,
+            'strictness' => $strictness
+        ));
+
+        $result = array();
+        $arr = array();
+
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $section = $DB->get_record('course_sections', $arr, '*', $params['strictness']);
+
+        if (!$section) {
+            $section = new stdClass();
+        }
+
+        $result['section'] = $section;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_course_sections_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'section' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'the id'),
+                        'course' => new external_value(PARAM_INT, 'the course id'),
+                        'section' => new external_value(PARAM_INT, 'the section'),
+                        'name' => new external_value(PARAM_RAW, 'the name'),
+                        'summary' => new external_value(PARAM_RAW, 'the summary'),
+                        'summaryformat' => new external_value(PARAM_INT, 'the summary format'),
+                        'sequence' => new external_value(PARAM_RAW, 'the sequence'),
+                        'visible' => new external_value(PARAM_INT, 'the visible'),
+                        'availability' => new external_value(PARAM_RAW, 'the availability')
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_course_modules_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'strictness' => new external_value(PARAM_INT, 'the strictness')
+            )
+        );
+    }
+
+    public static function get_course_modules_by($parameters, $strictness)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_course_modules_by_parameters(), array(
+            'parameters' => $parameters,
+            'strictness' => $strictness
+        ));
+
+        $result = array();
+        $arr = array();
+
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $cm = $DB->get_record('course_modules', $arr, 'id,course', $params['strictness']);
+
+        if (!$cm) {
+            $cm = new stdClass();
+        }
+
+        $result['cm'] = $cm;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function get_course_modules_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'cm' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'The course module id'),
+                        'course' => new external_value(PARAM_INT, 'The course id'),
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }
