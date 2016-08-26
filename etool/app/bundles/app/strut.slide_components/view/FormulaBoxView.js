@@ -198,6 +198,11 @@ define(["./ComponentView", "libs/etch",
 						this.formula = document.createElement("div");
 						element.appendChild(this.formula);
 					}
+					console.log(element);
+
+					var content = element.getElementsByClassName("content-scale")[0];
+					console.log(content);
+					content.style.display = "none";
 
 
 					//console.log(element);
