@@ -5820,8 +5820,8 @@ abstract class context extends stdClass implements IteratorAggregate
     {
         global $DB;
 
-        $record =  $DB->get_record('context', array("instanceid" => $instanceid, "contextlevel" => $contextlevel));
-        if (!($record) || empty($record->id)){
+        $record = $DB->get_record('context', array("instanceid" => $instanceid, "contextlevel" => $contextlevel));
+        if (!($record) || empty($record->id)) {
             $record = new stdClass();
             $record->contextlevel = $contextlevel;
             $record->instanceid = $instanceid;
@@ -7494,21 +7494,17 @@ class context_module extends context
 
         if (!$record = $DB->get_record('context', array('contextlevel' => CONTEXT_MODULE, 'instanceid' => $cmid))) {
 
-            switch (MOODLE_RUN_MODE) {
-                case MOODLE_MODE_HOST:
-                    $cm = $DB->get_record('course_modules', array('id' => $cmid), 'id,course', $strictness);
-                    break;
-                case MOODLE_MODE_HUB:
-                    $cm = get_remote_course_module($cmid);
-                    break;
-                default:
-                    break;
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+                $params = array();
+                $params['parameters[0][name]'] = "id";
+                $params['parameters[0][value]'] = $cmid;
+
+                $cm = get_remote_course_modules_by($params);
+            } else {
+                $cm = $DB->get_record('course_modules', array('id' => $cmid), 'id,course', $strictness);
             }
 
             if ($cm) {
-                if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-                    $cm->course = get_course_id_by_remote_id($cm->course);
-                }
                 $parentcontext = context_course::instance($cm->course);
                 $record = context::insert_context_record(CONTEXT_MODULE, $cm->id, $parentcontext->path);
             }
