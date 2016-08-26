@@ -209,13 +209,13 @@ define(["./ComponentView", "libs/etch",
 						element.appendChild(this.formula);
 					}
 
+					try {
+						katex.render(this.$textEl.text(), this.formula);
+					}catch (err){
+						katex.render("syntax\\space error", this.formula);
+					}
 
-					//console.log(element);
-					//console.log(this.$textEl.text());
-					katex.render(this.$textEl.text(), this.formula);
-					//console.log(this.$el[0]);
 
-					//console.log(this.$el);
 					this.model.set("text", text);
 					window.getSelection().removeAllRanges();
 					this.$textEl.attr("contenteditable", false);
