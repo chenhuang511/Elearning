@@ -103,7 +103,7 @@ class mod_questionnaire_mod_form extends moodleform_mod {
             $grades[$i] = $i;
         }
         $mform->addElement('select', 'grade', get_string('grade', 'questionnaire'), $grades);
-
+        $this->checkDisable('grade');
         if (empty($questionnaire->sid)) {
             if (!isset($questionnaire->id)) {
                 $questionnaire->id = 0;

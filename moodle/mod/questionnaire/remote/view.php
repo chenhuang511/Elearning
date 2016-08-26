@@ -41,7 +41,7 @@ if (!has_capability('moodle/course:manageactivities', $context) && $nonajax != t
 } else {
     $CFG->nonajax = true;
 }
-
+$CFG->nonajax = true; // fixed remove ajax layout
 $url = new moodle_url($CFG->wwwroot.'/mod/questionnaire/view.php');
 if (isset($id)) {
     $url->param('id', $id);
