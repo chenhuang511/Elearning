@@ -496,12 +496,13 @@ class local_course_external extends external_api
                 'modulename' => new external_value(PARAM_RAW, 'The module name'),
                 'cmid' => new external_value(PARAM_INT, 'The module id'),
                 'courseid' => new external_value(PARAM_INT, 'The course id'),
+                'validate' => new external_value(PARAM_BOOL, 'The validation for context'),
             )
         );
     }
 
 
-    public static function get_course_module_by_cmid($modulename, $cmid, $courseid)
+    public static function get_course_module_by_cmid($modulename, $cmid, $courseid, $validate)
     {
         //validate parameter
         $params = self::validate_parameters(self::get_course_module_by_cmid_parameters(),
@@ -509,14 +510,18 @@ class local_course_external extends external_api
                 'modulename' => $modulename,
                 'cmid' => $cmid,
                 'courseid' => $courseid,
+                'validate' => $validate
             ));
         $warnings = array();
         $cm = get_coursemodule_from_id($params['modulename'], $params['cmid'], $params['courseid'], true, MUST_EXIST);
-        $context = context_module::instance($cm->id);
-        self::validate_context($context);
         $info = $cm;
-        // Format name.
-        $info->name = external_format_string($cm->name, $context->id);
+
+        if ($params['validate']) {
+            $context = context_module::instance($cm->id);
+            self::validate_context($context);
+            // Format name.
+            $info->name = external_format_string($cm->name, $context->id);
+        }
 
         $result = array();
         $result['cm'] = $info;
