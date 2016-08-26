@@ -214,6 +214,14 @@ $functions = array(
         'description' => 'decline request for institiution membership',
         'type'        => 'read',
     ),
+
+    'remote_get_slide_by_id' => array(
+        'classname'   => 'mahara_institution_external',
+        'methodname'  => 'get_slide_by_id',
+        'classpath'   => WEBSERVICE_DIRECTORY,
+        'description' => 'decline request for institiution membership',
+        'type'        => 'read',
+    ),
 );
 
 /**
