@@ -158,7 +158,6 @@ define(['./view/ComponentButton',
 						type: 'TextBox'
 					}
 				}, TextBoxView);
-
                 registry.register({
 					interfaces: 'strut.ComponentView',
 					meta: {

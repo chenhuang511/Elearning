@@ -6,14 +6,16 @@ define(["./ComponentView", "libs/etch",
 		'use strict';
 		var undoHistory = CmdListFactory.managedInstance('editor');
 		var styles;
+		var keyText = 0;
+		var arrText = [keyText+1];
 		styles = ["family", "size", "weight", "style", "color", "decoration", "align"];
 
 		/**
-		 * @class TextBoxView
+		 * @class FormulaBoxView
 		 * @augments ComponentView
 		 */
 		return ComponentView.extend({
-			className: "component textBox",
+			className: "component formulaBox",
 			tagName: "div",
 
 			/**
@@ -36,6 +38,8 @@ define(["./ComponentView", "libs/etch",
 			 */
 			initialize: function() {
 				var style, _i, _len;
+				
+				
 				ComponentView.prototype.initialize.apply(this, arguments);
 				for (_i = 0, _len = styles.length; _i < _len; _i++) {
 					style = styles[_i];
@@ -47,12 +51,12 @@ define(["./ComponentView", "libs/etch",
 
 				this.dblclicked = this.dblclicked.bind(this);
 				TouchBridge.on.dblclick(this.$el, this.dblclicked);
-
 				// TODO This can be uncommented once modal windows start blocking all slide key events.
 				// https://github.com/tantaman/Strut/pull/183
 				// $(document).bind("keydown", this.keydown);
 
 				this.model.on("edit", this.edit, this);
+				
 			},
 
 			/**
@@ -103,10 +107,28 @@ define(["./ComponentView", "libs/etch",
 			dblclicked: function(e) {
 				this.$el.addClass("editable");
 				this.$textEl.attr("contenteditable", true);
+				if(!this.$textEl.attr("id")){
+					this.$textEl.attr("id",keyText);
+					arrText[keyText] = new objEditText(keyText, "FormulaBox");
+					++keyText;
+				}
+				
+
+				var element = this.$el[0];
+
+				var content = element.getElementsByClassName("content-scale")[0];
+				content.style.display = "inline";
+
 				if (e != null) {
+					console.log(this.$textEl.attr("id") + "  "+ arrText.length);
+					for(var i = 0; i < arrText.length; i++){
+						if(i == this.$textEl.attr("id")){
+							console.log(i);
+							this.model.set("text", arrText[i].value);
+						}
+					}
 					this._initialText = this.$textEl.html();
 					etch.editableInit.call(this, e, this.model.get("y") * this.dragScale + 35);
-
 					// Focus editor and select all text.
 					if (!this.editing) {
 						this.$textEl.get(0).focus();
@@ -114,9 +136,8 @@ define(["./ComponentView", "libs/etch",
 							document.execCommand('selectAll', false, null);
 							etch.triggerCaret();
 						} catch (e) {
-							// firefox failboats on this command
-							// for some reason.  hence the try/catch
-							// console.log(e);
+						// firefox failboats on this command
+						// for some reason.  hence the try/catch
 						}
 					}
 				}
@@ -194,25 +215,35 @@ define(["./ComponentView", "libs/etch",
 					var cmd = ComponentCommands.Text(this._initialText, this.model);
 					undoHistory.push(cmd);
 					var element = this.$el[0];
+
+					var content = element.getElementsByClassName("content-scale")[0];
+					content.style.display = "none";
 					if (this.formula == undefined){
 						this.formula = document.createElement("div");
 						element.appendChild(this.formula);
 					}
 
+					try {
+						katex.render(this.$textEl.text(), this.formula);
+					}catch (err){
+						katex.render("syntax\\space error", this.formula);
+					}
 
-					//console.log(element);
-					//console.log(this.$textEl.text());
-					katex.render(this.$textEl.text(), this.formula);
-					//console.log(this.$el[0]);
-
-					//console.log(this.$el);
-					this.model.set("text", text);
+					for(var i = 0; i < arrText.length; ++i){
+						if(i == this.$textEl.attr("id")){
+							console.log(this.$textEl.attr("id"));
+							arrText[i].value = this.$textEl.text();
+						}
+					}
+					this.model.set("text", this.formula.innerHTML);					
 					window.getSelection().removeAllRanges();
 					this.$textEl.attr("contenteditable", false);
 					this.$el.removeClass("editable");
 					this.allowDragging = true;
 				}
 			},
+
+			
 
 			/**
 			 * React on component is being selected. If component have been unselected, hide it's editor, if in editing mode.
@@ -315,3 +346,9 @@ define(["./ComponentView", "libs/etch",
 			}
 		});
 	});
+
+	function objEditText(key, value){
+		this.key = key;
+		this.value = value;
+	}
+

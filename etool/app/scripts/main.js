@@ -49,6 +49,7 @@ require.config({
     	'tantaman/web': '../bundles/common/tantaman.web',
 		'tantaman/web/local_storage': '../bundles/common/tantaman.web.local_storage',
 		'tantaman/web/remote_storage': '../bundles/common/tantaman.web.remote_storage',
+		'teca/web/slide_storage': '../bundles/common/teca.web.slide_storage',
 		'tantaman/web/saver': '../bundles/common/tantaman.web.saver',
 		'tantaman/web/storage': '../bundles/common/tantaman.web.storage',
 		'tantaman/web/undo_support': '../bundles/common/tantaman.web.undo_support',

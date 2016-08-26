@@ -179,17 +179,6 @@ select#id_realname_op{
     margin-bottom: 20px;
 }
 
-.userprofile .profile_tree section {
-    display: inline-block;
-    width: 100%;
-    height: auto;
-}
-.userprofile .el-category {
-    margin-bottom: 30px;
-    clear: both;
-    height: auto;
-}
-
 .advancedoverride{
     padding-bottom: 10px;
 }
