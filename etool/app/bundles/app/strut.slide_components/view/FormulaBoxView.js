@@ -103,6 +103,12 @@ define(["./ComponentView", "libs/etch",
 			dblclicked: function(e) {
 				this.$el.addClass("editable");
 				this.$textEl.attr("contenteditable", true);
+				var element = this.$el[0];
+
+				var content = element.getElementsByClassName("content-scale")[0];
+				console.log(content);
+				content.style.display = "inline";
+
 				if (e != null) {
 					this._initialText = this.$textEl.html();
 					etch.editableInit.call(this, e, this.model.get("y") * this.dragScale + 35);
@@ -194,15 +200,14 @@ define(["./ComponentView", "libs/etch",
 					var cmd = ComponentCommands.Text(this._initialText, this.model);
 					undoHistory.push(cmd);
 					var element = this.$el[0];
-					if (this.formula == undefined){
-						this.formula = document.createElement("div");
-						element.appendChild(this.formula);
-					}
-					console.log(element);
 
 					var content = element.getElementsByClassName("content-scale")[0];
 					console.log(content);
 					content.style.display = "none";
+					if (this.formula == undefined){
+						this.formula = document.createElement("div");
+						element.appendChild(this.formula);
+					}
 
 
 					//console.log(element);
