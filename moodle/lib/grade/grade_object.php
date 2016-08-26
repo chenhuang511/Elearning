@@ -298,7 +298,8 @@ abstract class grade_object
                 self::reset_raw_data_userid($rsraw, $usersmapping);
 
                 foreach ($rsraw as &$data) {
-                    if (isset($params['id']) && isset($params['itemtype']) && $params['itemtype'] == 'course' ) {
+                    if (isset($params['id']) ||
+                        (isset($params['id']) && isset($params['itemtype']) && $params['itemtype'] == 'course' )) {
                         $localcourse = get_local_course_record($data->courseid, false);
                         $data->courseid = $localcourse->id;
                     }
@@ -350,6 +351,7 @@ abstract class grade_object
         }
 
         $result = array();
+        unset($data);
         foreach ($rs as $data) {
             $instance = new $classname();
             grade_object::set_properties($instance, $data);

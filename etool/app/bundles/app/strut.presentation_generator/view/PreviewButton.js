@@ -15,7 +15,7 @@ function(Backbone, PreviewLauncher) {
 			delete this.options.editorModel;
 			// TODO: we should keep session meta per bundle...
 			this._index = Math.min(window.sessionMeta.generator_index || 0, this._generators.length - 1);
-			this._generatorChanged();
+            this._generatorChanged();
 
 			this._template = JST['strut.presentation_generator/Button'];
 		},

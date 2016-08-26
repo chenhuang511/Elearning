@@ -331,7 +331,9 @@ echo $OUTPUT->heading(get_string('modulenameplural', 'certificate'));
 echo $OUTPUT->paging_bar($usercount, $page, $perpage, $url);
 echo '<br />';
 echo html_writer::table($table);
-echo html_writer::tag('div', html_writer::table($tablebutton), array('style' => 'margin:auto'));
+if(MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+    echo html_writer::tag('div', html_writer::table($tablebutton), array('style' => 'margin:auto'));
+}
 if($CFG->nonajax = true){
     echo $OUTPUT->footer($course);
 }
