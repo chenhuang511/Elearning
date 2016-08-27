@@ -196,6 +196,15 @@ input#button-send{
 .mnetaddtoaclform form#mnetaddtoacl input{
     margin-top: 10px;
 }
+
+.generalbox .no-overflow table tbody tr td{
+    padding-bottom: 10px;
+}
+
+.userprofile .el-category{
+    min-height: 285px;
+    height: auto;
+}
 /***********/
 
 .userprofile .el-category:nth-child(3n) {
