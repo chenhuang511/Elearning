@@ -116,6 +116,7 @@ define(["./ComponentView", "libs/etch",
 				var element = this.$el[0];
 				var content = element.getElementsByClassName("content-scale")[0];
 				content.style.display = "inline";
+                //katex.render(this.)
 
 				if (e != null) {
 					//console.log(this.$textEl.attr("id") + "  "+ arrText.length);
@@ -338,12 +339,14 @@ define(["./ComponentView", "libs/etch",
 				var element = this.$el[0];
 				// hide edit div
 				var editContent = element.getElementsByClassName("content-scale")[0];
-				editContent.style.display = "none";
+				//editContent.style.display = "none";
 				// add formula
-				this.formula = document.createElement("div");
-				element.appendChild(this.formula);
-				katex.render("FormulaBox", this.formula);
-				this.model.set("text", this.formula.innerHTML);
+                if (this.formula == undefined){
+                    this.formula = document.createElement("div");
+				    element.appendChild(this.formula);
+                }
+				//katex.render("FormulaBox", this.formula);
+				// this.model.set("text", this.formula.innerHTML);
 
 				return this.$el;
 			},
