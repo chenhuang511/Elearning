@@ -320,12 +320,14 @@ abstract class grade_object
                             $localgrademax = $DB->get_field($data->itemmodule, 'grade', array('remoteid' => $data->iteminstance));
                             if ($localgrademax !== false) {
                                 $data->grademax = $localgrademax;
+                                $data->modifiedlocalgrademax = true;
                             }
                         } catch (\Exception $e) {
 
                         }
                     }
                 }
+                unset($data);
             } elseif ($table === 'grade_categories') {
                 $rsraw = get_remote_list_grade_categories_raw_data($sql, $remoteparams);
                 self::reset_raw_data_courseid($rsraw, $params);

@@ -507,22 +507,24 @@ abstract class grade_report {
                 $gradesrecords = $DB->get_records_sql($sql);
             }
             if ($gradesrecords) {
-                foreach ($gradesrecords as $grade) {
-                    if (ISREMOTE) {
-                        foreach ($items as $itemid => &$gitems) {
-                            if ($grade->itemid == $gitems->remoteid) {
-                                $grade->itemid = $itemid;
-                                if (isset($gitems->itemtype) &&
-                                    $gitems->itemtype == 'course' &&
-                                    isset($grade->rawgrademax) &&
-                                    !is_null($grade->finalgrade)) {
-                                    $gitems->grademax = $grade->rawgrademax;
-                                }
-                                break;
+                if (ISREMOTE) {
+                    foreach ($items as $itemid => &$gitems) {
+                        $rid = $gitems->remoteid;
+                        if (isset($rid) && isset($gradesrecords[$rid])) {
+                            $gradesrecords[$rid]->itemid = $itemid;
+                            if ($gitems->modifiedlocalgrademax) {
+                                $gradesrecords[$rid]->rawgrademax = $gitems->grademax;
+                            } elseif (isset($gitems->itemtype) &&
+                                $gitems->itemtype == 'course' &&
+                                isset($gradesrecords[$rid]->rawgrademax) &&
+                                !is_null($gradesrecords[$rid]->finalgrade)) {
+                                $gitems->grademax = $gradesrecords[$rid]->rawgrademax;
                             }
                         }
-                        unset($gitems);
                     }
+                    unset($gitems);
+                }
+                foreach ($gradesrecords as $grade) {
                     $grades[$grade->itemid] = new grade_grade($grade, false);
                 }
                 unset($gradesrecords);

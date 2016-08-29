@@ -270,7 +270,9 @@ class grade_grade extends grade_object {
             $this->grade_item = grade_item::fetch(array('id'=>$this->itemid));
         }
         if (ISREMOTE) {
-            if (isset($this->grade_item->itemtype) &&
+            if ($this->grade_item->modifiedlocalgrademax) {
+                $this->rawgrademax = $this->grade_item->grademax;
+            } elseif (isset($this->grade_item->itemtype) &&
                 $this->grade_item->itemtype == 'course' &&
                 isset($this->rawgrademax) &&
                 !is_null($this->finalgrade)) {
