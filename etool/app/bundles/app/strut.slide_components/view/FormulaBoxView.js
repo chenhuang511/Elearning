@@ -38,8 +38,8 @@ define(["./ComponentView", "libs/etch",
 			 */
 			initialize: function() {
 				var style, _i, _len;
-				
-				
+
+
 				ComponentView.prototype.initialize.apply(this, arguments);
 				for (_i = 0, _len = styles.length; _i < _len; _i++) {
 					style = styles[_i];
@@ -56,7 +56,7 @@ define(["./ComponentView", "libs/etch",
 				// $(document).bind("keydown", this.keydown);
 
 				this.model.on("edit", this.edit, this);
-				
+
 			},
 
 			/**
@@ -112,7 +112,7 @@ define(["./ComponentView", "libs/etch",
 					arrText[keyText] = new objEditText(keyText, "FormulaBox");
 					++keyText;
 				}
-				
+
 
 				var element = this.$el[0];
 
@@ -218,10 +218,6 @@ define(["./ComponentView", "libs/etch",
 
 					var content = element.getElementsByClassName("content-scale")[0];
 					content.style.display = "none";
-					if (this.formula == undefined){
-						this.formula = document.createElement("div");
-						element.appendChild(this.formula);
-					}
 
 					try {
 						katex.render(this.$textEl.text(), this.formula);
@@ -235,7 +231,7 @@ define(["./ComponentView", "libs/etch",
 							arrText[i].value = this.$textEl.text();
 						}
 					}
-					this.model.set("text", this.formula.innerHTML);					
+					this.model.set("text", this.formula.innerHTML);
 					window.getSelection().removeAllRanges();
 					this.$textEl.attr("contenteditable", false);
 					this.$el.removeClass("editable");
@@ -243,7 +239,7 @@ define(["./ComponentView", "libs/etch",
 				}
 			},
 
-			
+
 
 			/**
 			 * React on component is being selected. If component have been unselected, hide it's editor, if in editing mode.
@@ -338,6 +334,17 @@ define(["./ComponentView", "libs/etch",
 					// textDecoration: this.model.get("decoration"),
 					// textAlign: this.model.get("align")
 				});
+
+
+				var element = this.$el[0];
+				// hide edit div
+				var editContent = element.getElementsByClassName("content-scale")[0];
+				editContent.style.display = "none";
+				// add formula
+				this.formula = document.createElement("div");
+				element.appendChild(this.formula);
+				katex.render("FormulaBox", this.formula);
+
 				return this.$el;
 			},
 
