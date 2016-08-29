@@ -120,10 +120,10 @@ define(["./ComponentView", "libs/etch",
 				content.style.display = "inline";
 
 				if (e != null) {
-					console.log(this.$textEl.attr("id") + "  "+ arrText.length);
+					//console.log(this.$textEl.attr("id") + "  "+ arrText.length);
 					for(var i = 0; i < arrText.length; i++){
 						if(i == this.$textEl.attr("id")){
-							console.log(i);
+
 							this.model.set("text", arrText[i].value);
 						}
 					}
@@ -227,7 +227,6 @@ define(["./ComponentView", "libs/etch",
 
 					for(var i = 0; i < arrText.length; ++i){
 						if(i == this.$textEl.attr("id")){
-							console.log(this.$textEl.attr("id"));
 							arrText[i].value = this.$textEl.text();
 						}
 					}
@@ -344,6 +343,7 @@ define(["./ComponentView", "libs/etch",
 				this.formula = document.createElement("div");
 				element.appendChild(this.formula);
 				katex.render("FormulaBox", this.formula);
+				this.model.set("text", this.formula.innerHTML);
 
 				return this.$el;
 			},
