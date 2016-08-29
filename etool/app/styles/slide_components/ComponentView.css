@@ -1,3 +1,17 @@
+/*--------new css-------*/
+
+.katex .mathit {
+    margin-right: 0 !important;
+    font-family: "Lato", sans-serif;
+    font-style: initial;
+}
+
+.katex{
+    font-size: inherit;
+}
+
+/*----------------------*/
+
 .component .label {
 	visibility: hidden;
 	background: none;

@@ -33,12 +33,12 @@ define(["./ComponentView", "libs/etch",
 				return _.extend(parentEvents, myEvents);
 			},
 
+
 			/**
 			 * Initialize TextBox component view.
 			 */
 			initialize: function() {
 				var style, _i, _len;
-
 
 				ComponentView.prototype.initialize.apply(this, arguments);
 				for (_i = 0, _len = styles.length; _i < _len; _i++) {
@@ -109,24 +109,23 @@ define(["./ComponentView", "libs/etch",
 				this.$textEl.attr("contenteditable", true);
 				if(!this.$textEl.attr("id")){
 					this.$textEl.attr("id",keyText);
-					arrText[keyText] = new objEditText(keyText, "FormulaBox");
+					arrText[keyText] = "FormulaBox";
 					++keyText;
 				}
 
-
 				var element = this.$el[0];
-
 				var content = element.getElementsByClassName("content-scale")[0];
 				content.style.display = "inline";
 
 				if (e != null) {
 					//console.log(this.$textEl.attr("id") + "  "+ arrText.length);
-					for(var i = 0; i < arrText.length; i++){
-						if(i == this.$textEl.attr("id")){
 
-							this.model.set("text", arrText[i].value);
-						}
-					}
+					//for(var i = 0; i < arrText.length; i++){
+						var i = this.$textEl.attr("id");
+							//console.log(i);
+						this.model.set("text", arrText[i]);
+					//}
+
 					this._initialText = this.$textEl.html();
 					etch.editableInit.call(this, e, this.model.get("y") * this.dragScale + 35);
 					// Focus editor and select all text.
@@ -225,11 +224,13 @@ define(["./ComponentView", "libs/etch",
 						katex.render("syntax\\space error", this.formula);
 					}
 
-					for(var i = 0; i < arrText.length; ++i){
-						if(i == this.$textEl.attr("id")){
-							arrText[i].value = this.$textEl.text();
-						}
-					}
+					//for(var i = 0; i < arrText.length; ++i){
+						var i = this.$textEl.attr("id");
+							//console.log(this.$textEl.attr("id"));
+						arrText[i] = this.$textEl.text();
+						//}
+					//}
+
 					this.model.set("text", this.formula.innerHTML);
 					window.getSelection().removeAllRanges();
 					this.$textEl.attr("contenteditable", false);
@@ -237,7 +238,6 @@ define(["./ComponentView", "libs/etch",
 					this.allowDragging = true;
 				}
 			},
-
 
 
 			/**
