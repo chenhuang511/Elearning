@@ -246,7 +246,15 @@ $functions = array(
         'classname'     => 'local_course_external',
         'methodname'    => 'get_course_modules_by',
         'classpath'     => 'local/course/externallib.php',
-        'description'   => 'get course module by',
+        'description'   => 'get course module ',
+        'type'		    => 'write',
+        'ajax'		    => true
+    ),
+    'local_get_course_modules_by_instance' => array(
+        'classname'     => 'local_course_external',
+        'methodname'    => 'get_course_module_by_instance',
+        'classpath'     => 'local/course/externallib.php',
+        'description'   => 'get course module by instance',
         'type'		    => 'write',
         'ajax'		    => true
     ),
