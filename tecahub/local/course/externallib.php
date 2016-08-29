@@ -463,23 +463,41 @@ class local_course_external extends external_api
     public static function get_remote_course_sections($courseid)
     {
         global $DB;
+        $warnings = array();
 
         //validate parameter
-        $params = self::validate_parameters(self::get_remote_course_sections_parameters(), array('courseid' => $courseid));
-        return $DB->get_records('course_sections', array('course' => $courseid), 'section ASC', 'id,course,section,name,sequence');
+        $params = self::validate_parameters(self::get_remote_course_sections_parameters(), array(
+            'courseid' => $courseid
+        ));
+
+        $sections = $DB->get_records('course_sections', array('course' => $courseid), 'section ASC', 'id,course,section,name,sequence');
+
+        if(!$sections) {
+            $sections = array();
+        }
+
+        $result = array();
+        $result['sections'] = $sections;
+        $result['warnings'] = $warnings;
+        return $result;
     }
 
     public static function get_remote_course_sections_returns()
     {
-        return new external_multiple_structure(
-            new external_single_structure(
-                array(
-                    'id' => new external_value(PARAM_INT, 'ID of the course'),
-                    'course' => new external_value(PARAM_INT, 'The fullname of the course'),
-                    'section' => new external_value(PARAM_INT, 'Thumbnail course URL - big version'),
-                    'name' => new external_value(PARAM_TEXT, 'The fullname of the course'),
-                    'sequence' => new external_value(PARAM_RAW, 'Thumbnail course URL - big version'),
-                )
+        return new external_single_structure(
+            array(
+                'sections' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'ID of the course'),
+                            'course' => new external_value(PARAM_INT, 'The fullname of the course'),
+                            'section' => new external_value(PARAM_INT, 'Thumbnail course URL - big version'),
+                            'name' => new external_value(PARAM_TEXT, 'The fullname of the course'),
+                            'sequence' => new external_value(PARAM_RAW, 'Thumbnail course URL - big version'),
+                        )
+                    ), 'section data'
+                ),
+                'warnings' => new external_warnings()
             )
         );
     }
