@@ -509,12 +509,16 @@ abstract class grade_report {
             if ($gradesrecords) {
                 foreach ($gradesrecords as $grade) {
                     if (ISREMOTE) {
-                        foreach ($items as $itemid => $gitems) {
+                        foreach ($items as $itemid => &$gitems) {
                             if ($grade->itemid == $gitems->remoteid) {
                                 $grade->itemid = $itemid;
+                                if (isset($gitems->itemtype) && $gitems->itemtype == 'course' && isset($grade->rawgrademax)) {
+                                    $gitems->grademax = $grade->rawgrademax;
+                                }
                                 break;
                             }
                         }
+                        unset($gitems);
                     }
                     $grades[$grade->itemid] = new grade_grade($grade, false);
                 }

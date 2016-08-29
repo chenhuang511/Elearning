@@ -269,6 +269,11 @@ class grade_grade extends grade_object {
             debugging('Itemid mismatch');
             $this->grade_item = grade_item::fetch(array('id'=>$this->itemid));
         }
+        if (ISREMOTE) {
+            if (isset($this->grade_item->itemtype) && $this->grade_item->itemtype == 'course' && isset($this->rawgrademax)) {
+                $this->grade_item->grademax = $this->rawgrademax;
+            }
+        }
 
         return $this->grade_item;
     }
