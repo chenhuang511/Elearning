@@ -515,7 +515,7 @@ abstract class grade_report {
                                 if (isset($gitems->itemtype) &&
                                     $gitems->itemtype == 'course' &&
                                     isset($grade->rawgrademax) &&
-                                    !is_null($grade->usermodified) && !is_null($grade->finalgrade)) {
+                                    !is_null($grade->finalgrade)) {
                                     $gitems->grademax = $grade->rawgrademax;
                                 }
                                 break;

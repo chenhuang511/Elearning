@@ -273,7 +273,7 @@ class grade_grade extends grade_object {
             if (isset($this->grade_item->itemtype) &&
                 $this->grade_item->itemtype == 'course' &&
                 isset($this->rawgrademax) &&
-                !is_null($this->usermodified) && !is_null($this->finalgrade)) {
+                !is_null($this->finalgrade)) {
                 $this->grade_item->grademax = $this->rawgrademax;
             }
         }
