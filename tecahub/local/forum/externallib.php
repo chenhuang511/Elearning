@@ -2595,6 +2595,8 @@ class local_mod_forum_external extends external_api
         $post->course = $forum->course; // speedup
         $post->mailnow = $discussion->mailnow;
 
+        $transaction = $DB->start_delegated_transaction();
+
         $post->id = $DB->insert_record("forum_posts", $post);
 
         // TODO: Fix the calling code so that there always is a $cm when this function is called
@@ -2618,6 +2620,8 @@ class local_mod_forum_external extends external_api
 
         // Finally, set the pointer on the post.
         $DB->set_field("forum_posts", "discussion", $post->discussion, array("id" => $post->id));
+
+        $transaction->allow_commit();
 
         // Let Moodle know that assessable content is uploaded (eg for plagiarism detection)
         if (!empty($cm->id)) {
