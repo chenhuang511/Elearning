@@ -298,4 +298,12 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_forum_add_instance' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'forum_add_instance',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'save new forum  and new context',
+        'type' => 'read',
+        'ajax' => true
+    ),
 );

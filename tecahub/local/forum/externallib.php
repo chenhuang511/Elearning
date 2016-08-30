@@ -2487,4 +2487,53 @@ class local_mod_forum_external extends external_api
             )
         );
     }
+
+    public static function forum_add_instance_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'forumdata' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the data saved'
+                )
+            )
+        );
+    }
+
+    public static function forum_add_instance($forumdata)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::forum_add_instance_parameters(), array(
+            'forumdata' => $forumdata
+        ));
+
+        $forum = new stdClass();
+        foreach ($params['forumdata'] as $dt) {
+            $forum->$dt['name'] = $dt['value'];
+        }
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $forum->id = $DB->insert_record('forum', $forum);
+
+        $transaction->allow_commit();
+
+        $modcontext = context_module::instance($forum->coursemodule);
+
+        $result['newid'] = $forum->id;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function forum_add_instance_returns()
+    {
+        return self::save_mdl_forum_returns();
+    }
 }
