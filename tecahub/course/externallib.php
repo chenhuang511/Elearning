@@ -2496,5 +2496,4 @@ class core_course_external extends external_api {
     public static function get_course_module_by_instance_returns() {
         return self::get_course_module_returns();
     }
-
 }
