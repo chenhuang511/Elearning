@@ -226,15 +226,12 @@ input#button-send{
 
 .form-item .form-setting .defaultsnext {
     margin-right: .5em;
-    display: inline;
+    display: inline-block;
 }
 /*.form-item .form-setting .form-checkbox.defaultsnext {*/
     /*margin-top: 5px;*/
     /*display: inline-block;*/
 
-.form-setting .form-defaultinfo {
-    margin-left: 20px;
-}
     /***********/
 
 .userprofile .el-category:nth-child(3n) {
