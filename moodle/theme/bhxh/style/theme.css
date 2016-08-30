@@ -232,6 +232,29 @@ input#button-send{
     /*margin-top: 5px;*/
     /*display: inline-block;*/
 
+.form-item .form-setting{
+    padding-left: 0;
+}
+
+.form-item .form-description{
+    padding-left: 0px;
+}
+
+.form-item .form-setting .form-multicheckbox ul {
+    margin: 0;
+}
+
+@media (min-width: 992px) {
+    .form-setting .form-multicheckbox {
+        padding-top: 0;
+    }
+}
+
+.logselecform div select.select{
+    margin-bottom: 10px;
+    max-width: 150px;
+    margin-right: 5px;
+}
     /***********/
 
 .userprofile .el-category:nth-child(3n) {
