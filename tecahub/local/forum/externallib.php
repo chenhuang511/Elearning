@@ -2619,8 +2619,22 @@ class local_mod_forum_external extends external_api
         // Finally, set the pointer on the post.
         $DB->set_field("forum_posts", "discussion", $post->discussion, array("id" => $post->id));
 
+        if (!empty($cm->id)) {
+            forum_add_attachment($post, $forum, $cm, $mform, $unused);
+        }
+
+        if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {
+            forum_tp_mark_post_read($post->userid, $post, $post->forum);
+        }
+
+        // Let Moodle know that assessable content is uploaded (eg for plagiarism detection)
+        if (!empty($cm->id)) {
+            forum_trigger_content_uploaded_event($post, $cm, 'forum_add_discussion');
+        }
+
         $result = array();
-        $result['discusion'] = $discussion;
+        $result['forum'] = $forum;
+        $result['cm'] = $cm;
         $result['post'] = $post;
         $result['warnings'] = $warnings;
         return $result;
@@ -2630,21 +2644,58 @@ class local_mod_forum_external extends external_api
     {
         return new external_single_structure(
             array(
-                'discusion' => new external_single_structure(
+                'forum' => new external_single_structure(
                     array(
-                        'id' => new external_value(PARAM_INT, 'the id'),
+                        'id' => new external_value(PARAM_INT, 'the forum id'),
                         'course' => new external_value(PARAM_INT, 'the course id'),
-                        'forum' => new external_value(PARAM_INT, 'the forum id'),
-                        'name' => new external_value(PARAM_RAW, 'the name'),
-                        'firstpost' => new external_value(PARAM_INT, 'first post'),
-                        'userid' => new external_value(PARAM_INT, 'the user id'),
-                        'groupid' => new external_value(PARAM_INT, 'the group id'),
-                        'assessed' => new external_value(PARAM_INT, 'the assessed'),
-                        'timemodified' => new external_value(PARAM_INT, 'time modified'),
-                        'usermodified' => new external_value(PARAM_INT, 'user modified'),
-                        'timestart' => new external_value(PARAM_INT, 'time start'),
-                        'timeend' => new external_value(PARAM_INT, 'time end'),
-                        'pinned' => new external_value(PARAM_INT, 'pinned')
+                        'type' => new external_value(PARAM_RAW, 'type'),
+                        'name' => new external_value(PARAM_RAW, 'forum name'),
+                        'intro' => new external_value(PARAM_RAW, 'Page introduction text.'),
+                        'introformat' => new external_format_value(PARAM_INT, 'intro format', VALUE_OPTIONAL),
+                        'assessed' => new external_value(PARAM_INT, 'assessed'),
+                        'assesstimestart' => new external_value(PARAM_INT, 'assess time start'),
+                        'assesstimefinish' => new external_value(PARAM_INT, 'assess time finish'),
+                        'scale' => new external_format_value(PARAM_INT, 'scale'),
+                        'maxbytes' => new external_value(PARAM_INT, 'max bytes'),
+                        'maxattachments' => new external_value(PARAM_INT, 'max attachments'),
+                        'forcesubscribe' => new external_value(PARAM_INT, 'force subscribe'),
+                        'trackingtype' => new external_value(PARAM_INT, 'tracking type'),
+                        'rsstype' => new external_value(PARAM_INT, 'rss type'),
+                        'rssarticles' => new external_value(PARAM_INT, 'rss articles'),
+                        'timemodified' => new external_format_value(PARAM_INT, 'time modified'),
+                        'warnafter' => new external_value(PARAM_INT, 'warn after'),
+                        'blockafter' => new external_value(PARAM_INT, 'block after'),
+                        'blockperiod' => new external_value(PARAM_INT, 'block period'),
+                        'completiondiscussions' => new external_value(PARAM_INT, 'completion discussions'),
+                        'completionreplies' => new external_value(PARAM_INT, 'completion replies'),
+                        'completionposts' => new external_value(PARAM_INT, 'completion posts'),
+                        'displaywordcount' => new external_value(PARAM_INT, 'display word count')
+                    )
+                ),
+                'cm' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'The course module id'),
+                        'course' => new external_value(PARAM_INT, 'The course id'),
+                        'module' => new external_value(PARAM_INT, 'The module type id'),
+                        'name' => new external_value(PARAM_RAW, 'The activity name'),
+                        'modname' => new external_value(PARAM_COMPONENT, 'The module component name (forum, assign, etc..)'),
+                        'instance' => new external_value(PARAM_INT, 'The activity instance id'),
+                        'section' => new external_value(PARAM_INT, 'The module section id'),
+                        'sectionnum' => new external_value(PARAM_INT, 'The module section number'),
+                        'groupmode' => new external_value(PARAM_INT, 'Group mode'),
+                        'groupingid' => new external_value(PARAM_INT, 'Grouping id'),
+                        'completion' => new external_value(PARAM_INT, 'If completion is enabled'),
+                        'idnumber' => new external_value(PARAM_RAW, 'Module id number', VALUE_OPTIONAL),
+                        'added' => new external_value(PARAM_INT, 'Time added', VALUE_OPTIONAL),
+                        'score' => new external_value(PARAM_INT, 'Score', VALUE_OPTIONAL),
+                        'indent' => new external_value(PARAM_INT, 'Indentation', VALUE_OPTIONAL),
+                        'visible' => new external_value(PARAM_INT, 'If visible', VALUE_OPTIONAL),
+                        'visibleold' => new external_value(PARAM_INT, 'Visible old', VALUE_OPTIONAL),
+                        'completiongradeitemnumber' => new external_value(PARAM_INT, 'Completion grade item', VALUE_OPTIONAL),
+                        'completionview' => new external_value(PARAM_INT, 'Completion view setting', VALUE_OPTIONAL),
+                        'completionexpected' => new external_value(PARAM_INT, 'Completion time expected', VALUE_OPTIONAL),
+                        'showdescription' => new external_value(PARAM_INT, 'If the description is showed', VALUE_OPTIONAL),
+                        'availability' => new external_value(PARAM_RAW, 'Availability settings', VALUE_OPTIONAL)
                     )
                 ),
                 'post' => new external_single_structure(
