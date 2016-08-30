@@ -296,36 +296,8 @@ abstract class grade_object
             if ($table === 'grade_items') {
                 $rsraw = get_remote_assign_grade_items_raw_data($sql, $remoteparams);
                 self::reset_raw_data_userid($rsraw, $usersmapping);
+                self::reset_raw_grade_items_value($rsraw, $params);
 
-                foreach ($rsraw as &$data) {
-                    if (isset($params['id']) ||
-                        (isset($params['id']) && isset($params['itemtype']) && $params['itemtype'] == 'course' )) {
-                        $localcourse = get_local_course_record($data->courseid, false);
-                        $data->courseid = $localcourse->id;
-                    }
-                    if (isset($data->courseid) && isset($params['courseid'])) {
-                        $data->courseid = $params['courseid'];
-                    }
-
-                    $data->remoteid = $data->id; //create remoteid
-                    $data->id = $DB->get_field('grade_items', 'id', array('remoteid' => $data->remoteid));
-                    if (empty($data->id) && !empty($data->remoteid)) {
-                        $data->id = $DB->insert_record('grade_items', $data);
-                    } else {
-                        $data->gradepass = $DB->get_field('grade_items', 'gradepass', array('remoteid' => $data->remoteid));
-                    }
-                    $acceptedmodules = array('assign', 'quiz');
-                    if (in_array($data->itemmodule, $acceptedmodules)) {
-                        try {
-                            $localgrademax = $DB->get_field($data->itemmodule, 'grade', array('remoteid' => $data->iteminstance));
-                            if ($localgrademax !== false) {
-                                $data->grademax = $localgrademax;
-                            }
-                        } catch (\Exception $e) {
-
-                        }
-                    }
-                }
                 foreach ($rsraw as &$data) {
                     if ($data->itemtype == 'course') {
                         $grademax = 0;
@@ -336,7 +308,7 @@ abstract class grade_object
                         $rmtparam['param[0][name]='] = 'courseid';
                         $rmtparam['param[0][value]='] = $rmtcourseid;
                         $coursegradeitem = get_remote_assign_grade_items_raw_data($coursesql, $rmtparam);
-
+                        self::reset_raw_grade_items_value($coursegradeitem, $params);
                         foreach ($coursegradeitem as $needed) {
                             $grademax += $needed->grademax;
                         }
@@ -382,6 +354,40 @@ abstract class grade_object
         $rs->close();
 
         return $result;
+    }
+
+    public static function reset_raw_grade_items_value(&$rsraw, $params) {
+        global $DB;
+        foreach ($rsraw as &$data) {
+            if (isset($params['id']) ||
+                (isset($params['id']) && isset($params['itemtype']) && $params['itemtype'] == 'course' )) {
+                $localcourse = get_local_course_record($data->courseid, false);
+                $data->courseid = $localcourse->id;
+            }
+            if (isset($data->courseid) && isset($params['courseid'])) {
+                $data->courseid = $params['courseid'];
+            }
+
+            $data->remoteid = $data->id; //create remoteid
+            $data->id = $DB->get_field('grade_items', 'id', array('remoteid' => $data->remoteid));
+            if (empty($data->id) && !empty($data->remoteid)) {
+                $data->id = $DB->insert_record('grade_items', $data);
+            } else {
+                $data->gradepass = $DB->get_field('grade_items', 'gradepass', array('remoteid' => $data->remoteid));
+            }
+            $acceptedmodules = array('assign', 'quiz');
+            if (in_array($data->itemmodule, $acceptedmodules)) {
+                try {
+                    $localgrademax = $DB->get_field($data->itemmodule, 'grade', array('remoteid' => $data->iteminstance));
+                    if ($localgrademax !== false) {
+                        $data->grademax = $localgrademax;
+                    }
+                } catch (\Exception $e) {
+
+                }
+            }
+        }
+        unset($data);
     }
 
     public static function reset_raw_data_courseid(&$rawdata, $params) {
