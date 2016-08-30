@@ -5,11 +5,13 @@ define(['./view/ComponentButton',
 	'./model/FormulaBox',
 	'./model/WebFrame',
 	'./model/Video',
+	'./model/Table',
 	'./view/ImageView',
 	'./view/TextBoxView',
 	'./view/FormulaBoxView',
 	'./view/WebFrameView',
 	'./view/VideoView',
+	'./view/TableView',
 	'./ComponentFactory',
 	'lang',
 	'./view/ShapesDropdown',
@@ -23,11 +25,13 @@ define(['./view/ComponentButton',
 			 FormulaBox,
 			 WebFrame,
 			 Video,
+			 Table,
 			 ImageView,
 			 TextBoxView,
 			 FormulaBoxView,
 			 WebFrameView,
 			 VideoView,
+			 TableView,
 			 ComponentFactory,
 			 lang,
 			 ShapesDropdown,
@@ -52,6 +56,13 @@ define(['./view/ComponentButton',
 					name: 'FormulaBox',
 					editorModel: editorModel
 				}));
+
+				buttons.push(new Button({
+					componentType: 'Table',
+					icon: 'icon-text-width',
+					name: 'Table',
+					editorModel: editorModel
+				}))
 
 				buttons.push(new ImportingComponentButton({
 					componentType: 'Image',
@@ -146,6 +157,13 @@ define(['./view/ComponentButton',
 				}, Shape);
 
 				registry.register({
+					interfaces : 'strut.ComponentModel',
+					meta:{
+						type: 'Table'
+					}
+				}, Table)
+
+				registry.register({
 					interfaces: 'strut.ComponentView',
 					meta: {
 						type: 'Image'
@@ -165,12 +183,6 @@ define(['./view/ComponentButton',
 					}
 				}, FormulaBoxView);
 
-				registry.register({
-					interfaces: 'strut.ComponentView',
-					meta: {
-						type : 'FormulaBox'
-					}
-				}, FormulaBoxView);
 
 
 				registry.register({
@@ -193,6 +205,13 @@ define(['./view/ComponentButton',
 						type: 'Shape'
 					}
 				}, ShapeView);
+
+				registry.register({
+					interfaces: 'strut.ComponentView',
+					meta: {
+						type: 'Table'
+					}
+				}, TableView);
 
 				ComponentFactory.initialize(registry);
 			}
