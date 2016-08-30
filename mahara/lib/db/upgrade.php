@@ -4080,8 +4080,8 @@ function xmldb_core_upgrade($oldversion=0) {
     if ($oldversion < 2015042800) {
         log_debug('Clear Dwoo cache of unescaped institution names');
         require_once('dwoo/dwoo/dwooAutoload.php');
-        @unlink(get_config('dataroot') . 'dwoo/compile/default' . get_config('docroot') . 'theme/raw/' . 'templates/view/accesslistrow.tpl.d'.Dwoo_Core::RELEASE_TAG.'.php');
-        @unlink(get_config('dataroot') . 'dwoo/compile/default' . get_config('docroot') . 'theme/raw/' . 'templates/admin/users/accesslistitem.tpl.d'.Dwoo_Core::RELEASE_TAG.'.php');
+        @unlink(get_config('dataroot') . 'dwoo/compile/default' . get_config('docroot') . 'theme/lms/' . 'templates/view/accesslistrow.tpl.d'.Dwoo_Core::RELEASE_TAG.'.php');
+        @unlink(get_config('dataroot') . 'dwoo/compile/default' . get_config('docroot') . 'theme/lms/' . 'templates/admin/users/accesslistitem.tpl.d'.Dwoo_Core::RELEASE_TAG.'.php');
     }
 
     if ($oldversion < 2015071500) {

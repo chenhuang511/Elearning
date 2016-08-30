@@ -326,6 +326,21 @@ abstract class grade_object
                         }
                     }
                 }
+                foreach ($rsraw as &$data) {
+                    if ($data->itemtype == 'course') {
+                        $grademax = 0;
+                        foreach ($rsraw as $needed) {
+                            if ($needed->itemtype != 'course') {
+                                $grademax += $needed->grademax;
+                            }
+                        }
+                        if ($data->grademax != $grademax) {
+                            $data->grademax = $grademax;
+                            $DB->update_record('grade_items', $data);
+                        }
+                    }
+                }
+                unset($data);
             } elseif ($table === 'grade_categories') {
                 $rsraw = get_remote_list_grade_categories_raw_data($sql, $remoteparams);
                 self::reset_raw_data_courseid($rsraw, $params);

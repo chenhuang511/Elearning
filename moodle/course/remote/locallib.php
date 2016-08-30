@@ -111,20 +111,25 @@ function get_remote_course_module_by_instance($modulename, $instace, $options = 
             'params' => array('module' => $modulename, 'instance' => $instace)
         )
     ));
-    $result = merge_local_course_module($resp->cm);
+    if (isset($resp->exception) && $resp->exception) {
+        $result = new stdClass();
+    } else {
+        $result = merge_local_course_module($resp->cm);
+    }
+
     return $result;
 }
 
-function get_remote_course_module_by_cmid($modulename, $cmid, $options = array())
+function get_remote_course_module_by_cmid($modulename = '', $cmid, $courseid = 0, $validate = true, $iscache = true)
 {
-    $resp = moodle_webservice_client(array_merge($options,
+    $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_get_course_module_by_cmid',
-            'params' => array('module' => $modulename, 'id' => $cmid)
-        )
-    ));
+            'params' => array('modulename' => $modulename, 'cmid' => $cmid, 'courseid' => $courseid, 'validate' => $validate)
+        ), $iscache
+    );
     $result = merge_local_course_module($resp->cm);
     return $result;
 }
@@ -283,7 +288,7 @@ function change_email_to_userid($email)
  */
 function create_update_remote_course_modules_completion($cmc)
 {
-    if (isset($cmc['id'])){
+    if (isset($cmc['id'])) {
         unset($cmc['id']);
     }
 
@@ -303,8 +308,8 @@ function create_update_remote_course_modules_completion($cmc)
 
 /**
  * Get course completion on hub
- * @param int $courseid   - The id of course
- * @param int $userid     - The id of user
+ * @param int $courseid - The id of course
+ * @param int $userid - The id of user
  * @return mixed $result  - The information of course completion
  */
 function get_remote_course_completion_progress($course, $userid)
@@ -348,7 +353,7 @@ function get_remote_list_course_completion($userid)
 /**
  * Detele tbl course_completions by courseid & userid on host
  *
- * @param int $courseid    - The id of course
+ * @param int $courseid - The id of course
  * @return bool $result    - True if success
  */
 function delete_remote_course_completions($courseid)
@@ -373,7 +378,7 @@ function delete_remote_course_completions($courseid)
 /**
  * Detele tbl course_completion_crit_compl by courseid & userid on host
  *
- * @param int $courseid    - The id of course
+ * @param int $courseid - The id of course
  * @return bool $result    - True if success
  */
 function delete_remote_course_completion_crit_compl($courseid)
@@ -400,7 +405,7 @@ function delete_remote_course_completion_crit_compl($courseid)
  * deciding whether completion information should be 'locked' in the module
  * editing form.
  *
- * @param int $coursemoduleid    - The id of course module
+ * @param int $coursemoduleid - The id of course module
  * @return int $result           - Count user id
  */
 function count_remote_user_data_completion($coursemoduleid)
@@ -447,17 +452,17 @@ function get_remote_completion_fetch_all_helper($table, $courseid)
     );
 
     if ($table == 'course_completion_aggr_methd') {
-        if ($result->course_completion_aggr_methd){
-            foreach ($result->course_completion_aggr_methd as $element){
+        if ($result->course_completion_aggr_methd) {
+            foreach ($result->course_completion_aggr_methd as $element) {
                 $element->course = $courseid;
             }
             return $result->course_completion_aggr_methd;
         } else {
             return false;
         }
-    } else if($table == 'course_completion_criteria') {
-        if ($result->course_completion_criteria){
-            foreach ($result->course_completion_criteria as $element){
+    } else if ($table == 'course_completion_criteria') {
+        if ($result->course_completion_criteria) {
+            foreach ($result->course_completion_criteria as $element) {
                 $element->course = $courseid;
             }
             return $result->course_completion_criteria;
@@ -476,7 +481,8 @@ function get_remote_completion_fetch_all_helper($table, $courseid)
  *
  * @return array $return   - The information tbl modules
  */
-function get_remote_modules($fields = '*') {
+function get_remote_modules($fields = '*')
+{
     $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
@@ -499,7 +505,8 @@ function get_remote_modules($fields = '*') {
  * @param array $data - Data for update tbl course_completions
  * @return bool $result - Return true if success
  */
-function update_remote_course_completions($data) {
+function update_remote_course_completions($data)
+{
     $data['userid'] = get_remote_mapping_user($data['userid'])[0]->id;
     $data['course'] = get_local_course_record($data['course'], true)->remoteid;
 
@@ -513,4 +520,71 @@ function update_remote_course_completions($data) {
     );
 
     return $result;
+}
+
+function save_remote_mdl_course($modname, $data)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_save_mdl_course',
+            'params' => array_merge(array('modname' => $modname), $data),
+        )
+    );
+
+    return $result->newid;
+}
+
+function update_remote_mdl_course($modname, $id, $data)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_update_mdl_course',
+            'params' => array_merge(array('modname' => $modname, "id" => $id), $data),
+        )
+    );
+
+    return $result->id;
+}
+
+function get_remote_course_sections_by($parameters, $strictness = IGNORE_MISSING)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_get_course_sections_by',
+            'params' => array_merge(array('strictness' => $strictness), $parameters),
+        )
+    );
+
+    return $result->section;
+}
+
+function get_remote_course_modules_by($parameters, $strictness = MUST_EXIST)
+{
+    global $DB;
+
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_get_course_modules_by',
+            'params' => array_merge(array('strictness' => $strictness), $parameters),
+        )
+    );
+
+    $cm = $result->cm;
+
+    if ($cm) {
+        $localcourseid = $DB->get_field('course', 'id', array('remoteid' => $cm->course));
+        if ($localcourseid) {
+            $cm->course = $localcourseid;
+        }
+    }
+
+    return $cm;
 }

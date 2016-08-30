@@ -7,13 +7,13 @@ define(["./ComponentView", "libs/etch",
 		var undoHistory = CmdListFactory.managedInstance('editor');
 		var styles;
 		styles = ["family", "size", "weight", "style", "color", "decoration", "align"];
-		//var opts;
+
 		/**
-		 * @class FormulaBoxView
+		 * @class Table
 		 * @augments ComponentView
 		 */
 		return ComponentView.extend({
-			className: "component formulaBox",
+			className: "component textBox",
 			tagName: "div",
 
 			/**
@@ -31,7 +31,6 @@ define(["./ComponentView", "libs/etch",
 				return _.extend(parentEvents, myEvents);
 			},
 
-
 			/**
 			 * Initialize TextBox component view.
 			 */
@@ -48,6 +47,7 @@ define(["./ComponentView", "libs/etch",
 
 				this.dblclicked = this.dblclicked.bind(this);
 				TouchBridge.on.dblclick(this.$el, this.dblclicked);
+
 				// TODO This can be uncommented once modal windows start blocking all slide key events.
 				// https://github.com/tantaman/Strut/pull/183
 				// $(document).bind("keydown", this.keydown);
@@ -102,20 +102,11 @@ define(["./ComponentView", "libs/etch",
 			 */
 			dblclicked: function(e) {
 				this.$el.addClass("editable");
-				this.$textEl.attr("contenteditable", true);			
-				var element = this.$el[0];
-				var content = element.getElementsByClassName("content-scale")[0];
-				content.style.display = "inline";
-
+				this.$textEl.attr("contenteditable", true);
 				if (e != null) {
-					if(this.model.get("_opts")){
-						this.model.set("text", this.model.get("_opts"));
-					}
-					else{
-						this.model.set("text","FormulaBox");
-					}
 					this._initialText = this.$textEl.html();
 					etch.editableInit.call(this, e, this.model.get("y") * this.dragScale + 35);
+
 					// Focus editor and select all text.
 					if (!this.editing) {
 						this.$textEl.get(0).focus();
@@ -123,8 +114,9 @@ define(["./ComponentView", "libs/etch",
 							document.execCommand('selectAll', false, null);
 							etch.triggerCaret();
 						} catch (e) {
-						// firefox failboats on this command
-						// for some reason.  hence the try/catch
+							// firefox failboats on this command
+							// for some reason.  hence the try/catch
+							// console.log(e);
 						}
 					}
 				}
@@ -201,26 +193,14 @@ define(["./ComponentView", "libs/etch",
 				} else {
 					var cmd = ComponentCommands.Text(this._initialText, this.model);
 					undoHistory.push(cmd);
-					var element = this.$el[0];
 
-					var content = element.getElementsByClassName("content-scale")[0];
-					content.style.display = "none";
-
-					try {
-						katex.render(this.$textEl.text(), this.formula);
-					}catch (err){
-						katex.render("syntax\\space error", this.formula);
-					}
-					this.model.set("_opts", this.$textEl.text());
-					this.model.set("text", this.formula.innerHTML);
+					this.model.set("text", text);
 					window.getSelection().removeAllRanges();
 					this.$textEl.attr("contenteditable", false);
 					this.$el.removeClass("editable");
 					this.allowDragging = true;
-					
 				}
 			},
-
 
 			/**
 			 * React on component is being selected. If component have been unselected, hide it's editor, if in editing mode.
@@ -315,26 +295,11 @@ define(["./ComponentView", "libs/etch",
 					// textDecoration: this.model.get("decoration"),
 					// textAlign: this.model.get("align")
 				});
-
-
-				var element = this.$el[0];
-				// hide edit div
-				var editContent = element.getElementsByClassName("content-scale")[0];
-				//editContent.style.display = "none";
-				// add formula
-                if (this.formula == undefined){
-                    this.formula = document.createElement("div");
-				    element.appendChild(this.formula);
-                }
-				//katex.render("FormulaBox", this.formula);
-				// this.model.set("text", this.formula.innerHTML);
-
 				return this.$el;
 			},
 
-			constructor: function FormulaBoxView() {
+			constructor: function TableView() {
 				ComponentView.prototype.constructor.apply(this, arguments);
 			}
 		});
 	});
-

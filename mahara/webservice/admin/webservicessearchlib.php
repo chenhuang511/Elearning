@@ -34,7 +34,7 @@ require_once('user.php');
  */
 function build_webservice_log_search_results($search) {
     global $THEME;
-    $THEME->templatedirs[]= get_config('docroot') . 'auth/webservice/theme/raw/';
+    $THEME->templatedirs[]= get_config('docroot') . 'auth/webservice/theme/lms/';
 
     $results = get_log_search_results($search);
 

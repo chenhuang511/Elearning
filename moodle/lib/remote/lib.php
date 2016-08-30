@@ -8,7 +8,8 @@ require_once($CFG->libdir . '/additionallib.php');
  * @param $id
  * @return false|mixed
  */
-function change_key_by_value($array = array(), $key = 'id') {
+function change_key_by_value($array = array(), $key = 'id')
+{
     $keys = array_map(function ($ar) use ($key) {
         return $ar->$key;
     }, $array);
@@ -33,7 +34,7 @@ function moodle_webservice_client($options, $usecache = true, $assoc = false)
             $options['function_name'] . '&moodlewsrestformat=json';
 
         if (!class_exists('Zend_Http_Client')) {
-            set_include_path(get_include_path().PATH_SEPARATOR.$CFG->libdir . '/zend/');
+            set_include_path(get_include_path() . PATH_SEPARATOR . $CFG->libdir . '/zend/');
             require_once($CFG->libdir . '/zend/Zend/Http/Client.php');
         }
 
@@ -71,11 +72,11 @@ function get_remote_course_module($cmid, $options = array())
         'token' => HOST_TOKEN_M,
         'function_name' => 'core_course_get_course_module',
         'params' => array('cmid' => $cmid),
-    )));
+    )), false);
 
     $cm = $coursemodule->cm;
-    
-    if($cm) {
+
+    if ($cm) {
         $info = new stdClass();
         $info->id = strval($cm->id);
         $info->course = strval($cm->course);
@@ -127,7 +128,7 @@ function get_remote_course_mods($courseid)
         ), false
     );
 
-    foreach ($resp as $cm){
+    foreach ($resp as $cm) {
         merge_local_course_module($cm);
     }
 
@@ -136,33 +137,17 @@ function get_remote_course_mods($courseid)
 
 function get_remote_course_sections($courseid, $usesq = false)
 {
-    global $DB;
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_get_course_sections',
+            'params' => array('courseid' => $courseid)
+        )
+    );
 
-    $sections = new StdClass();
-    switch(MOODLE_RUN_MODE) {
-        case MOODLE_MODE_HOST:
-            // Get section data
-            $sections = $DB->get_records('course_sections', array('course' => $courseid), 'section ASC', 'id,section,sequence');
-            break;
-        case MOODLE_MODE_HUB:
-            $sections = moodle_webservice_client(
-                array(
-                    'domain' => HUB_URL,
-                    'token' => HOST_TOKEN,
-                    'function_name' => 'local_get_course_sections',
-                    'params' => array('courseid' => $courseid)
-                )
-            );
-            break;
-        default:
-            break;
-    }
+    $retval = change_key_by_value($result->sections, $usesq);
 
-    if ($usesq) {
-        $retval = change_key_by_value($sections, $usesq);
-    } else {
-        $retval = $sections;
-    }
     return $retval;
 }
 
@@ -193,7 +178,8 @@ function get_remote_mapping_user($user = null)
     );
 }
 
-function get_remote_mapping_localuserid($userid) {
+function get_remote_mapping_localuserid($userid)
+{
     global $DB;
     $result = moodle_webservice_client(
         array(
@@ -208,8 +194,8 @@ function get_remote_mapping_localuserid($userid) {
 
     $localuserid = 0;
 
-    if($hubuser) {
-        $localuserid = $DB->get_field('user','id',array('username' => $hubuser->username, 'email' => $hubuser->email));
+    if ($hubuser) {
+        $localuserid = $DB->get_field('user', 'id', array('username' => $hubuser->username, 'email' => $hubuser->email));
     }
 
     return $localuserid;
@@ -219,7 +205,7 @@ function remote_assign_role_to_user($roleid, $userid, $courseid)
 {
     global $DB;
 
-    $user = $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
+    $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
     $remoteuser = get_remote_mapping_user($user);
 
     return moodle_webservice_client(
@@ -232,11 +218,12 @@ function remote_assign_role_to_user($roleid, $userid, $courseid)
     );
 }
 
-function get_remote_cm_info($modname, $instanceid) {
+function get_remote_cm_info($modname, $instanceid)
+{
     global $DB;
 
     $modinfo = new StdClass();
-    switch(MOODLE_RUN_MODE) {
+    switch (MOODLE_RUN_MODE) {
         case MOODLE_MODE_HOST:
             // Get section data
             $modinfo = $DB->get_record($modname, array('id' => $instanceid), 'name, intro, introformat');
@@ -258,33 +245,35 @@ function get_remote_cm_info($modname, $instanceid) {
     return $modinfo;
 }
 
-function merge_local_course_module($cm){
+function merge_local_course_module($cm)
+{
     global $DB;
 
-    $localcourseid = get_local_course_record($cm->course)->id;
+    $localcourse = $DB->get_record('course', array('remoteid' => $cm->course));
+    if ($localcourse) {
+        if (!$coursemodule = $DB->get_record('course_modules', array('remoteid' => $cm->id))) {
+            // Make params to insert DB local
+            $cm->remoteid = $cm->id;
+            $cm->course = $localcourse->id;
+            unset($cm->id);
 
-    if(!$coursemodule = $DB->get_record('course_modules', array('remoteid' => $cm->id))){
-        // Make params to insert DB local
-        $cm->remoteid = $cm->id;
-        $cm->course = $localcourseid;
-        unset($cm->id);
+            $transaction = $DB->start_delegated_transaction();
+            $cmidhost = $DB->insert_record('course_modules', $cm);
+            $transaction->allow_commit();
+            unset($cm->remoteid);
 
-        $transaction = $DB->start_delegated_transaction();
-        $cmidhost = $DB->insert_record('course_modules', $cm);
-        $transaction->allow_commit();
-        unset($cm->remoteid);
+            $coursemodule = $DB->get_record('course_modules', array('id' => $cmidhost));
+        }
 
-        $coursemodule = $DB->get_record('course_modules', array('id' => $cmidhost));
+        // Merge course module for settings
+        $cm->id = $coursemodule->remoteid;
+        $cm->course = $localcourse->id;
+        $cm->availability = $coursemodule->availability;
+        $cm->completion = $coursemodule->completion;
+        $cm->completionview = $coursemodule->completionview;
+        $cm->completionexpected = $coursemodule->completionexpected;
+        $cm->completiongradeitemnumber = $coursemodule->completiongradeitemnumber;
     }
-
-    // Merge course module for settings
-    $cm->id                         = $coursemodule->remoteid;
-    $cm->course                     = $localcourseid;
-    $cm->availability               = $coursemodule->availability;
-    $cm->completion                 = $coursemodule->completion;
-    $cm->completionview             = $coursemodule->completionview;
-    $cm->completionexpected         = $coursemodule->completionexpected;
-    $cm->completiongradeitemnumber  = $coursemodule->completiongradeitemnumber;
 
     return $cm;
 }

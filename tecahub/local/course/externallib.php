@@ -463,23 +463,41 @@ class local_course_external extends external_api
     public static function get_remote_course_sections($courseid)
     {
         global $DB;
+        $warnings = array();
 
         //validate parameter
-        $params = self::validate_parameters(self::get_remote_course_sections_parameters(), array('courseid' => $courseid));
-        return $DB->get_records('course_sections', array('course' => $courseid), 'section ASC', 'id,course,section,name,sequence');
+        $params = self::validate_parameters(self::get_remote_course_sections_parameters(), array(
+            'courseid' => $courseid
+        ));
+
+        $sections = $DB->get_records('course_sections', array('course' => $courseid), 'section ASC', 'id,course,section,name,sequence');
+
+        if(!$sections) {
+            $sections = array();
+        }
+
+        $result = array();
+        $result['sections'] = $sections;
+        $result['warnings'] = $warnings;
+        return $result;
     }
 
     public static function get_remote_course_sections_returns()
     {
-        return new external_multiple_structure(
-            new external_single_structure(
-                array(
-                    'id' => new external_value(PARAM_INT, 'ID of the course'),
-                    'course' => new external_value(PARAM_INT, 'The fullname of the course'),
-                    'section' => new external_value(PARAM_INT, 'Thumbnail course URL - big version'),
-                    'name' => new external_value(PARAM_TEXT, 'The fullname of the course'),
-                    'sequence' => new external_value(PARAM_RAW, 'Thumbnail course URL - big version'),
-                )
+        return new external_single_structure(
+            array(
+                'sections' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'ID of the course'),
+                            'course' => new external_value(PARAM_INT, 'The fullname of the course'),
+                            'section' => new external_value(PARAM_INT, 'Thumbnail course URL - big version'),
+                            'name' => new external_value(PARAM_TEXT, 'The fullname of the course'),
+                            'sequence' => new external_value(PARAM_RAW, 'Thumbnail course URL - big version'),
+                        )
+                    ), 'section data'
+                ),
+                'warnings' => new external_warnings()
             )
         );
     }
@@ -493,45 +511,40 @@ class local_course_external extends external_api
     {
         return new external_function_parameters(
             array(
-                'module' => new external_value(PARAM_COMPONENT, 'The module name'),
-                'id' => new external_value(PARAM_INT, 'The module id'),
-                'options' => new external_multiple_structure (
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_ALPHANUM,
-                                'The expected keys (value format) are:
-                                                excludemodules (bool) Do not return modules, return only the sections structure
-                                                excludecontents (bool) Do not return module contents (i.e: files inside a resource)
-                                                sectionid (int) Return only this section
-                                                sectionnumber (int) Return only this section with number (order)
-                                                cmid (int) Return only this module information (among the whole sections structure)
-                                                modname (string) Return only modules with this name "label, forum, etc..."
-                                                modid (int) Return only the module with this id (to be used with modname'),
-                            'value' => new external_value(PARAM_RAW, 'the value of the option,
-                                                                    this param is personaly validated in the external function.')
-                        )
-                    ), 'Options, used since Moodle 2.9', VALUE_DEFAULT, array())
+                'modulename' => new external_value(PARAM_RAW, 'The module name'),
+                'cmid' => new external_value(PARAM_INT, 'The module id'),
+                'courseid' => new external_value(PARAM_INT, 'The course id'),
+                'validate' => new external_value(PARAM_BOOL, 'The validation for context'),
             )
         );
     }
 
-    /**
-     * @description Get course by module name and id of course module
-     * @param $module
-     * @param $id
-     * @param array $options
-     * @return array
-     * @throws invalid_parameter_exception
-     */
-    public static function get_course_module_by_cmid($module, $id, $options = array())
+
+    public static function get_course_module_by_cmid($modulename, $cmid, $courseid, $validate)
     {
         //validate parameter
         $params = self::validate_parameters(self::get_course_module_by_cmid_parameters(),
-            array('module' => $module, 'id' => $id, 'options' => $options));
+            array(
+                'modulename' => $modulename,
+                'cmid' => $cmid,
+                'courseid' => $courseid,
+                'validate' => $validate
+            ));
         $warnings = array();
-        $cm = get_coursemodule_from_id($params['module'], $params['id'], 0, false, MUST_EXIST);
+        $cm = get_coursemodule_from_id($params['modulename'], $params['cmid'], $params['courseid'], true, MUST_EXIST);
+        $info = $cm;
 
-        return core_course_external::get_course_module($cm->id);
+        if ($params['validate']) {
+            $context = context_module::instance($cm->id);
+            self::validate_context($context);
+            // Format name.
+            $info->name = external_format_string($cm->name, $context->id);
+        }
+
+        $result = array();
+        $result['cm'] = $info;
+        $result['warnings'] = $warnings;
+        return $result;
     }
 
     /**
@@ -1952,5 +1965,38 @@ class local_course_external extends external_api
                 'warnings' => new external_warnings()
             )
         );
+    }
+
+    public static function get_course_module_by_instance_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'module' => new external_value(PARAM_COMPONENT, 'The module name'),
+                'instance' => new external_value(PARAM_INT, 'The module instance id')
+            )
+        );
+    }
+
+    public static function get_course_module_by_instance($module, $instance)
+    {
+        $params = self::validate_parameters(self::get_course_module_by_instance_parameters(),
+            array(
+                'module' => $module,
+                'instance' => $instance,
+            ));
+
+        $warnings = array();
+        $cm = get_coursemodule_from_instance($params['module'], $params['instance']);
+        $info = $cm;
+
+        $result = array();
+        $result['cm'] = $info;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    public static function get_course_module_by_instance_returns()
+    {
+        return core_course_external::get_course_module_returns();
     }
 }

@@ -102,15 +102,15 @@ abstract class PluginBlocktype extends Plugin implements IPluginBlocktype {
      * method returns false, it will fall back to using the thumbnail.png
      *
      * In the core themes, these icons come from FontAwesome.
-     * See htdocs/theme/raw/sass/lib/font-awesome/_icons.scss
+     * See htdocs/theme/lms/sass/lib/font-awesome/_icons.scss
      * for the full list of icons loaded by Mahara. (Note that this may change
      * from one Mahara version to another, as we upgrade FontAwesome.)
      * (Also note that the .scss files are stripped from the Mahara packaged
      * ZIP file. IF you don't have them, look in our git repository:
-     * https://git.mahara.org/mahara/mahara/blob/master/htdocs/theme/raw/sass/lib/font-awesome/_icons.scss
+     * https://git.mahara.org/mahara/mahara/blob/master/htdocs/theme/lms/sass/lib/font-awesome/_icons.scss
      *
      * For the core blocktypes, we have "aliased" the name of the block
-     * to the appropriate icon. See theme/raw/sass/lib/typography/_icons.scss.
+     * to the appropriate icon. See theme/lms/sass/lib/typography/_icons.scss.
      *
      * @param string $blocktypename The name of the blocktype
      * (since blocktype classes don't always know their own name as a string)

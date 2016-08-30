@@ -196,7 +196,46 @@ input#button-send{
 .mnetaddtoaclform form#mnetaddtoacl input{
     margin-top: 10px;
 }
-/***********/
+
+.generalbox .no-overflow table tbody tr td{
+    padding-bottom: 10px;
+}
+
+.userprofile .el-category{
+    min-height: 285px;
+    height: auto;
+}
+
+.noti-content-main .singlebutton{
+    padding-top: 10px;
+    text-align: center;
+}
+
+.form-setting .form-duration input{
+    width: auto !important;
+    display: inline-block !important;
+}
+
+.form-item .form-setting select{
+    display: inline-block !important;
+}
+
+.form-item .form-setting .form-password .unmask, .form-item .form-setting .form-defaultinfo {
+    display: inline-block;
+}
+
+.form-item .form-setting .defaultsnext {
+    margin-right: .5em;
+    display: inline;
+}
+/*.form-item .form-setting .form-checkbox.defaultsnext {*/
+    /*margin-top: 5px;*/
+    /*display: inline-block;*/
+
+.form-setting .form-defaultinfo {
+    margin-left: 20px;
+}
+    /***********/
 
 .userprofile .el-category:nth-child(3n) {
     border: 1px solid #ddd;

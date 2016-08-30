@@ -44,7 +44,8 @@ use required_capability_exception;
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class api {
+class api
+{
 
     /**
      * Returns whether competencies are enabled.
@@ -55,7 +56,8 @@ class api {
      *
      * @return boolean True when enabled.
      */
-    public static function is_enabled() {
+    public static function is_enabled()
+    {
         return get_config('core_competency', 'enabled');
     }
 
@@ -65,7 +67,8 @@ class api {
      * @return void
      * @throws moodle_exception
      */
-    public static function require_enabled() {
+    public static function require_enabled()
+    {
         if (!static::is_enabled()) {
             throw new moodle_exception('competenciesarenotenabled', 'core_competency');
         }
@@ -81,13 +84,14 @@ class api {
      * @param int $scaleid The scale ID.
      * @return bool
      */
-    public static function is_scale_used_anywhere($scaleid) {
+    public static function is_scale_used_anywhere($scaleid)
+    {
         global $DB;
         $sql = "SELECT s.id
                   FROM {scale} s
-             LEFT JOIN {" . competency_framework::TABLE ."} f
+             LEFT JOIN {" . competency_framework::TABLE . "} f
                     ON f.scaleid = :scaleid1
-             LEFT JOIN {" . competency::TABLE ."} c
+             LEFT JOIN {" . competency::TABLE . "} c
                     ON c.scaleid = :scaleid2
                  WHERE f.id IS NOT NULL
                     OR c.id IS NOT NULL";
@@ -101,7 +105,8 @@ class api {
      * @param bool $throwexception Throw an exception or not.
      * @return bool
      */
-    protected static function validate_course_module($cmmixed, $throwexception = true) {
+    protected static function validate_course_module($cmmixed, $throwexception = true)
+    {
         $cm = $cmmixed;
         if (!is_object($cm)) {
             if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
@@ -140,7 +145,8 @@ class api {
      * @param bool $throwexception Throw an exception or not.
      * @return bool
      */
-    protected static function validate_course($courseorid, $throwexception = true) {
+    protected static function validate_course($courseorid, $throwexception = true)
+    {
         $course = $courseorid;
         if (!is_object($course)) {
             $course = get_course($course);
@@ -166,7 +172,8 @@ class api {
      * @param stdClass $record Record containing all the data for an instance of the class.
      * @return competency
      */
-    public static function create_competency(stdClass $record) {
+    public static function create_competency(stdClass $record)
+    {
         static::require_enabled();
         $competency = new competency(0, $record);
 
@@ -197,7 +204,8 @@ class api {
      * @param int $id The record to delete. This will delete alot of related data - you better be sure.
      * @return boolean
      */
-    public static function delete_competency($id) {
+    public static function delete_competency($id)
+    {
         global $DB;
         static::require_enabled();
         $competency = new competency($id);
@@ -259,7 +267,8 @@ class api {
      * @param int $id The id of the competency to move.
      * @return boolean
      */
-    public static function move_down_competency($id) {
+    public static function move_down_competency($id)
+    {
         static::require_enabled();
         $current = new competency($id);
 
@@ -267,7 +276,7 @@ class api {
         require_capability('moodle/competency:competencymanage', $current->get_context());
 
         $max = self::count_competencies(array('parentid' => $current->get_parentid(),
-                                              'competencyframeworkid' => $current->get_competencyframeworkid()));
+            'competencyframeworkid' => $current->get_competencyframeworkid()));
         if ($max > 0) {
             $max--;
         }
@@ -280,8 +289,8 @@ class api {
         $current->set_sortorder($sortorder);
 
         $filters = array('parentid' => $current->get_parentid(),
-                         'competencyframeworkid' => $current->get_competencyframeworkid(),
-                         'sortorder' => $sortorder);
+            'competencyframeworkid' => $current->get_competencyframeworkid(),
+            'sortorder' => $sortorder);
         $children = self::list_competencies($filters, 'id');
         foreach ($children as $needtoswap) {
             $needtoswap->set_sortorder($sortorder - 1);
@@ -302,7 +311,8 @@ class api {
      * @param int $id The id of the competency to move.
      * @return boolean
      */
-    public static function move_up_competency($id) {
+    public static function move_up_competency($id)
+    {
         static::require_enabled();
         $current = new competency($id);
 
@@ -318,8 +328,8 @@ class api {
         $current->set_sortorder($sortorder);
 
         $filters = array('parentid' => $current->get_parentid(),
-                         'competencyframeworkid' => $current->get_competencyframeworkid(),
-                         'sortorder' => $sortorder);
+            'competencyframeworkid' => $current->get_competencyframeworkid(),
+            'sortorder' => $sortorder);
         $children = self::list_competencies($filters, 'id');
         foreach ($children as $needtoswap) {
             $needtoswap->set_sortorder($sortorder + 1);
@@ -341,7 +351,8 @@ class api {
      * @param int $newparentid The new parent id for the competency.
      * @return boolean
      */
-    public static function set_parent_competency($id, $newparentid) {
+    public static function set_parent_competency($id, $newparentid)
+    {
         global $DB;
         static::require_enabled();
         $current = new competency($id);
@@ -350,7 +361,8 @@ class api {
         require_capability('moodle/competency:competencymanage', $current->get_context());
         if ($id == $newparentid) {
             throw new coding_exception('Can not set a competency as a parent of itself.');
-        } if ($newparentid == $current->get_parentid()) {
+        }
+        if ($newparentid == $current->get_parentid()) {
             throw new coding_exception('Can not move a competency to the same location.');
         }
 
@@ -411,7 +423,8 @@ class api {
      *
      * @return boolean
      */
-    public static function update_competency($record) {
+    public static function update_competency($record)
+    {
         static::require_enabled();
         $competency = new competency($record->id);
 
@@ -444,14 +457,15 @@ class api {
      * @param bool $includerelated Include related tags or not.
      * @return stdClass
      */
-    public static function read_competency($id, $includerelated = false) {
+    public static function read_competency($id, $includerelated = false)
+    {
         static::require_enabled();
         $competency = new competency($id);
 
         // First we do a permissions check.
         $context = $competency->get_context();
         if (!has_any_capability(array('moodle/competency:competencyview', 'moodle/competency:competencymanage'), $context)) {
-             throw new required_capability_exception($context, 'moodle/competency:competencyview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:competencyview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -474,14 +488,15 @@ class api {
      * @param int $competencyframeworkid The id of the framework to limit the search.
      * @return array of competencies
      */
-    public static function search_competencies($textsearch, $competencyframeworkid) {
+    public static function search_competencies($textsearch, $competencyframeworkid)
+    {
         static::require_enabled();
         $framework = new competency_framework($competencyframeworkid);
 
         // First we do a permissions check.
         $context = $framework->get_context();
         if (!has_any_capability(array('moodle/competency:competencyview', 'moodle/competency:competencymanage'), $context)) {
-             throw new required_capability_exception($context, 'moodle/competency:competencyview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:competencyview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -501,7 +516,8 @@ class api {
      * @param int $limit Max of records to return (pagination)
      * @return array of competencies
      */
-    public static function list_competencies($filters, $sort = '', $order = 'ASC', $skip = 0, $limit = 0) {
+    public static function list_competencies($filters, $sort = '', $order = 'ASC', $skip = 0, $limit = 0)
+    {
         static::require_enabled();
         if (!isset($filters['competencyframeworkid'])) {
             $context = context_system::instance();
@@ -512,7 +528,7 @@ class api {
 
         // First we do a permissions check.
         if (!has_any_capability(array('moodle/competency:competencyview', 'moodle/competency:competencymanage'), $context)) {
-             throw new required_capability_exception($context, 'moodle/competency:competencyview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:competencyview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -527,7 +543,8 @@ class api {
      * @param array $filters A list of filters to apply to the list.
      * @return int
      */
-    public static function count_competencies($filters) {
+    public static function count_competencies($filters)
+    {
         static::require_enabled();
         if (!isset($filters['competencyframeworkid'])) {
             $context = context_system::instance();
@@ -538,7 +555,7 @@ class api {
 
         // First we do a permissions check.
         if (!has_any_capability(array('moodle/competency:competencyview', 'moodle/competency:competencymanage'), $context)) {
-             throw new required_capability_exception($context, 'moodle/competency:competencyview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:competencyview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -553,7 +570,8 @@ class api {
      * @param stdClass $record Record containing all the data for an instance of the class.
      * @return competency_framework
      */
-    public static function create_framework(stdClass $record) {
+    public static function create_framework(stdClass $record)
+    {
         static::require_enabled();
         $framework = new competency_framework(0, $record);
         require_capability('moodle/competency:competencymanage', $framework->get_context());
@@ -579,7 +597,8 @@ class api {
      * @param int $id The record to duplicate. All competencies associated and related will be duplicated.
      * @return competency_framework the framework duplicated
      */
-    public static function duplicate_framework($id) {
+    public static function duplicate_framework($id)
+    {
         global $DB;
         static::require_enabled();
 
@@ -648,7 +667,8 @@ class api {
      * @param int $id The record to delete. This will delete alot of related data - you better be sure.
      * @return boolean
      */
-    public static function delete_framework($id) {
+    public static function delete_framework($id)
+    {
         global $DB;
         static::require_enabled();
         $framework = new competency_framework($id);
@@ -706,7 +726,8 @@ class api {
      * @param stdClass $record The new details for the framework. Note - must contain an id that points to the framework to update.
      * @return boolean
      */
-    public static function update_framework($record) {
+    public static function update_framework($record)
+    {
         static::require_enabled();
         $framework = new competency_framework($record->id);
 
@@ -733,11 +754,13 @@ class api {
      * @param int $id The id of the framework to read.
      * @return competency_framework
      */
-    public static function read_framework($id) {
+    public static function read_framework($id)
+    {
         static::require_enabled();
         $framework = new competency_framework($id);
         if (!has_any_capability(array('moodle/competency:competencyview', 'moodle/competency:competencymanage'),
-                $framework->get_context())) {
+            $framework->get_context())
+        ) {
             throw new required_capability_exception($framework->get_context(), 'moodle/competency:competencyview',
                 'nopermissions', '');
         }
@@ -750,14 +773,16 @@ class api {
      * @param competency_framework|int $frameworkorid The competency_framework object or competency framework id
      * @return bool
      */
-    public static function competency_framework_viewed($frameworkorid) {
+    public static function competency_framework_viewed($frameworkorid)
+    {
         static::require_enabled();
         $framework = $frameworkorid;
         if (!is_object($framework)) {
             $framework = new competency_framework($framework);
         }
         if (!has_any_capability(array('moodle/competency:competencyview', 'moodle/competency:competencymanage'),
-                $framework->get_context())) {
+            $framework->get_context())
+        ) {
             throw new required_capability_exception($framework->get_context(), 'moodle/competency:competencyview',
                 'nopermissions', '');
         }
@@ -771,7 +796,8 @@ class api {
      * @param competency|int $competencyorid The competency object or competency id
      * @return bool
      */
-    public static function competency_viewed($competencyorid) {
+    public static function competency_viewed($competencyorid)
+    {
         static::require_enabled();
         $competency = $competencyorid;
         if (!is_object($competency)) {
@@ -779,7 +805,8 @@ class api {
         }
 
         if (!has_any_capability(array('moodle/competency:competencyview', 'moodle/competency:competencymanage'),
-                $competency->get_context())) {
+            $competency->get_context())
+        ) {
             throw new required_capability_exception($competency->get_context(), 'moodle/competency:competencyview',
                 'nopermissions', '');
         }
@@ -808,7 +835,8 @@ class api {
      * @return array of competency_framework
      */
     public static function list_frameworks($sort, $order, $skip, $limit, $context, $includes = 'children',
-                                           $onlyvisible = false, $query = '') {
+                                           $onlyvisible = false, $query = '')
+    {
         global $DB;
         static::require_enabled();
 
@@ -853,7 +881,8 @@ class api {
      *                          - self: Context passed only.
      * @return int
      */
-    public static function count_frameworks($context, $includes) {
+    public static function count_frameworks($context, $includes)
+    {
         global $DB;
         static::require_enabled();
 
@@ -886,7 +915,8 @@ class api {
      * @param array $hasanycapability Array of capabilities passed to {@link has_any_capability()} in each context.
      * @return context[] An array of contexts where keys are context IDs.
      */
-    public static function get_related_contexts($context, $includes, array $hasanycapability = null) {
+    public static function get_related_contexts($context, $includes, array $hasanycapability = null)
+    {
         global $DB;
         static::require_enabled();
 
@@ -938,7 +968,8 @@ class api {
      * @param int $competencyid The id of the competency to check.
      * @return int
      */
-    public static function count_courses_using_competency($competencyid) {
+    public static function count_courses_using_competency($competencyid)
+    {
         static::require_enabled();
 
         // OK - all set.
@@ -970,7 +1001,8 @@ class api {
      * @param int $courseid The id of the course to check.
      * @return array[int] Array of course modules ids.
      */
-    public static function list_course_modules_using_competency($competencyid, $courseid) {
+    public static function list_course_modules_using_competency($competencyid, $courseid)
+    {
         static::require_enabled();
 
         $result = array();
@@ -1000,14 +1032,15 @@ class api {
      * @param mixed $cmorid The course module, or its ID.
      * @return array[competency] Array of competency records.
      */
-    public static function list_course_module_competencies_in_course_module($cmorid) {
+    public static function list_course_module_competencies_in_course_module($cmorid)
+    {
         static::require_enabled();
         $cm = $cmorid;
         if (!is_object($cmorid)) {
-            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
-                $cm = get_coursemodule_from_id('', $cmorid, 0, true, MUST_EXIST);
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+                $cm = get_remote_course_module_by_cmid('', $cmorid, 0, false, false);
             } else {
-                $cm = get_remote_course_module($cmorid);
+                $cm = get_coursemodule_from_id('', $cmorid, 0, true, MUST_EXIST);
             }
         }
 
@@ -1036,7 +1069,8 @@ class api {
      * @param int $competencyid The id of the competency to check.
      * @return array[stdClass] Array of stdClass containing id and shortname.
      */
-    public static function list_courses_using_competency($competencyid) {
+    public static function list_courses_using_competency($competencyid)
+    {
         static::require_enabled();
 
         // OK - all set.
@@ -1068,7 +1102,8 @@ class api {
      * @param int $userid The id of the user to check.
      * @return int
      */
-    public static function count_proficient_competencies_in_course_for_user($courseid, $userid) {
+    public static function count_proficient_competencies_in_course_for_user($courseid, $userid)
+    {
         static::require_enabled();
         // Check the user have access to the course.
         self::validate_course($courseid);
@@ -1078,7 +1113,7 @@ class api {
 
         $capabilities = array('moodle/competency:coursecompetencyview', 'moodle/competency:coursecompetencymanage');
         if (!has_any_capability($capabilities, $context)) {
-             throw new required_capability_exception($context, 'moodle/competency:coursecompetencyview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:coursecompetencyview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -1091,7 +1126,8 @@ class api {
      * @param int $courseid The id of the course to check.
      * @return int
      */
-    public static function count_competencies_in_course($courseid) {
+    public static function count_competencies_in_course($courseid)
+    {
         static::require_enabled();
         // Check the user have access to the course.
         self::validate_course($courseid);
@@ -1101,7 +1137,7 @@ class api {
 
         $capabilities = array('moodle/competency:coursecompetencyview', 'moodle/competency:coursecompetencymanage');
         if (!has_any_capability($capabilities, $context)) {
-             throw new required_capability_exception($context, 'moodle/competency:coursecompetencyview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:coursecompetencyview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -1117,7 +1153,8 @@ class api {
      *                   'coursecompetency' => \core_competency\course_competency
      *              ))
      */
-    public static function list_course_competencies($courseorid) {
+    public static function list_course_competencies($courseorid)
+    {
         static::require_enabled();
         $course = $courseorid;
         if (!is_object($courseorid)) {
@@ -1157,7 +1194,8 @@ class api {
      * @param int $competencyid The competency ID.
      * @return user_competency
      */
-    public static function get_user_competency($userid, $competencyid) {
+    public static function get_user_competency($userid, $competencyid)
+    {
         static::require_enabled();
         $existing = user_competency::get_multiple($userid, array($competencyid));
         $uc = array_pop($existing);
@@ -1180,7 +1218,8 @@ class api {
      * @param int $usercompetencyid The user competency ID.
      * @return user_competency
      */
-    public static function get_user_competency_by_id($usercompetencyid) {
+    public static function get_user_competency_by_id($usercompetencyid)
+    {
         static::require_enabled();
         $uc = new user_competency($usercompetencyid);
         if (!$uc->can_read()) {
@@ -1199,7 +1238,8 @@ class api {
      *                   'coursemodulecompetency' => \core_competency\course_module_competency
      *              ))
      */
-    public static function list_course_module_competencies($cmorid) {
+    public static function list_course_module_competencies($cmorid)
+    {
         static::require_enabled();
         $cm = $cmorid;
         if (!is_object($cmorid)) {
@@ -1240,7 +1280,8 @@ class api {
      * @param int $competencyid The id of the competency.
      * @return user_competency_course
      */
-    public static function get_user_competency_in_course($courseid, $userid, $competencyid) {
+    public static function get_user_competency_in_course($courseid, $userid, $competencyid)
+    {
         static::require_enabled();
         // First we do a permissions check.
         $context = context_course::instance($courseid);
@@ -1275,7 +1316,8 @@ class api {
      * @param int $userid The id of the course to check.
      * @return array of user_competency_course objects
      */
-    public static function list_user_competencies_in_course($courseid, $userid) {
+    public static function list_user_competencies_in_course($courseid, $userid)
+    {
         static::require_enabled();
         // First we do a permissions check.
         $context = context_course::instance($courseid);
@@ -1337,7 +1379,8 @@ class api {
      * @return array Containing the keys 'count', and 'competencies'. The 'competencies' key contains an object
      *               which contains 'competency', 'usercompetency' and 'user'.
      */
-    public static function list_user_competencies_to_review($skip = 0, $limit = 50, $userid = null) {
+    public static function list_user_competencies_to_review($skip = 0, $limit = 50, $userid = null)
+    {
         global $DB, $USER;
         static::require_enabled();
         if ($userid === null) {
@@ -1388,7 +1431,7 @@ class api {
         $competencies = array();
         $records = $DB->get_recordset_sql($getsql, $params, $skip, $limit);
         foreach ($records as $record) {
-            $objects = (object) array(
+            $objects = (object)array(
                 'usercompetency' => new user_competency(0, user_competency::extract_record($record, 'uc_')),
                 'competency' => new competency(0, competency::extract_record($record, 'c_')),
                 'user' => persistent::extract_record($record, 'usr_'),
@@ -1410,7 +1453,8 @@ class api {
      * @param int $competencyid The id of the competency
      * @return bool
      */
-    public static function add_competency_to_course_module($cmorid, $competencyid) {
+    public static function add_competency_to_course_module($cmorid, $competencyid)
+    {
         static::require_enabled();
         $cm = $cmorid;
         if (!is_object($cmorid)) {
@@ -1453,7 +1497,8 @@ class api {
      * @param int $competencyid The id of the competency
      * @return bool
      */
-    public static function remove_competency_from_course_module($cmorid, $competencyid) {
+    public static function remove_competency_from_course_module($cmorid, $competencyid)
+    {
         static::require_enabled();
         $cm = $cmorid;
         if (!is_object($cmorid)) {
@@ -1489,7 +1534,8 @@ class api {
      * @param int $competencyidto The id of the competency we are moving to.
      * @return boolean
      */
-    public static function reorder_course_module_competency($cmorid, $competencyidfrom, $competencyidto) {
+    public static function reorder_course_module_competency($cmorid, $competencyidfrom, $competencyidto)
+    {
         static::require_enabled();
         $cm = $cmorid;
         if (!is_object($cmorid)) {
@@ -1506,13 +1552,13 @@ class api {
         $down = true;
         $matches = course_module_competency::get_records(array('cmid' => $cm->id, 'competencyid' => $competencyidfrom));
         if (count($matches) == 0) {
-             throw new coding_exception('The link does not exist');
+            throw new coding_exception('The link does not exist');
         }
 
         $competencyfrom = array_pop($matches);
         $matches = course_module_competency::get_records(array('cmid' => $cm->id, 'competencyid' => $competencyidto));
         if (count($matches) == 0) {
-             throw new coding_exception('The link does not exist');
+            throw new coding_exception('The link does not exist');
         }
 
         $competencyto = array_pop($matches);
@@ -1545,7 +1591,8 @@ class api {
      * @param int $ruleoutcome The value of ruleoutcome.
      * @return bool True on success.
      */
-    public static function set_course_module_competency_ruleoutcome($coursemodulecompetencyorid, $ruleoutcome) {
+    public static function set_course_module_competency_ruleoutcome($coursemodulecompetencyorid, $ruleoutcome)
+    {
         static::require_enabled();
         $coursemodulecompetency = $coursemodulecompetencyorid;
         if (!is_object($coursemodulecompetency)) {
@@ -1570,7 +1617,8 @@ class api {
      * @param int $competencyid The id of the competency
      * @return bool
      */
-    public static function add_competency_to_course($courseid, $competencyid) {
+    public static function add_competency_to_course($courseid, $competencyid)
+    {
         static::require_enabled();
         // Check the user have access to the course.
         self::validate_course($courseid);
@@ -1609,7 +1657,8 @@ class api {
      * @param int $competencyid The id of the competency
      * @return bool
      */
-    public static function remove_competency_from_course($courseid, $competencyid) {
+    public static function remove_competency_from_course($courseid, $competencyid)
+    {
         static::require_enabled();
         // Check the user have access to the course.
         self::validate_course($courseid);
@@ -1646,7 +1695,8 @@ class api {
      * @param int $competencyidto The id of the competency we are moving to.
      * @return boolean
      */
-    public static function reorder_course_competency($courseid, $competencyidfrom, $competencyidto) {
+    public static function reorder_course_competency($courseid, $competencyidfrom, $competencyidto)
+    {
         static::require_enabled();
         // Check the user have access to the course.
         self::validate_course($courseid);
@@ -1660,13 +1710,13 @@ class api {
         $coursecompetency = new course_competency();
         $matches = $coursecompetency->get_records(array('courseid' => $courseid, 'competencyid' => $competencyidfrom));
         if (count($matches) == 0) {
-             throw new coding_exception('The link does not exist');
+            throw new coding_exception('The link does not exist');
         }
 
         $competencyfrom = array_pop($matches);
         $matches = $coursecompetency->get_records(array('courseid' => $courseid, 'competencyid' => $competencyidto));
         if (count($matches) == 0) {
-             throw new coding_exception('The link does not exist');
+            throw new coding_exception('The link does not exist');
         }
 
         $competencyto = array_pop($matches);
@@ -1699,7 +1749,8 @@ class api {
      * @param int $ruleoutcome The value of ruleoutcome.
      * @return bool True on success.
      */
-    public static function set_course_competency_ruleoutcome($coursecompetencyorid, $ruleoutcome) {
+    public static function set_course_competency_ruleoutcome($coursecompetencyorid, $ruleoutcome)
+    {
         static::require_enabled();
         $coursecompetency = $coursecompetencyorid;
         if (!is_object($coursecompetency)) {
@@ -1724,7 +1775,8 @@ class api {
      * @param stdClass $record Record containing all the data for an instance of the class.
      * @return template
      */
-    public static function create_template(stdClass $record) {
+    public static function create_template(stdClass $record)
+    {
         static::require_enabled();
         $template = new template(0, $record);
 
@@ -1751,7 +1803,8 @@ class api {
      * @param int $id the template id.
      * @return template
      */
-    public static function duplicate_template($id) {
+    public static function duplicate_template($id)
+    {
         static::require_enabled();
         $template = new template($id);
 
@@ -1791,7 +1844,8 @@ class api {
      * @param boolean $deleteplans True to delete plans associaated to template, false to unlink them.
      * @return boolean
      */
-    public static function delete_template($id, $deleteplans = true) {
+    public static function delete_template($id, $deleteplans = true)
+    {
         global $DB;
         static::require_enabled();
         $template = new template($id);
@@ -1859,7 +1913,8 @@ class api {
      * @param stdClass $record The new details for the template. Note - must contain an id that points to the template to update.
      * @return boolean
      */
-    public static function update_template($record) {
+    public static function update_template($record)
+    {
         global $DB;
         static::require_enabled();
         $template = new template($record->id);
@@ -1883,9 +1938,10 @@ class api {
 
         // Should we update the related plans?
         if ($before->duedate != $after->duedate ||
-                $before->shortname != $after->shortname ||
-                $before->description != $after->description ||
-                $before->descriptionformat != $after->descriptionformat) {
+            $before->shortname != $after->shortname ||
+            $before->description != $after->description ||
+            $before->descriptionformat != $after->descriptionformat
+        ) {
             $updateplans = true;
         }
 
@@ -1917,14 +1973,15 @@ class api {
      * @param int $id The id of the template to read.
      * @return template
      */
-    public static function read_template($id) {
+    public static function read_template($id)
+    {
         static::require_enabled();
         $template = new template($id);
         $context = $template->get_context();
 
         // First we do a permissions check.
         if (!$template->can_read()) {
-             throw new required_capability_exception($template->get_context(), 'moodle/competency:templateview',
+            throw new required_capability_exception($template->get_context(), 'moodle/competency:templateview',
                 'nopermissions', '');
         }
 
@@ -1950,7 +2007,8 @@ class api {
      * @param bool $onlyvisible If should list only visible templates
      * @return array of competency_framework
      */
-    public static function list_templates($sort, $order, $skip, $limit, $context, $includes = 'children', $onlyvisible = false) {
+    public static function list_templates($sort, $order, $skip, $limit, $context, $includes = 'children', $onlyvisible = false)
+    {
         global $DB;
         static::require_enabled();
 
@@ -1960,7 +2018,7 @@ class api {
 
         // First we do a permissions check.
         if (empty($contexts)) {
-             throw new required_capability_exception($context, 'moodle/competency:templateview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:templateview', 'nopermissions', '');
         }
 
         // Make the order by.
@@ -1994,7 +2052,8 @@ class api {
      *                          - self: Context passed only.
      * @return int
      */
-    public static function count_templates($context, $includes) {
+    public static function count_templates($context, $includes)
+    {
         global $DB;
         static::require_enabled();
 
@@ -2003,7 +2062,7 @@ class api {
             array('moodle/competency:templateview', 'moodle/competency:templatemanage'));
 
         if (empty($contexts)) {
-             throw new required_capability_exception($context, 'moodle/competency:templateview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:templateview', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -2018,7 +2077,8 @@ class api {
      * @param int $competencyid The id of the competency to check.
      * @return int
      */
-    public static function count_templates_using_competency($competencyid) {
+    public static function count_templates_using_competency($competencyid)
+    {
         static::require_enabled();
         // First we do a permissions check.
         $context = context_system::instance();
@@ -2026,7 +2086,7 @@ class api {
 
         $capabilities = array('moodle/competency:templateview', 'moodle/competency:templatemanage');
         if (!has_any_capability($capabilities, $context)) {
-             throw new required_capability_exception($context, 'moodle/competency:templateview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:templateview', 'nopermissions', '');
         }
 
         if (has_capability('moodle/competency:templatemanage', $context)) {
@@ -2043,7 +2103,8 @@ class api {
      * @param int $competencyid The id of the competency to check.
      * @return array[stdClass] Array of stdClass containing id and shortname.
      */
-    public static function list_templates_using_competency($competencyid) {
+    public static function list_templates_using_competency($competencyid)
+    {
         static::require_enabled();
         // First we do a permissions check.
         $context = context_system::instance();
@@ -2051,7 +2112,7 @@ class api {
 
         $capabilities = array('moodle/competency:templateview', 'moodle/competency:templatemanage');
         if (!has_any_capability($capabilities, $context)) {
-             throw new required_capability_exception($context, 'moodle/competency:templateview', 'nopermissions', '');
+            throw new required_capability_exception($context, 'moodle/competency:templateview', 'nopermissions', '');
         }
 
         if (has_capability('moodle/competency:templatemanage', $context)) {
@@ -2069,7 +2130,8 @@ class api {
      * @param  template|int $templateorid The template or its ID.
      * @return int
      */
-    public static function count_competencies_in_template($templateorid) {
+    public static function count_competencies_in_template($templateorid)
+    {
         static::require_enabled();
         // First we do a permissions check.
         $template = $templateorid;
@@ -2092,7 +2154,8 @@ class api {
      * @param  template|int $templateorid The template or its ID.
      * @return int
      */
-    public static function count_competencies_in_template_with_no_courses($templateorid) {
+    public static function count_competencies_in_template_with_no_courses($templateorid)
+    {
         // First we do a permissions check.
         $template = $templateorid;
         if (!is_object($template)) {
@@ -2114,7 +2177,8 @@ class api {
      * @param  template|int $templateorid The template or its ID.
      * @return array of competencies
      */
-    public static function list_competencies_in_template($templateorid) {
+    public static function list_competencies_in_template($templateorid)
+    {
         static::require_enabled();
         // First we do a permissions check.
         $template = $templateorid;
@@ -2138,7 +2202,8 @@ class api {
      * @param int $competencyid The id of the competency
      * @return bool
      */
-    public static function add_competency_to_template($templateid, $competencyid) {
+    public static function add_competency_to_template($templateid, $competencyid)
+    {
         static::require_enabled();
         // First we do a permissions check.
         $template = new template($templateid);
@@ -2174,7 +2239,8 @@ class api {
      * @param int $competencyid The id of the competency
      * @return bool
      */
-    public static function remove_competency_from_template($templateid, $competencyid) {
+    public static function remove_competency_from_template($templateid, $competencyid)
+    {
         static::require_enabled();
         // First we do a permissions check.
         $template = new template($templateid);
@@ -2207,7 +2273,8 @@ class api {
      * @param int $competencyidto The id of the competency we are moving to.
      * @return boolean
      */
-    public static function reorder_template_competency($templateid, $competencyidfrom, $competencyidto) {
+    public static function reorder_template_competency($templateid, $competencyidfrom, $competencyidto)
+    {
         static::require_enabled();
         // First we do a permissions check.
         $context = context_system::instance();
@@ -2255,10 +2322,11 @@ class api {
      * This silently ignores when the relation already existed.
      *
      * @param  template|int $templateorid The template or its ID.
-     * @param  stdClass|int $cohortorid   The cohort ot its ID.
+     * @param  stdClass|int $cohortorid The cohort ot its ID.
      * @return template_cohort
      */
-    public static function create_template_cohort($templateorid, $cohortorid) {
+    public static function create_template_cohort($templateorid, $cohortorid)
+    {
         global $DB;
         static::require_enabled();
 
@@ -2291,10 +2359,11 @@ class api {
      * Remove a relation between a template and a cohort.
      *
      * @param  template|int $templateorid The template or its ID.
-     * @param  stdClass|int $cohortorid   The cohort ot its ID.
+     * @param  stdClass|int $cohortorid The cohort ot its ID.
      * @return boolean True on success or when the relation did not exist.
      */
-    public static function delete_template_cohort($templateorid, $cohortorid) {
+    public static function delete_template_cohort($templateorid, $cohortorid)
+    {
         global $DB;
         static::require_enabled();
 
@@ -2323,7 +2392,8 @@ class api {
      * @param int $userid
      * @return \core_competency\plan[]
      */
-    public static function list_user_plans($userid) {
+    public static function list_user_plans($userid)
+    {
         global $DB, $USER;
         static::require_enabled();
         $select = 'userid = :userid';
@@ -2374,7 +2444,8 @@ class api {
      * @return array Containing the keys 'count', and 'plans'. The 'plans' key contains an object
      *               which contains 'plan', 'template' and 'owner'.
      */
-    public static function list_plans_to_review($skip = 0, $limit = 100, $userid = null) {
+    public static function list_plans_to_review($skip = 0, $limit = 100, $userid = null)
+    {
         global $DB, $USER;
         static::require_enabled();
 
@@ -2435,7 +2506,7 @@ class api {
                 $template = new template(0, template::extract_record($record, 'tpl_'));
             }
 
-            $plans[] = (object) array(
+            $plans[] = (object)array(
                 'plan' => $plan,
                 'template' => $template,
                 'owner' => persistent::extract_record($record, 'usr_'),
@@ -2455,7 +2526,8 @@ class api {
      * @param stdClass $record
      * @return \core_competency\plan
      */
-    public static function create_plan(stdClass $record) {
+    public static function create_plan(stdClass $record)
+    {
         global $USER;
         static::require_enabled();
         $plan = new plan(0, $record);
@@ -2485,7 +2557,8 @@ class api {
      * @param  int $userid
      * @return false|\core_competency\plan Returns false when the plan already exists.
      */
-    public static function create_plan_from_template($templateorid, $userid) {
+    public static function create_plan_from_template($templateorid, $userid)
+    {
         static::require_enabled();
         $template = $templateorid;
         if (!is_object($template)) {
@@ -2531,7 +2604,8 @@ class api {
         // We first apply the permission checks as we wouldn't want to leak information by returning early that
         // the plan already exists.
         if (plan::record_exists_select('templateid = :templateid AND userid = :userid', array(
-                'templateid' => $template->get_id(), 'userid' => $userid))) {
+            'templateid' => $template->get_id(), 'userid' => $userid))
+        ) {
             return false;
         }
 
@@ -2550,7 +2624,8 @@ class api {
      * @param  bool $recreateunlinked When true the plans that were unlinked from this template will be re-created.
      * @return int The number of plans created.
      */
-    public static function create_plans_from_template_cohort($templateorid, $cohortid, $recreateunlinked = false) {
+    public static function create_plans_from_template_cohort($templateorid, $cohortid, $recreateunlinked = false)
+    {
         global $DB, $CFG;
         static::require_enabled();
         require_once($CFG->dirroot . '/cohort/lib.php');
@@ -2601,7 +2676,7 @@ class api {
         $created = 0;
         $userids = template_cohort::get_missing_plans($template->get_id(), $cohortid, $recreateunlinked);
         foreach ($userids as $userid) {
-            $record = (object) (array) $recordbase;
+            $record = (object)(array)$recordbase;
             $record->userid = $userid;
 
             $plan = new plan(0, $record);
@@ -2625,7 +2700,8 @@ class api {
      * @param  \core_competency\plan|int $planorid The plan or its ID.
      * @return bool
      */
-    public static function unlink_plan_from_template($planorid) {
+    public static function unlink_plan_from_template($planorid)
+    {
         global $DB;
         static::require_enabled();
 
@@ -2657,7 +2733,7 @@ class api {
         $competencies = template_competency::list_competencies($template->get_id(), false);
         $i = 0;
         foreach ($competencies as $competency) {
-            $record = (object) array(
+            $record = (object)array(
                 'planid' => $plan->get_id(),
                 'competencyid' => $competency->get_id(),
                 'sortorder' => $i++
@@ -2682,7 +2758,8 @@ class api {
      * @param stdClass $record
      * @return \core_competency\plan
      */
-    public static function update_plan(stdClass $record) {
+    public static function update_plan(stdClass $record)
+    {
         static::require_enabled();
 
         $plan = new plan($record->id);
@@ -2728,7 +2805,8 @@ class api {
      * @param int $id
      * @return \core_competency\plan
      */
-    public static function read_plan($id) {
+    public static function read_plan($id)
+    {
         static::require_enabled();
         $plan = new plan($id);
 
@@ -2746,7 +2824,8 @@ class api {
      * @param mixed $planorid The id or the plan.
      * @return boolean
      */
-    public static function plan_viewed($planorid) {
+    public static function plan_viewed($planorid)
+    {
         static::require_enabled();
         $plan = $planorid;
         if (!is_object($plan)) {
@@ -2773,7 +2852,8 @@ class api {
      * @param int $id
      * @return bool Success?
      */
-    public static function delete_plan($id) {
+    public static function delete_plan($id)
+    {
         global $DB;
         static::require_enabled();
 
@@ -2814,7 +2894,8 @@ class api {
      * @param int|plan $planorid The plan, or its ID.
      * @return bool
      */
-    public static function plan_cancel_review_request($planorid) {
+    public static function plan_cancel_review_request($planorid)
+    {
         static::require_enabled();
         $plan = $planorid;
         if (!is_object($plan)) {
@@ -2849,7 +2930,8 @@ class api {
      * @param int|plan $planorid The plan, or its ID.
      * @return bool
      */
-    public static function plan_request_review($planorid) {
+    public static function plan_request_review($planorid)
+    {
         static::require_enabled();
         $plan = $planorid;
         if (!is_object($plan)) {
@@ -2884,7 +2966,8 @@ class api {
      * @param int|plan $planorid The plan, or its ID.
      * @return bool
      */
-    public static function plan_start_review($planorid) {
+    public static function plan_start_review($planorid)
+    {
         global $USER;
         static::require_enabled();
         $plan = $planorid;
@@ -2921,7 +3004,8 @@ class api {
      * @param  int|plan $planorid The plan, or its ID.
      * @return bool
      */
-    public static function plan_stop_review($planorid) {
+    public static function plan_stop_review($planorid)
+    {
         static::require_enabled();
         $plan = $planorid;
         if (!is_object($plan)) {
@@ -2959,7 +3043,8 @@ class api {
      * @param  int|plan $planorid The plan, or its ID.
      * @return bool
      */
-    public static function approve_plan($planorid) {
+    public static function approve_plan($planorid)
+    {
         static::require_enabled();
         $plan = $planorid;
         if (!is_object($plan)) {
@@ -2998,7 +3083,8 @@ class api {
      * @param  int|plan $planorid The plan, or its ID.
      * @return bool
      */
-    public static function unapprove_plan($planorid) {
+    public static function unapprove_plan($planorid)
+    {
         static::require_enabled();
         $plan = $planorid;
         if (!is_object($plan)) {
@@ -3033,7 +3119,8 @@ class api {
      * @param int|plan $planorid The plan, or its ID.
      * @return bool
      */
-    public static function complete_plan($planorid) {
+    public static function complete_plan($planorid)
+    {
         global $DB;
         static::require_enabled();
 
@@ -3088,7 +3175,8 @@ class api {
      * @param int|plan $planorid The plan, or its ID.
      * @return bool
      */
-    public static function reopen_plan($planorid) {
+    public static function reopen_plan($planorid)
+    {
         global $DB;
         static::require_enabled();
 
@@ -3153,7 +3241,8 @@ class api {
      *                  )
      *         The values of of keys usercompetency and usercompetencyplan cannot be defined at the same time.
      */
-    public static function get_plan_competency($planorid, $competencyid) {
+    public static function get_plan_competency($planorid, $competencyid)
+    {
         static::require_enabled();
         $plan = $planorid;
         if (!is_object($planorid)) {
@@ -3190,7 +3279,7 @@ class api {
             }
         }
 
-        $plancompetency = (object) array(
+        $plancompetency = (object)array(
             'competency' => $competency,
             'usercompetency' => null,
             'usercompetencyplan' => null
@@ -3211,7 +3300,8 @@ class api {
      *                        ))
      *         The values of of keys usercompetency and usercompetencyplan cannot be defined at the same time.
      */
-    public static function list_plan_competencies($planorid) {
+    public static function list_plan_competencies($planorid)
+    {
         static::require_enabled();
         $plan = $planorid;
         if (!is_object($planorid)) {
@@ -3256,7 +3346,7 @@ class api {
                 }
             }
 
-            $plancompetency = (object) array(
+            $plancompetency = (object)array(
                 'competency' => $competency,
                 'usercompetency' => null,
                 'usercompetencyplan' => null
@@ -3275,7 +3365,8 @@ class api {
      * @param int $competencyid The id of the competency
      * @return bool
      */
-    public static function add_competency_to_plan($planid, $competencyid) {
+    public static function add_competency_to_plan($planid, $competencyid)
+    {
         static::require_enabled();
         $plan = new plan($planid);
 
@@ -3317,7 +3408,8 @@ class api {
      * @param int $competencyid The id of the competency
      * @return bool
      */
-    public static function remove_competency_from_plan($planid, $competencyid) {
+    public static function remove_competency_from_plan($planid, $competencyid)
+    {
         static::require_enabled();
         $plan = new plan($planid);
 
@@ -3351,7 +3443,8 @@ class api {
      * @param int $competencyidto The id of the competency we are moving to.
      * @return boolean
      */
-    public static function reorder_plan_competency($planid, $competencyidfrom, $competencyidto) {
+    public static function reorder_plan_competency($planid, $competencyidfrom, $competencyidto)
+    {
         static::require_enabled();
         $plan = new plan($planid);
 
@@ -3406,11 +3499,12 @@ class api {
     /**
      * Cancel a user competency review request.
      *
-     * @param  int $userid       The user ID.
+     * @param  int $userid The user ID.
      * @param  int $competencyid The competency ID.
      * @return bool
      */
-    public static function user_competency_cancel_review_request($userid, $competencyid) {
+    public static function user_competency_cancel_review_request($userid, $competencyid)
+    {
         static::require_enabled();
         $context = context_user::instance($userid);
         $uc = user_competency::get_record(array('userid' => $userid, 'competencyid' => $competencyid));
@@ -3433,11 +3527,12 @@ class api {
     /**
      * Request a user competency review.
      *
-     * @param  int $userid       The user ID.
+     * @param  int $userid The user ID.
      * @param  int $competencyid The competency ID.
      * @return bool
      */
-    public static function user_competency_request_review($userid, $competencyid) {
+    public static function user_competency_request_review($userid, $competencyid)
+    {
         static::require_enabled();
         $uc = user_competency::get_record(array('userid' => $userid, 'competencyid' => $competencyid));
         if (!$uc) {
@@ -3466,11 +3561,12 @@ class api {
     /**
      * Start a user competency review.
      *
-     * @param  int $userid       The user ID.
+     * @param  int $userid The user ID.
      * @param  int $competencyid The competency ID.
      * @return bool
      */
-    public static function user_competency_start_review($userid, $competencyid) {
+    public static function user_competency_start_review($userid, $competencyid)
+    {
         global $USER;
         static::require_enabled();
 
@@ -3496,11 +3592,12 @@ class api {
     /**
      * Stop a user competency review.
      *
-     * @param  int $userid       The user ID.
+     * @param  int $userid The user ID.
      * @param  int $competencyid The competency ID.
      * @return bool
      */
-    public static function user_competency_stop_review($userid, $competencyid) {
+    public static function user_competency_stop_review($userid, $competencyid)
+    {
         static::require_enabled();
         $context = context_user::instance($userid);
         $uc = user_competency::get_record(array('userid' => $userid, 'competencyid' => $competencyid));
@@ -3526,7 +3623,8 @@ class api {
      * @param user_competency|int $usercompetencyorid The user competency object or user competency id
      * @return bool
      */
-    public static function user_competency_viewed($usercompetencyorid) {
+    public static function user_competency_viewed($usercompetencyorid)
+    {
         static::require_enabled();
         $uc = $usercompetencyorid;
         if (!is_object($uc)) {
@@ -3549,7 +3647,8 @@ class api {
      * @param int $planid The plan ID
      * @return bool
      */
-    public static function user_competency_viewed_in_plan($usercompetencyorid, $planid) {
+    public static function user_competency_viewed_in_plan($usercompetencyorid, $planid)
+    {
         static::require_enabled();
         $uc = $usercompetencyorid;
         if (!is_object($uc)) {
@@ -3576,7 +3675,8 @@ class api {
      * @param int $courseid The course ID
      * @return bool
      */
-    public static function user_competency_viewed_in_course($usercoursecompetencyorid) {
+    public static function user_competency_viewed_in_course($usercoursecompetencyorid)
+    {
         static::require_enabled();
         $ucc = $usercoursecompetencyorid;
         if (!is_object($ucc)) {
@@ -3601,7 +3701,8 @@ class api {
      * @param user_competency_plan|int $usercompetencyplanorid The user competency plan object or user competency plan id
      * @return bool
      */
-    public static function user_competency_plan_viewed($usercompetencyplanorid) {
+    public static function user_competency_plan_viewed($usercompetencyplanorid)
+    {
         static::require_enabled();
         $ucp = $usercompetencyplanorid;
         if (!is_object($ucp)) {
@@ -3628,7 +3729,8 @@ class api {
      * @param int $templateid The id of the template to check.
      * @return boolean
      */
-    public static function template_has_related_data($templateid) {
+    public static function template_has_related_data($templateid)
+    {
         static::require_enabled();
         // First we do a permissions check.
         $template = new template($templateid);
@@ -3648,12 +3750,14 @@ class api {
      * @param int $competencyid The id of the competency to check.
      * @return competency[]
      */
-    public static function list_related_competencies($competencyid) {
+    public static function list_related_competencies($competencyid)
+    {
         static::require_enabled();
         $competency = new competency($competencyid);
 
         if (!has_any_capability(array('moodle/competency:competencyview', 'moodle/competency:competencymanage'),
-                $competency->get_context())) {
+            $competency->get_context())
+        ) {
             throw new required_capability_exception($competency->get_context(), 'moodle/competency:competencyview',
                 'nopermissions', '');
         }
@@ -3668,7 +3772,8 @@ class api {
      * @param int $relatedcompetencyid The id of the related competency.
      * @return bool False when create failed, true on success, or if the relation already existed.
      */
-    public static function add_related_competency($competencyid, $relatedcompetencyid) {
+    public static function add_related_competency($competencyid, $relatedcompetencyid)
+    {
         static::require_enabled();
         $competency1 = new competency($competencyid);
         $competency2 = new competency($relatedcompetencyid);
@@ -3691,7 +3796,8 @@ class api {
      * @param int $relatedcompetencyid The id of the related competency.
      * @return bool True when it was deleted, false when it wasn't or the relation doesn't exist.
      */
-    public static function remove_related_competency($competencyid, $relatedcompetencyid) {
+    public static function remove_related_competency($competencyid, $relatedcompetencyid)
+    {
         static::require_enabled();
         $competency = new competency($competencyid);
 
@@ -3713,7 +3819,8 @@ class api {
      * @param int $id
      * @return user_evidence
      */
-    public static function read_user_evidence($id) {
+    public static function read_user_evidence($id)
+    {
         static::require_enabled();
         $userevidence = new user_evidence($id);
 
@@ -3728,11 +3835,12 @@ class api {
     /**
      * Create a new user evidence.
      *
-     * @param  object $data        The data.
-     * @param  int    $draftitemid The draft ID in which files have been saved.
+     * @param  object $data The data.
+     * @param  int $draftitemid The draft ID in which files have been saved.
      * @return user_evidence
      */
-    public static function create_user_evidence($data, $draftitemid = null) {
+    public static function create_user_evidence($data, $draftitemid = null)
+    {
         static::require_enabled();
         $userevidence = new user_evidence(null, $data);
         $context = $userevidence->get_context();
@@ -3757,11 +3865,12 @@ class api {
     /**
      * Create a new user evidence.
      *
-     * @param  object $data        The data.
-     * @param  int    $draftitemid The draft ID in which files have been saved.
+     * @param  object $data The data.
+     * @param  int $draftitemid The draft ID in which files have been saved.
      * @return user_evidence
      */
-    public static function update_user_evidence($data, $draftitemid = null) {
+    public static function update_user_evidence($data, $draftitemid = null)
+    {
         static::require_enabled();
         $userevidence = new user_evidence($data->id);
         $context = $userevidence->get_context();
@@ -3794,7 +3903,8 @@ class api {
      * @param  int $id The user evidence ID.
      * @return bool
      */
-    public static function delete_user_evidence($id) {
+    public static function delete_user_evidence($id)
+    {
         static::require_enabled();
         $userevidence = new user_evidence($id);
         $context = $userevidence->get_context();
@@ -3831,7 +3941,8 @@ class api {
      * @param  int $userid The user ID.
      * @return user_evidence[]
      */
-    public static function list_user_evidence($userid) {
+    public static function list_user_evidence($userid)
+    {
         static::require_enabled();
         if (!user_evidence::can_read_user($userid)) {
             $context = context_user::instance($userid);
@@ -3849,7 +3960,8 @@ class api {
      * @param  int $competencyid Competency ID.
      * @return user_evidence_competency
      */
-    public static function create_user_evidence_competency($userevidenceorid, $competencyid) {
+    public static function create_user_evidence_competency($userevidenceorid, $competencyid)
+    {
         global $USER;
         static::require_enabled();
 
@@ -3898,7 +4010,8 @@ class api {
      * @param  int $competencyid Competency ID.
      * @return bool
      */
-    public static function delete_user_evidence_competency($userevidenceorid, $competencyid) {
+    public static function delete_user_evidence_competency($userevidenceorid, $competencyid)
+    {
         global $USER;
         static::require_enabled();
 
@@ -3945,7 +4058,8 @@ class api {
      * @param  int $id The user evidence ID.
      * @return bool
      */
-    public static function request_review_of_user_evidence_linked_competencies($id) {
+    public static function request_review_of_user_evidence_linked_competencies($id)
+    {
         $userevidence = new user_evidence($id);
         $context = $userevidence->get_context();
         $userid = $userevidence->get_userid();
@@ -3974,7 +4088,8 @@ class api {
      * @param int $newparent - new parent id
      * @return competency[] $matchids - List of old competencies ids matched with new competencies object.
      */
-    protected static function duplicate_competency_tree($frameworkid, $tree, $oldparent = 0, $newparent = 0) {
+    protected static function duplicate_competency_tree($frameworkid, $tree, $oldparent = 0, $newparent = 0)
+    {
         $matchids = array();
         foreach ($tree as $node) {
             if ($node->competency->get_parentid() == $oldparent) {
@@ -4012,7 +4127,8 @@ class api {
      * @param competency[] $tree - array of competencies object
      * @param competency[] $matchids - List of old competencies ids matched with new competencies object
      */
-    protected static function migrate_competency_tree_rules($tree, $matchids) {
+    protected static function migrate_competency_tree_rules($tree, $matchids)
+    {
 
         foreach ($tree as $node) {
             $oldcompid = $node->competency->get_id();
@@ -4045,7 +4161,8 @@ class api {
      * @param int $plan The plan object.
      * @return void
      */
-    protected static function archive_user_competencies_in_plan($plan) {
+    protected static function archive_user_competencies_in_plan($plan)
+    {
 
         // Check if the plan was already completed.
         if ($plan->get_status() == plan::STATUS_COMPLETE) {
@@ -4081,7 +4198,7 @@ class api {
             // If the user competency doesn't exist, we create a new relation in user_competency_plan.
             if (!$found) {
                 $usercompetencyplan = user_competency_plan::create_relation($plan->get_userid(), $competency->get_id(),
-                        $plan->get_id());
+                    $plan->get_id());
                 $usercompetencyplan->set_sortorder($i);
                 $usercompetencyplan->create();
             }
@@ -4095,7 +4212,8 @@ class api {
      * @param int $plan The plan object.
      * @return void
      */
-    protected static function remove_archived_user_competencies_in_plan($plan) {
+    protected static function remove_archived_user_competencies_in_plan($plan)
+    {
         $competencies = $plan->get_competencies();
         $usercompetenciesplan = user_competency_plan::get_multiple($plan->get_userid(), $plan->get_id(), $competencies);
 
@@ -4118,7 +4236,8 @@ class api {
      * @return array of \core_competency\evidence
      */
     public static function list_evidence($userid = 0, $competencyid = 0, $planid = 0, $sort = 'timecreated',
-                                         $order = 'DESC', $skip = 0, $limit = 0) {
+                                         $order = 'DESC', $skip = 0, $limit = 0)
+    {
         static::require_enabled();
 
         if (!user_competency::can_read_user($userid)) {
@@ -4166,7 +4285,8 @@ class api {
      * @return \core_competency\evidence[]
      */
     public static function list_evidence_in_course($userid = 0, $courseid = 0, $competencyid = 0, $sort = 'timecreated',
-                                                   $order = 'DESC', $skip = 0, $limit = 0) {
+                                                   $order = 'DESC', $skip = 0, $limit = 0)
+    {
         static::require_enabled();
 
         if (!user_competency::can_read_user_in_course($userid, $courseid)) {
@@ -4212,7 +4332,8 @@ class api {
      */
     public static function add_evidence($userid, $competencyorid, $contextorid, $action, $descidentifier, $desccomponent,
                                         $desca = null, $recommend = false, $url = null, $grade = null, $actionuserid = null,
-                                        $note = null) {
+                                        $note = null)
+    {
         global $DB;
         static::require_enabled();
 
@@ -4442,7 +4563,8 @@ class api {
      * @param int $evidenceid The evidence ID.
      * @return evidence
      */
-    public static function read_evidence($evidenceid) {
+    public static function read_evidence($evidenceid)
+    {
         static::require_enabled();
 
         $evidence = new evidence($evidenceid);
@@ -4461,7 +4583,8 @@ class api {
      * @param evidence|int $evidenceorid The evidence, or its ID.
      * @return bool
      */
-    public static function delete_evidence($evidenceorid) {
+    public static function delete_evidence($evidenceorid)
+    {
         $evidence = $evidenceorid;
         if (!is_object($evidence)) {
             $evidence = new evidence($evidenceorid);
@@ -4486,11 +4609,12 @@ class api {
      * step to add evidence and trigger completion, etc...
      *
      * @param  user_competency $usercompetency The user competency recently completed.
-     * @param  competency|null $competency     The competency of the user competency, useful to avoid unnecessary read.
+     * @param  competency|null $competency The competency of the user competency, useful to avoid unnecessary read.
      * @return void
      */
     protected static function apply_competency_rules_from_usercompetency(user_competency $usercompetency,
-                                                                         competency $competency = null) {
+                                                                         competency $competency = null)
+    {
 
         // Perform some basic checks.
         if (!$usercompetency->get_proficiency()) {
@@ -4570,7 +4694,8 @@ class api {
      * @param  \core\event\course_module_completion_updated $event
      * @return void
      */
-    public static function observe_course_module_completion_updated(\core\event\course_module_completion_updated $event) {
+    public static function observe_course_module_completion_updated(\core\event\course_module_completion_updated $event)
+    {
         if (!static::is_enabled()) {
             return;
         }
@@ -4578,7 +4703,8 @@ class api {
         $eventdata = $event->get_record_snapshot('course_modules_completion', $event->objectid);
 
         if ($eventdata->completionstate == COMPLETION_COMPLETE
-                || $eventdata->completionstate == COMPLETION_COMPLETE_PASS) {
+            || $eventdata->completionstate == COMPLETION_COMPLETE_PASS
+        ) {
             $coursemodulecompetencies = course_module_competency::list_course_module_competencies($eventdata->coursemoduleid);
 
             $cm = get_coursemodule_from_id(null, $eventdata->coursemoduleid);
@@ -4631,7 +4757,8 @@ class api {
      * @param  \core\event\course_completed $event
      * @return void
      */
-    public static function observe_course_completed(\core\event\course_completed $event) {
+    public static function observe_course_completed(\core\event\course_completed $event)
+    {
         if (!static::is_enabled()) {
             return;
         }
@@ -4689,7 +4816,8 @@ class api {
      * @param stdClass $cm The CM object.
      * @return void
      */
-    public static function hook_course_module_deleted(stdClass $cm) {
+    public static function hook_course_module_deleted(stdClass $cm)
+    {
         global $DB;
         $DB->delete_records(course_module_competency::TABLE, array('cmid' => $cm->id));
     }
@@ -4702,7 +4830,8 @@ class api {
      * @param stdClass $course The course object.
      * @return void
      */
-    public static function hook_course_deleted(stdClass $course) {
+    public static function hook_course_deleted(stdClass $course)
+    {
         global $DB;
         $DB->delete_records(course_competency::TABLE, array('courseid' => $course->id));
         $DB->delete_records(course_competency_settings::TABLE, array('courseid' => $course->id));
@@ -4717,7 +4846,8 @@ class api {
      * @param int $courseid The course ID.
      * @return void
      */
-    public static function hook_course_reset_competency_ratings($courseid) {
+    public static function hook_course_reset_competency_ratings($courseid)
+    {
         global $DB;
         $DB->delete_records(user_competency_course::TABLE, array('courseid' => $courseid));
     }
@@ -4730,7 +4860,8 @@ class api {
      * @param \stdClass $cohort The cohort object.
      * @return void
      */
-    public static function hook_cohort_deleted(\stdClass $cohort) {
+    public static function hook_cohort_deleted(\stdClass $cohort)
+    {
         global $DB;
         $DB->delete_records(template_cohort::TABLE, array('cohortid' => $cohort->id));
     }
@@ -4744,7 +4875,8 @@ class api {
      * @param string $note A note to attach to the evidence
      * @return array of \core_competency\user_competency
      */
-    public static function grade_competency($userid, $competencyid, $grade, $note = null) {
+    public static function grade_competency($userid, $competencyid, $grade, $note = null)
+    {
         global $USER;
         static::require_enabled();
 
@@ -4758,7 +4890,8 @@ class api {
         $competency = $uc->get_competency();
         $competencycontext = $competency->get_context();
         if (!has_any_capability(array('moodle/competency:competencyview', 'moodle/competency:competencymanage'),
-                $competencycontext)) {
+            $competencycontext)
+        ) {
             throw new required_capability_exception($competencycontext, 'moodle/competency:competencyview', 'nopermissions', '');
         }
 
@@ -4766,17 +4899,17 @@ class api {
         $desckey = 'evidence_manualoverride';
 
         $result = self::add_evidence($uc->get_userid(),
-                                  $competency,
-                                  $context->id,
-                                  $action,
-                                  $desckey,
-                                  'core_competency',
-                                  null,
-                                  false,
-                                  null,
-                                  $grade,
-                                  $USER->id,
-                                  $note);
+            $competency,
+            $context->id,
+            $action,
+            $desckey,
+            'core_competency',
+            null,
+            false,
+            null,
+            $grade,
+            $USER->id,
+            $note);
         if ($result) {
             $uc->read();
             $event = \core\event\competency_user_competency_rated::create_from_user_competency($uc);
@@ -4794,7 +4927,8 @@ class api {
      * @param string $note A note to attach to the evidence
      * @return array of \core_competency\user_competency
      */
-    public static function grade_competency_in_plan($planorid, $competencyid, $grade, $note = null) {
+    public static function grade_competency_in_plan($planorid, $competencyid, $grade, $note = null)
+    {
         global $USER;
         static::require_enabled();
 
@@ -4812,7 +4946,8 @@ class api {
         $competency = $plan->get_competency($competencyid);
         $competencycontext = $competency->get_context();
         if (!has_any_capability(array('moodle/competency:competencyview', 'moodle/competency:competencymanage'),
-                $competencycontext)) {
+            $competencycontext)
+        ) {
             throw new required_capability_exception($competencycontext, 'moodle/competency:competencyview', 'nopermissions', '');
         }
 
@@ -4820,17 +4955,17 @@ class api {
         $desckey = 'evidence_manualoverrideinplan';
 
         $result = self::add_evidence($plan->get_userid(),
-                                  $competency,
-                                  $context->id,
-                                  $action,
-                                  $desckey,
-                                  'core_competency',
-                                  $plan->get_name(),
-                                  false,
-                                  null,
-                                  $grade,
-                                  $USER->id,
-                                  $note);
+            $competency,
+            $context->id,
+            $action,
+            $desckey,
+            'core_competency',
+            $plan->get_name(),
+            false,
+            null,
+            $grade,
+            $USER->id,
+            $note);
         if ($result) {
             $uc = static::get_user_competency($plan->get_userid(), $competency->get_id());
             $event = \core\event\competency_user_competency_rated_in_plan::create_from_user_competency($uc, $plan->get_id());
@@ -4852,7 +4987,8 @@ class api {
      * @param string $note A note to attach to the evidence
      * @return array of \core_competency\user_competency
      */
-    public static function grade_competency_in_course($courseorid, $userid, $competencyid, $grade, $note = null) {
+    public static function grade_competency_in_course($courseorid, $userid, $competencyid, $grade, $note = null)
+    {
         global $USER, $DB;
         static::require_enabled();
 
@@ -4876,7 +5012,8 @@ class api {
         $competency = course_competency::get_competency($course->id, $competencyid);
         $competencycontext = $competency->get_context();
         if (!has_any_capability(array('moodle/competency:competencyview', 'moodle/competency:competencymanage'),
-                $competencycontext)) {
+            $competencycontext)
+        ) {
             throw new required_capability_exception($competencycontext, 'moodle/competency:competencyview', 'nopermissions', '');
         }
 
@@ -4889,17 +5026,17 @@ class api {
         $desckey = 'evidence_manualoverrideincourse';
 
         $result = self::add_evidence($userid,
-                                  $competency,
-                                  $context->id,
-                                  $action,
-                                  $desckey,
-                                  'core_competency',
-                                  $context->get_context_name(),
-                                  false,
-                                  null,
-                                  $grade,
-                                  $USER->id,
-                                  $note);
+            $competency,
+            $context->id,
+            $action,
+            $desckey,
+            'core_competency',
+            $context->get_context_name(),
+            false,
+            null,
+            $grade,
+            $USER->id,
+            $note);
         if ($result) {
             $all = user_competency_course::get_multiple($userid, $course->id, array($competency->get_id()));
             $uc = reset($all);
@@ -4918,7 +5055,8 @@ class api {
      * @param int $status One of the plan status constants (or 0 for all plans).
      * @return int
      */
-    public static function count_plans_for_template($templateorid, $status = 0) {
+    public static function count_plans_for_template($templateorid, $status = 0)
+    {
         static::require_enabled();
         $template = $templateorid;
         if (!is_object($template)) {
@@ -4943,7 +5081,8 @@ class api {
      * @param mixed $proficiency If true, filter by proficiency, if false filter by not proficient, if null - no filter.
      * @return int
      */
-    public static function count_user_competency_plans_for_template($templateorid, $proficiency = null) {
+    public static function count_user_competency_plans_for_template($templateorid, $proficiency = null)
+    {
         static::require_enabled();
         $template = $templateorid;
         if (!is_object($template)) {
@@ -4952,7 +5091,7 @@ class api {
 
         // First we do a permissions check.
         if (!$template->can_read()) {
-             throw new required_capability_exception($template->get_context(), 'moodle/competency:templateview',
+            throw new required_capability_exception($template->get_context(), 'moodle/competency:templateview',
                 'nopermissions', '');
         }
 
@@ -4970,7 +5109,8 @@ class api {
      * @param int $limit The max number of records to return
      * @return plan[]
      */
-    public static function list_plans_for_template($templateorid, $status = 0, $skip = 0, $limit = 100) {
+    public static function list_plans_for_template($templateorid, $status = 0, $skip = 0, $limit = 100)
+    {
         $template = $templateorid;
         if (!is_object($template)) {
             $template = new template($template);
@@ -4978,7 +5118,7 @@ class api {
 
         // First we do a permissions check.
         if (!$template->can_read()) {
-             throw new required_capability_exception($template->get_context(), 'moodle/competency:templateview',
+            throw new required_capability_exception($template->get_context(), 'moodle/competency:templateview',
                 'nopermissions', '');
         }
 
@@ -4995,7 +5135,8 @@ class api {
      * @param int $limit The max number of records to return
      * @return competency[]
      */
-    public static function get_least_proficient_competencies_for_course($courseid, $skip = 0, $limit = 100) {
+    public static function get_least_proficient_competencies_for_course($courseid, $skip = 0, $limit = 100)
+    {
         static::require_enabled();
         $coursecontext = context_course::instance($courseid);
 
@@ -5016,7 +5157,8 @@ class api {
      * @param int $limit The max number of records to return
      * @return competency[]
      */
-    public static function get_least_proficient_competencies_for_template($templateorid, $skip = 0, $limit = 100) {
+    public static function get_least_proficient_competencies_for_template($templateorid, $skip = 0, $limit = 100)
+    {
         static::require_enabled();
         $template = $templateorid;
         if (!is_object($template)) {
@@ -5040,7 +5182,8 @@ class api {
      * @param mixed $templateorid The id or the template.
      * @return boolean
      */
-    public static function template_viewed($templateorid) {
+    public static function template_viewed($templateorid)
+    {
         static::require_enabled();
         $template = $templateorid;
         if (!is_object($template)) {
@@ -5067,7 +5210,8 @@ class api {
      * @param int $courseid The course id
      * @return course_competency_settings
      */
-    public static function read_course_competency_settings($courseid) {
+    public static function read_course_competency_settings($courseid)
+    {
         static::require_enabled();
 
         // First we do a permissions check.
@@ -5088,10 +5232,11 @@ class api {
      * @param stdClass $settings List of settings. The only valid setting ATM is pushratginstouserplans (boolean).
      * @return bool
      */
-    public static function update_course_competency_settings($courseid, $settings) {
+    public static function update_course_competency_settings($courseid, $settings)
+    {
         static::require_enabled();
 
-        $settings = (object) $settings;
+        $settings = (object)$settings;
 
         // Get all the valid settings.
         $pushratingstouserplans = isset($settings->pushratingstouserplans) ? $settings->pushratingstouserplans : false;
@@ -5110,7 +5255,7 @@ class api {
             $settings->set_pushratingstouserplans($pushratingstouserplans);
             return $settings->update();
         } else {
-            $data = (object) array('courseid' => $courseid, 'pushratingstouserplans' => $pushratingstouserplans);
+            $data = (object)array('courseid' => $courseid, 'pushratingstouserplans' => $pushratingstouserplans);
             $settings = new course_competency_settings(0, $data);
             $result = $settings->create();
             return !empty($result);
@@ -5133,7 +5278,8 @@ class api {
      * @todo MDL-52243 Move this function to lib/accesslib.php
      */
     public static function filter_users_with_capability_on_user_context_sql($capability, $userid = 0, $type = SQL_PARAMS_QM,
-                                                                            $prefix='param') {
+                                                                            $prefix = 'param')
+    {
 
         global $USER, $DB;
         $allresultsfilter = array('> 0', array());

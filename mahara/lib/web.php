@@ -1043,7 +1043,7 @@ class Theme {
         if (!$themeconfig) {
             // We can safely assume that the default theme is installed, users
             // should never be able to remove it
-            $themename ='default';
+            $themename ='lms';
             $themeconfig = $getthemeconfig($themename);
         }
 
@@ -1067,7 +1067,7 @@ class Theme {
         // 'raw' is the default parent theme
         // (If a theme has no parent, it should set $themeconfig->parent = false)
         if (!isset($themeconfig->parent)) {
-            $themeconfig->parent = 'raw';
+            $themeconfig->parent = 'lms';
         }
         $currentthemename = $this->basename;
         while ($themeconfig->parent !== false) {
@@ -1079,7 +1079,7 @@ class Theme {
             // If the parent theme is missing, short-circuit to the "raw" theme
             if (!$parentthemeconfig) {
                 log_warn("Theme \"{$currentthemename}\" has missing parent theme \"{$parentthemename}\".");
-                $parentthemename = 'raw';
+                $parentthemename = 'lms';
                 $parentthemeconfig = $getthemeconfig($parentthemename);
             }
             $currentthemename = $parentthemename;
@@ -1093,7 +1093,7 @@ class Theme {
             $this->templatedirs[] = get_config('docroot') . 'theme/' . $currentthemename . '/templates/';
             $this->inheritance[]  = $currentthemename;
             if (!isset($themeconfig->parent)) {
-                $themeconfig->parent = 'raw';
+                $themeconfig->parent = 'lms';
             }
         }
 
