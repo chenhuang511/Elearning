@@ -474,7 +474,7 @@ abstract class grade_report {
             $items = grade_item::fetch_all(array('courseid'=>$courseid));
             $grades = array();
 
-            $gradesrecords = null;
+            $gradesrecords = array();
             if (ISREMOTE) {
                 $sql = "SELECT g.*
                       FROM {grade_grades} g
@@ -487,18 +487,20 @@ abstract class grade_report {
                 $remoteparams['param[0][value]='] = $remoteuserid;
                 $remoteparams['param[1][name]='] = 'courseid';
                 $remoteparams['param[1][value]='] = $remotecourseid;
-                $gradesrecords = get_remote_assign_grade_grades_raw_data($sql, $remoteparams);
-                if ($gradesrecords) {
-                    foreach ($gradesrecords as &$rec) {
+                $gradesrecordsraw = get_remote_assign_grade_grades_raw_data($sql, $remoteparams);
+                if ($gradesrecordsraw) {
+                    foreach ($gradesrecordsraw as &$rec) {
                         if (isset($rec->courseid)) {
                             $rec->courseid = $courseid;
                         }
                         if (isset($rec->userid)) {
                             $rec->userid = $this->user->id;
                         }
+                        $gradesrecords[$rec->itemid] = $rec;
                     }
                     unset($rec);
                 }
+
             } else {
                 $sql = "SELECT g.*
                       FROM {grade_grades} g
