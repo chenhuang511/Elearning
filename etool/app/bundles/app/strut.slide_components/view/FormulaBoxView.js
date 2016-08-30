@@ -6,10 +6,8 @@ define(["./ComponentView", "libs/etch",
 		'use strict';
 		var undoHistory = CmdListFactory.managedInstance('editor');
 		var styles;
-		var keyText = 0;
-		var arrText = [keyText+1];
 		styles = ["family", "size", "weight", "style", "color", "decoration", "align"];
-
+		//var opts;
 		/**
 		 * @class FormulaBoxView
 		 * @augments ComponentView
@@ -39,7 +37,6 @@ define(["./ComponentView", "libs/etch",
 			 */
 			initialize: function() {
 				var style, _i, _len;
-
 				ComponentView.prototype.initialize.apply(this, arguments);
 				for (_i = 0, _len = styles.length; _i < _len; _i++) {
 					style = styles[_i];
@@ -56,7 +53,6 @@ define(["./ComponentView", "libs/etch",
 				// $(document).bind("keydown", this.keydown);
 
 				this.model.on("edit", this.edit, this);
-
 			},
 
 			/**
@@ -106,27 +102,18 @@ define(["./ComponentView", "libs/etch",
 			 */
 			dblclicked: function(e) {
 				this.$el.addClass("editable");
-				this.$textEl.attr("contenteditable", true);
-				if(!this.$textEl.attr("id")){
-					this.$textEl.attr("id",keyText);
-					arrText[keyText] = "FormulaBox";
-					++keyText;
-				}
-
+				this.$textEl.attr("contenteditable", true);			
 				var element = this.$el[0];
 				var content = element.getElementsByClassName("content-scale")[0];
 				content.style.display = "inline";
-                //katex.render(this.)
 
 				if (e != null) {
-					//console.log(this.$textEl.attr("id") + "  "+ arrText.length);
-
-					//for(var i = 0; i < arrText.length; i++){
-						var i = this.$textEl.attr("id");
-							//console.log(i);
-						this.model.set("text", arrText[i]);
-					//}
-
+					if(this.model.get("_opts")){
+						this.model.set("text", this.model.get("_opts"));
+					}
+					else{
+						this.model.set("text","FormulaBox");
+					}
 					this._initialText = this.$textEl.html();
 					etch.editableInit.call(this, e, this.model.get("y") * this.dragScale + 35);
 					// Focus editor and select all text.
@@ -224,19 +211,13 @@ define(["./ComponentView", "libs/etch",
 					}catch (err){
 						katex.render("syntax\\space error", this.formula);
 					}
-
-					//for(var i = 0; i < arrText.length; ++i){
-						var i = this.$textEl.attr("id");
-							//console.log(this.$textEl.attr("id"));
-						arrText[i] = this.$textEl.text();
-						//}
-					//}
-
+					this.model.set("_opts", this.$textEl.text());
 					this.model.set("text", this.formula.innerHTML);
 					window.getSelection().removeAllRanges();
 					this.$textEl.attr("contenteditable", false);
 					this.$el.removeClass("editable");
 					this.allowDragging = true;
+					
 				}
 			},
 
@@ -356,9 +337,4 @@ define(["./ComponentView", "libs/etch",
 			}
 		});
 	});
-
-	function objEditText(key, value){
-		this.key = key;
-		this.value = value;
-	}
 
