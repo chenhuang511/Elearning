@@ -148,8 +148,9 @@ function add_moduleinfo($moduleinfo, $course, $mform = null)
         $cmupdate['data[0][value]'] = $returnfromfunc;
 
         $rs = update_remote_mdl_course("course_modules", $moduleinfo->coursemodule, $cmupdate);
-    }
+    } else {
     $DB->set_field('course_modules', 'instance', $returnfromfunc, array('id' => $moduleinfo->coursemodule));
+    }
 
     // Update embedded links and save files.
     $modcontext = context_module::instance($moduleinfo->coursemodule);
@@ -163,8 +164,9 @@ function add_moduleinfo($moduleinfo, $course, $mform = null)
             $cmupdate['data[0][value]'] = $moduleinfo->intro;
 
             $rs = update_remote_mdl_course("course_modules", $moduleinfo->instance, $cmupdate);
-        }
+        } else {
         $DB->set_field($moduleinfo->modulename, 'intro', $moduleinfo->intro, array('id' => $moduleinfo->instance));
+        }
     }
 
     // Add module tags.

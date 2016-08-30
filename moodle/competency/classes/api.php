@@ -109,21 +109,16 @@ class api
     {
         $cm = $cmmixed;
         if (!is_object($cm)) {
-            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
-                $cmrecord = get_coursemodule_from_id(null, $cmmixed);
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+                $cmrecord = get_remote_course_module_by_cmid('', $cmmixed);
             } else {
-                $cmrecord = get_remote_course_module_by_instance(null, $cmmixed);
+                $cmrecord = get_coursemodule_from_id(null, $cmmixed);
             }
             $modinfo = get_fast_modinfo($cmrecord->course);
             $cm = $modinfo->get_cm($cmmixed);
         } else if (!$cm instanceof cm_info) {
             // Assume we got a course module record.
-            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
-                $modinfo = get_fast_modinfo($cm->course);
-            } else {
-                $course = get_local_course_record($cm->course, true);
-                $modinfo = get_fast_modinfo($course);
-            }
+            $modinfo = get_fast_modinfo($cm->course);
             $cm = $modinfo->get_cm($cm->id);
         }
 

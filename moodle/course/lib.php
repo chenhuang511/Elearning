@@ -1627,9 +1627,10 @@ function course_add_cm_to_section($courseorid, $cmid, $sectionnum, $beforemod = 
         $updatedata['data[0][name]'] = "section";
         $updatedata['data[0][value]'] = $section->id;
         $result = update_remote_mdl_course("course_modules", $cmid, $updatedata);
-    } else {}
-    $DB->set_field("course_sections", "sequence", $newsequence, array("id" => $section->id));
-    $DB->set_field('course_modules', 'section', $section->id, array('id' => $cmid));
+    } else {
+        $DB->set_field("course_sections", "sequence", $newsequence, array("id" => $section->id));
+        $DB->set_field('course_modules', 'section', $section->id, array('id' => $cmid));
+    }
 
     if (is_object($courseorid)) {
         rebuild_course_cache($courseorid->id, true);
