@@ -2619,14 +2619,6 @@ class local_mod_forum_external extends external_api
         // Finally, set the pointer on the post.
         $DB->set_field("forum_posts", "discussion", $post->discussion, array("id" => $post->id));
 
-        if (!empty($cm->id)) {
-            forum_add_attachment($post, $forum, $cm, $mform, $unused);
-        }
-
-        if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {
-            forum_tp_mark_post_read($post->userid, $post, $post->forum);
-        }
-
         // Let Moodle know that assessable content is uploaded (eg for plagiarism detection)
         if (!empty($cm->id)) {
             forum_trigger_content_uploaded_event($post, $cm, 'forum_add_discussion');
