@@ -7,6 +7,16 @@ define(function() {
     }
     var alerted = false;
 
+    function getParameterByName(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+
     SlideStorageProvider.prototype = {
         ready: function() {
             return true;
@@ -17,54 +27,112 @@ define(function() {
         },
 
         ls: function(path, regex, cb) {
-            // Paths are currently ignored
-            var numFiles = this.impl.length;
-            var fnames = [];
-            for (var i = 0; i < numFiles; ++i) {
-                var fname = this.impl.key(i);
-                if (fname.indexOf(prefix) == 0 &&
-                    (regex == null || regex.exec(fname) != null)) {
-                    fnames.push(fname.substring(prefix.length));
+            var userid = getParameterByName('userid');
+            $.ajax({
+                url: '../../slidestorage.php',
+                type: 'POST',
+                data: {
+                    action: 'listPresentations',
+                    filename: prefix + path,
+                    userid: userid
+                },
+                success: function (response) {
+                    var list = JSON.parse(response);
+                    if (typeof list === 'object'){
+                        var fnames = [];
+                        for (var i = 0; i < list.length; ++i) {
+                            var fname = list[i];
+                            if (fname.indexOf(prefix) == 0 &&
+                                (regex == null || regex.exec(fname) != null)) {
+                                fnames.push(fname.substring(prefix.length));
+                            }
+                        }
+                        cb(fnames);
+                    } else {
+                        console.log(list);
+                    }
+                },
+                error: function (e) {
+                    console.log(e.message);
                 }
-            }
-
-            cb(fnames);
+            });
 
             return this;
         },
 
         rm: function(path, cb) {
-            this.impl.removeItem(prefix + path);
-            if (cb)
-                cb(true);
+            var userid = getParameterByName('userid');
+            $.ajax({
+                url: '../../slidestorage.php',
+                type: 'POST',
+                data: {
+                    action: 'removePresentations',
+                    filename: prefix + path,
+                    userid: userid
+                },
+                success: function (response) {
+                    console.log(response);
+                    if(cb) {
+                        cb(true);
+                    }
+                },
+                error: function (e) {
+                    console.log(e.message);
+                }
+            });
+
             return this;
         },
 
         getContents: function(path, cb) {
-            var item = this.impl.getItem(prefix + path);
-            if (item != null) {
-                try {
-                    var data = JSON.parse(item);
-                    cb(data);
-                } catch (e) {
-                    cb(null, e);
+            var userid = getParameterByName('userid');
+            $.ajax({
+                url: '../../slidestorage.php',
+                type: 'POST',
+                data: {
+                    action: 'getContents',
+                    filename: prefix + path,
+                    userid: userid
+                },
+                success: function (response) {
+                    if (response != null){
+                        try {
+                            var data = JSON.parse(response);
+                            cb(data);
+                        } catch (e) {
+                            cb(null, e);
+                        }
+                    }
+                },
+                error: function (e) {
+                    console.log(e.message);
                 }
-            }
-
+            });
             return this;
         },
 
         setContents: function(path, data, cb) {
-            try {
-                this.impl.setItem(prefix + path, JSON.stringify(data));
-            } catch (e) {
-                if (!alerted) {
-                    alerted = true;
-                    alert("Strut currently uses your browser's LocalStorage to save presentations which is limited to between 2.5 and 5mb.\n\nYou are currently over this limit so your presentation will not be saved.  You may continue editing, however.\n\nTry removing any images you dragged in and link to them instead.\n\nWe're working on improving the storage capacity!  5mb should be good if you link to your images (e.g., file://path/to/image or http://url/of/image).\n\nSorry for the inconvenience that this may cause.  We are working to resolve the issue!");
+            var userid = getParameterByName('userid');
+            $.ajax({
+                url: '../../slidestorage.php',
+                type: 'POST',
+                data: {
+                    action: 'setContents',
+                    filename: prefix + path,
+                    data: JSON.stringify(data),
+                    userid: userid
+                },
+                success: function (response) {
+                    console.log(response);
+                    if(cb) {
+                        cb(true);
+                    }
+                },
+                error: function (e) {
+                    console.log(e.message);
                 }
-            }
-            if (cb)
-                cb(true);
+            });
+
             return this;
         }
     };
