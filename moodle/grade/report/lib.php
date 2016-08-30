@@ -512,9 +512,7 @@ abstract class grade_report {
                         $rid = $gitems->remoteid;
                         if (isset($rid) && isset($gradesrecords[$rid])) {
                             $gradesrecords[$rid]->itemid = $itemid;
-                            if ($gitems->modifiedlocalgrademax) {
-                                $gradesrecords[$rid]->rawgrademax = $gitems->grademax;
-                            } elseif (isset($gitems->itemtype) &&
+                            if (isset($gitems->itemtype) &&
                                 $gitems->itemtype == 'course' &&
                                 isset($gradesrecords[$rid]->rawgrademax) &&
                                 !is_null($gradesrecords[$rid]->finalgrade)) {

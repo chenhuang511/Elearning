@@ -320,10 +320,23 @@ abstract class grade_object
                             $localgrademax = $DB->get_field($data->itemmodule, 'grade', array('remoteid' => $data->iteminstance));
                             if ($localgrademax !== false) {
                                 $data->grademax = $localgrademax;
-                                $data->modifiedlocalgrademax = true;
                             }
                         } catch (\Exception $e) {
 
+                        }
+                    }
+                }
+                foreach ($rsraw as &$data) {
+                    if ($data->itemtype == 'course') {
+                        $grademax = 0;
+                        foreach ($rsraw as $needed) {
+                            if ($needed->itemtype != 'course') {
+                                $grademax += $needed->grademax;
+                            }
+                        }
+                        if ($data->grademax != $grademax) {
+                            $data->grademax = $grademax;
+                            $DB->update_record('grade_items', $data);
                         }
                     }
                 }
