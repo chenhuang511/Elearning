@@ -43,16 +43,22 @@ if (!empty($return)) {
     $url->param('return', $return);
 }
 
+$accessmodules = explode(",", $CFG->accessmodules);
+
 $isaccess = false;
 
 if (!empty($add)) {
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        if ($add !== 'forum') {
+        foreach ($accessmodules as $am) {
+            if ($add == $am) {
+                $isaccess = true;
+            }
+        }
+
+        if (!$isaccess) {
             echo $OUTPUT->header();
             echo 'Bạn không được cấp quyền truy cập trang này';
             echo $OUTPUT->footer();
-        } else {
-            $isaccess = true;
         }
     } else {
         $isaccess = true;
@@ -139,8 +145,15 @@ if (!empty($add)) {
 } else if (!empty($update)) {
 
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        if ($update === "forum") {
-            $isaccess = true;
+        foreach ($accessmodules as $am) {
+            if ($update == $am) {
+                $isaccess = true;
+            }
+        }
+        if (!$isaccess) {
+            echo $OUTPUT->header();
+            echo 'Bạn không được cấp quyền truy cập trang này';
+            echo $OUTPUT->footer();
         }
     } else {
         $isaccess = true;
