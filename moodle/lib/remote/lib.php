@@ -137,33 +137,17 @@ function get_remote_course_mods($courseid)
 
 function get_remote_course_sections($courseid, $usesq = false)
 {
-    global $DB;
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_get_course_sections',
+            'params' => array('courseid' => $courseid)
+        )
+    );
 
-    $sections = new StdClass();
-    switch (MOODLE_RUN_MODE) {
-        case MOODLE_MODE_HOST:
-            // Get section data
-            $sections = $DB->get_records('course_sections', array('course' => $courseid), 'section ASC', 'id,section,sequence');
-            break;
-        case MOODLE_MODE_HUB:
-            $sections = moodle_webservice_client(
-                array(
-                    'domain' => HUB_URL,
-                    'token' => HOST_TOKEN,
-                    'function_name' => 'local_get_course_sections',
-                    'params' => array('courseid' => $courseid)
-                )
-            );
-            break;
-        default:
-            break;
-    }
+    $retval = change_key_by_value($result->sections, $usesq);
 
-    if ($usesq) {
-        $retval = change_key_by_value($sections, $usesq);
-    } else {
-        $retval = $sections;
-    }
     return $retval;
 }
 
