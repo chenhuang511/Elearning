@@ -329,15 +329,22 @@ abstract class grade_object
                 foreach ($rsraw as &$data) {
                     if ($data->itemtype == 'course') {
                         $grademax = 0;
-                        foreach ($rsraw as $needed) {
-                            if ($needed->itemtype != 'course') {
-                                $grademax += $needed->grademax;
-                            }
+                        $coursesql = "SELECT * FROM {" . $table . "}";
+                        $coursesql .= " WHERE courseid = :courseid AND itemtype <> 'course'";
+                        $rmtparam = array();
+                        $rmtcourseid = get_local_course_record($data->courseid, true)->remoteid;
+                        $rmtparam['param[0][name]='] = 'courseid';
+                        $rmtparam['param[0][value]='] = $rmtcourseid;
+                        $coursegradeitem = get_remote_assign_grade_items_raw_data($coursesql, $rmtparam);
+
+                        foreach ($coursegradeitem as $needed) {
+                            $grademax += $needed->grademax;
                         }
                         if ($data->grademax != $grademax) {
                             $data->grademax = $grademax;
                             $DB->update_record('grade_items', $data);
                         }
+                        unset($coursegradeitem);
                     }
                 }
                 unset($data);
