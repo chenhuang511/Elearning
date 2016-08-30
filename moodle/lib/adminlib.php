@@ -7955,7 +7955,7 @@ function format_admin_setting($setting, $title = '', $form = '', $description = 
     if (!empty($defaults)) {
         $defaultinfo = implode(', ', $defaults);
         $defaultinfo = highlight($query, nl2br(s($defaultinfo)));
-        $defaultinfo = '<div style=" float: left; margin-left:20px;" class="form-defaultinfo">' . get_string('defaultsettinginfo', 'admin', $defaultinfo) . '</div>';
+        $defaultinfo = '<div class="form-defaultinfo">' . get_string('defaultsettinginfo', 'admin', $defaultinfo) . '</div>';
     }
 
 
