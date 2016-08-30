@@ -295,6 +295,19 @@ define(["./ComponentView", "libs/etch",
 					// textDecoration: this.model.get("decoration"),
 					// textAlign: this.model.get("align")
 				});
+
+				var element = this.$el[0];
+
+				if (this.table == undefined){
+					this.table = document.createElement("table");
+					element.appendChild(this.table);
+				}
+				var row = this.table.insertRow(0);
+				var cell0 = row.insertCell(0);
+				var cell1 = row.insertCell(1);
+				cell0.innerHTML = "NEW CELL0";
+    			cell1.innerHTML = "NEW CELL1";
+
 				return this.$el;
 			},
 

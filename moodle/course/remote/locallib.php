@@ -588,3 +588,28 @@ function get_remote_course_modules_by($parameters, $strictness = MUST_EXIST)
 
     return $cm;
 }
+
+function get_remote_course_modules_by_instance($module, $instance)
+{
+    global $DB;
+
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_get_course_modules_by_instance',
+            'params' => array('module' => $module, 'instance' => $instance),
+        )
+    );
+
+    $cm = $result->cm;
+
+    if ($cm) {
+        $localcourseid = $DB->get_field('course', 'id', array('remoteid' => $cm->course));
+        if ($localcourseid) {
+            $cm->course = $localcourseid;
+        }
+    }
+
+    return $cm;
+}

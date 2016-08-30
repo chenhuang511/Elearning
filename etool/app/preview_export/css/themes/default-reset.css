@@ -241,3 +241,7 @@
 	-ms-transition: background-color .8s ease;
 	transition: background-color .8s ease;
 }
+
+.slideContainer .componentContainer {
+    transform: none !important;
+}

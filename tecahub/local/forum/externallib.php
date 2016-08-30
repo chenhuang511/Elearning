@@ -2487,4 +2487,186 @@ class local_mod_forum_external extends external_api
             )
         );
     }
+
+    public static function forum_add_instance_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'forumdata' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the data saved'
+                )
+            )
+        );
+    }
+
+    public static function forum_add_instance($forumdata)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::forum_add_instance_parameters(), array(
+            'forumdata' => $forumdata
+        ));
+
+        $forum = new stdClass();
+        foreach ($params['forumdata'] as $dt) {
+            $forum->$dt['name'] = $dt['value'];
+        }
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $forum->id = $DB->insert_record('forum', $forum);
+
+        $transaction->allow_commit();
+
+        $modcontext = context_module::instance($forum->coursemodule);
+
+        $result['newid'] = $forum->id;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function forum_add_instance_returns()
+    {
+        return self::save_mdl_forum_returns();
+    }
+
+    public static function forum_add_discussions_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'discussiondata' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the data saved'
+                ),
+                'userid' => new external_value(PARAM_INT, 'the user id')
+            )
+        );
+    }
+
+    public static function forum_add_discussions($discussiondata, $userid)
+    {
+
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::forum_add_discussions_parameters(), array(
+            'discussiondata' => $discussiondata,
+            'userid' => $userid
+        ));
+
+        $discussion = new stdClass();
+        foreach ($params['discussiondata'] as $dt) {
+            $discussion->$dt['name'] = $dt['value'];
+        }
+
+
+        $timenow = isset($discussion->timenow) ? $discussion->timenow : time();
+
+        // The first post is stored as a real post, and linked
+        // to from the discuss entry.
+
+        $forum = $DB->get_record('forum', array('id' => $discussion->forum));
+        $cm = get_coursemodule_from_instance('forum', $forum->id);
+
+        $post = new stdClass();
+        $post->discussion = 0;
+        $post->parent = 0;
+        $post->userid = $userid;
+        $post->created = $timenow;
+        $post->modified = $timenow;
+        $post->mailed = FORUM_MAILED_PENDING;
+        $post->subject = $discussion->name;
+        $post->message = $discussion->message;
+        $post->messageformat = $discussion->messageformat;
+        $post->messagetrust = $discussion->messagetrust;
+        $post->attachments = isset($discussion->attachments) ? $discussion->attachments : null;
+        $post->forum = $forum->id;     // speedup
+        $post->course = $forum->course; // speedup
+        $post->mailnow = $discussion->mailnow;
+
+        $post->id = $DB->insert_record("forum_posts", $post);
+
+        // TODO: Fix the calling code so that there always is a $cm when this function is called
+        if (!empty($cm->id) && !empty($discussion->itemid)) {   // In "single simple discussions" this may not exist yet
+            $context = context_module::instance($cm->id);
+            $text = file_save_draft_area_files($discussion->itemid, $context->id, 'mod_forum', 'post', $post->id,
+                mod_forum_post_form::editor_options($context, null), $post->message);
+            $DB->set_field('forum_posts', 'message', $text, array('id' => $post->id));
+        }
+
+        // Now do the main entry for the discussion, linking to this first post
+
+        $discussion->firstpost = $post->id;
+        $discussion->timemodified = $timenow;
+        $discussion->usermodified = $post->userid;
+        $discussion->userid = $userid;
+        $discussion->assessed = 0;
+
+        $post->discussion = $DB->insert_record("forum_discussions", $discussion);
+        $discussion->id = $post->discussion;
+
+        // Finally, set the pointer on the post.
+        $DB->set_field("forum_posts", "discussion", $post->discussion, array("id" => $post->id));
+
+        $result = array();
+        $result['discusion'] = $discussion;
+        $result['post'] = $post;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    public static function forum_add_discussions_returns()
+    {
+        return new external_single_structure(
+            array(
+                'discusion' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'the id'),
+                        'course' => new external_value(PARAM_INT, 'the course id'),
+                        'forum' => new external_value(PARAM_INT, 'the forum id'),
+                        'name' => new external_value(PARAM_RAW, 'the name'),
+                        'firstpost' => new external_value(PARAM_INT, 'first post'),
+                        'userid' => new external_value(PARAM_INT, 'the user id'),
+                        'groupid' => new external_value(PARAM_INT, 'the group id'),
+                        'assessed' => new external_value(PARAM_INT, 'the assessed'),
+                        'timemodified' => new external_value(PARAM_INT, 'time modified'),
+                        'usermodified' => new external_value(PARAM_INT, 'user modified'),
+                        'timestart' => new external_value(PARAM_INT, 'time start'),
+                        'timeend' => new external_value(PARAM_INT, 'time end'),
+                        'pinned' => new external_value(PARAM_INT, 'pinned')
+                    )
+                ),
+                'post' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'the id'),
+                        'discussion' => new external_value(PARAM_INT, 'the discussion id'),
+                        'parent' => new external_value(PARAM_INT, 'the parent'),
+                        'userid' => new external_value(PARAM_INT, 'the user id'),
+                        'created' => new external_value(PARAM_INT, 'created'),
+                        'modified' => new external_value(PARAM_INT, 'modified'),
+                        'mailed' => new external_value(PARAM_INT, 'mailed'),
+                        'subject' => new external_value(PARAM_RAW, 'the subject'),
+                        'message' => new external_value(PARAM_RAW, 'the message'),
+                        'messageformat' => new external_value(PARAM_INT, 'message format'),
+                        'messagetrust' => new external_value(PARAM_INT, 'message trust'),
+                        'attachment' => new external_value(PARAM_RAW, 'attachment'),
+                        'totalscore' => new external_value(PARAM_INT, 'total score'),
+                        'mailnow' => new external_value(PARAM_INT, 'mail now')
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

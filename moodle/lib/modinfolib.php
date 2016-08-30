@@ -566,6 +566,7 @@ class course_modinfo {
             } else {
                 $id = $course->remoteid;
             }
+
             $sections = get_remote_course_sections($id, 'section');
         } else {
             // Get section data
