@@ -2585,7 +2585,7 @@ class local_mod_forum_external extends external_api
         $post->userid = $userid;
         $post->created = $timenow;
         $post->modified = $timenow;
-        $post->mailed = FORUM_MAILED_PENDING;
+        $post->mailed = 0;
         $post->subject = $discussion->name;
         $post->message = $discussion->message;
         $post->messageformat = $discussion->messageformat;
