@@ -36,12 +36,12 @@ switch($_POST['action']){
             $data->ctime = db_format_timestamp(time());
             $data->mtime = $data->ctime;
             insert_record('slide_storage', $data);
-            echo 'Create successful';
+            echo json_encode('Create successful');
         } else {
             $data->id = $slide->id;
             $data->mtime = db_format_timestamp(time());
             update_record('slide_storage', $data);
-            echo 'Update successful';
+            echo json_encode('Update successful');
         }
         db_commit();
         break;
@@ -50,7 +50,7 @@ switch($_POST['action']){
         if ($slide){
             echo $slide->content;
         } else {
-            echo 'Nothing to load!';
+            echo json_encode('Nothing to load!');
         }
         break;
     case REMOVE_PRESENTATION:
@@ -59,9 +59,9 @@ switch($_POST['action']){
             db_begin();
             delete_records('slide_storage', 'userid', $rmuserid, 'filename', $filename);
             db_commit();
-            echo "Delete Successfull.";
+            echo json_encode('Delete Successfull.');
         } else {
-            echo "Nothing to delete.";
+            echo json_encode('Nothing to delete.');
         }
         break;
     case LIST_PRESENTATION:

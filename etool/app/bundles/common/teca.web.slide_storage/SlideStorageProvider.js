@@ -127,7 +127,8 @@ define(function() {
                     userid: userid
                 },
                 success: function (response) {
-                    console.log(response);
+                    var resp = JSON.parse(response);
+                    console.log(resp);
                     if(cb) {
                         cb(true);
                     }
