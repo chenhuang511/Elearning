@@ -2590,7 +2590,7 @@ class local_mod_forum_external extends external_api
         $post->message = $discussion->message;
         $post->messageformat = $discussion->messageformat;
         $post->messagetrust = $discussion->messagetrust;
-        $post->attachments = isset($discussion->attachments) ? $discussion->attachments : null;
+        $post->attachment = isset($discussion->attachments) ? $discussion->attachments : null;
         $post->forum = $forum->id;     // speedup
         $post->course = $forum->course; // speedup
         $post->mailnow = $discussion->mailnow;
@@ -2713,8 +2713,9 @@ class local_mod_forum_external extends external_api
                         'message' => new external_value(PARAM_RAW, 'the message'),
                         'messageformat' => new external_value(PARAM_INT, 'message format'),
                         'messagetrust' => new external_value(PARAM_INT, 'message trust'),
-                        'attachment' => new external_value(PARAM_RAW, 'attachment'),
-                        'totalscore' => new external_value(PARAM_INT, 'total score'),
+                        'attachments' => new external_value(PARAM_RAW, 'attachments'),
+                        'forum' => new external_value(PARAM_INT, 'the forum id'),
+                        'course' => new external_value(PARAM_INT, 'the course id'),
                         'mailnow' => new external_value(PARAM_INT, 'mail now')
                     )
                 ),
