@@ -299,14 +299,27 @@ define(["./ComponentView", "libs/etch",
 				var element = this.$el[0];
 
 				if (this.table == undefined){
-					this.table = document.createElement("table");
-					element.appendChild(this.table);
+					this.tablediv = document.createElement('div-table');
+
+					element.appendChild(this.tablediv);
+					this.tablediv.innerHTML = '<table style="text-align: center;"> <thead> <tr> <th>Product</th> <th>Cost</th> <th>Really?</th> </tr> </thead> <tbody> <tr> <td>TinyMCE</td> <td>Free</td> <td>YES!</td> </tr> <tr> <td>Plupload</td> <td>Free</td> <td>YES!</td> </tr> </tbody> </table>'
 				}
-				var row = this.table.insertRow(0);
-				var cell0 = row.insertCell(0);
-				var cell1 = row.insertCell(1);
-				cell0.innerHTML = "NEW CELL0";
-    			cell1.innerHTML = "NEW CELL1";
+
+				tinymce.init({
+					selector: 'div-table',
+					plugins: [
+						'advlist autolink lists link image charmap print preview anchor',
+						'searchreplace visualblocks code fullscreen',
+						'insertdatetime media table contextmenu paste code'
+					],
+					toolbar: 'none',
+					menubar: 'none',
+					height: 500,
+					content_css: [
+   					 '//fast.fonts.net/cssapi/e6dc9b99-64fe-4292-ad98-6974f93cd2a2.css',
+					'//www.tinymce.com/css/codepen.min.css'
+  ]
+				});
 
 				return this.$el;
 			},
