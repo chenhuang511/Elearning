@@ -47,7 +47,7 @@ $isaccess = false;
 
 if (!empty($add)) {
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        if ($add !== 'forum') {
+        if (($add !== 'forum') and ($add !== 'quiz')) {
             echo $OUTPUT->header();
             echo 'Bạn không được cấp quyền truy cập trang này';
             echo $OUTPUT->footer();
@@ -136,7 +136,8 @@ if (!empty($add)) {
         $navbaraddition = $pageheading;
     }
 
-} else if (!empty($update)) {
+}
+else if (!empty($update)) {
 
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
         if ($update === "forum") {

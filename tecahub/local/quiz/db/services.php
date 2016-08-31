@@ -299,4 +299,20 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_quiz_db_insert_record' => array(
+	'classname'	  => 'local_mod_quiz_external',
+	'methodname'  => 'db_insert_record',
+	'classpath'	  => 'local/quiz/externallib.php',
+	'description' => "Insert a record into a table and return the id field if required.",
+	'type'		  => 'read',
+	'ajax'		  => true
+	),
+	'local_mod_quiz_db_delete_records' => array(
+	'classname'	  => 'local_mod_quiz_external',
+	'methodname'  => 'db_delete_records',
+	'classpath'	  => 'local/quiz/externallib.php',
+	'description' => "Delete the records from a table where all the given conditions met.",
+	'type'		  => 'read',
+	'ajax'		  => true
+	),
 );

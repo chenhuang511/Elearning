@@ -607,3 +607,43 @@ function remote_db_get_record($table,  $fields, $strictness, $conditions){
     }
     return $res;
 }
+
+/**
+ * using API insert_record from host to hub
+ */
+function remote_quiz_insert_record($tablename, $dataencode)
+{
+    $res = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_quiz_db_insert_record',
+            'params' => array('tablename' => $tablename, 'dataencode' => $dataencode)
+        ), false
+    );
+
+    if(!$res or !is_number($res)){
+        throw new coding_exception('Invalid local_mod_quiz_db_insert_record API. Please check your API');
+    }
+    return $res;
+
+}
+
+/**
+ * using API delete_records from host to hub
+ */
+function remote_quiz_delete_records($table, $condition)
+{
+    $res = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_quiz_db_delete_records',
+            'params' => array_merge(array('table' => $table), $condition)
+        ), false
+    );
+    if($res->status !== true){
+        throw new coding_exception('Invalid local_mod_delete_response_by_mbl API. Please check your API');
+    }
+    return $res;
+}

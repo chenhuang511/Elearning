@@ -345,8 +345,11 @@ function delete_remote_response_by_tbl($tablename, $select, $sort = '')
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_delete_response_by_mbl',
             'params' => array('tablename' => $tablename, 'select' => $select, 'sort' => $sort)
-        )
+        ), false
     );
+    if($res->status !== true){
+        throw new coding_exception('Invalid local_mod_delete_response_by_mbl API. Please check your API');
+    }
     return $res;
 }
 
@@ -366,5 +369,8 @@ function setfield_remote_response_by_tbl($tablename, $field, $value, $data)
             'params' => array_merge(array('tablename' => $tablename, 'field' => $field, 'value' => $value), $data)
         ), false
     );
+    if($res->status !== true){
+        throw new coding_exception('Invalid local_mod_setfield_response_by_mbl API. Please check your API');
+    }
     return $res;
 }
