@@ -472,7 +472,7 @@ class local_course_external extends external_api
 
         $sections = $DB->get_records('course_sections', array('course' => $courseid), 'section ASC', 'id,course,section,name,sequence');
 
-        if(!$sections) {
+        if (!$sections) {
             $sections = array();
         }
 
@@ -1998,5 +1998,64 @@ class local_course_external extends external_api
     public static function get_course_module_by_instance_returns()
     {
         return core_course_external::get_course_module_returns();
+    }
+
+    public static function get_list_course_module_competencies_in_course_module_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'cmorid' => new external_value(PARAM_RAW, 'id of cm')
+            )
+        );
+    }
+
+    public static function get_list_course_module_competencies_in_course_module($cmorid)
+    {
+
+        $params = self::validate_parameters(self::get_list_course_module_competencies_in_course_module_parameters(), array(
+            'cmorid' => $cmorid
+        ));
+
+        $cm = $params['cmorid'];
+        if (!is_object($params['cmorid'])) {
+            $cm = get_coursemodule_from_id('', $params['cmorid'], 0, true, MUST_EXIST);
+        }
+
+        var_dump($cm);
+
+        // Check the user have access to the course module.
+        \core_competency\api::validate_course_module($cm);
+        $context = context_module::instance($cm->id);
+
+        $capabilities = array('moodle/competency:coursecompetencyview', 'moodle/competency:coursecompetencymanage');
+        if (!has_any_capability($capabilities, $context)) {
+            throw new required_capability_exception($context, 'moodle/competency:coursecompetencyview', 'nopermissions', '');
+        }
+
+        $result = array();
+
+        $cmclist = \core_competency\course_module_competency::list_course_module_competencies($cm->id);
+        foreach ($cmclist as $id => $cmc) {
+            array_push($result, $cmc);
+        }
+
+        var_dump($result);
+
+        return $result;
+    }
+
+    public static function get_list_course_module_competencies_in_course_module_return()
+    {
+        return new external_single_structure(
+            array(
+                'cmc' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'id')
+                        )
+                    )
+                )
+            )
+        );
     }
 }

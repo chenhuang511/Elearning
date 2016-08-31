@@ -258,4 +258,12 @@ $functions = array(
         'type'		    => 'write',
         'ajax'		    => true
     ),
+    'local_get_list_course_module_competencies_in_course_module' => array(
+        'classname'     => 'local_course_external',
+        'methodname'    => 'get_list_course_module_competencies_in_course_module',
+        'classpath'     => 'local/course/externallib.php',
+        'description'   => 'get course modules competencies in course module',
+        'type'		    => 'write',
+        'ajax'		    => true
+    ),
 );
