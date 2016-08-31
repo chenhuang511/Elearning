@@ -2559,6 +2559,7 @@ class local_mod_forum_external extends external_api
 
         global $DB;
         $warnings = array();
+        $result = array();
 
         $params = self::validate_parameters(self::forum_add_discussions_parameters(), array(
             'discussiondata' => $discussiondata,
@@ -2590,7 +2591,7 @@ class local_mod_forum_external extends external_api
         $post->message = $discussion->message;
         $post->messageformat = $discussion->messageformat;
         $post->messagetrust = $discussion->messagetrust;
-        $post->attachment = isset($discussion->attachments) ? $discussion->attachments : null;
+        $post->attachments = isset($discussion->attachments) ? $discussion->attachments : null;
         $post->forum = $forum->id;     // speedup
         $post->course = $forum->course; // speedup
         $post->mailnow = $discussion->mailnow;
@@ -2623,13 +2624,6 @@ class local_mod_forum_external extends external_api
 
         $transaction->allow_commit();
 
-        // Let Moodle know that assessable content is uploaded (eg for plagiarism detection)
-        if (!empty($cm->id)) {
-            forum_trigger_content_uploaded_event($post, $cm, 'forum_add_discussion');
-        }
-
-        $result = array();
-
         if(!$forum)
             $forum = new stdClass();
         if(!$cm)
@@ -2648,30 +2642,30 @@ class local_mod_forum_external extends external_api
             array(
                 'forum' => new external_single_structure(
                     array(
-                        'id' => new external_value(PARAM_INT, 'the forum id'),
-                        'course' => new external_value(PARAM_INT, 'the course id'),
+                        'id' => new external_value(PARAM_RAW, 'the forum id'),
+                        'course' => new external_value(PARAM_RAW, 'the course id'),
                         'type' => new external_value(PARAM_RAW, 'type'),
                         'name' => new external_value(PARAM_RAW, 'forum name'),
                         'intro' => new external_value(PARAM_RAW, 'Page introduction text.'),
-                        'introformat' => new external_format_value(PARAM_INT, 'intro format', VALUE_OPTIONAL),
-                        'assessed' => new external_value(PARAM_INT, 'assessed'),
-                        'assesstimestart' => new external_value(PARAM_INT, 'assess time start'),
-                        'assesstimefinish' => new external_value(PARAM_INT, 'assess time finish'),
-                        'scale' => new external_format_value(PARAM_INT, 'scale'),
-                        'maxbytes' => new external_value(PARAM_INT, 'max bytes'),
-                        'maxattachments' => new external_value(PARAM_INT, 'max attachments'),
-                        'forcesubscribe' => new external_value(PARAM_INT, 'force subscribe'),
-                        'trackingtype' => new external_value(PARAM_INT, 'tracking type'),
-                        'rsstype' => new external_value(PARAM_INT, 'rss type'),
-                        'rssarticles' => new external_value(PARAM_INT, 'rss articles'),
-                        'timemodified' => new external_format_value(PARAM_INT, 'time modified'),
-                        'warnafter' => new external_value(PARAM_INT, 'warn after'),
-                        'blockafter' => new external_value(PARAM_INT, 'block after'),
-                        'blockperiod' => new external_value(PARAM_INT, 'block period'),
-                        'completiondiscussions' => new external_value(PARAM_INT, 'completion discussions'),
-                        'completionreplies' => new external_value(PARAM_INT, 'completion replies'),
-                        'completionposts' => new external_value(PARAM_INT, 'completion posts'),
-                        'displaywordcount' => new external_value(PARAM_INT, 'display word count')
+                        'introformat' => new external_format_value(PARAM_RAW, 'intro format'),
+                        'assessed' => new external_value(PARAM_RAW, 'assessed'),
+                        'assesstimestart' => new external_value(PARAM_RAW, 'assess time start'),
+                        'assesstimefinish' => new external_value(PARAM_RAW, 'assess time finish'),
+                        'scale' => new external_format_value(PARAM_RAW, 'scale'),
+                        'maxbytes' => new external_value(PARAM_RAW, 'max bytes'),
+                        'maxattachments' => new external_value(PARAM_RAW, 'max attachments'),
+                        'forcesubscribe' => new external_value(PARAM_RAW, 'force subscribe'),
+                        'trackingtype' => new external_value(PARAM_RAW, 'tracking type'),
+                        'rsstype' => new external_value(PARAM_RAW, 'rss type'),
+                        'rssarticles' => new external_value(PARAM_RAW, 'rss articles'),
+                        'timemodified' => new external_format_value(PARAM_RAW, 'time modified'),
+                        'warnafter' => new external_value(PARAM_RAW, 'warn after'),
+                        'blockafter' => new external_value(PARAM_RAW, 'block after'),
+                        'blockperiod' => new external_value(PARAM_RAW, 'block period'),
+                        'completiondiscussions' => new external_value(PARAM_RAW, 'completion discussions'),
+                        'completionreplies' => new external_value(PARAM_RAW, 'completion replies'),
+                        'completionposts' => new external_value(PARAM_RAW, 'completion posts'),
+                        'displaywordcount' => new external_value(PARAM_RAW, 'display word count')
                     )
                 ),
                 'cm' => new external_single_structure(
@@ -2687,22 +2681,21 @@ class local_mod_forum_external extends external_api
                         'groupmode' => new external_value(PARAM_INT, 'Group mode'),
                         'groupingid' => new external_value(PARAM_INT, 'Grouping id'),
                         'completion' => new external_value(PARAM_INT, 'If completion is enabled'),
-                        'idnumber' => new external_value(PARAM_RAW, 'Module id number', VALUE_OPTIONAL),
-                        'added' => new external_value(PARAM_INT, 'Time added', VALUE_OPTIONAL),
-                        'score' => new external_value(PARAM_INT, 'Score', VALUE_OPTIONAL),
-                        'indent' => new external_value(PARAM_INT, 'Indentation', VALUE_OPTIONAL),
-                        'visible' => new external_value(PARAM_INT, 'If visible', VALUE_OPTIONAL),
-                        'visibleold' => new external_value(PARAM_INT, 'Visible old', VALUE_OPTIONAL),
-                        'completiongradeitemnumber' => new external_value(PARAM_INT, 'Completion grade item', VALUE_OPTIONAL),
-                        'completionview' => new external_value(PARAM_INT, 'Completion view setting', VALUE_OPTIONAL),
-                        'completionexpected' => new external_value(PARAM_INT, 'Completion time expected', VALUE_OPTIONAL),
-                        'showdescription' => new external_value(PARAM_INT, 'If the description is showed', VALUE_OPTIONAL),
-                        'availability' => new external_value(PARAM_RAW, 'Availability settings', VALUE_OPTIONAL)
+                        'idnumber' => new external_value(PARAM_RAW, 'Module id number'),
+                        'added' => new external_value(PARAM_INT, 'Time added'),
+                        'score' => new external_value(PARAM_INT, 'Score'),
+                        'indent' => new external_value(PARAM_INT, 'Indentation'),
+                        'visible' => new external_value(PARAM_INT, 'If visible'),
+                        'visibleold' => new external_value(PARAM_INT, 'Visible old'),
+                        'completiongradeitemnumber' => new external_value(PARAM_INT, 'Completion grade item'),
+                        'completionview' => new external_value(PARAM_INT, 'Completion view setting'),
+                        'completionexpected' => new external_value(PARAM_INT, 'Completion time expected'),
+                        'showdescription' => new external_value(PARAM_INT, 'If the description is showed'),
+                        'availability' => new external_value(PARAM_RAW, 'Availability settings')
                     )
                 ),
                 'post' => new external_single_structure(
                     array(
-                        'id' => new external_value(PARAM_INT, 'the id'),
                         'discussion' => new external_value(PARAM_INT, 'the discussion id'),
                         'parent' => new external_value(PARAM_INT, 'the parent'),
                         'userid' => new external_value(PARAM_INT, 'the user id'),
@@ -2712,11 +2705,12 @@ class local_mod_forum_external extends external_api
                         'subject' => new external_value(PARAM_RAW, 'the subject'),
                         'message' => new external_value(PARAM_RAW, 'the message'),
                         'messageformat' => new external_value(PARAM_INT, 'message format'),
-                        'messagetrust' => new external_value(PARAM_INT, 'message trust'),
+                        'messagetrust' => new external_value(PARAM_RAW, 'message trust'),
                         'attachments' => new external_value(PARAM_RAW, 'attachments'),
-                        'forum' => new external_value(PARAM_INT, 'the forum id'),
-                        'course' => new external_value(PARAM_INT, 'the course id'),
-                        'mailnow' => new external_value(PARAM_INT, 'mail now')
+                        'forum' => new external_value(PARAM_RAW, 'the forum id'),
+                        'course' => new external_value(PARAM_RAW, 'the course id'),
+                        'mailnow' => new external_value(PARAM_RAW, 'mail now'),
+                        'id' => new external_value(PARAM_INT, 'the id'),
                     )
                 ),
                 'warnings' => new external_warnings()
