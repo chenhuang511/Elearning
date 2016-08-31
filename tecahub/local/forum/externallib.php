@@ -2630,9 +2630,8 @@ class local_mod_forum_external extends external_api
             $cm = new stdClass();
 
         $result['forum'] = $forum;
-        //$result['cm'] = $cm;
-        //$result['post'] = $post;
-        //$result['warnings'] = $warnings;
+        $result['post'] = $post;
+        $result['warnings'] = $warnings;
         return $result;
     }
 
@@ -2667,53 +2666,27 @@ class local_mod_forum_external extends external_api
                         'completionposts' => new external_value(PARAM_INT, 'completion posts'),
                         'displaywordcount' => new external_value(PARAM_INT, 'display word count')
                     )
-                )
-//                'cm' => new external_single_structure(
-//                    array(
-//                        'id' => new external_value(PARAM_INT, 'The course module id'),
-//                        'course' => new external_value(PARAM_INT, 'The course id'),
-//                        'module' => new external_value(PARAM_INT, 'The module type id'),
-//                        'name' => new external_value(PARAM_RAW, 'The activity name'),
-//                        'modname' => new external_value(PARAM_COMPONENT, 'The module component name (forum, assign, etc..)'),
-//                        'instance' => new external_value(PARAM_INT, 'The activity instance id'),
-//                        'section' => new external_value(PARAM_INT, 'The module section id'),
-//                        'sectionnum' => new external_value(PARAM_INT, 'The module section number'),
-//                        'groupmode' => new external_value(PARAM_INT, 'Group mode'),
-//                        'groupingid' => new external_value(PARAM_INT, 'Grouping id'),
-//                        'completion' => new external_value(PARAM_INT, 'If completion is enabled'),
-//                        'idnumber' => new external_value(PARAM_RAW, 'Module id number', VALUE_OPTIONAL),
-//                        'added' => new external_value(PARAM_INT, 'Time added', VALUE_OPTIONAL),
-//                        'score' => new external_value(PARAM_INT, 'Score', VALUE_OPTIONAL),
-//                        'indent' => new external_value(PARAM_INT, 'Indentation', VALUE_OPTIONAL),
-//                        'visible' => new external_value(PARAM_INT, 'If visible', VALUE_OPTIONAL),
-//                        'visibleold' => new external_value(PARAM_INT, 'Visible old', VALUE_OPTIONAL),
-//                        'completiongradeitemnumber' => new external_value(PARAM_INT, 'Completion grade item', VALUE_OPTIONAL),
-//                        'completionview' => new external_value(PARAM_INT, 'Completion view setting', VALUE_OPTIONAL),
-//                        'completionexpected' => new external_value(PARAM_INT, 'Completion time expected', VALUE_OPTIONAL),
-//                        'showdescription' => new external_value(PARAM_INT, 'If the description is showed', VALUE_OPTIONAL),
-//                        'availability' => new external_value(PARAM_RAW, 'Availability settings', VALUE_OPTIONAL)
-//                    )
-//                ),
-//                'post' => new external_single_structure(
-//                    array(
-//                        'id' => new external_value(PARAM_INT, 'the id'),
-//                        'discussion' => new external_value(PARAM_INT, 'the discussion id'),
-//                        'parent' => new external_value(PARAM_INT, 'the parent'),
-//                        'userid' => new external_value(PARAM_INT, 'the user id'),
-//                        'created' => new external_value(PARAM_INT, 'created'),
-//                        'modified' => new external_value(PARAM_INT, 'modified'),
-//                        'mailed' => new external_value(PARAM_INT, 'mailed'),
-//                        'subject' => new external_value(PARAM_RAW, 'the subject'),
-//                        'message' => new external_value(PARAM_RAW, 'the message'),
-//                        'messageformat' => new external_value(PARAM_INT, 'message format'),
-//                        'messagetrust' => new external_value(PARAM_INT, 'message trust'),
-//                        'attachments' => new external_value(PARAM_RAW, 'attachments'),
-//                        'forum' => new external_value(PARAM_INT, 'the forum id'),
-//                        'course' => new external_value(PARAM_INT, 'the course id'),
-//                        'mailnow' => new external_value(PARAM_INT, 'mail now')
-//                    )
-//                ),
-//                'warnings' => new external_warnings()
+                ),
+                'post' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'the id'),
+                        'discussion' => new external_value(PARAM_INT, 'the discussion id'),
+                        'parent' => new external_value(PARAM_INT, 'the parent'),
+                        'userid' => new external_value(PARAM_INT, 'the user id'),
+                        'created' => new external_value(PARAM_INT, 'created'),
+                        'modified' => new external_value(PARAM_INT, 'modified'),
+                        'mailed' => new external_value(PARAM_INT, 'mailed'),
+                        'subject' => new external_value(PARAM_RAW, 'the subject'),
+                        'message' => new external_value(PARAM_RAW, 'the message'),
+                        'messageformat' => new external_value(PARAM_INT, 'message format'),
+                        'messagetrust' => new external_value(PARAM_INT, 'message trust'),
+                        'attachments' => new external_value(PARAM_RAW, 'attachments'),
+                        'forum' => new external_value(PARAM_INT, 'the forum id'),
+                        'course' => new external_value(PARAM_INT, 'the course id'),
+                        'mailnow' => new external_value(PARAM_INT, 'mail now')
+                    )
+                ),
+                'warnings' => new external_warnings()
             )
         );
     }
