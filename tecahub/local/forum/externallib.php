@@ -2629,6 +2629,12 @@ class local_mod_forum_external extends external_api
         }
 
         $result = array();
+
+        if(!$forum)
+            $forum = new stdClass();
+        if(!$cm)
+            $cm = new stdClass();
+
         $result['forum'] = $forum;
         $result['cm'] = $cm;
         $result['post'] = $post;
