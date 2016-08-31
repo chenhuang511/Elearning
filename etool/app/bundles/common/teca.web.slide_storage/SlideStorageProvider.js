@@ -98,7 +98,11 @@ define(function() {
                     if (response != null){
                         try {
                             var data = JSON.parse(response);
-                            cb(data);
+                            if (typeof data === 'string') {
+                                console.log(data);
+                            } else {
+                                cb(data);
+                            }
                         } catch (e) {
                             cb(null, e);
                         }
