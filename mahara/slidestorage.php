@@ -15,11 +15,11 @@ $filename = isset($_POST['filename']) ? $_POST['filename']: null;
 $rawdata = isset($_POST['data']) ? $_POST['data']: null;
 
 if(empty($rmuserid)){
-    echo 'Empty userid. We can do nothing';
+    echo json_encode('Empty userid. We can do nothing');
     die;
 }
 if($cruserid != $rmuserid) {
-    echo 'Different userid. We can do nothing';
+    echo json_encode('Different userid. We can do nothing');
     die;
 }
 
