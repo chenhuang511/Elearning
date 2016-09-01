@@ -1750,7 +1750,7 @@ class local_course_external extends external_api
 
         $newid = $DB->insert_record($params['modname'], $obj);
         // make context in hub if insert new course_modules
-        if($params['modname'] === 'course_modules' and is_number($newid)){
+        if ($params['modname'] === 'course_modules' and is_number($newid)) {
             $context = context_module::instance($newid);
         }
 
@@ -2025,10 +2025,8 @@ class local_course_external extends external_api
             $cm = get_coursemodule_from_id('', $params['cmorid'], 0, true, MUST_EXIST);
         }
 
-        var_dump($cm);
-
         // Check the user have access to the course module.
-        \core_competency\api::validate_course_module($cm);
+        self::validate_course_module($cm);
         $context = context_module::instance($cm->id);
 
         $capabilities = array('moodle/competency:coursecompetencyview', 'moodle/competency:coursecompetencymanage');
@@ -2061,5 +2059,29 @@ class local_course_external extends external_api
                 )
             )
         );
+    }
+
+    private static function validate_course_module($cmmixed, $throwexception = true)
+    {
+        $cm = $cmmixed;
+        if (!is_object($cm)) {
+            $cmrecord = get_coursemodule_from_id(null, $cmmixed);
+            $modinfo = get_fast_modinfo($cmrecord->course);
+            $cm = $modinfo->get_cm($cmmixed);
+        } else if (!$cm instanceof cm_info) {
+            // Assume we got a course module record.
+            $modinfo = get_fast_modinfo($cm->course);
+            $cm = $modinfo->get_cm($cm->id);
+        }
+
+        if (!$cm->uservisible) {
+            if ($throwexception) {
+                throw new require_login_exception('Course module is hidden');
+            } else {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
