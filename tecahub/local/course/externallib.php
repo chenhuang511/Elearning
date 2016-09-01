@@ -2048,7 +2048,7 @@ class local_course_external extends external_api
         return $result;
     }
 
-    public static function get_list_course_module_competencies_in_course_module_return()
+    public static function get_list_course_module_competencies_in_course_module_returns()
     {
         return new external_single_structure(
             array(
