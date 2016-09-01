@@ -2069,6 +2069,73 @@ class local_course_external extends external_api
         );
     }
 
+    public static function can_add_moduleinfo_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, ' the course id'),
+                'modulename' => new external_value(PARAM_RAW, 'the module name'),
+                'section' => new external_value(PARAM_INT, 'the section number')
+            )
+        );
+    }
+
+    public static function can_add_moduleinfo($courseid, $modulename, $section)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::can_add_moduleinfo_parameters(), array(
+            'courseid' => $courseid,
+            'modulename' => $modulename,
+            'section' => $section
+        ));
+
+        $course = $DB->get_record('course', array('id' => $params['courseid']), '*', MUST_EXIST);
+        var_dump($course);
+        $module = $DB->get_record('modules', array('name' => $params['modulename']), '*', MUST_EXIST);
+        var_dump($module);
+        $context = context_course::instance($course->id);
+        require_capability('moodle/course:manageactivities', $context);
+
+        course_create_sections_if_missing($course, $section);
+        $cw = get_fast_modinfo($course)->get_section_info($section);
+        var_dump($cw);
+        if (!course_allowed_module($course, $module->name)) {
+            $warnings['message'] = print_error('moduledisable');
+        }
+
+        die();
+        $result = array();
+        $result['module'] = $module;
+        $result['cw'] = $cw;
+        return $result;
+    }
+
+    public static function can_add_moduleinfo_returns()
+    {
+        return new external_single_structure(
+            array(
+                'module' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'the id'),
+                        'name' => new external_value(PARAM_RAW, 'the name'),
+                        'cron' => new external_value(PARAM_INT, 'the cron'),
+                        'lastcron' => new external_value(PARAM_INT, 'the last cron'),
+                        'search' => new external_value(PARAM_RAW, 'the search'),
+                        'visible' => new external_value(PARAM_INT, 'the visible')
+                    )
+                ),
+                'cw' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'the id')
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
     private static function validate_course_module($cmmixed, $throwexception = true)
     {
         $cm = $cmmixed;
