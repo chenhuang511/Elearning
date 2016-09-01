@@ -2041,22 +2041,17 @@ class local_course_external extends external_api
             array_push($result, $cmc);
         }
 
-        var_dump($result);
+        $cmc = json_encode($result);
+        var_dump($cmc);
 
-        return $result;
+        return $cmc;
     }
 
     public static function get_list_course_module_competencies_in_course_module_returns()
     {
         return new external_single_structure(
             array(
-                'cmc' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'id' => new external_value(PARAM_INT, 'id')
-                        )
-                    )
-                )
+                'cmc' => new external_value(PARAM_RAW, 'object')
             )
         );
     }
