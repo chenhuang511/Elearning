@@ -148,8 +148,8 @@ function add_moduleinfo($moduleinfo, $course, $mform = null)
         $cmupdate['data[0][value]'] = $returnfromfunc;
 
         $rs = update_remote_mdl_course("course_modules", $moduleinfo->coursemodule, $cmupdate);
-    } else {
-    $DB->set_field('course_modules', 'instance', $returnfromfunc, array('id' => $moduleinfo->coursemodule));
+    }else{
+        $DB->set_field('course_modules', 'instance', $returnfromfunc, array('id' => $moduleinfo->coursemodule));
     }
 
     // Update embedded links and save files.
@@ -158,14 +158,13 @@ function add_moduleinfo($moduleinfo, $course, $mform = null)
         $moduleinfo->intro = file_save_draft_area_files($introeditor['itemid'], $modcontext->id,
             'mod_' . $moduleinfo->modulename, 'intro', 0,
             array('subdirs' => true), $introeditor['text']);
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            $cmupdate = array();
-            $cmupdate['data[0][name]'] = "intro";
-            $cmupdate['data[0][value]'] = $moduleinfo->intro;
-
-            $rs = update_remote_mdl_course("course_modules", $moduleinfo->instance, $cmupdate);
-        } else {
-        $DB->set_field($moduleinfo->modulename, 'intro', $moduleinfo->intro, array('id' => $moduleinfo->instance));
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $data = array();
+            $data['data[0][name]'] = 'id';
+            $data['data[0][value]'] = $moduleinfo->instance;
+            setfield_remote_response_by_tbl($moduleinfo->modulename, 'intro', $moduleinfo->intro, $data);
+        }else{
+            $DB->set_field($moduleinfo->modulename, 'intro', $moduleinfo->intro, array('id'=>$moduleinfo->instance));
         }
     }
 

@@ -1474,8 +1474,8 @@ function add_course_module($mod)
             if ($key == "course") {
                 $localcourse = $DB->get_record('course', array('id' => $val));
                 $cmdata["data[$i][value]"] = $localcourse ? $localcourse->remoteid : $val;
-            } else if ($key == "availability" && $val == null) {
-                $cmdata["data[$i][value]"] = "";
+            } else if(is_null($val)){
+                $cmdata["data[$i][value]"] = ""; // PARAM_RAW không nhận kiểu dữ liệu === null => chuyển về dạng string
             } else {
                 $cmdata["data[$i][value]"] = $val;
             }
@@ -1627,7 +1627,7 @@ function course_add_cm_to_section($courseorid, $cmid, $sectionnum, $beforemod = 
         $updatedata['data[0][name]'] = "section";
         $updatedata['data[0][value]'] = $section->id;
         $result = update_remote_mdl_course("course_modules", $cmid, $updatedata);
-    } else {
+    }else{
         $DB->set_field("course_sections", "sequence", $newsequence, array("id" => $section->id));
         $DB->set_field('course_modules', 'section', $section->id, array('id' => $cmid));
     }

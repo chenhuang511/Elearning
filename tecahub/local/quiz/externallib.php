@@ -2752,4 +2752,127 @@ ORDER BY
         );
     }
 
+    /**
+     * Hanv 29/08/2016
+     * Insert a record into a table and return the "id" field if required.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     *
+     */
+    public static function db_insert_record_parameters() {
+        return new external_function_parameters (
+            array(
+                'tablename' => new external_value(PARAM_RAW, 'table'),
+                'dataencode' => new external_value(PARAM_RAW_TRIMMED, 'data array ison_encode'),
+            )
+        );
+    }
+
+    /**
+     * Insert a record into a table and return the "id" field if required.
+     *
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function db_insert_record($table, $dataencode) {
+        global $CFG, $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::db_insert_record_parameters(),
+            array('tablename' => $table, 'dataencode' => $dataencode));
+
+        $data = json_decode($params['dataencode'], true);
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $id = $DB->insert_record($params['tablename'], $data);
+
+        $transaction->allow_commit();
+
+        return $id;
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function db_insert_record_returns() {
+        return new external_value(PARAM_INT, 'Standard Moodle primary key.');
+    }
+
+    /**
+     * Hanv 29/08/2016
+     * Delete the records from a table where all the given conditions met.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     *
+     */
+    public static function db_delete_records_parameters() {
+        return new external_function_parameters (
+            array(
+                'table' => new external_value(PARAM_RAW, 'table'),
+                'conditions' => new  external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'name'),
+                            'value' => new external_value(PARAM_RAW, 'value'),
+                        )
+                    )
+                ),
+            )
+        );
+    }
+
+    /**
+     * Delete the records from a table where all the given conditions met.
+     *
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function db_delete_records($table, $conditions) {
+        global $CFG, $DB;
+        $warnings = array();
+        //validate parameter
+        $params = self::validate_parameters(self::db_delete_records_parameters(),
+            array('table' => $table, 'conditions' => $conditions));
+
+        $result = array();
+        $r_conditions = array();
+        foreach ($params['conditions'] as $element) {
+            $r_conditions[$element['name']] = $element['value'];
+        }
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $DB->delete_records($table, $r_conditions);
+
+        $transaction->allow_commit();
+
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function db_delete_records_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
 }

@@ -1749,6 +1749,10 @@ class local_course_external extends external_api
         $transaction = $DB->start_delegated_transaction();
 
         $newid = $DB->insert_record($params['modname'], $obj);
+        // make context in hub if insert new course_modules
+        if($params['modname'] === 'course_modules' and is_number($newid)){
+            $context = context_module::instance($newid);
+        }
 
         $transaction->allow_commit();
 

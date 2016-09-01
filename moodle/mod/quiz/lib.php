@@ -76,6 +76,7 @@ define('QUIZ_NAVMETHOD_SEQ',  'sequential');
  */
 function quiz_add_instance($quiz) {
     global $DB;
+    $isremote = (MOODLE_RUN_MODE === MOODLE_MODE_HUB)?true:false;
     $cmid = $quiz->coursemodule;
 
     // Process the options from the form.
@@ -86,11 +87,33 @@ function quiz_add_instance($quiz) {
     }
 
     // Try to store it in the database.
-    $quiz->id = $DB->insert_record('quiz', $quiz);
-
-    // Create the first section for this quiz.
-    $DB->insert_record('quiz_sections', array('quizid' => $quiz->id,
+    if($isremote){
+        // Insert data in hub database. using json_encode data
+        $quizdata = $quiz;
+        $localcourse = $DB->get_record('course', array('id' => $quiz->course));
+        $quizdata->course = $localcourse->remoteid;
+        $quizdata = json_encode($quizdata);
+        $quiz->id = remote_quiz_insert_record("quiz", $quizdata);
+        if($quiz->course !== $localcourse->id){
+            $quiz->course = $localcourse->id;
+        }
+        // Create the first section for this quiz.
+        $quizsectiondata = array();
+        $quizsectiondata["data[0][name]"] = 'quizid';
+        $quizsectiondata["data[0][value]"] = $quiz->id;
+        $quizsectiondata["data[1][name]"] = 'firstslot';
+        $quizsectiondata["data[1][value]"] = 1;
+        $quizsectiondata["data[2][name]"] = 'heading';
+        $quizsectiondata["data[2][value]"] = '';
+        $quizsectiondata["data[3][name]"] = 'shufflequestions';
+        $quizsectiondata["data[3][value]"] = 0;
+        save_remote_mdl_course("quiz_sections", $quizsectiondata);
+    }else{
+        $quiz->id = $DB->insert_record('quiz', $quiz);
+        // Create the first section for this quiz.
+        $DB->insert_record('quiz_sections', array('quizid' => $quiz->id,
             'firstslot' => 1, 'heading' => '', 'shufflequestions' => 0));
+    }
 
     // Do the processing required after an add or an update.
     quiz_after_add_or_update($quiz);
@@ -1125,14 +1148,29 @@ function quiz_review_option_form_to_db($fromform, $field) {
  */
 function quiz_after_add_or_update($quiz) {
     global $DB;
+    $isremote = (MOODLE_RUN_MODE === MOODLE_MODE_HUB)?true:false;
     $cmid = $quiz->coursemodule;
 
     // We need to use context now, so we need to make sure all needed info is already in db.
-    $DB->set_field('course_modules', 'instance', $quiz->id, array('id'=>$cmid));
+    if($isremote){
+        $data = array();
+        $data['data[0][name]'] = 'id';
+        $data['data[0][value]'] = $cmid;
+        setfield_remote_response_by_tbl('course_modules', 'instance', $quiz->id, $data);
+    }else{
+        $DB->set_field('course_modules', 'instance', $quiz->id, array('id'=>$cmid));
+    }
     $context = context_module::instance($cmid);
 
     // Save the feedback.
-    $DB->delete_records('quiz_feedback', array('quizid' => $quiz->id));
+    if($isremote){
+        $data = array();
+        $data['conditions[0][name]'] = 'quizid';
+        $data['conditions[0][value]'] = $quiz->id;
+        remote_quiz_delete_records('quiz_feedback', $data);
+    }else{
+        $DB->delete_records('quiz_feedback', array('quizid' => $quiz->id));
+    }
 
     for ($i = 0; $i <= $quiz->feedbackboundarycount; $i++) {
         $feedback = new stdClass();
@@ -1146,14 +1184,22 @@ function quiz_after_add_or_update($quiz) {
                 $context->id, 'mod_quiz', 'feedback', $feedback->id,
                 array('subdirs' => false, 'maxfiles' => -1, 'maxbytes' => 0),
                 $quiz->feedbacktext[$i]['text']);
-        $DB->set_field('quiz_feedback', 'feedbacktext', $feedbacktext,
+        if($isremote){
+            $feedbackdata = array();
+            $feedbackdata['data[0][name]'] = 'id';
+            $feedbackdata['data[0][value]'] = $feedback->id;
+            setfield_remote_response_by_tbl('quiz_feedback', 'feedbacktext', $feedbacktext, $feedbackdata);
+        }else{
+            $DB->set_field('quiz_feedback', 'feedbacktext', $feedbacktext,
                 array('id' => $feedback->id));
+        }
     }
 
     // Store any settings belonging to the access rules.
     quiz_access_manager::save_settings($quiz);
 
     // Update the events relating to this quiz.
+    // @TODO: xử lý update_events.
     quiz_update_events($quiz);
 
     // Update related grade item.

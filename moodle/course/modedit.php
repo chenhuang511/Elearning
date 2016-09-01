@@ -142,7 +142,8 @@ if (!empty($add)) {
         $navbaraddition = $pageheading;
     }
 
-} else if (!empty($update)) {
+}
+else if (!empty($update)) {
 
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
         foreach ($accessmodules as $am) {

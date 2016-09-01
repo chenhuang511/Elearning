@@ -2264,8 +2264,10 @@ function rebuild_course_cache($courseid=0, $clearonly=false) {
         $sitecacherev = $DB->get_field('course', 'cacherev', array('id' => SITEID));
         $SITE->cachrev = $sitecacherev;
         if ($COURSE->id == SITEID) {
+            /** @var TYPE_NAME $COURSE */
             $COURSE->cacherev = $sitecacherev;
         } else {
+            /** @var TYPE_NAME $COURSE */
             $COURSE->cacherev = $DB->get_field('course', 'cacherev', array('id' => $COURSE->id));
         }
     } else {
@@ -2277,6 +2279,7 @@ function rebuild_course_cache($courseid=0, $clearonly=false) {
         if ($courseid == $COURSE->id || $courseid == $SITE->id) {
             $cacherev = $DB->get_field('course', 'cacherev', array('id' => $courseid));
             if ($courseid == $COURSE->id) {
+                /** @var TYPE_NAME $COURSE */
                 $COURSE->cacherev = $cacherev;
             }
             if ($courseid == $SITE->id) {
