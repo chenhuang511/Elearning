@@ -163,7 +163,9 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
     </td>
 </tr>
 <tr valign="top" class="required">
-    <td align="right"><?php echo html_writer::label(get_string('auth_cas_language_key', 'auth_cas'), 'menulanguage'); ?>:</td>
+    <td align="right">
+        <?php echo html_writer::label(get_string('auth_cas_language_key', 'auth_cas'), 'menulanguage'); ?>:
+    </td>
     <td>
         <?php echo html_writer::select($CASLANGUAGES, 'language', $config->language, false); ?>
     </td>
@@ -183,7 +185,9 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
     </td>
 </tr>
 <tr valign="top" class="required">
-    <td align="right"><?php echo html_writer::label(get_string('auth_cas_logoutcas_key', 'auth_cas'), 'menulogoutcas'); ?>:</td>
+    <td align="right">
+        <?php echo html_writer::label(get_string('auth_cas_logoutcas_key', 'auth_cas'), 'menulogoutcas'); ?>:
+    </td>
     <td>
         <?php echo html_writer::select($yesno, 'logoutcas', $config->logoutcas, false); ?>
     </td>
@@ -192,7 +196,9 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
     </td>
 </tr>
 <tr valign="top" class="required">
-    <td align="right"><?php echo html_writer::label(get_string('auth_cas_multiauth_key', 'auth_cas'), 'menumultiauth'); ?>:</td>
+    <td align="right">
+        <?php echo html_writer::label(get_string('auth_cas_multiauth_key', 'auth_cas'), 'menumultiauth'); ?>:
+    </td>
     <td>
         <?php echo html_writer::select($yesno, 'multiauth', $config->multiauth, false); ?>
     </td>
@@ -201,7 +207,9 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
     </td>
 </tr>
 <tr valign="top"  class="required">
-    <td align="right"><?php echo html_writer::label(get_string('auth_cas_certificate_check_key', 'auth_cas'), 'menucertificate_check'); ?>:</td>
+    <td align="right">
+        <?php echo html_writer::label(get_string('auth_cas_certificate_check_key', 'auth_cas'), 'menucertificate_check'); ?>:
+    </td>
     <td>
         <?php echo html_writer::select($yesno, 'certificate_check', $config->certificate_check, false); ?>
     </td>
@@ -210,7 +218,8 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
     </td>
 </tr>
 <tr valign="top" class="required">
-    <td align="right"><label for="certificate_path"><?php print_string('auth_cas_certificate_path_key', 'auth_cas') ?>: </label></td>
+    <td align="right">
+        <label for="certificate_path"><?php print_string('auth_cas_certificate_path_key', 'auth_cas') ?>: </label></td>
     <td>
         <input name="certificate_path" id="certificate_path" type="text" size="30" value="<?php echo $config->certificate_path ?>" />
         <?php if (isset($err['certificate_path'])) echo $OUTPUT->error_text($err['certificate_path']); ?>
