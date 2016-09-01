@@ -2022,7 +2022,7 @@ class local_course_external extends external_api
 
         $cm = $params['cmorid'];
         if (!is_object($params['cmorid'])) {
-            $cm = get_coursemodule_from_id('', $params['cmorid'], 0, true, MUST_EXIST);
+            $cm = self::get_coursemodule_from_id('', $params['cmorid'], 0, true, MUST_EXIST);
         }
 
         // Check the user have access to the course module.
@@ -2091,5 +2091,52 @@ class local_course_external extends external_api
         }
 
         return true;
+    }
+
+    private static function get_coursemodule_from_id($modulename, $cmid, $courseid = 0, $sectionnum = false, $strictness = IGNORE_MISSING)
+    {
+        global $DB;
+
+        $params = array('cmid' => $cmid);
+
+        if (!$modulename) {
+            if (!$modulename = $DB->get_field_sql("SELECT md.name
+                                                 FROM {modules} md
+                                                 JOIN {course_modules} cm ON cm.module = md.id
+                                                WHERE cm.id = :cmid", $params, $strictness)
+            ) {
+                return false;
+            }
+        } else {
+            if (!core_component::is_valid_plugin_name('mod', $modulename)) {
+                throw new coding_exception('Invalid modulename parameter');
+            }
+        }
+
+        $params['modulename'] = $modulename;
+
+        $courseselect = "";
+        $sectionfield = "";
+        $sectionjoin = "";
+
+        if ($courseid) {
+            $courseselect = "AND cm.course = :courseid";
+            $params['courseid'] = $courseid;
+        }
+
+        if ($sectionnum) {
+            $sectionfield = ", cw.section AS sectionnum";
+            $sectionjoin = "LEFT JOIN {course_sections} cw ON cw.id = cm.section";
+        }
+
+        $sql = "SELECT cm.*, m.name, md.name AS modname $sectionfield
+              FROM {course_modules} cm
+                   JOIN {modules} md ON md.id = cm.module
+                   JOIN {" . $modulename . "} m ON m.id = cm.instance
+                   $sectionjoin
+             WHERE cm.id = :cmid AND md.name = :modulename
+                   $courseselect";
+
+        return $DB->get_record_sql($sql, $params, $strictness);
     }
 }
