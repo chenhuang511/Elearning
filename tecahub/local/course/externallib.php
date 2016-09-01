@@ -2092,13 +2092,11 @@ class local_course_external extends external_api
         ));
 
         $course = $DB->get_record('course', array('id' => $params['courseid']), '*', MUST_EXIST);
-        var_dump($course);
         $module = $DB->get_record('modules', array('name' => $params['modulename']), '*', MUST_EXIST);
         var_dump($module);
         $context = context_course::instance($course->id);
-        require_capability('moodle/course:manageactivities', $context);
 
-        course_create_sections_if_missing($course, $section);
+        self::course_create_sections_if_missing($course, $section);
         $cw = get_fast_modinfo($course)->get_section_info($section);
         var_dump($cw);
         if (!course_allowed_module($course, $module->name)) {
@@ -2134,6 +2132,35 @@ class local_course_external extends external_api
                 'warnings' => new external_warnings()
             )
         );
+    }
+
+    private static function course_create_sections_if_missing($courseorid, $sections)
+    {
+        global $DB;
+        if (!is_array($sections)) {
+            $sections = array($sections);
+        }
+        $existing = array_keys(get_fast_modinfo($courseorid)->get_section_info_all());
+        if (is_object($courseorid)) {
+            $courseorid = $courseorid->id;
+        }
+        $coursechanged = false;
+        foreach ($sections as $sectionnum) {
+            if (!in_array($sectionnum, $existing)) {
+                $cw = new stdClass();
+                $cw->course = $courseorid;
+                $cw->section = $sectionnum;
+                $cw->summary = '';
+                $cw->summaryformat = FORMAT_HTML;
+                $cw->sequence = '';
+                $id = $DB->insert_record("course_sections", $cw);
+                $coursechanged = true;
+            }
+        }
+        if ($coursechanged) {
+            rebuild_course_cache($courseorid, true);
+        }
+        return $coursechanged;
     }
 
     private static function validate_course_module($cmmixed, $throwexception = true)
