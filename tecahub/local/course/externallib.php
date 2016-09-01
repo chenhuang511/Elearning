@@ -2022,36 +2022,49 @@ class local_course_external extends external_api
 
         $cm = $params['cmorid'];
         if (!is_object($params['cmorid'])) {
-            $cm = get_coursemodule_from_id('', $params['cmorid'], 0, true, MUST_EXIST);
+            $cm = self::get_coursemodule_from_id('', $params['cmorid'], 0, true, MUST_EXIST);
         }
 
         // Check the user have access to the course module.
         self::validate_course_module($cm);
         $context = context_module::instance($cm->id);
 
-        $capabilities = array('moodle/competency:coursecompetencyview', 'moodle/competency:coursecompetencymanage');
-        if (!has_any_capability($capabilities, $context)) {
-            throw new required_capability_exception($context, 'moodle/competency:coursecompetencyview', 'nopermissions', '');
-        }
-
         $result = array();
+        $result['cm'] = $cm;
 
-        $cmclist = \core_competency\course_module_competency::list_course_module_competencies($cm->id);
-        foreach ($cmclist as $id => $cmc) {
-            array_push($result, $cmc);
-        }
-
-        $cmc = json_encode($result);
-        var_dump($cmc);
-
-        return $cmc;
+        return $result;
     }
 
     public static function get_list_course_module_competencies_in_course_module_returns()
     {
         return new external_single_structure(
             array(
-                'cmc' => new external_value(PARAM_RAW, 'object')
+                'cm' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'The course module id'),
+                        'course' => new external_value(PARAM_INT, 'The course id'),
+                        'module' => new external_value(PARAM_INT, 'The module type id'),
+                        'instance' => new external_value(PARAM_INT, 'The activity instance id'),
+                        'section' => new external_value(PARAM_INT, 'The module section id'),
+                        'idnumber' => new external_value(PARAM_RAW, 'Module id number', VALUE_OPTIONAL),
+                        'added' => new external_value(PARAM_INT, 'Time added', VALUE_OPTIONAL),
+                        'score' => new external_value(PARAM_INT, 'Score', VALUE_OPTIONAL),
+                        'indent' => new external_value(PARAM_INT, 'Indentation', VALUE_OPTIONAL),
+                        'visible' => new external_value(PARAM_INT, 'If visible', VALUE_OPTIONAL),
+                        'visibleold' => new external_value(PARAM_INT, 'Visible old', VALUE_OPTIONAL),
+                        'groupmode' => new external_value(PARAM_INT, 'Group mode'),
+                        'groupingid' => new external_value(PARAM_INT, 'Grouping id'),
+                        'completion' => new external_value(PARAM_INT, 'If completion is enabled'),
+                        'completiongradeitemnumber' => new external_value(PARAM_INT, 'Completion grade item', VALUE_OPTIONAL),
+                        'completionview' => new external_value(PARAM_INT, 'Completion view setting', VALUE_OPTIONAL),
+                        'completionexpected' => new external_value(PARAM_INT, 'Completion time expected', VALUE_OPTIONAL),
+                        'showdescription' => new external_value(PARAM_INT, 'If the description is showed', VALUE_OPTIONAL),
+                        'availability' => new external_value(PARAM_RAW, 'Availability settings', VALUE_OPTIONAL),
+                        'name' => new external_value(PARAM_RAW, 'The activity name'),
+                        'modname' => new external_value(PARAM_COMPONENT, 'The module component name (forum, assign, etc..)'),
+                        'sectionnum' => new external_value(PARAM_INT, 'The module section number')
+                    )
+                )
             )
         );
     }
@@ -2078,5 +2091,52 @@ class local_course_external extends external_api
         }
 
         return true;
+    }
+
+    private static function get_coursemodule_from_id($modulename, $cmid, $courseid = 0, $sectionnum = false, $strictness = IGNORE_MISSING)
+    {
+        global $DB;
+
+        $params = array('cmid' => $cmid);
+
+        if (!$modulename) {
+            if (!$modulename = $DB->get_field_sql("SELECT md.name
+                                                 FROM {modules} md
+                                                 JOIN {course_modules} cm ON cm.module = md.id
+                                                WHERE cm.id = :cmid", $params, $strictness)
+            ) {
+                return false;
+            }
+        } else {
+            if (!core_component::is_valid_plugin_name('mod', $modulename)) {
+                throw new coding_exception('Invalid modulename parameter');
+            }
+        }
+
+        $params['modulename'] = $modulename;
+
+        $courseselect = "";
+        $sectionfield = "";
+        $sectionjoin = "";
+
+        if ($courseid) {
+            $courseselect = "AND cm.course = :courseid";
+            $params['courseid'] = $courseid;
+        }
+
+        if ($sectionnum) {
+            $sectionfield = ", cw.section AS sectionnum";
+            $sectionjoin = "LEFT JOIN {course_sections} cw ON cw.id = cm.section";
+        }
+
+        $sql = "SELECT cm.*, m.name, md.name AS modname $sectionfield
+              FROM {course_modules} cm
+                   JOIN {modules} md ON md.id = cm.module
+                   JOIN {" . $modulename . "} m ON m.id = cm.instance
+                   $sectionjoin
+             WHERE cm.id = :cmid AND md.name = :modulename
+                   $courseselect";
+
+        return $DB->get_record_sql($sql, $params, $strictness);
     }
 }
