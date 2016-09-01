@@ -26,3 +26,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'Tương tác với nhiều lần thử';
+$string['triesremaining'] = 'Lần thử còn lại: {$a}';

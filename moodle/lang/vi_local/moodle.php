@@ -49,4 +49,5 @@ $string['parentfolder'] = 'Thư mục gốc';
 $string['privatefiles'] = 'Tập tin cá nhân';
 $string['privatefilesmanage'] = 'Quản lý tập tin cá nhân';
 $string['selectalluserswithcount'] = 'Chọn tất cả {$a} người dùng';
+$string['sitehome'] = 'Trang chủ hệ thống';
 $string['total'] = 'Tổng cộng';

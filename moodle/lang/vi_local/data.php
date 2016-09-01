@@ -26,3 +26,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['csvfile'] = 'Tệp CSV';
+$string['menuchoose'] = 'Chọn...';

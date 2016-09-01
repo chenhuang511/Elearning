@@ -25,4 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['correctansweris'] = 'Câu trả lời đúng là: {$a}';
+$string['selectmulti'] = 'Chọn một hoặc nhiều đáp án:';
 $string['selectone'] = 'Chọn một đáp án';

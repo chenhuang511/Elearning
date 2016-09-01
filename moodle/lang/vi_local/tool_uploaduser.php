@@ -25,6 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['csvdelimiter'] = 'Dấu phân cách CSV';
 $string['uploadpictures'] = 'Tải lên hình ảnh người dùng';
 $string['uploadpicture_overwrite'] = 'Ghi đè lên hình ảnh người sử dụng hiện tại?';
 $string['uploadpicture_userfield'] = 'Thuộc tính người dùng sử dụng để phù hợp với hình ảnh:';

@@ -18,15 +18,11 @@
 /**
  * Local language pack from http://192.168.1.253
  *
- * @package    core
- * @subpackage cohort
+ * @package    qtype
+ * @subpackage match
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['allcohorts'] = 'Tất cả các đoàn thể';
-$string['defaultcontext'] = 'Ngữ cảnh mặc định';
-$string['preview'] = 'Xem trước';
-$string['systemcohorts'] = 'Hệ thống đoàn thể';
-$string['uploadcohorts'] = 'Tải lên các đoàn thể';
+$string['correctansweris'] = 'Câu trả lời đúng là: {$a}';

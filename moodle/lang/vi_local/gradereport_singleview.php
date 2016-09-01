@@ -25,7 +25,18 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['all_grades'] = 'Tất cả điểm';
+$string['blanks'] = 'Điểm trống';
+$string['bulkappliesto'] = 'Cho';
+$string['bulkinsertvalue'] = 'Giá trị chèn';
+$string['bulkperform'] = 'Thực hiện chèn số lượng lớn';
 $string['entrypage'] = 'Chấm điểm cho người dùng hoặc chấm điểm cho mục';
+$string['exclude'] = 'Ngoại trừ';
+$string['excludeall'] = 'Loại trừ tất cả điểm';
+$string['gradeitem'] = 'Mục điểm: {$a}';
+$string['override'] = 'Ghi đè';
+$string['overrideall'] = 'Ghi đè tất cả điểm';
+$string['overridefor'] = 'Ghi đè cho {$a}';
 $string['pluginname'] = 'Xem đơn lẻ';
 $string['selectgrade'] = 'Chọn mục điểm...';
 $string['selectuser'] = 'Chọn người dùng...';

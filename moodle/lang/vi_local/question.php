@@ -25,5 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['notyetanswered'] = 'Chưa trả lời';
 $string['options'] = 'Tùy chọn';
 $string['questionname'] = 'Tên câu hỏi';
+$string['tagarea_question'] = 'Câu hỏi';

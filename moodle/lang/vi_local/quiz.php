@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['addnewpagesafterselected'] = 'Thêm trang mới sau khi đã chọn câu hỏi';
 $string['addquestion'] = 'Thêm câu hỏi';
+$string['attemptalreadyclosed'] = 'Lần thi này đã được kết thúc.';
 $string['attemptclosed'] = 'Lần thi chưa kết thúc';
 $string['attemptnumber'] = 'Lần thi';
 $string['attempts'] = 'Số lần thi';
@@ -42,6 +43,7 @@ $string['decimalplaces'] = 'Số thập phân trong điểm';
 $string['decimalplacesquestion'] = 'Số chữ số thập phân trong điểm mỗi câu hỏi';
 $string['delay1st2nd'] = 'Khoảng thời gian trì hoãn giữa lần thi thứ nhất và thứ hai';
 $string['delaylater'] = 'Khoảng thời gian trì hoãn bắt buộc giữa các lần thi sau';
+$string['editoverride'] = 'Chỉnh sửa ghi đè';
 $string['enabled'] = 'Đã kích hoạt';
 $string['endtest'] = 'Kết thúc bài thi';
 $string['extraattemptrestrictions'] = 'Thêm hạn chế cho bài thi';
@@ -74,6 +76,11 @@ $string['overduehandlingautoabandon'] = 'Bài thi phải được nộp trước
 $string['overduehandlingautosubmit'] = 'Bài thi được nộp tự động';
 $string['overduehandlinggraceperiod'] = 'Có một khoảng thời gian ân hạn khi mở lần thi có thể được nộp, nhưng không được trả lời thêm câu hỏi';
 $string['overduemustbesubmittedby'] = 'Lần thi này bây giờ quá hạn. Nó nên được nộp ngay. Nếu bạn muốn bài thi này được chấm điểm, bạn phải nộp nó trước {$a}. Nếu bạn không nôp nó sau thời gian đó thì lần thi này sẽ không có giá trị.';
+$string['override'] = 'Ghi đè';
+$string['overridegroup'] = 'Ghi đè nhóm';
+$string['overrides'] = 'Ghi đè';
+$string['overrideuser'] = 'Ghi đè người dùng';
+$string['overrideusereventname'] = '{$a->quiz} - Ghi đè';
 $string['pluginadministration'] = 'Quản lý bài thi';
 $string['previewquiznow'] = 'Xem trước bài thi ngay bây giờ';
 $string['qname'] = 'tên';

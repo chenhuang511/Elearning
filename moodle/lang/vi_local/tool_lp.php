@@ -29,6 +29,7 @@ $string['actions'] = 'Hành động';
 $string['addcoursecompetencies'] = 'Thêm năng lực cho khóa học';
 $string['addnewcompetencyframework'] = 'Thêm khung năng lực mới';
 $string['addnewtemplate'] = 'Thêm mới biểu mẫu kế hoạch học tập';
+$string['category'] = 'Danh mục';
 $string['competencyframework'] = 'Khung năng lực';
 $string['competencyframeworkname'] = 'Tên';
 $string['competencyframeworks'] = 'Khung năng lực';

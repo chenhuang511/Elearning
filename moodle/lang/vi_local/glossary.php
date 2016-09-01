@@ -26,3 +26,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['answer'] = 'Đáp án';
+$string['cantinsertcat'] = 'Không thể chèn danh mục';
+$string['category'] = 'Danh mục';
+$string['categorydeleted'] = 'Danh mục đã xóa';
+$string['duplicatecategory'] = 'Nhân đôi danh mục';
+$string['question'] = 'Câu hỏi';

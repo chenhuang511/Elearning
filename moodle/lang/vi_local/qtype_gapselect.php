@@ -25,4 +25,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['correctansweris'] = 'Câu trả lời đúng là: {$a}';
 $string['group'] = 'Nhóm';

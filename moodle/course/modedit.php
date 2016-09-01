@@ -45,7 +45,7 @@ if (!empty($return)) {
 
 $accessmodules = explode(",", $CFG->accessmodules);
 
-$isaccess = false;
+$isaccess = true;
 
 if (!empty($add)) {
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
