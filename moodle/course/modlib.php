@@ -148,7 +148,7 @@ function add_moduleinfo($moduleinfo, $course, $mform = null)
         $cmupdate['data[0][value]'] = $returnfromfunc;
 
         $rs = update_remote_mdl_course("course_modules", $moduleinfo->coursemodule, $cmupdate);
-    }else{
+    } else {
         $DB->set_field('course_modules', 'instance', $returnfromfunc, array('id' => $moduleinfo->coursemodule));
     }
 
@@ -158,13 +158,13 @@ function add_moduleinfo($moduleinfo, $course, $mform = null)
         $moduleinfo->intro = file_save_draft_area_files($introeditor['itemid'], $modcontext->id,
             'mod_' . $moduleinfo->modulename, 'intro', 0,
             array('subdirs' => true), $introeditor['text']);
-        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
             $data = array();
             $data['data[0][name]'] = 'id';
             $data['data[0][value]'] = $moduleinfo->instance;
             setfield_remote_response_by_tbl($moduleinfo->modulename, 'intro', $moduleinfo->intro, $data);
-        }else{
-            $DB->set_field($moduleinfo->modulename, 'intro', $moduleinfo->intro, array('id'=>$moduleinfo->instance));
+        } else {
+            $DB->set_field($moduleinfo->modulename, 'intro', $moduleinfo->intro, array('id' => $moduleinfo->instance));
         }
     }
 
@@ -447,14 +447,21 @@ function set_moduleinfo_defaults($moduleinfo)
 function can_add_moduleinfo($course, $modulename, $section)
 {
     global $DB;
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $context = context_course::instance($course->id);
+        require_capability('moodle/course:manageactivities', $context);
 
+        $module = get_remote_can_add_moduleinfo($course->remoteid, $modulename, $section);
+    } else {
 
-    $module = $DB->get_record('modules', array('name' => $modulename), '*', MUST_EXIST);
+        $module = $DB->get_record('modules', array('name' => $modulename), '*', MUST_EXIST);
 
-    $context = context_course::instance($course->id);
-    require_capability('moodle/course:manageactivities', $context);
+        $context = context_course::instance($course->id);
+        require_capability('moodle/course:manageactivities', $context);
 
-    course_create_sections_if_missing($course, $section);
+        course_create_sections_if_missing($course, $section);
+    }
+
     $cw = get_fast_modinfo($course)->get_section_info($section);
 
     if (!course_allowed_module($course, $module->name)) {
