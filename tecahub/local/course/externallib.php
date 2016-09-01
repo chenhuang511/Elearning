@@ -1751,6 +1751,7 @@ class local_course_external extends external_api
         $newid = $DB->insert_record($params['modname'], $obj);
         // make context in hub if insert new course_modules
         if ($params['modname'] === 'course_modules' and is_number($newid)) {
+            rebuild_course_cache($obj->course, true);
             $context = context_module::instance($newid);
         }
 
