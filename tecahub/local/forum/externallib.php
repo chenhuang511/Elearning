@@ -2624,13 +2624,12 @@ class local_mod_forum_external extends external_api
 
         $transaction->allow_commit();
 
-        if(!$forum)
+        if (!$forum)
             $forum = new stdClass();
-        if(!$cm)
+        if (!$cm)
             $cm = new stdClass();
 
         $result['forum'] = $forum;
-        $result['cm'] = $cm;
         $result['post'] = $post;
         $result['warnings'] = $warnings;
         return $result;
@@ -2666,32 +2665,6 @@ class local_mod_forum_external extends external_api
                         'completionreplies' => new external_value(PARAM_INT, 'completion replies'),
                         'completionposts' => new external_value(PARAM_INT, 'completion posts'),
                         'displaywordcount' => new external_value(PARAM_INT, 'display word count')
-                    )
-                ),
-                'cm' => new external_single_structure(
-                    array(
-                        'id' => new external_value(PARAM_INT, 'The course module id'),
-                        'course' => new external_value(PARAM_INT, 'The course id'),
-                        'module' => new external_value(PARAM_INT, 'The module type id'),
-                        'name' => new external_value(PARAM_RAW, 'The activity name'),
-                        'modname' => new external_value(PARAM_COMPONENT, 'The module component name (forum, assign, etc..)'),
-                        'instance' => new external_value(PARAM_INT, 'The activity instance id'),
-                        'section' => new external_value(PARAM_INT, 'The module section id'),
-                        'sectionnum' => new external_value(PARAM_INT, 'The module section number'),
-                        'groupmode' => new external_value(PARAM_INT, 'Group mode'),
-                        'groupingid' => new external_value(PARAM_INT, 'Grouping id'),
-                        'completion' => new external_value(PARAM_INT, 'If completion is enabled'),
-                        'idnumber' => new external_value(PARAM_RAW, 'Module id number', VALUE_OPTIONAL),
-                        'added' => new external_value(PARAM_INT, 'Time added', VALUE_OPTIONAL),
-                        'score' => new external_value(PARAM_INT, 'Score', VALUE_OPTIONAL),
-                        'indent' => new external_value(PARAM_INT, 'Indentation', VALUE_OPTIONAL),
-                        'visible' => new external_value(PARAM_INT, 'If visible', VALUE_OPTIONAL),
-                        'visibleold' => new external_value(PARAM_INT, 'Visible old', VALUE_OPTIONAL),
-                        'completiongradeitemnumber' => new external_value(PARAM_INT, 'Completion grade item', VALUE_OPTIONAL),
-                        'completionview' => new external_value(PARAM_INT, 'Completion view setting', VALUE_OPTIONAL),
-                        'completionexpected' => new external_value(PARAM_INT, 'Completion time expected', VALUE_OPTIONAL),
-                        'showdescription' => new external_value(PARAM_INT, 'If the description is showed', VALUE_OPTIONAL),
-                        'availability' => new external_value(PARAM_RAW, 'Availability settings', VALUE_OPTIONAL)
                     )
                 ),
                 'post' => new external_single_structure(
