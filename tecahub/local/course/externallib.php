@@ -2016,7 +2016,6 @@ class local_course_external extends external_api
 
     public static function get_list_course_module_competencies_in_course_module($cmorid)
     {
-
         $params = self::validate_parameters(self::get_list_course_module_competencies_in_course_module_parameters(), array(
             'cmorid' => $cmorid
         ));
@@ -2097,20 +2096,16 @@ class local_course_external extends external_api
 
         $course = $DB->get_record('course', array('id' => $params['courseid']), '*', MUST_EXIST);
         $module = $DB->get_record('modules', array('name' => $params['modulename']), '*', MUST_EXIST);
-        var_dump($module);
         $context = context_course::instance($course->id);
         require_capability('moodle/course:manageactivities', $context);
         course_create_sections_if_missing($course, $section);
         $cw = get_fast_modinfo($course)->get_section_info($section);
-        var_dump($cw);
         if (!course_allowed_module($course, $module->name)) {
             $warnings['message'] = print_error('moduledisable');
         }
 
-        die();
         $result = array();
         $result['module'] = $module;
-        $result['cw'] = $cw;
         return $result;
     }
 
@@ -2126,11 +2121,6 @@ class local_course_external extends external_api
                         'lastcron' => new external_value(PARAM_INT, 'the last cron'),
                         'search' => new external_value(PARAM_RAW, 'the search'),
                         'visible' => new external_value(PARAM_INT, 'the visible')
-                    )
-                ),
-                'cw' => new external_single_structure(
-                    array(
-                        'id' => new external_value(PARAM_INT, 'the id')
                     )
                 ),
                 'warnings' => new external_warnings()
