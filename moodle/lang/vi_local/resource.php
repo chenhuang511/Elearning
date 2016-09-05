@@ -27,3 +27,4 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['clicktoopen2'] = 'Nhấn {$a} để xem tập tin.';
 $string['optionsheader'] = 'Hiển thị các lựa chọn';
+$string['showtype'] = 'Hiển thị kiểu';

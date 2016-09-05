@@ -29,3 +29,4 @@ $string['component'] = 'Thành phần';
 $string['dname'] = 'Tên';
 $string['filter'] = 'Bộ lọc';
 $string['name'] = 'Tên';
+$string['pluginname'] = 'Danh sách sự kiện';

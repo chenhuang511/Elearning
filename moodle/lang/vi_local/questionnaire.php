@@ -49,6 +49,7 @@ $string['deletingresp'] = 'Đang xóa câu trả lời';
 $string['downloadtextformat'] = 'Tải xuống theo định dạng văn bản';
 $string['edit'] = 'Chỉnh sửa';
 $string['errnewname'] = 'Xin lỗi, tên đã tồn tại. Vùi lòng chọn tên khác.';
+$string['feedbacktype'] = 'Loại phản hồi';
 $string['field'] = 'Câu hỏi {$a}';
 $string['finished'] = 'Bạn đã trả lời tất cả câu hỏi trong khảo sát!';
 $string['grade'] = 'Điểm của bài nộp';

@@ -28,3 +28,4 @@ defined('MOODLE_INTERNAL') || die();
 $string['basicltiname'] = 'Tên hoạt động';
 $string['default'] = 'Mặc định';
 $string['never'] = 'Không bao giờ';
+$string['types'] = 'Loại';

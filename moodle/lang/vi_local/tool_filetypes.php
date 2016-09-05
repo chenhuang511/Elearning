@@ -25,5 +25,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['addfiletypes'] = 'Thêm một loại tập tin mới';
 $string['displaydescription'] = 'Mô tả';
+$string['extension'] = 'Mở rộng';
+$string['groups'] = 'Loại nhóm';
+$string['mimetype'] = 'Loại MIME';
 $string['pluginname'] = 'Loại tập tin';
+$string['source'] = 'Loại';
+$string['source_standard'] = 'Tiêu chuẩn';

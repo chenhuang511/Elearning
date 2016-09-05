@@ -25,4 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['configlog'] = 'Thay đổi cấu hình';
 $string['plugin'] = 'Tiện ích';
+$string['pluginname'] = 'Thay đổi cấu hình';

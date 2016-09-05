@@ -25,4 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['pluginname'] = 'Các trường hợp câu hỏi';
+$string['questioninstances:view'] = 'Xem báo cáo các trường hợp câu hỏi';
 $string['totalquestions'] = 'Tổng cộng';

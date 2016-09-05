@@ -26,3 +26,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['name'] = 'Tên';
+$string['pluginname'] = 'Hoàn thành khóa học';

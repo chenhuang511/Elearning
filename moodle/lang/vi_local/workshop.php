@@ -25,6 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['allowedfiletypesforsubmission'] = 'Bài nộp được cho phép đính kèm loại tệp';
 $string['alreadygraded'] = 'Đã chấm điểm';
 $string['introduction'] = 'Mô tả';
 $string['nothingfound'] = 'Không có gì để hiển thị';
