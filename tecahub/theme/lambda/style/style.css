@@ -600,7 +600,7 @@ Course
 }
 
 .courseimage{
-	width: auto;
+	width: auto !important;
 }
 
 .coursebox .content .courseimage img {
