@@ -255,6 +255,10 @@ input#button-send{
     max-width: 150px;
     margin-right: 5px;
 }
+
+.navbar-inner .clearfix .usermenu li{
+    margin-right: 10px;
+}
     /***********/
 
 .userprofile .el-category:nth-child(3n) {

@@ -1050,6 +1050,7 @@ $string['loggedinas'] = 'You are logged in as {$a}';
 $string['loggedinasguest'] = 'You are currently using guest access';
 $string['loggedinnot'] = 'You are not logged in.';
 $string['login'] = 'Log in';
+$string['logincas'] = 'Log in CAS';
 $string['loginactivity'] = 'Login activity';
 $string['loginalready'] = 'You are already logged in';
 $string['loginas'] = 'Log in as';
