@@ -130,4 +130,20 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_grade_get_sum_grader_report_by_sql_query' => array(
+        'classname' => 'local_grade_external',
+        'methodname' => 'get_sum_grader_report_by_sql_query',
+        'classpath' => 'local/grade/externallib.php',
+        'description' => 'Get sum grader by sql query must include host ip',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_grade_get_count_grader_report_by_sql_query' => array(
+        'classname' => 'local_grade_external',
+        'methodname' => 'get_count_grader_report_by_sql_query',
+        'classpath' => 'local/grade/externallib.php',
+        'description' => 'Get count grader by sql query must include host ip',
+        'type' => 'read',
+        'ajax' => true
+    ),
 );
