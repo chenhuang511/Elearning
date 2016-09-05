@@ -1651,6 +1651,9 @@ class grade_report_grader extends grade_report {
 
                 if ($meanselection == GRADE_REPORT_MEAN_GRADED) {
                     $meancount = $totalcount - $ungradedcount;
+                    if ($meancount < 0) {
+                        $meancount = $totalcount - abs($meancount);
+                    }
                 } else { // Bump up the sum by the number of ungraded items * grademin
                     $sumarray[$item->id] += $ungradedcount * $item->grademin;
                     $meancount = $totalcount;
