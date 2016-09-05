@@ -65,7 +65,7 @@ echo $OUTPUT->doctype() ?>
         </div>
     </header>
     <?php } ?>
-
+    >
     <div id="page-content" class="row-fluid">
         <div id="<?php echo $regionbsid ?>" class="span9">
             <div class="row-fluid">
