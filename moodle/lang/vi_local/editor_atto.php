@@ -27,4 +27,5 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'Trình soạn thảo Atto HTML';
 $string['settings'] = 'Thiết lập thanh công cụ Atto';
+$string['subplugintype_atto'] = 'Tiện ích Atto';
 $string['subplugintype_atto_plural'] = 'Các tiện ích Atto';

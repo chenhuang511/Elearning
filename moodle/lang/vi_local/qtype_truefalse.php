@@ -28,4 +28,4 @@ defined('MOODLE_INTERNAL') || die();
 $string['pluginname'] = 'Đúng/Sai';
 $string['pluginnameadding'] = 'Thêm câu hỏi Đúng/Sai';
 $string['pluginnameediting'] = 'Chỉnh sửa câu hỏi Đúng/Sai';
-$string['selectone'] = 'Lựa chọn một đáp án:';
+$string['selectone'] = 'Chọn một đáp án:';

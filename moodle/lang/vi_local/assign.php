@@ -86,6 +86,7 @@ $string['lastmodifiedsubmission'] = 'Lần sửa đổi cuối (lần nộp)';
 $string['locksubmissions'] = 'Khóa bài nộp';
 $string['markingallocation'] = 'Sử dụng đánh dấu phân bổ';
 $string['markingworkflow'] = 'Sử dụng đánh dấu công việc';
+$string['markingworkflowstatereleased'] = 'Đã phát hành';
 $string['maxattempts'] = 'Số lần nộp tối đa';
 $string['maxperpage'] = 'Số bài tập tối đa mỗi trang';
 $string['messageprovider:assign_notification'] = 'Thông báo cho bài tập';

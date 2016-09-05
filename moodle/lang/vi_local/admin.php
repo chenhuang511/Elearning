@@ -25,8 +25,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['alternativefullnameformat'] = 'Thay thế định dạng tên đầy đủ';
+$string['alternativefullnameformat_desc'] = 'Điều này xác định tên được hiển thị đến người dùng như thế nào với khả năng xem tên đầy đủ (bởi người dùng mặc định với vai trò của người quản lý, giáo viên, trợ giảng). Giữ chỗ mà có thể được sử dụng cho thiết lập "Định dạng tên đầy đủ".';
 $string['availablesearchareas'] = 'Khu vực sẵn sàng cho tìm kiếm';
 $string['configpathtodu'] = 'Đường dẫn đến du';
+$string['configproxybypass'] = 'Dấu phẩy ngăn cách danh sách máy chủ (một phần) hoặc địa chỉ IP, cái nên vượt qua proxy (ví dụ: 192.168., .mydomain.com)';
 $string['configtempdatafoldercleanup'] = 'Gỡ bỏ các tập tin dữ liệu tạm thời từ thư mục dữ liệu đã quá thời gian lựa chọn.';
 $string['enableglobalsearch'] = 'Kích hoạt tìm kiếm toàn bộ';
 $string['enableglobalsearch_desc'] = 'Nếu được kích hoạt, dữ liệu sẽ được lập chỉ mục và đồng bộ bởi một nhiệm vụ theo lịch trình.';
@@ -46,6 +49,7 @@ $string['passwordreuselimit'] = 'Giới hạn thay đổi mật khẩu';
 $string['passwordreuselimit_desc'] = 'Số lần người dùng phải thay đổi mật khẩu của họ trước khi họ được phép tái sử dụng một mật khẩu. Hashes của mật khẩu sử dụng trước đó được lưu trữ trong bảng cơ sở dữ liệu địa phương. Tính năng này có thể không tương thích với một số bổ sung xác thực bên ngoài.';
 $string['pathtounoconv'] = 'Đường dẫn đến chuyển đổi tài liệu unoconv';
 $string['pathtounoconv_help'] = 'Đường dẫn đến chuyển đổi tài liệu unoconv. Đây là một thực thi mà có thể chuyển đổi giữa các định dạng tài liệu hỗ trợ bởi LibreOffice. Đây là tùy chọn, nhưng nếu được chỉ định, Moodle sẽ sử dụng nó để tự động chuyển đổi giữa các định dạng tài liệu. Điều này được sử dụng để hỗ trợ một phạm vi rộng lớn hơn của các tập tin đầu vào cho tính năng PDF chuyển nhượng chú thích.';
+$string['plugins'] = 'Tiện ích';
 $string['profilecategory'] = 'Danh mục';
 $string['questionbehaviours'] = 'Hành vi câu hỏi';
 $string['questiontypes'] = 'Loại hình câu hỏi';

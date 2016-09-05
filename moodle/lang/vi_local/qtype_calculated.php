@@ -26,3 +26,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['nextpage'] = 'Trang tiếp theo';
+$string['tolerancetype'] = 'Loại';

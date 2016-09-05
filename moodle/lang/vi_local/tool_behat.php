@@ -26,3 +26,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'Kiểm thử chấp nhận';
+$string['stepsdefinitionstype'] = 'Loại';

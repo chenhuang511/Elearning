@@ -26,3 +26,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['description'] = 'Mô tả';
+$string['pluginname'] = 'Tổng quan bảo mật';

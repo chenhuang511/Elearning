@@ -32,6 +32,7 @@ $string['certificatename'] = 'Tên chứng chỉ';
 $string['certificatetype'] = 'Loại chứng chỉ';
 $string['certify'] = 'Chứng chỉ này để xác nhận';
 $string['code'] = 'Mã';
+$string['completiondate'] = 'Hoàn thành khóa học';
 $string['coursegrade'] = 'Điểm khóa học';
 $string['coursetimereq'] = 'Thời gian bắt buộc của khóa học';
 $string['customtext'] = 'Bản văn người dùng';

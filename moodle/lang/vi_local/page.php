@@ -25,4 +25,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['displayselectexplain'] = 'Lựa chọn kiểu hiển thị';
 $string['optionsheader'] = 'Hiển thị các lựa chọn';

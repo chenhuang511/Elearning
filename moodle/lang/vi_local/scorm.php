@@ -29,3 +29,6 @@ $string['browse'] = 'Xem trước';
 $string['calculatedweight'] = 'Trọng lượng tính';
 $string['deleteselected'] = 'Xóa những lần thi được chọn';
 $string['scormopen'] = 'Có hiệu lực từ';
+$string['scormtype'] = 'Loại';
+$string['tracktype'] = 'Loại';
+$string['type'] = 'Loại';

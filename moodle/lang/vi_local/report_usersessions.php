@@ -26,3 +26,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['navigationlink'] = 'Phiên trình duyệt';
+$string['pluginname'] = 'Báo cáo học viên trong buổi học';
