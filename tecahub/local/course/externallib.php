@@ -2149,6 +2149,9 @@ class local_course_external extends external_api
         $moduleinfoobj = json_decode($params['moduleinfo']);
         $courseobj = json_decode($params['course']);
 
+        $moduleinfoobj->course = $courseobj->remoteid;
+        $courseobj->id = $courseobj->remoteid;
+
         require_once($CFG->dirroot . '/course/modlib.php');
 
         $modinfo = add_moduleinfo($moduleinfoobj, $courseobj, null);
