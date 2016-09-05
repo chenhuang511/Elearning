@@ -2128,6 +2128,50 @@ class local_course_external extends external_api
         );
     }
 
+    public static function add_moduleinfo_by_parameters() {
+        return new external_function_parameters(
+            array(
+                'moduleinfo' => new external_value(PARAM_RAW, 'module info'),
+                'course' => new external_value(PARAM_RAW, 'module info'),
+            )
+        );
+    }
+
+    public static function add_moduleinfo_by($moduleinfo, $course)
+    {
+        global $CFG, $DB;
+        $warnings = array();
+        $params = self::validate_parameters(self::add_moduleinfo_by_parameters(), array(
+            'moduleinfo' => $moduleinfo,
+            'course' => $course
+        ));
+
+        $moduleinfoobj = json_decode($params['moduleinfo']);
+        $courseobj = json_decode($params['course']);
+
+        $moduleinfoobj->course = $courseobj->remoteid;
+        $courseobj->id = $courseobj->remoteid;
+
+        require_once($CFG->dirroot . '/course/modlib.php');
+
+        $modinfo = add_moduleinfo($moduleinfoobj, $courseobj, null);
+
+        $result = array();
+        $result['moduleinfo'] = json_encode($modinfo);
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function add_moduleinfo_by_returns() {
+        return new external_single_structure(
+            array(
+                'moduleinfo' => new external_value(PARAM_RAW),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
     private static function validate_course_module($cmmixed, $throwexception = true)
     {
         $cm = $cmmixed;

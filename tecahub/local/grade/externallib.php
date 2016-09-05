@@ -806,4 +806,90 @@ class local_grade_external extends external_api
             ), 'grade category'
         );
     }
+
+    public static function get_sum_grader_report_by_sql_query_parameters() {
+        return new external_function_parameters (
+            array(
+                'sql' => new external_value(PARAM_RAW, 'sql'),
+                'param' => new  external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'name'),
+                            'value' => new external_value(PARAM_RAW, 'value'),
+                        )
+                    )
+                ),
+            )
+        );
+    }
+
+    public static function get_sum_grader_report_by_sql_query($sql, $param) {
+        global $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::get_sum_grader_report_by_sql_query_parameters(),
+            array('sql' => $sql, 'param' => $param));
+
+        $branch = array();
+        foreach ($params['param'] as $element) {
+            $branch[$element['name']] = $element['value'];
+        }
+
+        $rawdata = $DB->get_records_sql($params['sql'], $branch);
+        return $rawdata;
+    }
+
+    public static function get_sum_grader_report_by_sql_query_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'itemid' => new external_value(PARAM_INT, 'the grade item id'),
+                    'sum' => new external_value(PARAM_FLOAT, 'sum'),
+                )
+            ), 'grader sum'
+        );
+    }
+
+    public static function get_count_grader_report_by_sql_query_parameters() {
+        return new external_function_parameters (
+            array(
+                'sql' => new external_value(PARAM_RAW, 'sql'),
+                'param' => new  external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'name'),
+                            'value' => new external_value(PARAM_RAW, 'value'),
+                        )
+                    )
+                ),
+            )
+        );
+    }
+
+    public static function get_count_grader_report_by_sql_query($sql, $param) {
+        global $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::get_count_grader_report_by_sql_query_parameters(),
+            array('sql' => $sql, 'param' => $param));
+
+        $branch = array();
+        foreach ($params['param'] as $element) {
+            $branch[$element['name']] = $element['value'];
+        }
+
+        $rawdata = $DB->get_records_sql($params['sql'], $branch);
+        return $rawdata;
+    }
+
+    public static function get_count_grader_report_by_sql_query_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'the grade item id'),
+                    'count' => new external_value(PARAM_FLOAT, 'count'),
+                )
+            ), 'grader count'
+        );
+    }
 }
