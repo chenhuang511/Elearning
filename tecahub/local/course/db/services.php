@@ -266,4 +266,12 @@ $functions = array(
         'type'		    => 'write',
         'ajax'		    => true
     ),
+    'local_can_add_moduleinfo' => array(
+        'classname'     => 'local_course_external',
+        'methodname'    => 'can_add_moduleinfo',
+        'classpath'     => 'local/course/externallib.php',
+        'description'   => 'can add moduleinfo',
+        'type'		    => 'write',
+        'ajax'		    => true
+    ),
 );

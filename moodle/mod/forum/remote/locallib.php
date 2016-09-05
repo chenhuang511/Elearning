@@ -564,3 +564,29 @@ function get_remote_forum_search_posts_sql($fromsql, $selectsql, $allnames, $par
     return $data;
 }
 
+function save_remote_forum_add_instance($forumdata)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_forum_add_instance',
+            'params' => array_merge($forumdata),
+        )
+    );
+    return $result->newid;
+}
+
+function save_remote_forum_add_discussions($discussiondata, $userid)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_forum_add_discussions',
+            'params' => array_merge(array('userid' => $userid), $discussiondata),
+        )
+    );
+    return $result;
+}
+

@@ -110,7 +110,6 @@ $PAGE->set_title($SITE->fullname);
 $PAGE->set_heading($SITE->fullname);
 $courserenderer = $PAGE->get_renderer('core', 'course');
 echo $OUTPUT->header();
-
 // Print Section or custom info.
 $siteformatoptions = course_get_format($SITE)->get_format_options();
 $modinfo = get_fast_modinfo($SITE);

@@ -103,14 +103,26 @@ function forum_add_instance($forum, $mform = null)
     }
 
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $data = array();
+        $forumkeys = ["course", "coursemodule", "type", "name", "intro", "introformat", "assessed", "assesstimestart", "assesstimefinish", "scale",
+            "maxbytes", "maxattachments", "forcesubscribe", "trackingtype", "rsstype", "rssarticles", "timemodified", "warnafter", "blockafter",
+            "blockperiod", "completiondiscussions", "completionreplies", "completionposts", "displaywordcount"];
+        $forumdata = array();
         $i = 0;
         foreach ($forum as $key => $val) {
-            $data["data[$i][name]"] = "$key";
-            $data["data[$i][value]"] = $val;
-            $i++;
+            foreach ($forumkeys as $fkey) {
+                if ($key == $fkey) {
+                    $forumdata["forumdata[$i][name]"] = "$key";
+                    if ($key == "course") {
+                        $hubcourseid = $DB->get_field('course', 'remoteid', array('id' => $val));
+                        $forumdata["forumdata[$i][value]"] = $hubcourseid;
+                    } else {
+                        $forumdata["forumdata[$i][value]"] = $val;
+                    }
+                    $i++;
+                }
+            }
         }
-        $forum->id = save_remote_mdl_forum("forum", $data);
+        $forum->id = save_remote_forum_add_instance($forumdata);
     } else {
         $forum->id = $DB->insert_record('forum', $forum);
     }
@@ -3433,7 +3445,18 @@ function forum_get_discussions_count($cm)
             $params[] = $now;
             if (isloggedin()) {
                 $timelimit .= " OR d.userid = ?";
-                $params[] = $USER->id;
+                if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+                    $hubuserid = $USER->id;
+
+                    $hubuser = get_remote_mapping_user($hubuserid);
+                    if ($hubuser) {
+                        $hubuserid = $hubuser[0]->id;
+                    }
+
+                    $params[] = $hubuserid;
+                } else {
+                    $params[] = $USER->id;
+                }
             }
             $timelimit .= ")";
         }
@@ -4397,6 +4420,47 @@ function forum_print_discussion_header(&$post, $forum, $group = -1, $datestring 
 
 }
 
+
+function forum_print_nondiscussion($forum, $cm = null)
+{
+    global $CFG, $USER, $OUTPUT, $DB;
+
+    if (!$cm) {
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            if (!$cm = get_remote_course_module_by_instance('forum', $forum->id)) {
+                print_error('invalidcoursemodule');
+            }
+        } else {
+            if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
+                print_error('invalidcoursemodule');
+            }
+        }
+    }
+    $context = context_module::instance($cm->id);
+
+
+    echo '<div class="singlebutton forumaddnew">';
+    echo "<form id=\"newdiscussionform\" method=\"get\" action=\"$CFG->wwwroot/mod/forum/remote/post.php\">";
+    echo '<div>';
+    echo "<input type=\"hidden\" name=\"forum\" value=\"$forum->id\" />";
+    switch ($forum->type) {
+        case 'news':
+        case 'blog':
+            $buttonadd = get_string('addanewtopic', 'forum');
+            break;
+        case 'qanda':
+            $buttonadd = get_string('addanewquestion', 'forum');
+            break;
+        default:
+            $buttonadd = get_string('addanewdiscussion', 'forum');
+            break;
+    }
+    echo '<input type="submit" value="' . $buttonadd . '" />';
+    echo '</div>';
+    echo '</form>';
+    echo "</div>\n";
+}
+
 /**
  * Return the markup for the discussion subscription toggling icon.
  *
@@ -5272,104 +5336,85 @@ function forum_add_discussion($discussion, $mform = null, $unused = null, $useri
         $userid = $USER->id;
     }
 
-    // The first post is stored as a real post, and linked
-    // to from the discuss entry.
+    $hubuserid = $userid;
 
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $params = array();
-        $params['parameters[0][name]'] = "id";
-        $params['parameters[0][value]'] = $discussion->forum;
-        $forum = get_remote_forum_by($params);
-        $cm = get_remote_course_module_by_instance('forum', $forum->id);
-    } else {
-        $forum = $DB->get_record('forum', array('id' => $discussion->forum));
-        $cm = get_coursemodule_from_instance('forum', $forum->id);
-    }
+        $hubuser = get_remote_mapping_user($userid);
+        if ($hubuser) {
+            $hubuserid = $hubuser[0]->id;
+        }
 
-    $post = new stdClass();
-    $post->discussion = 0;
-    $post->parent = 0;
-    $post->userid = $userid;
-    $post->created = $timenow;
-    $post->modified = $timenow;
-    $post->mailed = FORUM_MAILED_PENDING;
-    $post->subject = $discussion->name;
-    $post->message = $discussion->message;
-    $post->messageformat = $discussion->messageformat;
-    $post->messagetrust = $discussion->messagetrust;
-    $post->attachments = isset($discussion->attachments) ? $discussion->attachments : null;
-    $post->forum = $forum->id;     // speedup
-    $post->course = $forum->course; // speedup
-    $post->mailnow = $discussion->mailnow;
+        $hubcourseid = $discussion->course;
 
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $postdata = array();
+        $localcourse = $DB->get_record('course', array("id" => $discussion->course));
+
+        if ($localcourse) {
+            $hubcourseid = $localcourse->remoteid;
+        }
+
+        $discussiondata = array();
         $i = 0;
-        foreach ($post as $key => $val) {
-            $postdata["data[$i][name]"] = "$key";
-            if ($key == "userid") {
-                $user = get_remote_mapping_user($val);
-                $postdata["data[$i][value]"] = $user[0]->id;
+        foreach ($discussion as $key => $val) {
+            $discussiondata["discussiondata[$i][name]"] = $key;
+            if ($key == "course") {
+                $discussiondata["discussiondata[$i][value]"] = $hubcourseid;
             } else {
-                $postdata["data[$i][value]"] = $val;
+                $discussiondata["discussiondata[$i][value]"] = $val;
             }
             $i++;
         }
-        $post->id = save_remote_mdl_forum("forum_posts", $postdata);
+
+        $result = save_remote_forum_add_discussions($discussiondata, $hubuserid);
+        $forum = $result->forum;
+        $post = $result->post;
+        $cm = get_remote_course_modules_by_instance('forum', $forum->id);
     } else {
+
+        // The first post is stored as a real post, and linked
+        // to from the discuss entry.
+
+        $forum = $DB->get_record('forum', array('id' => $discussion->forum));
+        $cm = get_coursemodule_from_instance('forum', $forum->id);
+
+        $post = new stdClass();
+        $post->discussion = 0;
+        $post->parent = 0;
+        $post->userid = $userid;
+        $post->created = $timenow;
+        $post->modified = $timenow;
+        $post->mailed = FORUM_MAILED_PENDING;
+        $post->subject = $discussion->name;
+        $post->message = $discussion->message;
+        $post->messageformat = $discussion->messageformat;
+        $post->messagetrust = $discussion->messagetrust;
+        $post->attachments = isset($discussion->attachments) ? $discussion->attachments : null;
+        $post->forum = $forum->id;     // speedup
+        $post->course = $forum->course; // speedup
+        $post->mailnow = $discussion->mailnow;
+
         $post->id = $DB->insert_record("forum_posts", $post);
-    }
 
-    // TODO: Fix the calling code so that there always is a $cm when this function is called
-    if (!empty($cm->id) && !empty($discussion->itemid)) {   // In "single simple discussions" this may not exist yet
-        $context = context_module::instance($cm->id);
-        $text = file_save_draft_area_files($discussion->itemid, $context->id, 'mod_forum', 'post', $post->id,
-            mod_forum_post_form::editor_options($context, null), $post->message);
-        $DB->set_field('forum_posts', 'message', $text, array('id' => $post->id));
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            $updatedata = array();
-            $updatedata['data[0][name]'] = "message";
-            $updatedata['data[0][value]'] = $post->message;
-            $result = update_remote_mdl_forum("forum_posts", $post->id, $updatedata);
+        // TODO: Fix the calling code so that there always is a $cm when this function is called
+        if (!empty($cm->id) && !empty($discussion->itemid)) {   // In "single simple discussions" this may not exist yet
+            $context = context_module::instance($cm->id);
+            $text = file_save_draft_area_files($discussion->itemid, $context->id, 'mod_forum', 'post', $post->id,
+                mod_forum_post_form::editor_options($context, null), $post->message);
+            $DB->set_field('forum_posts', 'message', $text, array('id' => $post->id));
         }
-    }
 
-    // Now do the main entry for the discussion, linking to this first post
+        // Now do the main entry for the discussion, linking to this first post
 
-    $discussion->firstpost = $post->id;
-    $discussion->timemodified = $timenow;
-    $discussion->usermodified = $post->userid;
-    $discussion->userid = $userid;
-    $discussion->course = $forum->course;
-    $discussion->assessed = 0;
+        $discussion->firstpost = $post->id;
+        $discussion->timemodified = $timenow;
+        $discussion->usermodified = $post->userid;
+        $discussion->userid = $userid;
+        $discussion->assessed = 0;
 
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $discussiondata = array();
-        $count = 0;
-        foreach ($discussion as $key => $val) {
-            $discussiondata["data[$count][name]"] = $key;
-            if ($key == "userid" || $key == "usermodified") {
-                $user = get_remote_mapping_user($val);
-                $discussiondata["data[$count][value]"] = $user[0]->id;
-            } else {
-                $discussiondata["data[$count][value]"] = $val;
-            }
-            $count++;
-        }
-        $post->discussion = save_remote_mdl_forum("forum_discussions", $discussiondata);
-    } else {
         $post->discussion = $DB->insert_record("forum_discussions", $discussion);
-    }
 
-    // Finally, set the pointer on the post.
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $updatedata = array();
-        $updatedata['data[0][name]'] = "discussion";
-        $updatedata['data[0][value]'] = $post->discussion;
-        $result = update_remote_mdl_forum("forum_posts", $post->id, $updatedata);
+        // Finally, set the pointer on the post.
+        $DB->set_field("forum_posts", "discussion", $post->discussion, array("id" => $post->id));
     }
-    $DB->set_field("forum_posts", "discussion", $post->discussion, array("id" => $post->id));
-
 
     if (!empty($cm->id)) {
         forum_add_attachment($post, $forum, $cm, $mform, $unused);
@@ -6663,7 +6708,16 @@ function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode,
 
     require_once($CFG->dirroot . '/rating/lib.php');
 
-    $ownpost = (isloggedin() && $USER->id == $post->userid);
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $hubuserid = $USER->id;
+        $huduser = get_remote_mapping_user($USER->id);
+        if ($huduser) {
+            $hubuserid = $huduser[0]->id;
+        }
+        $ownpost = (isloggedin() && $hubuserid == $post->userid);
+    } else {
+        $ownpost = (isloggedin() && $USER->id == $post->userid);
+    }
 
     $modcontext = context_module::instance($cm->id);
     if ($canreply === NULL) {

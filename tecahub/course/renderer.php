@@ -1177,7 +1177,7 @@ class core_course_renderer extends plugin_renderer_base {
             $course = new course_in_list($course);
         }
         $content = '';
-        $classes = trim('coursebox clearfix '. $additionalclasses);
+        $classes = trim('coursebox clearfix'. $additionalclasses);
         if ($chelper->get_show_courses() >= self::COURSECAT_SHOW_COURSES_EXPANDED) {
             $nametag = 'h3';
         } else {
@@ -1199,6 +1199,7 @@ class core_course_renderer extends plugin_renderer_base {
         $coursenamelink = html_writer::link(new moodle_url('/course/view.php', array('id' => $course->id)),
                                             $coursename, array('class' => $course->visible ? '' : 'dimmed'));
         $content .= html_writer::tag($nametag, $coursenamelink, array('class' => 'coursename'));
+
         // If we display course in collapsed form but the course has summary or course contacts, display the link to the info page.
         $content .= html_writer::start_tag('div', array('class' => 'moreinfo'));
         if ($chelper->get_show_courses() < self::COURSECAT_SHOW_COURSES_EXPANDED) {
@@ -1252,35 +1253,35 @@ class core_course_renderer extends plugin_renderer_base {
         }
         $content = '';
 
-        // display course summary
-        if ($course->has_summary()) {
-            $content .= html_writer::start_tag('div', array('class' => 'summary'));
-            $content .= $chelper->get_course_formatted_summary($course,
-                    array('overflowdiv' => true, 'noclean' => true, 'para' => false));
-            $content .= html_writer::end_tag('div'); // .summary
-        }
-
         // display course overview files
         $contentimages = $contentfiles = '';
         foreach ($course->get_course_overviewfiles() as $file) {
             $isimage = $file->is_valid_image();
             $url = file_encode_url("$CFG->wwwroot/pluginfile.php",
-                    '/'. $file->get_contextid(). '/'. $file->get_component(). '/'.
-                    $file->get_filearea(). $file->get_filepath(). $file->get_filename(), !$isimage);
+                '/'. $file->get_contextid(). '/'. $file->get_component(). '/'.
+                $file->get_filearea(). $file->get_filepath(). $file->get_filename(), !$isimage);
             if ($isimage) {
                 $contentimages .= html_writer::tag('div',
-                        html_writer::empty_tag('img', array('src' => $url)),
-                        array('class' => 'courseimage'));
+                    html_writer::empty_tag('img', array('src' => $url)),
+                    array('class' => 'courseimage col-sm-3'));
             } else {
                 $image = $this->output->pix_icon(file_file_icon($file, 24), $file->get_filename(), 'moodle');
                 $filename = html_writer::tag('span', $image, array('class' => 'fp-icon')).
-                        html_writer::tag('span', $file->get_filename(), array('class' => 'fp-filename'));
+                    html_writer::tag('span', $file->get_filename(), array('class' => 'fp-filename'));
                 $contentfiles .= html_writer::tag('span',
-                        html_writer::link($url, $filename),
-                        array('class' => 'coursefile fp-filename-icon'));
+                    html_writer::link($url, $filename),
+                    array('class' => 'coursefile fp-filename-icon'));
             }
         }
         $content .= $contentimages. $contentfiles;
+
+        // display course summary
+        if ($course->has_summary()) {
+            $content .= html_writer::start_tag('div', array('class' => 'summary col-sm-9'));
+            $content .= $chelper->get_course_formatted_summary($course,
+                    array('text' => true, 'noclean' => false, 'para' => false));
+            $content .= html_writer::end_tag('div'); // .summary
+        }
 
         // display course contacts. See course_in_list::get_course_contacts()
         if ($course->has_course_contacts()) {
@@ -2440,6 +2441,7 @@ class coursecat_helper {
         }
         $summary = file_rewrite_pluginfile_urls($course->summary, 'pluginfile.php', $context->id, 'course', 'summary', null);
         $summary = format_text($summary, $course->summaryformat, $options, $course->id);
+        $summary = mb_strimwidth( $summary, 0, 200, "...");
         if (!empty($this->searchcriteria['search'])) {
             $summary = highlight($this->searchcriteria['search'], $summary);
         }

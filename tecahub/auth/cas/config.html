@@ -147,7 +147,7 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
 </tr>
 <tr valign="top" class="required">
     <td align="right">
-        <?php echo html_writer::label(get_string('auth_cas_casversion', 'auth_cas'), 'menucasversion'); ?>:
+        <?php echo html_writer::label(get_string('auth_cas_casversion', 'auth_cas'), 'menucasversion'); ?>
     </td>
     <td>
         <?php
@@ -163,7 +163,9 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
     </td>
 </tr>
 <tr valign="top" class="required">
-    <td align="right"><?php echo html_writer::label(get_string('auth_cas_language_key', 'auth_cas'), 'menulanguage'); ?>:</td>
+    <td align="right">
+        <?php echo html_writer::label(get_string('auth_cas_language_key', 'auth_cas'), 'menulanguage'); ?>
+    </td>
     <td>
         <?php echo html_writer::select($CASLANGUAGES, 'language', $config->language, false); ?>
     </td>
@@ -192,13 +194,15 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
     </td>
 </tr>
 <tr valign="top" class="required">
-    <td align="right"><?php echo html_writer::label(get_string('auth_cas_multiauth_key', 'auth_cas'), 'menumultiauth'); ?>:</td>
+    <td align="right">
+        <?php echo html_writer::label(get_string('auth_cas_multiauth_key', 'auth_cas'), 'menumultiauth'); ?>:
+    </td>
     <td>
         <?php echo html_writer::select($yesno, 'multiauth', $config->multiauth, false); ?>
     </td>
     <td>
         <?php print_string('auth_cas_multiauth', 'auth_cas') ?>
-    </td>
+    <td>
 </tr>
 <tr valign="top"  class="required">
     <td align="right"><?php echo html_writer::label(get_string('auth_cas_certificate_check_key', 'auth_cas'), 'menucertificate_check'); ?>:</td>

@@ -561,7 +561,7 @@ Course
 	overflow: hidden;
 	text-overflow: ellipsis;
 	word-wrap: break-word;
-	white-space: nowrap;
+	/*white-space: nowrap;*/
 	border: none;
 }
 .coursebox > .info > h3.coursename {
@@ -595,8 +595,12 @@ Course
     width: 1.5em;
 }
 .coursebox > .content > .summary {
-	float: none;
+	float: left;
 	width: 100%;
+}
+
+.coursebox > .content > .courseimage {
+	float: left;
 }
 .coursebox > .content > .teachers {
 	display: none;

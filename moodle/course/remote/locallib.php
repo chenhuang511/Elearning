@@ -613,3 +613,43 @@ function get_remote_course_modules_by_instance($module, $instance)
 
     return $cm;
 }
+
+function get_remote_list_course_module_competencies_in_course_module($cmorid)
+{
+    global $DB;
+
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_get_list_course_module_competencies_in_course_module',
+            'params' => array('cmorid' => $cmorid),
+        ), false
+    );
+
+    $cm = $result->cm;
+
+    if ($cm) {
+        $course = $DB->get_record('course', array('remoteid' => $cm->course));
+        if ($course) {
+            $cm->course = $course->id;
+        }
+    }
+
+    return $cm;
+}
+
+function get_remote_can_add_moduleinfo($courseid, $modulename, $section)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_can_add_moduleinfo',
+            'params' => array('courseid' => $courseid, 'modulename' => $modulename, 'section' => $section),
+        ), false
+    );
+
+
+    return $result->module;
+}
