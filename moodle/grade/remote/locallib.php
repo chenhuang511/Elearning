@@ -183,3 +183,27 @@ function get_remote_list_grade_categories_raw_data($sql, $param, $pagestart = 0,
     );
     return $resp;
 }
+
+function get_remote_sum_grader_report_by_sql_query($sql, $param) {
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_grade_get_sum_grader_report_by_sql_query',
+            'params' => array('sql' => $sql, 'param' => $param)
+        ), false
+    );
+    return $resp;
+}
+
+function get_remote_count_grader_report_by_sql_query($sql, $param) {
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_grade_get_count_grader_report_by_sql_query',
+            'params' => array('sql' => $sql, 'param' => $param)
+        ), false
+    );
+    return $resp;
+}

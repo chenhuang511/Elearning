@@ -28,6 +28,7 @@ require_once($CFG->dirroot . '/grade/report/lib.php');
 require_once($CFG->libdir.'/tablelib.php');
 require_once($CFG->libdir . '/additionallib.php');
 require_once($CFG->libdir . '/remote/lib.php');
+require_once($CFG->dirroot . '/mnet/lib.php');
 
 /**
  * Class providing an API for the grader report building and displaying.
@@ -1490,8 +1491,95 @@ class grade_report_grader extends grade_report {
 
             $params = array_merge(array('courseid' => $this->courseid), $gradebookrolesparams, $enrolledparams, $groupwheresqlparams, $relatedctxparams);
 
-            // Find sums of all grade items in course.
-            $sql = "SELECT g.itemid, SUM(g.finalgrade) AS sum
+            $sumarray = array();
+            $ungradedcounts = array();
+            if (ISREMOTE) {
+                $hostip = gethostip();
+                $remotesql = "SELECT g.itemid, SUM(g.finalgrade) AS sum
+                      FROM {grade_items} gi
+                      JOIN {grade_grades} g ON g.itemid = gi.id
+                      JOIN {user} u ON u.id = g.userid
+                      JOIN ($enrolledsql) je ON je.id = u.id
+                      JOIN (
+                               SELECT DISTINCT ra.userid
+                                 FROM {role_assignments} ra
+                                WHERE ra.roleid $gradebookrolessql
+                           ) rainner ON rainner.userid = u.id
+                      JOIN {mnet_host} mnet
+                      ON mnet.id = u.mnethostid AND mnet.ip_address = '$hostip'
+                      $groupsql
+                     WHERE gi.courseid = :courseid
+                       AND u.deleted = 0
+                       AND g.finalgrade IS NOT NULL
+                       $groupwheresql
+                     GROUP BY g.itemid";
+                $newparams = array();
+                foreach ($params as $key => $value) {
+                    $pvalue = $value;
+                    if (strrpos($key, 'courseid') !== false && $value > 1) {
+                        $pvalue = get_local_course_record($value, true)->remoteid;
+                    }
+                    if (strpos($key, 'relatedctx') === false) {
+                        $newparams[$key] = $pvalue;
+                    }
+                }
+                $remoteparams = array();
+                $index = 0;
+                foreach ($newparams as $key => $value) {
+                    $remoteparams['param[' . $index . '][name]='] = $key;
+                    $remoteparams['param[' . $index . '][value]='] = $value;
+                    $index++;
+                }
+                $sumremote = get_remote_sum_grader_report_by_sql_query($remotesql, $remoteparams);
+                $itemsremoteid = array();
+                foreach ($this->gtree->items as $itemid => $item) {
+                    if (isset($item->remoteid) && $item->remoteid) {
+                        $itemsremoteid[$item->remoteid] = $itemid;
+                    } elseif (isset($item->id) && $item->id) {
+                        $itemsremoteid[$item->id] = $itemid;
+                    }
+                }
+                $sums = array();
+                if ($sumremote) {
+                    foreach ($sumremote as $rsum) {
+                        if (isset($itemsremoteid[$rsum->itemid])) {
+                            $sums[$itemsremoteid[$rsum->itemid]] = $rsum;
+                        }
+                    }
+                }
+                foreach ($sums as $itemid => $csum) {
+                    $sumarray[$itemid] = $csum->sum;
+                }
+
+                $remotesql = "SELECT gi.id, COUNT(DISTINCT u.id) AS count
+                      FROM {grade_items} gi
+                      CROSS JOIN {user} u
+                      JOIN ($enrolledsql) je
+                           ON je.id = u.id
+                      JOIN {role_assignments} ra
+                           ON ra.userid = u.id
+                      JOIN {mnet_host} mnet
+                      ON mnet.id = u.mnethostid AND mnet.ip_address = '$hostip'
+                      LEFT OUTER JOIN {grade_grades} g
+                           ON (g.itemid = gi.id AND g.userid = u.id AND g.finalgrade IS NOT NULL)
+                      $groupsql
+                     WHERE gi.courseid = :courseid
+                           AND ra.roleid $gradebookrolessql
+                           AND u.deleted = 0
+                           AND g.id IS NULL
+                           $groupwheresql
+                  GROUP BY gi.id";
+                $remoteungradedcounts = get_remote_count_grader_report_by_sql_query($remotesql, $remoteparams);
+                if ($remoteungradedcounts) {
+                    foreach ($remoteungradedcounts as $rcount) {
+                        if (isset($itemsremoteid[$rcount->id])) {
+                            $ungradedcounts[$itemsremoteid[$rcount->id]] = $rcount;
+                        }
+                    }
+                }
+            } else {
+                // Find sums of all grade items in course.
+                $sql = "SELECT g.itemid, SUM(g.finalgrade) AS sum
                       FROM {grade_items} gi
                       JOIN {grade_grades} g ON g.itemid = gi.id
                       JOIN {user} u ON u.id = g.userid
@@ -1508,16 +1596,15 @@ class grade_report_grader extends grade_report {
                        AND g.finalgrade IS NOT NULL
                        $groupwheresql
                      GROUP BY g.itemid";
-            $sumarray = array();
-            if ($sums = $DB->get_records_sql($sql, $params)) {
-                foreach ($sums as $itemid => $csum) {
-                    $sumarray[$itemid] = $csum->sum;
+                if ($sums = $DB->get_records_sql($sql, $params)) {
+                    foreach ($sums as $itemid => $csum) {
+                        $sumarray[$itemid] = $csum->sum;
+                    }
                 }
-            }
 
-            // MDL-10875 Empty grades must be evaluated as grademin, NOT always 0
-            // This query returns a count of ungraded grades (NULL finalgrade OR no matching record in grade_grades table)
-            $sql = "SELECT gi.id, COUNT(DISTINCT u.id) AS count
+                // MDL-10875 Empty grades must be evaluated as grademin, NOT always 0
+                // This query returns a count of ungraded grades (NULL finalgrade OR no matching record in grade_grades table)
+                $sql = "SELECT gi.id, COUNT(DISTINCT u.id) AS count
                       FROM {grade_items} gi
                       CROSS JOIN {user} u
                       JOIN ($enrolledsql) je
@@ -1535,8 +1622,9 @@ class grade_report_grader extends grade_report {
                            $groupwheresql
                   GROUP BY gi.id";
 
-            $ungradedcounts = $DB->get_records_sql($sql, $params);
+                $ungradedcounts = $DB->get_records_sql($sql, $params);
 
+            }
             $avgrow = new html_table_row();
             $avgrow->attributes['class'] = 'avg';
 
