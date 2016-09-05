@@ -555,19 +555,6 @@ Course
 	border-left:2px solid [[setting:maincolor]];
 }
 
-.coursebox .content .summary{
-    width: 80%;
-}
-
-.courseimage{
-    width: auto;
-}
-
-.coursebox .content .courseimage img {
-    max-width: 130px;
-    max-height: 130px;
-}
-
 .courses.frontpage-course-list-all > .coursebox {
 	min-height: 200px;
 	max-height: 200px;

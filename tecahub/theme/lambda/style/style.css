@@ -596,7 +596,16 @@ Course
 }
 .coursebox > .content > .summary {
 	float: left;
-	width: 100%;
+	width: 80%;
+}
+
+.courseimage{
+	width: auto;
+}
+
+.coursebox .content .courseimage img {
+	max-width: 130px;
+	max-height: 130px;
 }
 
 .coursebox > .content > .courseimage {

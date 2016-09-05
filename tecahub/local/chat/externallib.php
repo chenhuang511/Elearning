@@ -173,7 +173,7 @@ class local_mod_chat_external extends external_api {
     }
 
     public static function get_chat_current_messages_returns() {
-        return new external_multiple_structure(
+        return
             new external_single_structure(
                 array(
                     'id' => new external_value(PARAM_INT, 'id'),
@@ -184,7 +184,6 @@ class local_mod_chat_external extends external_api {
                     'message' => new external_value(PARAM_TEXT, 'user picture'),
                     'timestamp' => new external_value(PARAM_INT, 'user picture'),
                 )
-            )
         );
     }
 }
