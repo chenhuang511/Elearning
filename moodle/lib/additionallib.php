@@ -167,7 +167,6 @@ function get_local_courses_record() {
     return $courses;
 }
 
-
 function get_local_enrol_course() {
     global $DB, $USER, $CFG;
 

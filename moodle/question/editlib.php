@@ -43,14 +43,20 @@ function get_module_from_cmid($cmid) {
     if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
         $paramdata["param[0][name]"] = 0;
         $paramdata["param[0][value]"]= $cmid;
-        $cmrec = remote_quiz_get_record_sql($sql, $paramdata);
-        var_dump($cmrec);die;
+        $cm = remote_quiz_get_record_sql($sql, $paramdata);
+        $cmrec = merge_local_course_module($cm);
+
+        $cond = array();
+        $cond['conditions[0][name]'] = 'id';
+        $cond['conditions[0][value]'] = $cmrec->instance;
+        $modrec = remote_db_get_record($cmrec->modname, $cond);
     }else{
         $cmrec = $DB->get_record_sql($sql, array($cmid));
+        $modrec = $DB->get_record($cmrec->modname, array('id' => $cmrec->instance));
     }
     if (!$cmrec ){
         print_error('invalidcoursemodule');
-    } elseif (!$modrec =$DB->get_record($cmrec->modname, array('id' => $cmrec->instance))) {
+    } elseif (!$modrec) {
         print_error('invalidcoursemodule');
     }
     $modrec->instance = $modrec->id;
