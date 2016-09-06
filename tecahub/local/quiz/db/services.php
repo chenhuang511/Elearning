@@ -315,4 +315,12 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_quiz_db_record_exists' => array(
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'db_record_exists',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Test whether a record exists in a table where all the given conditions met.",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 );

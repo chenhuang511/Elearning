@@ -2877,4 +2877,78 @@ ORDER BY
             )
         );
     }
+
+    /**
+     * Hanv 06/09/2016
+     * Test whether a record exists in a table where all the given conditions met.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     *
+     */
+    public static function db_record_exists_parameters() {
+        return new external_function_parameters (
+            array(
+                'sql' => new external_value(PARAM_RAW, 'sql'),
+                'strictness' => new external_value(PARAM_INT, 'strictness'),
+                'param' => new  external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'name'),
+                            'value' => new external_value(PARAM_RAW, 'value'),
+                        )
+                    )
+                ),
+            )
+        );
+    }
+
+    /**
+     * Test whether a record exists in a table where all the given conditions met.
+     *
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function db_record_exists($sql, $strictness, $parameters) {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::db_record_exists_parameters(), array(
+            'sql' => $sql,
+            'strictness' => $strictness,
+            'param' => $parameters
+        ));
+        $r_param = array();
+        foreach ($params['param'] as $element) {
+            $r_param[$element['name']] = $element['value'];
+        }
+        $records = $DB->get_record_sql($sql, $r_param, $strictness);
+        $results = array();
+        $i = 0;
+        foreach ($records as $key => $value) {
+            $results[$i]['key']   = $key;
+            $results[$i]['value'] = $value;
+            $i++;
+        }
+        return $results;
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function db_record_exists_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'key' => new external_value(PARAM_RAW, 'key'),
+                    'value' => new external_value(PARAM_RAW, 'value'),
+                )
+            )
+        );
+    }
 }

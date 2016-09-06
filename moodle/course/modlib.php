@@ -447,13 +447,21 @@ function set_moduleinfo_defaults($moduleinfo)
 function can_add_moduleinfo($course, $modulename, $section)
 {
     global $DB;
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $context = context_course::instance($course->id);
+        require_capability('moodle/course:manageactivities', $context);
 
-    $module = $DB->get_record('modules', array('name'=>$modulename), '*', MUST_EXIST);
+        $module = get_remote_can_add_moduleinfo($course->remoteid, $modulename, $section);
+    } else {
 
-    $context = context_course::instance($course->id);
-    require_capability('moodle/course:manageactivities', $context);
+        $module = $DB->get_record('modules', array('name' => $modulename), '*', MUST_EXIST);
 
-    course_create_sections_if_missing($course, $section);
+        $context = context_course::instance($course->id);
+        require_capability('moodle/course:manageactivities', $context);
+
+        course_create_sections_if_missing($course, $section);
+    }
+
     $cw = get_fast_modinfo($course)->get_section_info($section);
 
     if (!course_allowed_module($course, $module->name)) {
