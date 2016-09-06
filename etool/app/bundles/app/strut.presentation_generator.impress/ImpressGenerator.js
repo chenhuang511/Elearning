@@ -15,6 +15,7 @@ function(Handlebars, Math2, marked, DeckUtils) {
 					if (ignore.indexOf(componentModel.get("type")) != -1)
 						return result;
 				}
+
 				switch (componentModel.get("type")) {
 					case "Image":
 						if (componentModel.get("imageType") === "SVG") {
@@ -25,10 +26,15 @@ function(Handlebars, Math2, marked, DeckUtils) {
 						break;
 					case "TextBox":
 						result = JST["strut.presentation_generator.impress/TextBox"](_this.convertTextBoxData(componentModel.attributes));
-						break;
+						//console.log("TEXTBOX : " + result);
+                        break;
                     case "FormulaBox":
 						result = JST["strut.presentation_generator.impress/FormulaBox"](_this.convertTextBoxData(componentModel.attributes));
 						break;
+                    case "Table":
+						result = JST["strut.presentation_generator.impress/Table"](_this.convertTextBoxData(componentModel.attributes));
+						//console.log("TABLE : " + result);
+                        break;
 					case "Video":
 						if (componentModel.get("videoType") === "html5") {
 							result = JST["strut.presentation_generator.impress/Video"](componentModel.attributes);
