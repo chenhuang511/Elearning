@@ -2555,78 +2555,6 @@ ORDER BY
     }
 
     /**
-     * Hanv 09/08/2016
-     * Fetch the sum of squared, cubed and to the power 4 differences between sumgrade and it's mean.
-     *
-     * @return external_function_parameters
-     * @since Moodle 3.1 Options available
-     * @since Moodle 3.1
-     *
-     */
-    public static function get_statistic_sum_of_powers_parameters() {
-        return new external_function_parameters (
-            array(
-                'sql' => new external_value(PARAM_RAW, 'sql'),
-                'param' => new  external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_RAW, 'name'),
-                            'value' => new external_value(PARAM_RAW, 'value'),
-                        )
-                    )
-                ),
-            )
-        );
-    }
-
-    /**
-     * Fetch the sum of squared, cubed and to the power 4 differences between sumgrade and it's mean.
-     *
-     * @since Moodle 3.1 Options available
-     * @since Moodle 3.1
-     */
-    public static function get_statistic_sum_of_powers($sql, $param) {
-        global $CFG, $DB;
-
-        //validate parameter
-        $params = self::validate_parameters(self::get_statistic_sum_of_powers_parameters(),
-            array('sql' => $sql, 'param' => $param));
-
-        $r_param = array();
-        foreach ($params['param'] as $element) {
-            $r_param[$element['name']] = $element['value'];
-        }
-        $records = $DB->get_record_sql($sql, $r_param);
-
-        $results = array();
-        $i = 0;
-        foreach ($records as $key => $value) {
-            $results[$i]['key']   = $key;
-            $results[$i]['value'] = $value;
-            $i++;
-        }
-        return $results;
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_single_structure
-     * @since Moodle 3.1 Options available
-     * @since Moodle 3.1
-     */
-    public static function get_statistic_sum_of_powers_returns() {
-        return new external_multiple_structure(
-            new external_single_structure(
-                array(
-                    'key' => new external_value(PARAM_RAW, 'key'),
-                    'value' => new external_value(PARAM_RAW, 'value'),
-                )
-            )
-        );
-    }
-
-    /**
      * Hanv 10/08/2016
      * Get id, category, createdby from question table by category.
      *
@@ -2872,6 +2800,80 @@ ORDER BY
             array(
                 'status' => new external_value(PARAM_BOOL, 'status: true if success'),
                 'warnings' => new external_warnings(),
+            )
+        );
+    }
+
+    /**
+     * Hanv 06/09/2016
+     * Get a single database record as an object using a SQL statement.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     *
+     */
+    public static function db_get_record_sql_parameters() {
+        return new external_function_parameters (
+            array(
+                'sql' => new external_value(PARAM_RAW, 'sql'),
+                'strictness' => new external_value(PARAM_INT, 'strictness'),
+                'param' => new  external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'name'),
+                            'value' => new external_value(PARAM_RAW, 'value'),
+                        )
+                    )
+                ),
+            )
+        );
+    }
+
+    /**
+     * Get a single database record as an object using a SQL statement.
+     *
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function db_get_record_sql($sql, $strictness, $parameters) {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::db_get_record_sql_parameters(), array(
+            'sql' => $sql,
+            'strictness' => $strictness,
+            'param' => $parameters
+        ));
+        $r_param = array();
+        foreach ($params['param'] as $element) {
+            $r_param[$element['name']] = $element['value'];
+        }
+        $records = $DB->get_record_sql($sql, $r_param, $strictness);
+        $results = array();
+        $i = 0;
+        foreach ($records as $key => $value) {
+            $results[$i]['key']   = $key;
+            $results[$i]['value'] = $value;
+            $i++;
+        }
+        return $results;
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function db_get_record_sql_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'key' => new external_value(PARAM_RAW, 'key'),
+                    'value' => new external_value(PARAM_RAW, 'value'),
+                )
             )
         );
     }
