@@ -2139,7 +2139,10 @@ class local_course_external extends external_api
 
     public static function add_moduleinfo_by($moduleinfo, $course)
     {
-        global $CFG, $DB;
+        global $CFG;
+
+        require_once($CFG->dirroot . '/course/modlib.php');
+
         $warnings = array();
         $params = self::validate_parameters(self::add_moduleinfo_by_parameters(), array(
             'moduleinfo' => $moduleinfo,
@@ -2151,8 +2154,6 @@ class local_course_external extends external_api
 
         $moduleinfoobj->course = $courseobj->remoteid;
         $courseobj->id = $courseobj->remoteid;
-
-        require_once($CFG->dirroot . '/course/modlib.php');
 
         $modinfo = add_moduleinfo($moduleinfoobj, $courseobj, null);
 
@@ -2242,4 +2243,6 @@ class local_course_external extends external_api
 
         return $DB->get_record_sql($sql, $params, $strictness);
     }
+
+
 }

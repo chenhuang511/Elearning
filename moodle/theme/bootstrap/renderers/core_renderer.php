@@ -170,9 +170,14 @@ class theme_bootstrap_core_renderer extends core_renderer {
             );
         } else {
             $menu->add(
+                $this->glyphicon('sign-in')  . get_string('logincas'),
+                new moodle_url('/login/index.php?authCAS=CAS', array('alt' => get_string('login'))),
+               'Log in' //class
+            );
+            $menu->add(
                 $this->glyphicon('sign-in')  . get_string('login'),
                 new moodle_url('/login/index.php', array('alt' => get_string('login'))),
-               'Log in'
+                'Log in'
             );
         }
 
