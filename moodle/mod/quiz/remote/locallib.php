@@ -558,22 +558,6 @@ function get_statistic_median_mark($sql, $limitoffset, $limit, $param){
     return $res;
 }
 
-function get_statistic_sum_of_powers($sql, $param){
-    $result = moodle_webservice_client(
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_quiz_get_statistic_sum_of_powers',
-            'params' => array_merge(array('sql' => $sql), $param)
-        ), false
-    );
-    $res = array();
-    foreach($result as $element){
-        $res[$element->key] = $element->value;
-    }
-    return $res;
-}
-
 function get_remote_ques_by_category($category){
     $results = moodle_webservice_client(
         array(
@@ -644,6 +628,29 @@ function remote_quiz_delete_records($table, $condition)
     );
     if($res->status !== true){
         throw new coding_exception('Invalid local_mod_delete_response_by_mbl API. Please check your API');
+    }
+    return $res;
+}
+
+/**
+ * using API get_record_sql from host to hub
+ */
+function remote_quiz_get_record_sql($sql, $param, $strictness=IGNORE_MISSING)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_quiz_db_get_record_sql',
+            'params' => array_merge(array('sql' => $sql, 'strictness' => $strictness), $param)
+        ), false
+    );
+    $res = array();
+    foreach($result as $element){
+        $res[$element->key] = $element->value;
+    }
+    if(!$res){
+        throw new coding_exception('Invalid local_mod_quiz_db_get_record_sql API. Please check your API');
     }
     return $res;
 }

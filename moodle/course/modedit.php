@@ -107,19 +107,18 @@ if (!empty($add)) {
         }
 
         if (plugin_supports('mod', $data->modulename, FEATURE_ADVANCED_GRADING, false)
-            and has_capability('moodle/grade:managegradingforms', $context)
-        ) {
-            require_once($CFG->dirroot . '/grade/grading/lib.php');
+            and has_capability('moodle/grade:managegradingforms', $context)) {
+            require_once($CFG->dirroot.'/grade/grading/lib.php');
 
             $data->_advancedgradingdata['methods'] = grading_manager::available_methods();
-            $areas = grading_manager::available_areas('mod_' . $module->name);
+            $areas = grading_manager::available_areas('mod_'.$module->name);
 
             foreach ($areas as $areaname => $areatitle) {
                 $data->_advancedgradingdata['areas'][$areaname] = array(
-                    'title' => $areatitle,
+                    'title'  => $areatitle,
                     'method' => '',
                 );
-                $formfield = 'advancedgradingmethod_' . $areaname;
+                $formfield = 'advancedgradingmethod_'.$areaname;
                 $data->{$formfield} = '';
             }
         }
