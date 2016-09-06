@@ -2141,8 +2141,6 @@ class local_course_external extends external_api
     {
         global $CFG;
 
-        require_once($CFG->dirroot . '/course/modlib.php');
-
         $warnings = array();
         $params = self::validate_parameters(self::add_moduleinfo_by_parameters(), array(
             'moduleinfo' => $moduleinfo,
@@ -2155,7 +2153,7 @@ class local_course_external extends external_api
         $moduleinfoobj->course = $courseobj->remoteid;
         $courseobj->id = $courseobj->remoteid;
 
-        $modinfo = add_moduleinfo($moduleinfoobj, $courseobj, null);
+        $modinfo = self::add_moduleinfo($moduleinfoobj, $courseobj, null);
 
         $result = array();
         $result['moduleinfo'] = json_encode($modinfo);
@@ -2244,5 +2242,137 @@ class local_course_external extends external_api
         return $DB->get_record_sql($sql, $params, $strictness);
     }
 
+    private static function add_moduleinfo($moduleinfo, $course, $mform = null) {
+        global $DB, $CFG;
+        require_once($CFG->dirroot . '/course/modlib.php');
 
+        // Attempt to include module library before we make any changes to DB.
+        include_modulelib($moduleinfo->modulename);
+
+        $moduleinfo->course = $course->id;
+        $moduleinfo = set_moduleinfo_defaults($moduleinfo);
+
+        if (!empty($course->groupmodeforce) or !isset($moduleinfo->groupmode)) {
+            $moduleinfo->groupmode = 0; // Do not set groupmode.
+        }
+
+        // First add course_module record because we need the context.
+        $newcm = new stdClass();
+        $newcm->course           = $course->id;
+        $newcm->module           = $moduleinfo->module;
+        $newcm->instance         = 0; // Not known yet, will be updated later (this is similar to restore code).
+        $newcm->visible          = $moduleinfo->visible;
+        $newcm->visibleold       = $moduleinfo->visible;
+        if (isset($moduleinfo->cmidnumber)) {
+            $newcm->idnumber         = $moduleinfo->cmidnumber;
+        }
+        $newcm->groupmode        = $moduleinfo->groupmode;
+        $newcm->groupingid       = $moduleinfo->groupingid;
+        $completion = new completion_info($course);
+        if ($completion->is_enabled()) {
+            $newcm->completion                = $moduleinfo->completion;
+            $newcm->completiongradeitemnumber = $moduleinfo->completiongradeitemnumber;
+            $newcm->completionview            = $moduleinfo->completionview;
+            $newcm->completionexpected        = $moduleinfo->completionexpected;
+        }
+        if(!empty($CFG->enableavailability)) {
+            // This code is used both when submitting the form, which uses a long
+            // name to avoid clashes, and by unit test code which uses the real
+            // name in the table.
+            $newcm->availability = null;
+            if (property_exists($moduleinfo, 'availabilityconditionsjson')) {
+                if ($moduleinfo->availabilityconditionsjson !== '') {
+                    $newcm->availability = $moduleinfo->availabilityconditionsjson;
+                }
+            } else if (property_exists($moduleinfo, 'availability')) {
+                $newcm->availability = $moduleinfo->availability;
+            }
+            // If there is any availability data, verify it.
+            if ($newcm->availability) {
+                $tree = new \core_availability\tree(json_decode($newcm->availability));
+                // Save time and database space by setting null if the only data
+                // is an empty tree.
+                if ($tree->is_empty()) {
+                    $newcm->availability = null;
+                }
+            }
+        }
+        if (isset($moduleinfo->showdescription)) {
+            $newcm->showdescription = $moduleinfo->showdescription;
+        } else {
+            $newcm->showdescription = 0;
+        }
+
+        // From this point we make database changes, so start transaction.
+        $transaction = $DB->start_delegated_transaction();
+
+        if (!$moduleinfo->coursemodule = add_course_module($newcm)) {
+            print_error('cannotaddcoursemodule');
+        }
+
+        if (plugin_supports('mod', $moduleinfo->modulename, FEATURE_MOD_INTRO, true) &&
+            isset($moduleinfo->introeditor)) {
+            $introeditor = $moduleinfo->introeditor;
+            unset($moduleinfo->introeditor);
+            $moduleinfo->intro       = $introeditor['text'];
+            $moduleinfo->introformat = $introeditor['format'];
+        }
+
+        $addinstancefunction    = $moduleinfo->modulename."_add_instance";
+        try {
+            $returnfromfunc = $addinstancefunction($moduleinfo, $mform);
+        } catch (moodle_exception $e) {
+            $returnfromfunc = $e;
+        }
+        if (!$returnfromfunc or !is_number($returnfromfunc)) {
+            // Undo everything we can. This is not necessary for databases which
+            // support transactions, but improves consistency for other databases.
+            $modcontext = context_module::instance($moduleinfo->coursemodule);
+            context_helper::delete_instance(CONTEXT_MODULE, $moduleinfo->coursemodule);
+            $DB->delete_records('course_modules', array('id'=>$moduleinfo->coursemodule));
+
+            if ($e instanceof moodle_exception) {
+                throw $e;
+            } else if (!is_number($returnfromfunc)) {
+                print_error('invalidfunction', '', course_get_url($course, $moduleinfo->section));
+            } else {
+                print_error('cannotaddnewmodule', '', course_get_url($course, $moduleinfo->section), $moduleinfo->modulename);
+            }
+        }
+
+        $moduleinfo->instance = $returnfromfunc;
+
+        $DB->set_field('course_modules', 'instance', $returnfromfunc, array('id'=>$moduleinfo->coursemodule));
+
+        // Update embedded links and save files.
+        $modcontext = context_module::instance($moduleinfo->coursemodule);
+        if (!empty($introeditor)) {
+            $moduleinfo->intro = file_save_draft_area_files($introeditor['itemid'], $modcontext->id,
+                'mod_'.$moduleinfo->modulename, 'intro', 0,
+                array('subdirs'=>true), $introeditor['text']);
+            $DB->set_field($moduleinfo->modulename, 'intro', $moduleinfo->intro, array('id'=>$moduleinfo->instance));
+        }
+
+        // Add module tags.
+        if (core_tag_tag::is_enabled('core', 'course_modules') && isset($moduleinfo->tags)) {
+            core_tag_tag::set_item_tags('core', 'course_modules', $moduleinfo->coursemodule, $modcontext, $moduleinfo->tags);
+        }
+
+        // Course_modules and course_sections each contain a reference to each other.
+        // So we have to update one of them twice.
+        $sectionid = course_add_cm_to_section($course, $moduleinfo->coursemodule, $moduleinfo->section);
+
+        // Trigger event based on the action we did.
+        // Api create_from_cm expects modname and id property, and we don't want to modify $moduleinfo since we are returning it.
+        $eventdata = clone $moduleinfo;
+        $eventdata->modname = $eventdata->modulename;
+        $eventdata->id = $eventdata->coursemodule;
+        $event = \core\event\course_module_created::create_from_cm($eventdata, $modcontext);
+        $event->trigger();
+
+        $moduleinfo = edit_module_post_actions($moduleinfo, $course);
+        $transaction->allow_commit();
+
+        return $moduleinfo;
+    }
 }
