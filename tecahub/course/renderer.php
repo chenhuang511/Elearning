@@ -1282,6 +1282,10 @@ class core_course_renderer extends plugin_renderer_base {
                     array('text' => true, 'noclean' => false, 'para' => false));
             $content .= html_writer::end_tag('div'); // .summary
         }
+        $content .= html_writer::start_tag('div');
+        $content .= html_writer::link(new moodle_url('/course/view.php', array('id' => $course->id)),
+            'Chi Tiết', array('class' => 'btn btn-primary btn-el-reg'));
+        $content .= html_writer::end_tag('div');
 
         // display course contacts. See course_in_list::get_course_contacts()
         if ($course->has_course_contacts()) {
