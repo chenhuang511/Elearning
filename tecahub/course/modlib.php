@@ -42,6 +42,7 @@ require_once($CFG->dirroot.'/course/lib.php');
  * @return object the updated module info
  */
 function add_moduleinfo($moduleinfo, $course, $mform = null) {
+    echo 'vao toi day'; die();
     global $DB, $CFG;
 
     // Attempt to include module library before we make any changes to DB.
