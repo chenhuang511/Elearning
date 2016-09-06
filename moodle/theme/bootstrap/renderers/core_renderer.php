@@ -176,7 +176,7 @@ class theme_bootstrap_core_renderer extends core_renderer {
             );
             $menu->add(
                 $this->glyphicon('sign-in')  . get_string('login'),
-                new moodle_url('/login/index.php', array('alt' => get_string('login'))),
+                new moodle_url('/login/index.php?authCAS=NOCAS', array('alt' => get_string('login'))),
                 'Log in'
             );
         }

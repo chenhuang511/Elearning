@@ -2243,6 +2243,4 @@ class local_course_external extends external_api
 
         return $DB->get_record_sql($sql, $params, $strictness);
     }
-
-
 }
