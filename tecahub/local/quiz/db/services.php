@@ -275,14 +275,6 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
-	'local_mod_quiz_get_statistic_sum_of_powers' => array(
-		'classname'	  => 'local_mod_quiz_external',
-		'methodname'  => 'get_statistic_sum_of_powers',
-		'classpath'	  => 'local/quiz/externallib.php',
-		'description' => "Fetch the sum of squared, cubed and to the power 4 differences between sumgrade and it's mean.",
-		'type'		  => 'read',
-		'ajax'		  => true
-	),
 	'local_mod_quiz_get_ques_by_category' => array(
 		'classname'	  => 'local_mod_quiz_external',
 		'methodname'  => 'get_ques_by_category',
@@ -300,19 +292,27 @@ $functions = array(
 		'ajax'		  => true
 	),
 	'local_mod_quiz_db_insert_record' => array(
-	'classname'	  => 'local_mod_quiz_external',
-	'methodname'  => 'db_insert_record',
-	'classpath'	  => 'local/quiz/externallib.php',
-	'description' => "Insert a record into a table and return the id field if required.",
-	'type'		  => 'read',
-	'ajax'		  => true
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'db_insert_record',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Insert a record into a table and return the id field if required.",
+		'type'		  => 'read',
+		'ajax'		  => true
 	),
 	'local_mod_quiz_db_delete_records' => array(
-	'classname'	  => 'local_mod_quiz_external',
-	'methodname'  => 'db_delete_records',
-	'classpath'	  => 'local/quiz/externallib.php',
-	'description' => "Delete the records from a table where all the given conditions met.",
-	'type'		  => 'read',
-	'ajax'		  => true
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'db_delete_records',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Delete the records from a table where all the given conditions met.",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
+	'local_mod_quiz_db_get_record_sql' => array(
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'db_get_record_sql',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Get a single database record as an object using a SQL statement.",
+		'type'		  => 'read',
+		'ajax'		  => true
 	),
 );

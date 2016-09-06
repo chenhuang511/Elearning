@@ -300,13 +300,13 @@ class calculator {
         $params = array('mean1' => $mean, 'mean2' => $mean, 'mean3' => $mean) + $qaparams;
 
         if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-            $index1 = 0;
+            $i = 0;
             foreach ($params as $key =>$value) {
-                $paramdata["param[$index1][name]"] = $key;
-                $paramdata["param[$index1][value]"]= $value;
-                $index1++;
+                $paramdata["param[$i][name]"] = $key;
+                $paramdata["param[$i][value]"]= $value;
+                $i++;
             }
-            return get_statistic_sum_of_powers($sql, $paramdata);
+            return remote_quiz_get_record_sql($sql, $paramdata, MUST_EXIST);
         }else{
             return $DB->get_record_sql($sql, $params, MUST_EXIST);
         }
