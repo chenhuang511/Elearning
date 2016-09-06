@@ -2128,7 +2128,8 @@ class local_course_external extends external_api
         );
     }
 
-    public static function add_moduleinfo_by_parameters() {
+    public static function add_moduleinfo_by_parameters()
+    {
         return new external_function_parameters(
             array(
                 'moduleinfo' => new external_value(PARAM_RAW, 'module info'),
@@ -2149,11 +2150,15 @@ class local_course_external extends external_api
             'course' => $course
         ));
 
-        $moduleinfoobj = json_decode($params['moduleinfo'], true);
-        $courseobj = json_decode($params['course'], true);
+        $moduleinfoobj = json_decode($params['moduleinfo']);
+        $courseobj = json_decode($params['course']);
 
         $moduleinfoobj->course = $courseobj->remoteid;
         $courseobj->id = $courseobj->remoteid;
+
+        if (isset($moduleinfoobj->introeditor)) {
+            $moduleinfoobj->introeditor = (array)$moduleinfoobj->introeditor;
+        }
 
         $modinfo = add_moduleinfo($moduleinfoobj, $courseobj, null);
 
@@ -2164,7 +2169,8 @@ class local_course_external extends external_api
         return $result;
     }
 
-    public static function add_moduleinfo_by_returns() {
+    public static function add_moduleinfo_by_returns()
+    {
         return new external_single_structure(
             array(
                 'moduleinfo' => new external_value(PARAM_RAW),
