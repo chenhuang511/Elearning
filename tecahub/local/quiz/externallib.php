@@ -2890,9 +2890,8 @@ ORDER BY
     public static function db_record_exists_parameters() {
         return new external_function_parameters (
             array(
-                'sql' => new external_value(PARAM_RAW, 'sql'),
-                'strictness' => new external_value(PARAM_INT, 'strictness'),
-                'param' => new  external_multiple_structure(
+                'table' => new external_value(PARAM_RAW, 'table'),
+                'conditions' => new  external_multiple_structure(
                     new external_single_structure(
                         array(
                             'name' => new external_value(PARAM_RAW, 'name'),
@@ -2910,28 +2909,26 @@ ORDER BY
      * @since Moodle 3.1 Options available
      * @since Moodle 3.1
      */
-    public static function db_record_exists($sql, $strictness, $parameters) {
-        global $DB;
+    public static function db_record_exists($table, $conditions) {
+        global $CFG, $DB;
         $warnings = array();
-
-        $params = self::validate_parameters(self::db_record_exists_parameters(), array(
-            'sql' => $sql,
-            'strictness' => $strictness,
-            'param' => $parameters
+        //validate parameter
+        $params = self::validate_parameters(self::db_delete_records_parameters(), array(
+            'table' => $table,
+            'conditions' => $conditions
         ));
-        $r_param = array();
-        foreach ($params['param'] as $element) {
-            $r_param[$element['name']] = $element['value'];
+
+        $result = array();
+        $r_conditions = array();
+        foreach ($params['conditions'] as $element) {
+            $r_conditions[$element['name']] = $element['value'];
         }
-        $records = $DB->get_record_sql($sql, $r_param, $strictness);
-        $results = array();
-        $i = 0;
-        foreach ($records as $key => $value) {
-            $results[$i]['key']   = $key;
-            $results[$i]['value'] = $value;
-            $i++;
-        }
-        return $results;
+
+        $isexist = $DB->record_exists($params['table'], $r_conditions);
+
+        $result['status'] = $isexist;
+        $result['warnings'] = $warnings;
+        return $result;
     }
 
     /**
@@ -2942,13 +2939,12 @@ ORDER BY
      * @since Moodle 3.1
      */
     public static function db_record_exists_returns() {
-        return new external_multiple_structure(
-            new external_single_structure(
-                array(
-                    'key' => new external_value(PARAM_RAW, 'key'),
-                    'value' => new external_value(PARAM_RAW, 'value'),
-                )
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings(),
             )
         );
     }
+
 }

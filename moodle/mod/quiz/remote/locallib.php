@@ -662,23 +662,19 @@ function remote_db_get_record_sql($sql, $param, $strictness=IGNORE_MISSING)
 /**
  * using API record_exists from host to hub
  */
-function remote_db_record_exists($sql, $param, $strictness=IGNORE_MISSING)
+function remote_db_record_exists($table, $condition)
 {
     $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_quiz_db_record_exists',
-            'params' => array_merge(array('sql' => $sql, 'strictness' => $strictness), $param)
+            'params' => array_merge(array('table' => $table), $condition)
         ), false
     );
-    $res = new stdClass();
-    foreach($result as $element){
-        if(!$element->key){
-            throw new coding_exception('Invalid local_mod_quiz_db_record_exists API. Please check your API');
-        }
-        $key = $element->key;
-        $res->$key= $element->value;
+    if(!is_bool($result->status)){
+        throw new coding_exception('Invalid local_mod_delete_response_by_mbl API. Please check your API');
     }
-    return $res;
+    return $result->status;
 }
+

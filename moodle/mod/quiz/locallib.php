@@ -475,7 +475,12 @@ function quiz_has_attempts($quizid) {
     global $DB;
     // @TODO: handle here
     if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-
+        $conditions = array();
+        $conditions['conditions[0][name]'] = "quiz";
+        $conditions['conditions[0][value]'] = $quizid;
+        $conditions['conditions[1][name]'] = "preview";
+        $conditions['conditions[1][value]'] = 0;
+        return remote_db_record_exists("quiz_attempts", $conditions);
     }else{
         return $DB->record_exists('quiz_attempts', array('quiz' => $quizid, 'preview' => 0));
     }
