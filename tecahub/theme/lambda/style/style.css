@@ -9,7 +9,7 @@ body{
     background: url([[setting:pagebackground]]) [[setting:background-repeat]];
 	background-size: [[setting:background-size]];
 	position: relative;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 400;
     line-height: 25px;
     text-shadow: none !important;
@@ -596,7 +596,8 @@ Course
 }
 .coursebox > .content > .summary {
 	float: left;
-	width: 80%;
+	width: 75%;
+	padding-left: 10px;
 }
 
 .courseimage{
@@ -604,8 +605,8 @@ Course
 }
 
 .coursebox .content .courseimage img {
-	max-width: 130px;
-	max-height: 130px;
+	max-width: 150px;
+	max-height: 150px;
 }
 
 .coursebox > .content > .courseimage {
