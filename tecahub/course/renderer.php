@@ -1278,14 +1278,16 @@ class core_course_renderer extends plugin_renderer_base {
         // display course summary
         if ($course->has_summary()) {
             $content .= html_writer::start_tag('div', array('class' => 'summary col-sm-9'));
+            $content .= html_writer::start_tag('p');
             $content .= $chelper->get_course_formatted_summary($course,
                     array('text' => true, 'noclean' => false, 'para' => false));
+            $content .= html_writer::end_tag('p');
+            $content .= html_writer::start_tag('span', array('class' => 'btn-readmore col-sm-9'));
+            $content .= html_writer::link(new moodle_url('/course/view.php', array('id' => $course->id)),
+                'Chi Tiết', array('class' => 'btn btn-primary btn-el-reg'));
+            $content .= html_writer::end_tag('span');
             $content .= html_writer::end_tag('div'); // .summary
         }
-        $content .= html_writer::start_tag('div');
-        $content .= html_writer::link(new moodle_url('/course/view.php', array('id' => $course->id)),
-            'Chi Tiết', array('class' => 'btn btn-primary btn-el-reg'));
-        $content .= html_writer::end_tag('div');
 
         // display course contacts. See course_in_list::get_course_contacts()
         if ($course->has_course_contacts()) {
