@@ -13,7 +13,7 @@ define(["./ComponentView", "libs/etch",
 		 * @augments ComponentView
 		 */
 		return ComponentView.extend({
-			className: "component textBox",
+			className: "component tableDisplay",
 			tagName: "div",
 
 			/**
@@ -124,6 +124,7 @@ define(["./ComponentView", "libs/etch",
 				this.editing = true;
 			},
 
+
 			/**
 			 * Event: mouse button has peen pressed down, drag started. If in editing mode, move etch to the clicked spot.
 			 *
@@ -195,6 +196,12 @@ define(["./ComponentView", "libs/etch",
 					undoHistory.push(cmd);
 
 					this.model.set("text", text);
+                    this.tablediv.innerHTML = this.model.get("text");
+                    this.model.set("_opts", text);
+                    // console.log("tablediv inner : " + this.tablediv.innerHTML);
+                    // console.log("model get text : " + this.model.get("text"));
+                    // console.log("set opts : " + this.model.get("_opts"));
+                    //this.model.set("text", this.tablediv.innerHTML);
 					window.getSelection().removeAllRanges();
 					this.$textEl.attr("contenteditable", false);
 					this.$el.removeClass("editable");
@@ -284,29 +291,36 @@ define(["./ComponentView", "libs/etch",
 					self._handlePaste(this, e);
 				});
 				this.$textEl.html(this.model.get("text"));
+                //this.$textEl.attr("contenteditable", true);
 				this.$el.css({
-					// fontFamily: this.model.get("family"),
 					fontSize: this.model.get("size"),
-					// fontWeight: this.model.get("weight"),
-					// fontStyle: this.model.get("style"),
-					// color: "#" + this.model.get("color"),
 					top: this.model.get("y"),
 					left: this.model.get("x"),
-					// textDecoration: this.model.get("decoration"),
-					// textAlign: this.model.get("align")
 				});
+
+                //console.log("get 1 opts : " + this.model.get("_opts"));
 
 				var element = this.$el[0];
 
-				if (this.table == undefined){
+				if (this.tablediv == undefined)
+                {
 					this.tablediv = document.createElement('div-table');
-
-					element.appendChild(this.tablediv);
-					this.tablediv.innerHTML = '<table style="text-align: center;"> <thead> <tr> <th>Product</th> <th>Cost</th> <th>Really?</th> </tr> </thead> <tbody> <tr> <td>TinyMCE</td> <td>Free</td> <td>YES!</td> </tr> <tr> <td>Plupload</td> <td>Free</td> <td>YES!</td> </tr> </tbody> </table>'
+					//element.appendChild(this.tablediv);
+                    if (this.model.get("_opts"))
+                    {
+                        this.tablediv.innerHTML = this.model.get("_opts");
+                    }
+                    else
+                    {
+                        this.tablediv.innerHTML = '<table style="text-align: center;"> <thead> <tr> <th>Product</th><th>Cost</th> <th>Really?</th> </tr> </thead></table>'
+                    }
 				}
 
+                this.model.set("text", this.tablediv.innerHTML);
+
 				tinymce.init({
-					selector: 'div-table',
+
+                    //selector: '.content',
 					plugins: [
 						'advlist autolink lists link image charmap print preview anchor',
 						'searchreplace visualblocks code fullscreen',
@@ -314,11 +328,12 @@ define(["./ComponentView", "libs/etch",
 					],
 					toolbar: 'none',
 					menubar: 'none',
-					height: 500,
+                    statusbar: false,
+					height: 200,
 					content_css: [
-   					 '//fast.fonts.net/cssapi/e6dc9b99-64fe-4292-ad98-6974f93cd2a2.css',
+   					 //'//fast.fonts.net/cssapi/e6dc9b99-64fe-4292-ad98-6974f93cd2a2.css',
 					'//www.tinymce.com/css/codepen.min.css'
-  ]
+                    ]
 				});
 
 				return this.$el;

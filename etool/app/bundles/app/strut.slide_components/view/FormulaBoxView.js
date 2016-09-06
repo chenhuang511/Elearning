@@ -102,7 +102,7 @@ define(["./ComponentView", "libs/etch",
 			 */
 			dblclicked: function(e) {
 				this.$el.addClass("editable");
-				this.$textEl.attr("contenteditable", true);			
+				this.$textEl.attr("contenteditable", true);
 				var element = this.$el[0];
 				var content = element.getElementsByClassName("content-scale")[0];
 				content.style.display = "inline";
@@ -217,7 +217,7 @@ define(["./ComponentView", "libs/etch",
 					this.$textEl.attr("contenteditable", false);
 					this.$el.removeClass("editable");
 					this.allowDragging = true;
-					
+
 				}
 			},
 
