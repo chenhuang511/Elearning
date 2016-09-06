@@ -594,6 +594,11 @@ Course
     text-align: center;
     width: 1.5em;
 }
+
+.coursebox .content .courseimage{
+	padding-top: 7px;
+}
+
 .coursebox > .content > .summary {
 	float: left;
 	width: 75%;
