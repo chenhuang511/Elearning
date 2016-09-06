@@ -574,7 +574,7 @@ function get_remote_ques_by_category($category){
     return $data;
 }
 
-function remote_db_get_record($table,  $fields, $strictness, $conditions){
+function remote_db_get_record($table, $conditions, $fields='*', $strictness=IGNORE_MISSING){
     $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
@@ -586,6 +586,9 @@ function remote_db_get_record($table,  $fields, $strictness, $conditions){
 
     $res = new stdClass();
     foreach($result as $element){
+        if(!$element->key){
+            throw new coding_exception('Invalid local_mod_quiz_db_get_record_sql API. Please check your API');
+        }
         $key = $element->key;
         $res->$key= $element->value;
     }
@@ -645,12 +648,13 @@ function remote_quiz_get_record_sql($sql, $param, $strictness=IGNORE_MISSING)
             'params' => array_merge(array('sql' => $sql, 'strictness' => $strictness), $param)
         ), false
     );
-    $res = array();
+    $res = new stdClass();
     foreach($result as $element){
         if(!$element->key){
             throw new coding_exception('Invalid local_mod_quiz_db_get_record_sql API. Please check your API');
         }
-        $res[$element->key] = $element->value;
+        $key = $element->key;
+        $res->$key= $element->value;
     }
     return $res;
 }

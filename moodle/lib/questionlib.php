@@ -1330,7 +1330,7 @@ function question_has_capability_on($question, $cap, $cachecat = -1) {
             $cond = array();
             $cond['conditions[0][name]'] = 'id';
             $cond['conditions[0][value]'] = $question->category;
-            $category = remote_db_get_record('question_categories', null, null, $cond);
+            $category = remote_db_get_record('question_categories', $cond);
         }else{
             $category = $DB->get_record('question_categories', array('id'=>$question->category));
         }
