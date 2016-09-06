@@ -27,14 +27,16 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Event observer for mod_forum.
  */
-class mod_forum_observer {
+class mod_forum_observer
+{
 
     /**
      * Triggered via user_enrolment_deleted event.
      *
      * @param \core\event\user_enrolment_deleted $event
      */
-    public static function user_enrolment_deleted(\core\event\user_enrolment_deleted $event) {
+    public static function user_enrolment_deleted(\core\event\user_enrolment_deleted $event)
+    {
         global $DB;
 
         // NOTE: this has to be as fast as possible.
@@ -47,10 +49,10 @@ class mod_forum_observer {
             list($forumselect, $params) = $DB->get_in_or_equal(array_keys($forums), SQL_PARAMS_NAMED);
             $params['userid'] = $cp->userid;
 
-            $DB->delete_records_select('forum_digests', 'userid = :userid AND forum '.$forumselect, $params);
-            $DB->delete_records_select('forum_subscriptions', 'userid = :userid AND forum '.$forumselect, $params);
-            $DB->delete_records_select('forum_track_prefs', 'userid = :userid AND forumid '.$forumselect, $params);
-            $DB->delete_records_select('forum_read', 'userid = :userid AND forumid '.$forumselect, $params);
+            $DB->delete_records_select('forum_digests', 'userid = :userid AND forum ' . $forumselect, $params);
+            $DB->delete_records_select('forum_subscriptions', 'userid = :userid AND forum ' . $forumselect, $params);
+            $DB->delete_records_select('forum_track_prefs', 'userid = :userid AND forumid ' . $forumselect, $params);
+            $DB->delete_records_select('forum_read', 'userid = :userid AND forumid ' . $forumselect, $params);
         }
     }
 
@@ -60,7 +62,8 @@ class mod_forum_observer {
      * @param \core\event\role_assigned $event
      * @return void
      */
-    public static function role_assigned(\core\event\role_assigned $event) {
+    public static function role_assigned(\core\event\role_assigned $event)
+    {
         global $CFG, $DB;
 
         $context = context::instance_by_id($event->contextid, MUST_EXIST);
@@ -102,14 +105,18 @@ class mod_forum_observer {
      * @param \core\event\course_module_created $event
      * @return void
      */
-    public static function course_module_created(\core\event\course_module_created $event) {
+    public static function course_module_created(\core\event\course_module_created $event)
+    {
         global $CFG;
 
         if ($event->other['modulename'] === 'forum') {
             // Include the forum library to make use of the forum_instance_created function.
             require_once($CFG->dirroot . '/mod/forum/lib.php');
-
-            $forum = $event->get_record_snapshot('forum', $event->other['instanceid']);
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+                $forum = get_remote_get_record_snapshot_by('forum', $event->other['instanceid']);
+            } else {
+                $forum = $event->get_record_snapshot('forum', $event->other['instanceid']);
+            }
             forum_instance_created($event->get_context(), $forum);
         }
     }
