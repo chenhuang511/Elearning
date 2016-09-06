@@ -2149,8 +2149,8 @@ class local_course_external extends external_api
             'course' => $course
         ));
 
-        $moduleinfoobj = json_decode($params['moduleinfo']);
-        $courseobj = json_decode($params['course']);
+        $moduleinfoobj = json_decode($params['moduleinfo'], true);
+        $courseobj = json_decode($params['course'], true);
 
         $moduleinfoobj->course = $courseobj->remoteid;
         $courseobj->id = $courseobj->remoteid;
