@@ -186,7 +186,7 @@ function get_remote_get_slots_by_quizid($quizid) {
 }
 
 function get_remote_get_sections_by_quizid($quizid) {
-    return moodle_webservice_client(
+    $results = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
@@ -194,6 +194,11 @@ function get_remote_get_sections_by_quizid($quizid) {
             'params' => array('quizid' => $quizid)
         ), false
     );
+    $sections = array();
+    foreach ($results as $result){
+        $sections[$result->id] = $result;
+    }
+    return $sections;
 }
 
 function get_remote_get_attempt_data($attemptid, $page = null, $setting) {

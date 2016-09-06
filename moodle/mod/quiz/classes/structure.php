@@ -611,7 +611,11 @@ class structure {
         }
 
         // Get quiz sections in ascending order of the firstslot.
-        $this->sections = $DB->get_records('quiz_sections', array('quizid' => $quiz->id), 'firstslot ASC');
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $this->sections = get_remote_get_sections_by_quizid($quiz->id);
+        }else{
+            $this->sections = $DB->get_records('quiz_sections', array('quizid' => $quiz->id), 'firstslot ASC');
+        }
         $this->populate_slots_with_sections();
         $this->populate_question_numbers();
     }

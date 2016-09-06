@@ -50,6 +50,7 @@ require_once($CFG->dirroot . '/question/category_class.php');
 // These params are only passed from page request to request while we stay on
 // this page otherwise they would go in question_edit_setup.
 $scrollpos = optional_param('scrollpos', '', PARAM_INT);
+$isremote = (MOODLE_RUN_MODE === MOODLE_MODE_HUB)?true:false;
 
 list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) =
         question_edit_setup('editq', '/mod/quiz/edit.php', true);
@@ -62,8 +63,13 @@ $quizhasattempts = quiz_has_attempts($quiz->id);
 $PAGE->set_url($thispageurl);
 
 // Get the course object and related bits.
-$course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
-$quizobj = new quiz($quiz, $cm, $course);
+if($isremote){
+    $course = get_local_course_record($quiz->course);
+    $quizobj = new quiz($quiz, $cm, $course, true, true);
+}else{
+    $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
+    $quizobj = new quiz($quiz, $cm, $course);
+}
 $structure = $quizobj->get_structure();
 
 // You need mod/quiz:manage in addition to question capabilities to access this page.
