@@ -598,7 +598,7 @@ function remote_db_get_record($table, $conditions, $fields='*', $strictness=IGNO
 /**
  * using API insert_record from host to hub
  */
-function remote_quiz_insert_record($tablename, $dataencode)
+function remote_db_insert_record($tablename, $dataencode)
 {
     $res = moodle_webservice_client(
         array(
@@ -619,7 +619,7 @@ function remote_quiz_insert_record($tablename, $dataencode)
 /**
  * using API delete_records from host to hub
  */
-function remote_quiz_delete_records($table, $condition)
+function remote_db_delete_records($table, $condition)
 {
     $res = moodle_webservice_client(
         array(
@@ -638,7 +638,7 @@ function remote_quiz_delete_records($table, $condition)
 /**
  * using API get_record_sql from host to hub
  */
-function remote_quiz_get_record_sql($sql, $param, $strictness=IGNORE_MISSING)
+function remote_db_get_record_sql($sql, $param, $strictness=IGNORE_MISSING)
 {
     $result = moodle_webservice_client(
         array(

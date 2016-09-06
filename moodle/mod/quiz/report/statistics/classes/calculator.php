@@ -306,7 +306,7 @@ class calculator {
                 $paramdata["param[$i][value]"]= $value;
                 $i++;
             }
-            return remote_quiz_get_record_sql($sql, $paramdata, MUST_EXIST);
+            return remote_db_get_record_sql($sql, $paramdata, MUST_EXIST);
         }else{
             return $DB->get_record_sql($sql, $params, MUST_EXIST);
         }

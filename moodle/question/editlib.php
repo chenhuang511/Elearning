@@ -43,7 +43,7 @@ function get_module_from_cmid($cmid) {
     if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
         $paramdata["param[0][name]"] = 0;
         $paramdata["param[0][value]"]= $cmid;
-        $cm = remote_quiz_get_record_sql($sql, $paramdata);
+        $cm = remote_db_get_record_sql($sql, $paramdata);
         $cmrec = merge_local_course_module($cm);
 
         $cond = array();

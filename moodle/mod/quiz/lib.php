@@ -93,7 +93,7 @@ function quiz_add_instance($quiz) {
         $localcourse = $DB->get_record('course', array('id' => $quiz->course));
         $quizdata->course = $localcourse->remoteid;
         $quizdata = json_encode($quizdata);
-        $quiz->id = remote_quiz_insert_record("quiz", $quizdata);
+        $quiz->id = remote_db_insert_record("quiz", $quizdata);
         if($quiz->course !== $localcourse->id){
             $quiz->course = $localcourse->id;
         }
@@ -1167,7 +1167,7 @@ function quiz_after_add_or_update($quiz) {
         $data = array();
         $data['conditions[0][name]'] = 'quizid';
         $data['conditions[0][value]'] = $quiz->id;
-        remote_quiz_delete_records('quiz_feedback', $data);
+        remote_db_delete_records('quiz_feedback', $data);
     }else{
         $DB->delete_records('quiz_feedback', array('quizid' => $quiz->id));
     }

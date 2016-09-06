@@ -473,7 +473,12 @@ function quiz_delete_previews($quiz, $userid = null) {
  */
 function quiz_has_attempts($quizid) {
     global $DB;
-    return $DB->record_exists('quiz_attempts', array('quiz' => $quizid, 'preview' => 0));
+    // @TODO: handle here
+    if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+
+    }else{
+        return $DB->record_exists('quiz_attempts', array('quiz' => $quizid, 'preview' => 0));
+    }
 }
 
 // Functions to do with quiz layout and pages //////////////////////////////////
