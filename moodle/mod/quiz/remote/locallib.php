@@ -647,10 +647,10 @@ function remote_quiz_get_record_sql($sql, $param, $strictness=IGNORE_MISSING)
     );
     $res = array();
     foreach($result as $element){
+        if(!$element->key){
+            throw new coding_exception('Invalid local_mod_quiz_db_get_record_sql API. Please check your API');
+        }
         $res[$element->key] = $element->value;
-    }
-    if(!$res){
-        throw new coding_exception('Invalid local_mod_quiz_db_get_record_sql API. Please check your API');
     }
     return $res;
 }

@@ -2817,6 +2817,7 @@ ORDER BY
         return new external_function_parameters (
             array(
                 'sql' => new external_value(PARAM_RAW, 'sql'),
+                'strictness' => new external_value(PARAM_INT, 'strictness'),
                 'param' => new  external_multiple_structure(
                     new external_single_structure(
                         array(
@@ -2825,7 +2826,6 @@ ORDER BY
                         )
                     )
                 ),
-                'strictness' => new external_value(PARAM_INT, 'strictness')
             )
         );
     }
