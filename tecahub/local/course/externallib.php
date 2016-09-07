@@ -410,44 +410,62 @@ class local_course_external extends external_api
     }
 
     public static function get_remote_course_mods($courseid)
-
     {
         global $DB;
+        $warnings = array();
 
         //validate parameter
-        $params = self::validate_parameters(self::get_remote_course_mods_parameters(), array('courseid' => $courseid));
-        return $DB->get_records_sql("SELECT cm.*, m.name as modname
+        $params = self::validate_parameters(self::get_remote_course_mods_parameters(), array(
+            'courseid' => $courseid
+        ));
+        $sql = "SELECT cm.*, m.name as modname
                                        FROM {modules} m, {course_modules} cm
-                                      WHERE cm.course = ? AND cm.module = m.id AND m.visible = 1",
-            array($courseid));
+                                      WHERE cm.course = ? AND cm.module = m.id AND m.visible = 1";
+
+        $coursemodules = $DB->get_records_sql($sql, array($params['courseid']));
+
+        if (!$coursemodules) {
+            $coursemodules = array();
+        }
+
+        $result = array();
+        $result['coursemodules'] = $coursemodules;
+        $result['warnings'] = $warnings;
+
+        return $result;
     }
 
     public static function get_remote_course_mods_returns()
     {
-        return new external_multiple_structure(
-            new external_single_structure(
-                array(
-                    'id' => new external_value(PARAM_INT, 'ID of the course'),
-                    'course' => new external_value(PARAM_INT, 'The fullname of the course'),
-                    'module' => new external_value(PARAM_INT, 'Thumbnail course URL - small version'),
-                    'instance' => new external_value(PARAM_INT, 'Thumbnail course URL - medium version'),
-                    'section' => new external_value(PARAM_INT, 'Thumbnail course URL - big version'),
-                    'idnumber' => new external_value(PARAM_TEXT, 'The fullname of the course'),
-                    'added' => new external_value(PARAM_INT, 'Thumbnail course URL - small version'),
-                    'score' => new external_value(PARAM_INT, 'Thumbnail course URL - medium version'),
-                    'indent' => new external_value(PARAM_INT, 'Thumbnail course URL - big version'),
-                    'visible' => new external_value(PARAM_INT, 'The fullname of the course'),
-                    'visibleold' => new external_value(PARAM_INT, 'Thumbnail course URL - small version'),
-                    'groupmode' => new external_value(PARAM_INT, 'Thumbnail course URL - medium version'),
-                    'groupingid' => new external_value(PARAM_INT, 'Thumbnail course URL - big version'),
-                    'completion' => new external_value(PARAM_INT, 'The fullname of the course'),
-                    'completiongradeitemnumber' => new external_value(PARAM_INT, 'Thumbnail course URL - small version'),
-                    'completionview' => new external_value(PARAM_INT, 'Thumbnail course URL - medium version'),
-                    'completionexpected' => new external_value(PARAM_INT, 'Thumbnail course URL - big version'),
-                    'showdescription' => new external_value(PARAM_INT, 'The fullname of the course'),
-                    'availability' => new external_value(PARAM_RAW, 'Thumbnail course URL - small version'),
-                    'modname' => new external_value(PARAM_TEXT, 'Thumbnail course URL - medium version'),
-                )
+        return new external_single_structure(
+            array(
+                'coursemodules' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'the id of course module'),
+                            'course' => new external_value(PARAM_INT, 'the id of course'),
+                            'module' => new external_value(PARAM_INT, 'the id of module'),
+                            'instance' => new external_value(PARAM_INT, 'the instance'),
+                            'section' => new external_value(PARAM_INT, 'the id of section'),
+                            'idnumber' => new external_value(PARAM_TEXT, 'the id number'),
+                            'added' => new external_value(PARAM_INT, 'the added'),
+                            'score' => new external_value(PARAM_INT, 'The score'),
+                            'indent' => new external_value(PARAM_INT, 'the indent'),
+                            'visible' => new external_value(PARAM_INT, 'The visible'),
+                            'visibleold' => new external_value(PARAM_INT, 'The visibleold'),
+                            'groupmode' => new external_value(PARAM_INT, 'the groupmode'),
+                            'groupingid' => new external_value(PARAM_INT, 'the groupingid'),
+                            'completion' => new external_value(PARAM_INT, 'The completion'),
+                            'completiongradeitemnumber' => new external_value(PARAM_INT, 'The completion grade item number'),
+                            'completionview' => new external_value(PARAM_INT, 'The completion view'),
+                            'completionexpected' => new external_value(PARAM_INT, 'The completion expected'),
+                            'showdescription' => new external_value(PARAM_INT, 'The show description'),
+                            'availability' => new external_value(PARAM_RAW, 'the availability'),
+                            'modname' => new external_value(PARAM_TEXT, 'The modname')
+                        )
+                    ), 'coursemodule data'
+                ),
+                'warnings' => new external_warnings()
             )
         );
     }
