@@ -2292,6 +2292,44 @@ class local_course_external extends external_api
         );
     }
 
+    public static function get_field_modname_by_id_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'tablename' => new external_value(PARAM_RAW, 'the table name'),
+                'id' => new external_value(PARAM_INT, 'the id')
+            )
+        );
+    }
+
+    public static function get_field_modname_by_id($tablename, $id)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_field_modname_by_id_parameters(), array(
+            'tablename' => $tablename,
+            'id' => $id
+        ));
+
+        $name = $DB->get_field($params['tablename'], "name", array("id" => $params['id']));
+
+        $result = array();
+        $result['name'] = $name;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    public static function get_field_modname_by_id_returns()
+    {
+        return new external_single_structure(
+            array(
+                'name' => new external_value(PARAM_RAW, 'the name'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
     private static function validate_course_module($cmmixed, $throwexception = true)
     {
         $cm = $cmmixed;

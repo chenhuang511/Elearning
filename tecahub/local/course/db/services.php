@@ -298,4 +298,12 @@ $functions = array(
         'type'		    => 'write',
         'ajax'		    => true
     ),
+    'local_get_field_modname_by_id' => array(
+        'classname'     => 'local_course_external',
+        'methodname'    => 'get_field_modname_by_id',
+        'classpath'     => 'local/course/externallib.php',
+        'description'   => 'get name of modname by id',
+        'type'		    => 'write',
+        'ajax'		    => true
+    ),
 );
