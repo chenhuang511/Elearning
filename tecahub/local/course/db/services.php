@@ -282,4 +282,12 @@ $functions = array(
         'type'		    => 'write',
         'ajax'		    => true
     ),
+    'local_get_record_snapshot_by' => array(
+        'classname'     => 'local_course_external',
+        'methodname'    => 'get_record_snapshot_by',
+        'classpath'     => 'local/course/externallib.php',
+        'description'   => 'get record by table name and id',
+        'type'		    => 'write',
+        'ajax'		    => true
+    ),
 );

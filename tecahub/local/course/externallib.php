@@ -2179,6 +2179,45 @@ class local_course_external extends external_api
         );
     }
 
+    public static function get_record_snapshot_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'tablename' => new external_value(PARAM_RAW, ' the table name'),
+                'id' => new external_value(PARAM_INT, 'the id')
+            )
+        );
+    }
+
+    public static function get_record_snapshot_by($tablename, $id)
+    {
+        global $DB;
+        $warning = array();
+
+        $params = self::validate_parameters(self::get_record_snapshot_by_parameters(), array(
+            'tablename' => $tablename,
+            'id' => $id
+        ));
+
+        $record = $DB->get_record($tablename, array('id' => $id));
+
+        $result = array();
+        $result['record'] = json_encode($record);
+        $result['warnings'] = $warning;
+
+        return $result;
+    }
+
+    public static function get_record_snapshot_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'record' => new external_value(PARAM_RAW, 'the record that encode'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
     private static function validate_course_module($cmmixed, $throwexception = true)
     {
         $cm = $cmmixed;

@@ -653,3 +653,43 @@ function get_remote_can_add_moduleinfo($courseid, $modulename, $section)
 
     return $result->module;
 }
+
+function get_remote_add_moduleinfo_by($moduleinfo, $course)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_add_moduleinfo_by',
+            'params' => array('moduleinfo' => $moduleinfo, 'course' => $course),
+        ), false
+    );
+
+    $moduleinfo = json_decode($result->moduleinfo);
+    return $moduleinfo;
+}
+
+function get_remote_get_record_snapshot_by($tablename, $id)
+{
+    global $DB;
+
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_get_record_snapshot_by',
+            'params' => array('tablename' => $tablename, 'id' => $id),
+        ), false
+    );
+
+    $record = json_decode($result->record);
+
+    if ($record && isset($record->course)) {
+        $course = $DB->get_record('course', array('remoteid' => $record->course), '*', MUST_EXIST);
+        if ($course) {
+            $record->course = $course->id;
+        }
+    }
+
+    return $record;
+}
