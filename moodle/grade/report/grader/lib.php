@@ -1441,6 +1441,70 @@ class grade_report_grader extends grade_report {
         return $rows;
     }
 
+    public function get_enrolled_users_id($groups = true, $users = false) {
+        global $CFG, $DB;
+        $userwheresql = "";
+        $groupsql      = "";
+        $groupwheresql = "";
+
+        // Limit to users with a gradeable role.
+        list($gradebookrolessql, $gradebookrolesparams) = $DB->get_in_or_equal(explode(',', $this->gradebookroles), SQL_PARAMS_NAMED, 'grbr0');
+
+        // Limit to users with an active enrollment.
+        list($enrolledsql, $enrolledparams) = get_enrolled_sql($this->context);
+
+        // We want to query both the current context and parent contexts.
+        list($relatedctxsql, $relatedctxparams) = $DB->get_in_or_equal($this->context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'relatedctx');
+
+        $params = array_merge($gradebookrolesparams, $enrolledparams, $relatedctxparams);
+
+        if ($users) {
+            $userwheresql = $this->userwheresql;
+            $params       = array_merge($params, $this->userwheresql_params);
+        }
+
+        if ($groups) {
+            $groupsql      = $this->groupsql;
+            $groupwheresql = $this->groupwheresql;
+            $params        = array_merge($params, $this->groupwheresql_params);
+        }
+
+        $sql = "SELECT DISTINCT u.id
+                       FROM {user} u
+                       JOIN ($enrolledsql) je
+                            ON je.id = u.id
+                       JOIN {role_assignments} ra
+                            ON u.id = ra.userid
+                       $groupsql
+                      WHERE ra.roleid $gradebookrolessql
+                            AND u.deleted = 0
+                            $userwheresql
+                            $groupwheresql
+                            AND ra.contextid $relatedctxsql";
+        $selectedusers = $DB->get_records_sql($sql, $params);
+
+        $return = array();
+        // Check if user's enrolment is active and should be displayed.
+        if (!empty($selectedusers)) {
+            $coursecontext = $this->context->get_course_context(true);
+
+            $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
+            $showonlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol);
+            $showonlyactiveenrol = $showonlyactiveenrol || !has_capability('moodle/course:viewsuspendedusers', $coursecontext);
+
+            if ($showonlyactiveenrol) {
+                $useractiveenrolments = get_enrolled_users($coursecontext, '', 0, 'u.id',  null, 0, 0, true);
+            }
+
+            foreach ($selectedusers as $id => $value) {
+                if (!$showonlyactiveenrol || ($showonlyactiveenrol && array_key_exists($id, $useractiveenrolments))) {
+                    $return[$id] = $value;
+                }
+            }
+        }
+        return $return;
+    }
+
     /**
      * Builds and return the row of averages for the right part of the grader report.
      * @param array $rows Whether to return only group averages or all averages.
@@ -1495,6 +1559,19 @@ class grade_report_grader extends grade_report {
             $ungradedcounts = array();
             if (ISREMOTE) {
                 $hostip = gethostip();
+                $listenrolledusersid = $this->get_enrolled_users_id($grouponly);
+                $listenremoterolledusersid = array();
+                if (count($listenrolledusersid) > 0) {
+                    foreach ($listenrolledusersid as $id => $unused) {
+                        if ($id) {
+                            $listenremoterolledusersid[] = get_remote_mapping_user($id)[0]->id;
+                        }
+                    }
+                }
+                $queryforusersmapping = '';
+                if ($listenremoterolledusersid) {
+                    $queryforusersmapping = " AND u.id IN (" . implode($listenremoterolledusersid, ',') . ") ";
+                }
                 $remotesql = "SELECT g.itemid, SUM(g.finalgrade) AS sum
                       FROM {grade_items} gi
                       JOIN {grade_grades} g ON g.itemid = gi.id
@@ -1510,6 +1587,7 @@ class grade_report_grader extends grade_report {
                       $groupsql
                      WHERE gi.courseid = :courseid
                        AND u.deleted = 0
+                       $queryforusersmapping 
                        AND g.finalgrade IS NOT NULL
                        $groupwheresql
                      GROUP BY g.itemid";
@@ -1566,6 +1644,7 @@ class grade_report_grader extends grade_report {
                      WHERE gi.courseid = :courseid
                            AND ra.roleid $gradebookrolessql
                            AND u.deleted = 0
+                           $queryforusersmapping
                            AND g.id IS NULL
                            $groupwheresql
                   GROUP BY gi.id";
@@ -1651,9 +1730,6 @@ class grade_report_grader extends grade_report {
 
                 if ($meanselection == GRADE_REPORT_MEAN_GRADED) {
                     $meancount = $totalcount - $ungradedcount;
-                    if ($meancount < 0) {
-                        $meancount = $totalcount - abs($meancount);
-                    }
                 } else { // Bump up the sum by the number of ungraded items * grademin
                     $sumarray[$item->id] += $ungradedcount * $item->grademin;
                     $meancount = $totalcount;

@@ -18,12 +18,12 @@
 /**
  * Local language pack from http://192.168.1.253
  *
- * @package    gradeimport
- * @subpackage xml
+ * @package    logstore
+ * @subpackage database
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['fileurl'] = 'Tập tin URL từ xa';
-$string['pluginname'] = 'Tệp XML';
+$string['conectexception'] = 'Không thể kết nối đến cơ sở dữ liệu';
+$string['databasetable'] = 'Bảng cơ sở dữ liệu';

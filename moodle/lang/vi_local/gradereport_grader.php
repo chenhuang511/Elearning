@@ -25,5 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['eventgradereportviewed'] = 'Đã xem báo cáo người chấm';
 $string['pluginname'] = 'Báo cáo chấm điểm';
 $string['preferences'] = 'Tùy chỉnh báo cáo của giáo viên';

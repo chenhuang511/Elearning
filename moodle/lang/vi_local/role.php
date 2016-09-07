@@ -26,6 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['advancedoverride'] = 'Ghi đè vai trò nâng cao';
+$string['competency:coursecompetencyconfigure'] = 'Thiết lập cấu hình năng lực khóa học';
 $string['grade:override'] = 'Ghi đè điểm';
 $string['localroles'] = 'Vai trò được bổ nhiệm';
 $string['permissions'] = 'Quyền hạn';

@@ -26,3 +26,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['dbtype'] = 'Loại';
+$string['inputwebadress'] = 'Địa chỉ web:';

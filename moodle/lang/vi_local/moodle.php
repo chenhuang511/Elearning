@@ -30,6 +30,7 @@ $string['category'] = 'Danh mục';
 $string['coursedetails'] = 'Chi tiết khóa học';
 $string['courseformats'] = 'Định dạng khóa học';
 $string['courseinfo'] = 'Thông tin về khóa học';
+$string['dataformats'] = 'Định dạng dữ liệu';
 $string['defaultcompetencescalenotproficient'] = 'Không có thẩm quyền';
 $string['defaultcompetencescaleproficient'] = 'Có thẩm quyền';
 $string['firstsiteaccess'] = 'Lần đầu truy cập';

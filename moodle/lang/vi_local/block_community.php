@@ -25,5 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['coursedesc'] = 'Mô tả';
 $string['coursename'] = 'Tên';
 $string['orderbyname'] = 'Tên';

@@ -25,7 +25,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['exportfilename'] = 'câu hỏi';
 $string['notyetanswered'] = 'Chưa trả lời';
 $string['options'] = 'Tùy chọn';
 $string['questionname'] = 'Tên câu hỏi';
+$string['questionno'] = 'Câu hỏi {$a}';
 $string['tagarea_question'] = 'Câu hỏi';

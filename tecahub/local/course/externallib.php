@@ -470,7 +470,9 @@ class local_course_external extends external_api
             'courseid' => $courseid
         ));
 
-        $sections = $DB->get_records('course_sections', array('course' => $courseid), 'section ASC', 'id,course,section,name,sequence');
+        $sections = $DB->get_records('course_sections', array('course' => $params['courseid']), 'section',
+            'section, id, course, name, summary, summaryformat, sequence, visible, ' .
+            'availability');
 
         if (!$sections) {
             $sections = array();
@@ -489,11 +491,15 @@ class local_course_external extends external_api
                 'sections' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'id' => new external_value(PARAM_INT, 'ID of the course'),
-                            'course' => new external_value(PARAM_INT, 'The fullname of the course'),
-                            'section' => new external_value(PARAM_INT, 'Thumbnail course URL - big version'),
-                            'name' => new external_value(PARAM_TEXT, 'The fullname of the course'),
-                            'sequence' => new external_value(PARAM_RAW, 'Thumbnail course URL - big version'),
+                            'id' => new external_value(PARAM_INT, 'the id of course section'),
+                            'course' => new external_value(PARAM_INT, 'the id of course'),
+                            'section' => new external_value(PARAM_INT, 'the number of section'),
+                            'name' => new external_value(PARAM_TEXT, 'the name of course section'),
+                            'summary' => new external_value(PARAM_RAW, 'the summary'),
+                            'summaryformat' => new external_value(PARAM_INT, 'the summary format'),
+                            'sequence' => new external_value(PARAM_RAW, 'the sequence'),
+                            'visible' => new external_value(PARAM_INT, 'the visible'),
+                            'availability' => new external_value(PARAM_RAW, 'the summary format'),
                         )
                     ), 'section data'
                 ),
@@ -2174,6 +2180,45 @@ class local_course_external extends external_api
         return new external_single_structure(
             array(
                 'moduleinfo' => new external_value(PARAM_RAW),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_record_snapshot_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'tablename' => new external_value(PARAM_RAW, ' the table name'),
+                'id' => new external_value(PARAM_INT, 'the id')
+            )
+        );
+    }
+
+    public static function get_record_snapshot_by($tablename, $id)
+    {
+        global $DB;
+        $warning = array();
+
+        $params = self::validate_parameters(self::get_record_snapshot_by_parameters(), array(
+            'tablename' => $tablename,
+            'id' => $id
+        ));
+
+        $record = $DB->get_record($tablename, array('id' => $id));
+
+        $result = array();
+        $result['record'] = json_encode($record);
+        $result['warnings'] = $warning;
+
+        return $result;
+    }
+
+    public static function get_record_snapshot_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'record' => new external_value(PARAM_RAW, 'the record that encode'),
                 'warnings' => new external_warnings()
             )
         );

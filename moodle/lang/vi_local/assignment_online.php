@@ -18,12 +18,11 @@
 /**
  * Local language pack from http://192.168.1.253
  *
- * @package    gradeimport
- * @subpackage xml
+ * @package    assignment
+ * @subpackage online
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['fileurl'] = 'Tập tin URL từ xa';
-$string['pluginname'] = 'Tệp XML';
+$string['event_assessable_uploaded'] = 'Một văn bản trực tuyến đã được tải lên.';

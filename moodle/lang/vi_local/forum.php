@@ -25,11 +25,13 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['addanewquestion'] = 'Thêm một câu hỏi mới';
 $string['attachment'] = 'Tệp đính kèm';
 $string['attachmentswordcount'] = 'Đính kèm tệp và số từ';
 $string['blockafter'] = 'Ngưỡng chặn cho bài đăng';
 $string['blockperiod'] = 'Khoảng thời gian chặn';
 $string['blockperioddisabled'] = 'Không chặn';
+$string['cannotfindfirstpost'] = 'Không thể tìm thấy bài viết đầu tiên trong diễn đàn này';
 $string['completiondiscussions'] = 'Học viên phải tạo cuộc thảo luận:';
 $string['completiondiscussionsgroup'] = 'Yêu cầu thảo luận';
 $string['completionposts'] = 'Học viên phải đăng thảo luận hoặc trả lời:';
@@ -51,6 +53,7 @@ $string['messageprovider:digests'] = 'Phân loại diễn đàn đăng ký';
 $string['messageprovider:posts'] = 'Bài viết đã đăng ký trên diễn đàn';
 $string['myprofileotherdis'] = 'Diễn đàn các cuộc thảo luận';
 $string['myprofileowndis'] = 'Diễn đàn các cuộc thảo luận của tôi';
+$string['noquestions'] = 'Không có câu hỏi nào trong diễn đàn này';
 $string['pluginadministration'] = 'Quản lý diễn đàn';
 $string['reply_handler'] = 'Trả lời bài viết diễn đàn thông qua email';
 $string['reply_handler_name'] = 'Trả lời bài viết diễn đàn';

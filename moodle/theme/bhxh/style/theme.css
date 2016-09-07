@@ -199,6 +199,7 @@ input#button-send{
 
 .generalbox .no-overflow table tbody tr td{
     padding-bottom: 10px;
+    padding-left: 10px;
 }
 
 .userprofile .el-category{

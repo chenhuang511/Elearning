@@ -25,4 +25,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['presentation'] = 'Mô tả không cần thiết';
 $string['preview'] = 'Xem trước';
