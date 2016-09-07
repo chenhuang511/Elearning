@@ -2947,4 +2947,86 @@ ORDER BY
         );
     }
 
+    /**
+     * Hanv 07/09/2016
+     * Get records_sql slots in function populate_structure.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     *
+     */
+    public static function get_slots_by_sql_quizid_parameters() {
+        return new external_function_parameters (
+            array(
+                'quizid' => new external_value(PARAM_INT, 'quizid'),
+            )
+        );
+    }
+
+    /**
+     * Get records_sql slots in function populate_structure.
+     *
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function get_slots_by_sql_quizid($quizid) {
+        global $CFG, $DB;
+        $warnings = array();
+        //validate parameter
+        $params = self::validate_parameters(self::get_slots_by_sql_quizid_parameters(),
+            array('quizid' => $quizid));
+
+        $slots = $DB->get_records_sql("
+                SELECT slot.id AS slotid, slot.slot, slot.questionid, slot.page, slot.maxmark,
+                        slot.requireprevious, q.*, qc.contextid
+                  FROM {quiz_slots} slot
+                  LEFT JOIN {question} q ON q.id = slot.questionid
+                  LEFT JOIN {question_categories} qc ON qc.id = q.category
+                 WHERE slot.quizid = ?
+              ORDER BY slot.slot", array($params['quizid']));
+        return $slots;
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1 Options available
+     * @since Moodle 3.1
+     */
+    public static function get_slots_by_sql_quizid_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'slotid' => new external_value(PARAM_INT, 'slotid.', VALUE_OPTIONAL),
+                    'slot' => new external_value(PARAM_INT, 'slot.', VALUE_OPTIONAL),
+                    'questionid' => new external_value(PARAM_RAW, 'question id.', VALUE_OPTIONAL),
+                    'page' => new external_value(PARAM_INT, 'page.', VALUE_OPTIONAL),
+                    'maxmark' => new external_value(PARAM_INT, 'maxmark.', VALUE_OPTIONAL),
+                    'requireprevious' => new external_value(PARAM_INT, 'requireprevious.', VALUE_OPTIONAL),
+                    'id' => new external_value(PARAM_INT, 'id.', VALUE_OPTIONAL),
+                    'category' => new external_value(PARAM_INT, 'category.', VALUE_OPTIONAL),
+                    'parent' => new external_value(PARAM_INT, 'parent.', VALUE_OPTIONAL),
+                    'name' => new external_value(PARAM_RAW, 'name.', VALUE_OPTIONAL),
+                    'questiontext' => new external_value(PARAM_RAW, 'id.', VALUE_OPTIONAL),
+                    'questiontextformat' => new external_value(PARAM_RAW, 'questiontextformat.', VALUE_OPTIONAL),
+                    'generalfeedbackformat' => new external_value(PARAM_RAW, 'generalfeedbackformat.', VALUE_OPTIONAL),
+                    'defaultmark' => new external_value(PARAM_RAW, 'defaultmark.', VALUE_OPTIONAL),
+                    'penalty' => new external_value(PARAM_RAW, 'id.', VALUE_OPTIONAL),
+                    'qtype' => new external_value(PARAM_RAW, 'qtype.', VALUE_OPTIONAL),
+                    'length' => new external_value(PARAM_RAW, 'length.', VALUE_OPTIONAL),
+                    'stamp' => new external_value(PARAM_RAW, 'stamp.', VALUE_OPTIONAL),
+                    'version' => new external_value(PARAM_RAW, 'version.', VALUE_OPTIONAL),
+                    'hidden' => new external_value(PARAM_RAW, 'hidden.', VALUE_OPTIONAL),
+                    'timecreated' => new external_value(PARAM_RAW, 'timecreated.', VALUE_OPTIONAL),
+                    'timemodified' => new external_value(PARAM_RAW, 'timemodified.', VALUE_OPTIONAL),
+                    'createdby' => new external_value(PARAM_RAW, 'createdby.', VALUE_OPTIONAL),
+                    'modifiedby' => new external_value(PARAM_RAW, 'modifiedby.', VALUE_OPTIONAL),
+                    'contextid' => new external_value(PARAM_RAW, 'contextid.', VALUE_OPTIONAL)
+                )
+            )
+        );
+    }
+
 }

@@ -323,4 +323,12 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_quiz_get_slots_by_sql_quizid' => array(
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'get_slots_by_sql_quizid',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Get records_sql slots in function populate_structure.",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 );
