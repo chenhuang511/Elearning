@@ -683,3 +683,26 @@ function remote_db_record_exists($table, $condition)
     return $result->status;
 }
 
+/**
+ * get records_sql slots in function populate_structure
+ */
+function remote_get_slots_by_sql_quizid($quizid)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_quiz_get_slots_by_sql_quizid',
+            'params' => array('quizid' => $quizid)
+        ), false
+    );
+    if(!is_array($result)){
+        throw new coding_exception('Invalid local_mod_quiz_get_slots_by_sql_quizid API. Please check your API');
+    }
+    $res = array();
+    foreach($result as $element){
+        $res[$element->slotid] = $element;
+    }
+    return $res;
+}
+

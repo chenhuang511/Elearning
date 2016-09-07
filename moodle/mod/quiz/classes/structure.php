@@ -580,7 +580,10 @@ class structure {
     public function populate_structure($quiz) {
         global $DB;
 
-        $slots = $DB->get_records_sql("
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $slots = remote_get_slots_by_sql_quizid($quiz->id);
+        }else{
+            $slots = $DB->get_records_sql("
                 SELECT slot.id AS slotid, slot.slot, slot.questionid, slot.page, slot.maxmark,
                         slot.requireprevious, q.*, qc.contextid
                   FROM {quiz_slots} slot
@@ -588,6 +591,7 @@ class structure {
                   LEFT JOIN {question_categories} qc ON qc.id = q.category
                  WHERE slot.quizid = ?
               ORDER BY slot.slot", array($quiz->id));
+        }
 
         $slots = $this->populate_missing_questions($slots);
 
