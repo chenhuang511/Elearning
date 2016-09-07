@@ -80,8 +80,8 @@ abstract class condition extends tree_node {
     public abstract function is_available($not, info $info, $grabthelot, $userid);
 
     public function check_available($not, info $info, $grabthelot, $userid) {
-        // Use is_available, and we always display (at this stage).
-        $allow = $this->is_available($not, $info, $grabthelot, $userid);
+        // Use is_available, and we always display (at this stage).     
+    $allow = $this->is_available($not, $info, $grabthelot, $userid);
         return new result($allow, $this);
     }
 

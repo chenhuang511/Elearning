@@ -26,6 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['add_item'] = 'Thêm câu hỏi';
+$string['description'] = 'Mô tả';
 $string['dropdown_values'] = 'Đáp án';
 $string['item_name'] = 'Câu hỏi';
 $string['line_values'] = 'Đánh giá';

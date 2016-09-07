@@ -27,3 +27,4 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['bind_pw_key'] = 'Mật khẩu';
 $string['category_key'] = 'Danh mục';
+$string['updatelocal'] = 'Cập nhật dữ liệu cục bộ';

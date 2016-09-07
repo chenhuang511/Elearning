@@ -26,3 +26,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['edit'] = 'Chỉnh sửa';
+$string['selectdb'] = 'Lựa chọn cơ sở dữ liệu:';

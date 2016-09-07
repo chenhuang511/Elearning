@@ -25,5 +25,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['event_assessable_uploaded'] = 'Một tệp tin đã được tải lên';
+$string['event_assessable_uploaded'] = 'Một tập tin đã được tải lên.';
 $string['pluginname'] = 'Tải lên';

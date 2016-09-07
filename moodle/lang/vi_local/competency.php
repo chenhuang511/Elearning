@@ -39,6 +39,7 @@ $string['coursemodulecompetencyoutcome_recommend'] = 'Gửi để xem trước';
 $string['deletecompetencyratings'] = 'Xóa xếp hạng năng lực';
 $string['enablecompetencies'] = 'Kích hoạt năng lực';
 $string['enablecompetencies_desc'] = 'Năng cho phép người dùng được đánh giá theo kế hoạch học tập';
+$string['invalidevidencedesc'] = 'Bằng chứng mô tả không hợp lệ';
 $string['pushcourseratingstouserplans'] = 'Đẩy xếp hạng khóa học đến kế hoạch học tập cá nhân';
 $string['pushcourseratingstouserplans_desc'] = 'Cài đặt kế hoạch học tập cá nhân với giá trị mặc định khi năng lực khóa học được đánh giá';
 $string['userplans'] = 'Kế hoạch học tập';

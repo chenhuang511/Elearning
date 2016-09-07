@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['configmaxbytes'] = 'Dung lượng tệp tin tối đa';
 $string['enabled'] = 'Tập tin nộp';
+$string['eventassessableuploaded'] = 'Một tập tin đã được tải lên.';
 $string['file'] = 'Tập tin nộp';
 $string['maxbytes'] = 'Dung lượng tệp tin tối đa';
 $string['maxfilessubmission'] = 'Số tệp tối đa được gửi';

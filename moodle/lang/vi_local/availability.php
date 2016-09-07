@@ -26,3 +26,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['restrictaccess'] = 'Giới hạn truy cập';
+$string['restrictbygroup'] = 'Thêm hạn chế truy cập nhóm/tổ';

@@ -25,5 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['addfiletext'] = 'Thêm tập tin';
 $string['original'] = 'Nguồn gốc';
 $string['repositories'] = 'Kho';

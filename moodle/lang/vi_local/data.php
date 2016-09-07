@@ -26,4 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['csvfile'] = 'Tệp CSV';
+$string['data:addinstance'] = 'Thêm một cơ sở dữ liệu mới';
+$string['fielddescription'] = 'Trường mô tả';
+$string['intro'] = 'Mô tả';
 $string['menuchoose'] = 'Chọn...';
