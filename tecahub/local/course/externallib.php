@@ -2242,6 +2242,56 @@ class local_course_external extends external_api
         );
     }
 
+    public static function page_get_coursemodule_info_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'id' => new external_value(PARAM_INT, 'The id of page')
+            )
+        );
+    }
+
+    public static function page_get_coursemodule_info_by($id)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::page_get_coursemodule_info_by_parameters(), array(
+            'id' => $id
+        ));
+
+        $page = $DB->get_record('page', array('id' => $params['id']),
+            'id, name, display, displayoptions, intro, introformat');
+
+        if (!$page) {
+            $page = new stdClass();
+        }
+
+        $result = array();
+        $result['page'] = $page;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    public static function page_get_coursemodule_info_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'page' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'the id of page'),
+                        'name' => new external_value(PARAM_RAW, 'the name of page'),
+                        'intro' => new external_value(PARAM_RAW, 'introduction'),
+                        'introformat' => new external_value(PARAM_INT, 'intro format'),
+                        'display' => new external_value(PARAM_INT, 'display'),
+                        'displayoptions' => new external_value(PARAM_RAW, 'display options')
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
     private static function validate_course_module($cmmixed, $throwexception = true)
     {
         $cm = $cmmixed;

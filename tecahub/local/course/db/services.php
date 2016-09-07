@@ -290,4 +290,12 @@ $functions = array(
         'type'		    => 'write',
         'ajax'		    => true
     ),
+    'local_page_get_coursemodule_info_by' => array(
+        'classname'     => 'local_course_external',
+        'methodname'    => 'page_get_coursemodule_info_by',
+        'classpath'     => 'local/course/externallib.php',
+        'description'   => 'page get course module info',
+        'type'		    => 'write',
+        'ajax'		    => true
+    ),
 );
