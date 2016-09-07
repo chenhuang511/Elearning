@@ -323,22 +323,6 @@ define(["./ComponentView", "libs/etch",
                     }
 				}
 
-                // var container = document.getElementById('sample'),
-                // hot;
-
-                // hot = new Handsontable(container, {
-                //     data: Handsontable.helper.createSpreadsheetData(200, 10),
-                //     rowHeaders: true,
-                //     colHeaders: true,
-                //     manualColumnResize: true,
-                //     manualRowResize: true
-                // });
-
-                //this.tablediv.colResizable({liveDrag:true});
-                // this.test = document.getElementById("sample");
-                // console.log(this.test);
-
-
                 this.model.set("text", this.tablediv.innerHTML);
 
 				tinymce.init({
