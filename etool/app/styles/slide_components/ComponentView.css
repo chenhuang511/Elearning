@@ -10,7 +10,7 @@
     font-size: inherit;
 }
 
-.component .content, .slideDrawer .componentContainer {
+.component, .component .content, .slideDrawer .componentContainer {
     transform: none !important;
 }
 
@@ -20,6 +20,12 @@ th, td {
 }
 
 div-table{
+    display: none;
+}
+
+.tableDisplay .topLabel, .tableDisplay .leftLabel,
+.tableDisplay .rightLabel, .tableDisplay .form-inline,
+.tableDisplay .scale{
     display: none;
 }
 

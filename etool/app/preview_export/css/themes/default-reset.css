@@ -245,3 +245,8 @@
 .slideContainer .componentContainer {
     transform: none !important;
 }
+
+.katex .katex-html .mathit {
+    font-family: "Lato", sans-serif;
+    font-style: initial;
+}

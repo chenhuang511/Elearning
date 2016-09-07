@@ -5,6 +5,7 @@ require.config({
 
     	jquery: "../scripts/libs/jQuery",
 		jqueryui: "../scripts/libs/jquery-ui",
+
 		touchpunch: "../scripts/libs/jquery-ui-touch-punch",
 		"jquery.multisortable": "../scripts/libs/jquery.multisortable",
     	position: "../components/jq-contextmenu/jquery.ui.position",

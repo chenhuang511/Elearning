@@ -312,9 +312,32 @@ define(["./ComponentView", "libs/etch",
                     }
                     else
                     {
-                        this.tablediv.innerHTML = '<table style="text-align: center;"> <thead> <tr> <th>Product</th><th>Cost</th> <th>Really?</th> </tr> </thead></table>'
+                        this.tablediv.innerHTML = '<table id="sample" style="text-align: center;"><tr> <th>Product</th><th>Cost</th> <th>Really?</th> </tr> <tr> <th>Toy</th><th>100</th> <th>OK</th> </tr> </table>';
+
+                        $(function() {
+                            $("table#sample th").resizable({
+
+                            });
+                        });
+
                     }
 				}
+
+                // var container = document.getElementById('sample'),
+                // hot;
+
+                // hot = new Handsontable(container, {
+                //     data: Handsontable.helper.createSpreadsheetData(200, 10),
+                //     rowHeaders: true,
+                //     colHeaders: true,
+                //     manualColumnResize: true,
+                //     manualRowResize: true
+                // });
+
+                //this.tablediv.colResizable({liveDrag:true});
+                // this.test = document.getElementById("sample");
+                // console.log(this.test);
+
 
                 this.model.set("text", this.tablediv.innerHTML);
 
