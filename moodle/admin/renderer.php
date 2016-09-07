@@ -990,7 +990,7 @@ class core_admin_renderer extends plugin_renderer_base {
                     );
                 }
 
-                $availableupdates = $plugin->available_updates();
+                //$availableupdates = $plugin->available_updates();
                 if (!empty($availableupdates)) {
                     foreach ($availableupdates as $availableupdate) {
                         $status .= $this->plugin_available_update_info($pluginman, $availableupdate);
