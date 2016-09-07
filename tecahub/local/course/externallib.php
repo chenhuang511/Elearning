@@ -435,7 +435,7 @@ class local_course_external extends external_api
         return $result;
     }
 
-    
+
 
     public static function get_remote_course_mods_returns()
     {

@@ -708,3 +708,20 @@ function get_remote_page_get_coursemodule_info_by($id)
     $page = $result->page;
     return $page;
 }
+
+function get_remote_get_field_modname_by_id($tablename, $id)
+{
+    global $DB;
+
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_get_field_modname_by_id',
+            'params' => array('tablename' => $tablename, 'id' => $id),
+        ), false
+    );
+
+    $name = $result->name;
+    return $name;
+}

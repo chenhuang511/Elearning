@@ -1240,6 +1240,7 @@ function get_course_mods($courseid) {
                                   WHERE cm.course = ? AND cm.module = m.id AND m.visible = 1",
             array($courseid)); // no disabled mods
     } else if (MOODLE_RUN_MODE == MOODLE_MODE_HUB) {
+        $hubcourseid = $courseid;
         return get_remote_course_mods($courseid);
     }
 }
