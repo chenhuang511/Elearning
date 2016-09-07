@@ -1042,7 +1042,7 @@ function get_array_of_activities($course)
         if ($errormessages = course_integrity_check($course->id, $rawmods, $sections)) {
             debugging(join('<br>', $errormessages));
             $rawmods = get_course_mods($course->remoteid);
-            $sections = get_remote_course_sections($courseid, 'id');
+            $sections = get_remote_course_sections($course->remoteid, 'id');
         }
         // Build array of activities.
         foreach ($sections as $section) {
