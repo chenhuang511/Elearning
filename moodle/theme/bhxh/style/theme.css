@@ -170,8 +170,8 @@ select#id_realname_op{
 .form-autocomplete-downarrow {
     color: #333;
     position: relative;
-    top: -2.3em !important;
-    left: 10.5em !important;
+    top: 0.1em !important;
+    left: -1.5em !important;
     cursor: pointer;
 }
 
@@ -280,12 +280,16 @@ input#button-send{
 }
 
 .form-item, .mform .fitem {
-    margin-bottom: 0px !important;
+    margin-bottom: 10px !important;
 }
 
 input.stop-reset-form.remote-form-action{
     font-weight: normal;
     margin: 0;
+}
+
+div#fitem_id_url.fitem_ftext .ftext input#id_url{
+    display: inline-block;
 }
     /***********/
 
