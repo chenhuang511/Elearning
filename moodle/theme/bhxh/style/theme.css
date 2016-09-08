@@ -300,6 +300,12 @@ div#fitem_id_url.fitem_ftext .ftext input#id_url{
 .gradingtable{
     padding-bottom: 10px;
 }
+@media (min-width: 1200px){
+    .fitem_actionbuttons .felement{
+        margin-left: 30%;
+    }
+}
+
     /***********/
 
 .userprofile .el-category:nth-child(3n) {
