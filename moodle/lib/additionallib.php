@@ -94,12 +94,6 @@ function convert_remote_assign_record(&$assign, $userid = false) {
     }
 }
 
-function convert_remote_course_modules_record(&$cm, $useid = false) {
-    if (!$useid)  {
-        $cm->id       = $cm->remoteid;
-    }
-}
-
 function get_local_course_record($courseid, $useid = false) {
     global $DB;
     if (is_object($courseid)) {
@@ -126,10 +120,6 @@ function get_local_assign_record($assignid, $useid = false) {
 
 function get_local_course_modules_record($cmid, $useid = false) {
     global $DB;
-    if (is_object($cmid)) {
-        convert_remote_course_modules_record($cmid);
-        return $cmid;
-    }
     $idfield = ((int)$cmid === 1 || $useid) ? "id" : "remoteid";
     $coursemodule = $DB->get_record("course_modules", array($idfield => $cmid), "*", MUST_EXIST);
     return $coursemodule;

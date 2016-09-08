@@ -180,8 +180,9 @@ else if (!empty($update)) {
         require_login($course, false, $cm); // needed to setup proper $COURSE
 
         list($cm, $context, $module, $data, $cw) = can_update_moduleinfo($cm);
+
         $data->coursemodule = $cm->id;
-        $data->section = $cw->sectionnumber;  // The section number itself - relative!!! (section column in course_sections)
+        $data->section = $cw->section;  // The section number itself - relative!!! (section column in course_sections)
         $data->visible = $cm->visible; //??  $cw->visible ? $cm->visible : 0; // section hiding overrides
         $data->cmidnumber = $cm->idnumber;          // The cm IDnumber
         $data->groupmode = groups_get_activity_groupmode($cm); // locked later if forced

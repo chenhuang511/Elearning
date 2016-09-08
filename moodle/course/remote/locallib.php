@@ -122,26 +122,29 @@ function get_remote_course_module_by_instance($modulename, $instace, $options = 
 
 function get_remote_course_module_by_cmid($modulename = '', $cmid, $courseid = 0, $validate = true, $iscache = true)
 {
+    $rcmid = get_local_course_modules_record($cmid, true)->remoteid;
     $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_get_course_module_by_cmid',
-            'params' => array('modulename' => $modulename, 'cmid' => $cmid, 'courseid' => $courseid, 'validate' => $validate)
+            'params' => array('modulename' => $modulename, 'cmid' => $rcmid, 'courseid' => $courseid, 'validate' => $validate)
         ), $iscache
     );
+
     $result = merge_local_course_module($resp->cm);
     return $result;
 }
 
 function get_remote_core_course_get_course_module($cmid)
 {
+    $rcmid = get_local_course_modules_record($cmid, true)->remoteid;
     $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN_M,
             'function_name' => 'core_course_get_course_module',
-            'params' => array('cmid' => $cmid)
+            'params' => array('cmid' => $rcmid)
         )
     );
 
@@ -293,6 +296,7 @@ function create_update_remote_course_modules_completion($cmc)
     }
 
     $cmc['userid'] = get_remote_mapping_user($cmc['userid'])[0]->id;
+    $cmc['coursemoduleid'] = get_local_course_modules_record($cmc['coursemoduleid'], true)->remoteid;
 
     $result = moodle_webservice_client(
         array(
@@ -438,7 +442,6 @@ function get_remote_completion_fetch_all_helper($table, $courseid)
 {
     $rcourseid = get_local_course_record($courseid, true)->remoteid;
 
-
     $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
@@ -462,8 +465,11 @@ function get_remote_completion_fetch_all_helper($table, $courseid)
         }
     } else if ($table == 'course_completion_criteria') {
         if ($result->course_completion_criteria) {
-            foreach ($result->course_completion_criteria as $element) {
+            foreach ($result->course_completion_criteria as &$element) {
                 $element->course = $courseid;
+                if (!empty($element->moduleinstance)) {
+                    $element->moduleinstance = get_local_course_modules_record($element->moduleinstance)->id;
+                }
             }
             return $result->course_completion_criteria;
         } else {
@@ -618,25 +624,22 @@ function get_remote_list_course_module_competencies_in_course_module($cmorid)
 {
     global $DB;
 
+    $rcmorid = get_local_course_modules_record($cmorid, true)->remoteid;
+
     $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_get_list_course_module_competencies_in_course_module',
-            'params' => array('cmorid' => $cmorid),
+            'params' => array('cmorid' => $rcmorid),
         ), false
     );
 
     $cm = $result->cm;
 
-    if ($cm) {
-        $course = $DB->get_record('course', array('remoteid' => $cm->course));
-        if ($course) {
-            $cm->course = $course->id;
-        }
-    }
+    $result = merge_local_course_module($cm);
 
-    return $cm;
+    return $result;
 }
 
 function get_remote_can_add_moduleinfo($courseid, $modulename, $section)

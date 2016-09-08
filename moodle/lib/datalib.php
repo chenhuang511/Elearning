@@ -1228,21 +1228,23 @@ function increment_revision_number($table, $field, $select, array $params = null
  * @return array
  */
 function get_course_mods($courseid) {
-    if (MOODLE_RUN_MODE == MOODLE_MODE_HOST) { // depends on config
-        global $DB;
+    global $DB;
 
-        if (empty($courseid)) {
-            return false; // avoid warnings
+    if (empty($courseid)) {
+        return false; // avoid warnings
+    }
+
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        if ($courseid != 1) {
+            get_remote_course_mods($courseid);
         }
+    }
 
-        return $DB->get_records_sql("SELECT cm.*, m.name as modname
+
+    return $DB->get_records_sql("SELECT cm.*, m.name as modname
                                    FROM {modules} m, {course_modules} cm
                                   WHERE cm.course = ? AND cm.module = m.id AND m.visible = 1",
             array($courseid)); // no disabled mods
-    } else if (MOODLE_RUN_MODE == MOODLE_MODE_HUB) {
-        $hubcourseid = $courseid;
-        return get_remote_course_mods($courseid);
-    }
 }
 
 

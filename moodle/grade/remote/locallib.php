@@ -16,6 +16,9 @@ function get_remote_grade_settings_by($parameters, $sort = '', $mustexists = FAL
             'params' => array_merge(array('sort' => $sort, 'mustexists' => $mustexists), $parameters),
         )
     );
+    if (!isset($result->setting)) {
+        return 0;
+    }
 
     return $result->setting;
 }

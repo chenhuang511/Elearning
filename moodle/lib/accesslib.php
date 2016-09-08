@@ -7493,18 +7493,7 @@ class context_module extends context
         }
 
         if (!$record = $DB->get_record('context', array('contextlevel' => CONTEXT_MODULE, 'instanceid' => $cmid))) {
-
-            if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-                $params = array();
-                $params['parameters[0][name]'] = "id";
-                $params['parameters[0][value]'] = $cmid;
-
-                $cm = get_remote_course_modules_by($params);
-            } else {
-                $cm = $DB->get_record('course_modules', array('id' => $cmid), 'id,course', $strictness);
-            }
-
-            if ($cm) {
+            if ($cm = $DB->get_record('course_modules', array('id' => $cmid), 'id,course', $strictness)) {
                 $parentcontext = context_course::instance($cm->course);
                 $record = context::insert_context_record(CONTEXT_MODULE, $cm->id, $parentcontext->path);
             }

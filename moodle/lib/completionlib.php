@@ -950,7 +950,6 @@ class completion_info {
         // Not there, get via SQL
         if ($usecache && $wholecourse) {
             // Get whole course data for cache
-            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
                 $alldatabycmc = $DB->get_records_sql("
             SELECT
                 cmc.*
@@ -959,16 +958,6 @@ class completion_info {
                 INNER JOIN {course_modules_completion} cmc ON cmc.coursemoduleid=cm.id
             WHERE
                 cm.course=? AND cmc.userid=?", array($this->course->id, $userid));
-            } else {
-                $alldatabycmc = $DB->get_records_sql("
-            SELECT
-                cmc.*
-            FROM
-                {course_modules} cm
-                INNER JOIN {course_modules_completion} cmc ON cmc.coursemoduleid=cm.remoteid
-            WHERE
-                cm.course=? AND cmc.userid=?", array($this->course->id, $userid));
-            }
 
             // Reindex by cm id
             $alldata = array();

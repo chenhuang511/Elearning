@@ -1031,18 +1031,17 @@ function get_array_of_activities($course)
 
     $mod = array();
 
-    $rawmods = get_course_mods($course->remoteid);
+    $rawmods = get_course_mods($course->id);
     if (empty($rawmods)) {
         return $mod; // always return array
     }
 
-    $sections = get_remote_course_sections($course->remoteid, 'id');
-    if ($sections) {
+    if ($sections = $DB->get_records('course_sections', array('course' => $course->id), 'section ASC', 'id,section,sequence')) {
         // First check and correct obvious mismatches between course_sections.sequence and course_modules.section.
         if ($errormessages = course_integrity_check($course->id, $rawmods, $sections)) {
             debugging(join('<br>', $errormessages));
-            $rawmods = get_course_mods($course->remoteid);
-            $sections = get_remote_course_sections($course->remoteid, 'id');
+            $rawmods = get_course_mods($course->id);
+            $sections = $DB->get_records('course_sections', array('course' => $course->id), 'section ASC', 'id,section,sequence');
         }
         // Build array of activities.
         foreach ($sections as $section) {
@@ -1668,11 +1667,7 @@ function set_coursemodule_groupmode($id, $groupmode)
 function set_coursemodule_idnumber($id, $idnumber)
 {
     global $DB;
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
-        $cm = $DB->get_record('course_modules', array('id' => $id), 'id,course,idnumber', MUST_EXIST);
-    } else {
-        $cm = get_local_course_modules_record($id);
-    }
+    $cm = $DB->get_record('course_modules', array('id' => $id), 'id,course,idnumber', MUST_EXIST);
 
     if ($cm->idnumber != $idnumber) {
         $DB->set_field('course_modules', 'idnumber', $idnumber, array('id' => $cm->id));
