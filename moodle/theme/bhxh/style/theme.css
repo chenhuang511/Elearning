@@ -260,6 +260,33 @@ input#button-send{
 .navbar-inner .clearfix .usermenu li{
     margin-right: 10px;
 }
+
+#page-report-participation-index .participationselectform div label{
+    display: inline;
+    margin: 0 5px 0px 5px;
+}
+
+.participationselectform div select{
+    max-width: 150px;
+    padding-right: 5px;
+}
+
+.participationselectform div label{
+    padding-right: 0px;
+}
+
+#fgroup_id_realname_grp fieldset.felement{
+    margin-bottom: 0;
+}
+
+.form-item, .mform .fitem {
+    margin-bottom: 0px !important;
+}
+
+input.stop-reset-form.remote-form-action{
+    font-weight: normal;
+    margin: 0;
+}
     /***********/
 
 .userprofile .el-category:nth-child(3n) {
