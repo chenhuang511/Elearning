@@ -292,10 +292,6 @@ div#fitem_id_url.fitem_ftext .ftext input#id_url{
     display: inline-block;
 }
 
-.path-admin-tool-customlang .mform.filterform .fitem .felement {
-    width: 60%;
-    margin-left: 31%;
-}
     /***********/
 
 .userprofile .el-category:nth-child(3n) {
