@@ -2407,12 +2407,13 @@ class local_course_external extends external_api
                 'courseid' => new external_value(PARAM_INT, 'the id of course'),
                 'add' => new external_value(PARAM_TEXT, 'the add'),
                 'section' => new external_value(PARAM_INT, 'the number of section'),
-                'sectionreturn' => new external_value(PARAM_INT, 'the number of section')
+                'sectionreturn' => new external_value(PARAM_INT, 'the number of section'),
+                'type' => new external_value(PARAM_TEXT, 'the type')
             )
         );
     }
 
-    public static function create_new_mods($courseid, $add, $section, $sectionreturn)
+    public static function create_new_mods($courseid, $add, $section, $sectionreturn, $type)
     {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/course/lib.php');
