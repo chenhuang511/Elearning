@@ -105,14 +105,14 @@ define(["./ComponentView", "libs/etch",
 				this.$textEl.attr("contenteditable", true);
 				if (e != null) {
 					this._initialText = this.$textEl.html();
-					etch.editableInit.call(this, e, this.model.get("y") * this.dragScale + 35);
+					//etch.editableInit.call(this, e, this.model.get("y") * this.dragScale + 35);
 
 					// Focus editor and select all text.
 					if (!this.editing) {
 						this.$textEl.get(0).focus();
 						try {
-							document.execCommand('selectAll', false, null);
-							etch.triggerCaret();
+							//document.execCommand('selectAll', false, null);
+							//etch.triggerCaret();
 						} catch (e) {
 							// firefox failboats on this command
 							// for some reason.  hence the try/catch
@@ -305,43 +305,23 @@ define(["./ComponentView", "libs/etch",
 				if (this.tablediv == undefined)
                 {
 					this.tablediv = document.createElement('div-table');
-					//element.appendChild(this.tablediv);
+					//this.$el.append(this.tablediv);
                     if (this.model.get("_opts"))
                     {
                         this.tablediv.innerHTML = this.model.get("_opts");
                     }
                     else
                     {
-                        this.tablediv.innerHTML = '<table id="sample" style="text-align: center;"><tr> <th>Product</th><th>Cost</th> <th>Really?</th> </tr> <tr> <th>Toy</th><th>100</th> <th>OK</th> </tr> </table>';
-
-                        $(function() {
-                            $("table#sample th").resizable({
-
-                            });
-                        });
-
+                        this.tablediv.innerHTML = '<table class="sampletable" style="text-align: center;"><tr> <th>Product</th><th>Cost</th> <th>Really?</th> </tr></table>';
+                        //console.log(this.$el.find('.sampletable th'));
+                        //console.log($("table.sampletable th"));
                     }
 				}
 
                 this.model.set("text", this.tablediv.innerHTML);
 
-				tinymce.init({
-
-                    //selector: '.content',
-					plugins: [
-						'advlist autolink lists link image charmap print preview anchor',
-						'searchreplace visualblocks code fullscreen',
-						'insertdatetime media table contextmenu paste code'
-					],
-					toolbar: 'none',
-					menubar: 'none',
-                    statusbar: false,
-					height: 200,
-					content_css: [
-   					 //'//fast.fonts.net/cssapi/e6dc9b99-64fe-4292-ad98-6974f93cd2a2.css',
-					'//www.tinymce.com/css/codepen.min.css'
-                    ]
-				});
+                this.$el.find('.sampletable th').resizable({});
+                //$('.sampletable th').resizable({});
 
 				return this.$el;
 			},
