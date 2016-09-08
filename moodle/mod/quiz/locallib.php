@@ -473,7 +473,6 @@ function quiz_delete_previews($quiz, $userid = null) {
  */
 function quiz_has_attempts($quizid) {
     global $DB;
-    // @TODO: handle here
     if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
         $conditions = array();
         $conditions['conditions[0][name]'] = "quiz";
