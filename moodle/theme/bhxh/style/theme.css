@@ -4098,7 +4098,7 @@ form#responseform .im-controls input[type="submit"], form#responseform .submitbt
 .btn-viewallsubmission, .btn-grade, .gradingbatchoperationsform #fgroup_id_actionsgrp .fgroup input[type="submit"],
 .btn-viewallresponse/* ,
 input[type="submit"].stop-reset-form */ {
-    font-weight: normal;
+    font-weight: bold;
 }
 
 #fgroup_id_buttonar .fgroup input[name="submitbutton"],
