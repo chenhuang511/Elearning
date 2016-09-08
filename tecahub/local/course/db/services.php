@@ -306,12 +306,4 @@ $functions = array(
         'type'		    => 'write',
         'ajax'		    => true
     ),
-    'local_create_new_mods' => array(
-        'classname'     => 'local_course_external',
-        'methodname'    => 'create_new_mods',
-        'classpath'     => 'local/course/externallib.php',
-        'description'   => 'create new module',
-        'type'		    => 'write',
-        'ajax'		    => true
-    ),
 );
