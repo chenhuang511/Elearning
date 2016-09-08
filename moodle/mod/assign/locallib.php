@@ -1253,7 +1253,7 @@ class assign {
                 $this->instance = $DB->get_record('assign', $params, '*', MUST_EXIST);
             } else {
                 // Get instance remote
-                if (!isset($this->get_context()->instanceid)){
+                if (isset($this->get_context()->instanceid)) {
                     $instanceremote = get_remote_assign_by_id_instanceid($params['id'], $this->get_context()->instanceid);
                 } else {
                     $instanceremote = get_remote_assign_by_id($params['id']);
@@ -4263,6 +4263,7 @@ class assign {
         global $USER;
 
         $members = $this->get_submission_group_members($groupid, true);
+
         foreach ($members as $member) {
             // If we can view any members submission, we can view the submission for the group.
             if ($this->can_view_submission($member->id)) {

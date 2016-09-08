@@ -559,21 +559,10 @@ class course_modinfo {
      */
     protected static function build_course_section_cache($course) {
         global $DB;
-        if (MOODLE_RUN_MODE == MOODLE_MODE_HUB) {
-            if (!isset($course->remoteid) || $course->remoteid == 0) {
-                $course = get_local_course_record($course->id, true);
-                $id = $course->remoteid;
-            } else {
-                $id = $course->remoteid;
-            }
-
-            $sections = get_remote_course_sections($id, 'section');
-        } else {
             // Get section data
-            $sections = $DB->get_records('course_sections', array('course' => $course->id), 'section',
+        $sections = $DB->get_records('course_sections', array('course' => $course->id), 'section',
                 'section, id, course, name, summary, summaryformat, sequence, visible, ' .
                 'availability');
-        }
 
         $compressedsections = array();
         $formatoptionsdef = course_get_format($course)->section_format_options();
@@ -1396,7 +1385,7 @@ class cm_info implements IteratorAggregate {
                 }
             }
         } else {
-            if(MOODLE_RUN_MODE==MOODLE_MODE_HUB){
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
                 $icon = $output->pix_url('iconhost', $this->modname);
             }
             else{
@@ -1755,7 +1744,7 @@ class cm_info implements IteratorAggregate {
                     FEATURE_NO_VIEW_LINK);
         }
         $this->url = $modviews[$this->modname]
-                ? new moodle_url('/mod/' . $this->modname . (MOODLE_RUN_MODE == MOODLE_MODE_HUB)?'/mod/' . $this->modname .'/remote/view.php':'/view.php', array('id'=>$this->id))
+            ? new moodle_url('/mod/' . $this->modname . (MOODLE_RUN_MODE === MOODLE_MODE_HUB) ? '/mod/' . $this->modname . '/remote/view.php' : '/view.php', array('id' => $this->id))
                 : null;
     }
 

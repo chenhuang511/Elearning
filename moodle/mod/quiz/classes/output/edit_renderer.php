@@ -200,7 +200,8 @@ class edit_renderer extends \plugin_renderer_base {
             'value' => get_string('repaginatecommand', 'quiz'),
         );
         if (!$structure->can_be_repaginated()) {
-            $buttonoptions['disabled'] = 'disabled';
+            // Bỏ disable để hiện repaginate button
+            // $buttonoptions['disabled'] = 'disabled';
         } else {
             $this->page->requires->yui_module('moodle-mod_quiz-repaginate', 'M.mod_quiz.repaginate.init');
         }

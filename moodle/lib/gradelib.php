@@ -674,7 +674,9 @@ function grade_get_setting($courseid, $name, $default = null, $resetcache = fals
         $params['parameters[1][name]'] = "name";
         $params['parameters[1][value]'] = $name;
         $data = get_remote_grade_settings_by($params);
-        $data->courseid = $courseid;
+        if (!empty($data)) {
+            $data->courseid = $courseid;
+        }
     } else {
         $data = $DB->get_record('grade_settings', array('courseid' => $courseid, 'name' => $name));
     }

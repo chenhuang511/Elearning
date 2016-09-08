@@ -50,13 +50,22 @@ $page       = optional_param('page', '', PARAM_INT);
 $PAGE->set_url('/mod/quiz/edit-rest.php',
         array('quizid' => $quizid, 'class' => $class));
 
+$isremote = (MOODLE_RUN_MODE === MOODLE_MODE_HUB);
 require_sesskey();
-$quiz = $DB->get_record('quiz', array('id' => $quizid), '*', MUST_EXIST);
-$cm = get_coursemodule_from_instance('quiz', $quiz->id, $quiz->course);
-$course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
+if($isremote){
+    $quiz = get_remote_quiz_by_id($quizid);
+    $cm = get_remote_course_module_by_instance("quiz", $quiz->id);
+    $course = get_local_course_record($quiz->course);
+    $quizobj = new quiz($quiz, $cm, $course, true, true);
+}else{
+    $quiz = $DB->get_record('quiz', array('id' => $quizid), '*', MUST_EXIST);
+    $cm = get_coursemodule_from_instance('quiz', $quiz->id, $quiz->course);
+    $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
+    $quizobj = new quiz($quiz, $cm, $course);
+}
+
 require_login($course, false, $cm);
 
-$quizobj = new quiz($quiz, $cm, $course);
 $structure = $quizobj->get_structure();
 $modcontext = context_module::instance($cm->id);
 

@@ -239,7 +239,7 @@ if ($completion->is_enabled()) {
 // We are currently keeping the button here from 1.x to help new teachers figure out
 // what to do, even though the link also appears in the course admin block.  It also
 // means you can back out of a situation where you removed the admin block. :)
-if ($CFG->enabledcourseeditbutton) {
+if (isset($CFG->enabledcourseeditbutton)) {
     if ($PAGE->user_allowed_editing()) {
         $buttons = $OUTPUT->edit_button($PAGE->url);
         $PAGE->set_button($buttons);
@@ -281,6 +281,7 @@ if (!is_remote_course($course)) {
     // make sure that section 0 exists (this function will create one if it is missing)
     course_create_sections_if_missing($course, 0);
 }
+
 // get information about course modules and existing module types
 // format.php in course formats may rely on presence of these variables
 $modinfo = get_fast_modinfo($course);

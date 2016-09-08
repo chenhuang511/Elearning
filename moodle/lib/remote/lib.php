@@ -68,10 +68,12 @@ function moodle_webservice_client($options, $usecache = true, $assoc = false)
  */
 function get_remote_course_module($cmid, $options = array())
 {
+    $rcmid = get_local_course_modules_record($cmid, true)->remoteid;
+
     $coursemodule = moodle_webservice_client(array_merge($options, array('domain' => HUB_URL,
         'token' => HOST_TOKEN_M,
         'function_name' => 'core_course_get_course_module',
-        'params' => array('cmid' => $cmid),
+        'params' => array('cmid' => $rcmid),
     )), false);
 
     $cm = $coursemodule->cm;
@@ -119,24 +121,24 @@ function get_remote_course_thumb($courseid, $options = [])
 
 function get_remote_course_mods($courseid)
 {
+    $rcourseid = get_local_course_record($courseid, true)->remoteid;
+
     $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_get_course_mods',
-            'params' => array('courseid' => $courseid)
+            'params' => array('courseid' => $rcourseid)
         ), false
     );
-
     $coursemodules = $result->coursemodules;
 
     if ($coursemodules) {
         foreach ($coursemodules as $cm) {
-            merge_local_course_module($cm);
+            add_local_course_module($cm);
         }
     }
-
-    return change_key_by_value($coursemodules);
+    add_local_course_sections($rcourseid);
 }
 
 function get_remote_course_sections($courseid, $usesq = false)
@@ -249,7 +251,59 @@ function get_remote_cm_info($modname, $instanceid)
     return $modinfo;
 }
 
-function merge_local_course_module($cm)
+/**
+ * Merge course module from hub save to host and merge
+ *
+ * @param object $cm - The course module info
+ * @return object $cm - The course module after merge
+ */
+function merge_local_course_module($rcm)
+{
+    $cm = get_local_course_modules_record($rcm->id);
+
+    if (isset($rcm->name)) {
+        $cm->name = $rcm->name;
+    }
+    if (isset($rcm->modname)) {
+        $cm->modname = $rcm->modname;
+    }
+
+    return $cm;
+}
+
+/**
+ * Merge course module availability from hub save to host and merge
+ *
+ * @param object $rcmavailability - The course module availability info
+ * @return object $rcmavailability - The course module availability after merge
+ */
+function merge_local_course_module_availability($rcmavailability)
+{
+    global $DB;
+
+    $rcmavailabilityobj = json_decode($rcmavailability);
+
+    foreach ($rcmavailabilityobj->c as &$c) {
+        if (!isset($c->cm)) {
+            continue;
+        }
+        if ($cmid = $DB->get_field('course_modules', 'id', array('remoteid' => $c->cm))) {
+            $c->cm = $cmid;
+        }
+    }
+
+    $rcmavailability = json_encode($rcmavailabilityobj);
+
+    return $rcmavailability;
+}
+
+/**
+ * Add course module from hub save to host and merge
+ *
+ * @param object $cm - The course module info
+ * @return object $cm - The course module after merge
+ */
+function add_local_course_module($cm)
 {
     global $DB;
 
@@ -258,28 +312,82 @@ function merge_local_course_module($cm)
         if (!$coursemodule = $DB->get_record('course_modules', array('remoteid' => $cm->id))) {
             // Make params to insert DB local
             $cm->remoteid = $cm->id;
-            $cm->course = $localcourse->id;
             unset($cm->id);
 
+            // Change course id on hub
+            $cm->course = $localcourse->id;
+
+            // Change module id on host
+            $modulehub = get_remote_modules_by_id($cm->module);
+            $modulehost = $DB->get_record('modules', array('name' => $modulehub->name));
+            if ($modulehost) {
+                $cm->module = $modulehost->id;
+            }
             $transaction = $DB->start_delegated_transaction();
             $cmidhost = $DB->insert_record('course_modules', $cm);
             $transaction->allow_commit();
-            unset($cm->remoteid);
-
             $coursemodule = $DB->get_record('course_modules', array('id' => $cmidhost));
         }
-
-        // Merge course module for settings
-        $cm->id = $coursemodule->remoteid;
-        $cm->course = $localcourse->id;
-        $cm->availability = $coursemodule->availability;
-        $cm->completion = $coursemodule->completion;
-        $cm->completionview = $coursemodule->completionview;
-        $cm->completionexpected = $coursemodule->completionexpected;
-        $cm->completiongradeitemnumber = $coursemodule->completiongradeitemnumber;
     }
 
-    return $cm;
+    return $coursemodule;
+}
+
+/**
+ * Add course section from hub save to host and merge
+ *
+ * @param int $courseid - The id of course
+ * @return void
+ */
+function add_local_course_sections($rcourseid)
+{
+    global $DB;
+
+    $sections = get_remote_course_sections($rcourseid, 'id');
+    $courseid = get_local_course_record($rcourseid)->id;
+
+    if ($sections) {
+        foreach ($sections as $section) {
+            // Insert course section from hub to host
+            if (!$localsection = $DB->get_record('course_sections', array('remoteid' => $section->id))) {
+                $section->remoteid = $section->id;
+                $section->course = $courseid;
+                unset($section->id);
+                // Insert to DB in host.
+                $transaction = $DB->start_delegated_transaction();
+                $secid = $DB->insert_record('course_sections', $section);
+                $transaction->allow_commit();
+                $localsection = $DB->get_record('course_sections', array('id' => $secid));
+            } else {
+                $secid = $localsection->id;
+            }
+
+
+            if (!empty($section->sequence)) {
+                $sequence = explode(",", $section->sequence);
+                foreach ($sequence as &$seq) {
+                    $cm = $DB->get_record('course_modules', array('remoteid' => $seq));
+                    // Update sectionid in course_module tbl
+                    if ($cm) {
+                        $cm->section = $secid;
+                        $transaction = $DB->start_delegated_transaction();
+                        if (!empty($cm->availability)) {
+                            //Merge availability
+                            $cm->availability = merge_local_course_module_availability($cm->availability);
+                        }
+                        $DB->update_record('course_modules', $cm);
+                        $transaction->allow_commit();
+                        $seq = $cm->id;
+                    }
+                }
+                // Update sequence in course_sections
+                $localsection->sequence = implode(",", $sequence);
+                $transaction = $DB->start_delegated_transaction();
+                $DB->update_record('course_sections', $localsection);
+                $transaction->allow_commit();
+            }
+        }
+    }
 }
 
 /**
@@ -362,3 +470,4 @@ function setfield_remote_response_by_tbl($tablename, $field, $value, $data)
     }
     return $res;
 }
+

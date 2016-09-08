@@ -29,7 +29,7 @@ function get_remote_assign_by_id($assignid){
 }
 
 /**
- * get assign by id
+ * get assign by id & instanceid
  *
  * @param int $assignid . the id of assign
  * @param array $options . the options
@@ -38,6 +38,8 @@ function get_remote_assign_by_id($assignid){
  */
 function get_remote_assign_by_id_instanceid($assignid, $instanceid)
 {
+    $rcmid = get_local_course_modules_record($instanceid, true)->remoteid;
+
     $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
@@ -45,7 +47,7 @@ function get_remote_assign_by_id_instanceid($assignid, $instanceid)
             'function_name' => 'local_mod_assign_get_assign_by_id_instanceid',
             'params' => array(
                 'assignid' => $assignid,
-                'instanceid' => $instanceid
+                'instanceid' => $rcmid
             )
         ), false
     );
@@ -636,6 +638,7 @@ function get_remote_assign_grades_get_grades($courseid, $component, $activityid,
     foreach ($userids as $userid) {
         $ruserids[] = get_remote_mapping_user($userid)[0]->id;
     }
+    $rcmid = get_local_course_modules_record($activityid, true)->remoteid;
 
     $resp = moodle_webservice_client(
         array(
@@ -645,7 +648,7 @@ function get_remote_assign_grades_get_grades($courseid, $component, $activityid,
             'params' => array(
                 'courseid' => $courseid,
                 'component' => $component,
-                'activityid' => $activityid,
+                'activityid' => $rcmid,
                 'userids' => $ruserids,
             ),
         ), false

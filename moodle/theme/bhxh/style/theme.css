@@ -280,7 +280,7 @@ input#button-send{
 }
 
 .form-item, .mform .fitem {
-    margin-bottom: 10px !important;
+    margin-bottom: 14px !important;
 }
 
 input.stop-reset-form.remote-form-action{
@@ -291,6 +291,7 @@ input.stop-reset-form.remote-form-action{
 div#fitem_id_url.fitem_ftext .ftext input#id_url{
     display: inline-block;
 }
+
     /***********/
 
 .userprofile .el-category:nth-child(3n) {

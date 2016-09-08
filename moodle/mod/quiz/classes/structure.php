@@ -1020,9 +1020,21 @@ class structure {
      */
     public function set_section_heading($id, $newheading) {
         global $DB;
-        $section = $DB->get_record('quiz_sections', array('id' => $id), '*', MUST_EXIST);
-        $section->heading = $newheading;
-        $DB->update_record('quiz_sections', $section);
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $cond = array();
+            $cond['conditions[0][name]'] = 'id';
+            $cond['conditions[0][value]'] = $id;
+            $section = remote_db_get_record('quiz_sections', $cond, '*', MUST_EXIST);
+            $section->heading = $newheading;
+            $data = array();
+            $data['data[0][name]'] = 'heading';
+            $data['data[0][value]'] = $newheading;
+            update_remote_response_by_tbl('quiz_sections', $id, $data);
+        }else{
+            $section = $DB->get_record('quiz_sections', array('id' => $id), '*', MUST_EXIST);
+            $section->heading = $newheading;
+            $DB->update_record('quiz_sections', $section);
+        }
     }
 
     /**

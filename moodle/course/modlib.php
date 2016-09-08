@@ -487,15 +487,16 @@ function can_update_moduleinfo($cm)
     $context = context_module::instance($cm->id);
     require_capability('moodle/course:manageactivities', $context);
 
+    // Check module exists.
+    $module = $DB->get_record('modules', array('id' => $cm->module), '*', MUST_EXIST);
+
+    // Check the course section exists.
+    $cw = $DB->get_record('course_sections', array('id' => $cm->section), '*', MUST_EXIST);
+
     if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
-        // Check module exists.
-        $module = $DB->get_record('modules', array('id' => $cm->module), '*', MUST_EXIST);
         // Check the moduleinfo exists.
         $data = $DB->get_record($module->name, array('id' => $cm->instance), '*', MUST_EXIST);
-        // Check the course section exists.
-        $cw = $DB->get_record('course_sections', array('id' => $cm->section), '*', MUST_EXIST);
     } else {
-        $module = get_remote_modules_by_id($cm->module);
         $func_get_module = $module->name . '_get_local_settings_info';
         $data = array();
         if (function_exists($func_get_module)) {
@@ -503,7 +504,6 @@ function can_update_moduleinfo($cm)
         } else {
             trigger_error("Not found function $func_get_module.");
         }
-        $cw = get_remote_course_section_nav_by_section($cm->section);
     }
     return array($cm, $context, $module, $data, $cw);
 }
@@ -587,18 +587,7 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null)
         $cm->showdescription = 0;
     }
 
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        // Change course_module id to update DB
-        $cmhost = get_local_course_modules_record($cm->id);
-        $cm->id = $cmhost->id;
-    }
-
     $DB->update_record('course_modules', $cm);
-
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        // Get back remote id for course module
-        $cm->id = $cmhost->remoteid;
-    }
 
     $modcontext = context_module::instance($moduleinfo->coursemodule);
 

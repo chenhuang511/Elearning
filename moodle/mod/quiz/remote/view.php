@@ -22,17 +22,17 @@ if ($id) {
     if (!$cm = get_remote_course_module_by_cmid("quiz", $id)) {
         print_error('invalidcoursemodule');
     }
-    if (!$course = get_local_course_record($cm->course, true)) {
+    if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
         print_error('coursemisconf');
     }
 } else {
     if (!$quiz = get_remote_quiz_by_id($q)) {
         print_error('invalidquizid', 'quiz');
     }
-    if (!$course = get_local_course_record($quiz->course)) {
+    if (!$course = $DB->get_record('course', array('id' => $quiz->course))) {
         print_error('invalidcourseid');
     }
-    
+
     if (!$cm = get_remote_course_module_by_instance("quiz", $quiz->id)) {
         print_error('invalidcoursemodule');
     }
