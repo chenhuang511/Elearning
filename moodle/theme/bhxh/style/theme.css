@@ -163,8 +163,13 @@ select#id_capability{
     font-weight: bold !important;
 }
 
-select#id_realname_op{
+.mform .fitem .felement.fgroup select{
     margin-right: 10px;
+}
+
+.mform .fgroup>span {
+    display: inline-block;
+    margin-top: 5px;
 }
 
 .form-autocomplete-downarrow {
@@ -284,7 +289,7 @@ input#button-send{
 }
 
 input.stop-reset-form.remote-form-action{
-    font-weight: normal;
+    font-weight: bold;
     margin: 0;
 }
 

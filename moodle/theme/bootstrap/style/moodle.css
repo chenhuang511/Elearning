@@ -17488,7 +17488,7 @@ textarea.searchform input[type="text"] {
 @media (min-width: 1200px) {
     .mform .fitem .fitemtitle {
         float: left;
-        width: 40%;
+        width: 30%;
     }
 }
 
@@ -17515,7 +17515,7 @@ textarea.searchform input[type="text"] {
 @media (min-width: 1200px) {
     .mform .fitem .felement {
         float: left;
-        width: 60%;
+        width: 70%;
     }
 } 
 .felement select {
@@ -17693,7 +17693,7 @@ textarea.mform .fitem .felement textarea {
 
 @media (min-width: 1200px) {
     .mform .fitem_actionbuttons > div.felement {
-        margin-left: 40%;
+        margin-left: 25%;
     }
 }
 
@@ -17933,7 +17933,7 @@ select.singleselect {
     -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
     transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
     width: auto;
-    max-width: 300px;
+    max-width: 150px;
     display: inline;
     /*margin: 0 0 5px 20px;*/
 }
