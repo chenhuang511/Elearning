@@ -17,7 +17,7 @@ define(['libs/backbone'], function(Backbone) {
     // in the markup as "data-button-class"   
     buttonClasses: {
       'default': ['save'],
-      'all': ['bold', 'italic', 'underline', 'unordered-list', 'ordered-list', 'link', 'clear-formatting', 'save'],
+      'all': ['bold', 'italic', 'underline', 'unordered-list', 'ordered-list', 'table', 'link', 'clear-formatting', 'save'],
       'title': ['bold', 'italic', 'underline', 'save']
     }
   };
@@ -76,7 +76,9 @@ define(['libs/backbone'], function(Backbone) {
       'click .etch-save': 'save',
       'click .etch-clear-formatting': 'clearFormatting',
       'click [data-option="fontSize"]': 'setFontSize',
-      'click [data-option="fontFamily"]': 'setFontFamily'
+      'click [data-option="fontFamily"]': 'setFontFamily',
+      'click .ok': 'setEditTable',
+      'input input[name="tableColumn"]':'numberColumn'
     },
 
     _editableModelChanged: function(model, newEditable) {
@@ -208,6 +210,35 @@ define(['libs/backbone'], function(Backbone) {
     clearFormatting: function(e) {
       e.preventDefault();
       document.execCommand('removeFormat', false, null);
+    },
+
+    setEditTable: function(e){
+      e.preventDefault();
+      var number_column = this.$el.find('input[name="tableColumn"]').val();
+      var number_row = this.$el.find('input[name="tableRow"]').val();
+      var textBox = this.model.get('editableModel');
+      var reg = /\d$/;
+      if(!reg.test(number_column) || number_column > 50)
+      {
+        this.$el.find('[data-toggle="toggle"]').tooltip();
+      }
+      else if(!reg.test(number_row) || number_row > 50)
+      {
+        this.$el.find('[data-toggle="toggle"]').tooltip();
+      }
+      else{
+        var $table = '<table width="600" style="text-align: center;">';
+        var $tableEl = '<tr height="40">'
+        for(var i = 0; i < number_column; ++i){
+          $tableEl += '<th> </th>';
+        }
+        $tableEl += '</tr>';
+        for(var j = 0; j < number_row; ++j){
+          $table += $tableEl;
+        }
+        $table + '</table>';
+        textBox.set("text",$table);
+      }
     },
 
     setFontFamily: function(e) {

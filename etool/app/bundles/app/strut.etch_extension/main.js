@@ -1,5 +1,5 @@
-define(['libs/etch', 'css!styles/etch_extension/EtchOverrides.css'],
-function(etch) {
+define(['libs/etch', 'css!styles/etch_extension/EtchOverrides.css','libs/backbone'],
+function(etch, backbone) {
     'use strict';
     _.extend(etch.config.buttonClasses, {
         default: [
@@ -7,6 +7,7 @@ function(etch) {
             '<group>', 'unordered-list', 'ordered-list', '</group>',
             '<group>', 'justify-left', 'justify-center', '</group>',
             '<group>', 'link', '</group>',
+            'table',
             'font-family', 'font-size',
             '<group>', 'color', '</group>',
             '<group>', 'clear-formatting', '</group>']
@@ -14,6 +15,7 @@ function(etch) {
 
     var noText = [
         'link',
+        'table',
         'clear-formatting',
         'ordered-list',
         'unordered-list'
@@ -32,6 +34,8 @@ function(etch) {
         switch (button) {
             case 'font-size':
                 return JST['strut.etch_extension/fontSizeSelection'](viewData);
+            case 'table':
+                return JST['strut.etch_extension/table'](viewData);
             case 'font-family':
                 return JST['strut.etch_extension/fontFamilySelection'](viewData);
             case 'color':

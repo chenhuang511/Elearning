@@ -6,7 +6,7 @@ define(["./ComponentView", "libs/etch",
 		'use strict';
 		var undoHistory = CmdListFactory.managedInstance('editor');
 		var styles;
-		styles = ["family", "size", "weight", "style", "color", "decoration", "align"];
+		styles = ["family", "size", "weight", "table", "style", "color", "decoration", "align"];
 
 		/**
 		 * @class Table
