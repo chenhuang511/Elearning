@@ -435,6 +435,8 @@ class local_course_external extends external_api
         return $result;
     }
 
+
+
     public static function get_remote_course_mods_returns()
     {
         return new external_single_structure(
@@ -2237,6 +2239,94 @@ class local_course_external extends external_api
         return new external_single_structure(
             array(
                 'record' => new external_value(PARAM_RAW, 'the record that encode'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function page_get_coursemodule_info_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'id' => new external_value(PARAM_INT, 'The id of page')
+            )
+        );
+    }
+
+    public static function page_get_coursemodule_info_by($id)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::page_get_coursemodule_info_by_parameters(), array(
+            'id' => $id
+        ));
+
+        $page = $DB->get_record('page', array('id' => $params['id']),
+            'id, name, display, displayoptions, intro, introformat');
+
+        if (!$page) {
+            $page = new stdClass();
+        }
+
+        $result = array();
+        $result['page'] = $page;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    public static function page_get_coursemodule_info_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'page' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'the id of page'),
+                        'name' => new external_value(PARAM_RAW, 'the name of page'),
+                        'intro' => new external_value(PARAM_RAW, 'introduction'),
+                        'introformat' => new external_value(PARAM_INT, 'intro format'),
+                        'display' => new external_value(PARAM_INT, 'display'),
+                        'displayoptions' => new external_value(PARAM_RAW, 'display options')
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_field_modname_by_id_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'tablename' => new external_value(PARAM_RAW, 'the table name'),
+                'id' => new external_value(PARAM_INT, 'the id')
+            )
+        );
+    }
+
+    public static function get_field_modname_by_id($tablename, $id)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_field_modname_by_id_parameters(), array(
+            'tablename' => $tablename,
+            'id' => $id
+        ));
+
+        $name = $DB->get_field($params['tablename'], "name", array("id" => $params['id']));
+
+        $result = array();
+        $result['name'] = $name;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    public static function get_field_modname_by_id_returns()
+    {
+        return new external_single_structure(
+            array(
+                'name' => new external_value(PARAM_RAW, 'the name'),
                 'warnings' => new external_warnings()
             )
         );

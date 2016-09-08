@@ -119,7 +119,7 @@ function get_remote_course_thumb($courseid, $options = [])
 
 function get_remote_course_mods($courseid)
 {
-    $resp = moodle_webservice_client(
+    $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
@@ -128,11 +128,15 @@ function get_remote_course_mods($courseid)
         ), false
     );
 
-    foreach ($resp as $cm) {
-        merge_local_course_module($cm);
+    $coursemodules = $result->coursemodules;
+
+    if ($coursemodules) {
+        foreach ($coursemodules as $cm) {
+            merge_local_course_module($cm);
+        }
     }
 
-    return change_key_by_value($resp);
+    return change_key_by_value($coursemodules);
 }
 
 function get_remote_course_sections($courseid, $usesq = false)
@@ -143,7 +147,7 @@ function get_remote_course_sections($courseid, $usesq = false)
             'token' => HOST_TOKEN,
             'function_name' => 'local_get_course_sections',
             'params' => array('courseid' => $courseid)
-        )
+        ), false
     );
 
     $retval = change_key_by_value($result->sections, $usesq);
@@ -331,7 +335,7 @@ function delete_remote_response_by_tbl($tablename, $select, $sort = '')
             'params' => array('tablename' => $tablename, 'select' => $select, 'sort' => $sort)
         ), false
     );
-    if($res->status !== true){
+    if ($res->status !== true) {
         throw new coding_exception('Invalid local_mod_delete_response_by_mbl API. Please check your API');
     }
     return $res;
@@ -353,7 +357,7 @@ function setfield_remote_response_by_tbl($tablename, $field, $value, $data)
             'params' => array_merge(array('tablename' => $tablename, 'field' => $field, 'value' => $value), $data)
         ), false
     );
-    if($res->status !== true){
+    if ($res->status !== true) {
         throw new coding_exception('Invalid local_mod_setfield_response_by_mbl API. Please check your API');
     }
     return $res;

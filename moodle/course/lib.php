@@ -1042,7 +1042,7 @@ function get_array_of_activities($course)
         if ($errormessages = course_integrity_check($course->id, $rawmods, $sections)) {
             debugging(join('<br>', $errormessages));
             $rawmods = get_course_mods($course->remoteid);
-            $sections = get_remote_course_sections($courseid, 'id');
+            $sections = get_remote_course_sections($course->remoteid, 'id');
         }
         // Build array of activities.
         foreach ($sections as $section) {
@@ -1143,7 +1143,11 @@ function get_array_of_activities($course)
                         }
                     }
                     if (!isset($mod[$seq]->name)) {
-                        $mod[$seq]->name = $DB->get_field($rawmods[$seq]->modname, "name", array("id" => $rawmods[$seq]->instance));
+                        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+                            $mod[$seq]->name = get_remote_get_field_modname_by_id($rawmods[$seq]->modname, $rawmods[$seq]->instance);
+                        } else {
+                            $mod[$seq]->name = $DB->get_field($rawmods[$seq]->modname, "name", array("id" => $rawmods[$seq]->instance));
+                        }
                     }
 
                     // Minimise the database size by unsetting default options when they are
@@ -1474,7 +1478,7 @@ function add_course_module($mod)
             if ($key == "course") {
                 $localcourse = $DB->get_record('course', array('id' => $val));
                 $cmdata["data[$i][value]"] = $localcourse ? $localcourse->remoteid : $val;
-            } else if(is_null($val)){
+            } else if (is_null($val)) {
                 $cmdata["data[$i][value]"] = ""; // PARAM_RAW không nhận kiểu dữ liệu === null => chuyển về dạng string
             } else {
                 $cmdata["data[$i][value]"] = $val;
@@ -1627,7 +1631,7 @@ function course_add_cm_to_section($courseorid, $cmid, $sectionnum, $beforemod = 
         $updatedata['data[0][name]'] = "section";
         $updatedata['data[0][value]'] = $section->id;
         $result = update_remote_mdl_course("course_modules", $cmid, $updatedata);
-    }else{
+    } else {
         $DB->set_field("course_sections", "sequence", $newsequence, array("id" => $section->id));
         $DB->set_field('course_modules', 'section', $section->id, array('id' => $cmid));
     }
