@@ -18200,7 +18200,7 @@ textareaselect.singleselect {
 
 input[type="radio"],
 input[type="checkbox"] {
-    margin: 0 4px;
+    margin: 0px;
 }
 
 /* Section and module editing forms contain special JS components for the

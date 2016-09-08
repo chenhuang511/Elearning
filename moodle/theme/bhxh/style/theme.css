@@ -297,6 +297,9 @@ div#fitem_id_url.fitem_ftext .ftext input#id_url{
     display: inline-block;
 }
 
+.gradingtable{
+    padding-bottom: 10px;
+}
     /***********/
 
 .userprofile .el-category:nth-child(3n) {
