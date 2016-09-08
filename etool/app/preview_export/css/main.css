@@ -21,6 +21,7 @@ time, mark, audio, video {
 th {
     border: solid 1px;
     padding: 5px 15px;
+    vertical-align: middle;
 }
 
 /* HTML5 display-role reset for older browsers */

@@ -312,7 +312,14 @@ define(["./ComponentView", "libs/etch",
                     }
                     else
                     {
-                        this.tablediv.innerHTML = '<table style="text-align: center;"> <thead> <tr> <th>Product</th><th>Cost</th> <th>Really?</th> </tr> </thead></table>'
+                        this.tablediv.innerHTML = '<table id="sample" style="text-align: center;"><tr> <th>Product</th><th>Cost</th> <th>Really?</th> </tr> <tr> <th>Toy</th><th>100</th> <th>OK</th> </tr> </table>';
+
+                        $(function() {
+                            $("table#sample th").resizable({
+
+                            });
+                        });
+
                     }
 				}
 
