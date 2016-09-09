@@ -9388,3 +9388,11 @@ function forum_get_local_settings_info($coursemodule)
     $forum->completionreplies = $localforum->completionreplies;
     return $forum;
 }
+
+function forum_formatted_moduleinfo($moduleinfo)
+{
+    if (isset($moduleinfo->introeditor)) {
+        $moduleinfo->introeditor = (array)$moduleinfo->introeditor;
+    }
+    return $moduleinfo;
+}

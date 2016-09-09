@@ -7906,3 +7906,11 @@ function mod_forum_myprofile_navigation(core_user\output\myprofile\tree $tree, $
 
     return true;
 }
+
+function forum_formatted_moduleinfo($moduleinfo)
+{
+    if (isset($moduleinfo->introeditor)) {
+        $moduleinfo->introeditor = (array)$moduleinfo->introeditor;
+    }
+    return $moduleinfo;
+}
