@@ -3329,8 +3329,12 @@ div.backup-section + form,
     }
 }
 
-#coursesearch .coursesearchbox {
-    padding: 15px;
+#coursesearch .coursesearchbox { searchbox-input
+    padding: 10px;
+}
+
+#coursesearch .coursesearchbox .searchbox-input{
+    padding-top: 10px;
 }
 
 #coursesearch .coursesearchbox label {
