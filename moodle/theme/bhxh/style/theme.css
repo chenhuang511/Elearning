@@ -309,7 +309,6 @@ div#fitem_id_url.fitem_ftext .ftext input#id_url{
 .block-search{
     background-color: #ececec;
     min-height: 80px;
-    padding: 15px;
 }
 
 .coursesearchbox .searchbox-title{
@@ -1494,7 +1493,7 @@ section#discussion-container.discussion.container div.discussion-body div#discus
 #enrol-course-list .right-block {
     padding-right: 0px;
     padding-left: 0px;
-    padding-top: 10px;
+    margin-bottom: 10px;
 }
 
 #enrol-course-list .right-block .container-block {
@@ -3329,11 +3328,11 @@ div.backup-section + form,
     }
 }
 
-#coursesearch .coursesearchbox { searchbox-input
+.coursesearchbox {
     padding: 10px;
 }
 
-#coursesearch .coursesearchbox .searchbox-input{
+.coursesearchbox .searchbox-input{
     padding-top: 10px;
 }
 
