@@ -685,6 +685,7 @@ function get_remote_assign_grades_get_grades($courseid, $component, $activityid,
  */
 function core_grades_update_grades($source, $courseid, $component, $activityid, $itemnumber, $rgrades, $itemdetails){
 
+    $rcmid = get_local_course_modules_record($activityid, true)->remoteid;
 
     $resp = moodle_webservice_client(
         array(
@@ -695,7 +696,7 @@ function core_grades_update_grades($source, $courseid, $component, $activityid, 
                 'source' => $source,
                 'courseid' => $courseid,
                 'component' => $component,
-                'activityid' => $activityid,
+                'activityid' => $rcmid,
                 'itemnumber' => $itemnumber,
                 'grades' => array($rgrades),
                 'itemdetails' => $itemdetails,
