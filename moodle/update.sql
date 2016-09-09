@@ -9,6 +9,7 @@ alter table mdl_grade_items add remoteid bigint(10) not null default 0;
 alter table mdl_questionnaire add remoteid bigint(10) not null default 0;
 alter table mdl_certificate add remoteid bigint(10) not null default 0;
 alter table mdl_course_modules add remoteid bigint(10) not null default 0;
+alter table mdl_course_sections add remoteid bigint(10) not null default 0;
 alter table mdl_forum add remoteid bigint(10) not null default 0;
 
 drop table mdl_mnetservice_enrol_courses;
