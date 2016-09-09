@@ -1957,8 +1957,8 @@ function quiz_formatted_moduleinfo($moduleinfo)
         $moduleinfo->introeditor = (array)$moduleinfo->introeditor;
     }
     if (isset($moduleinfo->feedbacktext)) {
-        foreach ($moduleinfo->feedbacktext as $obj) {
-            $obj = (array)$obj;
+        foreach ($moduleinfo->feedbacktext as $key => $val) {
+            $moduleinfo->feedbacktext[$key] = (array)$val;
         }
     }
     return $moduleinfo;
