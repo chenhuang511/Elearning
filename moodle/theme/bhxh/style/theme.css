@@ -306,6 +306,22 @@ div#fitem_id_url.fitem_ftext .ftext input#id_url{
     }
 }
 
+.block-search{
+    background-color: #ececec;
+    min-height: 80px;
+    padding: 15px;
+}
+
+.coursesearchbox .searchbox-title{
+    margin-top: 0;
+    padding-bottom: 6px;
+    text-transform: uppercase;
+    color: #167ac6;
+    text-align: left;
+    border-bottom: solid 1px #ddd;
+    font-size: 20px;
+    font-weight: 500;
+}
     /***********/
 
 .userprofile .el-category:nth-child(3n) {
@@ -1478,6 +1494,7 @@ section#discussion-container.discussion.container div.discussion-body div#discus
 #enrol-course-list .right-block {
     padding-right: 0px;
     padding-left: 0px;
+    padding-top: 10px;
 }
 
 #enrol-course-list .right-block .container-block {
@@ -3313,6 +3330,7 @@ div.backup-section + form,
 }
 
 #coursesearch .coursesearchbox {
+    padding: 15px;
 }
 
 #coursesearch .coursesearchbox label {
