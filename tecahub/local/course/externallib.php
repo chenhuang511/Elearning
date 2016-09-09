@@ -2180,7 +2180,7 @@ class local_course_external extends external_api
         $courseobj->id = $courseobj->remoteid;
 
         $modulerequire = "$CFG->dirroot/mod/$moduleinfoobj->modulename/lib.php";
-        if(file_exists($modulerequire)) {
+        if (file_exists($modulerequire)) {
             require_once($modulerequire);
         } else {
             $warnings['message'] = "File not found";
@@ -2188,7 +2188,9 @@ class local_course_external extends external_api
 
         $moduleformatfunction = $moduleinfoobj->modulename . '_formatted_moduleinfo';
 
-        $moduleinfoobj = $moduleformatfunction($moduleinfoobj);
+        if (function_exists($moduleformatfunction)) {
+            $moduleinfoobj = $moduleformatfunction($moduleinfoobj);
+        }
 
         $modinfo = add_moduleinfo($moduleinfoobj, $courseobj, null);
 
