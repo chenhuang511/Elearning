@@ -195,13 +195,10 @@ define(["./ComponentView", "libs/etch",
 					var cmd = ComponentCommands.Text(this._initialText, this.model);
 					undoHistory.push(cmd);
 
-					this.model.set("text", text);
-                    this.tablediv.innerHTML = this.model.get("text");
+					//this.model.set("text", text);
                     this.model.set("_opts", text);
-                    // console.log("tablediv inner : " + this.tablediv.innerHTML);
-                    // console.log("model get text : " + this.model.get("text"));
-                    // console.log("set opts : " + this.model.get("_opts"));
-                    //this.model.set("text", this.tablediv.innerHTML);
+                    this.tablediv.innerHTML = text;
+
 					window.getSelection().removeAllRanges();
 					this.$textEl.attr("contenteditable", false);
 					this.$el.removeClass("editable");
@@ -298,14 +295,13 @@ define(["./ComponentView", "libs/etch",
 					left: this.model.get("x"),
 				});
 
-                //console.log("get 1 opts : " + this.model.get("_opts"));
 
 				var element = this.$el[0];
 
 				if (this.tablediv == undefined)
                 {
 					this.tablediv = document.createElement('div-table');
-					//this.$el.append(this.tablediv);
+
                     if (this.model.get("_opts"))
                     {
                         this.tablediv.innerHTML = this.model.get("_opts");
@@ -313,12 +309,12 @@ define(["./ComponentView", "libs/etch",
                     else
                     {
                         this.tablediv.innerHTML = '<table class="sampletable" style="text-align: center;"><tr> <th>Product</th><th>Cost</th> <th>Really?</th> </tr></table>';
-                        //console.log(this.$el.find('.sampletable th'));
-                        //console.log($("table.sampletable th"));
+                        //this.model.set("text", this.tablediv.innerHTML);
                     }
+                    this.$el.append(this.tablediv);
 				}
-
-                this.model.set("text", this.tablediv.innerHTML);
+                //console.log("TEST : " + this.$el.find('.sampletable').parent().html());
+                this.model.set("text", this.$el.find('.sampletable').parent().html());
 
                 this.$el.find('.sampletable th').resizable({});
                 //$('.sampletable th').resizable({});
