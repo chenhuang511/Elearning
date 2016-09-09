@@ -126,7 +126,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     if (!$forum = get_remote_forum_by($prs)) {
         print_error('invalidforumid', 'forum');
     }
-    if (!$course = get_local_course_record($forum->course)) {
+    if (!$course = $DB->get_record('course', array('id' => $forum->course))) {
         print_error('invalidcourseid');
     }
     if (!$cm = get_remote_course_module_by_instance('forum', $forum->id)) {
