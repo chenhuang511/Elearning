@@ -50,15 +50,6 @@ function add_moduleinfo($moduleinfo, $course, $mform = null)
         if ($moduleinfo) {
             $moduleinfo->course = $course->id;
         }
-
-        $modcontext = context_module::instance($moduleinfo->coursemodule);
-
-        $eventdata = clone $moduleinfo;
-        $eventdata->modname = $eventdata->modulename;
-        $eventdata->id = $eventdata->coursemodule;
-        $event = \core\event\course_module_created::create_from_cm($eventdata, $modcontext);
-        $event->trigger();
-
     } else {
 // Attempt to include module library before we make any changes to DB.
         include_modulelib($moduleinfo->modulename);
