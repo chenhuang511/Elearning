@@ -33,7 +33,11 @@ list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) =
         question_edit_setup('editq', '/mod/quiz/edit.php', true);
 
 // Get the course object and related bits.
-$course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
+if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+    $course = get_local_course_record($quiz->course);
+}else{
+    $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
+}
 require_capability('mod/quiz:manage', $contexts->lowest());
 
 // Create quiz question bank view.

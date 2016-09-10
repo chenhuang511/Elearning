@@ -131,28 +131,28 @@ $functions = array(
 		'ajax'		  => true
 	),
 	'local_mod_quiz_get_report_avg_record' => array(
-	'classname'	  => 'local_mod_quiz_external',
-	'methodname'  => 'get_report_avg_record',
-	'classpath'	  => 'local/quiz/externallib.php',
-	'description' => "Get average grade and count numaverage for table view.",
-	'type'		  => 'read',
-	'ajax'		  => true
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'get_report_avg_record',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Get average grade and count numaverage for table view.",
+		'type'		  => 'read',
+		'ajax'		  => true
 	),
 	'local_mod_quiz_report_check_quiz_grade' => array(
-	'classname'	  => 'local_mod_quiz_external',
-	'methodname'  => 'check_exist_quiz_grade',
-	'classpath'	  => 'local/quiz/externallib.php',
-	'description' => "Check exist quiz grade record in DB.",
-	'type'		  => 'read',
-	'ajax'		  => true
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'check_exist_quiz_grade',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Check exist quiz grade record in DB.",
+		'type'		  => 'read',
+		'ajax'		  => true
 	),
 	'local_mod_quiz_report_get_grade_bands' => array(
-	'classname'	  => 'local_mod_quiz_external',
-	'methodname'  => 'get_grade_bands',
-	'classpath'	  => 'local/quiz/externallib.php',
-	'description' => "get grade bands data by sql and param from host.",
-	'type'		  => 'read',
-	'ajax'		  => true
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'get_grade_bands',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "get grade bands data by sql and param from host.",
+		'type'		  => 'read',
+		'ajax'		  => true
 	),
 	'local_mod_quiz_load_questions_usages_question_state_summary' => array(
 		'classname'	  => 'local_mod_quiz_external',
@@ -163,12 +163,12 @@ $functions = array(
 		'ajax'		  => true
 	),
 	'local_mod_quiz_load_questions_usages_where_question_in_state' => array(
-	'classname'	  => 'local_mod_quiz_external',
-	'methodname'  => 'load_questions_usages_where_question_in_state',
-	'classpath'	  => 'local/quiz/externallib.php',
-	'description' => "Get a list of usage ids where the question with slot. Also return the total count of such states.",
-	'type'		  => 'read',
-	'ajax'		  => true
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'load_questions_usages_where_question_in_state',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Get a list of usage ids where the question with slot. Also return the total count of such states.",
+		'type'		  => 'read',
+		'ajax'		  => true
 	),
 	'local_mod_quiz_get_remote_attempts_byid' => array(
 		'classname'	  => 'local_mod_quiz_external',
@@ -187,12 +187,12 @@ $functions = array(
 		'ajax'		  => true
 	),
 	'local_mod_quiz_get_essay_question_options' => array(
-	'classname'	  => 'local_mod_quiz_external',
-	'methodname'  => 'get_essay_question_options',
-	'classpath'	  => 'local/quiz/externallib.php',
-	'description' => "Get essay question options.",
-	'type'		  => 'read',
-	'ajax'		  => true
+		'classname'	  => 'local_mod_quiz_external',
+		'methodname'  => 'get_essay_question_options',
+		'classpath'	  => 'local/quiz/externallib.php',
+		'description' => "Get essay question options.",
+		'type'		  => 'read',
+		'ajax'		  => true
 	),
 	'local_mod_quiz_get_question_options_answer' => array(
 		'classname'	  => 'local_mod_quiz_external',
