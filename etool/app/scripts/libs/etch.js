@@ -78,7 +78,11 @@ define(['libs/backbone'], function(Backbone) {
       'click [data-option="fontSize"]': 'setFontSize',
       'click [data-option="fontFamily"]': 'setFontFamily',
       'click .ok': 'setEditTable',
-      'input input[name="tableColumn"]':'numberColumn'
+      'input input[name="tableColumn"]':'numberColumn',
+      'click .insert-row': '_insertRow',
+      'click .insert-column': '_insertColumn',
+      'click .delete-row': '_deleteRow',
+      'click .delete-column': '_deleteColumn'
     },
 
     _editableModelChanged: function(model, newEditable) {
@@ -227,10 +231,10 @@ define(['libs/backbone'], function(Backbone) {
         this.$el.find('[data-toggle="toggle"]').tooltip();
       }
       else{
-        var $table = '<table width="600" style="text-align: center;">';
+        var $table = '<table class="table-striped" width="600" style="text-align: center;">';
         var $tableEl = '<tr height="40">'
         for(var i = 0; i < number_column; ++i){
-          $tableEl += '<th> </th>';
+          $tableEl += '<td></td>';
         }
         $tableEl += '</tr>';
         for(var j = 0; j < number_row; ++j){
@@ -239,6 +243,42 @@ define(['libs/backbone'], function(Backbone) {
         $table + '</table>';
         textBox.set("text",$table);
       }
+    },
+
+    _insertRow: function(e){
+      e.preventDefault();
+      var textBox = this.model.get('editableModel');
+      var $table = textBox.get("text");
+      var n = $table.lastIndexOf("<tr");
+      var m = $table.lastIndexOf("</tr>");
+      var str = $table.substring(n, m + 5);
+      var tableArr = str.match(/<td>/g);
+      for(var i in tableArr){
+        tableArr[i] += "</td>"
+      }
+      str = str.substr(0,str.indexOf("<td>")) + tableArr.join("") + str.substr(str.lastIndexOf("</td>") + 5);
+      $table = $table.substr(0, m + 5)+ str + $table.substr(m + 5);
+      textBox.set("text",$table);
+    },
+
+    _insertColumn: function(e){
+      e.preventDefault();
+      console.log("46");
+    },
+
+    _deleteRow: function(e){
+      e.preventDefault();
+      var textBox = this.model.get('editableModel');
+      var $table = textBox.get("text");
+      var n = $table.lastIndexOf("<tr");
+      var m = $table.lastIndexOf("</tr>");
+      var str = $table.substr(0, n) + $table.substr(m+5);
+      textBox.set("text",str);
+    },
+
+    _deleteColumn: function(e){
+      e.preventDefault();
+      console.log("ssbfs");
     },
 
     setFontFamily: function(e) {
