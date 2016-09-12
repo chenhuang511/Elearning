@@ -148,13 +148,7 @@ function add_moduleinfo($moduleinfo, $course, $mform = null)
 
     $moduleinfo->instance = $returnfromfunc;
 
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $DB->set_field($moduleinfo->modulename, 'remoteid', $moduleinforet->instanceid, array('id' => $moduleinfo->instance));
-        $DB->set_field('course_modules', 'remoteid', $moduleinforet->coursemoduleid, array('id' => $moduleinfo->coursemodule));
-        $DB->set_field('course_modules', 'instance', $moduleinforet->instanceid, array('id' => $moduleinfo->coursemodule));
-    } else {
-        $DB->set_field('course_modules', 'instance', $returnfromfunc, array('id' => $moduleinfo->coursemodule));
-    }
+    $DB->set_field('course_modules', 'instance', $returnfromfunc, array('id' => $moduleinfo->coursemodule));
 
     // Update embedded links and save files.
     $modcontext = context_module::instance($moduleinfo->coursemodule);
@@ -185,6 +179,12 @@ function add_moduleinfo($moduleinfo, $course, $mform = null)
 
     $moduleinfo = edit_module_post_actions($moduleinfo, $course);
     $transaction->allow_commit();
+
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $DB->set_field($moduleinfo->modulename, 'remoteid', $moduleinforet->instanceid, array('id' => $moduleinfo->instance));
+        $DB->set_field('course_modules', 'remoteid', $moduleinforet->coursemoduleid, array('id' => $moduleinfo->coursemodule));
+        $DB->set_field('course_modules', 'instance', $moduleinforet->instanceid, array('id' => $moduleinfo->coursemodule));
+    }
 
     return $moduleinfo;
 }

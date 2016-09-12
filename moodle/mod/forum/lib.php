@@ -102,30 +102,7 @@ function forum_add_instance($forum, $mform = null)
         $forum->assesstimefinish = 0;
     }
 
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $forumkeys = ["course", "coursemodule", "type", "name", "intro", "introformat", "assessed", "assesstimestart", "assesstimefinish", "scale",
-            "maxbytes", "maxattachments", "forcesubscribe", "trackingtype", "rsstype", "rssarticles", "timemodified", "warnafter", "blockafter",
-            "blockperiod", "completiondiscussions", "completionreplies", "completionposts", "displaywordcount"];
-        $forumdata = array();
-        $i = 0;
-        foreach ($forum as $key => $val) {
-            foreach ($forumkeys as $fkey) {
-                if ($key == $fkey) {
-                    $forumdata["forumdata[$i][name]"] = "$key";
-                    if ($key == "course") {
-                        $hubcourseid = $DB->get_field('course', 'remoteid', array('id' => $val));
-                        $forumdata["forumdata[$i][value]"] = $hubcourseid;
-                    } else {
-                        $forumdata["forumdata[$i][value]"] = $val;
-                    }
-                    $i++;
-                }
-            }
-        }
-        $forum->id = save_remote_forum_add_instance($forumdata);
-    } else {
-        $forum->id = $DB->insert_record('forum', $forum);
-    }
+    $forum->id = $DB->insert_record('forum', $forum);
     $modcontext = context_module::instance($forum->coursemodule);
 
     if ($forum->type == 'single') {  // Create related discussion.
@@ -146,28 +123,12 @@ function forum_add_instance($forum, $mform = null)
 
         if ($mform and $draftid = file_get_submitted_draft_itemid('introeditor')) {
             // Ugly hack - we need to copy the files somehow.
-            if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-                $params = array();
-                $params['parameters[0][name]'] = "id";
-                $params['parameters[0][value]'] = $discussion->id;
-                $discussion = get_remote_forum_discussions_by($params, '', true);
-
-                $params['parameters[0][value]'] = $discussion->firstpost;
-                $post = get_remote_forum_posts_by($params, '', true);
-            } else {
-                $discussion = $DB->get_record('forum_discussions', array('id' => $discussion->id), '*', MUST_EXIST);
-                $post = $DB->get_record('forum_posts', array('id' => $discussion->firstpost), '*', MUST_EXIST);
-            }
+            $discussion = $DB->get_record('forum_discussions', array('id' => $discussion->id), '*', MUST_EXIST);
+            $post = $DB->get_record('forum_posts', array('id' => $discussion->firstpost), '*', MUST_EXIST);
 
             $options = array('subdirs' => true); // Use the same options as intro field!
             $post->message = file_save_draft_area_files($draftid, $modcontext->id, 'mod_forum', 'post', $post->id, $options, $post->message);
             $DB->set_field('forum_posts', 'message', $post->message, array('id' => $post->id));
-            if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-                $updatedata = array();
-                $updatedata['data[0][name]'] = "message";
-                $updatedata['data[0][value]'] = $post->message;
-                $result = update_remote_mdl_forum("forum_posts", $post->id, $updatedata);
-            }
         }
     }
 

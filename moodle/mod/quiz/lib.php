@@ -76,7 +76,6 @@ define('QUIZ_NAVMETHOD_SEQ',  'sequential');
  */
 function quiz_add_instance($quiz) {
     global $DB;
-    $isremote = (MOODLE_RUN_MODE === MOODLE_MODE_HUB)?true:false;
     $cmid = $quiz->coursemodule;
 
     // Process the options from the form.
@@ -87,33 +86,11 @@ function quiz_add_instance($quiz) {
     }
 
     // Try to store it in the database.
-    if($isremote){
-        // Insert data in hub database. using json_encode data
-        $quizdata = $quiz;
-        $localcourse = $DB->get_record('course', array('id' => $quiz->course));
-        $quizdata->course = $localcourse->remoteid;
-        $quizdata = json_encode($quizdata);
-        $quiz->id = remote_db_insert_record("quiz", $quizdata);
-        if($quiz->course !== $localcourse->id){
-            $quiz->course = $localcourse->id;
-        }
-        // Create the first section for this quiz.
-        $quizsectiondata = array();
-        $quizsectiondata["data[0][name]"] = 'quizid';
-        $quizsectiondata["data[0][value]"] = $quiz->id;
-        $quizsectiondata["data[1][name]"] = 'firstslot';
-        $quizsectiondata["data[1][value]"] = 1;
-        $quizsectiondata["data[2][name]"] = 'heading';
-        $quizsectiondata["data[2][value]"] = '';
-        $quizsectiondata["data[3][name]"] = 'shufflequestions';
-        $quizsectiondata["data[3][value]"] = 0;
-        save_remote_mdl_course("quiz_sections", $quizsectiondata);
-    }else{
-        $quiz->id = $DB->insert_record('quiz', $quiz);
-        // Create the first section for this quiz.
-        $DB->insert_record('quiz_sections', array('quizid' => $quiz->id,
-            'firstslot' => 1, 'heading' => '', 'shufflequestions' => 0));
-    }
+    $quiz->id = $DB->insert_record('quiz', $quiz);
+
+    // Create the first section for this quiz.
+    $DB->insert_record('quiz_sections', array('quizid' => $quiz->id,
+        'firstslot' => 1, 'heading' => '', 'shufflequestions' => 0));
 
     // Do the processing required after an add or an update.
     quiz_after_add_or_update($quiz);
