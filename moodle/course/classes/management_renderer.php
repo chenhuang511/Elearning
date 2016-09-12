@@ -776,7 +776,7 @@ class core_course_management_renderer extends plugin_renderer_base {
                 array('' => 'choosedots'),
                 array('aria-labelledby' => 'moveselectedcoursesto')
             );
-            $submit = array('type' => 'submit', 'name' => 'bulkmovecourses', 'value' => get_string('move'));
+            $submit = array('type' => 'submit', 'name' => 'bulkmovecourses', 'class' => 'movecourses', 'value' => 'move');
             $html .= $this->detail_pair(
                 html_writer::span(get_string('moveselectedcoursesto'), '', array('id' => 'moveselectedcoursesto')),
                 $select . html_writer::empty_tag('input', $submit)
@@ -802,7 +802,7 @@ class core_course_management_renderer extends plugin_renderer_base {
             array('' => 'choosedots'),
             array('aria-labelledby' => 'moveselectedcoursesto')
         );
-        $submit = array('type' => 'submit', 'name' => 'bulkmovecourses', 'value' => get_string('move'));
+        $submit = array('type' => 'submit', 'name' => 'bulkmovecourses','class' => 'movecourses', 'value' => get_string('move'));
         $html .= $this->detail_pair(
             html_writer::span(get_string('moveselectedcoursesto'), '', array('id' => 'moveselectedcoursesto')),
             $select . html_writer::empty_tag('input', $submit)

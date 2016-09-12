@@ -128,15 +128,15 @@ class core_remote_renderer extends plugin_renderer_base
         $strsearchcourses= get_string("searchcourses");
         $searchurl = new moodle_url('/course/search.php');
 
-        $content .= html_writer::start_tag('form', array('id' => $formid, 'action' => $searchurl, 'method' => 'get'));
+        $content .= html_writer::start_tag('form', array('id' => '', 'action' => $searchurl, 'method' => 'get'));
 
         $content .= html_writer::start_tag('div', array('class' => 'coursesearchbox'));
 
-        $content .= html_writer::tag('div', $strsearchcourses, array('for' => $inputid, 'class' => 'searchbox-title'));
+        $content .= html_writer::tag('div', $strsearchcourses, array('for' => '', 'class' => 'searchbox-title'));
         $content .= html_writer::start_tag('div', array('class' => 'searchbox-input'));
         $content .= html_writer::empty_tag('input', array('type' => 'text', 'id' => $inputid,
-            'size' => $inputsize, 'name' => 'search', 'value' => s($value)));
-        $content .= html_writer::empty_tag('input', array('type' => 'submit',
+            'size' => '', 'name' => 'search', 'value' => ''));
+        $content .= html_writer::empty_tag('input', array('type' => 'submit', 'class' => 'search-btn',
             'value' => get_string('search')));
         $content .= html_writer::end_tag('div');
         $content .= html_writer::end_tag('div');
