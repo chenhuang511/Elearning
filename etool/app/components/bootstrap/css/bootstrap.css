@@ -1977,6 +1977,10 @@ table {
   border-spacing: 0;
 }
 
+.slideSnapshot table{
+    border: solid 1px;
+}
+
 .table {
   width: 100%;
   margin-bottom: 20px;

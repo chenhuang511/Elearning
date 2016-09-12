@@ -101,6 +101,9 @@ define(["./ComponentView", "libs/etch",
 			 * @param {Event} e
 			 */
 			dblclicked: function(e) {
+
+                console.log(this.model.get("text"));
+
 				this.$el.addClass("editable");
 				this.$textEl.attr("contenteditable", true);
 				if (e != null) {
@@ -186,6 +189,9 @@ define(["./ComponentView", "libs/etch",
 			 * Finish editing and close the editor.
 			 */
 			editCompleted: function() {
+
+                //console.log(this.model.get("text"));
+
 				var text;
 				text = this.$textEl.html();
 				this.editing = false;
@@ -195,9 +201,22 @@ define(["./ComponentView", "libs/etch",
 					var cmd = ComponentCommands.Text(this._initialText, this.model);
 					undoHistory.push(cmd);
 
-					//this.model.set("text", text);
+                    //this.tablediv.innerHTML = '<table class="sampletable" style="text-align: center;"><tr> <th>Product</th><th>Cost</th><th>Really?</th></tr></table>';
+                    //this.model.set("text", this.tablediv.innerHTML);
+
+                    //console.log("AAAAA : " + text);
+
+                    this.$textEl.find(".ui-resizable-handle").remove();
+
+                    text = this.$textEl.html();
+                    //console.log("BBBBBBBB : " + text);
+
+                    this.model.set("text", text);
                     this.model.set("_opts", text);
-                    this.tablediv.innerHTML = text;
+
+                    this.$el.find('.sampletable td').resizable({});
+
+                    //console.log("test : " + this.test);
 
 					window.getSelection().removeAllRanges();
 					this.$textEl.attr("contenteditable", false);
@@ -288,7 +307,8 @@ define(["./ComponentView", "libs/etch",
 					self._handlePaste(this, e);
 				});
 				this.$textEl.html(this.model.get("text"));
-                //this.$textEl.attr("contenteditable", true);
+                //console.log("first text : " + this.model.get("text"));
+                this.$textEl.attr("contenteditable", true);
 				this.$el.css({
 					fontSize: this.model.get("size"),
 					top: this.model.get("y"),
@@ -304,19 +324,18 @@ define(["./ComponentView", "libs/etch",
 
                     if (this.model.get("_opts"))
                     {
+                        //console.log("tjlsekjtlsek : " +this.model.get("_opts"));
                         this.tablediv.innerHTML = this.model.get("_opts");
                     }
                     else
                     {
-                        this.tablediv.innerHTML = '<table class="sampletable" style="text-align: center;"><tr> <th>Product</th><th>Cost</th> <th>Really?</th> </tr></table>';
-                        //this.model.set("text", this.tablediv.innerHTML);
+                        this.tablediv.innerHTML = '<table class="sampletable" style="text-align: center;"><tr><td>Product</td><td>Cost</td><td>Really?</td></tr></table>';
                     }
                     this.$el.append(this.tablediv);
 				}
-                //console.log("TEST : " + this.$el.find('.sampletable').parent().html());
-                this.model.set("text", this.$el.find('.sampletable').parent().html());
 
-                this.$el.find('.sampletable th').resizable({});
+                this.model.set("text", this.$el.find('.sampletable').parent().html());
+                this.$el.find('.sampletable td').resizable({});
                 //$('.sampletable th').resizable({});
 
 				return this.$el;

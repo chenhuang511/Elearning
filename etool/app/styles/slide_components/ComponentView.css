@@ -19,9 +19,13 @@ th, td {
     padding: 5px 15px;
 }
 
-/*div-table{
+.component.tableDisplay {
+    right: 14px;
+}
+
+div-table{
     display: none;
-}*/
+}
 
 .tableDisplay .topLabel, .tableDisplay .leftLabel,
 .tableDisplay .rightLabel, .tableDisplay .form-inline,
