@@ -101,14 +101,14 @@ function get_remote_url_content($urlid, $options = [])
     ));
 }
 
-function get_remote_course_module_by_instance($modulename, $instace, $options = array())
+function get_remote_course_module_by_instance($modulename, $instance, $options = array())
 {
     $resp = moodle_webservice_client(array_merge($options,
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN_M,
             'function_name' => 'core_course_get_course_module_by_instance',
-            'params' => array('module' => $modulename, 'instance' => $instace)
+            'params' => array('module' => $modulename, 'instance' => $instance)
         )
     ));
     if (isset($resp->exception) && $resp->exception) {
@@ -657,19 +657,25 @@ function get_remote_can_add_moduleinfo($courseid, $modulename, $section)
     return $result->module;
 }
 
-function get_remote_add_moduleinfo_by($moduleinfo, $course)
+function get_remote_add_moduleinfo_by($moduleinfo, $rcourseid)
 {
+
     $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_add_moduleinfo_by',
-            'params' => array('moduleinfo' => $moduleinfo, 'course' => $course),
+            'params' => array('moduleinfo' => $moduleinfo, 'course' => $rcourseid),
         ), false
     );
 
-    $moduleinfo = json_decode($result->moduleinfo);
-    return $moduleinfo;
+    if (isset($result->moduleinfo)) {
+        return $result->moduleinfo;
+    } else {
+        print_error('Can not get remote id from hub');
+    }
+
+    return 0;
 }
 
 function get_remote_get_record_snapshot_by($tablename, $id)

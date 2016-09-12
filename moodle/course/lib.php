@@ -1469,26 +1469,8 @@ function add_course_module($mod)
 
     $mod->added = time();
     unset($mod->id);
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $cmdata = array();
-        $i = 0;
-        foreach ($mod as $key => $val) {
-            $cmdata["data[$i][name]"] = $key;
-            if ($key == "course") {
-                $localcourse = $DB->get_record('course', array('id' => $val));
-                $cmdata["data[$i][value]"] = $localcourse ? $localcourse->remoteid : $val;
-            } else if (is_null($val)) {
-                $cmdata["data[$i][value]"] = ""; // PARAM_RAW không nhận kiểu dữ liệu === null => chuyển về dạng string
-            } else {
-                $cmdata["data[$i][value]"] = $val;
-            }
-            $i++;
-        }
+    $cmid = $DB->insert_record("course_modules", $mod);
 
-        $cmid = save_remote_mdl_course("course_modules", $cmdata);
-    } else {
-        $cmid = $DB->insert_record("course_modules", $mod);
-    }
     rebuild_course_cache($mod->course, true);
     return $cmid;
 }
@@ -1572,37 +1554,14 @@ function course_add_cm_to_section($courseorid, $cmid, $sectionnum, $beforemod = 
     if (is_object($beforemod)) {
         $beforemod = $beforemod->id;
     }
-
     if (is_object($courseorid)) {
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            $hubcourseid = $courseorid->remoteid;
-        }
         $courseid = $courseorid->id;
     } else {
         $courseid = $courseorid;
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            $localcourse = $DB->get_record('course', array('id' => $courseid));
-            if (!$localcourse)
-                $hubcourseid = $courseid;
-            else
-                $hubcourseid = $localcourse->remoteid;
-        }
     }
-
-
     // Do not try to use modinfo here, there is no guarantee it is valid!
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $params = array();
-        $params['parameters[0][name]'] = "course";
-        $params['parameters[0][value]'] = $hubcourseid;
-        $params['parameters[1][name]'] = "section";
-        $params['parameters[1][value]'] = $sectionnum;
-
-        $section = get_remote_course_sections_by($params);
-    } else {
-        $section = $DB->get_record('course_sections',
-            array('course' => $courseid, 'section' => $sectionnum), '*', IGNORE_MISSING);
-    }
+    $section = $DB->get_record('course_sections',
+        array('course' => $courseid, 'section' => $sectionnum), '*', IGNORE_MISSING);
     if (!$section) {
         // This function call requires modinfo.
         course_create_sections_if_missing($courseorid, $sectionnum);
@@ -1620,21 +1579,8 @@ function course_add_cm_to_section($courseorid, $cmid, $sectionnum, $beforemod = 
     } else {
         $newsequence = "$section->sequence,$cmid";
     }
-
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $updatedata = array();
-        $updatedata['data[0][name]'] = "sequence";
-        $updatedata['data[0][value]'] = $newsequence;
-        $rs = update_remote_mdl_course("course_sections", $section->id, $updatedata);
-
-        $updatedata['data[0][name]'] = "section";
-        $updatedata['data[0][value]'] = $section->id;
-        $result = update_remote_mdl_course("course_modules", $cmid, $updatedata);
-    } else {
-        $DB->set_field("course_sections", "sequence", $newsequence, array("id" => $section->id));
-        $DB->set_field('course_modules', 'section', $section->id, array('id' => $cmid));
-    }
-
+    $DB->set_field("course_sections", "sequence", $newsequence, array("id" => $section->id));
+    $DB->set_field('course_modules', 'section', $section->id, array('id' => $cmid));
     if (is_object($courseorid)) {
         rebuild_course_cache($courseorid->id, true);
     } else {

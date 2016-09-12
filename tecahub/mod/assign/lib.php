@@ -1508,3 +1508,17 @@ function mod_assign_output_fragment_gradingpanel($args) {
 
     return $assign->view('gradingpanel', $viewargs);
 }
+
+/**
+ * Convert object to array for assignment
+ *
+ * @param $moduleinfo
+ * @return mixed
+ */
+function assign_formatted_moduleinfo($moduleinfo)
+{
+    if (isset($moduleinfo->introeditor)) {
+        $moduleinfo->introeditor = (array)$moduleinfo->introeditor;
+    }
+    return $moduleinfo;
+}

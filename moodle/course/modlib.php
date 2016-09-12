@@ -44,141 +44,147 @@ require_once($CFG->dirroot . '/course/lib.php');
 function add_moduleinfo($moduleinfo, $course, $mform = null)
 {
     global $DB, $CFG;
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $remotemoduleinfo = clone $moduleinfo;
+
+        $remotemoduleinfo = merge_module_info_send_to_hub($remotemoduleinfo);
+
+        $moduleinforet = get_remote_add_moduleinfo_by(json_encode($remotemoduleinfo), $course->remoteid);
+    }
+// Attempt to include module library before we make any changes to DB.
+    include_modulelib($moduleinfo->modulename);
+
+    $moduleinfo->course = $course->id;
+    $moduleinfo = set_moduleinfo_defaults($moduleinfo);
+
+    if (!empty($course->groupmodeforce) or !isset($moduleinfo->groupmode)) {
+        $moduleinfo->groupmode = 0; // Do not set groupmode.
+    }
+
+    // First add course_module record because we need the context.
+    $newcm = new stdClass();
+    $newcm->course = $course->id;
+    $newcm->module = $moduleinfo->module;
+    $newcm->instance = 0; // Not known yet, will be updated later (this is similar to restore code).
+    $newcm->visible = $moduleinfo->visible;
+    $newcm->visibleold = $moduleinfo->visible;
+    if (isset($moduleinfo->cmidnumber)) {
+        $newcm->idnumber = $moduleinfo->cmidnumber;
+    }
+    $newcm->groupmode = $moduleinfo->groupmode;
+    $newcm->groupingid = $moduleinfo->groupingid;
+    $completion = new completion_info($course);
+    if ($completion->is_enabled()) {
+        $newcm->completion = $moduleinfo->completion;
+        $newcm->completiongradeitemnumber = $moduleinfo->completiongradeitemnumber;
+        $newcm->completionview = $moduleinfo->completionview;
+        $newcm->completionexpected = $moduleinfo->completionexpected;
+    }
+    if (!empty($CFG->enableavailability)) {
+        // This code is used both when submitting the form, which uses a long
+        // name to avoid clashes, and by unit test code which uses the real
+        // name in the table.
+        $newcm->availability = null;
+        if (property_exists($moduleinfo, 'availabilityconditionsjson')) {
+            if ($moduleinfo->availabilityconditionsjson !== '') {
+                $newcm->availability = $moduleinfo->availabilityconditionsjson;
+            }
+        } else if (property_exists($moduleinfo, 'availability')) {
+            $newcm->availability = $moduleinfo->availability;
+        }
+        // If there is any availability data, verify it.
+        if ($newcm->availability) {
+            $tree = new \core_availability\tree(json_decode($newcm->availability));
+            // Save time and database space by setting null if the only data
+            // is an empty tree.
+            if ($tree->is_empty()) {
+                $newcm->availability = null;
+            }
+        }
+    }
+    if (isset($moduleinfo->showdescription)) {
+        $newcm->showdescription = $moduleinfo->showdescription;
+    } else {
+        $newcm->showdescription = 0;
+    }
+
+    // From this point we make database changes, so start transaction.
+    $transaction = $DB->start_delegated_transaction();
+
+    if (!$moduleinfo->coursemodule = add_course_module($newcm)) {
+        print_error('cannotaddcoursemodule');
+    }
+
+    if (plugin_supports('mod', $moduleinfo->modulename, FEATURE_MOD_INTRO, true) &&
+        isset($moduleinfo->introeditor)
+    ) {
+        $introeditor = $moduleinfo->introeditor;
+        unset($moduleinfo->introeditor);
+        $moduleinfo->intro = $introeditor['text'];
+        $moduleinfo->introformat = $introeditor['format'];
+    }
+
+    $addinstancefunction = $moduleinfo->modulename . "_add_instance";
+    try {
+        $returnfromfunc = $addinstancefunction($moduleinfo, $mform);
+    } catch (moodle_exception $e) {
+        $returnfromfunc = $e;
+    }
+    if (!$returnfromfunc or !is_number($returnfromfunc)) {
+        // Undo everything we can. This is not necessary for databases which
+        // support transactions, but improves consistency for other databases.
+        $modcontext = context_module::instance($moduleinfo->coursemodule);
+        context_helper::delete_instance(CONTEXT_MODULE, $moduleinfo->coursemodule);
+        $DB->delete_records('course_modules', array('id' => $moduleinfo->coursemodule));
+
+        if ($e instanceof moodle_exception) {
+            throw $e;
+        } else if (!is_number($returnfromfunc)) {
+            print_error('invalidfunction', '', course_get_url($course, $moduleinfo->section));
+        } else {
+            print_error('cannotaddnewmodule', '', course_get_url($course, $moduleinfo->section), $moduleinfo->modulename);
+        }
+    }
+
+    $moduleinfo->instance = $returnfromfunc;
 
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $moduleinfo = get_remote_add_moduleinfo_by(json_encode($moduleinfo), json_encode($course));
-        if ($moduleinfo) {
-            $moduleinfo->course = $course->id;
-        }
+        $DB->set_field($moduleinfo->modulename, 'remoteid', $moduleinforet->instanceid, array('id' => $moduleinfo->instance));
+        $DB->set_field('course_modules', 'remoteid', $moduleinforet->coursemoduleid, array('id' => $moduleinfo->coursemodule));
+        $DB->set_field('course_modules', 'instance', $moduleinforet->instanceid, array('id' => $moduleinfo->coursemodule));
     } else {
-// Attempt to include module library before we make any changes to DB.
-        include_modulelib($moduleinfo->modulename);
-
-        $moduleinfo->course = $course->id;
-        $moduleinfo = set_moduleinfo_defaults($moduleinfo);
-
-        if (!empty($course->groupmodeforce) or !isset($moduleinfo->groupmode)) {
-            $moduleinfo->groupmode = 0; // Do not set groupmode.
-        }
-
-        // First add course_module record because we need the context.
-        $newcm = new stdClass();
-        $newcm->course = $course->id;
-        $newcm->module = $moduleinfo->module;
-        $newcm->instance = 0; // Not known yet, will be updated later (this is similar to restore code).
-        $newcm->visible = $moduleinfo->visible;
-        $newcm->visibleold = $moduleinfo->visible;
-        if (isset($moduleinfo->cmidnumber)) {
-            $newcm->idnumber = $moduleinfo->cmidnumber;
-        }
-        $newcm->groupmode = $moduleinfo->groupmode;
-        $newcm->groupingid = $moduleinfo->groupingid;
-        $completion = new completion_info($course);
-        if ($completion->is_enabled()) {
-            $newcm->completion = $moduleinfo->completion;
-            $newcm->completiongradeitemnumber = $moduleinfo->completiongradeitemnumber;
-            $newcm->completionview = $moduleinfo->completionview;
-            $newcm->completionexpected = $moduleinfo->completionexpected;
-        }
-        if (!empty($CFG->enableavailability)) {
-            // This code is used both when submitting the form, which uses a long
-            // name to avoid clashes, and by unit test code which uses the real
-            // name in the table.
-            $newcm->availability = null;
-            if (property_exists($moduleinfo, 'availabilityconditionsjson')) {
-                if ($moduleinfo->availabilityconditionsjson !== '') {
-                    $newcm->availability = $moduleinfo->availabilityconditionsjson;
-                }
-            } else if (property_exists($moduleinfo, 'availability')) {
-                $newcm->availability = $moduleinfo->availability;
-            }
-            // If there is any availability data, verify it.
-            if ($newcm->availability) {
-                $tree = new \core_availability\tree(json_decode($newcm->availability));
-                // Save time and database space by setting null if the only data
-                // is an empty tree.
-                if ($tree->is_empty()) {
-                    $newcm->availability = null;
-                }
-            }
-        }
-        if (isset($moduleinfo->showdescription)) {
-            $newcm->showdescription = $moduleinfo->showdescription;
-        } else {
-            $newcm->showdescription = 0;
-        }
-
-        // From this point we make database changes, so start transaction.
-        $transaction = $DB->start_delegated_transaction();
-
-        if (!$moduleinfo->coursemodule = add_course_module($newcm)) {
-            print_error('cannotaddcoursemodule');
-        }
-
-        if (plugin_supports('mod', $moduleinfo->modulename, FEATURE_MOD_INTRO, true) &&
-            isset($moduleinfo->introeditor)
-        ) {
-            $introeditor = $moduleinfo->introeditor;
-            unset($moduleinfo->introeditor);
-            $moduleinfo->intro = $introeditor['text'];
-            $moduleinfo->introformat = $introeditor['format'];
-        }
-
-        $addinstancefunction = $moduleinfo->modulename . "_add_instance";
-        try {
-            $returnfromfunc = $addinstancefunction($moduleinfo, $mform);
-        } catch (moodle_exception $e) {
-            $returnfromfunc = $e;
-        }
-        if (!$returnfromfunc or !is_number($returnfromfunc)) {
-            // Undo everything we can. This is not necessary for databases which
-            // support transactions, but improves consistency for other databases.
-            $modcontext = context_module::instance($moduleinfo->coursemodule);
-            context_helper::delete_instance(CONTEXT_MODULE, $moduleinfo->coursemodule);
-            $DB->delete_records('course_modules', array('id' => $moduleinfo->coursemodule));
-
-            if ($e instanceof moodle_exception) {
-                throw $e;
-            } else if (!is_number($returnfromfunc)) {
-                print_error('invalidfunction', '', course_get_url($course, $moduleinfo->section));
-            } else {
-                print_error('cannotaddnewmodule', '', course_get_url($course, $moduleinfo->section), $moduleinfo->modulename);
-            }
-        }
-
-        $moduleinfo->instance = $returnfromfunc;
-
         $DB->set_field('course_modules', 'instance', $returnfromfunc, array('id' => $moduleinfo->coursemodule));
-
-        // Update embedded links and save files.
-        $modcontext = context_module::instance($moduleinfo->coursemodule);
-        if (!empty($introeditor)) {
-            $moduleinfo->intro = file_save_draft_area_files($introeditor['itemid'], $modcontext->id,
-                'mod_' . $moduleinfo->modulename, 'intro', 0,
-                array('subdirs' => true), $introeditor['text']);
-            $DB->set_field($moduleinfo->modulename, 'intro', $moduleinfo->intro, array('id' => $moduleinfo->instance));
-        }
-
-        // Add module tags.
-        if (core_tag_tag::is_enabled('core', 'course_modules') && isset($moduleinfo->tags)) {
-            core_tag_tag::set_item_tags('core', 'course_modules', $moduleinfo->coursemodule, $modcontext, $moduleinfo->tags);
-        }
-
-        // Course_modules and course_sections each contain a reference to each other.
-        // So we have to update one of them twice.
-        $sectionid = course_add_cm_to_section($course, $moduleinfo->coursemodule, $moduleinfo->section);
-
-        // Trigger event based on the action we did.
-        // Api create_from_cm expects modname and id property, and we don't want to modify $moduleinfo since we are returning it.
-        $eventdata = clone $moduleinfo;
-        $eventdata->modname = $eventdata->modulename;
-        $eventdata->id = $eventdata->coursemodule;
-        $event = \core\event\course_module_created::create_from_cm($eventdata, $modcontext);
-        $event->trigger();
-
-        $moduleinfo = edit_module_post_actions($moduleinfo, $course);
-        $transaction->allow_commit();
     }
+
+    // Update embedded links and save files.
+    $modcontext = context_module::instance($moduleinfo->coursemodule);
+    if (!empty($introeditor)) {
+        $moduleinfo->intro = file_save_draft_area_files($introeditor['itemid'], $modcontext->id,
+            'mod_' . $moduleinfo->modulename, 'intro', 0,
+            array('subdirs' => true), $introeditor['text']);
+        $DB->set_field($moduleinfo->modulename, 'intro', $moduleinfo->intro, array('id' => $moduleinfo->instance));
+    }
+
+    // Add module tags.
+    if (core_tag_tag::is_enabled('core', 'course_modules') && isset($moduleinfo->tags)) {
+        core_tag_tag::set_item_tags('core', 'course_modules', $moduleinfo->coursemodule, $modcontext, $moduleinfo->tags);
+    }
+
+    // Course_modules and course_sections each contain a reference to each other.
+    // So we have to update one of them twice.
+    $sectionid = course_add_cm_to_section($course, $moduleinfo->coursemodule, $moduleinfo->section);
+
+    // Trigger event based on the action we did.
+    // Api create_from_cm expects modname and id property, and we don't want to modify $moduleinfo since we are returning it.
+    $eventdata = clone $moduleinfo;
+    $eventdata->modname = $eventdata->modulename;
+    $eventdata->id = $eventdata->coursemodule;
+    $event = \core\event\course_module_created::create_from_cm($eventdata, $modcontext);
+    $event->trigger();
+
+
+    $moduleinfo = edit_module_post_actions($moduleinfo, $course);
+    $transaction->allow_commit();
 
     return $moduleinfo;
 }
@@ -439,20 +445,13 @@ function set_moduleinfo_defaults($moduleinfo)
 function can_add_moduleinfo($course, $modulename, $section)
 {
     global $DB;
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $context = context_course::instance($course->id);
-        require_capability('moodle/course:manageactivities', $context);
 
-        $module = get_remote_can_add_moduleinfo($course->remoteid, $modulename, $section);
-    } else {
+    $module = $DB->get_record('modules', array('name' => $modulename), '*', MUST_EXIST);
 
-        $module = $DB->get_record('modules', array('name' => $modulename), '*', MUST_EXIST);
+    $context = context_course::instance($course->id);
+    require_capability('moodle/course:manageactivities', $context);
 
-        $context = context_course::instance($course->id);
-        require_capability('moodle/course:manageactivities', $context);
-
-        course_create_sections_if_missing($course, $section);
-    }
+    course_create_sections_if_missing($course, $section);
 
     $cw = get_fast_modinfo($course)->get_section_info($section);
 
@@ -675,5 +674,24 @@ function include_modulelib($modulename)
     } else {
         throw new moodle_exception('modulemissingcode', '', '', $modlib);
     }
+}
+
+/**
+ * Change attribute of host for send to hub
+ *
+ * @param object $moduleinfo - The information of moduleinfo.
+ * @return object $moduleinfo - The information of moduleinfo after merge.
+ */
+function merge_module_info_send_to_hub($moduleinfo)
+{
+    global $DB;
+
+    $moduleinfo->course = get_local_course_record($moduleinfo->course, true)->remoteid;
+
+    if (isset($moduleinfo->availabilityconditionsjson) && !empty($moduleinfo->availabilityconditionsjson)) {
+        $moduleinfo->availabilityconditionsjson = merge_local_course_module_availability($moduleinfo->availabilityconditionsjson, true);
+    }
+
+    return $moduleinfo;
 }
 

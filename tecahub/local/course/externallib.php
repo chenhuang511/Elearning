@@ -2156,28 +2156,33 @@ class local_course_external extends external_api
         return new external_function_parameters(
             array(
                 'moduleinfo' => new external_value(PARAM_RAW, 'module info'),
-                'course' => new external_value(PARAM_RAW, 'module info'),
+                'course' => new external_value(PARAM_INT, 'The id of course'),
             )
         );
     }
 
-    public static function add_moduleinfo_by($moduleinfo, $course)
+    public static function add_moduleinfo_by($moduleinfo, $courseid)
     {
-        global $CFG;
+        global $CFG, $DB;
 
         require_once($CFG->dirroot . '/course/modlib.php');
 
         $warnings = array();
         $params = self::validate_parameters(self::add_moduleinfo_by_parameters(), array(
             'moduleinfo' => $moduleinfo,
-            'course' => $course
+            'course' => $courseid
         ));
-
         $moduleinfoobj = json_decode($params['moduleinfo']);
-        $courseobj = json_decode($params['course']);
 
-        $moduleinfoobj->course = $courseobj->remoteid;
-        $courseobj->id = $courseobj->remoteid;
+        $courseobj = $DB->get_record('course', array('id' => $params['course']), '*', MUST_EXIST);
+        if ($courseobj->enablecompletion) {
+            unset($moduleinfoobj->availabilityconditionsjson);
+            foreach ($moduleinfoobj as $key => $value) {
+                if (substr($key, 0, 10) === 'completion') {
+                    unset($moduleinfoobj->$key);
+                }
+            }
+        }
 
         $modulerequire = "$CFG->dirroot/mod/$moduleinfoobj->modulename/lib.php";
         if (file_exists($modulerequire)) {
@@ -2195,7 +2200,10 @@ class local_course_external extends external_api
         $modinfo = add_moduleinfo($moduleinfoobj, $courseobj, null);
 
         $result = array();
-        $result['moduleinfo'] = json_encode($modinfo);
+        $result['moduleinfo'] = array(
+            'coursemoduleid' => $modinfo->coursemodule,
+            'instanceid' => $modinfo->instance
+        );
         $result['warnings'] = $warnings;
 
         return $result;
@@ -2205,7 +2213,12 @@ class local_course_external extends external_api
     {
         return new external_single_structure(
             array(
-                'moduleinfo' => new external_value(PARAM_RAW),
+                'moduleinfo' => new external_single_structure(
+                    array(
+                        'coursemoduleid' => new external_value(PARAM_INT, 'The id of course module just created'),
+                        'instanceid' => new external_value(PARAM_INT, 'The id of instance'),
+                    )
+                ),
                 'warnings' => new external_warnings()
             )
         );

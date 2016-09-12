@@ -1130,20 +1130,31 @@ function assign_grade_item_update($assign, $grades=null) {
             $grades,
             $params);
     } else{
-        $rgrades = array(
-            'studentid' => get_remote_mapping_user($grades['userid'])[0]->id,
-            'grade' => $grades['rawgrade'],
-            'str_feedback' => $grades['feedback']
-        );
-        return core_grades_update_grades(
-            'mod/assign',
-            $assign->courseremoteid,
-            'mod_assign',
-            $assign->cmid,
-            0,
-            $rgrades,
-            $params
-        );
+        if (empty($assign->courseremoteid)) {
+            return grade_update('mod/assign',
+                $assign->courseid,
+                'mod',
+                'assign',
+                $assign->id,
+                0,
+                $grades,
+                $params);
+        } else {
+            $rgrades = array(
+                'studentid' => get_remote_mapping_user($grades['userid'])[0]->id,
+                'grade' => $grades['rawgrade'],
+                'str_feedback' => $grades['feedback']
+            );
+            return core_grades_update_grades(
+                'mod/assign',
+                $assign->courseremoteid,
+                'mod_assign',
+                $assign->cmid,
+                0,
+                $rgrades,
+                $params
+            );
+        }
     }
 }
 

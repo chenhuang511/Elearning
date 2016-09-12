@@ -55,8 +55,7 @@ class mod_assign_mod_form extends moodleform_mod {
         }
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
-
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST || !empty($this->current->add)) {
             $this->standard_intro_elements(get_string('description', 'assign'));
             $mform->addElement('filemanager', 'introattachments',
                 get_string('introattachments', 'assign'),
@@ -75,6 +74,7 @@ class mod_assign_mod_form extends moodleform_mod {
             }
             $ctx = context_module::instance($cm->id);
         }
+
         $assignment = new assign($ctx, null, null);
         if ($this->current && $this->current->course) {
             if (!$ctx) {

@@ -421,6 +421,8 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element
         }
         if (!isset($CFG->enablededitor)) {
             $attributes = "readonly";
+        } else {
+            $attributes = '';
         }
         $str .= '<div><textarea id="' . $id . '" name="' . $elname . '[text]" rows="' . $rows . '" cols="' . $cols . '" spellcheck="true"' .$attributes . $editorrules . '>';
         $str .= s($text);
