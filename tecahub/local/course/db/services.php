@@ -306,4 +306,20 @@ $functions = array(
         'type'		    => 'write',
         'ajax'		    => true
     ),
+    'local_can_update_moduleinfo' => array(
+        'classname'     => 'local_course_external',
+        'methodname'    => 'can_update_moduleinfo',
+        'classpath'     => 'local/course/externallib.php',
+        'description'   => 'can update moduleinfo',
+        'type'		    => 'write',
+        'ajax'		    => true
+    ),
+    'local_update_moduleinfo_by' => array(
+        'classname'     => 'local_course_external',
+        'methodname'    => 'update_moduleinfo_by',
+        'classpath'     => 'local/course/externallib.php',
+        'description'   => 'update moduleinfo',
+        'type'		    => 'write',
+        'ajax'		    => true
+    ),
 );

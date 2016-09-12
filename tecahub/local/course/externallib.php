@@ -554,7 +554,7 @@ class local_course_external extends external_api
                 'validate' => $validate
             ));
         $warnings = array();
-        $cm = get_coursemodule_from_id($params['modulename'], $params['cmid'], $params['courseid'], true, MUST_EXIST);
+        $cm = self::get_coursemodule_from_id($params['modulename'], $params['cmid'], $params['courseid'], true, MUST_EXIST);
         $info = $cm;
 
         if ($params['validate']) {
@@ -2224,6 +2224,283 @@ class local_course_external extends external_api
         );
     }
 
+    public static function can_update_moduleinfo_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'cmid' => new external_value(PARAM_INT, 'the id of course module')
+            )
+        );
+    }
+
+    public static function can_update_moduleinfo($cmid)
+    {
+        global $CFG, $DB;
+        $warnings = array();
+
+        require_once($CFG->dirroot . '/lib/datalib.php');
+        require_once($CFG->dirroot . '/lib/accesslib.php');
+
+        $params = self::validate_parameters(self::can_update_moduleinfo_parameters(), array(
+            'cmid' => $cmid
+        ));
+
+        $cm = get_coursemodule_from_id('', $params['cmid'], 0, false, MUST_EXIST);
+
+        if(!$cm) {
+            $warnings['message'] = "The course module not found";
+        }
+
+        // Check the $USER has the right capability.
+        $context = context_module::instance($cm->id);
+        require_capability('moodle/course:manageactivities', $context);
+
+        // Check module exists.
+        $module = $DB->get_record('modules', array('id' => $cm->module), '*', MUST_EXIST);
+
+        // Check the moduleinfo exists.
+        $data = $DB->get_record($module->name, array('id' => $cm->instance), '*', MUST_EXIST);
+
+        // Check the course section exists.
+        $cw = $DB->get_record('course_sections', array('id' => $cm->section), '*', MUST_EXIST);
+
+        return array($cm, $context, $module, $data, $cw);
+    }
+
+    public static function can_update_moduleinfo_returns() {
+        return new external_single_structure(
+            array(
+                'module' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'the id'),
+                        'name' => new external_value(PARAM_RAW, 'the name'),
+                        'cron' => new external_value(PARAM_INT, 'the cron'),
+                        'lastcron' => new external_value(PARAM_INT, 'the last cron'),
+                        'search' => new external_value(PARAM_RAW, 'the search'),
+                        'visible' => new external_value(PARAM_INT, 'the visible')
+                    )
+                ),
+                'data' => new external_value(PARAM_RAW, 'the data'),
+                'cw' => new external_value(PARAM_RAW, 'the course section')
+            )
+        );
+    }
+
+    public static function update_moduleinfo_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'cm' => new external_value(PARAM_RAW, 'the course module'),
+                'moduleinfo' => new external_value(PARAM_RAW, 'the course module'),
+                'courseid' => new external_value(PARAM_INT, 'the id of course'),
+                'mform' => new external_value(PARAM_RAW, 'the mod form')
+            )
+        );
+    }
+
+    public static function update_moduleinfo_by($cm, $moduleinfo, $courseid, $mform)
+    {
+        global $DB, $CFG;
+        $warnings = array();
+
+        require_once($CFG->dirroot . '/course/modlib.php');
+
+        $warnings = array();
+        $params = self::validate_parameters(self::add_moduleinfo_by_parameters(), array(
+            'cm' => $cm,
+            'moduleinfo' => $moduleinfo,
+            'courseid' => $courseid,
+            'mform' => $mform
+        ));
+
+        $course = $DB->get_record('course', array('id' => $params['courseid']), '*', MUST_EXIST);
+        if (!$course) {
+            $warnings['message'] = "The course not found";
+        }
+
+        $modinfo = json_decode($params['moduleinfo']);
+        $modinfo->course = $course->id;
+
+        $modform = json_decode($params['mform']);
+
+        $modulerequire = "$CFG->dirroot/mod/$modinfo->modulename/lib.php";
+        if (file_exists($modulerequire)) {
+            require_once($modulerequire);
+        } else {
+            $warnings['message'] = "File not found";
+        }
+
+        $moduleformatfunction = $modinfo->modulename . '_formatted_moduleinfo';
+
+        if (function_exists($moduleformatfunction)) {
+            $modinfo = $moduleformatfunction($modinfo);
+        }
+
+        $moduleformformatfunction = $modinfo->modulename . '_formatted_modform';
+        if (function_exists($moduleformformatfunction)) {
+            $modform = $moduleformformatfunction($modform);
+        }
+
+        $data = new stdClass();
+        if ($modform) {
+            $data = $modform->get_data();
+        }
+
+        // Attempt to include module library before we make any changes to DB.
+        include_modulelib($modinfo->modulename);
+
+        $modinfo->course = $course->id;
+        $modinfo = set_moduleinfo_defaults($modinfo);
+
+        if (!empty($course->groupmodeforce) or !isset($modinfo->groupmode)) {
+            $modinfo->groupmode = $cm->groupmode; // Keep original.
+        }
+
+        // Update course module first.
+        $cm->groupmode = $modinfo->groupmode;
+        if (isset($modinfo->groupingid)) {
+            $cm->groupingid = $modinfo->groupingid;
+        }
+        $completion = new completion_info($course);
+        if ($completion->is_enabled()) {
+            // Completion settings that would affect users who have already completed
+            // the activity may be locked; if so, these should not be updated.
+            if (!empty($modinfo->completionunlocked)) {
+                $cm->completion = $modinfo->completion;
+                $cm->completiongradeitemnumber = $modinfo->completiongradeitemnumber;
+                $cm->completionview = $modinfo->completionview;
+            }
+            // The expected date does not affect users who have completed the activity,
+            // so it is safe to update it regardless of the lock status.
+            $cm->completionexpected = $modinfo->completionexpected;
+        }
+
+        if (!empty($CFG->enableavailability)) {
+            // This code is used both when submitting the form, which uses a long
+            // name to avoid clashes, and by unit test code which uses the real
+            // name in the table.
+            if (property_exists($modinfo, 'availabilityconditionsjson')) {
+                if ($modinfo->availabilityconditionsjson !== '') {
+                    $cm->availability = $modinfo->availabilityconditionsjson;
+                } else {
+                    $cm->availability = null;
+                }
+            } else if (property_exists($modinfo, 'availability')) {
+                $cm->availability = $modinfo->availability;
+            }
+            // If there is any availability data, verify it.
+            if ($cm->availability) {
+                $tree = new \core_availability\tree(json_decode($cm->availability));
+                // Save time and database space by setting null if the only data
+                // is an empty tree.
+                if ($tree->is_empty()) {
+                    $cm->availability = null;
+                }
+            }
+        }
+        if (isset($modinfo->showdescription)) {
+            $cm->showdescription = $modinfo->showdescription;
+        } else {
+            $cm->showdescription = 0;
+        }
+
+        $DB->update_record('course_modules', $cm);
+
+        $modcontext = context_module::instance($modinfo->coursemodule);
+
+        // Update embedded links and save files.
+        if (plugin_supports('mod', $modinfo->modulename, FEATURE_MOD_INTRO, true)) {
+            $modinfo->intro = file_save_draft_area_files($modinfo->introeditor['itemid'], $modcontext->id,
+                'mod_' . $modinfo->modulename, 'intro', 0,
+                array('subdirs' => true), $modinfo->introeditor['text']);
+            $modinfo->introformat = $modinfo->introeditor['format'];
+            unset($modinfo->introeditor);
+        }
+
+        // Get the a copy of the grade_item before it is modified incase we need to scale the grades.
+        $oldgradeitem = null;
+        $newgradeitem = null;
+        if (!empty($data->grade_rescalegrades) && $data->grade_rescalegrades == 'yes') {
+            // Fetch the grade item before it is updated.
+            $oldgradeitem = grade_item::fetch(array('itemtype' => 'mod',
+                'itemmodule' => $modinfo->modulename,
+                'iteminstance' => $modinfo->instance,
+                'itemnumber' => 0,
+                'courseid' => $modinfo->course));
+        }
+
+        $updateinstancefunction = $modinfo->modulename . "_update_instance";
+        if (!$updateinstancefunction($modinfo, $mform)) {
+            print_error('cannotupdatemod', '', course_get_url($course, $cm->section), $modinfo->modulename);
+        }
+
+        // This needs to happen AFTER the grademin/grademax have already been updated.
+        if (!empty($data->grade_rescalegrades) && $data->grade_rescalegrades == 'yes') {
+            // Get the grade_item after the update call the activity to scale the grades.
+            $newgradeitem = grade_item::fetch(array('itemtype' => 'mod',
+                'itemmodule' => $modinfo->modulename,
+                'iteminstance' => $modinfo->instance,
+                'itemnumber' => 0,
+                'courseid' => $modinfo->course));
+            if ($newgradeitem && $oldgradeitem->gradetype == GRADE_TYPE_VALUE && $newgradeitem->gradetype == GRADE_TYPE_VALUE) {
+                $params = array(
+                    $course,
+                    $cm,
+                    $oldgradeitem->grademin,
+                    $oldgradeitem->grademax,
+                    $newgradeitem->grademin,
+                    $newgradeitem->grademax
+                );
+                if (!component_callback('mod_' . $modinfo->modulename, 'rescale_activity_grades', $params)) {
+                    print_error('cannotreprocessgrades', '', course_get_url($course, $cm->section), $modinfo->modulename);
+                }
+            }
+        }
+
+        // Make sure visibility is set correctly (in particular in calendar).
+        if (has_capability('moodle/course:activityvisibility', $modcontext)) {
+            set_coursemodule_visible($modinfo->coursemodule, $modinfo->visible);
+        }
+
+        if (isset($modinfo->cmidnumber)) { // Label.
+            // Set cm idnumber - uniqueness is already verified by form validation.
+            set_coursemodule_idnumber($modinfo->coursemodule, $modinfo->cmidnumber);
+        }
+
+        // Update module tags.
+        if (core_tag_tag::is_enabled('core', 'course_modules') && isset($modinfo->tags)) {
+            core_tag_tag::set_item_tags('core', 'course_modules', $modinfo->coursemodule, $modcontext, $modinfo->tags);
+        }
+
+        // Now that module is fully updated, also update completion data if required.
+        // (this will wipe all user completion data and recalculate it)
+        if ($completion->is_enabled() && !empty($modinfo->completionunlocked)) {
+            $completion->reset_all_state($cm);
+        }
+        $cm->name = $modinfo->name;
+
+        \core\event\course_module_updated::create_from_cm($cm, $modcontext)->trigger();
+
+        $modinfo = edit_module_post_actions($modinfo, $course);
+
+        $result = array();
+        $result['warnings'] = $warnings;
+        $result['cm'] = json_encode($cm);
+        $result['moduleinfo'] = json_encode($modinfo);
+        return $result;
+    }
+
+    public static function update_moduleinfo_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'cm' => new external_value(PARAM_RAW, 'the course module'),
+                'moduleinfo' => new external_value(PARAM_RAW, 'the module info'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
     public static function get_record_snapshot_by_parameters()
     {
         return new external_function_parameters(
@@ -2355,7 +2632,7 @@ class local_course_external extends external_api
     {
         $cm = $cmmixed;
         if (!is_object($cm)) {
-            $cmrecord = get_coursemodule_from_id(null, $cmmixed);
+            $cmrecord = self::get_coursemodule_from_id(null, $cmmixed);
             $modinfo = get_fast_modinfo($cmrecord->course);
             $cm = $modinfo->get_cm($cmmixed);
         } else if (!$cm instanceof cm_info) {
