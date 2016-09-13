@@ -230,7 +230,7 @@ define(['libs/backbone'], function(Backbone) {
         this.$el.find('[data-toggle="toggle"]').tooltip();
       }
       else{
-        var $table = '<table class="sampletable" width="600" style="text-align: center;">';
+        var $table = '<table class="sampletable" style="text-align: center;">';
         var $tableEl = '<tr height="40">'
         for(var i = 0; i < number_column; ++i){
           $tableEl += '<td>edit text</td>';
@@ -254,11 +254,12 @@ define(['libs/backbone'], function(Backbone) {
       var $row = $table.substring(n, m + 5);
       var $rowEl = $row.split("<")
       for(var i in $rowEl){
-        if($rowEl[i].indexOf("td") >= 0)
-          $rowEl[i] = "<" + $rowEl[i].substr(0, $rowEl[i].indexOf(">") + 1);
-        else if($rowEl[i] != "")
+        if($rowEl[i] != "")
           $rowEl[i] = "<" +$rowEl[i];
+        if($rowEl[i].indexOf("<td") >= 0)
+          $rowEl[i] = $rowEl[i].substr(0, $rowEl[i].indexOf(">") + 1)+"edit text";
       }
+      //console.log($rowEl);
       $table = $table.substr(0, m + 5) + $rowEl.join("") + $table.substr(m + 5);
       textBox.set("text",$table);
       textBox.set("_opts",$table);
@@ -308,7 +309,7 @@ define(['libs/backbone'], function(Backbone) {
         str = $table.substr(0, ind);
         $row[i] = str.substr(0, str.lastIndexOf("<td")) + "</tr>";
         $table = $table.substr(ind + 5);
-        
+
       }
       $table = $row.join("") + $table;
       if($table.indexOf("<td") < 0 || $table.indexOf("</td>") < 0){

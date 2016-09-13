@@ -27,8 +27,7 @@ div-table{
     display: none;
 }
 
-.tableDisplay .topLabel, .tableDisplay .leftLabel,
-.tableDisplay .rightLabel, .tableDisplay .form-inline,
+.topLabel, .leftLabel, .rightLabel, .form-inline,
 .tableDisplay .scale{
     display: none;
 }
