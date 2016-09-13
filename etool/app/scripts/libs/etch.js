@@ -77,7 +77,7 @@ define(['libs/backbone'], function(Backbone) {
       'click .etch-clear-formatting': 'clearFormatting',
       'click [data-option="fontSize"]': 'setFontSize',
       'click [data-option="fontFamily"]': 'setFontFamily',
-      'click .ok': 'setEditTable',
+      'click .ok': 'createTable',
       'input input[name="tableColumn"]':'numberColumn',
       'click .insert-row': '_insertRow',
       'click .insert-column': '_insertColumn',
@@ -216,7 +216,7 @@ define(['libs/backbone'], function(Backbone) {
       document.execCommand('removeFormat', false, null);
     },
 
-    setEditTable: function(e){
+    createTable: function(e){
       e.preventDefault();
       var number_column = this.$el.find('input[name="tableColumn"]').val();
       var number_row = this.$el.find('input[name="tableRow"]').val();
@@ -231,10 +231,10 @@ define(['libs/backbone'], function(Backbone) {
         this.$el.find('[data-toggle="toggle"]').tooltip();
       }
       else{
-        var $table = '<table class="sampletable" style="text-align: center;">';
-        var $tableEl = '<tr>'
+        var $table = '<table class="sampletable" width="600" style="text-align: center;">';
+        var $tableEl = '<tr height="40">'
         for(var i = 0; i < number_column; ++i){
-          $tableEl += '<td style = "min-width: 80px">edit text</td>';
+          $tableEl += '<td>edit text</td>';
         }
         $tableEl += '</tr>';
         for(var j = 0; j < number_row; ++j){
@@ -242,6 +242,7 @@ define(['libs/backbone'], function(Backbone) {
         }
         $table + '</table>';
         textBox.set("text",$table);
+        textBox.set("_opts",$table);
       }
     },
 
@@ -256,14 +257,27 @@ define(['libs/backbone'], function(Backbone) {
       for(var i in tableArr){
         tableArr[i] += "edit text</td>"
       }
-      str = str.substr(0,str.indexOf("<td>")) + tableArr.join("") + str.substr(str.lastIndexOf("</td>") + 5);
-      $table = $table.substr(0, m + 5)+ str + $table.substr(m + 5);
+      str = str.substr(0,str.indexOf("<td>"))+ tableArr.join("") + str.substr(str.lastIndexOf("</td>") + 5);
+      $table = $table.substr(0, m + 5) + str + $table.substr(m + 5);
       textBox.set("text",$table);
+      textBox.set("_opts",$table);
     },
 
     _insertColumn: function(e){
       e.preventDefault();
-      console.log("46");
+      var str, ind;
+      var textBox = this.model.get('editableModel');
+      var $table = textBox.get("text");
+      var $row = $table.match(/<tr/g);
+      for(var i in $row){
+        ind = $table.indexOf("</tr>");
+        str = $table.substr(0, ind);
+        $row[i] = str + "<td>edit text</td></tr>";
+        $table = $table.substr(ind + 5);
+      }
+      $table = $row.join("") + $table;
+      textBox.set("text", $table);
+      textBox.set("_opts",$table);
     },
 
     _deleteRow: function(e){
@@ -272,13 +286,38 @@ define(['libs/backbone'], function(Backbone) {
       var $table = textBox.get("text");
       var n = $table.lastIndexOf("<tr");
       var m = $table.lastIndexOf("</tr>");
-      var str = $table.substr(0, n) + $table.substr(m+5);
-      textBox.set("text",str);
+      $table = $table.substr(0, n) + $table.substr(m + 5);
+      if($table.indexOf("<tr") < 0|| $table.indexOf("</tr>") < 0){
+        console.log("a");
+      }
+      else{
+        console.log("b");
+        textBox.set("text",$table);
+        textBox.set("_opts",$table);
+      }
     },
 
     _deleteColumn: function(e){
       e.preventDefault();
-      console.log("ssbfs");
+      var str, ind;
+      var textBox = this.model.get('editableModel');
+      var $table = textBox.get("text");
+      var $row = $table.match(/<tr/g);
+      for(var i in $row){
+        ind = $table.indexOf("</tr>");
+        str = $table.substr(0, ind);
+        $row[i] = str.substr(0, str.lastIndexOf("<td>")) + "</tr>";
+        $table = $table.substr(ind + 5);
+        
+      }
+      $table = $row.join("") + $table;
+      if($table.indexOf("<td>") < 0 || $table.indexOf("</td>") < 0){
+        
+      }
+      else{
+        textBox.set("text", $table);
+        textBox.set("_opts",$table);
+      }
     },
 
     setFontFamily: function(e) {
