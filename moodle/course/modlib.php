@@ -471,30 +471,21 @@ function can_add_moduleinfo($course, $modulename, $section)
  */
 function can_update_moduleinfo($cm)
 {
-    global $DB, $CFG;
+    global $DB;
 
     // Check the $USER has the right capability.
     $context = context_module::instance($cm->id);
     require_capability('moodle/course:manageactivities', $context);
 
     // Check module exists.
-    $module = $DB->get_record('modules', array('id' => $cm->module), '*', MUST_EXIST);
+    $module = $DB->get_record('modules', array('id'=>$cm->module), '*', MUST_EXIST);
+
+    // Check the moduleinfo exists.
+    $data = $DB->get_record($module->name, array('id'=>$cm->instance), '*', MUST_EXIST);
 
     // Check the course section exists.
-    $cw = $DB->get_record('course_sections', array('id' => $cm->section), '*', MUST_EXIST);
+    $cw = $DB->get_record('course_sections', array('id'=>$cm->section), '*', MUST_EXIST);
 
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
-        // Check the moduleinfo exists.
-        $data = $DB->get_record($module->name, array('id' => $cm->instance), '*', MUST_EXIST);
-    } else {
-        $func_get_module = $module->name . '_get_local_settings_info';
-        $data = array();
-        if (function_exists($func_get_module)) {
-            $data = $func_get_module($cm);
-        } else {
-            trigger_error("Not found function $func_get_module.");
-        }
-    }
     return array($cm, $context, $module, $data, $cw);
 }
 

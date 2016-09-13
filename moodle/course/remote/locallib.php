@@ -122,7 +122,13 @@ function get_remote_course_module_by_instance($modulename, $instance, $options =
 
 function get_remote_course_module_by_cmid($modulename = '', $cmid, $courseid = 0, $validate = true, $iscache = true)
 {
-    $rcmid = get_local_course_modules_record($cmid, true)->remoteid;
+    $rcmid = $cmid;
+
+    $localcm = get_local_course_modules_record($cmid, true);
+    if ($localcm) {
+        $rcmid = $localcm->remoteid;
+    }
+
     $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,

@@ -37,11 +37,12 @@ class mod_forum_mod_form extends moodleform_mod
         $mform =& $this->_form;
 
         $add = optional_param('add', '', PARAM_ALPHA);
+        $update = optional_param('update', 0, PARAM_INT);
 
         $readonly = '';
 
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            if (empty($add)) {
+            if (empty($add) && !$update) {
                 $readonly = 'readonly';
             }
         }

@@ -7914,3 +7914,8 @@ function forum_formatted_moduleinfo($moduleinfo)
     }
     return $moduleinfo;
 }
+
+function forum_formatted_modform($mfrom)
+{
+    return $mfrom;
+}
