@@ -45,7 +45,7 @@ h2.main, #pageheading {
 }
 
 .quizattemptcounts a, .resourceworkaround a, .introattachments-image div a, .box a, .assignment-info-fix a, .lastcol a, .noti-content a {
-    color: #167ac6;
+    color: #187bb2;
 }
 
 .submitbtns a {
@@ -99,6 +99,10 @@ a:focus {
 }
 
 /*editting V */
+
+.movecourses{
+    padding: 8px 16px !important;
+}
 
 .boxwidthnormal{
     width: 100%;
@@ -315,11 +319,16 @@ div#fitem_id_url.fitem_ftext .ftext input#id_url{
     margin-top: 0;
     padding-bottom: 6px;
     text-transform: uppercase;
-    color: #167ac6;
+    color: #187bb2;
     text-align: left;
     border-bottom: solid 1px #ddd;
     font-size: 20px;
     font-weight: 500;
+}
+
+.searchbox-input .search-btn{
+    padding: 8px 10px;
+    border-radius: 4px;
 }
     /***********/
 
@@ -369,7 +378,7 @@ div#fitem_id_url.fitem_ftext .ftext input#id_url{
     width: 5px;
     height: 5px;
     border-radius: 50%;
-    background: #167ac6;
+    background: #187bb2;
     margin-left: 10px;
 }
 
@@ -414,7 +423,7 @@ div#fitem_id_url.fitem_ftext .ftext input#id_url{
 
 .forumpost .subject-single {
     margin-left: 20px;
-    color: #167ac6;
+    color: #187bb2;
 
 }
 
@@ -425,7 +434,7 @@ div#fitem_id_url.fitem_ftext .ftext input#id_url{
 }
 
 .forumpost .author-forum a {
-    color: #167ac6;
+    color: #187bb2;
 }
 
 .forumpost .content-no-overflow {
@@ -440,7 +449,7 @@ a
 
 .noti-content-main .commands a {
     font-size: 13px;
-    color: #167ac6;
+    color: #187bb2;
 }
 .circle-icon-bhxh {
     background-color: #187cb2 !important;
@@ -961,7 +970,7 @@ a
 }
 
 .loginpanel .btn-login:hover {
-    background: #167ac6;
+    background: #187bb2;
 }
 
 .loginpanel .forgetpass {
@@ -1362,7 +1371,7 @@ section#discussion-container.discussion.container div.discussion-body div#discus
 }
 
 #frontpage-course-list .coursebox .coursename a {
-    color: #167ac6;
+    color: #187bb2;
     font-weight: 600;
     font-size: 16px;
 }
@@ -1488,6 +1497,10 @@ section#discussion-container.discussion.container div.discussion-body div#discus
     border-left: none;
     float: left;
     margin: 20px 0;
+}
+
+input#adminsearchquery.form-control{
+    max-width: 300px;
 }
 
 #enrol-course-list .right-block {
@@ -2348,7 +2361,7 @@ legend + * {
 }
 
 .breadcrumb > li a {
-    color: #167ac6;
+    color: #187bb2;
 }
 
 .breadcrumb > li > .divider {
@@ -2786,7 +2799,7 @@ div.backup-section + form,
 }
 
 .courses.frontpage-course-list-all .coursebox .info .coursename a {
-    color: #167ac6;
+    color: #187bb2;
     background: none;
     padding: 0;
 }
@@ -3508,7 +3521,7 @@ table.forumheaderlist > tbody > tr > td > a {
 table.forumheaderlist > tbody > tr > td > a.active,
 table.forumheaderlist > tbody > tr > td > a:focus,
 table.forumheaderlist > tbody > tr > td > a:hover {
-    color: #167ac6;
+    color: #187bb2;
 }
 
 table#explaincaps tbody > tr:nth-child(2n+1) > td,
@@ -3871,7 +3884,7 @@ table#permissions tbody tr:hover > th {
 }
 
 .el-link-chat .btn-primary:hover {
-    background: #167ac6;
+    background: #187bb2;
 }
 
 .introdesc > #fitem_id_intro > .fitemtitle > .fstaticlabel {
@@ -3932,21 +3945,21 @@ table#permissions tbody tr:hover > th {
 
 .el-btn-search {
     padding: 6px 10px !important;
-    background-color: #167ac6 !important;
+    background-color: #187bb2 !important;
     font-weight: normal !important;
 }
 
 .el-heading {
     text-transform: uppercase !important;
-    border-bottom: solid 1px #167ac6;
+    border-bottom: solid 1px #187bb2;
     padding-bottom: 8px;
     font-size: 24px;
     font-weight: 600;
-    color: #167ac6;
+    color: #187bb2;
 }
 
 a.pre-el-link, a.next-el-link {
-    color: #167ac6;
+    color: #187bb2;
     font-size: 14px;
 }
 
@@ -3978,7 +3991,7 @@ a.pre-el-link:focus, a.pre-el-link:hover, a.next-el-link:focus, a.next-el-link:h
     margin-top: 0;
     padding-bottom: 6px;
     text-transform: uppercase;
-    color: #167ac6;
+    color: #187bb2;
     text-align: left;
     border-bottom: solid 1px #ddd;
     font-size: 20px;
@@ -4004,7 +4017,7 @@ a.pre-el-link:focus, a.pre-el-link:hover, a.next-el-link:focus, a.next-el-link:h
 
 .el-sidebar article.coursebox .coursename a:focus,
 .el-sidebar article.coursebox .coursename a:hover {
-    color: #167ac6;
+    color: #187bb2;
 }
 
 .el-sidebar article.coursebox .course-image img {
@@ -4036,12 +4049,12 @@ ul#enroltabs > li > a {
 ul#enroltabs > li.active > a, ul#enroltabs > li > a:focus, ul#enroltabs > li > a:hover {
     color: #111;
     background-color: #fff;
-    border-bottom: solid 2px #167ac6;
+    border-bottom: solid 2px #187bb2;
 }
 
 .el-badge {
     float: right;
-    background-color: #167ac6;
+    background-color: #187bb2;
     padding: 18px 0;
     border-radius: 50%;
     font-size: 13px;
@@ -4052,12 +4065,12 @@ ul#enroltabs > li.active > a, ul#enroltabs > li > a:focus, ul#enroltabs > li > a
     color: #fff !important;
     float: left;
     margin-top: 5px;
-    background-color: #167ac6;
-    border-color: #167ac6;
+    background-color: #187bb2;
+    border-color: #187bb2;
 }
 
 .btn-el-reg:hover, .btn-el-reg:focus {
-    background-color: #167ac6;
+    background-color: #187bb2;
     border-color: #187bb2;
 }
 
@@ -4118,7 +4131,7 @@ ul#enroltabs > li.active > a, ul#enroltabs > li > a:focus, ul#enroltabs > li > a
 /*  START - FORUM STYLESHEET */
 #forummenu input[type="submit"], .pindiscussion > .action-form > form input[type="submit"] {
     font-weight: normal;
-    background-color: #167ac6;
+    background-color: #187bb2;
     border-color: #0b5186;
 }
 
@@ -4179,7 +4192,7 @@ input[type="submit"].stop-reset-form:hover {
 .forumaddnew > form input[type="submit"],
 .quizattempt .continuebutton form input[type="submit"].stop-reset-form,
 form#personsearch input[type="submit"] {
-    background-color: #167ac6;
+    background-color: #187bb2;
     border-color: #0b5186;
     font-weight: 500;
 }
@@ -4197,9 +4210,9 @@ form#personsearch input[type="submit"]:hover {
 
 /* START - QUIZ STYLESHEET */
 .quizstartbuttondiv > form input[type="submit"] {
-    background-color: #167ac6;
+    background-color: #187bb2;
     border-color: #0b5186;
-    font-weight: normal;
+    font-weight: bold;
 }
 
 .quizstartbuttondiv > form input[type="submit"]:focus,
@@ -4226,7 +4239,7 @@ form#mod_quiz_preflight_form fieldset {
 }
 
 .path-mod-quiz .qnbutton.thispage {
-    border-color: #167ac6;
+    border-color: #187bb2;
 }
 
 .path-mod-quiz .qnbutton.thispage
@@ -4235,8 +4248,8 @@ form#mod_quiz_preflight_form fieldset {
 }
 
 a.qnbutton.notyetanswered {
-    color: #167ac6;
-    font-weight: normal;
+    color: #187bb2;
+    font-weight: bold;
 }
 
 /* END - QUIZ STYLESHEET */
@@ -4277,31 +4290,31 @@ table.flexible > thead > tr > th:last-child {
 
 /* BHXH STYLE SHEET */
 .block_navigation .block_tree [aria-expanded="true"]:before {
-    color: #167ac6;
+    color: #187bb2;
 }
 
 .block_navigation .block_tree [aria-expanded="false"]:before {
-    color: #167ac6;
+    color: #187bb2;
 }
 
 .block_settings .block_tree [aria-expanded="true"]:before {
-    color: #167ac6;
+    color: #187bb2;
 }
 
 .block_settings .block_tree [aria-expanded="false"]:before {
-    color: #167ac6;
+    color: #187bb2;
 }
 
 .mform fieldset.collapsible legend a.fheader:before {
-    color: #167ac6;
+    color: #187bb2;
 }
 
 .collapsible-actions .collapseexpand:before {
-    color: #167ac6;
+    color: #187bb2;
 }
 
 .activity img.activityicon, .block_navigation .block_tree p.hasicon img {
-    background-color: #167ac6;
+    background-color: #187bb2;
     border-radius: 50%;
 }
 

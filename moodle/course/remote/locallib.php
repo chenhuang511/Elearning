@@ -628,8 +628,6 @@ function get_remote_course_modules_by_instance($module, $instance)
 
 function get_remote_list_course_module_competencies_in_course_module($cmorid)
 {
-    global $DB;
-
     $rcmorid = get_local_course_modules_record($cmorid, true)->remoteid;
 
     $result = moodle_webservice_client(

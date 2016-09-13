@@ -1030,17 +1030,13 @@ class api
     public static function list_course_module_competencies_in_course_module($cmorid)
     {
         static::require_enabled();
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            $cm = get_remote_list_course_module_competencies_in_course_module($cmorid);
-        } else {
-            $cm = $cmorid;
-            if (!is_object($cmorid)) {
-                $cm = get_coursemodule_from_id('', $cmorid, 0, true, MUST_EXIST);
-            }
-
-            // Check the user have access to the course module.
-            self::validate_course_module($cm);
+        $cm = $cmorid;
+        if (!is_object($cmorid)) {
+            $cm = get_coursemodule_from_id('', $cmorid, 0, true, MUST_EXIST);
         }
+
+        // Check the user have access to the course module.
+        self::validate_course_module($cm);
         $context = context_module::instance($cm->id);
 
         $capabilities = array('moodle/competency:coursecompetencyview', 'moodle/competency:coursecompetencymanage');

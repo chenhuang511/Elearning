@@ -1,20 +1,20 @@
 define(['libs/backbone'], function(Backbone) {
   'use strict';
-    
+
   var models = {},
     views = {},
     collections = {},
     etch = {};
-	
+
   // versioning as per semver.org
   etch.VERSION = '0.6.2';
 
   etch.config = {
-    // selector to specify editable elements   
+    // selector to specify editable elements
     selector: '.editable',
-      
+
     // Named sets of buttons to be specified on the editable element
-    // in the markup as "data-button-class"   
+    // in the markup as "data-button-class"
     buttonClasses: {
       'default': ['save'],
       'all': ['bold', 'italic', 'underline', 'unordered-list', 'ordered-list', 'table', 'link', 'clear-formatting', 'save'],
@@ -44,7 +44,7 @@ define(['libs/backbone'], function(Backbone) {
 
     initialize: function() {
       this.$el = $(this.el);
-            
+
       // Model attribute event listeners:
       _.bindAll(this, 'changeButtons', 'changePosition', 'changeEditable', 'insertImage',
               '_editableModelChanged');
@@ -91,7 +91,7 @@ define(['libs/backbone'], function(Backbone) {
       }
 
       this._lastEditableModel = newEditable;
-      
+
       newEditable.on('change:size', this._fontSizeChanged, this);
     },
 
@@ -113,7 +113,7 @@ define(['libs/backbone'], function(Backbone) {
       this.$fontFamilyReadout.html(face);
       this.$colorChooser.spectrum('set', color);
     },
-        
+
     changeEditable: function() {
       this.setButtonClass();
       // Im assuming that Ill add more functionality here
@@ -136,11 +136,11 @@ define(['libs/backbone'], function(Backbone) {
       this.$el.empty();
       var view = this;
       var buttons = this.model.get('buttons');
-            
+
       // hide editor panel if there are no buttons in it and exit early
       if (!buttons.length) { $(this.el).hide(); return; }
-      
-      var $container = view.$el;  
+
+      var $container = view.$el;
       _.each(this.model.get('buttons'), function(button){
         if (button == "<group>") {
           $container = etch.groupElFactory();
@@ -152,7 +152,7 @@ define(['libs/backbone'], function(Backbone) {
           $container.append($buttonEl);
         }
       });
-            
+
       $(this.el).show('fast');
 
       var $colorChooser = this.$el.find(".color-chooser");
@@ -203,14 +203,14 @@ define(['libs/backbone'], function(Backbone) {
       var pos = this.model.get('position');
       this.$el.animate({'top': pos.y, 'left': pos.x}, { queue: false, duration: 300 });
     },
-        
+
     wrapSelection: function(selectionOrRange, elString, cb) {
       // wrap current selection with elString tag
       var range = selectionOrRange === Range ? selectionOrRange : selectionOrRange.getRangeAt(0);
       var el = document.createElement(elString);
       range.surroundContents(el);
     },
-        
+
     clearFormatting: function(e) {
       e.preventDefault();
       document.execCommand('removeFormat', false, null);
@@ -231,10 +231,10 @@ define(['libs/backbone'], function(Backbone) {
         this.$el.find('[data-toggle="toggle"]').tooltip();
       }
       else{
-        var $table = '<table class="table-striped" width="600" style="text-align: center;">';
-        var $tableEl = '<tr height="40">'
+        var $table = '<table class="sampletable" style="text-align: center;">';
+        var $tableEl = '<tr>'
         for(var i = 0; i < number_column; ++i){
-          $tableEl += '<td></td>';
+          $tableEl += '<td style = "min-width: 80px">edit text</td>';
         }
         $tableEl += '</tr>';
         for(var j = 0; j < number_row; ++j){
@@ -254,7 +254,7 @@ define(['libs/backbone'], function(Backbone) {
       var str = $table.substring(n, m + 5);
       var tableArr = str.match(/<td>/g);
       for(var i in tableArr){
-        tableArr[i] += "</td>"
+        tableArr[i] += "edit text</td>"
       }
       str = str.substr(0,str.indexOf("<td>")) + tableArr.join("") + str.substr(str.lastIndexOf("</td>") + 5);
       $table = $table.substr(0, m + 5)+ str + $table.substr(m + 5);
@@ -307,7 +307,7 @@ define(['libs/backbone'], function(Backbone) {
         size: value
       });
     },
-        
+
     toggleBold: function(e) {
       e.preventDefault();
       document.execCommand('bold', false, null);
@@ -322,7 +322,7 @@ define(['libs/backbone'], function(Backbone) {
       e.preventDefault();
       document.execCommand('underline', false, null);
     },
-        
+
     toggleHeading: function(e) {
       e.preventDefault();
       var range = window.getSelection().getRangeAt(0);
@@ -338,10 +338,10 @@ define(['libs/backbone'], function(Backbone) {
     urlPrompt: function(callback) {
       // This uses the default browser UI prompt to get a url.
       // Override this function if you want to implement a custom UI.
-        
+
       var url = prompt('Enter a url', 'http://');
-        
-      // Ensure a new link URL starts with http:// or https:// 
+
+      // Ensure a new link URL starts with http:// or https://
       // before it's added to the DOM.
       //
       // NOTE: This implementation will disallow relative URLs from being added
@@ -352,7 +352,7 @@ define(['libs/backbone'], function(Backbone) {
         callback("http://" + url);
       }
     },
-    
+
     toggleLink: function(e) {
       e.preventDefault();
       var range = window.getSelection().getRangeAt(0);
@@ -381,7 +381,7 @@ define(['libs/backbone'], function(Backbone) {
       e.preventDefault();
       document.execCommand('insertOrderedList', false, null);
     },
-        
+
     justifyLeft: function(e) {
       e.preventDefault();
       document.execCommand('justifyLeft', false, null);
@@ -403,43 +403,43 @@ define(['libs/backbone'], function(Backbone) {
       // call startUploader with callback to handle inserting it once it is uploded/cropped
       this.startUploader(this.insertImage);
     },
-        
+
     startUploader: function(cb) {
       // initialize Image Uploader
       var model = new models.ImageUploader();
       var view = new views.ImageUploader({model: model});
-            
+
       // stash a reference to the callback to be called after image is uploaded
       model._imageCallback = function(image) {
         view.startCropper(image, cb);
       };
 
 
-      // stash reference to saved range for inserting the image once its 
+      // stash reference to saved range for inserting the image once its
       this._savedRange = window.getSelection().getRangeAt(0);
 
       // insert uploader html into DOM
       $('body').append(view.render().el);
     },
-        
+
     insertImage: function(image) {
       // insert image - passed as a callback to startUploader
       var sel = window.getSelection();
       sel.removeAllRanges();
       sel.addRange(this._savedRange);
-            
+
       var attrs = {
         'editable': this.model.get('editable'),
         'editableModel': this.model.get('editableModel')
       };
-            
+
       _.extend(attrs, image);
 
       var model = new models.EditableImage(attrs);
       var view = new views.EditableImage({model: model});
       this._savedRange.insertNode($(view.render().el).addClass('etch-float-left')[0]);
     },
-        
+
     save: function(e) {
       e.preventDefault();
       var editableModel = this.model.get('editableModel');
@@ -459,7 +459,7 @@ define(['libs/backbone'], function(Backbone) {
     },
 
     // This function is to be used as callback to whatever event
-    // you use to initialize editing 
+    // you use to initialize editing
     editableInit: function(e, overrideY) {
       e.stopPropagation();
       var target = e.target || e.srcElement;
@@ -487,7 +487,7 @@ define(['libs/backbone'], function(Backbone) {
       } else {
         $editor.css("display", "block");
       }
-      
+
       // Firefox seems to be only browser that defaults to `StyleWithCSS == true`
       // so we turn it off here. Plus a try..catch to avoid an error being thrown in IE8.
       try {
@@ -527,8 +527,8 @@ define(['libs/backbone'], function(Backbone) {
           $editor.css("display", "none");
           editorModel.trigger('spectrum:hide', null);
           //$editor.remove();
-                    
-                    
+
+
           if (models.EditableImage) {
             // unblind the image-tools if the editor isn't active
             $editable.find('img').unbind('mouseenter');
@@ -536,7 +536,7 @@ define(['libs/backbone'], function(Backbone) {
             // remove any latent image tool model references
             $(etch.config.selector+' img').data('editableImageModel', false)
           }
-                    
+
           // once the editor is removed, remove the body binding for it
           $(this).unbind('mousedown.editor');
         }
@@ -566,7 +566,7 @@ define(['libs/backbone'], function(Backbone) {
       if (_.isFunction(views[settings.classType])) {
         var view = new views[settings.classType]({model: model, el: this, tagName: this.tagName});
       }
-           
+
       // stash the model and view on the elements data object
       $el.data({model: model});
       $el.data({view: view});
@@ -590,6 +590,6 @@ define(['libs/backbone'], function(Backbone) {
     var $el = $(this);
     return $el.is(etch.config.selector) ? $el : $el.closest(etch.config.selector);
   }
-    
+
   return etch;
 });

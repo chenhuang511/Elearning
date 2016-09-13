@@ -56,7 +56,7 @@
 
 .path-mod-assign .gradingbatchoperationsform .mform fieldset {
     margin: 0px;
-    padding: 0px;
+    /*padding: 0px;*/
 }
 
 .path-mod-assign td.submissionstatus,

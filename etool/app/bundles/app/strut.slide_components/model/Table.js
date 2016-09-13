@@ -32,7 +32,7 @@ define(['strut/deck/Component'],
 					delete this._opts;
 					this.set('text', text);
 					if (!this.get('size'))
-						this.set('size', 42);
+						this.set('size', 32);
 				}
 			},
 
