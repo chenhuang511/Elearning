@@ -312,10 +312,10 @@ function add_local_course_module($cm)
 {
     global $DB;
 
-    $transaction = $DB->start_delegated_transaction();
     $localcourse = $DB->get_record('course', array('remoteid' => $cm->course));
     if ($localcourse) {
         if (!$coursemodule = $DB->get_record('course_modules', array('remoteid' => $cm->id))) {
+            $transaction = $DB->start_delegated_transaction();
             // Make params to insert DB local
             $cm->remoteid = $cm->id;
             unset($cm->id);
@@ -330,10 +330,10 @@ function add_local_course_module($cm)
                 $cm->module = $modulehost->id;
             }
             $cmidhost = $DB->insert_record('course_modules', $cm);
+            $transaction->allow_commit();
             $coursemodule = $DB->get_record('course_modules', array('id' => $cmidhost));
         }
     }
-    $transaction->allow_commit();
     return $coursemodule;
 }
 
@@ -365,7 +365,6 @@ function add_local_course_sections($rcourseid)
                 $secid = $localsection->id;
             }
 
-
             if (!empty($section->sequence)) {
                 $sequence = explode(",", $section->sequence);
                 foreach ($sequence as &$seq) {
@@ -388,6 +387,31 @@ function add_local_course_sections($rcourseid)
         }
     }
     $transaction->allow_commit();
+}
+
+/**
+ *
+ * @param $sequence
+ */
+function merge_local_sequence_course_section($sequence)
+{
+    global $DB;
+    if (empty($sequence)) {
+        return 0;
+    }
+
+    $sequencesarray = explode(",", $sequence);
+    foreach ($sequencesarray as &$seq) {
+        $cm = $DB->get_record('course_modules', array('remoteid' => $seq));
+        // Update sectionid in course_module tbl
+        if ($cm) {
+            $seq = $cm->id;
+        }
+    }
+    // Update sequence in course_sections
+    $sequence = implode(",", $sequencesarray);
+
+    return $sequence;
 }
 
 /**
