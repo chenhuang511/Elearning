@@ -12,4 +12,12 @@ alter table mdl_course_modules add remoteid bigint(10) not null default 0;
 alter table mdl_course_sections add remoteid bigint(10) not null default 0;
 alter table mdl_forum add remoteid bigint(10) not null default 0;
 
+CREATE TABLE mdl_course_activities (
+  id BIGINT(10) NOT NULL AUTO_INCREMENT,
+  course BIGINT(10) NOT NULL,
+  coursemodule BIGINT(10) NOT NULL,
+  userid BIGINT(10) NOT NULL,
+  PRIMARY KEY(id)
+);
+
 drop table mdl_mnetservice_enrol_courses;

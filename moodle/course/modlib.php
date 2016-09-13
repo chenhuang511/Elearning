@@ -43,13 +43,21 @@ require_once($CFG->dirroot . '/course/lib.php');
  */
 function add_moduleinfo($moduleinfo, $course, $mform = null)
 {
-    global $DB, $CFG;
+    global $DB, $CFG, $USER;
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
         $remotemoduleinfo = clone $moduleinfo;
 
         $remotemoduleinfo = merge_module_info_send_to_hub($remotemoduleinfo);
 
         $moduleinforet = get_remote_add_moduleinfo_by(json_encode($remotemoduleinfo), $course->remoteid);
+
+        // add data to course_activities
+        $activity = new stdClass();
+        $activity->course = $course->id;
+        $activity->coursemodule = $moduleinforet->coursemodule;
+        $activity->userid = $USER->id;
+
+        $activity->id = $DB->insert_record('course_activities', $activity);
     }
 // Attempt to include module library before we make any changes to DB.
     include_modulelib($moduleinfo->modulename);
@@ -471,20 +479,33 @@ function can_add_moduleinfo($course, $modulename, $section)
  */
 function can_update_moduleinfo($cm)
 {
-    global $DB;
+    global $DB, $USER;
 
-    // Check the $USER has the right capability.
-    $context = context_module::instance($cm->id);
-    require_capability('moodle/course:manageactivities', $context);
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $context = context_module::instance($cm->id);
+        require_capability('moodle/course:manageactivities', $context);
 
-    // Check module exists.
-    $module = $DB->get_record('modules', array('id'=>$cm->module), '*', MUST_EXIST);
+        $rs = get_remote_can_update_moduleinfo($cm->remoteid);
 
-    // Check the moduleinfo exists.
-    $data = $DB->get_record($module->name, array('id'=>$cm->instance), '*', MUST_EXIST);
+        $module = $rs['module'];
+        $data = $rs['data'];
+        $cw = $rs['cw'];
 
-    // Check the course section exists.
-    $cw = $DB->get_record('course_sections', array('id'=>$cm->section), '*', MUST_EXIST);
+    } else {
+
+        // Check the $USER has the right capability.
+        $context = context_module::instance($cm->id);
+        require_capability('moodle/course:manageactivities', $context);
+
+        // Check module exists.
+        $module = $DB->get_record('modules', array('id' => $cm->module), '*', MUST_EXIST);
+
+        // Check the moduleinfo exists.
+        $data = $DB->get_record($module->name, array('id' => $cm->instance), '*', MUST_EXIST);
+
+        // Check the course section exists.
+        $cw = $DB->get_record('course_sections', array('id' => $cm->section), '*', MUST_EXIST);
+    }
 
     return array($cm, $context, $module, $data, $cw);
 }
@@ -503,149 +524,164 @@ function can_update_moduleinfo($cm)
  */
 function update_moduleinfo($cm, $moduleinfo, $course, $mform = null)
 {
-    global $DB, $CFG;
+    global $DB, $CFG, $USER;
 
-    $data = new stdClass();
-    if ($mform) {
-        $data = $mform->get_data();
-    }
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $activity = $DB->get_record('course_activities', array('course' => $course->id, 'coursemodule' => $cm->id, 'userid' => $USER->id), '*', MUST_EXIST);
 
-    // Attempt to include module library before we make any changes to DB.
-    include_modulelib($moduleinfo->modulename);
-
-    $moduleinfo->course = $course->id;
-    $moduleinfo = set_moduleinfo_defaults($moduleinfo);
-
-    if (!empty($course->groupmodeforce) or !isset($moduleinfo->groupmode)) {
-        $moduleinfo->groupmode = $cm->groupmode; // Keep original.
-    }
-
-    // Update course module first.
-    $cm->groupmode = $moduleinfo->groupmode;
-    if (isset($moduleinfo->groupingid)) {
-        $cm->groupingid = $moduleinfo->groupingid;
-    }
-    $completion = new completion_info($course);
-    if ($completion->is_enabled()) {
-        // Completion settings that would affect users who have already completed
-        // the activity may be locked; if so, these should not be updated.
-        if (!empty($moduleinfo->completionunlocked)) {
-            $cm->completion = $moduleinfo->completion;
-            $cm->completiongradeitemnumber = $moduleinfo->completiongradeitemnumber;
-            $cm->completionview = $moduleinfo->completionview;
+        if (!$activity) {
+            print_error("No permission to edit this activity");
         }
-        // The expected date does not affect users who have completed the activity,
-        // so it is safe to update it regardless of the lock status.
-        $cm->completionexpected = $moduleinfo->completionexpected;
-    }
 
-    if (!empty($CFG->enableavailability)) {
-        // This code is used both when submitting the form, which uses a long
-        // name to avoid clashes, and by unit test code which uses the real
-        // name in the table.
-        if (property_exists($moduleinfo, 'availabilityconditionsjson')) {
-            if ($moduleinfo->availabilityconditionsjson !== '') {
-                $cm->availability = $moduleinfo->availabilityconditionsjson;
-            } else {
-                $cm->availability = null;
-            }
-        } else if (property_exists($moduleinfo, 'availability')) {
-            $cm->availability = $moduleinfo->availability;
+        $rs = get_remote_update_moduleinfo_by(json_encode($cm), json_encode($moduleinfo), $course->remoteid, json_encode($mform));
+        if (!$rs) {
+            print_error('Occur error');
         }
-        // If there is any availability data, verify it.
-        if ($cm->availability) {
-            $tree = new \core_availability\tree(json_decode($cm->availability));
-            // Save time and database space by setting null if the only data
-            // is an empty tree.
-            if ($tree->is_empty()) {
-                $cm->availability = null;
-            }
-        }
-    }
-    if (isset($moduleinfo->showdescription)) {
-        $cm->showdescription = $moduleinfo->showdescription;
+        $cm = $rs->cm;
+        $moduleinfo = $rs->moduleinfo;
     } else {
-        $cm->showdescription = 0;
-    }
+        $data = new stdClass();
+        if ($mform) {
+            $data = $mform->get_data();
+        }
 
-    $DB->update_record('course_modules', $cm);
+        // Attempt to include module library before we make any changes to DB.
+        include_modulelib($moduleinfo->modulename);
 
-    $modcontext = context_module::instance($moduleinfo->coursemodule);
+        $moduleinfo->course = $course->id;
+        $moduleinfo = set_moduleinfo_defaults($moduleinfo);
 
-    // Update embedded links and save files.
-    if (plugin_supports('mod', $moduleinfo->modulename, FEATURE_MOD_INTRO, true)) {
-        $moduleinfo->intro = file_save_draft_area_files($moduleinfo->introeditor['itemid'], $modcontext->id,
-            'mod_' . $moduleinfo->modulename, 'intro', 0,
-            array('subdirs' => true), $moduleinfo->introeditor['text']);
-        $moduleinfo->introformat = $moduleinfo->introeditor['format'];
-        unset($moduleinfo->introeditor);
-    }
+        if (!empty($course->groupmodeforce) or !isset($moduleinfo->groupmode)) {
+            $moduleinfo->groupmode = $cm->groupmode; // Keep original.
+        }
 
-    // Get the a copy of the grade_item before it is modified incase we need to scale the grades.
-    $oldgradeitem = null;
-    $newgradeitem = null;
-    if (!empty($data->grade_rescalegrades) && $data->grade_rescalegrades == 'yes') {
-        // Fetch the grade item before it is updated.
-        $oldgradeitem = grade_item::fetch(array('itemtype' => 'mod',
-            'itemmodule' => $moduleinfo->modulename,
-            'iteminstance' => $moduleinfo->instance,
-            'itemnumber' => 0,
-            'courseid' => $moduleinfo->course));
-    }
+        // Update course module first.
+        $cm->groupmode = $moduleinfo->groupmode;
+        if (isset($moduleinfo->groupingid)) {
+            $cm->groupingid = $moduleinfo->groupingid;
+        }
+        $completion = new completion_info($course);
+        if ($completion->is_enabled()) {
+            // Completion settings that would affect users who have already completed
+            // the activity may be locked; if so, these should not be updated.
+            if (!empty($moduleinfo->completionunlocked)) {
+                $cm->completion = $moduleinfo->completion;
+                $cm->completiongradeitemnumber = $moduleinfo->completiongradeitemnumber;
+                $cm->completionview = $moduleinfo->completionview;
+            }
+            // The expected date does not affect users who have completed the activity,
+            // so it is safe to update it regardless of the lock status.
+            $cm->completionexpected = $moduleinfo->completionexpected;
+        }
 
-    $updateinstancefunction = $moduleinfo->modulename . "_update_instance";
-    if (!$updateinstancefunction($moduleinfo, $mform)) {
-        print_error('cannotupdatemod', '', course_get_url($course, $cm->section), $moduleinfo->modulename);
-    }
-
-    // This needs to happen AFTER the grademin/grademax have already been updated.
-    if (!empty($data->grade_rescalegrades) && $data->grade_rescalegrades == 'yes') {
-        // Get the grade_item after the update call the activity to scale the grades.
-        $newgradeitem = grade_item::fetch(array('itemtype' => 'mod',
-            'itemmodule' => $moduleinfo->modulename,
-            'iteminstance' => $moduleinfo->instance,
-            'itemnumber' => 0,
-            'courseid' => $moduleinfo->course));
-        if ($newgradeitem && $oldgradeitem->gradetype == GRADE_TYPE_VALUE && $newgradeitem->gradetype == GRADE_TYPE_VALUE) {
-            $params = array(
-                $course,
-                $cm,
-                $oldgradeitem->grademin,
-                $oldgradeitem->grademax,
-                $newgradeitem->grademin,
-                $newgradeitem->grademax
-            );
-            if (!component_callback('mod_' . $moduleinfo->modulename, 'rescale_activity_grades', $params)) {
-                print_error('cannotreprocessgrades', '', course_get_url($course, $cm->section), $moduleinfo->modulename);
+        if (!empty($CFG->enableavailability)) {
+            // This code is used both when submitting the form, which uses a long
+            // name to avoid clashes, and by unit test code which uses the real
+            // name in the table.
+            if (property_exists($moduleinfo, 'availabilityconditionsjson')) {
+                if ($moduleinfo->availabilityconditionsjson !== '') {
+                    $cm->availability = $moduleinfo->availabilityconditionsjson;
+                } else {
+                    $cm->availability = null;
+                }
+            } else if (property_exists($moduleinfo, 'availability')) {
+                $cm->availability = $moduleinfo->availability;
+            }
+            // If there is any availability data, verify it.
+            if ($cm->availability) {
+                $tree = new \core_availability\tree(json_decode($cm->availability));
+                // Save time and database space by setting null if the only data
+                // is an empty tree.
+                if ($tree->is_empty()) {
+                    $cm->availability = null;
+                }
             }
         }
+        if (isset($moduleinfo->showdescription)) {
+            $cm->showdescription = $moduleinfo->showdescription;
+        } else {
+            $cm->showdescription = 0;
+        }
+
+        $DB->update_record('course_modules', $cm);
+
+        $modcontext = context_module::instance($moduleinfo->coursemodule);
+
+        // Update embedded links and save files.
+        if (plugin_supports('mod', $moduleinfo->modulename, FEATURE_MOD_INTRO, true)) {
+            $moduleinfo->intro = file_save_draft_area_files($moduleinfo->introeditor['itemid'], $modcontext->id,
+                'mod_' . $moduleinfo->modulename, 'intro', 0,
+                array('subdirs' => true), $moduleinfo->introeditor['text']);
+            $moduleinfo->introformat = $moduleinfo->introeditor['format'];
+            unset($moduleinfo->introeditor);
+        }
+
+        // Get the a copy of the grade_item before it is modified incase we need to scale the grades.
+        $oldgradeitem = null;
+        $newgradeitem = null;
+        if (!empty($data->grade_rescalegrades) && $data->grade_rescalegrades == 'yes') {
+            // Fetch the grade item before it is updated.
+            $oldgradeitem = grade_item::fetch(array('itemtype' => 'mod',
+                'itemmodule' => $moduleinfo->modulename,
+                'iteminstance' => $moduleinfo->instance,
+                'itemnumber' => 0,
+                'courseid' => $moduleinfo->course));
+        }
+
+        $updateinstancefunction = $moduleinfo->modulename . "_update_instance";
+        if (!$updateinstancefunction($moduleinfo, $mform)) {
+            print_error('cannotupdatemod', '', course_get_url($course, $cm->section), $moduleinfo->modulename);
+        }
+
+        // This needs to happen AFTER the grademin/grademax have already been updated.
+        if (!empty($data->grade_rescalegrades) && $data->grade_rescalegrades == 'yes') {
+            // Get the grade_item after the update call the activity to scale the grades.
+            $newgradeitem = grade_item::fetch(array('itemtype' => 'mod',
+                'itemmodule' => $moduleinfo->modulename,
+                'iteminstance' => $moduleinfo->instance,
+                'itemnumber' => 0,
+                'courseid' => $moduleinfo->course));
+            if ($newgradeitem && $oldgradeitem->gradetype == GRADE_TYPE_VALUE && $newgradeitem->gradetype == GRADE_TYPE_VALUE) {
+                $params = array(
+                    $course,
+                    $cm,
+                    $oldgradeitem->grademin,
+                    $oldgradeitem->grademax,
+                    $newgradeitem->grademin,
+                    $newgradeitem->grademax
+                );
+                if (!component_callback('mod_' . $moduleinfo->modulename, 'rescale_activity_grades', $params)) {
+                    print_error('cannotreprocessgrades', '', course_get_url($course, $cm->section), $moduleinfo->modulename);
+                }
+            }
+        }
+
+        // Make sure visibility is set correctly (in particular in calendar).
+        if (has_capability('moodle/course:activityvisibility', $modcontext)) {
+            set_coursemodule_visible($moduleinfo->coursemodule, $moduleinfo->visible);
+        }
+
+        if (isset($moduleinfo->cmidnumber)) { // Label.
+            // Set cm idnumber - uniqueness is already verified by form validation.
+            set_coursemodule_idnumber($moduleinfo->coursemodule, $moduleinfo->cmidnumber);
+        }
+
+        // Update module tags.
+        if (core_tag_tag::is_enabled('core', 'course_modules') && isset($moduleinfo->tags)) {
+            core_tag_tag::set_item_tags('core', 'course_modules', $moduleinfo->coursemodule, $modcontext, $moduleinfo->tags);
+        }
+
+        // Now that module is fully updated, also update completion data if required.
+        // (this will wipe all user completion data and recalculate it)
+        if ($completion->is_enabled() && !empty($moduleinfo->completionunlocked)) {
+            $completion->reset_all_state($cm);
+        }
+        $cm->name = $moduleinfo->name;
+
+        \core\event\course_module_updated::create_from_cm($cm, $modcontext)->trigger();
+
+        $moduleinfo = edit_module_post_actions($moduleinfo, $course);
     }
-
-    // Make sure visibility is set correctly (in particular in calendar).
-    if (has_capability('moodle/course:activityvisibility', $modcontext)) {
-        set_coursemodule_visible($moduleinfo->coursemodule, $moduleinfo->visible);
-    }
-
-    if (isset($moduleinfo->cmidnumber)) { // Label.
-        // Set cm idnumber - uniqueness is already verified by form validation.
-        set_coursemodule_idnumber($moduleinfo->coursemodule, $moduleinfo->cmidnumber);
-    }
-
-    // Update module tags.
-    if (core_tag_tag::is_enabled('core', 'course_modules') && isset($moduleinfo->tags)) {
-        core_tag_tag::set_item_tags('core', 'course_modules', $moduleinfo->coursemodule, $modcontext, $moduleinfo->tags);
-    }
-
-    // Now that module is fully updated, also update completion data if required.
-    // (this will wipe all user completion data and recalculate it)
-    if ($completion->is_enabled() && !empty($moduleinfo->completionunlocked)) {
-        $completion->reset_all_state($cm);
-    }
-    $cm->name = $moduleinfo->name;
-
-    \core\event\course_module_updated::create_from_cm($cm, $modcontext)->trigger();
-
-    $moduleinfo = edit_module_post_actions($moduleinfo, $course);
 
     return array($cm, $moduleinfo);
 }
