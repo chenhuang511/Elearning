@@ -257,7 +257,7 @@ define(['libs/backbone'], function(Backbone) {
       for(var i in tableArr){
         tableArr[i] += "edit text</td>"
       }
-      str = str.substr(0,str.indexOf("<td>"))+ tableArr.join("") + str.substr(str.lastIndexOf("</td>") + 5);
+      str = str.substr(0,str.indexOf("<td"))+ tableArr.join("") + str.substr(str.lastIndexOf("</td>") + 5);
       $table = $table.substr(0, m + 5) + str + $table.substr(m + 5);
       textBox.set("text",$table);
       textBox.set("_opts",$table);
@@ -312,10 +312,9 @@ define(['libs/backbone'], function(Backbone) {
       $table = $row.join("") + $table;
       console.log($table);
       if($table.indexOf("<td") < 0 || $table.indexOf("</td>") < 0){
-        console.log("dd");
+
       }
       else{
-        console.log("dg");
         textBox.set("text", $table);
         textBox.set("_opts",$table);
       }
