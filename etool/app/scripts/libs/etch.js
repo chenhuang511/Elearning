@@ -131,7 +131,6 @@ define(['libs/backbone'], function(Backbone) {
     },
 
     changeButtons: function() {
-      console.log("Change btns");
       // render the buttons into the editor-panel
       this.$el.empty();
       var view = this;
@@ -310,7 +309,6 @@ define(['libs/backbone'], function(Backbone) {
         
       }
       $table = $row.join("") + $table;
-      console.log($table);
       if($table.indexOf("<td") < 0 || $table.indexOf("</td>") < 0){
 
       }
