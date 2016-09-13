@@ -2247,7 +2247,7 @@ class local_course_external extends external_api
 
         $cm = get_coursemodule_from_id('', $params['cmid'], 0, false, MUST_EXIST);
 
-        if(!$cm) {
+        if (!$cm) {
             $warnings['message'] = "The course module not found";
         }
 
@@ -2264,10 +2264,17 @@ class local_course_external extends external_api
         // Check the course section exists.
         $cw = $DB->get_record('course_sections', array('id' => $cm->section), '*', MUST_EXIST);
 
-        return array($cm, $context, $module, $data, $cw);
+        $result = array();
+        $result['warnings'] = $warnings;
+        $result['module'] = $module;
+        $result['data'] = json_encode($data);
+        $result['cw'] = $cw;
+
+        return $result;
     }
 
-    public static function can_update_moduleinfo_returns() {
+    public static function can_update_moduleinfo_returns()
+    {
         return new external_single_structure(
             array(
                 'module' => new external_single_structure(
@@ -2281,7 +2288,20 @@ class local_course_external extends external_api
                     )
                 ),
                 'data' => new external_value(PARAM_RAW, 'the data'),
-                'cw' => new external_value(PARAM_RAW, 'the course section')
+                'cw' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'the id'),
+                        'course' => new external_value(PARAM_INT, 'the course id'),
+                        'section' => new external_value(PARAM_INT, 'the section'),
+                        'name' => new external_value(PARAM_RAW, 'the name'),
+                        'summary' => new external_value(PARAM_RAW, 'the summary'),
+                        'summaryformat' => new external_value(PARAM_INT, 'the summary format'),
+                        'sequence' => new external_value(PARAM_RAW, 'the sequence'),
+                        'visible' => new external_value(PARAM_INT, 'the visible'),
+                        'availability' => new external_value(PARAM_RAW, 'the availability')
+                    )
+                ),
+                'warnings' => new external_warnings()
             )
         );
     }
