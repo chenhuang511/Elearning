@@ -251,13 +251,15 @@ define(['libs/backbone'], function(Backbone) {
       var $table = textBox.get("text");
       var n = $table.lastIndexOf("<tr");
       var m = $table.lastIndexOf("</tr>");
-      var str = $table.substring(n, m + 5);
-      var tableArr = str.match(/<td>/g);
-      for(var i in tableArr){
-        tableArr[i] += "edit text</td>"
+      var $row = $table.substring(n, m + 5);
+      var $rowEl = $row.split("<")
+      for(var i in $rowEl){
+        if($rowEl[i].indexOf("td") >= 0)
+          $rowEl[i] = "<" + $rowEl[i].substr(0, $rowEl[i].indexOf(">") + 1);
+        else if($rowEl[i] != "")
+          $rowEl[i] = "<" +$rowEl[i];
       }
-      str = str.substr(0,str.indexOf("<td"))+ tableArr.join("") + str.substr(str.lastIndexOf("</td>") + 5);
-      $table = $table.substr(0, m + 5) + str + $table.substr(m + 5);
+      $table = $table.substr(0, m + 5) + $rowEl.join("") + $table.substr(m + 5);
       textBox.set("text",$table);
       textBox.set("_opts",$table);
     },
