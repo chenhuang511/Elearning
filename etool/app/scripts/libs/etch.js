@@ -270,7 +270,7 @@ define(['libs/backbone'], function(Backbone) {
       var $table = textBox.get("text");
       var $row = $table.match(/<tr/g);
       for(var i in $row){
-        ind = $table.indexOf("</tr>");
+        ind = $table.indexOf("</tr");
         str = $table.substr(0, ind);
         $row[i] = str + "<td>edit text</td></tr>";
         $table = $table.substr(ind + 5);
@@ -288,10 +288,9 @@ define(['libs/backbone'], function(Backbone) {
       var m = $table.lastIndexOf("</tr>");
       $table = $table.substr(0, n) + $table.substr(m + 5);
       if($table.indexOf("<tr") < 0|| $table.indexOf("</tr>") < 0){
-        console.log("a");
+
       }
       else{
-        console.log("b");
         textBox.set("text",$table);
         textBox.set("_opts",$table);
       }
@@ -306,15 +305,17 @@ define(['libs/backbone'], function(Backbone) {
       for(var i in $row){
         ind = $table.indexOf("</tr>");
         str = $table.substr(0, ind);
-        $row[i] = str.substr(0, str.lastIndexOf("<td>")) + "</tr>";
+        $row[i] = str.substr(0, str.lastIndexOf("<td")) + "</tr>";
         $table = $table.substr(ind + 5);
         
       }
       $table = $row.join("") + $table;
-      if($table.indexOf("<td>") < 0 || $table.indexOf("</td>") < 0){
-        
+      console.log($table);
+      if($table.indexOf("<td") < 0 || $table.indexOf("</td>") < 0){
+        console.log("dd");
       }
       else{
+        console.log("dg");
         textBox.set("text", $table);
         textBox.set("_opts",$table);
       }
