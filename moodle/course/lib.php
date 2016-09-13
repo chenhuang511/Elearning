@@ -1001,7 +1001,7 @@ function course_integrity_check($courseid, $rawmods = null, $sections = null, $f
  * For a given course, returns an array of course activity objects
  * Each item in the array contains he following properties:
  */
-function get_array_of_activities($course)
+function get_array_of_activities($courseid)
 {
 //  cm - course module id
 //  mod - name of the module (eg forum)
@@ -1012,18 +1012,7 @@ function get_array_of_activities($course)
 //  extra - contains extra string to include in any link
     global $CFG, $DB;
 
-    if (MOODLE_RUN_MODE == MOODLE_MODE_HUB) {
-        if (!isset($course->remoteid) || $course->remoteid == null || $course->id === SITEID) {
-            $id = $course->id;
-            $useid = true;
-        } else {
-            $id = $course->remoteid;
-            $useid = false;
-        }
-        $course = get_local_course_record($id, $useid);
-    } else {
-        $course = $DB->get_record('course', array('id' => $course->id), "*", MUST_EXIST);
-    }
+    $course = $DB->get_record('course', array('id' => $courseid));
 
     if (empty($course)) {
         throw new moodle_exception('courseidnotfound');
@@ -1031,17 +1020,17 @@ function get_array_of_activities($course)
 
     $mod = array();
 
-    $rawmods = get_course_mods($course->id);
+    $rawmods = get_course_mods($courseid);
     if (empty($rawmods)) {
         return $mod; // always return array
     }
 
-    if ($sections = $DB->get_records('course_sections', array('course' => $course->id), 'section ASC', 'id,section,sequence')) {
+    if ($sections = $DB->get_records('course_sections', array('course' => $courseid), 'section ASC', 'id,section,sequence')) {
         // First check and correct obvious mismatches between course_sections.sequence and course_modules.section.
-        if ($errormessages = course_integrity_check($course->id, $rawmods, $sections)) {
+        if ($errormessages = course_integrity_check($courseid, $rawmods, $sections)) {
             debugging(join('<br>', $errormessages));
-            $rawmods = get_course_mods($course->id);
-            $sections = $DB->get_records('course_sections', array('course' => $course->id), 'section ASC', 'id,section,sequence');
+            $rawmods = get_course_mods($courseid);
+            $sections = $DB->get_records('course_sections', array('course' => $courseid), 'section ASC', 'id,section,sequence');
         }
         // Build array of activities.
         foreach ($sections as $section) {
@@ -1131,7 +1120,9 @@ function get_array_of_activities($course)
                     // but showdescriptions is enabled, then we use the 'intro'
                     // and 'introformat' fields in the module table
                     if (!$hasfunction && $rawmods[$seq]->showdescription) {
-                        if ($modvalues = get_remote_cm_info($rawmods[$seq]->modname, $rawmods[$seq]->instance)) {
+                        if ($modvalues = $DB->get_record($rawmods[$seq]->modname,
+                            array('id' => $rawmods[$seq]->instance), 'name, intro, introformat')
+                        ) {
                             // Set content from intro and introformat. Filters are disabled
                             // because we  filter it with format_text at display time
                             $mod[$seq]->content = format_module_intro($rawmods[$seq]->modname,
@@ -1142,11 +1133,7 @@ function get_array_of_activities($course)
                         }
                     }
                     if (!isset($mod[$seq]->name)) {
-                        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-                            $mod[$seq]->name = get_remote_get_field_modname_by_id($rawmods[$seq]->modname, $rawmods[$seq]->instance);
-                        } else {
-                            $mod[$seq]->name = $DB->get_field($rawmods[$seq]->modname, "name", array("id" => $rawmods[$seq]->instance));
-                        }
+                        $mod[$seq]->name = $DB->get_field($rawmods[$seq]->modname, "name", array("id" => $rawmods[$seq]->instance));
                     }
 
                     // Minimise the database size by unsetting default options when they are

@@ -138,7 +138,7 @@ function get_remote_course_mods($courseid)
             add_local_course_module($cm);
         }
     }
-    add_local_course_sections($rcourseid);
+    add_local_course_sections($courseid);
 }
 
 function get_remote_course_sections($courseid, $usesq = false)
@@ -329,12 +329,10 @@ function add_local_course_module($cm)
             if ($modulehost) {
                 $cm->module = $modulehost->id;
             }
-            $cmidhost = $DB->insert_record('course_modules', $cm);
+            $DB->insert_record('course_modules', $cm);
             $transaction->allow_commit();
-            $coursemodule = $DB->get_record('course_modules', array('id' => $cmidhost));
         }
     }
-    return $coursemodule;
 }
 
 /**
@@ -343,12 +341,12 @@ function add_local_course_module($cm)
  * @param int $courseid - The id of course
  * @return void
  */
-function add_local_course_sections($rcourseid)
+function add_local_course_sections($courseid)
 {
     global $DB;
 
+    $rcourseid = get_local_course_record($courseid, true)->remoteid;
     $sections = get_remote_course_sections($rcourseid, 'id');
-    $courseid = get_local_course_record($rcourseid)->id;
 
     $transaction = $DB->start_delegated_transaction();
     if ($sections) {
@@ -366,23 +364,8 @@ function add_local_course_sections($rcourseid)
             }
 
             if (!empty($section->sequence)) {
-                $sequence = explode(",", $section->sequence);
-                foreach ($sequence as &$seq) {
-                    $cm = $DB->get_record('course_modules', array('remoteid' => $seq));
-                    // Update sectionid in course_module tbl
-                    if ($cm) {
-                        $cm->section = $secid;
-                        if (!empty($cm->availability)) {
-                            //Merge availability
-                            $cm->availability = merge_local_course_module_availability($cm->availability);
-                        }
-                        $DB->update_record('course_modules', $cm);
-                        $seq = $cm->id;
-                    }
-                }
-                // Update sequence in course_sections
-                $localsection->sequence = implode(",", $sequence);
-                $DB->set_field('course_sections', 'sequence', $localsection->sequence, array('id' => $seq));
+                $localsection->sequence = merge_local_sequence_course_section($section->sequence, true, $secid);
+                $DB->set_field('course_sections', 'sequence', $localsection->sequence, array('id' => $secid));
             }
         }
     }
@@ -390,14 +373,23 @@ function add_local_course_sections($rcourseid)
 }
 
 /**
+ * Merge local sequence course section & course module
  *
- * @param $sequence
+ * @param string $sequence -  List course module id on hub
+ * @param bool $updatecm -  Update tbl course module or not
+ * @param int $secid -  The id of course section
+ *
+ * @return string $sequence -  List course module id on host
  */
-function merge_local_sequence_course_section($sequence)
+function merge_local_sequence_course_section($sequence, $updatecm = false, $secid = '')
 {
     global $DB;
     if (empty($sequence)) {
         return 0;
+    }
+
+    if ($updatecm && empty($secid)) {
+        print_error('Cannot update course module when empty section id');
     }
 
     $sequencesarray = explode(",", $sequence);
@@ -405,6 +397,17 @@ function merge_local_sequence_course_section($sequence)
         $cm = $DB->get_record('course_modules', array('remoteid' => $seq));
         // Update sectionid in course_module tbl
         if ($cm) {
+            if ($updatecm) {
+                $cm->section = $secid;
+                if (!empty($cm->availability)) {
+                    //Merge availability
+                    $cm->availability = merge_local_course_module_availability($cm->availability);
+                }
+
+                // Merge & generate course module instance foreach
+                $cm->instance = merge_local_course_module_instance($cm);
+                $DB->update_record('course_module', $cm);
+            }
             $seq = $cm->id;
         }
     }
@@ -412,6 +415,34 @@ function merge_local_sequence_course_section($sequence)
     $sequence = implode(",", $sequencesarray);
 
     return $sequence;
+}
+
+/**
+ * Generate instance activities and change instance course module
+ *
+ * @param object $coursemodule -  The info of course module to merge.
+ * @return bool|int             -  True if success.
+ */
+function merge_local_course_module_instance($coursemodule)
+{
+    global $DB, $CFG;
+
+    if (!$modname = $DB->get_field('modules', 'name', array('id' => $coursemodule->module))) {
+        return $coursemodule->instance;
+    }
+
+    $functionname = $modname . '_get_local_settings_info';
+
+    if (!file_exists("$CFG->dirroot/mod/$modname/lib.php")) {
+        return $coursemodule->instance;
+    }
+
+    include_once("$CFG->dirroot/mod/$modname/lib.php");
+    if (function_exists($functionname)) {
+        if ($instance = $functionname($coursemodule)) {
+            $coursemodule->instance = $instance;
+        }
+    }
 }
 
 /**

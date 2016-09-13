@@ -184,14 +184,19 @@ function add_moduleinfo($moduleinfo, $course, $mform = null)
     $event = \core\event\course_module_created::create_from_cm($eventdata, $modcontext);
     $event->trigger();
 
-
     $moduleinfo = edit_module_post_actions($moduleinfo, $course);
     $transaction->allow_commit();
 
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $DB->set_field($moduleinfo->modulename, 'remoteid', $moduleinforet->instanceid, array('id' => $moduleinfo->instance));
-        $DB->set_field('course_modules', 'remoteid', $moduleinforet->coursemoduleid, array('id' => $moduleinfo->coursemodule));
-        $DB->set_field('course_modules', 'instance', $moduleinforet->instanceid, array('id' => $moduleinfo->coursemodule));
+        $remotemoduleinfo = merge_module_info_send_to_hub($remotemoduleinfo);
+
+        $moduleinforet = get_remote_add_moduleinfo_by(json_encode($remotemoduleinfo), $course->remoteid);
+
+        if ($moduleinforet) {
+            $DB->set_field($moduleinfo->modulename, 'remoteid', $moduleinforet->instanceid, array('id' => $moduleinfo->instance));
+            $DB->set_field('course_modules', 'remoteid', $moduleinforet->coursemoduleid, array('id' => $moduleinfo->coursemodule));
+            $DB->set_field('course_modules', 'instance', $moduleinforet->instanceid, array('id' => $moduleinfo->coursemodule));
+        }
     }
 
     return $moduleinfo;

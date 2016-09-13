@@ -614,7 +614,7 @@ class course_modinfo {
         // This may take time on large courses and it is possible that another user modifies the same course during this process.
         // Field cacherev stored in both DB and cache will ensure that cached data matches the current course state.
         $coursemodinfo = new stdClass();
-        $coursemodinfo->modinfo = get_array_of_activities($course);
+        $coursemodinfo->modinfo = get_array_of_activities($course->id);
         $coursemodinfo->sectioncache = self::build_course_section_cache($course);
         foreach (self::$cachedfields as $key) {
             $coursemodinfo->$key = $course->$key;

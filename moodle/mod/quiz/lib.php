@@ -1969,5 +1969,5 @@ function quiz_get_local_settings_info($coursemodule){
     if($quiz->settinglocal === false){ // check data quiz in local db
         $quiz->id = $DB->insert_record('quiz', $quiz, true);
     }
-    return $quiz;
+    return $quiz->id;
 }

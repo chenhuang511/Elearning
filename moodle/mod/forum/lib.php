@@ -9313,23 +9313,6 @@ function mod_forum_myprofile_navigation(core_user\output\myprofile\tree $tree, $
     return true;
 }
 
-function forum_get_coursemodule_info($coursemodule)
-{
-    global $CFG;
-
-    require_once($CFG->dirroot . '/mod/forum/remote/locallib.php');
-    $params = array();
-    $params['parameters[0][name]'] = "id";
-    $params['parameters[0][value]'] = $coursemodule->instance;
-    $forum = get_remote_forum_by($params, '', true);
-
-    $result = new cached_cm_info();
-    $result->name = $forum->name;
-    $result->content = format_module_intro('forum', $forum, $coursemodule->id, false);
-
-    return $result;
-}
-
 function forum_get_local_settings_info($coursemodule)
 {
     global $CFG, $DB;
@@ -9338,16 +9321,16 @@ function forum_get_local_settings_info($coursemodule)
     $params['parameters[0][name]'] = "id";
     $params['parameters[0][value]'] = $coursemodule->instance;
     $forum = get_remote_forum_by($params);
+    if (!$forum) {
+        return 0;
+    }
     $localforum = $DB->get_record('forum', array('remoteid' => $coursemodule->instance));
     if (!$localforum) {
         $forum->remoteid = $forum->id;
-        $DB->insert_record('forum', $forum);
+        unset($forum->id);
+        $localforum->id = $DB->insert_record('forum', $forum);
     }
-    // Merge setting local with hub
-    $forum->completionposts = $localforum->completionposts;
-    $forum->completiondiscussions = $localforum->completiondiscussions;
-    $forum->completionreplies = $localforum->completionreplies;
-    return $forum;
+    return $localforum->id;
 }
 
 function forum_formatted_moduleinfo($moduleinfo)

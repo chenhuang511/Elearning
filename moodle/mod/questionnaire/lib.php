@@ -1221,6 +1221,6 @@ function questionnaire_get_local_settings_info($coursemodule){
     }
     // Merge setting local with hub
     $questionnaire->completionsubmit = $local_questionaire->completionsubmit;
-    return $questionnaire;
+    return $local_questionaire->id;
 }
 

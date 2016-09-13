@@ -735,5 +735,5 @@ function bigbluebuttonbn_get_local_settings_info($coursemodule){
     global $CFG, $DB;
     require_once($CFG->dirroot . '/mod/bigbluebuttonbn/remote/locallib.php');
     $bigbluebuttonbn = get_remote_bigbluebuttonbn_by_id($coursemodule->instance);
-    return $bigbluebuttonbn;
+    return $bigbluebuttonbn->id;
 }

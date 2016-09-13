@@ -568,5 +568,5 @@ function resource_get_local_settings_info($coursemodule){
     $params['parameters[0][name]'] = "id";
     $params['parameters[0][value]'] = $coursemodule->instance;
     $resource = get_remote_resource_by($params);
-    return $resource;
+    return $resource->id;
 }

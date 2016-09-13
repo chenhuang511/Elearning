@@ -374,5 +374,5 @@ function certificate_get_local_settings_info($coursemodule){
     } else {
         $certificate->id = $id;
     }
-    return $certificate;
+    return $certificate->id;
 }
