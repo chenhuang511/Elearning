@@ -51,13 +51,13 @@ function add_moduleinfo($moduleinfo, $course, $mform = null)
 
         $moduleinforet = get_remote_add_moduleinfo_by(json_encode($remotemoduleinfo), $course->remoteid);
 
-        // add data to course_activities
+        // add data to course_modules_createdby
         $activity = new stdClass();
         $activity->course = $course->id;
         $activity->coursemodule = $moduleinforet->coursemodule;
         $activity->userid = $USER->id;
 
-        $activity->id = $DB->insert_record('course_activities', $activity);
+        $activity->id = $DB->insert_record('course_modules_createdby', $activity);
     }
 // Attempt to include module library before we make any changes to DB.
     include_modulelib($moduleinfo->modulename);
@@ -532,7 +532,7 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null)
     global $DB, $CFG, $USER;
 
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $activity = $DB->get_record('course_activities', array('course' => $course->id, 'coursemodule' => $cm->id, 'userid' => $USER->id), '*', MUST_EXIST);
+        $activity = $DB->get_record('course_modules_createdby', array('course' => $course->id, 'coursemodule' => $cm->id, 'userid' => $USER->id), '*', MUST_EXIST);
 
         if (!$activity) {
             print_error("No permission to edit this activity");
