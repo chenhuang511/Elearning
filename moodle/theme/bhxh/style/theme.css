@@ -101,7 +101,7 @@ a:focus {
 /*editting V */
 
 .movecourses{
-    padding: 8px 16px !important;
+    padding: 7px 16px !important;
 }
 
 .boxwidthnormal{
@@ -327,7 +327,7 @@ div#fitem_id_url.fitem_ftext .ftext input#id_url{
 }
 
 .searchbox-input .search-btn{
-    padding: 8px 10px;
+    padding: 7px 10px;
     border-radius: 4px;
 }
     /***********/

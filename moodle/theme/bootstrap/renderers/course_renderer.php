@@ -102,7 +102,7 @@ class theme_bootstrap_core_course_renderer extends core_course_renderer
 
             if ($thumbnail) {
 
-                $imgthumb = html_writer::empty_tag('img', array('class' => 'course-img course-img2', 'src' => $thumbobj[0]->thumbnail_image));
+                $imgthumb = html_writer::empty_tag('img', array('class' => 'course-img course-img2 col-sm-3', 'src' => $thumbobj[0]->thumbnail_image));
                 $thumblink = html_writer::link(new moodle_url($CFG->wwwroot . '/course/view.php', array('id' => $course->id)),
                     $imgthumb, array('class' => $course->visible ? '' : 'course-thumbnail'));
 
@@ -157,7 +157,9 @@ class theme_bootstrap_core_course_renderer extends core_course_renderer
 
         // Display course summary.
         if ($course->has_summary()) {
+            $content .= html_writer::start_tag('div', array('class' => 'summary-highlight col-sm-9'));
             $content .= $chelper->get_course_formatted_summary($course);
+            $content .= html_writer::end_tag('div');
         }
 
         // Display course contacts. See course_in_list::get_course_contacts().

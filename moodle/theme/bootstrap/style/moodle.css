@@ -4,6 +4,12 @@
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */
 /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
+/* editting*/
+
+.course-img2{
+
+}
+
 html {
     font-family: sans-serif;
     -ms-text-size-adjust: 100%;
@@ -8577,9 +8583,9 @@ img.icon.hide {
     width: auto;
 }
 
-.pagelayout-admin .show {
-    display: inline !important;
-}
+/*.pagelayout-admin .show {*/
+    /*display: inline !important;*/
+/*}*/
 
 .gradingform_rubric {
     max-width: none !important;
@@ -17931,7 +17937,7 @@ form.atto_form input[type="url"]{
     -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
     transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
     width: auto;
-    max-width: 300px;
+    max-width: 350px;
     display: inline;
     /*margin: 0 0 5px 20px;*/
 }

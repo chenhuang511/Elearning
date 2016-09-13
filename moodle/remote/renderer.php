@@ -134,7 +134,7 @@ class core_remote_renderer extends plugin_renderer_base
 
         $content .= html_writer::tag('div', $strsearchcourses, array('for' => '', 'class' => 'searchbox-title'));
         $content .= html_writer::start_tag('div', array('class' => 'searchbox-input'));
-        $content .= html_writer::empty_tag('input', array('type' => 'text', 'id' => $inputid,
+        $content .= html_writer::empty_tag('input', array('type' => 'text', 'id' => '',
             'size' => '', 'name' => 'search', 'value' => ''));
         $content .= html_writer::empty_tag('input', array('type' => 'submit', 'class' => 'search-btn',
             'value' => get_string('search')));
