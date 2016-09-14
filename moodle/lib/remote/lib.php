@@ -406,7 +406,7 @@ function merge_local_sequence_course_section($sequence, $updatecm = false, $seci
 
                 // Merge & generate course module instance foreach
                 $cm->instance = merge_local_course_module_instance($cm);
-                $DB->update_record('course_module', $cm);
+                $DB->update_record('course_modules', $cm);
             }
             $seq = $cm->id;
         }
@@ -440,9 +440,11 @@ function merge_local_course_module_instance($coursemodule)
     include_once("$CFG->dirroot/mod/$modname/lib.php");
     if (function_exists($functionname)) {
         if ($instance = $functionname($coursemodule)) {
-            $coursemodule->instance = $instance;
+            return $coursemodule->instance = $instance;
         }
     }
+
+    return $coursemodule->instance;
 }
 
 /**

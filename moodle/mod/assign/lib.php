@@ -1555,8 +1555,6 @@ function assign_get_local_settings_info($coursemodule){
         }
         // Check if not exist then insert local DB
         unset($remoteassign->id);
-        var_dump($remoteassign);
-        die;
         $remoteassign->course = $coursemodule->course;
         $remoteassign->remoteid = $coursemodule->instance;
         // From this point we make database changes, so start transaction.
