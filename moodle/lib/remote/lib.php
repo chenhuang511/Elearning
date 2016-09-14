@@ -364,7 +364,7 @@ function add_local_course_sections($courseid)
             }
 
             if (!empty($section->sequence)) {
-                $localsection->sequence = merge_local_sequence_course_section($section->sequence, true, $secid);
+                $localsection->sequence = merge_local_sequence_course_section($localsection->sequence, true, $secid);
                 $DB->set_field('course_sections', 'sequence', $localsection->sequence, array('id' => $secid));
             }
         }
@@ -440,7 +440,7 @@ function merge_local_course_module_instance($coursemodule)
     include_once("$CFG->dirroot/mod/$modname/lib.php");
     if (function_exists($functionname)) {
         if ($instance = $functionname($coursemodule)) {
-            return $coursemodule->instance = $instance;
+            return $instance;
         }
     }
 

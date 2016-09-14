@@ -368,6 +368,9 @@ function certificate_get_local_settings_info($coursemodule){
     global $CFG, $DB;
     require_once($CFG->dirroot . '/mod/certificate/remote/locallib.php');
     $certificate = get_remote_certificate_by_id($coursemodule->instance);
+    if (!$certificate) {
+        return 0;
+    }
     $id = $DB->get_field('certificate', 'id', array('remoteid' => $coursemodule->instance));
     if(empty($id)){ // check data questionnaire in local db
         $certificate->id = $DB->insert_record('certificate', $certificate, true);

@@ -9328,7 +9328,6 @@ function forum_get_local_settings_info($coursemodule)
     if (!$localforum) {
         $forum->remoteid = $forum->id;
         unset($forum->id);
-        $localforum = new stdClass();
         $localforumid = $DB->insert_record('forum', $forum);
         return $localforumid;
     }

@@ -63,6 +63,10 @@ function get_remote_forum_by($parameters, $sort = '', $mustexists = FALSE)
         ), false
     );
 
+    if (isset($result->exception)) {
+        return 0;
+    }
+
     $forum = $result->forum;
     if ($forum) {
         $course = $DB->get_record('course', array('remoteid' => $forum->course), '*', MUST_EXIST);

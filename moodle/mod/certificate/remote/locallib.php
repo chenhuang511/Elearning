@@ -22,6 +22,10 @@ function get_remote_certificate_by_id($id) {
             'params' => array('id' => $id)
         ), false
     );
+
+    if (isset($resp->exception)) {
+        return 0;
+    }
     /**
      *  override certificate setting hub
      */
