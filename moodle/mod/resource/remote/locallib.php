@@ -28,6 +28,10 @@ function get_remote_resource_by($parameters, $sort = '', $mustexists = FALSE)
         )
     );
 
+    if (isset($result->exception)) {
+        return 0;
+    }
+
     return $result->resource;
 }
 

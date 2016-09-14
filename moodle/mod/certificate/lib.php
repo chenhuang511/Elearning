@@ -373,6 +373,7 @@ function certificate_get_local_settings_info($coursemodule){
     }
     $id = $DB->get_field('certificate', 'id', array('remoteid' => $coursemodule->instance));
     if(empty($id)){ // check data questionnaire in local db
+        $certificate->course = $coursemodule->course;
         $certificate->id = $DB->insert_record('certificate', $certificate, true);
     } else {
         $certificate->id = $id;

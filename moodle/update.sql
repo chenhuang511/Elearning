@@ -11,6 +11,9 @@ alter table mdl_certificate add remoteid bigint(10) not null default 0;
 alter table mdl_course_modules add remoteid bigint(10) not null default 0;
 alter table mdl_course_sections add remoteid bigint(10) not null default 0;
 alter table mdl_forum add remoteid bigint(10) not null default 0;
+alter table mdl_chat add remoteid bigint(10) not null default 0;
+alter table mdl_bigbluebuttonbn add remoteid bigint(10) not null default 0;
+alter table mdl_resource add remoteid bigint(10) not null default 0;
 
 CREATE TABLE mdl_course_modules_createdby (
   id BIGINT(10) NOT NULL AUTO_INCREMENT,

@@ -567,6 +567,19 @@ function resource_get_local_settings_info($coursemodule){
     require_once($CFG->dirroot . '/mod/resource/remote/locallib.php');
     $params['parameters[0][name]'] = "id";
     $params['parameters[0][value]'] = $coursemodule->instance;
-    $resource = get_remote_resource_by($params);
+
+    if (!$resource = $DB->get_record('resource', array('remoteid' => $coursemodule->instance))) {
+        // Get remote assign
+        if (!$resource = get_remote_resource_by($params)) {
+            return 0;
+        }
+        // Check if not exist then insert local DB
+        unset($resource->id);
+        $resource->course = $coursemodule->course;
+        $resource->remoteid = $coursemodule->instance;
+        // From this point we make database changes, so start transaction.
+        $resource->id = $DB->insert_record('resource', $resource);
+    }
+
     return $resource->id;
 }

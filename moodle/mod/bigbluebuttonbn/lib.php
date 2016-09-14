@@ -734,6 +734,18 @@ function bigbluebuttonbn_get_cfg_shared_secret() {
 function bigbluebuttonbn_get_local_settings_info($coursemodule){
     global $CFG, $DB;
     require_once($CFG->dirroot . '/mod/bigbluebuttonbn/remote/locallib.php');
-    $bigbluebuttonbn = get_remote_bigbluebuttonbn_by_id($coursemodule->instance);
+    if (!$bigbluebuttonbn = $DB->get_record('bigbluebuttonbn', array('remoteid' => $coursemodule->instance))) {
+        // Get remote assign
+        if (!$bigbluebuttonbn = get_remote_bigbluebuttonbn_by_id($coursemodule->instance)) {
+            return 0;
+        }
+        // Check if not exist then insert local DB
+        unset($bigbluebuttonbn->id);
+        $bigbluebuttonbn->course = $coursemodule->course;
+        $bigbluebuttonbn->remoteid = $coursemodule->instance;
+        // From this point we make database changes, so start transaction.
+        $bigbluebuttonbn->id = $DB->insert_record('bigbluebuttonbn', $bigbluebuttonbn);
+    }
+
     return $bigbluebuttonbn->id;
 }

@@ -1408,5 +1408,18 @@ function chat_get_local_settings_info($coursemodule){
     require_once($CFG->dirroot . '/mod/chat/remote/locallib.php');
     $chat = get_remote_chat_by_id($coursemodule->instance);
 
+    if (!$chat = $DB->get_record('chat', array('remoteid' => $coursemodule->instance))) {
+        // Get remote assign
+        if (!$chat = get_remote_chat_by_id($coursemodule->instance)) {
+            return 0;
+        }
+        // Check if not exist then insert local DB
+        unset($chat->id);
+        $chat->course = $coursemodule->course;
+        $chat->remoteid = $coursemodule->instance;
+        // From this point we make database changes, so start transaction.
+        $chat->id = $DB->insert_record('chat', $chat);
+    }
+
     return $chat->id;
 }

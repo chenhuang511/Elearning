@@ -53,13 +53,19 @@ function get_remote_chat_login_user($userid, $chatid, $groupid = 0)
 
 function get_remote_chat_by_id($id)
 {
-	return moodle_webservice_client(array(
+    $resp = moodle_webservice_client(array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_chat_get_chat_by_id',
             'params' => array('id' => $id)
         )
     );
+
+    if (isset($resp->exception)) {
+        return 0;
+    }
+
+    return $resp;
 }
 
 function local_get_remote_chat_user($groupingjoin, $groupselect, $data)

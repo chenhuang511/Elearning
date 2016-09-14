@@ -1967,6 +1967,7 @@ function quiz_get_local_settings_info($coursemodule){
     require_once($CFG->dirroot . '/mod/quiz/remote/locallib.php');
     $quiz = get_remote_quiz_by_id($coursemodule->instance);
     if($quiz->settinglocal === false){ // check data quiz in local db
+        $quiz->course = $coursemodule->course;
         $quiz->id = $DB->insert_record('quiz', $quiz, true);
     }
     return $quiz->id;

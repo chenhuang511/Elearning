@@ -21,5 +21,9 @@ function get_remote_bigbluebuttonbn_by_id($id) {
             'params' => array('id' => $id)
         )
     );
+
+    if (isset($resp->exception)) {
+        return 0;
+    }
     return $resp;
 }
