@@ -32,7 +32,7 @@ define(['libs/backbone',
 				this.set('modeId', 'slide-editor');
 
 				this.exportable = new Adapter(this, {
-					export: 'exportPresentation',
+					export: 'exportAllForAPI',
 					identifier: 'fileName'
 				});
 
@@ -120,11 +120,32 @@ define(['libs/backbone',
 				return obj;
 			},
 
+            exportAllForAPI: function(filename) {
+                var generators = this.registry
+                    .getBest('strut.presentation_generator.GeneratorCollection');
+                var generator = null;
+                for (var i = generators.length - 1; i >= 0; i--) {
+                    if(generators[i].id == 'bespoke') {
+                        generator = generators[i];
+                        break;
+                    }
+                }
+                var contentHTML = '';
+                if (generator) {
+                    contentHTML = generator.generate(this._deck);
+                }
+                var contentJSON = this.exportPresentation(filename);
+                return {
+                    'contentJSON': contentJSON,
+                    'contentHTML': contentHTML
+                };
+            },
+
 			fileName: function() {
 				var fname = this._deck.get('fileName');
 				if (fname == null) {
 					// TODO...
-					fname = 'presentation-unnamed';
+					fname = 'presentation-unnamed-' + Date.now();
 					this._deck.set('fileName', fname);
 				}
 

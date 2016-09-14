@@ -2,7 +2,7 @@ define(
 function() {
 	return {
 		save: function(storageInterface, model, filename, cb) {
-			storageInterface.savePresentation(filename, model.exportPresentation(filename), cb);
+			storageInterface.savePresentation(filename, model.exportAllForAPI(filename), cb);
 		},
 
 		open: function(storageInterface, model, filename, cb) {

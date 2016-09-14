@@ -14,3 +14,6 @@ moodle/config.php
 Elearning.phpproj
 /mahara/config.php
 /mahara/.idea/*
+/etool/app/scripts/compiled-templates.js
+etool/app/scripts/compiled-templates.js
+etool/dist/*

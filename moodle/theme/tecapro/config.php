@@ -81,6 +81,12 @@ $THEME->layouts = array(
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-pre'
     ),
+    'contentcreator' => array(
+        'file' => 'contentcreator.php',
+        'regions' => array('side-pre'),
+        'defaultregion' => 'side-pre',
+        'options' => array('fluid' => true, 'nonavbar' => true),
+    ),
 );
 
 $THEME->blockrtlmanipulations = array(
