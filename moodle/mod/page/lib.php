@@ -223,16 +223,10 @@ function page_get_coursemodule_info($coursemodule)
     global $CFG, $DB;
     require_once("$CFG->libdir/resourcelib.php");
 
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        if (!$page = get_remote_page_get_coursemodule_info_by($coursemodule->instance)) {
-            return NULL;
-        }
-    } else {
-        if (!$page = $DB->get_record('page', array('id' => $coursemodule->instance),
-            'id, name, display, displayoptions, intro, introformat')
-        ) {
-            return NULL;
-        }
+    if (!$page = $DB->get_record('page', array('id' => $coursemodule->instance),
+        'id, name, display, displayoptions, intro, introformat')
+    ) {
+        return NULL;
     }
 
     $info = new cached_cm_info();

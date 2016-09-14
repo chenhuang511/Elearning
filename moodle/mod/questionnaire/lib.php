@@ -1177,39 +1177,6 @@ function questionnaire_get_completion_state($course, $cm, $userid, $type) {
     }
 }
 
-
-/**
- * Given a course_module object, this function returns any
- * "extra" information that may be needed when printing
- * this activity in a course listing.
- * See get_array_of_activities() in course/lib.php
- *
- * @global object
- * @param object $coursemodule
- * @return object|null
- */
-function questionnaire_get_coursemodule_info($coursemodule) {
-    global $CFG, $DB;
-
-    $questionnaire = new StdClass();
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        require_once($CFG->dirroot . '/mod/questionnaire/remote/locallib.php');
-        if (!$questionnaire = get_remote_questionnaire_by_id($coursemodule->instance)) {
-            return NULL;
-        }
-    }
-
-    $info = new cached_cm_info();
-    $info->name = $questionnaire->name;
-
-    if ($coursemodule->showdescription) {
-        // Convert intro to html. Do not filter cached version, filters run at display time.
-        $info->content = format_module_intro('questionnaire', $questionnaire, $coursemodule->id, false);
-    }
-
-    return $info;
-}
-
 function questionnaire_get_local_settings_info($courseid, $instance)
 {
     global $CFG, $DB;

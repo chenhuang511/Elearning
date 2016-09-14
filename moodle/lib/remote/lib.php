@@ -119,26 +119,34 @@ function get_remote_course_thumb($courseid, $options = [])
     ));
 }
 
-function get_remote_course_mods($courseid)
+function get_remote_course_mods($courseid, $getcm = false)
 {
-    $rcourseid = get_local_course_record($courseid, true)->remoteid;
+    $remotecourseid = get_local_course_record($courseid, true)->remoteid;
 
     $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_get_course_mods',
-            'params' => array('courseid' => $rcourseid)
+            'params' => array('courseid' => $remotecourseid)
         ), false
     );
+    if (isset($result->exception)) {
+        print_error($result->exception);
+    }
+
     $coursemodules = $result->coursemodules;
+
+    if ($getcm) {
+        return $coursemodules;
+    }
 
     if ($coursemodules) {
         foreach ($coursemodules as $cm) {
             add_local_course_module($cm);
         }
     }
-    add_local_course_sections($courseid);
+    add_local_course_sections($remotecourseid);
 }
 
 function get_remote_course_sections($courseid, $usesq = false)
@@ -345,12 +353,13 @@ function add_local_course_module($cm)
  * @param int $courseid - The id of course
  * @return void
  */
-function add_local_course_sections($courseid)
+function add_local_course_sections($remotecourseid)
 {
     global $DB;
 
-    $rcourseid = get_local_course_record($courseid, true)->remoteid;
-    $sections = get_remote_course_sections($rcourseid, 'id');
+    $sections = get_remote_course_sections($remotecourseid, 'id');
+    $courseid = get_local_course_record($remotecourseid)->id;
+
 
     $transaction = $DB->start_delegated_transaction();
     if ($sections) {
@@ -368,7 +377,7 @@ function add_local_course_sections($courseid)
             }
 
             if (!empty($section->sequence)) {
-                $localsection->sequence = merge_local_sequence_course_section($localsection->sequence, true, $secid);
+                $localsection->sequence = merge_local_sequence_course_section($section->sequence, true, $secid);
                 $DB->set_field('course_sections', 'sequence', $localsection->sequence, array('id' => $secid));
             }
         }
@@ -396,8 +405,8 @@ function merge_local_sequence_course_section($sequence, $updatecm = false, $seci
         print_error('Cannot update course module when empty section id');
     }
 
-    $sequencesarray = explode(",", $sequence);
-    foreach ($sequencesarray as &$seq) {
+    $sequences = explode(",", $sequence);
+    foreach ($sequences as &$seq) {
         $cm = $DB->get_record('course_modules', array('remoteid' => $seq));
         // Update sectionid in course_module tbl
         if ($cm) {
@@ -413,7 +422,7 @@ function merge_local_sequence_course_section($sequence, $updatecm = false, $seci
         }
     }
     // Update sequence in course_sections
-    $sequence = implode(",", $sequencesarray);
+    $sequence = implode(",", $sequences);
 
     return $sequence;
 }
