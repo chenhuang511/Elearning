@@ -325,9 +325,14 @@ function create_update_remote_course_modules_completion($cmc)
 function get_remote_course_completion_progress($course, $userid)
 {
     global $DB;
-    $completion = new completion_info($course);
-    $activities = $completion->get_activities();
-    $totalmoduletracking = count($activities);
+
+    $cms = get_remote_course_mods($course->id, true);
+    $totalmoduletracking = 0;
+    foreach ($cms as $cm) {
+        if ($cm->completion) {
+            $totalmoduletracking++;
+        }
+    }
 
     $result = moodle_webservice_client(
         array(

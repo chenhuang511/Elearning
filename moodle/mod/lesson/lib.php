@@ -1500,31 +1500,3 @@ function lesson_update_media_file($lessonid, $context, $draftitemid)
     }
 }
 
-/**
- * Add a get_coursemodule_info function in case any assignment type wants to add 'extra' information
- * for the course (see resource).
- *
- * Given a course_module object, this function returns any "extra" information that may be needed
- * when printing this activity in a course listing.  See get_array_of_activities() in course/lib.php.
- *
- * @param stdClass $coursemodule The coursemodule object (record).
- * @return cached_cm_info An object on information that the courses
- *                        will know about (most noticeably, an icon).
- */
-function lesson_get_coursemodule_info($coursemodule)
-{
-    global $CFG;
-
-    require_once($CFG->dirroot . '/mod/lesson/remote/locallib.php');
-    $params = array();
-    $params['parameters[0][name]'] = "id";
-    $params['parameters[0][value]'] = $coursemodule->instance;
-    $lesson = get_remote_lesson_by($params, '', true);
-
-    $result = new cached_cm_info();
-    $result->name = $lesson->name;
-    $result->content = format_module_intro('lesson', $lesson, $coursemodule->id, false);
-
-    return $result;
-}
-

@@ -1027,29 +1027,3 @@ function survey_save_answers($survey, $answersrawdata, $course, $context)
     $event = \mod_survey\event\response_submitted::create($params);
     $event->trigger();
 }
-
-/**
- * Add a get_coursemodule_info function in case any assignment type wants to add 'extra' information
- * for the course (see resource).
- *
- * Given a course_module object, this function returns any "extra" information that may be needed
- * when printing this activity in a course listing.  See get_array_of_activities() in course/lib.php.
- *
- * @param stdClass $coursemodule The coursemodule object (record).
- * @return cached_cm_info An object on information that the courses
- *                        will know about (most noticeably, an icon).
- */
-function survey_get_coursemodule_info($coursemodule)
-{
-    global $CFG;
-
-    require_once($CFG->dirroot . '/mod/survey/remote/locallib.php');
-
-    $survey = get_remote_survey_by_id($coursemodule->instance);
-
-    $result = new cached_cm_info();
-    $result->name = $survey->name;
-    $result->content = format_module_intro('survey', $survey, $coursemodule->id, false);
-
-    return $result;
-}
