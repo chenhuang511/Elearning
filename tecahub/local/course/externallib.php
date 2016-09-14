@@ -2201,8 +2201,8 @@ class local_course_external extends external_api
 
         $result = array();
         $result['moduleinfo'] = array(
-            'coursemoduleid' => $modinfo->coursemodule,
-            'instanceid' => $modinfo->instance
+            'coursemodule' => $modinfo->coursemodule,
+            'instance' => $modinfo->instance
         );
         $result['warnings'] = $warnings;
 
@@ -2215,8 +2215,8 @@ class local_course_external extends external_api
             array(
                 'moduleinfo' => new external_single_structure(
                     array(
-                        'coursemoduleid' => new external_value(PARAM_INT, 'The id of course module just created'),
-                        'instanceid' => new external_value(PARAM_INT, 'The id of instance'),
+                        'coursemodule' => new external_value(PARAM_INT, 'The id of course module just created'),
+                        'instance' => new external_value(PARAM_INT, 'The id of instance'),
                     )
                 ),
                 'warnings' => new external_warnings()
@@ -2326,7 +2326,7 @@ class local_course_external extends external_api
         require_once($CFG->dirroot . '/course/modlib.php');
 
         $warnings = array();
-        $params = self::validate_parameters(self::add_moduleinfo_by_parameters(), array(
+        $params = self::validate_parameters(self::update_moduleinfo_by_parameters(), array(
             'cm' => $cm,
             'moduleinfo' => $moduleinfo,
             'courseid' => $courseid,
