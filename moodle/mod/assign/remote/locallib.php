@@ -25,6 +25,10 @@ function get_remote_assign_by_id($assignid){
         ), false
     );
 
+    if (isset($resp->exception)) {
+        return 0;
+    }
+
     return $resp;
 }
 

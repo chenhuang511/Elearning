@@ -1558,17 +1558,16 @@ function assign_get_local_settings_info($coursemodule){
         $remoteassign->course = $coursemodule->course;
         $remoteassign->remoteid = $coursemodule->instance;
         // From this point we make database changes, so start transaction.
-        $transaction = $DB->start_delegated_transaction();
-        $assignment->id = $DB->insert_record('assign', $remoteassign);
+        $assignid = $DB->insert_record('assign', $remoteassign);
         // Insert plugin config
         $pluginconfigs = get_remote_assign_plugin_config($coursemodule->instance);
         foreach ($pluginconfigs as $pluginconfig) {
-            $pluginconfig->assignment = $assignment->id;
+            $pluginconfig->assignment = $assignid;
         }
-        if (!$DB->get_records('assign_plugin_config', array('assignment' => $assignment->id))) {
+        if (!$DB->get_records('assign_plugin_config', array('assignment' => $assignid))) {
             $DB->insert_records('assign_plugin_config', $pluginconfigs);
         }
-        $transaction->allow_commit();
+        return $assignid;
     }
 
     return $assignment->id;
