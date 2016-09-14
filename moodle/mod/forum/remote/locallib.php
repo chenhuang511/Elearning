@@ -69,10 +69,6 @@ function get_remote_forum_by($parameters, $sort = '', $mustexists = FALSE)
 
     $forum = $result->forum;
     if ($forum) {
-        $course = $DB->get_record('course', array('remoteid' => $forum->course), '*', MUST_EXIST);
-        if($course) {
-            $forum->course = $course->id;
-        }
         $localforum = $DB->get_record('forum', array('remoteid' => $forum->id));
         if ($localforum) {
             $info = [

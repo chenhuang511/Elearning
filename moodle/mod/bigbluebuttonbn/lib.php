@@ -731,18 +731,19 @@ function bigbluebuttonbn_get_cfg_shared_secret() {
     return (isset($BIGBLUEBUTTONBN_CFG->bigbluebuttonbn_shared_secret)? trim($BIGBLUEBUTTONBN_CFG->bigbluebuttonbn_shared_secret): (isset($CFG->bigbluebuttonbn_shared_secret)? trim($CFG->bigbluebuttonbn_shared_secret): '8cd8ef52e8e101574e400365b55e11a6'));
 }
 
-function bigbluebuttonbn_get_local_settings_info($coursemodule){
+function bigbluebuttonbn_get_local_settings_info($courseid, $instance)
+{
     global $CFG, $DB;
     require_once($CFG->dirroot . '/mod/bigbluebuttonbn/remote/locallib.php');
-    if (!$bigbluebuttonbn = $DB->get_record('bigbluebuttonbn', array('remoteid' => $coursemodule->instance))) {
+    if (!$bigbluebuttonbn = $DB->get_record('bigbluebuttonbn', array('remoteid' => $instance))) {
         // Get remote assign
-        if (!$bigbluebuttonbn = get_remote_bigbluebuttonbn_by_id($coursemodule->instance)) {
+        if (!$bigbluebuttonbn = get_remote_bigbluebuttonbn_by_id($instance)) {
             return 0;
         }
         // Check if not exist then insert local DB
         unset($bigbluebuttonbn->id);
-        $bigbluebuttonbn->course = $coursemodule->course;
-        $bigbluebuttonbn->remoteid = $coursemodule->instance;
+        $bigbluebuttonbn->course = $courseid;
+        $bigbluebuttonbn->remoteid = $instance;
         // From this point we make database changes, so start transaction.
         $bigbluebuttonbn->id = $DB->insert_record('bigbluebuttonbn', $bigbluebuttonbn);
     }

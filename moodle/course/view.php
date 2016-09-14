@@ -44,11 +44,7 @@ $urlparams = array('id' => $course->id);
 
 // Sectionid should get priority over section number
 if ($sectionid) {
-    if (MOODLE_MODE_HUB === MOODLE_MODE_HOST) {
-        $section = $DB->get_field('course_sections', 'section', array('id' => $sectionid, 'course' => $course->id), MUST_EXIST);
-    } else {
-        $section = get_remote_course_section_nav_by_section($sectionid);
-    }
+    $section = $DB->get_field('course_sections', 'section', array('id' => $sectionid, 'course' => $course->id), MUST_EXIST);
 }
 if ($section) {
     $urlparams['section'] = $section;

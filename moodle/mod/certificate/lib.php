@@ -364,16 +364,19 @@ function certificate_get_coursemodule_info($coursemodule) {
 
     return $info;
 }
-function certificate_get_local_settings_info($coursemodule){
+
+function certificate_get_local_settings_info($courseid, $instance)
+{
     global $CFG, $DB;
     require_once($CFG->dirroot . '/mod/certificate/remote/locallib.php');
-    $certificate = get_remote_certificate_by_id($coursemodule->instance);
+
+    $certificate = get_remote_certificate_by_id($instance);
     if (!$certificate) {
         return 0;
     }
-    $id = $DB->get_field('certificate', 'id', array('remoteid' => $coursemodule->instance));
+    $id = $DB->get_field('certificate', 'id', array('remoteid' => $instance));
     if(empty($id)){ // check data questionnaire in local db
-        $certificate->course = $coursemodule->course;
+        $certificate->course = $courseid;
         $certificate->id = $DB->insert_record('certificate', $certificate, true);
     } else {
         $certificate->id = $id;

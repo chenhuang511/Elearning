@@ -1240,7 +1240,6 @@ function get_course_mods($courseid) {
         }
     }
 
-
     return $DB->get_records_sql("SELECT cm.*, m.name as modname
                                    FROM {modules} m, {course_modules} cm
                                   WHERE cm.course = ? AND cm.module = m.id AND m.visible = 1",

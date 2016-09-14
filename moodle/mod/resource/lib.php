@@ -562,21 +562,23 @@ function resource_view($resource, $course, $cm, $context)
     $completion = new completion_info($course);
     $completion->set_module_viewed($cm);
 }
-function resource_get_local_settings_info($coursemodule){
+
+function resource_get_local_settings_info($courseid, $instance)
+{
     global $CFG, $DB;
     require_once($CFG->dirroot . '/mod/resource/remote/locallib.php');
     $params['parameters[0][name]'] = "id";
-    $params['parameters[0][value]'] = $coursemodule->instance;
+    $params['parameters[0][value]'] = $instance;
 
-    if (!$resource = $DB->get_record('resource', array('remoteid' => $coursemodule->instance))) {
+    if (!$resource = $DB->get_record('resource', array('remoteid' => $instance))) {
         // Get remote assign
         if (!$resource = get_remote_resource_by($params)) {
             return 0;
         }
         // Check if not exist then insert local DB
         unset($resource->id);
-        $resource->course = $coursemodule->course;
-        $resource->remoteid = $coursemodule->instance;
+        $resource->course = $courseid;
+        $resource->remoteid = $instance;
         // From this point we make database changes, so start transaction.
         $resource->id = $DB->insert_record('resource', $resource);
     }

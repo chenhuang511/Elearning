@@ -1544,30 +1544,30 @@ function mod_assign_output_fragment_gradingpanel($args) {
  * @param stdClass $coursemodule  - The info of course module
  * @return stdClass $assign   - The info of assignment
  */
-function assign_get_local_settings_info($coursemodule){
+function assign_get_local_settings_info($courseid, $instance)
+{
     global $CFG, $DB;
     require_once($CFG->dirroot . '/mod/assign/remote/locallib.php');
 
-    if (!$assignment = $DB->get_record('assign', array('remoteid' => $coursemodule->instance))) {
+    if (!$assignment = $DB->get_record('assign', array('remoteid' => $instance))) {
         // Get remote assign
-        if (!$remoteassign = get_remote_assign_by_id($coursemodule->instance)) {
+        if (!$assignment = get_remote_assign_by_id($instance)) {
             return false;
         }
         // Check if not exist then insert local DB
-        unset($remoteassign->id);
-        $remoteassign->course = $coursemodule->course;
-        $remoteassign->remoteid = $coursemodule->instance;
+        unset($assignment->id);
+        $assignment->course = $courseid;
+        $assignment->remoteid = $instance;
         // From this point we make database changes, so start transaction.
-        $assignid = $DB->insert_record('assign', $remoteassign);
+        $assignment->id = $DB->insert_record('assign', $assignment);
         // Insert plugin config
-        $pluginconfigs = get_remote_assign_plugin_config($coursemodule->instance);
+        $pluginconfigs = get_remote_assign_plugin_config($instance);
         foreach ($pluginconfigs as $pluginconfig) {
-            $pluginconfig->assignment = $assignid;
+            $pluginconfig->assignment = $assignment->id;
         }
-        if (!$DB->get_records('assign_plugin_config', array('assignment' => $assignid))) {
+        if (!$DB->get_records('assign_plugin_config', array('assignment' => $assignment->id))) {
             $DB->insert_records('assign_plugin_config', $pluginconfigs);
         }
-        return $assignid;
     }
 
     return $assignment->id;

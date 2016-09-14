@@ -1962,12 +1962,13 @@ function quiz_get_coursemodule_info($coursemodule) {
     return $result;
 }
 
-function quiz_get_local_settings_info($coursemodule){
+function quiz_get_local_settings_info($courseid, $instance)
+{
     global $CFG, $DB;
     require_once($CFG->dirroot . '/mod/quiz/remote/locallib.php');
-    $quiz = get_remote_quiz_by_id($coursemodule->instance);
+    $quiz = get_remote_quiz_by_id($instance);
     if($quiz->settinglocal === false){ // check data quiz in local db
-        $quiz->course = $coursemodule->course;
+        $quiz->course = $courseid;
         $quiz->id = $DB->insert_record('quiz', $quiz, true);
     }
     return $quiz->id;

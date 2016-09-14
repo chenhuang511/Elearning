@@ -9313,21 +9313,23 @@ function mod_forum_myprofile_navigation(core_user\output\myprofile\tree $tree, $
     return true;
 }
 
-function forum_get_local_settings_info($coursemodule)
+function forum_get_local_settings_info($courseid, $instance)
 {
     global $CFG, $DB;
     require_once($CFG->dirroot . '/mod/forum/remote/locallib.php');
     $params = array();
     $params['parameters[0][name]'] = "id";
-    $params['parameters[0][value]'] = $coursemodule->instance;
+    $params['parameters[0][value]'] = $instance;
     $forum = get_remote_forum_by($params);
     if (!$forum) {
         return 0;
     }
-    $localforum = $DB->get_record('forum', array('remoteid' => $coursemodule->instance));
+    $localforum = $DB->get_record('forum', array('remoteid' => $instance));
     if (!$localforum) {
         $forum->remoteid = $forum->id;
+        $forum->course = $courseid;
         unset($forum->id);
+
         $localforumid = $DB->insert_record('forum', $forum);
         return $localforumid;
     }

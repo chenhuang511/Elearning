@@ -1209,22 +1209,22 @@ function questionnaire_get_coursemodule_info($coursemodule) {
 
     return $info;
 }
-function questionnaire_get_local_settings_info($coursemodule){
+
+function questionnaire_get_local_settings_info($courseid, $instance)
+{
     global $CFG, $DB;
     require_once($CFG->dirroot . '/mod/questionnaire/remote/locallib.php');
-    $questionnaire = get_remote_questionnaire_by_id($coursemodule->instance);
+    $questionnaire = get_remote_questionnaire_by_id($instance);
     if (!$questionnaire) {
         return 0;
     }
-    $local_questionaire = $DB->get_record('questionnaire', array('remoteid' => $coursemodule->instance));
+    $local_questionaire = $DB->get_record('questionnaire', array('remoteid' => $instance));
     if(empty($local_questionaire)){ // check data questionnaire in local db
-        $questionnaire->course = $coursemodule->course;
+        $questionnaire->course = $courseid;
         $questionnaire->id = $DB->insert_record('questionnaire', $questionnaire, true);
     } else {
         $questionnaire->id = $local_questionaire->id;
     }
-    // Merge setting local with hub
-    $questionnaire->completionsubmit = $local_questionaire->completionsubmit;
-    return $local_questionaire->id;
+    return $questionnaire->id;
 }
 

@@ -316,11 +316,11 @@ function add_local_course_module($cm)
     if ($localcourse) {
         if (!$coursemodule = $DB->get_record('course_modules', array('remoteid' => $cm->id))) {
             $transaction = $DB->start_delegated_transaction();
-            // Make params to insert DB local
+            // Make params to insert DB host
             $cm->remoteid = $cm->id;
             unset($cm->id);
 
-            // Change course id on hub
+            // Change course id on host
             $cm->course = $localcourse->id;
 
             // Change module id on host
@@ -328,7 +328,11 @@ function add_local_course_module($cm)
             $modulehost = $DB->get_record('modules', array('name' => $modulehub->name));
             if ($modulehost) {
                 $cm->module = $modulehost->id;
+
+                // Change instance id on host
+                $cm->instance = merge_local_course_module_instance($cm->course, $cm->instance, $modulehost->name);
             }
+
             $DB->insert_record('course_modules', $cm);
             $transaction->allow_commit();
         }
@@ -403,9 +407,6 @@ function merge_local_sequence_course_section($sequence, $updatecm = false, $seci
                     //Merge availability
                     $cm->availability = merge_local_course_module_availability($cm->availability);
                 }
-
-                // Merge & generate course module instance foreach
-                $cm->instance = merge_local_course_module_instance($cm);
                 $DB->update_record('course_modules', $cm);
             }
             $seq = $cm->id;
@@ -420,31 +421,34 @@ function merge_local_sequence_course_section($sequence, $updatecm = false, $seci
 /**
  * Generate instance activities and change instance course module
  *
- * @param object $coursemodule -  The info of course module to merge.
- * @return bool|int             -  True if success.
+ * @param int $courseid -  The id of course.
+ * @param int $instance -  The id of mod activity .
+ * @param string $modname -  The name of mod.
+ * @return int $instance   -  The instance id of course module.
  */
-function merge_local_course_module_instance($coursemodule)
+function merge_local_course_module_instance($courseid, $instance, $modname)
 {
     global $DB, $CFG;
 
-    if (!$modname = $DB->get_field('modules', 'name', array('id' => $coursemodule->module))) {
-        return $coursemodule->instance;
+    // If exist in host then return
+    if ($DB->get_field($modname, 'id', array('id' => $instance))) {
+        return $instance;
     }
 
     $functionname = $modname . '_get_local_settings_info';
 
     if (!file_exists("$CFG->dirroot/mod/$modname/lib.php")) {
-        return $coursemodule->instance;
+        return $instance;
     }
 
     include_once("$CFG->dirroot/mod/$modname/lib.php");
     if (function_exists($functionname)) {
-        if ($instance = $functionname($coursemodule)) {
+        if ($instance = $functionname($courseid, $instance)) {
             return $instance;
         }
     }
 
-    return $coursemodule->instance;
+    return $instance;
 }
 
 /**
