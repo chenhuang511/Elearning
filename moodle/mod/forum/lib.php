@@ -987,7 +987,7 @@ function forum_cron()
                 $userfrom->customheaders = array(
                     // Headers to make emails easier to track.
                     'List-Id: "' . $cleanforumname . '" ' . generate_email_messageid('moodleforum' . $forum->id),
-                    'List-Help: ' . $CFG->wwwroot . '/mod/forum/remote/view.php?f=' . $forum->id,
+                    'List-Help: ' . $CFG->wwwroot . '/mod/forum/view.php?f=' . $forum->id,
                     'Message-ID: ' . forum_get_email_message_id($post->id, $userto->id),
                     'X-Course-Id: ' . $course->id,
                     'X-Course-Name: ' . format_string($course->fullname, true),
@@ -1105,7 +1105,7 @@ function forum_cron()
                 // Make sure strings are in message recipients language.
                 $eventdata->smallmessage = get_string_manager()->get_string('smallmessage', 'forum', $smallmessagestrings, $userto->lang);
 
-                $contexturl = new moodle_url('/mod/forum/remote/discuss.php', array('d' => $discussion->id), 'p' . $post->id);
+                $contexturl = new moodle_url('/mod/forum/discuss.php', array('d' => $discussion->id), 'p' . $post->id);
                 $eventdata->contexturl = $contexturl->out();
                 $eventdata->contexturlname = $discussion->name;
 
@@ -1346,17 +1346,17 @@ function forum_cron()
                         $posttext .= " -> " . format_string($discussion->name, true);
                     }
                     $posttext .= "\n";
-                    $posttext .= $CFG->wwwroot . '/mod/forum/remote/discuss.php?d=' . $discussion->id;
+                    $posttext .= $CFG->wwwroot . '/mod/forum/discuss.php?d=' . $discussion->id;
                     $posttext .= "\n";
 
                     $posthtml .= "<p><font face=\"sans-serif\">" .
                         "<a target=\"_blank\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$shortname</a> -> " .
-                        "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/remote/index.php?id=$course->id\">$strforums</a> -> " .
-                        "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/remote/view.php?f=$forum->id\">" . format_string($forum->name, true) . "</a>";
+                        "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/index.php?id=$course->id\">$strforums</a> -> " .
+                        "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id\">" . format_string($forum->name, true) . "</a>";
                     if ($discussion->name == $forum->name) {
                         $posthtml .= "</font></p>";
                     } else {
-                        $posthtml .= " -> <a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/remote/discuss.php?d=$discussion->id\">" . format_string($discussion->name, true) . "</a></font></p>";
+                        $posthtml .= " -> <a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id\">" . format_string($discussion->name, true) . "</a></font></p>";
                     }
                     $posthtml .= '<p>';
 
@@ -1448,11 +1448,11 @@ function forum_cron()
                     }
                     $footerlinks = array();
                     if ($canunsubscribe) {
-                        $footerlinks[] = "<a href=\"$CFG->wwwroot/mod/forum/remote/subscribe.php?id=$forum->id\">" . get_string("unsubscribe", "forum") . "</a>";
+                        $footerlinks[] = "<a href=\"$CFG->wwwroot/mod/forum/subscribe.php?id=$forum->id\">" . get_string("unsubscribe", "forum") . "</a>";
                     } else {
                         $footerlinks[] = get_string("everyoneissubscribed", "forum");
                     }
-                    $footerlinks[] = "<a href='{$CFG->wwwroot}/mod/forum/remote/index.php?id={$forum->course}'>" . get_string("digestmailpost", "forum") . '</a>';
+                    $footerlinks[] = "<a href='{$CFG->wwwroot}/mod/forum/index.php?id={$forum->course}'>" . get_string("digestmailpost", "forum") . '</a>';
                     $posthtml .= "\n<div class='mdl-right'><font size=\"1\">" . implode('&nbsp;', $footerlinks) . '</font></div>';
                     $posthtml .= '<hr size="1" noshade="noshade" /></p>';
                 }
@@ -1800,7 +1800,7 @@ function forum_print_overview($courses, &$htmlarray)
             $showunread = true;
         }
         if ($count > 0 || $thisunread > 0) {
-            $str .= '<div class="overview forum"><div class="name">' . $strforum . ': <a title="' . $strforum . '" href="' . $CFG->wwwroot . '/mod/forum/remote/view.php?f=' . $forum->id . '">' .
+            $str .= '<div class="overview forum"><div class="name">' . $strforum . ': <a title="' . $strforum . '" href="' . $CFG->wwwroot . '/mod/forum/view.php?f=' . $forum->id . '">' .
                 $forum->name . '</a></div>';
             $str .= '<div class="info"><span class="postsincelogin">';
             $str .= get_string('overviewnumpostssince', 'forum', $count) . "</span>";
@@ -1909,9 +1909,9 @@ function forum_print_recent_activity($course, $viewfullnames, $timestart)
             '</div>';
         echo '<div class="info' . $subjectclass . '">';
         if (empty($post->parent)) {
-            echo '"<a href="' . $CFG->wwwroot . '/mod/forum/remote/discuss.php?d=' . $post->discussion . '">';
+            echo '"<a href="' . $CFG->wwwroot . '/mod/forum/discuss.php?d=' . $post->discussion . '">';
         } else {
-            echo '"<a href="' . $CFG->wwwroot . '/mod/forum/remote/discuss.php?d=' . $post->discussion . '&amp;parent=' . $post->parent . '#p' . $post->id . '">';
+            echo '"<a href="' . $CFG->wwwroot . '/mod/forum/discuss.php?d=' . $post->discussion . '&amp;parent=' . $post->parent . '#p' . $post->id . '">';
         }
         $post->subject = break_up_long_words(format_string($post->subject, true));
         echo $post->subject;
@@ -3698,7 +3698,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost = 
         $str->markunread = get_string('markunread', 'forum');
     }
 
-    $discussionlink = new moodle_url('/mod/forum/remote/discuss.php', array('d' => $post->discussion));
+    $discussionlink = new moodle_url('/mod/forum/discuss.php', array('d' => $post->discussion));
 
     // Build an object that represents the posting user
     $postuser = new stdClass;
@@ -3775,21 +3775,21 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost = 
             $commands[] = array('url' => new moodle_url('/course/modedit.php', array('update' => $cm->id, 'sesskey' => sesskey(), 'return' => 1)), 'text' => $str->edit, 'icon' => '<i class="fa fa-pencil-square-o" aria-hidden="true"></i>');
         }
     } else if (($ownpost && $age < $CFG->maxeditingtime) || $cm->cache->caps['mod/forum:editanypost']) {
-        $commands[] = array('url' => new moodle_url('/mod/forum/remote/post.php', array('edit' => $post->id)), 'text' => $str->edit, 'icon' => '<i class="fa fa-pencil-square-o" aria-hidden="true"></i>');
+        $commands[] = array('url' => new moodle_url('/mod/forum/post.php', array('edit' => $post->id)), 'text' => $str->edit, 'icon' => '<i class="fa fa-pencil-square-o" aria-hidden="true"></i>');
     }
 
     if ($cm->cache->caps['mod/forum:splitdiscussions'] && $post->parent && $forum->type != 'single') {
-        $commands[] = array('url' => new moodle_url('/mod/forum/remote/post.php', array('prune' => $post->id)), 'text' => $str->prune, 'title' => $str->pruneheading);
+        $commands[] = array('url' => new moodle_url('/mod/forum/post.php', array('prune' => $post->id)), 'text' => $str->prune, 'title' => $str->pruneheading);
     }
 
     if ($forum->type == 'single' and $discussion->firstpost == $post->id) {
         // Do not allow deleting of first post in single simple type.
     } else if (($ownpost && $age < $CFG->maxeditingtime && $cm->cache->caps['mod/forum:deleteownpost']) || $cm->cache->caps['mod/forum:deleteanypost']) {
-        $commands[] = array('url' => new moodle_url('/mod/forum/remote/post.php', array('delete' => $post->id)), 'text' => $str->delete, 'icon' => '<i class="fa fa-times" aria-hidden="true"></i>');
+        $commands[] = array('url' => new moodle_url('/mod/forum/post.php', array('delete' => $post->id)), 'text' => $str->delete, 'icon' => '<i class="fa fa-times" aria-hidden="true"></i>');
     }
 
     if ($reply) {
-        $commands[] = array('url' => new moodle_url('/mod/forum/remote/post.php#mformforum', array('reply' => $post->id)), 'text' => $str->reply, 'icon' => '<i class="fa fa-reply" aria-hidden="true"></i>');
+        $commands[] = array('url' => new moodle_url('/mod/forum/post.php#mformforum', array('reply' => $post->id)), 'text' => $str->reply, 'icon' => '<i class="fa fa-reply" aria-hidden="true"></i>');
     }
 
     if ($CFG->enableportfolios && ($cm->cache->caps['mod/forum:exportpost'] || ($ownpost && $cm->cache->caps['mod/forum:exportownpost']))) {
@@ -4278,7 +4278,7 @@ function forum_print_discussion_header(&$post, $forum, $group = -1, $datestring 
         echo $PAGE->get_renderer('mod_forum')->timed_discussion_tooltip($post, empty($timedoutsidewindow));
     }
 
-    echo '<a href="' . $CFG->wwwroot . '/mod/forum/remote/discuss.php?d=' . $post->discussion . '">' . $post->subject . '</a>';
+    echo '<a href="' . $CFG->wwwroot . '/mod/forum/discuss.php?d=' . $post->discussion . '">' . $post->subject . '</a>';
     echo "</td>\n";
 
     // Picture
@@ -4318,7 +4318,7 @@ function forum_print_discussion_header(&$post, $forum, $group = -1, $datestring 
 
     if (has_capability('mod/forum:viewdiscussion', $modcontext)) {   // Show the column with replies
         echo '<td class="replies">';
-        echo '<a href="' . $CFG->wwwroot . '/mod/forum/remote/discuss.php?d=' . $post->discussion . '">';
+        echo '<a href="' . $CFG->wwwroot . '/mod/forum/discuss.php?d=' . $post->discussion . '">';
         echo $post->replies . '</a>';
         echo "</td>\n";
 
@@ -4327,10 +4327,10 @@ function forum_print_discussion_header(&$post, $forum, $group = -1, $datestring 
             if ($forumtracked) {
                 if ($post->unread > 0) {
                     echo '<span class="unread">';
-                    echo '<a href="' . $CFG->wwwroot . '/mod/forum/remote/discuss.php?d=' . $post->discussion . '#unread">';
+                    echo '<a href="' . $CFG->wwwroot . '/mod/forum/discuss.php?d=' . $post->discussion . '#unread">';
                     echo $post->unread;
                     echo '</a>';
-                    echo '<a title="' . $strmarkalldread . '" href="' . $CFG->wwwroot . '/mod/forum/remote/markposts.php?f=' .
+                    echo '<a title="' . $strmarkalldread . '" href="' . $CFG->wwwroot . '/mod/forum/markposts.php?f=' .
                         $forum->id . '&amp;d=' . $post->discussion . '&amp;mark=read&amp;returnpage=view.php&amp;sesskey=' . sesskey() . '">' .
                         '<img src="' . $OUTPUT->pix_url('t/markasread') . '" class="iconsmall" alt="' . $strmarkalldread . '" /></a>';
                     echo '</span>';
@@ -4362,7 +4362,7 @@ function forum_print_discussion_header(&$post, $forum, $group = -1, $datestring 
         $parenturl = (empty($post->lastpostid)) ? '' : '&amp;parent=' . $post->lastpostid;
     }
 
-    echo '<a href="' . $CFG->wwwroot . '/mod/forum/remote/discuss.php?d=' . $post->discussion . $parenturl . '">' .
+    echo '<a href="' . $CFG->wwwroot . '/mod/forum/discuss.php?d=' . $post->discussion . $parenturl . '">' .
         userdate($usedate, $datestring) . '</a>';
     echo "</td>\n";
 
@@ -4401,7 +4401,7 @@ function forum_print_nondiscussion($forum, $cm = null)
 
 
     echo '<div class="singlebutton forumaddnew">';
-    echo "<form id=\"newdiscussionform\" method=\"get\" action=\"$CFG->wwwroot/mod/forum/remote/post.php\">";
+    echo "<form id=\"newdiscussionform\" method=\"get\" action=\"$CFG->wwwroot/mod/forum/post.php\">";
     echo '<div>';
     echo "<input type=\"hidden\" name=\"forum\" value=\"$forum->id\" />";
     switch ($forum->type) {
@@ -4439,7 +4439,7 @@ function forum_get_discussion_subscription_icon($forum, $discussionid, $returnur
 
     $o = '';
     $subscriptionstatus = \mod_forum\subscriptions::is_subscribed($USER->id, $forum, $discussionid);
-    $subscriptionlink = new moodle_url('/mod/forum/remote/subscribe.php', array(
+    $subscriptionlink = new moodle_url('/mod/forum/subscribe.php', array(
         'sesskey' => sesskey(),
         'id' => $forum->id,
         'd' => $discussionid,
@@ -4507,11 +4507,11 @@ function forum_print_mode_form($id, $mode, $forumtype = '')
 {
     global $OUTPUT;
     if ($forumtype == 'single') {
-        $select = new single_select(new moodle_url("/mod/forum/remote/view.php", array('f' => $id, 'class' => 'mode-form')), 'mode', forum_get_layout_modes(), $mode, null, "mode");
+        $select = new single_select(new moodle_url("/mod/forum/view.php", array('f' => $id, 'class' => 'mode-form')), 'mode', forum_get_layout_modes(), $mode, null, "mode");
         $select->set_label(get_string('displaymode', 'forum'), array('class' => 'accesshide'));
         $select->class = "forummode forum-mode";
     } else {
-        $select = new single_select(new moodle_url("/mod/forum/remote/discuss.php", array('d' => $id, 'class' => 'mode-form')), 'mode', forum_get_layout_modes(), $mode, null, "mode");
+        $select = new single_select(new moodle_url("/mod/forum/discuss.php", array('d' => $id, 'class' => 'mode-form')), 'mode', forum_get_layout_modes(), $mode, null, "mode");
         $select->set_label(get_string('displaymode', 'forum'), array('class' => 'accesshide'));
     }
     echo $OUTPUT->render($select);
@@ -4528,7 +4528,7 @@ function forum_search_form($course, $search = '')
     global $CFG, $OUTPUT;
 
     $output = '<div class="forumsearch">';
-    $output .= '<form action="' . $CFG->wwwroot . '/mod/forum/remote/search.php" style="display:inline">';
+    $output .= '<form action="' . $CFG->wwwroot . '/mod/forum/search.php" style="display:inline">';
     $output .= '<fieldset class="invisiblefieldset">';
     $output .= $OUTPUT->help_icon('search');
     $output .= '<label class="accesshide" for="search" >' . get_string('search', 'forum') . '</label>';
@@ -5305,27 +5305,7 @@ function forum_add_discussion($discussion, $mform = null, $unused = null, $useri
             $hubuserid = $hubuser[0]->id;
         }
 
-        $hubcourseid = $discussion->course;
-
-        $localcourse = $DB->get_record('course', array("id" => $discussion->course));
-
-        if ($localcourse) {
-            $hubcourseid = $localcourse->remoteid;
-        }
-
-        $discussiondata = array();
-        $i = 0;
-        foreach ($discussion as $key => $val) {
-            $discussiondata["discussiondata[$i][name]"] = $key;
-            if ($key == "course") {
-                $discussiondata["discussiondata[$i][value]"] = $hubcourseid;
-            } else {
-                $discussiondata["discussiondata[$i][value]"] = $val;
-            }
-            $i++;
-        }
-
-        $result = save_remote_forum_add_discussions($discussiondata, $hubuserid);
+        $result = save_remote_forum_add_discussions($discussion, $hubuserid);
         $forum = $result->forum;
         $post = $result->post;
         $cm = get_remote_course_modules_by_instance('forum', $forum->id);
@@ -5525,7 +5505,7 @@ function forum_delete_post($post, $children, $course, $cm, $forum, $skipcompleti
 
     // Delete cached RSS feeds.
     if (!empty($CFG->enablerssfeeds)) {
-        require_once($CFG->dirroot . '/mod/forum/remote/rsslib.php');
+        require_once($CFG->dirroot . '/mod/forum/rsslib.php');
         forum_rss_delete_file($forum);
     }
 
@@ -5752,7 +5732,7 @@ function forum_get_subscribe_link($forum, $context, $messages = array(), $cantac
         }
         $options['id'] = $forum->id;
         $options['sesskey'] = sesskey();
-        $url = new moodle_url('/mod/forum/remote/subscribe.php', $options);
+        $url = new moodle_url('/mod/forum/subscribe.php', $options);
         $link .= $OUTPUT->single_button($url, $linktext, 'get', array('title' => $linktitle));
         if ($fakelink) {
             $link .= '</noscript>';
@@ -6423,7 +6403,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions = -1, $
 
     if ($canstart) {
         echo '<div class="singlebutton forumaddnew">';
-        echo "<form id=\"newdiscussionform\" method=\"get\" action=\"$CFG->wwwroot/mod/forum/remote/post.php\">";
+        echo "<form id=\"newdiscussionform\" method=\"get\" action=\"$CFG->wwwroot/mod/forum/post.php\">";
         echo '<div>';
         echo "<input type=\"hidden\" name=\"forum\" value=\"$forum->id\" />";
         switch ($forum->type) {
@@ -6531,7 +6511,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions = -1, $
                 echo '<th class="header replies" scope="col">' . get_string('unread', 'forum');
                 if ($forumtracked) {
                     echo '<a title="' . get_string('markallread', 'forum') .
-                        '" href="' . $CFG->wwwroot . '/mod/forum/remote/markposts.php?f=' .
+                        '" href="' . $CFG->wwwroot . '/mod/forum/markposts.php?f=' .
                         $forum->id . '&amp;mark=read&amp;returnpage=view.php&amp;sesskey=' . sesskey() . '">' .
                         '<img src="' . $OUTPUT->pix_url('t/markasread') . '" class="iconsmall"   alt="' . get_string('markallread', 'forum') . '" /></a>';
                 }
@@ -6636,7 +6616,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions = -1, $
             $strolder = get_string('olderdiscussions', 'forum');
         }
         echo '<div class="forumolddiscuss">';
-        echo '<a href="' . $CFG->wwwroot . '/mod/forum/remote/view.php?f=' . $forum->id . '&amp;showall=1">';
+        echo '<a href="' . $CFG->wwwroot . '/mod/forum/view.php?f=' . $forum->id . '&amp;showall=1">';
         echo $strolder . '</a> ...</div>';
     }
 
@@ -6731,9 +6711,9 @@ function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode,
         $ratingoptions->scaleid = $forum->scale;
         $ratingoptions->userid = $USER->id;
         if ($forum->type == 'single' or !$discussion->id) {
-            $ratingoptions->returnurl = "$CFG->wwwroot/mod/forum/remote/view.php?id=$cm->id";
+            $ratingoptions->returnurl = "$CFG->wwwroot/mod/forum/view.php?id=$cm->id";
         } else {
-            $ratingoptions->returnurl = "$CFG->wwwroot/mod/forum/remote/discuss.php?d=$discussion->id";
+            $ratingoptions->returnurl = "$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id";
         }
         $ratingoptions->assesstimestart = $forum->assesstimestart;
         $ratingoptions->assesstimefinish = $forum->assesstimefinish;
@@ -7061,7 +7041,7 @@ function forum_print_recent_mod_activity($activity, $courseid, $detail, $modname
         echo "<img src=\"" . $OUTPUT->pix_url('icon', $activity->type) . "\" " .
             "class=\"icon\" alt=\"{$aname}\" />";
     }
-    echo "<a href=\"$CFG->wwwroot/mod/forum/remote/discuss.php?d={$activity->content->discussion}"
+    echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d={$activity->content->discussion}"
         . "#p{$activity->content->id}\">{$activity->content->subject}</a>";
     echo '</div>';
 
@@ -7133,7 +7113,7 @@ function forum_update_subscriptions_button($courseid, $forumid)
         $edit = "on";
     }
 
-    return "<form method=\"get\" action=\"$CFG->wwwroot/mod/forum/remote/subscribers.php\">" .
+    return "<form method=\"get\" action=\"$CFG->wwwroot/mod/forum/subscribers.php\">" .
     "<input type=\"hidden\" name=\"id\" value=\"$forumid\" />" .
     "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />" .
     "<input type=\"submit\" value=\"$string\" /></form>";
@@ -8023,7 +8003,7 @@ function forum_check_throttling($forum, $cm = null)
         $warning->errorcode = 'forumblockingtoomanyposts';
         $warning->module = 'error';
         $warning->additional = $a;
-        $warning->link = $CFG->wwwroot . '/mod/forum/remote/view.php?f=' . $forum->id;
+        $warning->link = $CFG->wwwroot . '/mod/forum/view.php?f=' . $forum->id;
 
         return $warning;
     }
@@ -8400,10 +8380,10 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
     if ($canmanage) {
         $mode = $forumnode->add(get_string('subscriptionmode', 'forum'), null, navigation_node::TYPE_CONTAINER);
 
-        $allowchoice = $mode->add(get_string('subscriptionoptional', 'forum'), new moodle_url('/mod/forum/remote/subscribe.php', array('id' => $forumobject->id, 'mode' => FORUM_CHOOSESUBSCRIBE, 'sesskey' => sesskey())), navigation_node::TYPE_SETTING);
-        $forceforever = $mode->add(get_string("subscriptionforced", "forum"), new moodle_url('/mod/forum/remote/subscribe.php', array('id' => $forumobject->id, 'mode' => FORUM_FORCESUBSCRIBE, 'sesskey' => sesskey())), navigation_node::TYPE_SETTING);
-        $forceinitially = $mode->add(get_string("subscriptionauto", "forum"), new moodle_url('/mod/forum/remote/subscribe.php', array('id' => $forumobject->id, 'mode' => FORUM_INITIALSUBSCRIBE, 'sesskey' => sesskey())), navigation_node::TYPE_SETTING);
-        $disallowchoice = $mode->add(get_string('subscriptiondisabled', 'forum'), new moodle_url('/mod/forum/remote/subscribe.php', array('id' => $forumobject->id, 'mode' => FORUM_DISALLOWSUBSCRIBE, 'sesskey' => sesskey())), navigation_node::TYPE_SETTING);
+        $allowchoice = $mode->add(get_string('subscriptionoptional', 'forum'), new moodle_url('/mod/forum/subscribe.php', array('id' => $forumobject->id, 'mode' => FORUM_CHOOSESUBSCRIBE, 'sesskey' => sesskey())), navigation_node::TYPE_SETTING);
+        $forceforever = $mode->add(get_string("subscriptionforced", "forum"), new moodle_url('/mod/forum/subscribe.php', array('id' => $forumobject->id, 'mode' => FORUM_FORCESUBSCRIBE, 'sesskey' => sesskey())), navigation_node::TYPE_SETTING);
+        $forceinitially = $mode->add(get_string("subscriptionauto", "forum"), new moodle_url('/mod/forum/subscribe.php', array('id' => $forumobject->id, 'mode' => FORUM_INITIALSUBSCRIBE, 'sesskey' => sesskey())), navigation_node::TYPE_SETTING);
+        $disallowchoice = $mode->add(get_string('subscriptiondisabled', 'forum'), new moodle_url('/mod/forum/subscribe.php', array('id' => $forumobject->id, 'mode' => FORUM_DISALLOWSUBSCRIBE, 'sesskey' => sesskey())), navigation_node::TYPE_SETTING);
 
         switch ($subscriptionmode) {
             case FORUM_CHOOSESUBSCRIBE : // 0
@@ -8448,7 +8428,7 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
         } else {
             $linktext = get_string('subscribe', 'forum');
         }
-        $url = new moodle_url('/mod/forum/remote/subscribe.php', array('id' => $forumobject->id, 'sesskey' => sesskey()));
+        $url = new moodle_url('/mod/forum/subscribe.php', array('id' => $forumobject->id, 'sesskey' => sesskey()));
         $forumnode->add($linktext, $url, navigation_node::TYPE_SETTING);
 
         if (isset($discussionid)) {
@@ -8457,7 +8437,7 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
             } else {
                 $linktext = get_string('subscribediscussion', 'forum');
             }
-            $url = new moodle_url('/mod/forum/remote/subscribe.php', array(
+            $url = new moodle_url('/mod/forum/subscribe.php', array(
                 'id' => $forumobject->id,
                 'sesskey' => sesskey(),
                 'd' => $discussionid,
@@ -8468,7 +8448,7 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
     }
 
     if (has_capability('mod/forum:viewsubscribers', $PAGE->cm->context)) {
-        $url = new moodle_url('/mod/forum/remote/subscribers.php', array('id' => $forumobject->id));
+        $url = new moodle_url('/mod/forum/subscribers.php', array('id' => $forumobject->id));
         $forumnode->add(get_string('showsubscribers', 'forum'), $url, navigation_node::TYPE_SETTING);
     }
 
@@ -8481,7 +8461,7 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
             } else {
                 $linktext = get_string('trackforum', 'forum');
             }
-            $url = new moodle_url('/mod/forum/remote/settracking.php', array(
+            $url = new moodle_url('/mod/forum/settracking.php', array(
                 'id' => $forumobject->id,
                 'sesskey' => sesskey(),
             ));
@@ -9293,7 +9273,7 @@ function mod_forum_myprofile_navigation(core_user\output\myprofile\tree $tree, $
         // May as well just bail aggressively here.
         return false;
     }
-    $postsurl = new moodle_url('/mod/forum/remote/user.php', array('id' => $user->id));
+    $postsurl = new moodle_url('/mod/forum/user.php', array('id' => $user->id));
     if (!empty($course)) {
         $postsurl->param('course', $course->id);
     }
@@ -9301,7 +9281,7 @@ function mod_forum_myprofile_navigation(core_user\output\myprofile\tree $tree, $
     $node = new core_user\output\myprofile\node('miscellaneous', 'forumposts', $string, null, $postsurl);
     $tree->add_node($node);
 
-    $discussionssurl = new moodle_url('/mod/forum/remote/user.php', array('id' => $user->id, 'mode' => 'discussions'));
+    $discussionssurl = new moodle_url('/mod/forum/user.php', array('id' => $user->id, 'mode' => 'discussions'));
     if (!empty($course)) {
         $discussionssurl->param('course', $course->id);
     }

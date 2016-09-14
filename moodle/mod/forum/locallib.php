@@ -182,7 +182,7 @@ class forum_portfolio_caller extends portfolio_module_caller_base
     function get_return_url()
     {
         global $CFG;
-        return $CFG->wwwroot . '/mod/forum/remote/discuss.php?d=' . $this->discussion->id;
+        return $CFG->wwwroot . '/mod/forum/discuss.php?d=' . $this->discussion->id;
     }
 
     /**
@@ -196,7 +196,7 @@ class forum_portfolio_caller extends portfolio_module_caller_base
         $navlinks = array();
         $navlinks[] = array(
             'name' => format_string($this->discussion->name),
-            'link' => $CFG->wwwroot . '/mod/forum/remote/discuss.php?d=' . $this->discussion->id,
+            'link' => $CFG->wwwroot . '/mod/forum/discuss.php?d=' . $this->discussion->id,
             'type' => 'title'
         );
         return array($navlinks, $this->cm);

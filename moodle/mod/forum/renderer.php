@@ -46,14 +46,14 @@ class mod_forum_renderer extends plugin_renderer_base {
             $html .= html_writer::start_tag('div', array('class' => 'discussion-nav clearfix'));
             $html .= html_writer::start_tag('ul');
             if ($prev) {
-                $url = new moodle_url('/mod/forum/remote/discuss.php', array('d' => $prev->id));
+                $url = new moodle_url('/mod/forum/discuss.php', array('d' => $prev->id));
                 $html .= html_writer::start_tag('li', array('class' => 'prev-discussion'));
                 $html .= html_writer::link($url, format_string($prev->name),
                     array('aria-label' => get_string('prevdiscussiona', 'mod_forum', format_string($prev->name)), 'class' => 'pre-el-link'));
                 $html .= html_writer::end_tag('li');
             }
             if ($next) {
-                $url = new moodle_url('/mod/forum/remote/discuss.php', array('d' => $next->id));
+                $url = new moodle_url('/mod/forum/discuss.php', array('d' => $next->id));
                 $html .= html_writer::start_tag('li', array('class' => 'next-discussion'));
                 $html .= html_writer::link($url, format_string($next->name),
                     array('aria-label' => get_string('nextdiscussiona', 'mod_forum', format_string($next->name)), 'class' => 'next-el-link'));

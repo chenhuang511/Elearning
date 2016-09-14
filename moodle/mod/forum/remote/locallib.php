@@ -62,13 +62,16 @@ function get_remote_forum_by($parameters, $sort = '', $mustexists = FALSE)
             'params' => array_merge(array('sort' => $sort, 'mustexists' => $mustexists), $parameters),
         ), false
     );
+    if (!isset($result->exception))
+        $forum = $result->forum;
+    else
+        $forum = 0;
 
-    if (isset($result->exception)) {
-        return 0;
-    }
-
-    $forum = $result->forum;
     if ($forum) {
+        $course = $DB->get_record('course', array('remoteid' => $forum->course));
+        if ($course) {
+            $forum->course = $course->id;
+        }
         $localforum = $DB->get_record('forum', array('remoteid' => $forum->id));
         if ($localforum) {
             $info = [
@@ -581,14 +584,40 @@ function save_remote_forum_add_instance($forumdata)
     return $result->newid;
 }
 
-function save_remote_forum_add_discussions($discussiondata, $userid)
+function save_remote_forum_add_discussions($discussion, $userid)
 {
+    global $DB;
+
+    if ($discussion) {
+        $course = $DB->get_record('course', array("id" => $discussion->course), "id, remoteid");
+        if ($course) {
+            $discussion->course = $course->remoteid;
+        }
+        $forum = $DB->get_record('forum', array("id" => $discussion->forum), "id, remoteid");
+        if ($forum) {
+            $discussion->forum = $forum->remoteid;
+        }
+
+        $hubuser = get_remote_mapping_user($discussion->userid);
+        if ($hubuser) {
+            $discussion->userid = $hubuser[0]->id;
+        }
+    }
+
+    $data = array();
+    $i = 0;
+    foreach ($discussion as $key => $val) {
+        $data["data[$i][name]"] = $key;
+        $data["data[$i][value]"] = $val;
+        $i++;
+    }
+
     $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_forum_add_discussions',
-            'params' => array_merge(array('userid' => $userid), $discussiondata),
+            'params' => array_merge(array('userid' => $userid), $data),
         )
     );
     return $result;

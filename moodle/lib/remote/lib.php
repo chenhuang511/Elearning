@@ -395,7 +395,6 @@ function merge_local_sequence_course_section($sequence, $updatecm = false, $seci
     if ($updatecm && empty($secid)) {
         print_error('Cannot update course module when empty section id');
     }
-
     $sequencesarray = explode(",", $sequence);
     foreach ($sequencesarray as &$seq) {
         $cm = $DB->get_record('course_modules', array('remoteid' => $seq));

@@ -2541,7 +2541,7 @@ class local_mod_forum_external extends external_api
     {
         return new external_function_parameters(
             array(
-                'discussiondata' => new external_multiple_structure(
+                'data' => new external_multiple_structure(
                     new external_single_structure(
                         array(
                             'name' => new external_value(PARAM_RAW, 'param name'),
@@ -2554,7 +2554,7 @@ class local_mod_forum_external extends external_api
         );
     }
 
-    public static function forum_add_discussions($discussiondata, $userid)
+    public static function forum_add_discussions($data, $userid)
     {
 
         global $DB;
@@ -2562,12 +2562,12 @@ class local_mod_forum_external extends external_api
         $result = array();
 
         $params = self::validate_parameters(self::forum_add_discussions_parameters(), array(
-            'discussiondata' => $discussiondata,
+            'data' => $data,
             'userid' => $userid
         ));
 
         $discussion = new stdClass();
-        foreach ($params['discussiondata'] as $dt) {
+        foreach ($params['data'] as $dt) {
             $discussion->$dt['name'] = $dt['value'];
         }
 
