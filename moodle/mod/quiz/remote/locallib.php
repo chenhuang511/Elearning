@@ -49,18 +49,21 @@ function get_remote_quiz_by_id($id) {
             'params' => array('id'=>$id)
         ), false
     );
-    $fields = ' remoteid,
-                timeopen,
-                timeclose,
-                timelimit,
-                overduehandling,
-                graceperiod,
-                attempts,
-                grademethod,
-                timecreated,
-                timemodified,
-                completionpass,
-                completionattemptsexhausted';
+    $fields =
+        'id,
+        course,
+        remoteid,
+        timeopen,
+        timeclose,
+        timelimit,
+        overduehandling,
+        graceperiod,
+        attempts,
+        grademethod,
+        timecreated,
+        timemodified,
+        completionpass,
+        completionattemptsexhausted';
     $local_quiz_data = $DB->get_record('quiz', array('remoteid' => $res->id), $fields);
     if(empty($local_quiz_data)){ // check data quiz in local db
         $res->remoteid = $res->id;
@@ -91,17 +94,6 @@ function get_remote_user_attemps($quizid, $userid, $status, $includepreviews) {
         $result[$attempt->id] = $attempt;
     }
     return $result;
-}
-
-function get_remote_quiz_access_information($quizid) {
-    return moodle_webservice_client(
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN_M,
-            'function_name' => 'mod_quiz_get_quiz_access_information',
-            'params' => array('quizid'=>$quizid)
-        ), false
-    );
 }
 
 function get_remote_quiz_view_quiz($quizid) {

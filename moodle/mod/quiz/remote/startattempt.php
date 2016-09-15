@@ -27,15 +27,14 @@ $id = required_param('cmid', PARAM_INT); // Course module id
 $forcenew = optional_param('forcenew', false, PARAM_BOOL); // Used to force a new preview
 $page = optional_param('page', -1, PARAM_INT); // Page to jump to in the attempt.
 
-if (!$cm = get_remote_course_module_by_cmid("quiz", $id)) {
+if (!$cm = get_coursemodule_from_id('quiz', $id)) {
     print_error('invalidcoursemodule');
 }
-if (!$course = get_local_course_record($cm->course, true)) {
+if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
     print_error("coursemisconf");
 }
 
-$quiz = get_remote_quiz_by_id($cm->instance);
-$quizobj = new quiz($quiz, $cm, $course, true, true);
+$quizobj = quiz::create($cm->instance, $USER->id);
 // This script should only ever be posted to, so set page URL to the view page.
 $PAGE->set_url($quizobj->view_url());
 
@@ -46,7 +45,11 @@ $PAGE->set_heading($quizobj->get_course()->fullname);
 
 // Check questions.
 if (!$quizobj->has_questions($quiz->id)) {
-    print_error('cannotstartnoquestions', 'quiz', $quizobj->view_url());
+    if ($quizobj->has_capability('mod/quiz:manage')) {
+        redirect($quizobj->edit_url());
+    } else {
+        print_error('cannotstartnoquestions', 'quiz', $quizobj->view_url());
+    }
 }
 
 // Create an object to manage all the other (non-roles) access rules.
@@ -128,7 +131,8 @@ if($quiz->settinglocal){
         $index++;
     }
 }
-$attemptremote = get_remote_quiz_start_attempt($quiz->id, $user[0]->id, $preview, $setting);
+$attemptremote = get_remote_quiz_start_attempt($quiz->remote, $user[0]->id, $preview, $setting);
+
 $attempt = $attemptremote->attempt;
 // Redirect to the attempt page.
 redirect($quizobj->attempt_url($attempt->id, $page));

@@ -89,7 +89,7 @@ class quiz {
      * @param object $course the row from the course table for the course we belong to.
      * @param bool $getcontext intended for testing - stops the constructor getting the context.
      */
-    public function __construct($quiz, $cm, $course, $getcontext = true, $isremote = false) {
+    public function __construct($quiz, $cm, $course, $getcontext = true) {
         $this->quiz = $quiz;
         $this->cm = $cm;
         $this->quiz->cmid = $this->cm->id;
@@ -97,8 +97,7 @@ class quiz {
         if ($getcontext && !empty($cm->id)) {
             $this->context = context_module::instance($cm->id);
         }
-
-        $this->isremote = $isremote;
+        $this->isremote = (MOODLE_RUN_MODE === MOODLE_MODE_HUB)?true:false;
     }
 
     /**
@@ -111,7 +110,12 @@ class quiz {
     public static function create($quizid, $userid = null) {
         global $DB;
 
-        $quiz = quiz_access_manager::load_quiz_and_settings($quizid);
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $remoteid = $DB->get_field('quiz', 'remoteid', array('id' => $quizid));
+            $quiz = get_remote_quiz_by_id($remoteid);
+        }else{
+            $quiz = quiz_access_manager::load_quiz_and_settings($quizid);
+        }
         $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
         $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id, false, MUST_EXIST);
 
@@ -192,6 +196,11 @@ class quiz {
     /** @return int the quiz id. */
     public function get_quizid() {
         return $this->quiz->id;
+    }
+
+    /** @return int the quiz remoteid === quizid in hub. */
+    public function get_quiz_remoteid() {
+        return $this->quiz->remoteid;
     }
 
     /** @return object the row of the quiz table. */
@@ -565,21 +574,21 @@ class quiz_attempt {
      * @param bool $loadquestions (optional) if true, the default, load all the details
      *      of the state of each question. Else just set up the basic details of the attempt.
      */
-    public function __construct($attempt, $quiz, $cm, $course, $loadquestions = true, $isremote = false) {
+    public function __construct($attempt, $quiz, $cm, $course, $loadquestions = true) {
         global $DB;
 
-        $this->isremote = $isremote;
+        $this->isremote = (MOODLE_RUN_MODE === MOODLE_MODE_HUB)?true:false;
         $this->attempt = $attempt;
         $this->quizobj = new quiz($quiz, $cm, $course);
 
         if($this->isremote){
-            $remoteslots = get_remote_get_slots_by_quizid($this->get_quizid());
+            $remoteslots = get_remote_get_slots_by_quizid($quiz->remoteid);
             $slots = array();
             foreach ($remoteslots as $remoteslot){
                 $slots[$remoteslot->slot] = $remoteslot;
             }
             $this->slots = $slots;
-            $this->sections = get_remote_get_sections_by_quizid($this->get_quizid());
+            $this->sections = get_remote_get_sections_by_quizid($quiz->remoteid);
         }else{
             $this->slots = $DB->get_records('quiz_slots',
                 array('quizid' => $this->get_quizid()), 'slot',
@@ -605,8 +614,14 @@ class quiz_attempt {
     protected static function create_helper($conditions) {
         global $DB;
 
-        $attempt = $DB->get_record('quiz_attempts', $conditions, '*', MUST_EXIST);
-        $quiz = quiz_access_manager::load_quiz_and_settings($attempt->quiz);
+        $isremote = (MOODLE_RUN_MODE === MOODLE_MODE_HUB)?true:false;
+        if($isremote){
+            $attempt = get_remote_attempt_by_attemptid($conditions['id']);
+            $quiz = get_remote_quiz_by_id($attempt->quiz);
+        }else{
+            $attempt = $DB->get_record('quiz_attempts', $conditions, '*', MUST_EXIST);
+            $quiz = quiz_access_manager::load_quiz_and_settings($attempt->quiz);
+        }
         $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
         $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id, false, MUST_EXIST);
 

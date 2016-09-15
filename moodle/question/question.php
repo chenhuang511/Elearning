@@ -99,6 +99,8 @@ if ($scrollpos) {
 
 if ($cmid){
     list($module, $cm) = get_module_from_cmid($cmid);
+    //module: dữ liệu quiz của hub
+    //cm: dữ liệu course_module trên local với trường instance là quizid của hub.
     require_login($cm->course, false, $cm);
     $thiscontext = context_module::instance($cmid);
 } elseif ($courseid) {
@@ -117,6 +119,7 @@ if (optional_param('addcancel', false, PARAM_BOOL)) {
 }
 
 if ($id) {
+    // @TODO: not fix here
     if (!$question = $DB->get_record('question', array('id' => $id))) {
         print_error('questiondoesnotexist', 'question', $returnurl);
     }
@@ -134,6 +137,7 @@ if ($id) {
     }
 
 } else if ($categoryid) {
+    // @TODO: not fix here
     // Category, but no qtype. They probably came from the addquestion.php
     // script without choosing a question type. Send them back.
     $addurl = new moodle_url('/question/addquestion.php', $url->params());
@@ -146,7 +150,7 @@ if ($id) {
 
 $qtypeobj = question_bank::get_qtype($question->qtype);
 
-// Validate the question category.
+// Validate the question category. @TODO: now question_categories error name
 if (!$category = $DB->get_record('question_categories', array('id' => $question->category))) {
     print_error('categorydoesnotexist', 'question', $returnurl);
 }
@@ -158,6 +162,7 @@ $categorycontext = context::instance_by_id($category->contextid);
 $addpermission = has_capability('moodle/question:add', $categorycontext);
 
 if ($id) {
+    // @TODO: handle
     $question->formoptions->canedit = question_has_capability_on($question, 'edit');
     $question->formoptions->canmove = $addpermission && question_has_capability_on($question, 'move');
     $question->formoptions->cansaveasnew = $addpermission &&
@@ -174,6 +179,8 @@ if ($id) {
     }
 
 } else  { // creating a new question
+//    echo "<pre>";
+//    print_r($question);die;
     $question->formoptions->canedit = question_has_capability_on($question, 'edit');
     $question->formoptions->canmove = (question_has_capability_on($question, 'move') && $addpermission);
     $question->formoptions->cansaveasnew = false;

@@ -30,13 +30,10 @@ $attemptid = required_param('attempt', PARAM_INT); // The attempt to summarise.
 
 $PAGE->set_url('/mod/quiz/remote/summary.php', array('attempt' => $attemptid));
 
-$attempt = get_remote_attempt_by_attemptid($attemptid);
-$quiz = get_remote_quiz_by_id($attempt->quiz);
-$course = get_local_course_record($quiz->course);
-$cm = get_remote_course_module_by_instance("quiz", $quiz->id);
-$attemptobj = new quiz_attempt($attempt, $quiz, $cm, $course, false, true);
+$attemptobj = quiz_attempt::create($attemptid);
 
 $nonajax = optional_param('nonajax', true, PARAM_BOOL);
+$cm = $attemptobj->get_cm();
 $context = context_module::instance($cm->id);
 if (!has_capability('moodle/course:manageactivities', $context) && $nonajax == false) {
     $CFG->nonajax = false;
@@ -100,7 +97,7 @@ if($quiz->settinglocal){
 }
 
 // If the attempt is now overdue, or abandoned, deal with that.
-$attempt = remote_handle_if_time_expired($quiz->id, $attempt->id, true, $settinglocal);
+$attempt = remote_handle_if_time_expired($quiz->remoteid, $attempt->id, true, $settinglocal);
 $summaryremote = get_remote_get_attempt_summary($attemptobj->get_attemptid(), $settinglocal);
 
 // If the attempt is already closed, redirect them to the review page.

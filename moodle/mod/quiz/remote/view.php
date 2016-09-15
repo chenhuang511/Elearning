@@ -19,21 +19,20 @@ $id = optional_param('id', 0, PARAM_INT); // Course Module ID, or ...
 $q = optional_param('q',  0, PARAM_INT);  // Quiz ID.
 
 if ($id) {
-    if (!$cm = get_remote_course_module_by_cmid("quiz", $id)) {
+    if (!$cm = get_coursemodule_from_id('quiz', $id)) {
         print_error('invalidcoursemodule');
     }
     if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
         print_error('coursemisconf');
     }
 } else {
-    if (!$quiz = get_remote_quiz_by_id($q)) {
+    if (!$quiz = $DB->get_record('quiz', array('id' => $q))) {
         print_error('invalidquizid', 'quiz');
     }
     if (!$course = $DB->get_record('course', array('id' => $quiz->course))) {
         print_error('invalidcourseid');
     }
-
-    if (!$cm = get_remote_course_module_by_instance("quiz", $quiz->id)) {
+    if (!$cm = get_coursemodule_from_instance("quiz", $quiz->id, $course->id)) {
         print_error('invalidcoursemodule');
     }
 }
@@ -57,9 +56,9 @@ if (!has_capability('moodle/course:manageactivities', $context) && $nonajax == f
 
 // Create an object to manage all the other (non-roles) access rules.
 $timenow = time();
-$rules= get_remote_quiz_access_information($cm->instance);
-$quiz = get_remote_quiz_by_id($cm->instance);
-$quizobj = new quiz($quiz, $cm, $course, true, true);
+//$quiz = get_remote_quiz_by_id($cm->instance);
+//$quizobj = new quiz($quiz, $cm, $course, true, true);
+$quizobj = quiz::create($cm->instance, $USER->id);
 $accessmanager = new quiz_access_manager($quizobj, $timenow,
     has_capability('mod/quiz:ignoretimelimits', $context, null, false));
 $quiz = $quizobj->get_quiz();
@@ -77,11 +76,11 @@ $viewobj->canreviewmine = $canreviewmine;
 
 // Get this user's attempts. User should map from host to hub
 $user = get_remote_mapping_user();
-$attempts = get_remote_user_attemps($quiz->id, $user[0]->id, 'finished', true);
+$attempts = get_remote_user_attemps($quiz->remoteid, $user[0]->id, 'finished', true);
 $lastfinishedattempt = end($attempts);
 $unfinished = false;
 $unfinishedattemptid = null;
-$unfinishedremote = get_remote_user_attemps($quiz->id, $user[0]->id, 'unfinished', true);
+$unfinishedremote = get_remote_user_attemps($quiz->remoteid, $user[0]->id, 'unfinished', true);
 $unfinishedattempt = array_shift($unfinishedremote);
 
 // Get settinglocal to call API handle_if_time_expired
@@ -106,7 +105,7 @@ if($quiz->settinglocal){
 if(!empty($unfinishedattempt)){
     // If the attempt is now overdue, deal with that - and pass isonline = false.
     // We want the student notified in this case.
-    $unfinishedattempt = remote_handle_if_time_expired($quiz->id, $unfinishedattempt->id, false, $setting);
+    $unfinishedattempt = remote_handle_if_time_expired($quiz->remoteid, $unfinishedattempt->id, false, $setting);
     $attempts[] = $unfinishedattempt;
     $unfinished = $unfinishedattempt->state == quiz_attempt::IN_PROGRESS ||
         $unfinishedattempt->state == quiz_attempt::OVERDUE;
@@ -126,7 +125,7 @@ foreach ($attempts as $attempt) {
 
 // Work out the final grade, checking whether it was overridden in the gradebook.
 if (!$canpreview) {
-    $mygrade = get_remote_user_best_grade($quiz->id, $user[0]->id)->grade;
+    $mygrade = get_remote_user_best_grade($quiz->remoteid, $user[0]->id)->grade;
 } else if ($lastfinishedattempt) {
     // Users who can preview the quiz don't get a proper grade, so work out a
     // plausible value to display instead, so the page looks right.

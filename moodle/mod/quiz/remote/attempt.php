@@ -34,13 +34,23 @@ $isremote = (MOODLE_RUN_MODE == MOODLE_MODE_HUB)?true:false;
 $attemptid = required_param('attempt', PARAM_INT);
 $page = optional_param('page', 0, PARAM_INT);
 
-$attempt = get_remote_attempt_by_attemptid($attemptid);
-$quiz = get_remote_quiz_by_id($attempt->quiz);
-$course = get_local_course_record($quiz->course);
-$cm = get_remote_course_module_by_instance("quiz", $quiz->id);
-$attemptobj = new quiz_attempt($attempt, $quiz, $cm, $course, false, true);
-$context = context_module::instance($cm->id);
+$attemptobj = quiz_attempt::create($attemptid);
+$page = $attemptobj->force_page_number_into_range($page);
+$PAGE->set_url($attemptobj->attempt_url(null, $page));
+//$attempt = get_remote_attempt_by_attemptid($attemptid);
+//$quiz = get_remote_quiz_by_id($attempt->quiz);
+//$course = get_local_course_record($quiz->course);
+//$cm = get_remote_course_module_by_instance("quiz", $quiz->id);
+//$attemptobj = new quiz_attempt($attempt, $quiz, $cm, $course, false, true);
 
+$cm = $attemptobj->get_cm();
+$context = context_module::instance($cm->id);
+$nonajax = optional_param('nonajax', true, PARAM_BOOL);
+if (!has_capability('moodle/course:manageactivities', $context) && $nonajax == false) {
+    $CFG->nonajax = false;
+} else {
+    $CFG->nonajax = true;
+}
 $setting = array();
 if($quiz->settinglocal){
     $fields =  array(
@@ -60,16 +70,6 @@ if($quiz->settinglocal){
     }
 }
 $attemptremote = get_remote_get_attempt_data($attemptid, null, $setting);
-
-$nonajax = optional_param('nonajax', true, PARAM_BOOL);
-if (!has_capability('moodle/course:manageactivities', $context) && $nonajax == false) {
-    $CFG->nonajax = false;
-} else {
-    $CFG->nonajax = true;
-}
-
-$page = $attemptobj->force_page_number_into_range($page);
-$PAGE->set_url($attemptobj->attempt_url(null, $page));
 
 // Check login.
 require_login($attemptobj->get_course(), false, $attemptobj->get_cm());
