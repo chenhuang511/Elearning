@@ -172,7 +172,7 @@ $context = context_module::instance($COURSE->id);
                                                                         }
                                                                         ?>
                                                                             "
-                                                                           href="<?php echo $CFG->wwwroot . '/mod/' . $module->modname . '/remote/view.php?id=' . $module->id; ?>"
+                                                                           href="<?php echo $CFG->wwwroot . '/mod/' . $module->modname . '/view.php?id=' . $module->id; ?>"
                                                                         >
                                         <span
                                             class="icon-bxh icon-<?php echo $module->modname; ?>"></span><?php echo $module->name; ?>

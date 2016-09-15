@@ -304,7 +304,7 @@ if ($isaccess) {
 
     if ($mform->is_cancelled()) {
         if ($return && !empty($cm->id)) {
-            redirect("$CFG->wwwroot/mod/$module->name/remote/view.php?id=$cm->id");
+            redirect("$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id");
         } else {
             redirect(course_get_url($course, $cw->section, array('sr' => $sectionreturn)));
         }
@@ -326,7 +326,7 @@ if ($isaccess) {
 
         if (isset($fromform->submitbutton)) {
             if (empty($fromform->showgradingmanagement)) {
-                redirect("$CFG->wwwroot/mod/$module->name/remote/view.php?id=$fromform->coursemodule");
+                redirect("$CFG->wwwroot/mod/$module->name/view.php?id=$fromform->coursemodule");
             } else {
                 $returnurl = new moodle_url("/mod/$module->name/view.php", array('id' => $fromform->coursemodule));
                 redirect($fromform->gradingman->get_management_url($returnurl));

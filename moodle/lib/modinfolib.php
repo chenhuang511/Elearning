@@ -1744,8 +1744,8 @@ class cm_info implements IteratorAggregate {
                     FEATURE_NO_VIEW_LINK);
         }
         $this->url = $modviews[$this->modname]
-            ? new moodle_url('/mod/' . $this->modname . (MOODLE_RUN_MODE === MOODLE_MODE_HUB) ? '/mod/' . $this->modname . '/remote/view.php' : '/view.php', array('id' => $this->id))
-                : null;
+            ? new moodle_url('/mod/' . $this->modname . '/view.php', array('id' => $this->id))
+            : null;
     }
 
     /**
