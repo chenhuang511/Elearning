@@ -198,10 +198,6 @@ define(["./ComponentView", "libs/etch",
 				} else {
 					var cmd = ComponentCommands.Text(this._initialText, this.model);
 					undoHistory.push(cmd);
-
-                    //this.tablediv.innerHTML = '<table class="sampletable" style="text-align: center;"><tr> <th>Product</th><th>Cost</th><th>Really?</th></tr></table>';
-                    //this.model.set("text", this.tablediv.innerHTML);
-
                     this.$textEl.find(".ui-resizable-handle").remove();
 
                     text = this.$textEl.html();
@@ -306,7 +302,18 @@ define(["./ComponentView", "libs/etch",
 					top: this.model.get("y"),
 					left: this.model.get("x"),
 				});
-
+				var number_col = this.model.get("column");
+				var number_row = this.model.get("row");
+				var $table = '<table class="sampletable" style="text-align: center;">';
+        		var $tableEl = '<tr height="40">'
+        		for(var i = 0; i < number_col; ++i){
+          			$tableEl += '<td>edit text</td>';
+        		}
+        			$tableEl += '</tr>';
+        		for(var j = 0; j < number_row; ++j){
+          			$table += $tableEl;
+        		}
+        		$table + '</table>';
 				var element = this.$el[0];
 
 				if (this.tablediv == undefined)
@@ -319,11 +326,20 @@ define(["./ComponentView", "libs/etch",
                     }
                     else
                     {
-                        this.tablediv.innerHTML = '<table class="sampletable" style="text-align: center;"><tr><td>Product</td><td>Cost</td><td>Really?</td></tr></table>';
-                    }
+						var number_col = this.model.get("column");
+						var number_row = this.model.get("row");
+						var $table = '<table class="sampletable" style="text-align: center;">';
+        				var $tableEl = '<tr height="40">'
+        				for(var i = 0; i < number_col; ++i)
+          					$tableEl += '<td>edit text</td>';
+        				$tableEl += '</tr>';
+        				for(var j = 0; j < number_row; ++j)
+          					$table += $tableEl;			
+        				$table + '</table>';
+                        this.tablediv.innerHTML = $table;
+                    	}
                     this.$el.append(this.tablediv);
 				}
-
                 this.model.set("text", this.$el.find('.sampletable').parent().html());
                 //this.$el.find('.sampletable td').resizable({});
                 //$('.sampletable th').resizable({});

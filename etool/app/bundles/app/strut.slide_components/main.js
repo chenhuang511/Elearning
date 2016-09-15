@@ -1,4 +1,5 @@
 define(['./view/ComponentButton',
+	'./view/TableButton',
 	'./view/ImportingComponentButton',
 	'./model/Image',
 	'./model/TextBox',
@@ -19,6 +20,7 @@ define(['./view/ComponentButton',
 	'./view/ShapeView',
 	'./model/Shape'],
 	function(Button,
+			 TableButton,
 			 ImportingComponentButton,
 			 Image,
 			 TextBox,
@@ -57,7 +59,7 @@ define(['./view/ComponentButton',
 					editorModel: editorModel
 				}));
 
-				buttons.push(new Button({
+				buttons.push(new TableButton({
 					componentType: 'Table',
 					icon: 'icon-text-width',
 					name: 'Table',
