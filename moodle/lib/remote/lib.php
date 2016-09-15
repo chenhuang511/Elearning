@@ -405,12 +405,20 @@ function merge_local_sequence_course_section($sequence, $updatecm = false, $seci
         print_error('Cannot update course module when empty section id');
     }
 
+    if ($secid && $localsequence = $DB->get_field('course_sections', 'sequence', array('id' => $secid))){
+        $localsequencearray = explode(",", $localsequence);
+    }
+
     $sequences = explode(",", $sequence);
     foreach ($sequences as &$seq) {
         $cm = $DB->get_record('course_modules', array('remoteid' => $seq));
         // Update sectionid in course_module tbl
         if ($cm) {
+            $seq = $cm->id;
             if ($updatecm) {
+                if(isset($localsequencearray) && in_array($seq, $localsequencearray)){
+                    continue;
+                }
                 $cm->section = $secid;
                 if (!empty($cm->availability)) {
                     //Merge availability
@@ -418,7 +426,6 @@ function merge_local_sequence_course_section($sequence, $updatecm = false, $seci
                 }
                 $DB->update_record('course_modules', $cm);
             }
-            $seq = $cm->id;
         }
     }
     // Update sequence in course_sections

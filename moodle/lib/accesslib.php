@@ -1461,28 +1461,20 @@ function get_context_info_array($contextid)
     $cm = null;
 
     if ($context->contextlevel == CONTEXT_COURSE) {
-        $course = $DB->get_record('course', array('id' => $context->instanceid), '*', MUST_EXIST);
+        $course = $DB->get_record('course', array('id'=>$context->instanceid), '*', MUST_EXIST);
 
     } else if ($context->contextlevel == CONTEXT_MODULE) {
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
-            $cm = get_coursemodule_from_id('', $context->instanceid, 0, false, MUST_EXIST);
-        } else {
-            $cm = get_remote_course_module($context->instanceid);
-        }
-        $course = get_local_course_record($cm->course, true);
+        $cm = get_coursemodule_from_id('', $context->instanceid, 0, false, MUST_EXIST);
+        $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
 
     } else if ($context->contextlevel == CONTEXT_BLOCK) {
         $parent = $context->get_parent_context();
 
         if ($parent->contextlevel == CONTEXT_COURSE) {
-            $course = $DB->get_record('course', array('id' => $parent->instanceid), '*', MUST_EXIST);
+            $course = $DB->get_record('course', array('id'=>$parent->instanceid), '*', MUST_EXIST);
         } else if ($parent->contextlevel == CONTEXT_MODULE) {
-            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
-                $cm = get_coursemodule_from_id('', $parent->instanceid, 0, false, MUST_EXIST);
-            } else {
-                $cm = get_remote_course_module($parent->instanceid);
-            }
-            $course = get_local_course_record($cm->course, true);
+            $cm = get_coursemodule_from_id('', $parent->instanceid, 0, false, MUST_EXIST);
+            $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
         }
     }
 
