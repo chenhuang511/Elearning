@@ -2337,8 +2337,8 @@ abstract class lesson_base
  * @property-read array $jumps An array containing all the jumps this page uses
  * @property-read lesson $lesson The lesson this page belongs to
  * @property-read int $type The type of the page [question | structure]
- * @property-read typeid The unique identifier for the page type
- * @property-read typestring The string that describes this page type
+ * @property-read int $typeid The unique identifier for the page type
+ * @property-read string $typestring The string that describes this page type
  *
  * @abstract
  * @copyright  2009 Sam Hemelryk

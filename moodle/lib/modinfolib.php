@@ -1046,6 +1046,11 @@ class cm_info implements IteratorAggregate {
     private $afterediticons;
 
     /**
+     * @var string
+     */
+    private $remoteid;
+
+    /**
      * List of class read-only properties and their getter methods.
      * Used by magic functions __get(), __isset(), __empty()
      * @var array
@@ -1096,6 +1101,7 @@ class cm_info implements IteratorAggregate {
         'uservisible' => 'get_user_visible',
         'visible' => false,
         'visibleold' => false,
+        'remoteid' => false,
     );
 
     /**
@@ -1719,6 +1725,7 @@ class cm_info implements IteratorAggregate {
         $this->added = isset($mod->added) ? $mod->added : 0;
         $this->score = isset($mod->score) ? $mod->score : 0;
         $this->visibleold = isset($mod->visibleold) ? $mod->visibleold : 0;
+        $this->remoteid = isset($mod->remoteid) ? $mod->remoteid : 0;
 
         // Note: it saves effort and database space to always include the
         // availability and completion fields, even if availability or completion
@@ -1737,6 +1744,7 @@ class cm_info implements IteratorAggregate {
                 ? $mod->conditionsgrade : array();
         $this->conditionsfield = isset($mod->conditionsfield)
                 ? $mod->conditionsfield : array();
+        $this->remoteid = isset($mod->remoteid) ? $mod->remoteid : null;
 
         static $modviews = array();
         if (!isset($modviews[$this->modname])) {

@@ -36,27 +36,40 @@ function get_remote_assign_by_id($assignid){
  * get assign by id & instanceid
  *
  * @param int $assignid . the id of assign
- * @param array $options . the options
+ * @param int $remotecm . The id of course module on hub
  *
  * @return stdClass $asssign
  */
-function get_remote_assign_by_id_instanceid($assignid, $instanceid)
+function get_remote_assign_by_id_instanceid($assignid, $remotecm)
 {
-    $rcmid = get_local_course_modules_record($instanceid, true)->remoteid;
-
+    $assign = get_local_assign_record($assignid, true);
     $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_assign_get_assign_by_id_instanceid',
             'params' => array(
-                'assignid' => $assignid,
-                'instanceid' => $rcmid
+                'assignid' => $assign->remoteid,
+                'instanceid' => $remotecm
             )
         ), false
     );
 
-    return $resp->assignment;
+    if(isset($resp->exception)){
+        print_error($resp->exception);
+    }
+
+    $remoteassign = $resp->assignment;
+
+    // Merge local setting
+    $assign->name = $remoteassign->name;
+    $assign->intro = $remoteassign->intro;
+    $assign->introformat = $remoteassign->introformat;
+    if (isset($remoteassign->introattachments)) {
+        $assign->introattachments = $remoteassign->introattachments;
+    }
+
+    return $assign;
 }
 
 /**

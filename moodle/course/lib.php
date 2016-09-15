@@ -1066,6 +1066,10 @@ function get_array_of_activities($courseid)
                     $mod[$seq]->completionexpected = $rawmods[$seq]->completionexpected;
                     $mod[$seq]->showdescription = $rawmods[$seq]->showdescription;
                     $mod[$seq]->availability = $rawmods[$seq]->availability;
+                    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+                        $mod[$seq]->remoteid = $rawmods[$seq]->remoteid;
+                    }
+
 
                     $modname = $mod[$seq]->mod;
                     $functionname = $modname . "_get_coursemodule_info";
@@ -1141,7 +1145,7 @@ function get_array_of_activities($courseid)
                     foreach (array('idnumber', 'groupmode', 'groupingid',
                                  'indent', 'completion', 'extra', 'extraclasses', 'iconurl', 'onclick', 'content',
                                  'icon', 'iconcomponent', 'customdata', 'availability', 'completionview',
-                                 'completionexpected', 'score', 'showdescription') as $property) {
+                                 'completionexpected', 'score', 'showdescription', 'remoteid') as $property) {
                         if (property_exists($mod[$seq], $property) &&
                             empty($mod[$seq]->{$property})
                         ) {

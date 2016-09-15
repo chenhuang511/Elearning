@@ -210,11 +210,7 @@ class assign {
         $params['action'] = $action;
         $cm = $this->get_course_module();
         if ($cm) {
-            if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-                $currenturl = new moodle_url('/mod/assign/view.php', array('id' => $cm->id));
-            }else{
-                $currenturl = new moodle_url('/mod/assign/remote/view.php', array('id' => $cm->id));
-            }
+            $currenturl = new moodle_url('/mod/assign/view.php', array('id' => $cm->id));
         } else {
             $currenturl = new moodle_url('/mod/assign/index.php', array('id' => $this->get_course()->id));
         }
@@ -554,11 +550,7 @@ class assign {
         }
         // Now show the right view page.
         if ($action == 'redirect') {
-            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-                $nextpageurl = new moodle_url('/mod/assign/view.php', $nextpageparams);
-            }else{
-                $nextpageurl = new moodle_url('/mod/assign/remote/view.php', $nextpageparams);
-            }
+            $nextpageurl = new moodle_url('/mod/assign/view.php', $nextpageparams);
             redirect($nextpageurl);
             return;
         } else if ($action == 'savegradingresult') {
@@ -1008,11 +1000,7 @@ class assign {
         global $DB;
         $adminconfig = $this->get_admin_config();
         $update = new stdClass();
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-            $update->id = $formdata->instance;
-        } else {
-            $update->id = get_local_assign_record($formdata->instance)->id;
-        }
+        $update->id = $formdata->instance;
         $update->name = $formdata->name;
         $update->timemodified = time();
         $update->course = $formdata->course;
@@ -1252,21 +1240,7 @@ class assign {
             if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
                 $this->instance = $DB->get_record('assign', $params, '*', MUST_EXIST);
             } else {
-                // Get instance remote
-                if (isset($this->get_context()->instanceid)) {
-                    $instanceremote = get_remote_assign_by_id_instanceid($params['id'], $this->get_context()->instanceid);
-                } else {
-                    $instanceremote = get_remote_assign_by_id($params['id']);
-                }
-                // Get instance host
-                $this->instance = get_local_assign_record($this->get_course_module()->instance);
-                // Merge 2 instance
-                $this->instance->name = $instanceremote->name;
-                $this->instance->intro = $instanceremote->intro;
-                $this->instance->introformat = $instanceremote->introformat;
-                if (isset($instanceremote->introattachments)){
-                    $this->instance->introattachments = $instanceremote->introattachments;
-                }
+                $this->instance = get_remote_assign_by_id_instanceid($params['id'], $this->get_course_module()->remoteid);
             }
         }
         if (!$this->instance) {
@@ -5086,11 +5060,7 @@ class assign {
 
         if ($this->can_view_grades()) {
             // Group selector will only be displayed if necessary.
-            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-                $currenturl = new moodle_url('/mod/assign/view.php', array('id' => $this->get_course_module()->id));
-            } else{
-                $currenturl = new moodle_url('/mod/assign/remote/view.php', array('id' => $this->get_course_module()->id));
-            }
+            $currenturl = new moodle_url('/mod/assign/view.php', array('id' => $this->get_course_module()->id));
             $o .= groups_print_activity_menu($this->get_course_module(), $currenturl->out(), true);
 
             $summary = $this->get_assign_grading_summary_renderable();

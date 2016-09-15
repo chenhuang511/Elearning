@@ -34,15 +34,10 @@
 <div data-region="grading-navigation" class="row-fluid">
 <div data-region="assignment-info" class="col-xs-4 assignment-info-fix">
 <a href="{{config.wwwroot}}/course/view.php?id={{courseid}}">{{coursename}}</a><br/>
-{{#modehub}}
-    <a href="{{config.wwwroot}}/mod/assign/remote/view.php?id={{cmid}}">{{name}}</a>
-{{/modehub}}
-    {{^modehub}}
         <a href="{{config.wwwroot}}/mod/assign/view.php?id={{cmid}}">{{name}}</a>
         {{#caneditsettings}}
             <a href="{{config.wwwroot}}/course/modedit.php?update={{cmid}}&return=1">{{#pix}}t/edit, core,{{#str}}editsettings{{/str}}{{/pix}}</a>
         {{/caneditsettings}}
-    {{/modehub}}
 <div role="tooltip" id="tooltip-{{uniqid}}" class="accesshide">
 {{#duedate}}
 {{#str}}duedatecolon, mod_assign, {{duedatestr}}{{/str}}
