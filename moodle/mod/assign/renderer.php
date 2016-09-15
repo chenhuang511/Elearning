@@ -243,17 +243,7 @@ class mod_assign_renderer extends plugin_renderer_base
         $this->page->set_title(get_string('pluginname', 'assign'));
         $this->page->set_heading($this->page->course->fullname);
 
-
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST || $CFG->nonajax) {
-            $o .= $this->output->header();
-        } else {
-            // Header with JS
-            $this->page->set_state(moodle_page::STATE_PRINTING_HEADER);
-            $o .= $this->output->standard_head_html();
-            // Need submit permission to submit an assignment.
-            $o .= $this->output->standard_top_of_body_html();
-            $this->page->set_state(moodle_page::STATE_IN_BODY);
-        }
+        $o .= $this->output->header();
 
         $heading = format_string($header->assign->name, false, array('context' => $header->context));
         $o .= $this->output->heading($heading, 2, array('class' => 'el-heading'));

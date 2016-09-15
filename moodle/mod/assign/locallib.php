@@ -5073,11 +5073,7 @@ class assign {
             $o .= $this->view_student_summary($USER, true);
         }
 
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST || $CFG->nonajax) {
-            $o .= $this->view_footer();
-        } else {
-            $o .= $this->get_renderer()->footer(true);
-        }
+        $o .= $this->view_footer();
 
         \mod_assign\event\submission_status_viewed::create_from_assign($this)->trigger();
 

@@ -175,7 +175,7 @@ echo $OUTPUT->doctype() ?>
                                                                         }
                                                                         ?>
                                                                             "
-                                                                           href="<?php echo $CFG->wwwroot . '/mod/' . $cms[$module]->modname . '/remote/view.php?id=' . $cms[$module]->id . '&nonajax=1'; ?>"
+                                                                           href="<?php echo $CFG->wwwroot . '/mod/' . $cms[$module]->modname . '/view.php?id=' . $cms[$module]->id . '&nonajax=1'; ?>"
                                                                         >
                                                                         <span class="circle-icon-bhxh icon-bxh icon-<?php echo $cms[$module]->modname; ?>"></span><?php echo $cms[$module]->name; ?>
                                                                         </a>
