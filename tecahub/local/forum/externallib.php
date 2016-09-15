@@ -2557,7 +2557,7 @@ class local_mod_forum_external extends external_api
     public static function forum_add_discussions($data, $userid)
     {
 
-        global $DB;
+        global $CFG, $DB;
         $warnings = array();
         $result = array();
 
@@ -2568,8 +2568,9 @@ class local_mod_forum_external extends external_api
 
         $discussion = new stdClass();
         foreach ($params['data'] as $dt) {
-            if ($dt['name'] == 'messagetrust')
-                $data['value'] = $data['value'] === 'false' ? false : true;
+            if ($dt['name'] == 'messagetrust') {
+                $dt['value'] = $dt['value'] === 'false' ? false : true;
+            }
             $discussion->$dt['name'] = $dt['value'];
         }
 
@@ -2604,6 +2605,7 @@ class local_mod_forum_external extends external_api
         // TODO: Fix the calling code so that there always is a $cm when this function is called
         if (!empty($cm->id) && !empty($discussion->itemid)) {   // In "single simple discussions" this may not exist yet
             $context = context_module::instance($cm->id);
+            require_once($CFG->dirroot . '/lib/filelib.php');
             $text = file_save_draft_area_files($discussion->itemid, $context->id, 'mod_forum', 'post', $post->id,
                 mod_forum_post_form::editor_options($context, null), $post->message);
             $DB->set_field('forum_posts', 'message', $text, array('id' => $post->id));
