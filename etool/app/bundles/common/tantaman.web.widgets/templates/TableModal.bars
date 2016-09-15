@@ -1,0 +1,13 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">&times;</button>
+    <h4 class="modal-title">Modal Header</h4>
+</div>
+<div class="modal-body">
+    <label for="column">Number of Column:</label>
+    <input type="text" data-toggle="toggle" data-placement="right" title="the entry must be numeric less than or equal to 50" class="table-column" name="tableColumn" id="column">
+    <label for="row">Number of Row:</label>
+    <input type="text" data-toggle="toggle" data-placement="right" title="the entry must be numeric less than or equal to 50" class="table-row" name="tableRow" id="row"></br>
+</div>
+<div class="modal-footer">              
+     <a href="#" class="btn btn-primary ok btn-inverse" >OK</a>
+</div>
