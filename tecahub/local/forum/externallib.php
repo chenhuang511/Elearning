@@ -2568,9 +2568,10 @@ class local_mod_forum_external extends external_api
 
         $discussion = new stdClass();
         foreach ($params['data'] as $dt) {
+            if ($dt['name'] == 'messagetrust')
+                $data['value'] = $data['value'] === 'false' ? false : true;
             $discussion->$dt['name'] = $dt['value'];
         }
-
 
         $timenow = isset($discussion->timenow) ? $discussion->timenow : time();
 
