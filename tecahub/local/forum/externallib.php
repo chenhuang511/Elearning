@@ -268,11 +268,11 @@ class local_mod_forum_external extends external_api
             array(
                 'sub' => new external_single_structure(
                     array(
-                        'id' => new external_value(PARAM_INT, 'the id'),
-                        'forum' => new external_value(PARAM_INT, 'the forum'),
-                        'userid' => new external_value(PARAM_INT, 'the user id'),
-                        'discussion' => new external_value(PARAM_INT, 'the discussion id'),
-                        'preference' => new external_value(PARAM_INT, 'preference')
+                        'id' => new external_value(PARAM_INT, 'the id', VALUE_OPTIONAL),
+                        'forum' => new external_value(PARAM_INT, 'the forum', VALUE_OPTIONAL),
+                        'userid' => new external_value(PARAM_INT, 'the user id', VALUE_OPTIONAL),
+                        'discussion' => new external_value(PARAM_INT, 'the discussion id', VALUE_OPTIONAL),
+                        'preference' => new external_value(PARAM_INT, 'preference', VALUE_OPTIONAL)
                     )
                 ),
                 'warnings' => new external_warnings()
@@ -339,20 +339,20 @@ class local_mod_forum_external extends external_api
             array(
                 'post' => new external_single_structure(
                     array(
-                        'id' => new external_value(PARAM_INT, 'the id'),
-                        'discussion' => new external_value(PARAM_INT, 'the discussion id'),
-                        'parent' => new external_value(PARAM_INT, 'the parent'),
-                        'userid' => new external_value(PARAM_INT, 'the user id'),
-                        'created' => new external_value(PARAM_INT, 'created'),
-                        'modified' => new external_value(PARAM_INT, 'modified'),
-                        'mailed' => new external_value(PARAM_INT, 'mailed'),
-                        'subject' => new external_value(PARAM_RAW, 'the subject'),
-                        'message' => new external_value(PARAM_RAW, 'the message'),
-                        'messageformat' => new external_value(PARAM_INT, 'message format'),
-                        'messagetrust' => new external_value(PARAM_INT, 'message trust'),
-                        'attachment' => new external_value(PARAM_RAW, 'attachment'),
-                        'totalscore' => new external_value(PARAM_INT, 'total score'),
-                        'mailnow' => new external_value(PARAM_INT, 'mail now')
+                        'id' => new external_value(PARAM_INT, 'the id', VALUE_OPTIONAL),
+                        'discussion' => new external_value(PARAM_INT, 'the discussion id', VALUE_OPTIONAL),
+                        'parent' => new external_value(PARAM_INT, 'the parent', VALUE_OPTIONAL),
+                        'userid' => new external_value(PARAM_INT, 'the user id', VALUE_OPTIONAL),
+                        'created' => new external_value(PARAM_INT, 'created', VALUE_OPTIONAL),
+                        'modified' => new external_value(PARAM_INT, 'modified', VALUE_OPTIONAL),
+                        'mailed' => new external_value(PARAM_INT, 'mailed', VALUE_OPTIONAL),
+                        'subject' => new external_value(PARAM_RAW, 'the subject', VALUE_OPTIONAL),
+                        'message' => new external_value(PARAM_RAW, 'the message', VALUE_OPTIONAL),
+                        'messageformat' => new external_value(PARAM_INT, 'message format', VALUE_OPTIONAL),
+                        'messagetrust' => new external_value(PARAM_INT, 'message trust', VALUE_OPTIONAL),
+                        'attachment' => new external_value(PARAM_RAW, 'attachment', VALUE_OPTIONAL),
+                        'totalscore' => new external_value(PARAM_INT, 'total score', VALUE_OPTIONAL),
+                        'mailnow' => new external_value(PARAM_INT, 'mail now', VALUE_OPTIONAL)
                     )
                 ),
                 'warnings' => new external_warnings()
