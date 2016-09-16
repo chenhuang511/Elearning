@@ -102,12 +102,6 @@ define(["./ComponentView", "libs/etch",
 			 */
 			dblclicked: function(e) {
 
-                var number_col = this.model.get("column");
-				var number_row = this.model.get("row");
-
-                var testrow = this.$el.find('.sampletable tr');
-                console.log(testrow);
-
                 this.$el.find('.sampletable tr td:first').resizable({
                     handles: "s,e",
                 });
@@ -124,8 +118,6 @@ define(["./ComponentView", "libs/etch",
                 // this.$el.find('.sampletable tr td:first').resizable({
                 //     minHeight: 40
                 // });
-
-                //colResizable({liveDrag:true});
 
 				this.$el.addClass("editable");
 				this.$textEl.attr("contenteditable", true);
