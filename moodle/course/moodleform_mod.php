@@ -901,6 +901,7 @@ abstract class moodleform_mod extends moodleform {
         $mform->setType('introeditor', PARAM_RAW);
 
         $mform->addElement('html', '<div class="introdesc">');
+
         if (isset($this->current->introattachments)) {
             $introattachment = generate_output_introattachment($this->current->introattachments);
             $this->current->intro .= $introattachment;

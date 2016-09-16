@@ -57,21 +57,17 @@ class mod_assign_mod_form extends moodleform_mod {
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         if (MOODLE_RUN_MODE === MOODLE_MODE_HOST || !empty($this->current->add)) {
             $this->standard_intro_elements(get_string('description', 'assign'));
-            $mform->addElement('filemanager', 'introattachments',
-                get_string('introattachments', 'assign'),
-                null, array('subdirs' => 0, 'maxbytes' => $COURSE->maxbytes) );
-            $mform->addHelpButton('introattachments', 'introattachments', 'assign');
         } else {
             $this->remote_intro_elements(get_string('description', 'assign'));
         }
+        $mform->addElement('filemanager', 'introattachments',
+            get_string('introattachments', 'assign'),
+            null, array('subdirs' => 0, 'maxbytes' => $COURSE->maxbytes) );
+        $mform->addHelpButton('introattachments', 'introattachments', 'assign');
 
         $ctx = null;
         if ($this->current && $this->current->coursemodule) {
-            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
-                $cm = get_coursemodule_from_instance('assign', $this->current->id, 0, false, MUST_EXIST);
-            } else {
-                $cm = get_remote_course_module_by_instance('assign', $this->current->remoteid);
-            }
+            $cm = get_coursemodule_from_instance('assign', $this->current->id, 0, false, MUST_EXIST);
             $ctx = context_module::instance($cm->id);
         }
 
@@ -284,11 +280,7 @@ class mod_assign_mod_form extends moodleform_mod {
 
         $ctx = null;
         if ($this->current && $this->current->coursemodule) {
-            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
-                $cm = get_coursemodule_from_instance('assign', $this->current->id, 0, false, MUST_EXIST);
-            } else {
-                $cm = get_remote_course_module_by_instance('assign', $this->current->remoteid);
-            }
+            $cm = get_coursemodule_from_instance('assign', $this->current->id, 0, false, MUST_EXIST);
             $ctx = context_module::instance($cm->id);
         }
         $assignment = new assign($ctx, null, null);

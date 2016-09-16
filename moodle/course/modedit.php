@@ -166,12 +166,7 @@ else if (!empty($update)) {
         // Select the "Edit settings" from navigation.
         navigation_node::override_active_url(new moodle_url('/course/modedit.php', array('update' => $update, 'return' => 1)));
 
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
-            // Check the course module exists.
-            $cm = get_coursemodule_from_id('', $update, 0, false, MUST_EXIST);
-        } else {
-            $cm = get_remote_course_module($update);
-        }
+        $cm = get_coursemodule_from_id('', $update, 0, false, MUST_EXIST);
 
         // Check the course exists.
         $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
