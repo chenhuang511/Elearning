@@ -2,12 +2,13 @@ define(['libs/etch', 'css!styles/etch_extension/EtchOverrides.css','libs/backbon
 function(etch, backbone) {
     'use strict';
     _.extend(etch.config.buttonClasses, {
-        default: [
+        default:[
             '<group>', 'bold', 'italic', '</group>',
             '<group>', 'unordered-list', 'ordered-list', '</group>',
             '<group>', 'justify-left', 'justify-center', '</group>',
             '<group>', 'link', '</group>',
-            'table',
+            'insert-table',
+            'delete-table',
             'font-family', 'font-size',
             '<group>', 'color', '</group>',
             '<group>', 'clear-formatting', '</group>']
@@ -15,7 +16,6 @@ function(etch, backbone) {
 
     var noText = [
         'link',
-        'table',
         'clear-formatting',
         'ordered-list',
         'unordered-list'
@@ -34,8 +34,10 @@ function(etch, backbone) {
         switch (button) {
             case 'font-size':
                 return JST['strut.etch_extension/fontSizeSelection'](viewData);
-            case 'table':
-                return JST['strut.etch_extension/table'](viewData);
+            case 'insert-table':
+                return JST['strut.etch_extension/insertTable'](viewData);
+            case 'delete-table':
+                return JST['strut.etch_extension/deleteTable'](viewData);
             case 'font-family':
                 return JST['strut.etch_extension/fontFamilySelection'](viewData);
             case 'color':

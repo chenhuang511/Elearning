@@ -1,0 +1,10 @@
+<div class="btn-group">
+	<a href="#" class="btn btn-primary dropdown-toggle btn-small delTableBtn" data-toggle="dropdown" title="delete table"><span class="deleteTable">Delete</span>
+		<span class="caret"></span></a>
+	<ul class="dropdown-menu menuBarOption" data-option="deleteTable">
+		<li>
+                  <a href="#" data-value="deleteColumn">Delete Column</a>
+                  <a href="#" data-value="deleteRow">Delete Row</a>
+		</li>
+    </ul>
+</div>

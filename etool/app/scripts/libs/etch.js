@@ -17,7 +17,7 @@ define(['libs/backbone'], function(Backbone) {
     // in the markup as "data-button-class"
     buttonClasses: {
       'default': ['save'],
-      'all': ['bold', 'italic', 'underline', 'unordered-list', 'ordered-list', 'table', 'link', 'clear-formatting', 'save'],
+      'all': ['bold', 'italic', 'underline', 'unordered-list', 'ordered-list','insert-table', 'delete-table', 'link', 'clear-formatting', 'save'],
       'title': ['bold', 'italic', 'underline', 'save']
     }
   };
@@ -77,12 +77,8 @@ define(['libs/backbone'], function(Backbone) {
       'click .etch-clear-formatting': 'clearFormatting',
       'click [data-option="fontSize"]': 'setFontSize',
       'click [data-option="fontFamily"]': 'setFontFamily',
-      'click .ok': 'createTable',
-      'input input[name="tableColumn"]':'numberColumn',
-      'click .insert-row': '_insertRow',
-      'click .insert-column': '_insertColumn',
-      'click .delete-row': '_deleteRow',
-      'click .delete-column': '_deleteColumn'
+      'click [data-option="insertTable"]': 'insertTable',
+      'click [data-option="deleteTable"]': 'deleteTable',
     },
 
     _editableModelChanged: function(model, newEditable) {
@@ -124,6 +120,16 @@ define(['libs/backbone'], function(Backbone) {
       var editorModel = this.model;
       var buttonClass = editorModel.get('editable').attr('data-button-class') || 'default';
       editorModel.set({ buttons: etch.config.buttonClasses[buttonClass] });
+      var typeModel = editorModel.get("editableModel").get("type");
+      console.log(typeModel);
+      if(typeModel != "Table"){
+        this.$el.find(".insertTableBtn").addClass('disabled');
+        this.$el.find(".delTableBtn").addClass('disabled');
+      }
+      else{
+        this.$el.find(".insertTableBtn").removeClass('disabled');
+        this.$el.find(".delTableBtn").removeClass('disabled');
+      }
     },
 
     _fontSizeChanged: function(model, value) {
@@ -135,10 +141,8 @@ define(['libs/backbone'], function(Backbone) {
       this.$el.empty();
       var view = this;
       var buttons = this.model.get('buttons');
-
       // hide editor panel if there are no buttons in it and exit early
       if (!buttons.length) { $(this.el).hide(); return; }
-
       var $container = view.$el;
       _.each(this.model.get('buttons'), function(button){
         if (button == "<group>") {
@@ -153,7 +157,6 @@ define(['libs/backbone'], function(Backbone) {
       });
 
       $(this.el).show('fast');
-
       var $colorChooser = this.$el.find(".color-chooser");
       if ($colorChooser.length > 0) {
         var hex = '333';
@@ -215,38 +218,29 @@ define(['libs/backbone'], function(Backbone) {
       document.execCommand('removeFormat', false, null);
     },
 
-    createTable: function(e){
+    insertTable: function(e){
       e.preventDefault();
-      var number_column = this.$el.find('input[name="tableColumn"]').val();
-      var number_row = this.$el.find('input[name="tableRow"]').val();
-      var textBox = this.model.get('editableModel');
-      var reg = /\d$/;
-      if(!reg.test(number_column) || number_column > 50)
-      {
-        this.$el.find('[data-toggle="toggle"]').tooltip();
+      var value = extractValue(e);
+      if(value == "insertColumn"){
+        this._insertColumn();
       }
-      else if(!reg.test(number_row) || number_row > 50)
-      {
-        this.$el.find('[data-toggle="toggle"]').tooltip();
-      }
-      else{
-        var $table = '<table class="sampletable" style="text-align: center;">';
-        var $tableEl = '<tr height="40">'
-        for(var i = 0; i < number_column; ++i){
-          $tableEl += '<td>edit text</td>';
-        }
-        $tableEl += '</tr>';
-        for(var j = 0; j < number_row; ++j){
-          $table += $tableEl;
-        }
-        $table + '</table>';
-        textBox.set("text",$table);
-        textBox.set("_opts",$table);
+      else if(value == "insertRow"){
+        this._insertRow();
       }
     },
 
-    _insertRow: function(e){
+    deleteTable: function(e){
       e.preventDefault();
+      var value = extractValue(e);
+      if(value == "deleteColumn"){
+        this._deleteColumn();
+      }
+      else if(value == "deleteRow"){
+        this._deleteRow();
+      }
+    },
+
+    _insertRow: function(){
       var textBox = this.model.get('editableModel');
       var $table = textBox.get("text");
       var n = $table.lastIndexOf("<tr");
@@ -259,14 +253,12 @@ define(['libs/backbone'], function(Backbone) {
         if($rowEl[i].indexOf("<td") >= 0)
           $rowEl[i] = $rowEl[i].substr(0, 3)+">edit text";
       }
-      console.log($rowEl);
       $table = $table.substr(0, m + 5) + $rowEl.join("") + $table.substr(m + 5);
       textBox.set("text",$table);
       textBox.set("_opts",$table);
     },
 
-    _insertColumn: function(e){
-      e.preventDefault();
+    _insertColumn: function(){
       var str, ind;
       var textBox = this.model.get('editableModel');
       var $table = textBox.get("text");
@@ -282,8 +274,7 @@ define(['libs/backbone'], function(Backbone) {
       textBox.set("_opts",$table);
     },
 
-    _deleteRow: function(e){
-      e.preventDefault();
+    _deleteRow: function(){
       var textBox = this.model.get('editableModel');
       var $table = textBox.get("text");
       var n = $table.lastIndexOf("<tr");
@@ -298,8 +289,7 @@ define(['libs/backbone'], function(Backbone) {
       }
     },
 
-    _deleteColumn: function(e){
-      e.preventDefault();
+    _deleteColumn: function(){
       var str, ind;
       var textBox = this.model.get('editableModel');
       var $table = textBox.get("text");
@@ -335,7 +325,6 @@ define(['libs/backbone'], function(Backbone) {
     setFontSize: function(e) {
       var textBox = this.model.get('editableModel');
       var value = extractValue(e);
-
       textBox.set('size', (value |= 0));
 
       // TODO: we need to bind this to the editable model...

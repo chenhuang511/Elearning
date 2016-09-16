@@ -1,0 +1,10 @@
+<div class="btn-group">
+	<a href="#" class="btn btn-primary dropdown-toggle btn-small insertTableBtn" data-toggle="dropdown" title="insert table"><span class="insertTable">Insert</span>
+		<span class="caret"></span></a>
+	<ul class="dropdown-menu menuBarOption" role="menu" data-option="insertTable">
+		<li>
+            <a href="#" data-value="insertColumn">Insert Column</a>
+            <a href="#" data-value="insertRow">Insert Row</a>
+		</li>
+     	</ul>
+</div>
