@@ -269,10 +269,10 @@ class local_mod_forum_external extends external_api
                 'sub' => new external_single_structure(
                     array(
                         'id' => new external_value(PARAM_INT, 'the id'),
-                        'forum' => new external_value(PARAM_INT, 'the forum id'),
+                        'forum' => new external_value(PARAM_INT, 'the forum'),
                         'userid' => new external_value(PARAM_INT, 'the user id'),
                         'discussion' => new external_value(PARAM_INT, 'the discussion id'),
-                        'preference' => new external_value(PARAM_INT, 'the preference')
+                        'preference' => new external_value(PARAM_INT, 'preference')
                     )
                 ),
                 'warnings' => new external_warnings()
