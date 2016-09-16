@@ -2149,12 +2149,12 @@ class local_mod_forum_external extends external_api
             array(
                 'neighbour' => new external_single_structure(
                     array(
-                        'id' => new external_value(PARAM_INT, 'the id of discussion'),
-                        'name' => new external_value(PARAM_RAW, 'the name of discussion'),
-                        'timemodified' => new external_value(PARAM_INT, 'the time modified'),
-                        'groupid' => new external_value(PARAM_INT, 'the group id'),
-                        'timestart' => new external_value(PARAM_INT, 'time start'),
-                        'timeend' => new external_value(PARAM_INT, 'time end')
+                        'id' => new external_value(PARAM_INT, 'the id of discussion', VALUE_OPTIONAL),
+                        'name' => new external_value(PARAM_RAW, 'the name of discussion', VALUE_OPTIONAL),
+                        'timemodified' => new external_value(PARAM_INT, 'the time modified', VALUE_OPTIONAL),
+                        'groupid' => new external_value(PARAM_INT, 'the group id', VALUE_OPTIONAL),
+                        'timestart' => new external_value(PARAM_INT, 'time start', VALUE_OPTIONAL),
+                        'timeend' => new external_value(PARAM_INT, 'time end', VALUE_OPTIONAL)
                     )
                 ),
                 'warnings' => new external_warnings()
