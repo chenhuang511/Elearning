@@ -2781,9 +2781,10 @@ function forum_count_discussion_replies($forumid, $forumsort = "", $limit = -1, 
 
     if (($limitfrom == 0 and $limitnum == 0) or $forumsort == "") {
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $forum = $DB->get_record('forum', array('id' => $forumid), 'id, remoteid');
             $prs = array();
             $prs['parameters[0][name]'] = "forum";
-            $prs['parameters[0][value]'] = $forumid;
+            $prs['parameters[0][value]'] = $forum ? $forum->remoteid : $forumid;
 
             $replies = get_remote_forum_count_discussion_replies_sql($prs, $limitfrom, $limitnum, $forumsort, $orderby, $groupby);
             return $replies;
@@ -3048,7 +3049,12 @@ function forum_get_discussions($cm, $forumsort = "", $fullpost = true, $unused =
         $i = 0;
         foreach ($params as $key => $val) {
             $prs["parameters[$i][name]"] = $key;
-            $prs["parameters[$i][value]"] = $val;
+            if ($key == 0) {
+                $forum = $DB->get_record('forum', array("id" => $val), "id, remoteid");
+                $prs["parameters[$i][value]"] = $forum ? $forum->remoteid : $val;
+            } else {
+                $prs["parameters[$i][value]"] = $val;
+            }
             $i++;
         }
 
@@ -3137,7 +3143,7 @@ function forum_get_discussion_neighbours($cm, $discussion, $forum)
         }
     }
 
-    $params['forumid'] = $cm->instance;
+    $params['forumid'] = MOODLE_RUN_MODE === MOODLE_MODE_HUB ? $forum->remoteid : $cm->instance;
     $params['discid1'] = $discussion->id;
     $params['discid2'] = $discussion->id;
     $params['discid3'] = $discussion->id;
@@ -3438,7 +3444,12 @@ function forum_get_discussions_count($cm)
 
         foreach ($params as $key => $val) {
             $prs["parameters[$i][name]"] = $key;
-            $prs["parameters[$i][value]"] = $val;
+            if ($key == 0) {
+                $forum = $DB->get_record('forum', array('id' => $val), 'id, remoteid');
+                $prs["parameters[$i][value]"] = $forum ? $forum->remoteid : $val;
+            } else {
+                $prs["parameters[$i][value]"] = $val;
+            }
             $i++;
         }
 
@@ -5090,15 +5101,13 @@ function forum_add_new_post($post, $mform, $unused = null)
         $params['parameters[0][name]'] = "id";
         $params['parameters[0][value]'] = $post->discussion;
         $discussion = get_remote_forum_discussions_by($params);
-
-        $params['parameters[0][value]'] = $discussion->forum;
-        $forum = get_remote_forum_by($params);
-        $cm = get_remote_course_module_by_instance('forum', $forum->id);
     } else {
         $discussion = $DB->get_record('forum_discussions', array('id' => $post->discussion));
-        $forum = $DB->get_record('forum', array('id' => $discussion->forum));
-        $cm = get_coursemodule_from_instance('forum', $forum->id);
     }
+
+    $forum = $DB->get_record('forum', array('id' => $discussion->forum));
+    $cm = get_coursemodule_from_instance('forum', $forum->id);
+
     $context = context_module::instance($cm->id);
 
     $post->created = $post->modified = time();
@@ -5123,6 +5132,8 @@ function forum_add_new_post($post, $mform, $unused = null)
             } else if ($key == "course") {
                 $localcourse = $DB->get_record('course', array('id' => $val), 'id, remoteid', MUST_EXIST);
                 $postdata["data[$i][value]"] = $localcourse->remoteid;
+            } else if ($key == "forum") {
+                $postdata["data[$i][value]"] = $forum->remoteid;
             } else {
                 $postdata["data[$i][value]"] = $val;
             }
@@ -5148,7 +5159,6 @@ function forum_add_new_post($post, $mform, $unused = null)
     $DB->set_field("forum_discussions", "timemodified", $post->modified, array("id" => $post->discussion));
     $DB->set_field("forum_discussions", "usermodified", $post->userid, array("id" => $post->discussion));
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-
         $userhub = get_remote_mapping_user($post->userid);
         $updata = array();
         $updata['data[0][name]'] = "timemodified";
@@ -6337,7 +6347,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions = -1, $
 
     if (!$cm) {
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            if (!$cm = get_remote_course_module_by_instance('forum', $forum->id)) {
+            if (!$cm = get_coursemodule_from_instance('forum', $forum->remoteid)) {
                 print_error('invalidcoursemodule');
             }
         } else {

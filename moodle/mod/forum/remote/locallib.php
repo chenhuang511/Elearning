@@ -99,6 +99,7 @@ function get_remote_forum_by($parameters, $sort = '', $mustexists = FALSE)
 
 function get_remote_forum_discussions_by($parameters, $sort = '', $mustexists = FALSE)
 {
+    global $DB;
     $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
@@ -108,11 +109,27 @@ function get_remote_forum_discussions_by($parameters, $sort = '', $mustexists = 
         ), false
     );
 
-    return $result->discussion;
+    $discussion = $result->discussion;
+    if ($discussion) {
+        $course = $DB->get_record('course', array('remoteid' => $discussion->course), 'id, remoteid');
+        if ($course) {
+            $discussion->course = $course->id;
+        }
+
+        $forum = $DB->get_record('forum', array('remoteid' => $discussion->forum), 'id, remoteid');
+        if ($forum) {
+            $discussion->forum = $forum->id;
+        }
+        $discussion->userid = get_remote_mapping_localuserid($discussion->userid);
+        $discussion->usermodified = get_remote_mapping_localuserid($discussion->usermodified);
+    }
+
+    return $discussion;
 }
 
 function get_remote_forum_discussion_subs_by($parameters, $sort = '', $mustexists = FALSE)
 {
+    global $DB;
     $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
@@ -122,7 +139,16 @@ function get_remote_forum_discussion_subs_by($parameters, $sort = '', $mustexist
         ), false
     );
 
-    return $result->sub;
+    $sub = $result->sub;
+    if($sub) {
+        $forum = $DB->get_record('forum', array('remoteid' => $sub->forum), 'id, remoteid');
+        if($forum) {
+            $sub->forum = $forum->id;
+        }
+        $sub->userid = get_remote_mapping_localuserid($sub->userid);
+    }
+
+    return $sub;
 }
 
 function get_remote_forum_posts_by($parameters, $sort = '', $mustexists = FALSE)
@@ -136,7 +162,12 @@ function get_remote_forum_posts_by($parameters, $sort = '', $mustexists = FALSE)
         ), false
     );
 
-    return $result->post;
+    $post = $result->post;
+    if ($post) {
+        $post->userid = get_remote_mapping_localuserid($post->userid);
+    }
+
+    return $post;
 }
 
 function get_remote_forum_digests_by($parameters, $sort = '', $mustexists = FALSE)
@@ -474,6 +505,7 @@ function get_remote_forum_count_discussion_replies_sql($parameters, $limitfrom, 
 
 function get_remote_forum_get_post_full_sql($sql, $parameters)
 {
+    global $DB;
     $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
@@ -483,7 +515,16 @@ function get_remote_forum_get_post_full_sql($sql, $parameters)
         ), false
     );
 
-    return $result->post;
+    $post = $result->post;
+    if ($post) {
+        $post->userid = get_remote_mapping_localuserid($post->userid);
+        $forum = $DB->get_record('forum', array('remoteid' => $post->forum), 'id, remoteid');
+        if ($forum) {
+            $post->forum = $forum->id;
+        }
+    }
+
+    return $post;
 }
 
 function get_remote_forum_get_discussion_neighbours_sql($sql, $parameters, $strictness = IGNORE_MISSING)
@@ -502,6 +543,7 @@ function get_remote_forum_get_discussion_neighbours_sql($sql, $parameters, $stri
 
 function get_remote_forum_get_all_discussion_posts_sql($allnames, $tracking, $sort, $parameters)
 {
+    global $DB;
     $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
@@ -514,6 +556,7 @@ function get_remote_forum_get_all_discussion_posts_sql($allnames, $tracking, $so
     $posts = array();
 
     foreach ($result->posts as $post) {
+        $post->userid = get_remote_mapping_localuserid($post->userid);
         $posts[$post->id] = $post;
     }
 
@@ -623,12 +666,12 @@ function save_remote_forum_add_discussions($discussion, $userid)
 
     $forum = $DB->get_record('forum', array('remoteid' => $result->forum->id), '*', MUST_EXIST);
     $post = $result->post;
-    if($post) {
-        if(isset($post->userid))
+    if ($post) {
+        if (isset($post->userid))
             $post->userid = $USER->id;
-        if(isset($post->forum))
+        if (isset($post->forum))
             $post->forum = $forum->id;
-        if(isset($post->course))
+        if (isset($post->course))
             $post->course = $forum->course;
     }
     return array($forum, $post);

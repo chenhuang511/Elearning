@@ -841,10 +841,17 @@ class subscriptions
         global $DB;
 
         $hubuserid = $userid;
+        $hubforumid = $discussion->forum;
 
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
             $user = get_remote_mapping_user($userid);
-            $hubuserid = $user[0]->id;
+            if ($user) {
+                $hubuserid = $user[0]->id;
+            }
+            $forum = $DB->get_record('forum', array('id' => $discussion->forum), 'id, remoteid');
+            if ($forum) {
+                $hubforumid = $forum->remoteid;
+            }
         }
         // First check whether the user is subscribed to the discussion already.
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
@@ -870,7 +877,7 @@ class subscriptions
             $params['parameters[0][name]'] = "userid";
             $params['parameters[0][value]'] = $hubuserid;
             $params['parameters[1][name]'] = "forum";
-            $params['parameters[1][value]'] = $discussion->forum;
+            $params['parameters[1][value]'] = $hubforumid;
             $isexists = check_remote_record_forum_exists("forum_subscriptions", $params);
         } else {
             $isexists = $DB->record_exists('forum_subscriptions', array('userid' => $userid, 'forum' => $discussion->forum));
@@ -912,10 +919,13 @@ class subscriptions
                 if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
                     $data = array();
                     $i = 0;
-                    foreach ($data as $key => $val) {
+                    foreach ($subscription as $key => $val) {
                         $data["data[$i][name]"] = $key;
                         if ($key == "userid") {
                             $data["data[$i][value]"] = $hubuserid;
+                        } else if ($key == "forum") {
+                            $forum = $DB->get_record('forum', array('id' => $val), 'id, remoteid');
+                            $data["data[$i][value]"] = $forum->remoteid;
                         } else {
                             $data["data[$i][value]"] = $val;
                         }
