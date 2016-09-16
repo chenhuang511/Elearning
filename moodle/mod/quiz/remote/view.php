@@ -56,8 +56,6 @@ if (!has_capability('moodle/course:manageactivities', $context) && $nonajax == f
 
 // Create an object to manage all the other (non-roles) access rules.
 $timenow = time();
-//$quiz = get_remote_quiz_by_id($cm->instance);
-//$quizobj = new quiz($quiz, $cm, $course, true, true);
 $quizobj = quiz::create($cm->instance, $USER->id);
 $accessmanager = new quiz_access_manager($quizobj, $timenow,
     has_capability('mod/quiz:ignoretimelimits', $context, null, false));
@@ -120,7 +118,7 @@ $numattempts = count($attempts);
 $viewobj->attempts = $attempts;
 $viewobj->attemptobjs = array();
 foreach ($attempts as $attempt) {
-    $viewobj->attemptobjs[] = new quiz_attempt($attempt, $quiz, $cm, $course, false, true);
+    $viewobj->attemptobjs[] = new quiz_attempt($attempt, $quiz, $cm, $course, false);
 }
 
 // Work out the final grade, checking whether it was overridden in the gradebook.

@@ -131,7 +131,7 @@ if($quiz->settinglocal){
         $index++;
     }
 }
-$attemptremote = get_remote_quiz_start_attempt($quiz->remote, $user[0]->id, $preview, $setting);
+$attemptremote = get_remote_quiz_start_attempt($quizobj->get_quiz_remoteid(), $user[0]->id, $preview, $setting);
 
 $attempt = $attemptremote->attempt;
 // Redirect to the attempt page.

@@ -127,7 +127,8 @@ $status = $status->state;
 
 // update completion state if done this attempt
 if($status == quiz_attempt::FINISHED){
-    $completion = new completion_info($course);
+    $cm = $attemptobj->get_cm();
+    $completion = new completion_info($attemptobj->get_course());
     if ($completion->is_enabled()) {
         if($cm->completion != COMPLETION_TRACKING_MANUAL){
             $data = $completion->get_data($cm, false);

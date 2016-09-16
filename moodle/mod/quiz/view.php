@@ -25,6 +25,8 @@
 
 
 require_once(dirname(__FILE__) . '/../../config.php');
+require_once($CFG->dirroot . '/course/remote/locallib.php');
+require_once($CFG->dirroot.'/mod/quiz/remote/locallib.php');
 require_once($CFG->libdir.'/gradelib.php');
 require_once($CFG->dirroot.'/mod/quiz/locallib.php');
 require_once($CFG->libdir . '/completionlib.php');
@@ -32,6 +34,7 @@ require_once($CFG->dirroot . '/course/format/lib.php');
 
 $id = optional_param('id', 0, PARAM_INT); // Course Module ID, or ...
 $q = optional_param('q',  0, PARAM_INT);  // Quiz ID.
+$isremote = (MOODLE_RUN_MODE === MOODLE_MODE_HUB)?true:false;
 
 if ($id) {
     if (!$cm = get_coursemodule_from_id('quiz', $id)) {
@@ -61,6 +64,12 @@ require_capability('mod/quiz:view', $context);
 $canattempt = has_capability('mod/quiz:attempt', $context);
 $canreviewmine = has_capability('mod/quiz:reviewmyattempts', $context);
 $canpreview = has_capability('mod/quiz:preview', $context);
+$nonajax = optional_param('nonajax', true, PARAM_BOOL);
+if (!has_capability('moodle/course:manageactivities', $context) && $nonajax == false) {
+    $CFG->nonajax = false;
+} else {
+    $CFG->nonajax = true;
+}
 
 // Create an object to manage all the other (non-roles) access rules.
 $timenow = time();
@@ -81,21 +90,55 @@ $viewobj->accessmanager = $accessmanager;
 $viewobj->canreviewmine = $canreviewmine;
 
 // Get this user's attempts.
-$attempts = quiz_get_user_attempts($quiz->id, $USER->id, 'finished', true);
-$lastfinishedattempt = end($attempts);
-$unfinished = false;
-$unfinishedattemptid = null;
-if ($unfinishedattempt = quiz_get_user_attempt_unfinished($quiz->id, $USER->id)) {
-    $attempts[] = $unfinishedattempt;
+if($isremote){
+    $user = get_remote_mapping_user();
+    $attempts = get_remote_user_attemps($quiz->remoteid, $user[0]->id, 'finished', true);
+    $lastfinishedattempt = end($attempts);
+    $unfinished = false;
+    $unfinishedattemptid = null;
+    $unfinishedremote = get_remote_user_attemps($quiz->remoteid, $user[0]->id, 'unfinished', true);
+    $unfinishedattempt = array_shift($unfinishedremote);
 
-    // If the attempt is now overdue, deal with that - and pass isonline = false.
-    // We want the student notified in this case.
-    $quizobj->create_attempt_object($unfinishedattempt)->handle_if_time_expired(time(), false);
+    $setting = array();
+    if($quiz->settinglocal){
+        $fields =  array(
+            'timeopen',
+            'timeclose',
+            'timelimit',
+            'overduehandling',
+            'graceperiod',
+            'attempts',
+            'grademethod'
+        );
+        $index = 0;
+        foreach ($fields as $field){
+            $setting["setting[$index][name]"] = $field;
+            $setting["setting[$index][value]"] = $quiz->$field;
+            $index++;
+        }
+    }
+}else{
+    $attempts = quiz_get_user_attempts($quiz->id, $USER->id, 'finished', true);
+    $lastfinishedattempt = end($attempts);
+    $unfinished = false;
+    $unfinishedattemptid = null;
+    $unfinishedattempt = quiz_get_user_attempt_unfinished($quiz->id, $USER->id);
+}
 
+if(!empty($unfinishedattempt)){
+    if($isremote){
+        // If the attempt is now overdue, deal with that - and pass isonline = false.
+        // We want the student notified in this case.
+        $unfinishedattempt = remote_handle_if_time_expired($quiz->remoteid, $unfinishedattempt->id, false, $setting);
+        $attempts[] = $unfinishedattempt;
+    }else{
+        $attempts[] = $unfinishedattempt;
+        $quizobj->create_attempt_object($unfinishedattempt)->handle_if_time_expired(time(), false);
+    }
     $unfinished = $unfinishedattempt->state == quiz_attempt::IN_PROGRESS ||
             $unfinishedattempt->state == quiz_attempt::OVERDUE;
     if (!$unfinished) {
-        $lastfinishedattempt = $unfinishedattempt;
+        $lastfinishedattempt = $isremote?$unfinishedattempt:$attempts;
     }
     $unfinishedattemptid = $unfinishedattempt->id;
     $unfinishedattempt = null; // To make it clear we do not use this again.
@@ -110,7 +153,11 @@ foreach ($attempts as $attempt) {
 
 // Work out the final grade, checking whether it was overridden in the gradebook.
 if (!$canpreview) {
-    $mygrade = quiz_get_best_grade($quiz, $USER->id);
+    if($isremote){
+        $mygrade = get_remote_user_best_grade($quiz->remoteid, $user[0]->id)->grade;
+    }else{
+        $mygrade = quiz_get_best_grade($quiz, $USER->id);
+    }
 } else if ($lastfinishedattempt) {
     // Users who can preview the quiz don't get a proper grade, so work out a
     // plausible value to display instead, so the page looks right.
@@ -161,6 +208,47 @@ if ($attempts) {
 $viewobj->timenow = $timenow;
 $viewobj->numattempts = $numattempts;
 $viewobj->mygrade = $mygrade;
+
+if($isremote){
+    /**
+     * override mygrade follow local setting
+     * @todo: Need check handel $mygrade
+     */
+    $gradearray = array();
+    foreach ($viewobj->attemptobjs as $attemptobj) {
+        $temp = quiz_rescale_grade($attemptobj->get_sum_marks(), $quiz, false);
+        if($attemptobj->get_state() == quiz_attempt::FINISHED && ! is_null($temp)){
+            $gradearray[] = quiz_rescale_grade($attemptobj->get_sum_marks(), $quiz, false);
+        }
+    }
+
+    if($gradearray){
+        switch ($quiz->grademethod) {
+            case QUIZ_ATTEMPTFIRST:
+                $viewobj->mygrade = $viewobj->mygrade = ($gradearray[0]) ? $gradearray[0] : null;
+                break;
+
+            case QUIZ_ATTEMPTLAST:
+                $viewobj->mygrade = end($gradearray);
+                break;
+
+            case QUIZ_GRADEAVERAGE:
+                $viewobj->mygrade = array_sum($gradearray)/count($gradearray);
+                break;
+
+            default:
+            case QUIZ_GRADEHIGHEST:
+                $viewobj->mygrade = max($gradearray);
+                break;
+        }
+    } else {
+        $viewobj->mygrade = null;
+    }
+    /**
+     *  end override
+     */
+}
+
 $viewobj->moreattempts = $unfinished ||
         !$accessmanager->is_finished($numattempts, $lastfinishedattempt);
 $viewobj->mygradeoverridden = $mygradeoverridden;
