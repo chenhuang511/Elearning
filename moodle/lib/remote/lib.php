@@ -146,6 +146,7 @@ function get_remote_course_mods($courseid, $getcm = false)
             add_local_course_module($cm);
         }
     }
+
     add_local_course_sections($remotecourseid);
 }
 
@@ -445,11 +446,6 @@ function merge_local_sequence_course_section($sequence, $updatecm = false, $seci
 function merge_local_course_module_instance($courseid, $instance, $modname)
 {
     global $DB, $CFG;
-
-    // If exist in host then return
-    if ($DB->get_field($modname, 'id', array('id' => $instance))) {
-        return $instance;
-    }
 
     $functionname = $modname . '_get_local_settings_info';
 
