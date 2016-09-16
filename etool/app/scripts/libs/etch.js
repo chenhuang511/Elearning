@@ -253,6 +253,7 @@ define(['libs/backbone'], function(Backbone) {
         if($rowEl[i].indexOf("<td") >= 0)
           $rowEl[i] = $rowEl[i].substr(0, 3)+">edit text";
       }
+
       $table = $table.substr(0, m + 5) + $rowEl.join("") + $table.substr(m + 5);
       textBox.set("text",$table);
       textBox.set("_opts",$table);

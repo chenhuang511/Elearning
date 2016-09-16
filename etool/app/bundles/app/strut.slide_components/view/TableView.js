@@ -102,13 +102,36 @@ define(["./ComponentView", "libs/etch",
 			 */
 			dblclicked: function(e) {
 
-                this.$el.find('.sampletable td').resizable({});
+                var number_col = this.model.get("column");
+				var number_row = this.model.get("row");
+
+                var testrow = this.$el.find('.sampletable tr');
+                console.log(testrow);
+
+                this.$el.find('.sampletable tr td:first').resizable({
+                    handles: "s,e",
+                });
+
+                this.$el.find('.sampletable td:first-child').resizable({
+                    handles: "s",
+                    minHeight: 40
+                });
+
+                this.$el.find('.sampletable tr:first td').resizable({
+                    handles: "e",
+                });
+
+                // this.$el.find('.sampletable tr td:first').resizable({
+                //     minHeight: 40
+                // });
+
+                //colResizable({liveDrag:true});
 
 				this.$el.addClass("editable");
 				this.$textEl.attr("contenteditable", true);
 				if (e != null) {
 					this._initialText = this.$textEl.html();
-					//etch.editableInit.call(this, e, this.model.get("y") * this.dragScale + 35);
+					etch.editableInit.call(this, e, this.model.get("y") * this.dragScale + 23);
 
 					// Focus editor and select all text.
 					if (!this.editing) {
@@ -136,7 +159,7 @@ define(["./ComponentView", "libs/etch",
 			mousedown: function(e) {
 				if (this.editing) {
 					e.stopPropagation();
-					etch.editableInit.call(this, e, this.model.get("y") * this.dragScale + 35);
+					etch.editableInit.call(this, e, this.model.get("y") * this.dragScale + 23);
 				} else {
 					ComponentView.prototype.mousedown.apply(this, arguments);
 				}
@@ -305,7 +328,7 @@ define(["./ComponentView", "libs/etch",
 				var number_col = this.model.get("column");
 				var number_row = this.model.get("row");
 				var $table = '<table class="sampletable" style="text-align: center;">';
-        		var $tableEl = '<tr height="40">'
+        		var $tableEl = '<tr>'
         		for(var i = 0; i < number_col; ++i){
           			$tableEl += '<td>edit text</td>';
         		}
@@ -329,18 +352,19 @@ define(["./ComponentView", "libs/etch",
 						var number_col = this.model.get("column");
 						var number_row = this.model.get("row");
 						var $table = '<table class="sampletable" style="text-align: center;">';
-        				var $tableEl = '<tr height="40">'
+        				var $tableEl = '<tr>'
         				for(var i = 0; i < number_col; ++i)
           					$tableEl += '<td>edit text</td>';
         				$tableEl += '</tr>';
         				for(var j = 0; j < number_row; ++j)
-          					$table += $tableEl;			
+          					$table += $tableEl;
         				$table + '</table>';
                         this.tablediv.innerHTML = $table;
-                    	}
+                    }
                     this.$el.append(this.tablediv);
 				}
                 this.model.set("text", this.$el.find('.sampletable').parent().html());
+
                 //this.$el.find('.sampletable td').resizable({});
                 //$('.sampletable th').resizable({});
 

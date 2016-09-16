@@ -10,9 +10,9 @@
     font-size: inherit;
 }
 
-.component, .component .content, .slideDrawer .componentContainer {
+/*.component, .component .content, .slideDrawer .componentContainer {
     transform: none !important;
-}
+}*/
 
 th, td {
     border: solid 1px;
@@ -25,7 +25,7 @@ th, td {
 }
 
 .component.tableDisplay {
-    right: 14px;
+    /*right: 14px;*/
 }
 
 div-table{
