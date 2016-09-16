@@ -5306,9 +5306,9 @@ function forum_add_discussion($discussion, $mform = null, $unused = null, $useri
         }
 
         $result = save_remote_forum_add_discussions($discussion, $hubuserid);
-        $forum = $result->forum;
-        $post = $result->post;
-        $cm = get_remote_course_modules_by_instance('forum', $forum->id);
+        $forum = $result[0];
+        $post = $result[1];
+        $cm = get_coursemodule_from_instance('forum', $forum->id);
     } else {
 
         // The first post is stored as a real post, and linked
@@ -5766,12 +5766,11 @@ function forum_user_has_posted_discussion($forumid, $userid, $groupid = null)
     }
 
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $user = get_remote_mapping_user($userid);
         $prs = array();
         $prs['parameters[0][name]'] = "forum";
         $prs['parameters[0][value]'] = $forumid;
         $prs['parameters[1][name]'] = "userid";
-        $prs['parameters[1][value]'] = $user[0]->id;
+        $prs['parameters[1][value]'] = $userid;
 
         if (count($params) > 2) {
             $prs['parameters[2][name]'] = "groupid";
@@ -5902,14 +5901,8 @@ function forum_user_can_post_discussion($forum, $currentgroup = null, $unused = 
 
     if (!$cm) {
         debugging('missing cm', DEBUG_DEVELOPER);
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            if (!$cm = get_remote_course_module_by_instance('forum', $forum->id)) {
-                print_error('invalidcoursemodule');
-            }
-        } else {
-            if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
-                print_error('invalidcoursemodule');
-            }
+        if (!$cm = get_coursemodule_from_instance('forum', MOODLE_RUN_MODE === MOODLE_MODE_HOST ? $forum->id : $forum->remoteid, $forum->course)) {
+            print_error('invalidcoursemodule');
         }
     }
 
@@ -5940,8 +5933,20 @@ function forum_user_can_post_discussion($forum, $currentgroup = null, $unused = 
     }
 
     if ($forum->type == 'eachuser') {
-        if (forum_user_has_posted_discussion($forum->id, $USER->id, $currentgroup)) {
-            return false;
+        if (MOODLE_RUN_MODE == MOODLE_MODE_HUB) {
+            $hubuserid = $USER->id;
+            $hubuser = get_remote_mapping_user($USER->id);
+            if ($hubuser) {
+                $hubuserid = $hubuser[0]->id;
+            }
+
+            if (forum_user_has_posted_discussion($forum->remoteid, $hubuserid, $currentgroup)) {
+                return false;
+            }
+        } else {
+            if (forum_user_has_posted_discussion($forum->id, $USER->id, $currentgroup)) {
+                return false;
+            }
         }
     }
 
@@ -7962,7 +7967,7 @@ function forum_check_throttling($forum, $cm = null)
 
     if (!$cm) {
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            $cm = get_remote_course_module_by_instance('forum', $forum->id);
+            $cm = get_remote_course_module_by_instance('forum', $forum->remoteid);
         } else {
             $cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course, false, MUST_EXIST);
         }
@@ -8351,14 +8356,7 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
 {
     global $USER, $PAGE, $CFG, $DB, $OUTPUT;
 
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $params = array();
-        $params['parameters[0][name]'] = "id";
-        $params['parameters[0][value]'] = $PAGE->cm->instance;
-        $forumobject = get_remote_forum_by($params);
-    } else {
-        $forumobject = $DB->get_record("forum", array("id" => $PAGE->cm->instance));
-    }
+    $forumobject = $DB->get_record("forum", array("id" => $PAGE->cm->instance));
     if (empty($PAGE->cm->context)) {
         $PAGE->cm->context = context_module::instance($PAGE->cm->instance);
     }

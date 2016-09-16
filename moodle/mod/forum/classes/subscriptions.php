@@ -341,11 +341,12 @@ class subscriptions
                 if (!isset(self::$forumcache[$userid][$forumid])) {
                     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
                         $user = get_remote_mapping_user($userid);
+                        $forum = $DB->get_record('forum', array('id' => $forumid), 'id,remoteid', MUST_EXIST);
                         $params = array();
                         $params['parameters[0][name]'] = "userid";
                         $params['parameters[0][value]'] = $user[0]->id;
                         $params['parameters[1][name]'] = "forum";
-                        $params['parameters[1][value]'] = $forumid;
+                        $params['parameters[1][value]'] = $forum ? $forum->remoteid : $forumid;
                         $isexists = check_remote_record_forum_exists("forum_subscriptions", $params);
                     } else {
                         $isexists = $DB->record_exists('forum_subscriptions', array(

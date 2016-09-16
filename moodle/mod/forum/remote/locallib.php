@@ -586,7 +586,7 @@ function save_remote_forum_add_instance($forumdata)
 
 function save_remote_forum_add_discussions($discussion, $userid)
 {
-    global $DB;
+    global $DB, $USER;
 
     if ($discussion) {
         $course = $DB->get_record('course', array("id" => $discussion->course), "id, remoteid");
@@ -620,6 +620,17 @@ function save_remote_forum_add_discussions($discussion, $userid)
             'params' => array_merge(array('userid' => $userid), $data),
         )
     );
-    return $result;
+
+    $forum = $DB->get_record('forum', array('remoteid' => $result->forum->id), '*', MUST_EXIST);
+    $post = $result->post;
+    if($post) {
+        if(isset($post->userid))
+            $post->userid = $USER->id;
+        if(isset($post->forum))
+            $post->forum = $forum->id;
+        if(isset($post->course))
+            $post->course = $forum->course;
+    }
+    return array($forum, $post);
 }
 

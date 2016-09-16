@@ -245,7 +245,7 @@ class local_mod_forum_external extends external_api
 
         $result = array();
 
-        if ($params['mustexists'] === FALSE) {
+        if ($params['mustexists'] === FALSE && $params['sort'] == '') {
             $sub = $DB->get_record("forum_discussion_subs", $arr);
         } else if ($params['mustexists'] === FALSE && $params['sort'] != '') {
             $sub = $DB->get_record("forum_discussion_subs", $arr, $params['sort']);
