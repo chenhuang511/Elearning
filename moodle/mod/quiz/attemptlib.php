@@ -111,8 +111,7 @@ class quiz {
         global $DB;
 
         if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-            $remoteid = $DB->get_field('quiz', 'remoteid', array('id' => $quizid));
-            $quiz = get_remote_quiz_by_id($remoteid);
+            $quiz = get_remote_quiz_by_id($quizid, false);
         }else{
             $quiz = quiz_access_manager::load_quiz_and_settings($quizid);
         }
@@ -764,6 +763,11 @@ class quiz_attempt {
     /** @return int the quiz id. */
     public function get_quizid() {
         return $this->quizobj->get_quizid();
+    }
+
+    /** @return int the quiz id. */
+    public function get_quiz_remoteid() {
+        return $this->quizobj->get_quiz_remoteid();
     }
 
     /** @return string the name of this quiz. */

@@ -17,10 +17,10 @@ $q = optional_param('q', 0, PARAM_INT);
 $mode = optional_param('mode', '', PARAM_ALPHA);
 
 if ($id) {
-    if (!$cm = get_remote_course_module_by_cmid('quiz', $id)) {
+    if (!$cm = get_coursemodule_from_id('quiz', $id)) {
         print_error('invalidcoursemodule');
     }
-    if (!$course = get_local_course_record($cm->course, true)) {
+    if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
         print_error('coursemisconf');
     }
 

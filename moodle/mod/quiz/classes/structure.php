@@ -581,7 +581,7 @@ class structure {
         global $DB;
 
         if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-            $slots = remote_get_slots_by_sql_quizid($quiz->id);
+            $slots = remote_get_slots_by_sql_quizid($quiz->remoteid);
         }else{
             $slots = $DB->get_records_sql("
                 SELECT slot.id AS slotid, slot.slot, slot.questionid, slot.page, slot.maxmark,
@@ -616,7 +616,7 @@ class structure {
 
         // Get quiz sections in ascending order of the firstslot.
         if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-            $this->sections = get_remote_get_sections_by_quizid($quiz->id);
+            $this->sections = get_remote_get_sections_by_quizid($quiz->remoteid);
         }else{
             $this->sections = $DB->get_records('quiz_sections', array('quizid' => $quiz->id), 'firstslot ASC');
         }

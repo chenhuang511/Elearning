@@ -2231,7 +2231,7 @@ function quiz_validate_new_attempt(quiz $quizobj, quiz_access_manager $accessman
     }
     // Look for an existing attempt.
     if($isremote){
-        $attempts = get_remote_user_attemps($quizobj->get_quiz_remoteid(), $user[0]->id, 'all', true);
+        $attempts = get_remote_user_attemps($quizobj->get_quizid(), $user[0]->id, 'all', true);
     }else{
         $attempts = quiz_get_user_attempts($quizobj->get_quizid(), $USER->id, 'all', true);
     }

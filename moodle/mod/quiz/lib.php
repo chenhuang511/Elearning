@@ -1573,7 +1573,7 @@ function quiz_num_attempt_summary($quiz, $cm, $returnzero = false, $currentgroup
     if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
         $numattempts = $DB->count_records('quiz_attempts', array('quiz'=> $quiz->id, 'preview'=>0));
     }else{
-        $numattempts = get_remote_count_attempts($quiz->id)->num;
+        $numattempts = get_remote_count_attempts($quiz->remoteid)->num;
     }
     
     if ($numattempts || $returnzero) {
@@ -1942,6 +1942,7 @@ function quiz_get_local_settings_info($courseid, $instance)
 {
     global $CFG, $DB;
     require_once($CFG->dirroot . '/mod/quiz/remote/locallib.php');
+    // instance chính là quizid in hub
     $quiz = get_remote_quiz_by_id($instance);
     if($quiz->settinglocal === false){ // check data quiz in local db
         $quiz->course = $courseid;

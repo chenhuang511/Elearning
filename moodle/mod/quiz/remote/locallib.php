@@ -39,8 +39,12 @@ require_once($CFG->dirroot . '/lib/additionallib.php');
 require_once($CFG->dirroot . '/mnet/service/enrol/locallib.php');
 require_once($CFG->dirroot . '/mnet/lib.php');
 
-function get_remote_quiz_by_id($id) {
+function get_remote_quiz_by_id($id, $isremoteid = true) {
     global $DB;
+    // Nếu quizid là local id thì ta phải lấy hubid = remoteid để call API
+    if ($isremoteid === false){
+        $id = $DB->get_field('quiz', 'remoteid', array('id' => $id));
+    }
     $res = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
@@ -81,12 +85,15 @@ function get_remote_quiz_by_id($id) {
 }
 
 function get_remote_user_attemps($quizid, $userid, $status, $includepreviews) {
+    global $DB;
+    // Fix quizlocal id ->>> quiz remoteid
+    $id = $DB->get_field('quiz', 'remoteid', array('id' => $quizid));
     $remote_attempts = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN_M,
             'function_name' => 'mod_quiz_get_user_attempts',
-            'params' => array('quizid' => $quizid, 'userid' => $userid, 'status' => $status, 'includepreviews' => $includepreviews)
+            'params' => array('quizid' => $id, 'userid' => $userid, 'status' => $status, 'includepreviews' => $includepreviews)
         ), false
     );
     $result = array();
@@ -96,47 +103,38 @@ function get_remote_user_attemps($quizid, $userid, $status, $includepreviews) {
     return $result;
 }
 
-function get_remote_quiz_view_quiz($quizid) {
-    return moodle_webservice_client(
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN_M,
-            'function_name' => 'mod_quiz_view_quiz',
-            'params' => array('quizid'=>$quizid)
-        ), false
-    );
-}
-
-function get_remote_user_best_grade($quizid,  $userid) {
+function get_remote_user_best_grade($quizremoteid,  $userid) {
     return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN_M,
             'function_name' => 'mod_quiz_get_user_best_grade',
-            'params' => array('quizid' => $quizid, 'userid' => $userid)
+            'params' => array('quizid' => $quizremoteid, 'userid' => $userid)
         ), false
     );
 }
 
 function get_remote_question($quizid) {
+    global $DB;
+    // Fix quizlocal id ->>> quiz remoteid
+    $id = $DB->get_field('quiz', 'remoteid', array('id' => $quizid));
     return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_quiz_get_questions_by_quizid',
-            'params' => array('id' => $quizid)
+            'params' => array('id' => $id)
         ), false
     );
 }
 
-// Sử dụng API có sẵn mod_quiz_start_attempt để thay thế cho hàm xử lý quiz_prepare_and_start_new_attempt trong startattempt.php
-function get_remote_quiz_start_attempt($quizid, $remoteuserid, $preview, $setting) {
+function get_remote_quiz_start_attempt($quizremoteid, $remoteuserid, $preview, $setting) {
     return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_quiz_start_remote_attempt',
-            'params' => array_merge(array('quizid' => $quizid, 'remoteuserid' => $remoteuserid, 'preview' => $preview,
+            'params' => array_merge(array('quizid' => $quizremoteid, 'remoteuserid' => $remoteuserid, 'preview' => $preview,
                 'preflightdata' => array(), 'forcenew' => true), $setting)
         ), false
     );
@@ -285,6 +283,9 @@ function get_remote_count_attempts($quizid) {
 }
 
 function get_remote_significant_questions($quizid) {
+    global $DB;
+    // Fix quizlocal id ->>> quiz remoteid
+    $id = $DB->get_field('quiz', 'remoteid', array('id' => $quizid));
     $questions = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
@@ -357,6 +358,7 @@ function get_remote_check_quiz_grade_by_quizid($quizid) {
 }
 
 function get_remote_report_grade_bands($sql, $params) {
+    // @TODO: chua fix
     return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
@@ -403,6 +405,7 @@ function get_remote_attempts_byid($paramdata, $asql, $fields) {
 }
 
 function remote_process_submitted_data($attemptids, $data) {
+    // @TODO chua fix
     return moodle_webservice_client(
         array(
             'domain' => HUB_URL,

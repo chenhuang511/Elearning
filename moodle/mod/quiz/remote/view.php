@@ -26,7 +26,7 @@ if ($id) {
         print_error('coursemisconf');
     }
 } else {
-    if (!$quiz = $DB->get_record('quiz', array('id' => $q))) {
+    if (!$quiz = get_remote_quiz_by_id($q, false)) {
         print_error('invalidquizid', 'quiz');
     }
     if (!$course = $DB->get_record('course', array('id' => $quiz->course))) {
@@ -74,11 +74,11 @@ $viewobj->canreviewmine = $canreviewmine;
 
 // Get this user's attempts. User should map from host to hub
 $user = get_remote_mapping_user();
-$attempts = get_remote_user_attemps($quiz->remoteid, $user[0]->id, 'finished', true);
+$attempts = get_remote_user_attemps($quiz->id, $user[0]->id, 'finished', true);
 $lastfinishedattempt = end($attempts);
 $unfinished = false;
 $unfinishedattemptid = null;
-$unfinishedremote = get_remote_user_attemps($quiz->remoteid, $user[0]->id, 'unfinished', true);
+$unfinishedremote = get_remote_user_attemps($quiz->id, $user[0]->id, 'unfinished', true);
 $unfinishedattempt = array_shift($unfinishedremote);
 
 // Get settinglocal to call API handle_if_time_expired
@@ -118,7 +118,7 @@ $numattempts = count($attempts);
 $viewobj->attempts = $attempts;
 $viewobj->attemptobjs = array();
 foreach ($attempts as $attempt) {
-    $viewobj->attemptobjs[] = new quiz_attempt($attempt, $quiz, $cm, $course, false);
+    $viewobj->attemptobjs[] = new quiz_attempt($attempt, $quiz, $cm, $course, false, true);
 }
 
 // Work out the final grade, checking whether it was overridden in the gradebook.

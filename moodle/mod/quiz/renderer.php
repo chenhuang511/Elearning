@@ -760,7 +760,7 @@ class mod_quiz_renderer extends plugin_renderer_base
         // Get the summary info for each question.
         $slots = $attemptobj->get_slots();
         if (!$slots) {
-            $r_slots = get_remote_get_slots_by_quizid($attemptobj->get_quizid());
+            $r_slots = get_remote_get_slots_by_quizid($attemptobj->get_quiz_remoteid());
             $slots = array();
             foreach ($r_slots as $key => $value) {
                 $slots[$key] = (string)$r_slots[$key]->slot;

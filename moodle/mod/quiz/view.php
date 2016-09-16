@@ -44,7 +44,7 @@ if ($id) {
         print_error('coursemisconf');
     }
 } else {
-    if (!$quiz = $DB->get_record('quiz', array('id' => $q))) {
+    if (!$quiz = get_remote_quiz_by_id($q, false)) {
         print_error('invalidquizid', 'quiz');
     }
     if (!$course = $DB->get_record('course', array('id' => $quiz->course))) {
@@ -92,11 +92,11 @@ $viewobj->canreviewmine = $canreviewmine;
 // Get this user's attempts.
 if($isremote){
     $user = get_remote_mapping_user();
-    $attempts = get_remote_user_attemps($quiz->remoteid, $user[0]->id, 'finished', true);
+    $attempts = get_remote_user_attemps($quiz->id, $user[0]->id, 'finished', true);
     $lastfinishedattempt = end($attempts);
     $unfinished = false;
     $unfinishedattemptid = null;
-    $unfinishedremote = get_remote_user_attemps($quiz->remoteid, $user[0]->id, 'unfinished', true);
+    $unfinishedremote = get_remote_user_attemps($quiz->id, $user[0]->id, 'unfinished', true);
     $unfinishedattempt = array_shift($unfinishedremote);
 
     $setting = array();
@@ -274,7 +274,7 @@ if ($quiz->attempts != 1) {
 }
 
 // Determine wheter a start attempt button should be displayed.
-$viewobj->quizhasquestions = $quizobj->has_questions();
+$viewobj->quizhasquestions = $quizobj->has_questions($quiz->id);
 $viewobj->preventmessages = array();
 if (!$viewobj->quizhasquestions) {
     $viewobj->buttontext = '';

@@ -107,8 +107,8 @@ class quiz_overview_report extends quiz_attempts_report {
             }
         }
 
-        if($isremote){
-            $r_questions = get_remote_get_slots_by_quizid($quiz->id);
+        if($isremote){                                                          
+            $r_questions = get_remote_get_slots_by_quizid($quiz->remoteid);
             $hasquestions = !empty($r_questions);
         }else{
             $hasquestions = quiz_has_questions($quiz->id);
@@ -258,7 +258,7 @@ class quiz_overview_report extends quiz_attempts_report {
             }
 
             if($isremote){
-                $checkgrade = get_remote_check_quiz_grade_by_quizid($quiz->id)->check;
+                $checkgrade = get_remote_check_quiz_grade_by_quizid($quiz->remoteid)->check;
             }else{
                 $checkgrade = $DB->record_exists('quiz_grades', array('quiz'=> $quiz->id));
             }
