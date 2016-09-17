@@ -18,10 +18,11 @@ time, mark, audio, video {
     vertical-align: baseline;
 }
 
-th {
+th, td {
     border: solid 1px;
     padding: 5px 15px;
     vertical-align: middle;
+    white-space: nowrap;
 }
 
 /* HTML5 display-role reset for older browsers */
