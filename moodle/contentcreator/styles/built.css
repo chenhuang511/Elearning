@@ -759,25 +759,35 @@ body {
     font-size: inherit;
 }
 
-.component, .component .content, .slideDrawer .componentContainer {
+/*.component, .component .content, .slideDrawer .componentContainer {
     transform: none !important;
-}
+}*/
 
 th, td {
     border: solid 1px;
     padding: 5px 15px;
+    /*white-space: normal;*/
+}
+
+.slideDrawer td {
+    white-space: nowrap;
 }
 
 .component.tableDisplay {
-    right: 14px;
+    /*right: 14px;*/
 }
 
 div-table{
     display: none;
 }
 
-.topLabel, .leftLabel, .rightLabel, .form-inline,
-.tableDisplay .scale{
+.tableDisplay .topLabel, .tableDisplay .leftLabel, .tableDisplay .rightLabel,
+.tableDisplay .form-inline, .tableDisplay .scale,
+.textBox .topLabel, .textBox .leftLabel, .textBox .rightLabel,
+.textBox .form-inline,
+.formulaBox .topLabel, .formulaBox .leftLabel, .formulaBox .rightLabel,
+.formulaBox .form-inline
+{
     display: none;
 }
 
