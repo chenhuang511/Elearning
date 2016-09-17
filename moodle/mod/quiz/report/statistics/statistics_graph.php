@@ -41,18 +41,14 @@ $whichattempts = required_param('whichattempts', PARAM_INT);
 $isremote = (MOODLE_RUN_MODE === MOODLE_MODE_HUB)?true:false;
 
 if($isremote){
-    $quiz = get_remote_quiz_by_id($quizid);
-    $cm = $cm = get_remote_course_module_by_instance("quiz", $quiz->id);
-    $course = get_local_course_record($quiz->course);
-    // Check access.
-    require_login($course, false, $cm);
+    $quiz = get_remote_quiz_by_id($quizid, false);
 }else{
     $quiz = $DB->get_record('quiz', array('id' => $quizid), '*', MUST_EXIST);
-    $cm = get_coursemodule_from_instance('quiz', $quiz->id);
-    // Check access.
-    require_login($quiz->course, false, $cm);
 }
+$cm = get_coursemodule_from_instance('quiz', $quiz->id);
 
+// Check access.
+require_login($quiz->course, false, $cm);
 $modcontext = context_module::instance($cm->id);
 require_capability('quiz/statistics:view', $modcontext);
 

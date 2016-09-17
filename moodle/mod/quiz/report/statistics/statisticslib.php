@@ -41,7 +41,12 @@ function quiz_statistics_attempts_sql($quizid, $groupstudents, $whichattempts = 
     $fromqa = '{quiz_attempts} quiza ';
 
     $whereqa = 'quiza.quiz = :quizid AND quiza.preview = 0 AND quiza.state = :quizstatefinished';
-    $qaparams = array('quizid' => (int)$quizid, 'quizstatefinished' => quiz_attempt::FINISHED);
+    if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+        $remoteid = $DB->get_field('quiz', 'remoteid', array('id' => $quizid));
+        $qaparams = array('quizid' => (int)$remoteid, 'quizstatefinished' => quiz_attempt::FINISHED);
+    }else{
+        $qaparams = array('quizid' => (int)$quizid, 'quizstatefinished' => quiz_attempt::FINISHED);
+    }
 
     if($usermaps){
         ksort($usermaps);
