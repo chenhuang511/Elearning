@@ -160,7 +160,7 @@ class quiz_overview_report extends quiz_attempts_report {
                             $quiz, $groupstudents);
                     if ($currentgroup) {
                         $a= new stdClass();
-                        $a->groupname = groups_get_group_name($currentgroup);//@TODO API here...
+                        $a->groupname = groups_get_group_name($currentgroup);
                         $a->coursestudents = get_string('participants');
                         $a->countregradeneeded = $regradesneeded;
                         $regradealldrydolabel =
@@ -193,7 +193,7 @@ class quiz_overview_report extends quiz_attempts_report {
                     echo '</form>';
                     echo '</div>';
                 }
-                // Print information on the grading method. @TODO: handle here...
+                // Print information on the grading method.
                 if ($strattempthighlight = quiz_report_highlighting_grading_method(
                         $quiz, $this->qmsubselect, $options->onlygraded)) {
                     echo '<div class="quizattemptcounts">' . $strattempthighlight . '</div>';

@@ -87,13 +87,13 @@ function get_remote_quiz_by_id($id, $isremoteid = true) {
 function get_remote_user_attemps($quizid, $userid, $status, $includepreviews) {
     global $DB;
     // Fix quizlocal id ->>> quiz remoteid
-    $id = $DB->get_field('quiz', 'remoteid', array('id' => $quizid));
+    $remoteid = $DB->get_field('quiz', 'remoteid', array('id' => $quizid));
     $remote_attempts = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN_M,
             'function_name' => 'mod_quiz_get_user_attempts',
-            'params' => array('quizid' => $id, 'userid' => $userid, 'status' => $status, 'includepreviews' => $includepreviews)
+            'params' => array('quizid' => $remoteid, 'userid' => $userid, 'status' => $status, 'includepreviews' => $includepreviews)
         ), false
     );
     $result = array();
@@ -117,13 +117,13 @@ function get_remote_user_best_grade($quizremoteid,  $userid) {
 function get_remote_question($quizid) {
     global $DB;
     // Fix quizlocal id ->>> quiz remoteid
-    $id = $DB->get_field('quiz', 'remoteid', array('id' => $quizid));
+    $remoteid = $DB->get_field('quiz', 'remoteid', array('id' => $quizid));
     return moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_quiz_get_questions_by_quizid',
-            'params' => array('id' => $id)
+            'params' => array('id' => $remoteid)
         ), false
     );
 }
@@ -285,13 +285,13 @@ function get_remote_count_attempts($quizid) {
 function get_remote_significant_questions($quizid) {
     global $DB;
     // Fix quizlocal id ->>> quiz remoteid
-    $id = $DB->get_field('quiz', 'remoteid', array('id' => $quizid));
+    $remoteid = $DB->get_field('quiz', 'remoteid', array('id' => $quizid));
     $questions = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_quiz_report_get_significant_questions',
-            'params' => array('quizid' => $quizid)
+            'params' => array('quizid' => $remoteid)
         ), false
     );
     $sigquestions = array();
@@ -358,7 +358,6 @@ function get_remote_check_quiz_grade_by_quizid($quizid) {
 }
 
 function get_remote_report_grade_bands($sql, $params) {
-    // @TODO: chua fix
     return moodle_webservice_client(
         array(
             'domain' => HUB_URL,

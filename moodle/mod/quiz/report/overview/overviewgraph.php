@@ -33,14 +33,12 @@ $groupid = optional_param('groupid', 0, PARAM_INT);
 
 $isremote = (MOODLE_RUN_MODE == MOODLE_MODE_HUB)?true:false;
 if($isremote){
-    $quiz = get_remote_quiz_by_id($quizid);
-    $course = get_local_course_record($quiz->course);
-    $cm = get_remote_course_module_by_instance("quiz", $quiz->id);
+    $quiz = get_remote_quiz_by_id($quizid, false);
 }else{
     $quiz = $DB->get_record('quiz', array('id' => $quizid));
-    $course = $DB->get_record('course', array('id' => $quiz->course));
-    $cm = get_coursemodule_from_instance('quiz', $quizid);
 }
+$course = $DB->get_record('course', array('id' => $quiz->course));
+$cm = get_coursemodule_from_instance('quiz', $quizid);
 
 require_login($course, false, $cm);
 $modcontext = context_module::instance($cm->id);

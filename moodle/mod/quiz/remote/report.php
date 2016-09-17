@@ -24,18 +24,18 @@ if ($id) {
         print_error('coursemisconf');
     }
 
-    if (!$quiz = get_remote_quiz_by_id($cm->instance)) {
+    if (!$quiz = get_remote_quiz_by_id($cm->instance, false)) {
         print_error('invalidcoursemodule');
     }
 
 } else {
-    if (!$quiz = get_remote_quiz_by_id($q)) {
+    if (!$quiz = get_remote_quiz_by_id($q, false)) {
         print_error('invalidquizid', 'quiz');
     }
-    if (!$course = get_local_course_record($quiz->course)) {
+    if (!$course = $DB->get_record('course', array('id' => $quiz->course))) {
         print_error('invalidcourseid');
     }
-    if (!$cm = get_remote_course_module_by_instance("quiz", $quiz->id)) {
+    if (!$cm = get_coursemodule_from_instance("quiz", $quiz->id, $course->id)) {
         print_error('invalidcoursemodule');
     }
 }

@@ -231,6 +231,8 @@ ORDER BY
     $params['bandwidth'] = $bandwidth;
 
     if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+        $remoteid = $DB->get_field('quiz', 'remoteid', array('id' => $quizid));
+        $params['quizid'] = $remoteid;
         $paramdata = array();
         $index = 0;
         foreach ($params as $key => $val){

@@ -447,7 +447,11 @@ abstract class quiz_attempts_report_table extends table_sql {
         $from = "\n{user} u";
         $from .= "\nLEFT JOIN {quiz_attempts} quiza ON
                                     quiza.userid = u.id AND quiza.quiz = :quizid";
-        $params = array('quizid' => $this->quiz->id);
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $params = array('quizid' => $this->quiz->remoteid);
+        }else{
+            $params = array('quizid' => $this->quiz->id);
+        }
 
         if ($this->qmsubselect && $this->options->onlygraded) {
             $from .= " AND (quiza.state <> :finishedstate OR $this->qmsubselect)";
