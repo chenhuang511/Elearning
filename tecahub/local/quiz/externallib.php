@@ -1511,7 +1511,14 @@ ORDER BY
     public static function load_questions_usages_where_question_in_state_parameters() {
         return new external_function_parameters(
             array(
-                'param' => new  external_multiple_structure(
+                'summarystate' => new external_value(PARAM_RAW, 'summarystate'),
+                'slot' => new external_value(PARAM_RAW, 'slot'),
+                'questionid' => new external_value(PARAM_RAW, 'questionid'),
+                'orderby' => new external_value(PARAM_RAW, 'orderby'),
+                'limitfrom' => new external_value(PARAM_RAW, 'limitfrom'),
+                'pagesize' => new external_value(PARAM_RAW, 'pagesize'),
+                'qubawhere' => new external_value(PARAM_RAW, 'where'),
+                'qubaparam' => new  external_multiple_structure(
                     new external_single_structure(
                         array(
                             'name' => new external_value(PARAM_RAW, 'name'),
@@ -1519,13 +1526,14 @@ ORDER BY
                         )
                     )
                 ),
-                'where' => new external_value(PARAM_RAW, 'where'),
-                'summarystate' => new external_value(PARAM_RAW, 'summarystate'),
-                'slot' => new external_value(PARAM_RAW, 'slot'),
-                'questionid' => new external_value(PARAM_RAW, 'questionid'),
-                'orderby' => new external_value(PARAM_RAW, 'orderby'),
-                'limitfrom' => new external_value(PARAM_RAW, 'limitfrom'),
-                'pagesize' => new external_value(PARAM_RAW, 'pagesize'),
+                'orderbyparam' => new  external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'name'),
+                            'value' => new external_value(PARAM_RAW, 'value'),
+                        )
+                    )
+                ),
             )
         );
     }
@@ -1536,46 +1544,27 @@ ORDER BY
      * @since Moodle 3.1 Options available
      * @since Moodle 3.1
      */
-    public static function load_questions_usages_where_question_in_state($qubaparam, $qubawhere, $summarystate,
-                                                                         $slot, $questionid, $orderby, $limitfrom, $pagesize) {
+    public static function load_questions_usages_where_question_in_state($summarystate, $slot, $questionid, $orderby, $limitfrom, $pagesize, $qubawhere, $qubaparam, $orderbyparam) {
         global $CFG, $DB;
 
         $params = self::validate_parameters(self::load_questions_usages_where_question_in_state_parameters(),
-            array('param' => $qubaparam, 'where' => $qubawhere, 'summarystate' => $summarystate, 'slot' => $slot, 'questionid' => $questionid,
-                'orderby' => $orderby, 'limitfrom' => $limitfrom, 'pagesize' => $pagesize));
+            array('summarystate' => $summarystate, 'slot' => $slot, 'questionid' => $questionid, 'orderby' => $orderby, 'limitfrom' => $limitfrom,
+                'pagesize' => $pagesize, 'qubawhere' => $qubawhere, 'qubaparam' => $qubaparam, 'orderbyparam' => $orderbyparam));
 
-        $paramdata = array();
+        $qubaparamdata = array();
         foreach ($qubaparam as $element) {
-            $paramdata[$element['name']] = $element['value'];
+            $qubaparamdata[$element['name']] = $element['value'];
         }
         
-        $qubaids = new qubaid_join('{quiz_attempts} quiza', 'quiza.uniqueid', $qubawhere, $paramdata);
-        $dm = new question_engine_data_mapper();
-        $params = array();
-        if ($orderby == 'date') {
-            list($statetest, $params) = $dm->in_summary_state_test(
-                'manuallygraded', false, 'mangrstate');
-            $orderby = "(
-                    SELECT MAX(sortqas.timecreated)
-                    FROM {question_attempt_steps} sortqas
-                    WHERE sortqas.questionattemptid = qa.id
-                        AND sortqas.state $statetest
-                    )";
-        } else if ($orderby == 'studentfirstname' || $orderby == 'studentlastname' || $orderby == 'idnumber') {
-            $qubaids->from .= " JOIN {user} u ON quiza.userid = u.id ";
-            // For name sorting, map orderby form value to
-            // actual column names; 'idnumber' maps naturally
-            switch ($orderby) {
-                case "studentlastname":
-                    $orderby = "u.lastname, u.firstname";
-                    break;
-                case "studentfirstname":
-                    $orderby = "u.firstname, u.lastname";
-                    break;
-            }
+        $qubaids = new qubaid_join('{quiz_attempts} quiza', 'quiza.uniqueid', $qubawhere, $qubaparamdata);
+        $orderbyparamdata = array();
+        foreach ($orderbyparam as $element) {
+            $orderbyparamdata[$element['name']] = $element['value'];
         }
+        $dm = new question_engine_data_mapper();
+//        var_dump($orderby);die;
         $result = $dm->load_questions_usages_where_question_in_state($qubaids, $summarystate,
-            $slot, $questionid, $orderby, $params, $limitfrom, $pagesize);
+            $slot, $questionid, $orderby, $orderbyparamdata, $limitfrom, $pagesize);
         $res = array();
         $res['qubaids'] = $result[0];
         $res['count'] = $result[1];

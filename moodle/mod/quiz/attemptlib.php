@@ -627,6 +627,9 @@ class quiz_attempt {
         // Update quiz with override information.
         $quiz = quiz_update_effective_access($quiz, $attempt->userid);
 
+        if($isremote){
+            return new quiz_attempt($attempt, $quiz, $cm, $course, false);
+        }
         return new quiz_attempt($attempt, $quiz, $cm, $course);
     }
 

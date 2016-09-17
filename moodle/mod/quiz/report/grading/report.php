@@ -104,11 +104,7 @@ class quiz_grading_report extends quiz_default_report {
 
         // Get the list of questions in this quiz.
         if($isremote){
-            $r_questions = get_remote_significant_questions($quiz->id);
-            $questions = array();
-            foreach ($r_questions as $key => $value){
-                $questions[$value->slot] = $value;
-            }
+            $questions = get_remote_significant_questions($quiz->id);
         }else{
             $questions = quiz_report_get_significant_questions($quiz);
         }
@@ -135,7 +131,7 @@ class quiz_grading_report extends quiz_default_report {
         }
 
         if($isremote){
-            $hasquestions = !empty($r_questions);
+            $hasquestions = !empty($questions);
         }else{
             $hasquestions = quiz_has_questions($quiz->id);
         }
@@ -158,7 +154,6 @@ class quiz_grading_report extends quiz_default_report {
                     $questiondata["questions[$index1]"] = $question->slot;
                     $index1++;
                 }
-                //@TODO: test and check if many slots
                 $statecounts = get_remote_load_questions_usages_question_state_summary($questiondata, $qubaparam, $qubaobj->where);
             }else{
                 $statecounts = $this->get_question_state_summary(array($slot));
@@ -203,9 +198,15 @@ class quiz_grading_report extends quiz_default_report {
 
         $currentgroup = groups_get_activity_group($this->cm, true);
         if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            $remoteid = $DB->get_field('quiz', 'remoteid', array('id' => $this->cm->instance));
+            $params['mangrquizid'] = $remoteid;
             $users = get_users_by_capability($this->context,
                 array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), '', '', '', '',
                 $currentgroup, '', false);
+            if(!$users){
+                global $OUTPUT;
+                echo $OUTPUT->notification(get_string('nostudentsyet'));die();
+            }
             list($usql, $uparam) = $DB->get_in_or_equal(array_keys($users),
                 SQL_PARAMS_NAMED, 'mangru');
             $uparamdata = array();
@@ -238,7 +239,7 @@ class quiz_grading_report extends quiz_default_report {
 
         list($asql, $params) = $DB->get_in_or_equal($qubaids);
         $params[] = quiz_attempt::FINISHED;
-        $params[] = $this->quiz->id;
+        $params[] = (MOODLE_RUN_MODE === MOODLE_MODE_HUB)?$this->quiz->remoteid:$this->quiz->id;
 
         $fields = 'quiza.*, u.idnumber, ';
         $fields .= get_all_user_name_fields(true, 'u');
@@ -686,17 +687,26 @@ class quiz_grading_report extends quiz_default_report {
 
         $result = array();
         if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            // @TODO: handle here
             $qubaparam = array();
             $index = 0;
             foreach ($qubaids->params as $key => $val){
-                $qubaparam["param[$index][name]"]=$key;
-                $qubaparam["param[$index][value]"]=$val;
+                $qubaparam["qubaparam[$index][name]"]=$key;
+                $qubaparam["qubaparam[$index][value]"]=$val;
                 $index++;
             }
+            $orderbyparam = array();
+            $i = 0;
+            foreach ($params as $key => $val){
+                $orderbyparam["orderbyparam[$i][name]"]=$key;
+                $orderbyparam["orderbyparam[$i][value]"]=$val;
+                $i++;
+            }
             $qubawhere = $qubaids->where;
+//            var_dump($orderbyparam);die;
 
             $res = get_remote_load_questions_usages_where_question_in_state($qubaparam, $qubawhere, $summarystate,
-                $slot, $questionid, $orderby, $limitfrom, $pagesize);
+                $slot, $questionid, $orderby, $orderbyparam, $limitfrom, $pagesize);
             $result = array($res->qubaids, $res->count);
         }else{
             $result = $dm->load_questions_usages_where_question_in_state($qubaids, $summarystate,

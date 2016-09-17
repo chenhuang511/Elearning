@@ -380,16 +380,17 @@ function get_remote_load_questions_usages_question_state_summary($questions, $pa
 }
 
 function get_remote_load_questions_usages_where_question_in_state($qubaparam, $qubawhere, $summarystate,
-                                                                  $slot, $questionid, $orderby, $limitfrom, $pagesize) {
-    return moodle_webservice_client(
+                                                                  $slot, $questionid, $orderby, $orderbyparam, $limitfrom, $pagesize) {
+    $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_quiz_load_questions_usages_where_question_in_state',
             'params' => array_merge(array('summarystate' => $summarystate, 'slot' => $slot, 'questionid' => $questionid,
-                'orderby' => $orderby, 'limitfrom' => $limitfrom, 'pagesize' => $pagesize, "where" => $qubawhere), $qubaparam)
+                'orderby' => $orderby, 'limitfrom' => $limitfrom, 'pagesize' => $pagesize, "qubawhere" => $qubawhere), $qubaparam, $orderbyparam)
         ), false
     );
+    return $result;
 }
 
 function get_remote_attempts_byid($paramdata, $asql, $fields) {

@@ -44,7 +44,7 @@ require_sesskey();
 $PAGE->set_heading($quizobj->get_course()->fullname);
 
 // Check questions.
-if (!$quizobj->has_questions($quiz->id)) {
+if (!$quizobj->has_questions($quizobj->get_quiz()->id)) {
     if ($quizobj->has_capability('mod/quiz:manage')) {
         redirect($quizobj->edit_url());
     } else {
