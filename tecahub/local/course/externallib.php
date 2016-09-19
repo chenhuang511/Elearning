@@ -2720,4 +2720,37 @@ class local_course_external extends external_api
     {
         return self::delete_course_modules_returns();
     }
+
+    public static function course_delete_module_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'cmid' => new external_value(PARAM_INT, 'the id of course module')
+            )
+        );
+    }
+
+    public static function course_delete_module_by($cmid)
+    {
+        global $CFG;
+        $warnings = array();
+        require_once($CFG->dirroot . '/course/lib.php');
+
+        $params = self::validate_parameters(self::course_delete_module_by_parameters(), array(
+            'cmid' => $cmid
+        ));
+
+        $result = array();
+
+        course_delete_module($params['cmid']);
+
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    public static function course_delete_module_by_returns()
+    {
+        return self::delete_course_modules_returns();
+    }
 }

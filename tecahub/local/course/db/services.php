@@ -330,4 +330,12 @@ $functions = array(
         'type'		    => 'write',
         'ajax'		    => true
     ),
+    'local_course_delete_module_by' => array(
+        'classname'     => 'local_course_external',
+        'methodname'    => 'course_delete_module_by',
+        'classpath'     => 'local/course/externallib.php',
+        'description'   => 'course delete module',
+        'type'		    => 'write',
+        'ajax'		    => true
+    ),
 );
