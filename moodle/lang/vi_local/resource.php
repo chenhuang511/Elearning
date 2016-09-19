@@ -26,5 +26,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['clicktoopen2'] = 'Nhấn {$a} để xem tập tin.';
+$string['filenotfound'] = 'Xin lỗi, không tìm thấy tập tin.';
 $string['optionsheader'] = 'Hiển thị các lựa chọn';
 $string['showtype'] = 'Hiển thị kiểu';

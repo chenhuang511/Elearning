@@ -25,6 +25,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['comments'] = 'Bình luận';
+$string['defaultformat'] = 'Định dạng mặc định';
+$string['deleteupload'] = 'Xóa';
 $string['edit'] = 'Chỉnh sửa';
 $string['editsection'] = 'chỉnh sửa';
 $string['rating'] = 'Đánh giá';

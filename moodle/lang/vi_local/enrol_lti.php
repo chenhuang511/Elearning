@@ -19,7 +19,7 @@
  * Local language pack from http://192.168.1.253
  *
  * @package    enrol
- * @subpackage paypal
+ * @subpackage lti
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,4 +27,3 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['enrolenddate'] = 'Ngày kết thúc';
 $string['enrolstartdate'] = 'Ngày bắt đầu';
-$string['mailstudents'] = 'Thông báo cho học viên';

@@ -29,3 +29,5 @@ $string['generalconfig'] = 'Cấu hình chung';
 $string['idle'] = 'Không hoạt động';
 $string['pluginadministration'] = 'Quản lý trò chuyện';
 $string['search:activity'] = 'Trò chuyện - thông tin hoạt động';
+$string['send'] = 'Gửi';
+$string['sending'] = 'Đang gửi';

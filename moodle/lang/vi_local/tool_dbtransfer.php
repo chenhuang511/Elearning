@@ -26,5 +26,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['exportdata'] = 'Xuất dữ liệu';
+$string['options'] = 'Tùy chọn';
 $string['pluginname'] = 'Chuyển cơ sở dữ liệu';
 $string['transferdata'] = 'Chuyển dữ liệu';

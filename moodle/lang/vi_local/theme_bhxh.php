@@ -18,13 +18,14 @@
 /**
  * Local language pack from http://192.168.1.253
  *
- * @package    enrol
- * @subpackage paypal
+ * @package    theme
+ * @subpackage bhxh
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['enrolenddate'] = 'Ngày kết thúc';
-$string['enrolstartdate'] = 'Ngày bắt đầu';
-$string['mailstudents'] = 'Thông báo cho học viên';
+$string['customcss'] = 'Tùy chỉnh CSS';
+$string['customcssdesc'] = 'Quy tắc CSS bạn thêm vào khu vực này sẽ được phản ánh qua mỗi trang, làm cho tùy biến dễ dàng hơn về chủ đề này.';
+$string['footnotedesc'] = 'Bất cứ cái gì bạn thêm vào khu vực này sẽ được hiển thị phần cuối trang trong trang web Moodle của ban.';
+$string['logodesc'] = 'Hãy tải lên biểu tượng tùy chỉnh của bạn ở đây nếu bạn muốn thêm nó vào đầu trang. <br>Hình ảnh phải cao 37px và bất kỳ chiều rộng hợp lý (tối thiểu: 250px) phù hợp.';

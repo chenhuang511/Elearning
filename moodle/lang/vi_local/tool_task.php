@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['component'] = 'Thành phần';
 $string['default'] = 'Mặc định';
+$string['disabled'] = 'Vô hiệu hóa';
 $string['faildelay'] = 'Lỗi chậm trễ';
 $string['lastruntime'] = 'Chạy lần cuối';
 $string['nextruntime'] = 'Chạy lần tiếp theo';

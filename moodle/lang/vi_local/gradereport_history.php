@@ -27,7 +27,8 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['allgradeitems'] = 'Tất cả các mục điểm';
 $string['allgraders'] = 'Tất cả điểm';
-$string['datefrom'] = 'Tù ngày';
+$string['datefrom'] = 'Từ ngày';
+$string['datetime'] = 'Ngày và giờ';
 $string['dateto'] = 'Đến ngày';
 $string['grader'] = 'Điểm';
 $string['historyperpage'] = 'Lịch sử truy cập mỗi trang';

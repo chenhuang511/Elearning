@@ -25,6 +25,17 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['check_backup'] = 'Sao lưu tự động';
+$string['check_backup_comment_disable'] = 'Hiệu suất có thể bị ảnh hưởng trong quá trình sao lưu. Nếu được kích hoạt, sao lưu nên được lên kế hoạch cho thời gian cao điểm.';
+$string['check_cachejs_comment_enable'] = 'Nếu vô hiệu hóa, trang có thể tải chậm.';
+$string['check_debugmsg_comment_nodeveloper'] = 'Nếu thiết lập đến NHÀ PHÁT TRIỂN, hiệu suất có thể bị ảnh hưởng nhẹ.';
+$string['check_enablestats_comment_disable'] = 'Hiệu suất có thể bị ảnh hưởng bởi tiến trình thống kê. Nếu được kích hoạt, thiết lập thống kê cần được thiết lập một cách thận trọng.';
+$string['check_themedesignermode_comment_disable'] = 'Nếu được kích hoạt, hình ảnh và phong cách trang sẽ không được lưu trữ, dẫn đến suy thoái hiệu suất đáng kể.';
+$string['comments'] = 'Bình luận';
+$string['disabled'] = 'Vô hiệu hóa';
 $string['edit'] = 'Chỉnh sửa';
 $string['enabled'] = 'Đã kích hoạt';
+$string['issue'] = 'Vấn đề';
+$string['performancereportdesc'] = 'Báo cáo này liệt kê các vấn đề có thể ảnh hưởng đến hiệu suất của trang web {$a}';
 $string['pluginname'] = 'Tổng quan về hiệu năng';
+$string['value'] = 'Giá trị';

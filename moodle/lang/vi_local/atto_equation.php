@@ -26,3 +26,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['settings'] = 'Thiết lập trình soạn thảo cân bằng';
+$string['update'] = 'Cập nhật';

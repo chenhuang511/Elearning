@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['enabled'] = 'Tệp tin phản hồi';
 $string['file'] = 'Tệp phản hồi';
+$string['filesupdated'] = 'Tệp phản hồi được cập nhật: {$a}';
 $string['maxbytes'] = 'Dung lượng tệp tin tối đa';
 $string['maxfiles'] = 'Số tệp tối đa được gửi';
 $string['maximumsize'] = 'Dung lượng tệp tin tối đa';

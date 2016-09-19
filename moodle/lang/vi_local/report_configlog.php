@@ -26,5 +26,9 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['configlog'] = 'Thay đổi cấu hình';
+$string['oldvalue'] = 'Giá trị ban đầu';
 $string['plugin'] = 'Tiện ích';
 $string['pluginname'] = 'Thay đổi cấu hình';
+$string['setting'] = 'Thiết lập';
+$string['timemodified'] = 'Ngày';
+$string['value'] = 'Giá trị mới';

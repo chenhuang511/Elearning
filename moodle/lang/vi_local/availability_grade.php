@@ -26,6 +26,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['description'] = 'Yêu cầu học viên đạt được một mức điểm cụ thể.';
-$string['pluginname'] = 'Hạn chế bằng điểm';
+$string['pluginname'] = 'Hạn chế theo điểm';
 $string['requires_min'] = 'Bạn đạt điểm số được yêu cầu trong  <strong>{$a}</strong>';
 $string['title'] = 'Điểm';

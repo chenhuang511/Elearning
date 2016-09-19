@@ -26,12 +26,14 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['actions'] = 'Hành động';
+$string['disabled'] = 'Vô hiệu hóa';
 $string['edit'] = 'Chỉnh sửa';
 $string['editoverride'] = 'Chỉnh sửa ghi đè';
 $string['enabled'] = 'Đã kích hoạt';
 $string['groupoverrides'] = 'Ghi đè nhóm';
 $string['groupoverridesdeleted'] = 'Ghi đè nhóm đã xóa';
 $string['messageprovider:graded_essay'] = 'Thông báo đã chấm điểm bài luận trong bài học';
+$string['options'] = 'Tùy chọn';
 $string['override'] = 'Ghi đè';
 $string['overridegroup'] = 'Ghi đè nhóm';
 $string['overrides'] = 'Ghi đè';

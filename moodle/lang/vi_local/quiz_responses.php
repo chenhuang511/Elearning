@@ -18,13 +18,21 @@
 /**
  * Local language pack from http://192.168.1.253
  *
- * @package    enrol
- * @subpackage paypal
+ * @package    quiz
+ * @subpackage responses
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['enrolenddate'] = 'Ngày kết thúc';
-$string['enrolstartdate'] = 'Ngày bắt đầu';
-$string['mailstudents'] = 'Thông báo cho học viên';
+$string['pluginname'] = 'Phản hồi';
+$string['questiontext'] = 'nội dung câu hỏi';
+$string['reportresponses'] = 'Phản hồi';
+$string['response'] = 'phản hồi';
+$string['responses'] = 'Phản hồi';
+$string['responsesfilename'] = 'phản hồi';
+$string['responsestitle'] = 'Phản hồi';
+$string['responsex'] = 'Phản hồi {$a}';
+$string['rightanswer'] = 'câu trả lời đúng';
+$string['rightanswerx'] = 'Câu trả lời đúng {$a}';
+$string['showthe'] = 'Hiển thị';

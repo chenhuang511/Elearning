@@ -29,4 +29,5 @@ $string['enrolusers'] = 'Ghi danh người dùng';
 $string['manual:enrol'] = 'Ghi danh người dùng';
 $string['messageprovider:expiry_notification'] = 'Đăng ký thủ công thông báo hết hạn';
 $string['pluginname'] = 'Đăng ký thủ công';
+$string['statusdisabled'] = 'Vô hiệu hóa';
 $string['statusenabled'] = 'Đã kích hoạt';

@@ -26,5 +26,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['questionname'] = 'Tên câu hỏi';
+$string['response'] = 'Phản hồi';
 $string['statistics'] = 'Số liệu thống kê';
 $string['statisticsreport'] = 'Báo cáo số liệu thống kê';

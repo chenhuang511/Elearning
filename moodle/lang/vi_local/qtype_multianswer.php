@@ -25,4 +25,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['correctanswer'] = 'Câu trả lời đúng';
 $string['layout'] = 'Trình bày';

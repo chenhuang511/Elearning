@@ -18,13 +18,16 @@
 /**
  * Local language pack from http://192.168.1.253
  *
- * @package    enrol
- * @subpackage paypal
+ * @package    mnetservice
+ * @subpackage enrol
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['enrolenddate'] = 'Ngày kết thúc';
-$string['enrolstartdate'] = 'Ngày bắt đầu';
-$string['mailstudents'] = 'Thông báo cho học viên';
+$string['clientname'] = 'Máy khách ghi danh từ xa';
+$string['editenrolments'] = 'Chỉnh sửa ghi danh';
+$string['hostappname'] = 'Ứng dụng';
+$string['hostname'] = 'Tên máy chủ';
+$string['hosturl'] = 'URL máy chủ từ xa';
+$string['pluginname'] = 'Dịch vụ ghi danh từ xa';

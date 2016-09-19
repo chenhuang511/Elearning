@@ -25,5 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['create'] = 'Tạo';
+$string['delete'] = 'Xóa';
 $string['edit'] = 'Chỉnh sửa';
 $string['selectdb'] = 'Lựa chọn cơ sở dữ liệu:';

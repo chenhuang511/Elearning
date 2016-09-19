@@ -27,5 +27,8 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['basicltiname'] = 'Tên hoạt động';
 $string['default'] = 'Mặc định';
+$string['delete'] = 'Xóa';
 $string['never'] = 'Không bao giờ';
+$string['send'] = 'Gửi';
 $string['types'] = 'Loại';
+$string['update'] = 'Cập nhật';

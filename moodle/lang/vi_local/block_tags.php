@@ -25,4 +25,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['anytype'] = 'Tất cả';
 $string['tagcollection'] = 'Bộ sưu tập thẻ';

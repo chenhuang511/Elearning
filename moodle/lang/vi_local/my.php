@@ -25,5 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['allprofileswerereset'] = 'Tất cả các trang hồ sơ đã được thiết lập lại để mặc định.';
 $string['mymoodle'] = 'Trang cá nhân';
 $string['reseteveryonesprofile'] = 'Thiết lập lại hồ sơ cho tất cả người dùng';

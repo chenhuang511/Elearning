@@ -42,4 +42,5 @@ $string['enablecompetencies_desc'] = 'Năng cho phép người dùng được đ
 $string['invalidevidencedesc'] = 'Bằng chứng mô tả không hợp lệ';
 $string['pushcourseratingstouserplans'] = 'Đẩy xếp hạng khóa học đến kế hoạch học tập cá nhân';
 $string['pushcourseratingstouserplans_desc'] = 'Cài đặt kế hoạch học tập cá nhân với giá trị mặc định khi năng lực khóa học được đánh giá';
+$string['taxonomy_value'] = 'Giá trị';
 $string['userplans'] = 'Kế hoạch học tập';
