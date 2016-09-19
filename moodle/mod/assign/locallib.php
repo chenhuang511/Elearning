@@ -4198,15 +4198,9 @@ class assign {
 
         $o .= $this->get_renderer()->render(new assign_form('editsubmissionform', $mform));
 
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST || $CFG->nonajax) {
-            $o .= $this->view_footer();
-        }else{
-            $o .= $this->get_renderer()->footer(true);
-        }
+        $o .= $this->view_footer();
 
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-            \mod_assign\event\submission_form_viewed::create_from_user($this, $user)->trigger();
-        }
+        \mod_assign\event\submission_form_viewed::create_from_user($this, $user)->trigger();
 
         return $o;
     }
