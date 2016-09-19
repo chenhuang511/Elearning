@@ -1224,6 +1224,77 @@ class local_course_external extends external_api
         return new external_value(PARAM_INT, 'True(1) if success');
     }
 
+    /**
+     * Describes the parameters for get_remote_course_modules_completion_by_userid_cmid_completion
+     *
+     * @return external_external_function_parameters
+     */
+    public static function get_remote_course_modules_completion_by_userid_cmid_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'userid' => new external_value(PARAM_INT, 'The id of user'),
+                'coursemoduleid' => new external_value(PARAM_INT, 'The id of course module'),
+            )
+        );
+    }
+
+    /**
+     * Get record remote course module completion by userid and course moduleid
+     *
+     * @param int $userid          - The id of user on hub
+     * @param int $coursemoduleid  - The id of course modules on hub
+     *
+     * @return int $result         - The id of course modules completion
+     */
+    public static function get_remote_course_modules_completion_by_userid_cmid($userid, $coursemoduleid)
+    {
+        global $DB;
+
+        $result = array();
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_remote_course_modules_completion_by_userid_cmid_parameters(), array(
+            'userid' => $userid,
+            'coursemoduleid' => $coursemoduleid
+        ));
+
+        $result['completion'] = $DB->get_record('course_modules_completion', array('coursemoduleid' => $params['coursemoduleid'],
+            'userid' => $params['userid']));
+
+        if (!$result['completion']){
+            $result['completion'] = array();
+        }
+
+        $result['warning'] = $warnings;
+
+        return $result;
+    }
+
+    /**
+     * Describes the get_remote_course_modules_completion_by_userid_cmid returns value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function get_remote_course_modules_completion_by_userid_cmid_returns()
+    {
+        return new external_single_structure(
+            array(
+                'completion' => new external_single_structure(
+                    array(
+                        'coursemoduleid' => new external_value(PARAM_INT, 'The id of course module'),
+                        'userid' => new external_value(PARAM_INT, 'The id of user'),
+                        'completionstate' => new external_value(PARAM_INT, 'The state of completion'),
+                        'viewed' => new external_value(PARAM_INT, 'The state of viewed'),
+                        'timemodified' => new external_value(PARAM_INT, 'The modified time')
+                    )
+                ),
+                'warning' => new external_warnings()
+            )
+        );
+    }
+
     public static function get_course_completion_progress_parameters()
     {
         return new external_function_parameters(
@@ -1446,69 +1517,6 @@ class local_course_external extends external_api
     }
 
     /**
-     * Describes the parameters for count_remote_user_data_completion
-     *
-     * @return external_external_function_parameters
-     */
-    public static function count_remote_user_data_completion_parameters()
-    {
-        return new external_function_parameters(
-            array(
-                'coursemoduleid' => new external_value(PARAM_INT, 'The id of course module'),
-                'hostip' => new external_value(PARAM_TEXT, 'The ip address on host')
-            )
-        );
-    }
-
-    /**
-     * Determines how much completion data exists for an activity. This is used when
-     * deciding whether completion information should be 'locked' in the module
-     * editing form.
-     *
-     * @param int $courseid - The id of course
-     * @param string $hostip - The ip_address on host
-     *
-     * @return bool $result true if success
-     */
-    public static function count_remote_user_data_completion($coursemoduleid, $hostip)
-    {
-        global $DB;
-
-        $params = self::validate_parameters(self::count_remote_user_data_completion_parameters(), array(
-            'coursemoduleid' => $coursemoduleid,
-            'hostip' => $hostip,
-        ));
-
-        $sql = 'SELECT u.id 
-                FROM {user} u 
-                JOIN {mnet_host} mh 
-                ON u.mnethostid = mh.id 
-                WHERE mh.ip_address = ?';
-
-        $result = $DB->get_field_sql("
-                SELECT
-                    COUNT(1)
-                FROM
-                    {course_modules_completion}
-                WHERE
-                    coursemoduleid=? AND completionstate<>0 AND userid IN(" . $sql . ") ",
-            array($params['coursemoduleid'], $params['hostip']));;
-
-        return $result;
-    }
-
-    /**
-     * Describes the count_remote_user_data_completion returns value.
-     *
-     * @return external_single_structure
-     * @since Moodle 3.1
-     */
-    public static function count_remote_user_data_completion_returns()
-    {
-        return new external_value(PARAM_INT, 'count user data completion');
-    }
-
-    /**
      * Describes the parameters for get_remote_completion_fetch_all_helper
      *
      * @return external_external_function_parameters
@@ -1728,142 +1736,6 @@ class local_course_external extends external_api
     public static function update_remote_course_completions_returns()
     {
         return new external_value(PARAM_INT, 'Return true if success');
-    }
-
-    public static function save_mdl_course_parameters()
-    {
-        return new external_function_parameters(
-            array(
-                'modname' => new external_value(PARAM_RAW, 'the mod name'),
-                'data' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_RAW, 'param name'),
-                            'value' => new external_value(PARAM_RAW, 'param value'),
-                        )
-                    ), 'the data saved'
-                )
-            )
-        );
-    }
-
-    public static function save_mdl_course($modname, $data)
-    {
-        global $DB;
-        $warnings = array();
-
-        $params = self::validate_parameters(self::save_mdl_course_parameters(), array(
-            'modname' => $modname,
-            'data' => $data
-        ));
-
-        $obj = new stdClass();
-
-        foreach ($params['data'] as $element) {
-            if ($element['name'] == "availability" && $element['value'] == "") {
-                $obj->$element['name'] = null;
-            } else {
-                $obj->$element['name'] = $element['value'];
-            }
-        }
-
-        $result = array();
-
-        $transaction = $DB->start_delegated_transaction();
-
-        $newid = $DB->insert_record($params['modname'], $obj);
-        // make context in hub if insert new course_modules
-        if ($params['modname'] === 'course_modules' and is_number($newid)) {
-            rebuild_course_cache($obj->course, true);
-            $context = context_module::instance($newid);
-        }
-
-        $transaction->allow_commit();
-
-        $result['newid'] = $newid;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    public static function save_mdl_course_returns()
-    {
-        return new external_single_structure(
-            array(
-                'newid' => new external_value(PARAM_INT, 'the new id'),
-                'warnings' => new external_warnings()
-            )
-        );
-    }
-
-    public static function update_mdl_course_parameters()
-    {
-        return new external_function_parameters(
-            array(
-                'modname' => new external_value(PARAM_RAW, 'the mod name'),
-                'id' => new external_value(PARAM_INT, 'the id'),
-                'data' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_RAW, 'param name'),
-                            'value' => new external_value(PARAM_RAW, 'param value'),
-                        )
-                    ), 'the data saved'
-                )
-            )
-        );
-    }
-
-    public static function update_mdl_course($modname, $id, $data)
-    {
-        global $DB;
-        $warnings = array();
-
-        $params = self::validate_parameters(self::update_mdl_course_parameters(), array(
-            'modname' => $modname,
-            'id' => $id,
-            'data' => $data
-        ));
-
-        $result = array();
-
-        $obj = $DB->get_record($params['modname'], array("id" => $params['id']));
-
-        if (!$obj) {
-            $warnings['message'] = "Not found data record";
-            $result['id'] = 0;
-            $result['warnings'] = $warnings;
-            return $result;
-        }
-
-        foreach ($params['data'] as $element) {
-            if ($element['name'] == "availability" && $element['value'] == "") {
-                $obj->$element['name'] = null;
-            } else {
-                $obj->$element['name'] = $element['value'];
-            }
-        }
-
-        $transaction = $DB->start_delegated_transaction();
-
-        $cid = $DB->update_record($params['modname'], $obj);
-
-        $transaction->allow_commit();
-
-        $result['id'] = $cid;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    public static function update_mdl_course_returns()
-    {
-        return new external_single_structure(
-            array(
-                'id' => new external_value(PARAM_INT, 'the id'),
-                'warnings' => new external_warnings()
-            )
-        );
     }
 
     public static function get_course_sections_by_parameters()

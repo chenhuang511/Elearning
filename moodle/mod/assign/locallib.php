@@ -2253,9 +2253,7 @@ class assign {
         }
 
         if ($this->gradebook_item_update(null, $grade)) {
-            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-                \mod_assign\event\submission_graded::create_from_grade($this, $grade)->trigger();
-            }
+            \mod_assign\event\submission_graded::create_from_grade($this, $grade)->trigger();
         }
 
         // If the conditions are met, allow another attempt.
@@ -4562,20 +4560,16 @@ class assign {
                                                                         $data));
         }
         $o = '';
-        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST || $CFG->nonajax){
-            $o .= $this->get_renderer()->header();
-        }
+        $o .= $this->get_renderer()->header();
 
         $submitforgradingpage = new assign_submit_for_grading_page($notifications,
                                                                    $this->get_course_module()->id,
                                                                    $mform);
         $o .= $this->get_renderer()->render($submitforgradingpage);
 
-        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST || $CFG->nonajax){
-            $o .= $this->view_footer();
+        $o .= $this->view_footer();
 
-            \mod_assign\event\submission_confirmation_form_viewed::create_from_assign($this)->trigger();
-        }
+        \mod_assign\event\submission_confirmation_form_viewed::create_from_assign($this)->trigger();
 
         return $o;
     }
@@ -5176,7 +5170,7 @@ class assign {
         $assign = clone $this->get_instance();
         $assign->cmidnumber = $this->get_course_module()->idnumber;
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-            $assign->cmid = $this->get_course_module()->id;
+            $assign->cmremoteid = $this->get_course_module()->remoteid;
             $assign->courseremoteid = $this->get_course()->remoteid;
         }
         // Set assign gradebook feedback plugin status (enabled and visible).
@@ -5981,12 +5975,7 @@ class assign {
             if ($mform->get_data() == false) {
                 return false;
             }
-            if (MOODLE_MODE_HUB === MOODLE_MODE_HOST){
-                return $this->submit_for_grading($data, $notices);
-            } else{
-                $userid = get_remote_mapping_user();
-                return submit_remote_for_grading($this->get_instance()->id, $userid[0]->id, $data);
-            }
+            return $this->submit_for_grading($data, $notices);
         }
         return true;
     }

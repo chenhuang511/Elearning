@@ -186,16 +186,10 @@ function resource_set_display_options($data)
 function resource_delete_instance($id)
 {
     global $DB;
-    $params = array();
-    $params['parameters[0][name]'] = "id";
-    $params['parameters[0][value]'] = $id;
-    if (!$resource = get_remote_resource_by($params)) {
-        return false;
-    }
 
     // note: all context files are deleted automatically
 
-    $DB->delete_records('resource', array('id' => $resource->id));
+    $DB->delete_records('resource', array('id' => $id));
 
     return true;
 }
@@ -215,14 +209,12 @@ function resource_get_coursemodule_info($coursemodule)
     global $CFG, $DB;
     require_once("$CFG->libdir/filelib.php");
     require_once("$CFG->dirroot/mod/resource/locallib.php");
-    require_once($CFG->libdir . '/completionlib.php');
-    require_once($CFG->dirroot . '/mod/resource/remote/locallib.php');
+    require_once($CFG->libdir.'/completionlib.php');
 
     $context = context_module::instance($coursemodule->id);
-    $params = array();
-    $params['parameters[0][name]'] = "id";
-    $params['parameters[0][value]'] = $coursemodule->instance;
-    if (!$resource = get_remote_resource_by($params)) {
+
+    if (!$resource = $DB->get_record('resource', array('id'=>$coursemodule->instance),
+        'id, name, display, displayoptions, tobemigrated, revision, intro, introformat')) {
         return NULL;
     }
 
@@ -234,7 +226,7 @@ function resource_get_coursemodule_info($coursemodule)
     }
 
     if ($resource->tobemigrated) {
-        $info->icon = 'i/invalid';
+        $info->icon ='i/invalid';
         return $info;
     }
     $fs = get_file_storage();
@@ -248,15 +240,15 @@ function resource_get_coursemodule_info($coursemodule)
     $display = resource_get_final_display_type($resource);
 
     if ($display == RESOURCELIB_DISPLAY_POPUP) {
-        $fullurl = "$CFG->wwwroot/mod/resource/remote/view.php?id=$coursemodule->id&amp;redirect=1";
+        $fullurl = "$CFG->wwwroot/mod/resource/view.php?id=$coursemodule->id&amp;redirect=1";
         $options = empty($resource->displayoptions) ? array() : unserialize($resource->displayoptions);
-        $width = empty($options['popupwidth']) ? 620 : $options['popupwidth'];
+        $width  = empty($options['popupwidth'])  ? 620 : $options['popupwidth'];
         $height = empty($options['popupheight']) ? 450 : $options['popupheight'];
         $wh = "width=$width,height=$height,toolbar=no,location=no,menubar=no,copyhistory=no,status=no,directories=no,scrollbars=yes,resizable=yes";
         $info->onclick = "window.open('$fullurl', '', '$wh'); return false;";
 
     } else if ($display == RESOURCELIB_DISPLAY_NEW) {
-        $fullurl = "$CFG->wwwroot/mod/resource/remote/view.php?id=$coursemodule->id&amp;redirect=1";
+        $fullurl = "$CFG->wwwroot/mod/resource/view.php?id=$coursemodule->id&amp;redirect=1";
         $info->onclick = "window.open('$fullurl'); return false;";
 
     }

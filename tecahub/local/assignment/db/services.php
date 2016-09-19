@@ -186,14 +186,6 @@ $functions = array(
 		'type'		  => 'write',
 		'ajax'		  => true
 	),
-	'local_mod_assign_get_remote_submission_status' => array(
-		'classname'	  => 'local_mod_assign_external',
-		'methodname'  => 'get_remote_submission_status',
-		'classpath'	  => 'local/assignment/externallib.php',
-		'description' => "Get remote submission status",
-		'type'		  => 'read',
-		'ajax'		  => true
-	),
 	'local_mod_assign_get_assignfeedback_comments' => array(
 		'classname'	  => 'local_mod_assign_external',
 		'methodname'  => 'get_assignfeedback_comments',

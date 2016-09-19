@@ -522,7 +522,7 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null)
     global $DB, $CFG, $USER;
 
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $activity = $DB->get_record('course_modules_createdby', array('course' => $course->id, 'coursemodule' => $cm->id, 'userid' => $USER->id), '*');
+        $activity = $DB->get_record('course_modules_createdby', array('course' => $course->id, 'coursemodule' => $cm->id, 'userid' => $USER->id));
 
         if ($activity) {
             $rs = get_remote_update_moduleinfo_by(json_encode($cm), json_encode($moduleinfo), $course->remoteid, json_encode($mform));

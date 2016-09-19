@@ -60,7 +60,7 @@ require_once($CFG->libdir . '/additionallib.php');
  * @param mixed $itemdetails Object or array describing the grading item, NULL if no change
  * @return int Returns GRADE_UPDATE_OK, GRADE_UPDATE_FAILED, GRADE_UPDATE_MULTIPLE or GRADE_UPDATE_ITEM_LOCKED
  */
-function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance, $itemnumber, $grades = NULL, $itemdetails = NULL)
+function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance, $itemnumber,  $grades = NULL, $itemdetails = NULL)
 {
     global $USER, $CFG, $DB;
 

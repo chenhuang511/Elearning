@@ -192,7 +192,7 @@ class mod_assign_renderer extends plugin_renderer_base
         $o .= $this->output->heading(get_string('submitassignment', 'assign'), 3);
         $o .= $this->output->spacer(array('height' => 30));
 
-        $cancelurl = new moodle_url('/mod/assign/' . (ISREMOTE ? 'remote/' : '') . 'view.php', array('id' => $page->coursemoduleid));
+        $cancelurl = new moodle_url('/mod/assign/view.php', array('id' => $page->coursemoduleid));
         if (count($page->notifications)) {
             // At least one of the submission plugins is not ready for submission.
 

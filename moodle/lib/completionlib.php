@@ -731,17 +731,13 @@ class completion_info {
     public function count_user_data($cm) {
         global $DB;
 
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-            return $DB->get_field_sql("
+        return $DB->get_field_sql("
                 SELECT
                     COUNT(1)
                 FROM
                     {course_modules_completion}
                 WHERE
                     coursemoduleid=? AND completionstate<>0", array($cm->id));
-        } else {
-            return count_remote_user_data_completion($cm->id);
-        }
     }
 
     /**

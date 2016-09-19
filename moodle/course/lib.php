@@ -1481,9 +1481,6 @@ function course_create_sections_if_missing($courseorid, $sections)
     }
     $existing = array_keys(get_fast_modinfo($courseorid)->get_section_info_all());
     if (is_object($courseorid)) {
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            $hubcourseid = $courseorid->remoteid;
-        }
         $courseorid = $courseorid->id;
     }
     $coursechanged = false;
@@ -1495,23 +1492,8 @@ function course_create_sections_if_missing($courseorid, $sections)
             $cw->summary = '';
             $cw->summaryformat = FORMAT_HTML;
             $cw->sequence = '';
-            if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-                $sectiondata = array();
-                $i = 0;
-                foreach ($cw as $key => $val) {
-                    $sectiondata["data[$i][name]"] = $key;
-                    if ($key == "course") {
-                        $sectiondata["data[$i][value]"] = $hubcourseid;
-                    } else {
-                        $sectiondata["data[$i][value]"] = $val;
-                    }
-                    $i++;
-                }
 
-                $id = save_remote_mdl_course("course_sections", $sectiondata);
-            } else {
-                $id = $DB->insert_record("course_sections", $cw);
-            }
+            $id = $DB->insert_record("course_sections", $cw);
             $coursechanged = true;
         }
     }

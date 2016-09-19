@@ -170,6 +170,14 @@ $functions = array(
         'type'		    => 'write',
         'ajax'		    => true
     ),
+    'local_get_remote_course_modules_completion_by_userid_cmid' => array(
+        'classname'     => 'local_course_external',
+        'methodname'    => 'get_remote_course_modules_completion_by_userid_cmid',
+        'classpath'     => 'local/course/externallib.php',
+        'description'   => 'Get course module completion by userid and coursemoduleid',
+        'type'		    => 'read',
+        'ajax'		    => true
+    ),
     'local_get_course_completion_progress' => array(
         'classname'     => 'local_course_external',
         'methodname'    => 'get_course_completion_progress',
@@ -184,14 +192,6 @@ $functions = array(
         'classpath'     => 'local/course/externallib.php',
         'description'   => 'get list id of course completion',
         'type'		    => 'write',
-        'ajax'		    => true
-    ),
-    'local_get_course_completion_count_user_data' => array(
-        'classname'     => 'local_course_external',
-        'methodname'    => 'count_remote_user_data_completion',
-        'classpath'     => 'local/course/externallib.php',
-        'description'   => 'Count user data completion',
-        'type'		    => 'read',
         'ajax'		    => true
     ),
     'local_get_remote_completion_fetch_all_helper' => array(
@@ -215,22 +215,6 @@ $functions = array(
         'methodname'    => 'update_remote_course_completions',
         'classpath'     => 'local/course/externallib.php',
         'description'   => 'Update tbl course completions',
-        'type'		    => 'write',
-        'ajax'		    => true
-    ),
-    'local_save_mdl_course' => array(
-        'classname'     => 'local_course_external',
-        'methodname'    => 'save_mdl_course',
-        'classpath'     => 'local/course/externallib.php',
-        'description'   => 'save course_',
-        'type'		    => 'write',
-        'ajax'		    => true
-    ),
-    'local_update_mdl_course' => array(
-        'classname'     => 'local_course_external',
-        'methodname'    => 'update_mdl_course',
-        'classpath'     => 'local/course/externallib.php',
-        'description'   => 'update data course_',
         'type'		    => 'write',
         'ajax'		    => true
     ),
