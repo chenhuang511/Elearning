@@ -1114,7 +1114,7 @@ class moodle_page
         if (is_null($this->_cm)) {
             throw new coding_exception('You cannot call $PAGE->set_activity_record until after $PAGE->cm has been set.');
         }
-        if ($module->id != $this->_cm->instance || get_course_id_by_remote_id($module->course) != $this->_course->id) {
+        if ($module->id != $this->_cm->instance || $module->course != $this->_course->id) {
             throw new coding_exception('The activity record does not seem to correspond to the cm that has been set.');
         }
         $this->_module = $module;
