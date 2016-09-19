@@ -703,7 +703,6 @@ class quiz_grading_report extends quiz_default_report {
                 $i++;
             }
             $qubawhere = $qubaids->where;
-//            var_dump($orderbyparam);die;
 
             $res = get_remote_load_questions_usages_where_question_in_state($qubaparam, $qubawhere, $summarystate,
                 $slot, $questionid, $orderby, $orderbyparam, $limitfrom, $pagesize);

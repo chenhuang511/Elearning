@@ -1532,7 +1532,7 @@ ORDER BY
                             'name' => new external_value(PARAM_RAW, 'name'),
                             'value' => new external_value(PARAM_RAW, 'value'),
                         )
-                    )
+                    ), 'orderby param', VALUE_DEFAULT, array()
                 ),
             )
         );
@@ -1562,7 +1562,6 @@ ORDER BY
             $orderbyparamdata[$element['name']] = $element['value'];
         }
         $dm = new question_engine_data_mapper();
-//        var_dump($orderby);die;
         $result = $dm->load_questions_usages_where_question_in_state($qubaids, $summarystate,
             $slot, $questionid, $orderby, $orderbyparamdata, $limitfrom, $pagesize);
         $res = array();
