@@ -133,7 +133,6 @@ class format_weeks extends format_base
                     return null;
                 }
                 $url->set_anchor('section-' . $sectionno);
-                $url->add_param(array('section' => $sectionno));
             }
         }
         return $url;
