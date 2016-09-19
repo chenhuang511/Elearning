@@ -33,6 +33,7 @@
 
 require_once($CFG->libdir.'/eventslib.php');
 require_once($CFG->dirroot.'/calendar/lib.php');
+require_once($CFG->dirroot.'/mod/questionnaire/remote/locallib.php');
 // Constants.
 
 define ('QUESTIONNAIREUNLIMITED', 0);
@@ -1044,7 +1045,6 @@ function questionnaire_prep_for_questionform($questionnaire, $qid, $qtype) {
  */
 function questionnaire_get_standard_page_items($id = null, $a = null) {
     global $DB;
-    if(MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
         if ($id) {
             if (!$cm = get_coursemodule_from_id('questionnaire', $id)) {
                 print_error('invalidcoursemodule');
@@ -1053,13 +1053,13 @@ function questionnaire_get_standard_page_items($id = null, $a = null) {
             if (!$course = $DB->get_record("course", array("id" => $cm->course))) {
                 print_error('coursemisconf');
             }
-
-            if (!$questionnaire = $DB->get_record("questionnaire", array("id" => $cm->instance))) {
+            
+            if (!$questionnaire = get_remote_questionnaire_by_id($cm->instance)) {
                 print_error('invalidcoursemodule');
             }
 
         } else {
-            if (!$questionnaire = $DB->get_record("questionnaire", array("id" => $a))) {
+            if (!$questionnaire = get_remote_questionnaire_by_id($a)) {
                 print_error('invalidcoursemodule');
             }
             if (!$course = $DB->get_record("course", array("id" => $questionnaire->course))) {
@@ -1069,30 +1069,5 @@ function questionnaire_get_standard_page_items($id = null, $a = null) {
                 print_error('invalidcoursemodule');
             }
         }
-    } else {
-        if ($id) {
-            if (!$cm = get_remote_course_module_by_cmid('questionnaire', $id)) {
-                print_error('invalidcoursemodule');
-            }
-            if (!$course = get_local_course_record($cm->course, true)) {
-                print_error('coursemisconf');
-            }
-
-            if (!$questionnaire = get_remote_questionnaire_by_id($cm->instance)) {
-                print_error('invalidcoursemodule');
-            }
-
-        } else {
-            if (!$questionnaire = get_remote_questionnaire_by_id($a)) {
-                print_error('invalidcoursemodule');
-            }
-            if (!$course = get_local_course_record($questionnaire->course)) {
-                print_error('coursemisconf');
-            }
-            if (!$cm = get_remote_course_module_by_instance('questionnaire', $a)) {
-                print_error('invalidcoursemodule');
-            }
-        }
-    }
     return (array($cm, $course, $questionnaire));
 }

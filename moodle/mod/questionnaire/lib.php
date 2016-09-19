@@ -146,11 +146,7 @@ function questionnaire_update_instance($questionnaire) {
     }
 
     $questionnaire->timemodified = time();
-    if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-        $questionnaire->id = $questionnaire->instance;
-    } else {
-        $questionnaire->id = $DB->get_field('questionnaire', 'id', array('remoteid' => $questionnaire->instance));
-    }
+    $questionnaire->id = $questionnaire->instance;
 
     // May have to add extra stuff in here.
     if (empty($questionnaire->useopendate)) {
@@ -1178,20 +1174,22 @@ function questionnaire_get_completion_state($course, $cm, $userid, $type) {
 }
 
 function questionnaire_get_local_settings_info($courseid, $instance)
-{
+{ // instance of hub
     global $CFG, $DB;
     require_once($CFG->dirroot . '/mod/questionnaire/remote/locallib.php');
-    $questionnaire = get_remote_questionnaire_by_id($instance);
-    if (!$questionnaire) {
-        return 0;
-    }
-    $local_questionaire = $DB->get_record('questionnaire', array('remoteid' => $instance));
-    if(empty($local_questionaire)){ // check data questionnaire in local db
+
+    $local_questionnaire = $DB->get_record('questionnaire', array('remoteid' => $instance));
+    if(!$local_questionnaire){ // check data questionnaire in local db
+        $questionnaire = get_remote_questionnaire_by_id($instance, false);
+        if (!$questionnaire) {
+            return 0;
+        }
+        $questionnaire->remoteid = $questionnaire->id;
         $questionnaire->course = $courseid;
-        $questionnaire->id = $DB->insert_record('questionnaire', $questionnaire, true);
+        $id = $DB->insert_record('questionnaire', $questionnaire, true);
     } else {
-        $questionnaire->id = $local_questionaire->id;
+        $id = $local_questionnaire->id;
     }
-    return $questionnaire->id;
+    return $id;
 }
 

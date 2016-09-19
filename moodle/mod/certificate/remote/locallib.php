@@ -12,31 +12,20 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/lib/remote/lib.php');
 require_once($CFG->dirroot . '/lib/additionallib.php');
 
-function get_remote_certificate_by_id($id) {
+function get_remote_certificate_by_id($id, $merge = true) {
     global $DB;
-    $resp = moodle_webservice_client(
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_certificate_get_certificate_by_id',
-            'params' => array('id' => $id)
-        ), false
-    );
-
-    if (isset($resp->exception)) {
-        return 0;
-    }
     /**
-     *  override certificate setting hub
+     *  get certificate setting local
      */
-    $fields = ' remoteid,
+    if($merge == true) {
+        $fields = ' id,
+                remoteid,
                 emailteachers,
                 emailothers,
                 savecert,
                 reportcert,
                 delivery,
                 requiredtime,
-                certificatetype,
                 orientation,
                 borderstyle,
                 bordercolor,
@@ -54,10 +43,29 @@ function get_remote_certificate_by_id($id) {
                 printseal,
                 timecreated,
                 timemodified';
-    $local_certificate_data = $DB->get_record('certificate', array('remoteid' => $resp->id), $fields);
-    if(empty($local_certificate_data)){ // check data certificate in local db
-        $resp->remoteid = $resp->id;
+        $local_certificate_data = $DB->get_record('certificate', array('id' => $id), $fields);
+        $remoteid = $local_certificate_data->remoteid;
     } else {
+        $remoteid = $id;
+    }
+
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_certificate_get_certificate_by_id',
+            'params' => array('id' => $remoteid)
+        ), false
+    );
+
+    if (isset($resp->exception)) {
+        return 0;
+    }
+    /**
+     *  override certificate setting hub
+     */
+
+    if($merge == true) {
         foreach ($local_certificate_data as $key => $value){
             $resp->$key = $value;
         }
