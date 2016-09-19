@@ -3,14 +3,9 @@ require_once("../config.php");
 require_once ('./lib.php');
 defined('MOODLE_INTERNAL') || die();
 
-$slideid = optional_param('id', 0, PARAM_INT);        // slide id
-if ($slideid !== 0) {
-    // validation user permission for this slide
-    // render data from slide id
-} else {
-    // create new slide
-    // when save event trigger, save to api endpoint
-}
+$slideid = required_param('id', PARAM_INT);        // slide id
+
+$slideobj = getslidesbyid($slideid);
 
 $PAGE->set_url('/contentcreator/index.php');
 $PAGE->set_context(context_system::instance());
@@ -21,10 +16,10 @@ $PAGE->set_pagelayout('contentcreator');
 require_login();
 
 $PAGE->set_heading($site->fullname);
-$PAGE->set_title("Create Slide");
+$PAGE->set_title("Update Slide");
 
 
 echo $OUTPUT->header();
 echo $OUTPUT->skip_link_target();
-echo printscriptnewpresentation();
+echo printscriptpresentationdata(json_encode($slideobj->content_json), $slideid);
 echo $OUTPUT->footer();

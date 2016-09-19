@@ -51,7 +51,8 @@ function add_moduleinfo($moduleinfo, $course, $mform = null)
 
         $moduleinforet = get_remote_add_moduleinfo_by(json_encode($remotemoduleinfo), $course->remoteid);
 
-        rebuild_course_cache($course->id, true);
+        rebuild_course_cache($course->id);
+
         // add data to course_modules_createdby
         $activity = new stdClass();
         $activity->course = $course->id;
@@ -59,6 +60,13 @@ function add_moduleinfo($moduleinfo, $course, $mform = null)
         $activity->userid = $USER->id;
 
         $activity->id = $DB->insert_record('course_modules_createdby', $activity);
+
+        // Merge moduleinfo to return host
+        if ($moduleinforet){
+            $cm = get_local_course_modules_record($moduleinforet->coursemodule);
+            $moduleinfo->coursemodule = $cm->id;
+        }
+
     } else {
 // Attempt to include module library before we make any changes to DB.
         include_modulelib($moduleinfo->modulename);
@@ -522,7 +530,7 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null)
     global $DB, $CFG, $USER;
 
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $activity = $DB->get_record('course_modules_createdby', array('course' => $course->id, 'coursemodule' => $cm->id, 'userid' => $USER->id));
+        $activity = $DB->get_record('course_modules_createdby', array('course' => $course->id, 'coursemodule' => $cm->id, 'userid' => $USER->id), '*');
 
         if ($activity) {
             $rs = get_remote_update_moduleinfo_by(json_encode($cm), json_encode($moduleinfo), $course->remoteid, json_encode($mform));

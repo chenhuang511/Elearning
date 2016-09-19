@@ -58,18 +58,13 @@ list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) =
 $defaultcategoryobj = question_make_default_categories($contexts->all());
 $defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contextid;
 
-$quizhasattempts = quiz_has_attempts($quiz->id);
+$quizhasattempts = quiz_has_attempts($quiz->remoteid);
 
 $PAGE->set_url($thispageurl);
 
 // Get the course object and related bits.
-if($isremote){
-    $course = get_local_course_record($quiz->course);
-    $quizobj = new quiz($quiz, $cm, $course, true, true);
-}else{
-    $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
-    $quizobj = new quiz($quiz, $cm, $course);
-}
+$course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
+$quizobj = new quiz($quiz, $cm, $course);
 $structure = $quizobj->get_structure();
 
 // You need mod/quiz:manage in addition to question capabilities to access this page.

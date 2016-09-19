@@ -103,7 +103,7 @@ class mod_assign_renderer extends plugin_renderer_base
         if (!empty($result->page)) {
             $urlparams['page'] = $result->page;
         }
-        $url = new moodle_url('/mod/assign/' . (ISREMOTE ? 'remote/' : '') . 'view.php', $urlparams);
+        $url = new moodle_url('/mod/assign/view.php', $urlparams);
         $classes = $result->gradingerror ? 'notifyproblem' : 'notifysuccess';
 
         $o = '';
@@ -1108,7 +1108,7 @@ class mod_assign_renderer extends plugin_renderer_base
                         'action' => 'grade',
                         'returnaction' => $history->returnaction,
                         'returnparams' => $returnparams);
-                    $url = new moodle_url('/mod/assign/' . (ISREMOTE ? 'remote/' : '') . 'view.php', $urlparams);
+                    $url = new moodle_url('/mod/assign/view.php', $urlparams);
                     $icon = new pix_icon('gradefeedback',
                         get_string('editattemptfeedback', 'assign', $grade->attemptnumber + 1),
                         'mod_assign');
@@ -1213,7 +1213,7 @@ class mod_assign_renderer extends plugin_renderer_base
                     'action' => $action,
                     'returnaction' => $submissionplugin->returnaction,
                     'returnparams' => $returnparams);
-                $url = new moodle_url('/mod/assign/' . (ISREMOTE ? 'remote/' : '') . 'view.php', $urlparams);
+                $url = new moodle_url('/mod/assign/view.php', $urlparams);
                 $link .= $this->output->action_link($url, $icon);
                 $link .= '</noscript>';
 
@@ -1312,7 +1312,7 @@ class mod_assign_renderer extends plugin_renderer_base
                     'action' => 'viewplugin' . $feedbackplugin->plugin->get_subtype(),
                     'returnaction' => $feedbackplugin->returnaction,
                     'returnparams' => http_build_query($feedbackplugin->returnparams));
-                $url = new moodle_url('/mod/assign/' . (ISREMOTE ? 'remote/' : '') . 'view.php', $urlparams);
+                $url = new moodle_url('/mod/assign/view.php', $urlparams);
                 $link .= '<noscript>';
                 $link .= $this->output->action_link($url, $icon);
                 $link .= '</noscript>';
@@ -1367,7 +1367,7 @@ class mod_assign_renderer extends plugin_renderer_base
         $currentsection = '';
         foreach ($indexsummary->assignments as $info) {
             $params = array('id' => $info['cmid']);
-            $link = html_writer::link(new moodle_url('/mod/assign/' . (ISREMOTE ? 'remote/' : '') . 'view.php', $params),
+            $link = html_writer::link(new moodle_url('/mod/assign/view.php', $params),
                 $info['cmname']);
             $due = $info['timedue'] ? userdate($info['timedue']) : '-';
 

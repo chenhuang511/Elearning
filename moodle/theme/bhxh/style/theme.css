@@ -48,9 +48,9 @@ h2.main, #pageheading {
     color: #187bb2;
 }
 
-.submitbtns a {
-    color: #FFFFFF;
-}
+/*.submitbtns a {*/
+    /*color: #FFFFFF;*/
+/*}*/
 
 .mdl-align a, .row-fluid a, .othernav-mcboy, .endtestlink {
     color: #337ab7;
@@ -99,6 +99,15 @@ a:focus {
 }
 
 /*editting V */
+
+a.mod_quiz-next-nav {
+    color: #0070a8 !important;
+    text-decoration: none;
+}
+
+#page-mod-quiz-attempt .submitbtns .mod_quiz-next-nav, #page-mod-quiz-review .submitbtns .mod_quiz-next-nav, a.remote-link-action {
+    float: right;
+}
 
 .fitem_actionbuttons div.felement.fgroup{
     margin: 0 !important;

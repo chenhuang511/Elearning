@@ -306,4 +306,36 @@ $functions = array(
         'type'		    => 'write',
         'ajax'		    => true
     ),
+    'local_delete_course_modules' => array(
+        'classname'     => 'local_course_external',
+        'methodname'    => 'delete_course_modules',
+        'classpath'     => 'local/course/externallib.php',
+        'description'   => 'delete course modules by',
+        'type'		    => 'write',
+        'ajax'		    => true
+    ),
+    'local_delete_instance_by' => array(
+        'classname'     => 'local_course_external',
+        'methodname'    => 'delete_instance_by',
+        'classpath'     => 'local/course/externallib.php',
+        'description'   => 'delete instance',
+        'type'		    => 'write',
+        'ajax'		    => true
+    ),
+    'local_delete_mod_from_section_by' => array(
+        'classname'     => 'local_course_external',
+        'methodname'    => 'delete_mod_from_section_by',
+        'classpath'     => 'local/course/externallib.php',
+        'description'   => 'delete module form section',
+        'type'		    => 'write',
+        'ajax'		    => true
+    ),
+    'local_course_delete_module_by' => array(
+        'classname'     => 'local_course_external',
+        'methodname'    => 'course_delete_module_by',
+        'classpath'     => 'local/course/externallib.php',
+        'description'   => 'course delete module',
+        'type'		    => 'write',
+        'ajax'		    => true
+    ),
 );

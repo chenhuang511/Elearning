@@ -122,9 +122,13 @@ define(function() {
                     data: JSON.stringify(senddata),
                 },
                 success: function (response) {
-                    console.log('response', response);
                     var resp = JSON.parse(response);
                     console.log(resp);
+                    try {
+                        localStorage.setItem('presentationId', resp.slideid);
+                    } catch (e) {
+
+                    }
                     if(cb) {
                         cb(true);
                     }

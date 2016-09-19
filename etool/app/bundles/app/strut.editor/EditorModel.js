@@ -55,6 +55,29 @@ define(['libs/backbone',
 				GlobalEvents.on('redo', this._cmdList.redo, this._cmdList);
 
 				Backbone.on('etch:state', this._fontStateChanged, this);
+
+                // for edit page:
+                var presentationContent = {
+                    fileName: "presentation-" + Date.now(),
+                    slides: []
+                };
+                var oldContent = presentationContent;
+                var rawContent = '';
+                try {
+                    rawContent = localStorage.getItem('contentJSON');
+                } catch (err) {
+                    rawContent = '';
+                }
+
+                if (rawContent) {
+                    try {
+                        presentationContent = JSON.parse(rawContent);
+                    } catch(err) {
+                        presentationContent = oldContent;
+                    }
+                }
+                this.importPresentation(presentationContent);
+                this._deck.create();
 			},
 
 			changeActiveMode: function(modeId) {
@@ -80,13 +103,14 @@ define(['libs/backbone',
 			},
 
 			newPresentation: function() {
-				var num = window.sessionMeta.num || 0;
+                try {
+                    localStorage.setItem('presentationId', -1);
+                } catch (e) {
 
-				num += 1;
-				window.sessionMeta.num = num;
+                }
 
 				this.importPresentation({
-	        		fileName: "presentation-" + num,
+	        		fileName: "presentation-" + Date.now(),
 	        		slides: []
 	      		});
 				this._deck.create();
@@ -120,6 +144,16 @@ define(['libs/backbone',
 				return obj;
 			},
 
+            getPresentationPageParam: function(name) {
+                var url = window.location.href;
+                name = name.replace(/[\[\]]/g, "\\$&");
+                var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)")
+                var results = regex.exec(url);
+                if (!results) return null;
+                if (!results[2]) return '';
+                return decodeURIComponent(results[2].replace(/\+/g, " "));
+            },
+
             exportAllForAPI: function(filename) {
                 var generators = this.registry
                     .getBest('strut.presentation_generator.GeneratorCollection');
@@ -135,7 +169,20 @@ define(['libs/backbone',
                     contentHTML = generator.generate(this._deck);
                 }
                 var contentJSON = this.exportPresentation(filename);
+                var presentationId = this.getPresentationPageParam('id') || -1;
+                var pId = -1;
+                var localStoragePID = -1;
+                try {
+                    localStoragePID = localStorage.getItem('presentationId');
+                    pId = parseInt(localStoragePID);
+                } catch(err) {
+                    pId = -1
+                }
+                if (pId != presentationId) {
+                    presentationId = pId
+                }
                 return {
+                    'id': presentationId,
                     'contentJSON': contentJSON,
                     'contentHTML': contentHTML
                 };
