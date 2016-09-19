@@ -24,7 +24,12 @@ switch($_POST['action']){
         $data->filename = $filename;
         $data->content_json = json_encode($slidedata->contentJSON);
         $data->content_html = $slidedata->contentHTML;
-        $slide = $DB->get_record('slide_storage', ['userid' => $cruserid, 'filename' => $filename]);
+        $data->id = $slidedata->id;
+        $slide = null;
+        $slideid = $data->id;
+        if ($slideid > 0) {
+            $slide = $DB->get_record('slide_storage', ['id' => $slideid]);
+        }
 
         if (!$slide) {
             $data->timecreated = time();
