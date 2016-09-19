@@ -1,0 +1,40 @@
+body { background:#e4e4e4 url(../assets/bg.png) repeat-x 0px 0px; padding:0px; margin:0px;}
+.language_bg { background:url(../assets/language_bg.png) no-repeat center top; }
+.top_margin { height:74px;}
+td,div,p { font-family:Arial, Helvetica, sans-serif; font-size:11px; color:#333;}
+.header { background-image:url(../assets/top_header_bg.png); width:689px; height:85px; background-repeat:no-repeat; background-position:center top;}
+.content { background-image:url(../assets/content.png); width:689px; background-repeat:repeat-y;}
+.footer { background-image:url(../assets/footer_bg.png); width:554px; height:32px; background-repeat:no-repeat; background-position:bottom}
+.padding{ padding:8px 18px 8px 18px}
+.logo_padding { padding:12px 14px 0px 14px;}
+.login_txt { color:#5a5a5a; font-size:12px;}
+.header_txt { background-color:#f0f0f0; font-weight:bold; color:#909090; font-size:16px; text-align:center; height:28px;}
+.header_padding { padding:0px 9px 0px 8px;}
+.margin{height:6px;}
+.message p { color:#5a5a5a; font-size:13px; margin:6px 0px; }
+.login { background:url(../assets/login_btn.png); cursor:pointer; height:29px; width:82px; background-repeat:no-repeat; border:0px; margin-right:10px; }
+.copyright {font-size:10px; }
+.input1 { border:1px solid #969696 ;}
+.copyright a { color:#000; text-decoration:none}
+.copyright a:hover { text-decoration:blink;}
+.alert_msg { color:#FF0000; font-weight:bold; text-align:center;padding-left:100px;}
+td select,select, textarea, td textarea { border:1px solid #b1c3cc; color:#333; font-weight:normal; }
+.btn_wide { background-image:url(../ins/images/btn_wide.png); background-repeat:no-repeat; width:80px; height:24px; border:0px; cursor:hand; font-weight:bold; color:#333;}
+.input_bg { background:url(../assets/input_bg.png) repeat-x 0px 0px; height:29px; border:1px solid #c3c3c3; width:300px; padding:3px 5px; color:#5a5a5a; font-size:12px; }
+.input_bg_transparent { background:none; height:29px; border:0px solid #fff; width:272px; padding:3px 5px; _padding:8px 5px 1px 5px; color:#5a5a5a; font-size:12px; cursor: pointer; }
+.fake_ddl { background:url(../assets/fake_ddl.png) no-repeat 0px 0px; width:302px; height:31px; cursor: pointer; }
+
+
+#blackOverlay { background:url(../assets/modal_bg.png); width:100%; min-height:100%; height:100%; margin-bottom:-10px; position:absolute; display:none; }
+#LangPanel { display:none; background:#fff; position:absolute; border:1px solid #333; margin-top:-226px; _margin-top:-234px; margin-left:-220px; _margin-left:-210px; width:672px; height:400px; padding:8px; }
+.btnClose { background:url(../assets/close.png) no-repeat 0px 0px; width:68px; height:16px; display:block; float:right; position:relative; }
+.languages { height:360; }
+.languages a { color:#7b7b7b; font-size:13px; }
+.languages table td { padding:2px; vertical-align:top; }
+.languages table td a:hover { color:#2b4cb5; }
+
+.tableHead { border-bottom:1px solid #999999; margin-bottom:6px; }
+.tableHead th { text-align:left; font-size:18px; color:#7b7b7b; }
+.tableHead th, .tableHead td { padding-bottom:6px; }
+
+.alert_msg_login { background:url(../assets/alert.png) no-repeat 0px 5px; padding-left:20px; color:#b8281a; font-size:12px; font-family:Arial, Helvetica, sans-serif; }
