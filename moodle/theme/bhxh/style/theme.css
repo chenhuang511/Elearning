@@ -100,12 +100,12 @@ a:focus {
 
 /*editting V */
 
-a {
-    color: #0070a8;
+a.mod_quiz-next-nav {
+    color: #0070a8 !important;
     text-decoration: none;
 }
 
-#page-mod-quiz-attempt .submitbtns .mod_quiz-next-nav, #page-mod-quiz-review .submitbtns .mod_quiz-next-nav {
+#page-mod-quiz-attempt .submitbtns .mod_quiz-next-nav, #page-mod-quiz-review .submitbtns .mod_quiz-next-nav, a.remote-link-action {
     float: right;
 }
 
