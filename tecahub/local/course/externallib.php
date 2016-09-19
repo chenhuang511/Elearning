@@ -1242,8 +1242,8 @@ class local_course_external extends external_api
     /**
      * Get record remote course module completion by userid and course moduleid
      *
-     * @param int $userid          - The id of user on hub
-     * @param int $coursemoduleid  - The id of course modules on hub
+     * @param int $userid - The id of user on hub
+     * @param int $coursemoduleid - The id of course modules on hub
      *
      * @return int $result         - The id of course modules completion
      */
@@ -1262,7 +1262,7 @@ class local_course_external extends external_api
         $result['completion'] = $DB->get_record('course_modules_completion', array('coursemoduleid' => $params['coursemoduleid'],
             'userid' => $params['userid']));
 
-        if (!$result['completion']){
+        if (!$result['completion']) {
             $result['completion'] = array();
         }
 
@@ -2641,5 +2641,83 @@ class local_course_external extends external_api
                 'warnings' => new external_warnings()
             )
         );
+    }
+
+    public static function delete_instance_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'contextlevel' => new external_value(PARAM_INT, 'the context level'),
+                'instanceid' => new external_value(PARAM_INT, 'the instance id')
+            )
+        );
+    }
+
+    public static function delete_instance_by($contextlevel, $instanceid)
+    {
+        global $CFG, $DB;
+        $warnings = array();
+
+        require_once($CFG->dirroot . '/lib/accesslib.php');
+
+        $params = self::validate_parameters(self::delete_instance_by_parameters(), array(
+            'contextlevel' => $contextlevel,
+            'instanceid' => $instanceid
+        ));
+
+        $result = array();
+
+        // double check the context still exists
+        if ($record = $DB->get_record('context', array('contextlevel' => $params['contextlevel'], 'instanceid' => $params['instanceid']))) {
+            $context = context::create_instance_from_record($record);
+            $context->delete();
+            $status = true;
+        } else {
+            $status = false;
+        }
+
+        $result['status'] = $status;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    public static function delete_instance_by_returns()
+    {
+        return self::delete_course_modules_returns();
+    }
+
+    public static function delete_mod_from_section_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'modid' => new external_value(PARAM_INT, 'the module id'),
+                'sectionid' => new external_value(PARAM_INT, 'the section id')
+            )
+        );
+    }
+
+    public static function delete_mod_from_section_by($modid, $sectionid)
+    {
+        global $CFG, $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::delete_mod_from_section_by_parameters(), array(
+            'modid' => $modid,
+            'sectionid' => $sectionid
+        ));
+
+        require_once($CFG->dirroot . '/course/lib.php');
+
+        $status = delete_mod_from_section($params['modid'], $params['sectionid']);
+
+        $result = array();
+        $result['status'] = $status;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    public static function delete_mod_from_section_by_returns()
+    {
+        return self::delete_course_modules_returns();
     }
 }
