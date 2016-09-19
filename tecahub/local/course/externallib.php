@@ -2590,4 +2590,56 @@ class local_course_external extends external_api
 
         return $DB->get_record_sql($sql, $params, $strictness);
     }
+
+    public static function delete_course_modules_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'modname' => new external_value(PARAM_RAW, 'the mod name'),
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                )
+            )
+        );
+    }
+
+    public static function delete_course_modules($modname, $parameters)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::delete_course_modules_parameters(), array(
+            'modname' => $modname,
+            'parameters' => $parameters
+        ));
+
+        $result = array();
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $transaction = $DB->start_delegated_transaction();
+        $result['status'] = $DB->delete_records($params['modname'], $arr);
+        $transaction->allow_commit();
+
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function delete_course_modules_returns()
+    {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'bool: true if delete success'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }
