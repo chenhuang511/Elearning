@@ -1891,7 +1891,7 @@ function quiz_get_completion_state($course, $cm, $userid, $type) {
     $isremote = (MOODLE_RUN_MODE === MOODLE_MODE_HUB)?true:false;
 
     if($isremote){
-        $quiz = get_remote_quiz_by_id($cm->instance);
+        $quiz = get_remote_quiz_by_id($cm->instance, false);
     }else{
         $quiz = $DB->get_record('quiz', array('id' => $cm->instance), '*', MUST_EXIST);
     }
