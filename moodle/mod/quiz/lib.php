@@ -1924,3 +1924,10 @@ function quiz_get_local_settings_info($courseid, $instance)
     }
     return $quiz->id;
 }
+
+function quiz_merge_module_info($instance){
+    global $DB, $CFG;
+    require_once($CFG->dirroot.'/mod/quiz/remote/locallib.php');
+    $datamerge = get_remote_quiz_by_id($instance, false);
+    return $datamerge;
+}
