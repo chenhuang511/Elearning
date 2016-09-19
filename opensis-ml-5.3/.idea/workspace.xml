@@ -22,81 +22,262 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="index.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="index.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/index.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="42">
-              <caret line="28" column="17" selection-start-line="28" selection-start-column="17" selection-end-line="28" selection-end-column="17" />
+            <state relative-caret-position="126">
+              <caret line="140" column="50" selection-start-line="140" selection-start-column="43" selection-end-line="140" selection-end-column="50" />
               <folding>
-                <marker date="1474250274104" expanded="true" signature="3039:3103" placeholder="DELETE FROM " />
-                <marker date="1474250274104" expanded="true" signature="4148:4251" placeholder="SELECT DISTI... schedule" />
-                <marker date="1474250274104" expanded="true" signature="4363:4495" placeholder="SELECT * FRO... schedule" />
-                <marker date="1474250274104" expanded="true" signature="4663:4913" placeholder="UPDATE cours... " />
-                <marker date="1474250274104" expanded="true" signature="4744:4912" placeholder="SELECT COURS... schedule" />
-                <marker date="1474250274104" expanded="true" signature="4930:5149" placeholder="UPDATE sched... " />
-                <marker date="1474250274104" expanded="true" signature="5783:5963" placeholder="SELECT s.STU... students" />
-                <marker date="1474250274104" expanded="true" signature="6145:6213" placeholder="SELECT SYSTE... system_preference_misc" />
-                <marker date="1474250274104" expanded="true" signature="6331:6446" placeholder="SELECT USERN... staff" />
-                <marker date="1474250274104" expanded="true" signature="6551:6665" placeholder="SELECT SYEAR... school_years" />
-                <marker date="1474250274104" expanded="true" signature="6610:6664" placeholder="SELECT MAX(S... school_years" />
-                <marker date="1474250274104" expanded="true" signature="6779:7026" placeholder="SELECT COUNT... staff_school_relationship" />
-                <marker date="1474250274104" expanded="true" signature="7161:7341" placeholder="SELECT COUNT... staff_school_relationship" />
-                <marker date="1474250274104" expanded="true" signature="7621:8068" placeholder="SELECT USERN... staff" />
-                <marker date="1474250274104" expanded="true" signature="8636:8944" placeholder="SELECT se.ID... student_enrollment" />
-                <marker date="1474250274104" expanded="true" signature="8783:8856" placeholder="SELECT MAX(S... student_enrollment" />
-                <marker date="1474250274104" expanded="true" signature="9227:9402" placeholder="SELECT STAFF... staff_school_relationship" />
-                <marker date="1474250274104" expanded="true" signature="9453:9628" placeholder="SELECT STAFF... staff_school_relationship" />
-                <marker date="1474250274104" expanded="true" signature="9872:10317" placeholder="SELECT s.USE... students" />
-                <marker date="1474250274104" expanded="true" signature="10158:10229" placeholder="SELECT MAX(S... student_enrollment" />
-                <marker date="1474250274104" expanded="true" signature="10660:10747" placeholder="SELECT STAFF... staff" />
-                <marker date="1474250274104" expanded="true" signature="11205:11755" placeholder="SELECT s.USE... staff" />
-                <marker date="1474250274104" expanded="true" signature="11572:11713" placeholder="SELECT MAX(s... staff_school_relationship" />
-                <marker date="1474250274104" expanded="true" signature="11827:12198" placeholder="SELECT s.FIR... students" />
-                <marker date="1474250274104" expanded="true" signature="12039:12110" placeholder="SELECT MAX(S... student_enrollment" />
-                <marker date="1474250274104" expanded="true" signature="12296:12387" placeholder="SELECT STAFF... staff" />
-                <marker date="1474250274104" expanded="true" signature="12527:12817" placeholder="SELECT USERN... staff" />
-                <marker date="1474250274104" expanded="true" signature="12669:12777" placeholder="SELECT MAX(S... staff" />
-                <marker date="1474250274104" expanded="true" signature="12872:13243" placeholder="SELECT s.FIR... students" />
-                <marker date="1474250274104" expanded="true" signature="13084:13155" placeholder="SELECT MAX(S... student_enrollment" />
-                <marker date="1474250274104" expanded="true" signature="13700:13761" placeholder="SELECT MAX(S... school_years" />
-                <marker date="1474250274104" expanded="true" signature="14775:14857" placeholder="INSERT INTO log_maintain... " />
-                <marker date="1474250274104" expanded="true" signature="14890:14972" placeholder="SELECT MIN(i... log_maintain" />
-                <marker date="1474250274104" expanded="true" signature="15047:15089" placeholder="SELECT VALUE... log_maintain" />
-                <marker date="1474250274104" expanded="true" signature="15176:15258" placeholder="SELECT MAX(i... log_maintain" />
-                <marker date="1474250274104" expanded="true" signature="15333:15375" placeholder="SELECT VALUE... log_maintain" />
-                <marker date="1474250274104" expanded="true" signature="15960:16316" placeholder="INSERT INTO login_records... " />
-                <marker date="1474250274104" expanded="true" signature="16912:16957" placeholder="SELECT FAIL_... system_preference_misc" />
-                <marker date="1474250274104" expanded="true" signature="17111:17236" placeholder="UPDATE staff... " />
-                <marker date="1474250274104" expanded="true" signature="17571:17619" placeholder="SELECT ACTIV... system_preference_misc" />
-                <marker date="1474250274104" expanded="true" signature="18098:18293" placeholder="UPDATE staff... " />
-                <marker date="1474250274104" expanded="true" signature="18633:18725" placeholder="UPDATE staff... " />
-                <marker date="1474250274104" expanded="true" signature="18759:18869" placeholder="UPDATE staff... " />
-                <marker date="1474250274104" expanded="true" signature="19293:19320" placeholder="UPDATE confi... " />
-                <marker date="1474250274104" expanded="true" signature="19566:19611" placeholder="SELECT FAIL_... system_preference_misc" />
-                <marker date="1474250274104" expanded="true" signature="21018:21394" placeholder="INSERT INTO login_records... " />
-                <marker date="1474250274104" expanded="true" signature="21488:21533" placeholder="SELECT FAIL_... system_preference_misc" />
-                <marker date="1474250274104" expanded="true" signature="21669:21756" placeholder="UPDATE stude... " />
-                <marker date="1474250274104" expanded="true" signature="22088:22136" placeholder="SELECT ACTIV... system_preference_misc" />
-                <marker date="1474250274104" expanded="true" signature="22468:22555" placeholder="UPDATE stude... " />
-                <marker date="1474250274104" expanded="true" signature="22756:22848" placeholder="UPDATE staff... " />
-                <marker date="1474250274104" expanded="true" signature="22882:23001" placeholder="UPDATE stude... " />
-                <marker date="1474250274104" expanded="true" signature="23145:23315" placeholder="SELECT MAX(S... staff" />
-                <marker date="1474250274104" expanded="true" signature="23336:23456" placeholder="UPDATE staff... " />
-                <marker date="1474250274104" expanded="true" signature="23475:23598" placeholder="UPDATE stude... " />
-                <marker date="1474250274104" expanded="true" signature="24505:24692" placeholder="INSERT INTO login_records... " />
-                <marker date="1474250274104" expanded="true" signature="24736:24769" placeholder="SELECT MAX(i... login_records" />
-                <marker date="1474250274104" expanded="true" signature="24863:24997" placeholder="UPDATE login... " />
-                <marker date="1474250274104" expanded="true" signature="25051:25096" placeholder="SELECT FAIL_... system_preference_misc" />
-                <marker date="1474250274104" expanded="true" signature="25197:25311" placeholder="SELECT FAILE... staff" />
-                <marker date="1474250274104" expanded="true" signature="25776:25883" placeholder="UPDATE staff... " />
-                <marker date="1474250274104" expanded="true" signature="26689:26798" placeholder="SELECT FAILE... students" />
-                <marker date="1474250274104" expanded="true" signature="27038:27148" placeholder="UPDATE stude... " />
-                <marker date="1474250274104" expanded="true" signature="28083:28491" placeholder="SELECT COUNT... students" />
-                <marker date="1474250274104" expanded="true" signature="28418:28489" placeholder="SELECT MAX(S... student_enrollment" />
-                <marker date="1474250274104" expanded="true" signature="30466:30575" placeholder="..." />
-                <marker date="1474250274104" expanded="true" signature="30769:31168" placeholder="..." />
-                <marker date="1474250274104" expanded="true" signature="30816:31099" placeholder="..." />
-                <marker date="1474250274104" expanded="false" signature="31043:31068" placeholder="..." />
+                <marker date="1474270940746" expanded="true" signature="3039:3103" placeholder="DELETE FROM " />
+                <marker date="1474270940746" expanded="true" signature="4148:4251" placeholder="SELECT DISTI... schedule" />
+                <marker date="1474270940746" expanded="true" signature="4363:4495" placeholder="SELECT * FRO... schedule" />
+                <marker date="1474270940746" expanded="true" signature="4663:4913" placeholder="UPDATE cours... " />
+                <marker date="1474270940746" expanded="true" signature="4744:4912" placeholder="SELECT COURS... schedule" />
+                <marker date="1474270940746" expanded="true" signature="4930:5149" placeholder="UPDATE sched... " />
+                <marker date="1474270940746" expanded="true" signature="5783:5963" placeholder="SELECT s.STU... students" />
+                <marker date="1474270940746" expanded="true" signature="6145:6213" placeholder="SELECT SYSTE... system_preference_misc" />
+                <marker date="1474270940746" expanded="true" signature="6331:6446" placeholder="SELECT USERN... staff" />
+                <marker date="1474270940746" expanded="true" signature="6551:6665" placeholder="SELECT SYEAR... school_years" />
+                <marker date="1474270940746" expanded="true" signature="6610:6664" placeholder="SELECT MAX(S... school_years" />
+                <marker date="1474270940746" expanded="true" signature="6779:7026" placeholder="SELECT COUNT... staff_school_relationship" />
+                <marker date="1474270940746" expanded="true" signature="7161:7341" placeholder="SELECT COUNT... staff_school_relationship" />
+                <marker date="1474270940746" expanded="true" signature="7621:8068" placeholder="SELECT USERN... staff" />
+                <marker date="1474270940746" expanded="true" signature="8636:8944" placeholder="SELECT se.ID... student_enrollment" />
+                <marker date="1474270940746" expanded="true" signature="8783:8856" placeholder="SELECT MAX(S... student_enrollment" />
+                <marker date="1474270940746" expanded="true" signature="9227:9402" placeholder="SELECT STAFF... staff_school_relationship" />
+                <marker date="1474270940746" expanded="true" signature="9453:9628" placeholder="SELECT STAFF... staff_school_relationship" />
+                <marker date="1474270940746" expanded="true" signature="9872:10317" placeholder="SELECT s.USE... students" />
+                <marker date="1474270940746" expanded="true" signature="10158:10229" placeholder="SELECT MAX(S... student_enrollment" />
+                <marker date="1474270940746" expanded="true" signature="10660:10747" placeholder="SELECT STAFF... staff" />
+                <marker date="1474270940746" expanded="true" signature="11205:11755" placeholder="SELECT s.USE... staff" />
+                <marker date="1474270940746" expanded="true" signature="11572:11713" placeholder="SELECT MAX(s... staff_school_relationship" />
+                <marker date="1474270940746" expanded="true" signature="11827:12198" placeholder="SELECT s.FIR... students" />
+                <marker date="1474270940746" expanded="true" signature="12039:12110" placeholder="SELECT MAX(S... student_enrollment" />
+                <marker date="1474270940746" expanded="true" signature="12296:12387" placeholder="SELECT STAFF... staff" />
+                <marker date="1474270940746" expanded="true" signature="12527:12817" placeholder="SELECT USERN... staff" />
+                <marker date="1474270940746" expanded="true" signature="12669:12777" placeholder="SELECT MAX(S... staff" />
+                <marker date="1474270940746" expanded="true" signature="12872:13243" placeholder="SELECT s.FIR... students" />
+                <marker date="1474270940746" expanded="true" signature="13084:13155" placeholder="SELECT MAX(S... student_enrollment" />
+                <marker date="1474270940746" expanded="true" signature="13700:13761" placeholder="SELECT MAX(S... school_years" />
+                <marker date="1474270940746" expanded="true" signature="14775:14857" placeholder="INSERT INTO log_maintain... " />
+                <marker date="1474270940746" expanded="true" signature="14890:14972" placeholder="SELECT MIN(i... log_maintain" />
+                <marker date="1474270940746" expanded="true" signature="15047:15089" placeholder="SELECT VALUE... log_maintain" />
+                <marker date="1474270940746" expanded="true" signature="15176:15258" placeholder="SELECT MAX(i... log_maintain" />
+                <marker date="1474270940746" expanded="true" signature="15333:15375" placeholder="SELECT VALUE... log_maintain" />
+                <marker date="1474270940746" expanded="true" signature="15960:16316" placeholder="INSERT INTO login_records... " />
+                <marker date="1474270940746" expanded="true" signature="16912:16957" placeholder="SELECT FAIL_... system_preference_misc" />
+                <marker date="1474270940746" expanded="true" signature="17111:17236" placeholder="UPDATE staff... " />
+                <marker date="1474270940746" expanded="true" signature="17571:17619" placeholder="SELECT ACTIV... system_preference_misc" />
+                <marker date="1474270940746" expanded="true" signature="18098:18293" placeholder="UPDATE staff... " />
+                <marker date="1474270940746" expanded="true" signature="18633:18725" placeholder="UPDATE staff... " />
+                <marker date="1474270940746" expanded="true" signature="18759:18869" placeholder="UPDATE staff... " />
+                <marker date="1474270940746" expanded="true" signature="19293:19320" placeholder="UPDATE confi... " />
+                <marker date="1474270940746" expanded="true" signature="19566:19611" placeholder="SELECT FAIL_... system_preference_misc" />
+                <marker date="1474270940746" expanded="true" signature="21018:21394" placeholder="INSERT INTO login_records... " />
+                <marker date="1474270940746" expanded="true" signature="21488:21533" placeholder="SELECT FAIL_... system_preference_misc" />
+                <marker date="1474270940746" expanded="true" signature="21669:21756" placeholder="UPDATE stude... " />
+                <marker date="1474270940746" expanded="true" signature="22088:22136" placeholder="SELECT ACTIV... system_preference_misc" />
+                <marker date="1474270940746" expanded="true" signature="22468:22555" placeholder="UPDATE stude... " />
+                <marker date="1474270940746" expanded="true" signature="22756:22848" placeholder="UPDATE staff... " />
+                <marker date="1474270940746" expanded="true" signature="22882:23001" placeholder="UPDATE stude... " />
+                <marker date="1474270940746" expanded="true" signature="23145:23315" placeholder="SELECT MAX(S... staff" />
+                <marker date="1474270940746" expanded="true" signature="23336:23456" placeholder="UPDATE staff... " />
+                <marker date="1474270940746" expanded="true" signature="23475:23598" placeholder="UPDATE stude... " />
+                <marker date="1474270940746" expanded="true" signature="24505:24692" placeholder="INSERT INTO login_records... " />
+                <marker date="1474270940746" expanded="true" signature="24736:24769" placeholder="SELECT MAX(i... login_records" />
+                <marker date="1474270940746" expanded="true" signature="24863:24997" placeholder="UPDATE login... " />
+                <marker date="1474270940746" expanded="true" signature="25051:25096" placeholder="SELECT FAIL_... system_preference_misc" />
+                <marker date="1474270940746" expanded="true" signature="25197:25311" placeholder="SELECT FAILE... staff" />
+                <marker date="1474270940746" expanded="true" signature="25776:25883" placeholder="UPDATE staff... " />
+                <marker date="1474270940746" expanded="true" signature="26689:26798" placeholder="SELECT FAILE... students" />
+                <marker date="1474270940746" expanded="true" signature="27038:27148" placeholder="UPDATE stude... " />
+                <marker date="1474270940746" expanded="true" signature="28083:28491" placeholder="SELECT COUNT... students" />
+                <marker date="1474270940746" expanded="true" signature="28418:28489" placeholder="SELECT MAX(S... student_enrollment" />
+                <marker date="1474270940746" expanded="true" signature="30466:30575" placeholder="..." />
+                <marker date="1474270940746" expanded="true" signature="30769:31168" placeholder="..." />
+                <marker date="1474270940746" expanded="true" signature="30816:31099" placeholder="..." />
+                <marker date="1474270940746" expanded="false" signature="31043:31068" placeholder="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Backup.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/modules/Tools/Backup.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="153">
+              <caret line="666" column="9" selection-start-line="666" selection-start-column="9" selection-end-line="666" selection-end-column="9" />
+              <folding>
+                <marker date="1407882706000" expanded="true" signature="32427:32453" placeholder="select * fro... ${$table}" />
+                <marker date="1407882706000" expanded="true" signature="33140:33166" placeholder="insert into `${$table}`... " />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="cron.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/cli/cron.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="63">
+              <caret line="3" column="17" selection-start-line="3" selection-start-column="17" selection-end-line="3" selection-end-column="17" />
+              <folding>
+                <marker date="1474273842499" expanded="true" signature="1060:1104" placeholder="SELECT id, i... m_mnet_host" />
+                <marker date="1474273842499" expanded="true" signature="1308:1329" placeholder="select * fro... courses" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Courses.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/modules/School_Setup/Courses.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="189">
+              <caret line="394" column="20" selection-start-line="394" selection-start-column="20" selection-end-line="394" selection-end-column="20" />
+              <folding>
+                <marker date="1407882706000" expanded="true" signature="2087:2182" placeholder="UPDATE cours... " />
+                <marker date="1407882706000" expanded="true" signature="2343:2450" placeholder="SELECT SUBJE... course_subjects" />
+                <marker date="1407882706000" expanded="true" signature="3134:3384" placeholder="SELECT SUBJE... course_subjects" />
+                <marker date="1407882706000" expanded="true" signature="3421:3673" placeholder="SELECT SUBJE... courses" />
+                <marker date="1407882706000" expanded="true" signature="3724:4065" placeholder="SELECT c.SUB... course_periods" />
+                <marker date="1407882706000" expanded="true" signature="7108:7256" placeholder="SELECT TEACH... course_periods" />
+                <marker date="1407882706000" expanded="true" signature="8627:8710" placeholder="SELECT FIRST... staff" />
+                <marker date="1407882706000" expanded="true" signature="8745:8877" placeholder="SELECT TITLE... school_periods" />
+                <marker date="1407882706000" expanded="true" signature="13094:13167" placeholder="SELECT GRADE... course_periods" />
+                <marker date="1407882706000" expanded="true" signature="15261:15340" placeholder="SELECT COUNT... attendance_period" />
+                <marker date="1407882706000" expanded="true" signature="16195:16257" placeholder="DELETE FROM " />
+                <marker date="1407882706000" expanded="true" signature="20412:20424" placeholder="INSERT INTO ${$table_name}... " />
+                <marker date="1407882706000" expanded="true" signature="22819:22913" placeholder="SELECT FIRST... staff" />
+                <marker date="1407882706000" expanded="true" signature="23027:23168" placeholder="SELECT TITLE... school_periods" />
+                <marker date="1407882706000" expanded="true" signature="27726:27783" placeholder="SELECT MAX(C... course_periods" />
+                <marker date="1407882706000" expanded="true" signature="27804:27901" placeholder="UPDATE cours... " />
+                <marker date="1407882706000" expanded="true" signature="28950:29032" placeholder="UPDATE cours... " />
+                <marker date="1407882706000" expanded="true" signature="29048:29123" placeholder="DELETE FROM " />
+                <marker date="1407882706000" expanded="true" signature="29139:29208" placeholder="DELETE FROM " />
+                <marker date="1407882706000" expanded="true" signature="29332:29410" placeholder="SELECT COURS... course_periods" />
+                <marker date="1407882706000" expanded="true" signature="29586:29640" placeholder="DELETE FROM " />
+                <marker date="1407882706000" expanded="true" signature="29895:29973" placeholder="SELECT COURS... course_periods" />
+                <marker date="1407882706000" expanded="true" signature="30034:30112" placeholder="UPDATE cours... " />
+                <marker date="1407882706000" expanded="true" signature="30154:30215" placeholder="DELETE FROM " />
+                <marker date="1407882706000" expanded="true" signature="30231:30286" placeholder="DELETE FROM " />
+                <marker date="1407882706000" expanded="true" signature="30302:30366" placeholder="DELETE FROM " />
+                <marker date="1407882706000" expanded="true" signature="30887:30907" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="31099:31153" placeholder="DELETE FROM " />
+                <marker date="1407882706000" expanded="true" signature="31408:31486" placeholder="SELECT COURS... course_periods" />
+                <marker date="1407882706000" expanded="true" signature="31547:31625" placeholder="UPDATE cours... " />
+                <marker date="1407882706000" expanded="true" signature="31667:31728" placeholder="DELETE FROM " />
+                <marker date="1407882706000" expanded="true" signature="31744:31799" placeholder="DELETE FROM " />
+                <marker date="1407882706000" expanded="true" signature="31815:31879" placeholder="DELETE FROM " />
+                <marker date="1407882706000" expanded="true" signature="32158:32224" placeholder="SELECT COURS... courses" />
+                <marker date="1407882706000" expanded="true" signature="32313:32377" placeholder="DELETE FROM " />
+                <marker date="1407882706000" expanded="true" signature="32409:32475" placeholder="SELECT COURS... courses" />
+                <marker date="1407882706000" expanded="true" signature="32562:32624" placeholder="DELETE FROM " />
+                <marker date="1407882706000" expanded="true" signature="32857:32943" placeholder="SELECT COURS... course_periods" />
+                <marker date="1407882706000" expanded="true" signature="33010:33089" placeholder="UPDATE cours... " />
+                <marker date="1407882706000" expanded="true" signature="33143:33212" placeholder="DELETE FROM " />
+                <marker date="1407882706000" expanded="true" signature="33230:33293" placeholder="DELETE FROM " />
+                <marker date="1407882706000" expanded="true" signature="33311:33383" placeholder="DELETE FROM " />
+                <marker date="1407882706000" expanded="true" signature="33696:33716" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="33890:33954" placeholder="DELETE FROM " />
+                <marker date="1407882706000" expanded="true" signature="33986:34052" placeholder="SELECT COURS... courses" />
+                <marker date="1407882706000" expanded="true" signature="34139:34201" placeholder="DELETE FROM " />
+                <marker date="1407882706000" expanded="true" signature="34434:34520" placeholder="SELECT COURS... course_periods" />
+                <marker date="1407882706000" expanded="true" signature="34587:34666" placeholder="UPDATE cours... " />
+                <marker date="1407882706000" expanded="true" signature="34720:34789" placeholder="DELETE FROM " />
+                <marker date="1407882706000" expanded="true" signature="34807:34870" placeholder="DELETE FROM " />
+                <marker date="1407882706000" expanded="true" signature="34888:34960" placeholder="DELETE FROM " />
+                <marker date="1407882706000" expanded="true" signature="35919:36045" placeholder="SELECT SUBJE... course_subjects" />
+                <marker date="1407882706000" expanded="true" signature="36607:37018" placeholder="SELECT PAREN... course_periods" />
+                <marker date="1407882706000" expanded="true" signature="37165:37247" placeholder="SELECT TITLE... courses" />
+                <marker date="1407882706000" expanded="true" signature="38423:38711" placeholder="SELECT STAFF... staff" />
+                <marker date="1407882706000" expanded="true" signature="39580:39709" placeholder="SELECT PERIO... school_periods" />
+                <marker date="1407882706000" expanded="true" signature="40290:40435" placeholder="SELECT MARKI... school_quarters" />
+                <marker date="1407882706000" expanded="true" signature="40290:40750" placeholder="SELECT MARKI... " />
+                <marker date="1407882706000" expanded="true" signature="40442:40588" placeholder="SELECT MARKI... school_semesters" />
+                <marker date="1407882706000" expanded="true" signature="40595:40737" placeholder="SELECT MARKI... school_years" />
+                <marker date="1407882706000" expanded="true" signature="40862:40997" placeholder="SELECT (TOTA... course_periods" />
+                <marker date="1407882706000" expanded="true" signature="41736:41754" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="42360:42472" placeholder="SELECT TITLE... report_card_grade_scales" />
+                <marker date="1407882706000" expanded="true" signature="42822:43075" placeholder="SELECT COUNT... gradebook_assignments" />
+                <marker date="1407882706000" expanded="true" signature="45110:45253" placeholder="SELECT TITLE... attendance_calendars" />
+                <marker date="1407882706000" expanded="true" signature="45429:45651" placeholder="SELECT COUNT... schedule" />
+                <marker date="1407882706000" expanded="true" signature="49273:49433" placeholder="SELECT cp.TI... course_periods" />
+                <marker date="1407882706000" expanded="true" signature="49644:49801" placeholder="SELECT COURS... course_periods" />
+                <marker date="1407882706000" expanded="true" signature="52356:52432" placeholder="SELECT ID,TI... school_gradelevels" />
+                <marker date="1407882706000" expanded="true" signature="52491:52687" placeholder="SELECT c.TIT... courses" />
+                <marker date="1407882706000" expanded="true" signature="52859:52966" placeholder="SELECT TITLE... course_subjects" />
+                <marker date="1407882706000" expanded="true" signature="54855:54949" placeholder="SELECT TITLE... course_subjects" />
+                <marker date="1407882706000" expanded="true" signature="57211:57424" placeholder="SELECT COURS... courses" />
+                <marker date="1407882706000" expanded="true" signature="58969:59056" placeholder="SELECT MP_TY... marking_periods" />
+                <marker date="1407882706000" expanded="true" signature="59728:59902" placeholder="SELECT COURS... course_periods" />
+                <marker date="1407882706000" expanded="true" signature="62121:62212" placeholder="SELECT TITLE... course_periods" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="login.inc.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/login.inc.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-546">
+              <caret line="32" column="66" selection-start-line="32" selection-start-column="66" selection-end-line="32" selection-end-column="66" />
+              <folding>
+                <marker date="1407882706000" expanded="true" signature="1544:1595" placeholder="SELECT MESSA... login_message" />
+                <marker date="1407882706000" expanded="true" signature="1944:2177" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="1986:2167" placeholder="{...}" />
+                <marker date="1407882706000" expanded="true" signature="3381:4639" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="3460:4639" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="3467:4639" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="3506:4639" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="3599:4639" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="3621:4081" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="3651:4067" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="3743:4062" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="3762:4041" placeholder="..." />
+                <marker date="1407882706000" expanded="false" signature="3877:3896" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="4094:4639" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="4125:4639" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="4188:4639" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="4207:4639" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="4228:4639" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="4291:4639" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="4316:4639" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="4366:4613" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="4429:4608" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="4460:4575" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="4720:4729" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="4900:5784" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="4943:5784" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="5006:5784" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="5037:5784" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="5070:5784" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="5168:5784" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="5209:5426" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="5449:5678" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="5702:5784" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="6274:12812" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="6322:6531" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="6558:12801" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="6831:12788" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="6898:12774" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="6911:12757" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="6939:8457" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="8485:9978" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="10006:11542" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="11556:12743" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="12847:12880" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="12873:12880" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="13301:13916" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="13356:13892" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="13438:13881" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="13448:13873" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="14006:14160" placeholder="..." />
+                <marker date="1407882706000" expanded="false" signature="14083:14095" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="14305:14902" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="14348:14888" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="14411:14883" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="14430:14491" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="14510:14862" placeholder="..." />
+                <marker date="1407882706000" expanded="true" signature="14564:14842" placeholder="..." />
               </folding>
             </state>
           </provider>
@@ -105,7 +286,7 @@
       <file leaf-file-name="database.inc.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/database.inc.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="672">
+            <state relative-caret-position="124">
               <caret line="57" column="9" selection-start-line="57" selection-start-column="9" selection-end-line="57" selection-end-column="9" />
               <folding>
                 <marker date="1407882706000" expanded="true" signature="8432:8944" placeholder="..." />
@@ -123,7 +304,9 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="0">
               <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
+              <folding>
+                <marker date="1407882706000" expanded="true" signature="71:244" placeholder="&lt;IfModule mod_rewrite.c&gt;" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -170,6 +353,7 @@
         <option value="$PROJECT_DIR$/functions/DrawHeader.fnc.php" />
         <option value="$PROJECT_DIR$/i18n.php" />
         <option value="$PROJECT_DIR$/index.php" />
+        <option value="$PROJECT_DIR$/cli/cron.php" />
       </list>
     </option>
   </component>
@@ -244,7 +428,7 @@
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="modules" />
+              <option name="myItemId" value="cli" />
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
             </PATH_ELEMENT>
           </PATH>
@@ -305,34 +489,34 @@
       <updated>1474009703726</updated>
       <workItem from="1474009704991" duration="5781000" />
       <workItem from="1474023586808" duration="2143000" />
-      <workItem from="1474250264206" duration="608000" />
+      <workItem from="1474250264206" duration="11491000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="8532000" />
+    <option name="totallyTimeSpent" value="19415000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="0" width="1612" height="867" extended-state="1" />
+    <frame x="-7" y="0" width="1612" height="867" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2564433" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3997175" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3997175" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
@@ -367,7 +551,14 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="15" />
+      <breakpoints>
+        <line-breakpoint enabled="true" type="php">
+          <url>file://$PROJECT_DIR$/modules/School_Setup/Courses.php</url>
+          <line>27</line>
+          <option name="timeStamp" value="15" />
+        </line-breakpoint>
+      </breakpoints>
+      <option name="time" value="22" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="index.php">
@@ -381,75 +572,75 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1474250274104" expanded="true" signature="3039:3103" placeholder="DELETE FROM " />
-            <marker date="1474250274104" expanded="true" signature="4148:4251" placeholder="SELECT DISTI... schedule" />
-            <marker date="1474250274104" expanded="true" signature="4363:4495" placeholder="SELECT * FRO... schedule" />
-            <marker date="1474250274104" expanded="true" signature="4663:4913" placeholder="UPDATE cours... " />
-            <marker date="1474250274104" expanded="true" signature="4744:4912" placeholder="SELECT COURS... schedule" />
-            <marker date="1474250274104" expanded="true" signature="4930:5149" placeholder="UPDATE sched... " />
-            <marker date="1474250274104" expanded="true" signature="5783:5963" placeholder="SELECT s.STU... students" />
-            <marker date="1474250274104" expanded="true" signature="6145:6213" placeholder="SELECT SYSTE... system_preference_misc" />
-            <marker date="1474250274104" expanded="true" signature="6331:6446" placeholder="SELECT USERN... staff" />
-            <marker date="1474250274104" expanded="true" signature="6551:6665" placeholder="SELECT SYEAR... school_years" />
-            <marker date="1474250274104" expanded="true" signature="6610:6664" placeholder="SELECT MAX(S... school_years" />
-            <marker date="1474250274104" expanded="true" signature="6779:7026" placeholder="SELECT COUNT... staff_school_relationship" />
-            <marker date="1474250274104" expanded="true" signature="7161:7341" placeholder="SELECT COUNT... staff_school_relationship" />
-            <marker date="1474250274104" expanded="true" signature="7621:8068" placeholder="SELECT USERN... staff" />
-            <marker date="1474250274104" expanded="true" signature="8636:8944" placeholder="SELECT se.ID... student_enrollment" />
-            <marker date="1474250274104" expanded="true" signature="8783:8856" placeholder="SELECT MAX(S... student_enrollment" />
-            <marker date="1474250274104" expanded="true" signature="9227:9402" placeholder="SELECT STAFF... staff_school_relationship" />
-            <marker date="1474250274104" expanded="true" signature="9453:9628" placeholder="SELECT STAFF... staff_school_relationship" />
-            <marker date="1474250274104" expanded="true" signature="9872:10317" placeholder="SELECT s.USE... students" />
-            <marker date="1474250274104" expanded="true" signature="10158:10229" placeholder="SELECT MAX(S... student_enrollment" />
-            <marker date="1474250274104" expanded="true" signature="10660:10747" placeholder="SELECT STAFF... staff" />
-            <marker date="1474250274104" expanded="true" signature="11205:11755" placeholder="SELECT s.USE... staff" />
-            <marker date="1474250274104" expanded="true" signature="11572:11713" placeholder="SELECT MAX(s... staff_school_relationship" />
-            <marker date="1474250274104" expanded="true" signature="11827:12198" placeholder="SELECT s.FIR... students" />
-            <marker date="1474250274104" expanded="true" signature="12039:12110" placeholder="SELECT MAX(S... student_enrollment" />
-            <marker date="1474250274104" expanded="true" signature="12296:12387" placeholder="SELECT STAFF... staff" />
-            <marker date="1474250274104" expanded="true" signature="12527:12817" placeholder="SELECT USERN... staff" />
-            <marker date="1474250274104" expanded="true" signature="12669:12777" placeholder="SELECT MAX(S... staff" />
-            <marker date="1474250274104" expanded="true" signature="12872:13243" placeholder="SELECT s.FIR... students" />
-            <marker date="1474250274104" expanded="true" signature="13084:13155" placeholder="SELECT MAX(S... student_enrollment" />
-            <marker date="1474250274104" expanded="true" signature="13700:13761" placeholder="SELECT MAX(S... school_years" />
-            <marker date="1474250274104" expanded="true" signature="14775:14857" placeholder="INSERT INTO log_maintain... " />
-            <marker date="1474250274104" expanded="true" signature="14890:14972" placeholder="SELECT MIN(i... log_maintain" />
-            <marker date="1474250274104" expanded="true" signature="15047:15089" placeholder="SELECT VALUE... log_maintain" />
-            <marker date="1474250274104" expanded="true" signature="15176:15258" placeholder="SELECT MAX(i... log_maintain" />
-            <marker date="1474250274104" expanded="true" signature="15333:15375" placeholder="SELECT VALUE... log_maintain" />
-            <marker date="1474250274104" expanded="true" signature="15960:16316" placeholder="INSERT INTO login_records... " />
-            <marker date="1474250274104" expanded="true" signature="16912:16957" placeholder="SELECT FAIL_... system_preference_misc" />
-            <marker date="1474250274104" expanded="true" signature="17111:17236" placeholder="UPDATE staff... " />
-            <marker date="1474250274104" expanded="true" signature="17571:17619" placeholder="SELECT ACTIV... system_preference_misc" />
-            <marker date="1474250274104" expanded="true" signature="18098:18293" placeholder="UPDATE staff... " />
-            <marker date="1474250274104" expanded="true" signature="18633:18725" placeholder="UPDATE staff... " />
-            <marker date="1474250274104" expanded="true" signature="18759:18869" placeholder="UPDATE staff... " />
-            <marker date="1474250274104" expanded="true" signature="19293:19320" placeholder="UPDATE confi... " />
-            <marker date="1474250274104" expanded="true" signature="19566:19611" placeholder="SELECT FAIL_... system_preference_misc" />
-            <marker date="1474250274104" expanded="true" signature="21018:21394" placeholder="INSERT INTO login_records... " />
-            <marker date="1474250274104" expanded="true" signature="21488:21533" placeholder="SELECT FAIL_... system_preference_misc" />
-            <marker date="1474250274104" expanded="true" signature="21669:21756" placeholder="UPDATE stude... " />
-            <marker date="1474250274104" expanded="true" signature="22088:22136" placeholder="SELECT ACTIV... system_preference_misc" />
-            <marker date="1474250274104" expanded="true" signature="22468:22555" placeholder="UPDATE stude... " />
-            <marker date="1474250274104" expanded="true" signature="22756:22848" placeholder="UPDATE staff... " />
-            <marker date="1474250274104" expanded="true" signature="22882:23001" placeholder="UPDATE stude... " />
-            <marker date="1474250274104" expanded="true" signature="23145:23315" placeholder="SELECT MAX(S... staff" />
-            <marker date="1474250274104" expanded="true" signature="23336:23456" placeholder="UPDATE staff... " />
-            <marker date="1474250274104" expanded="true" signature="23475:23598" placeholder="UPDATE stude... " />
-            <marker date="1474250274104" expanded="true" signature="24505:24692" placeholder="INSERT INTO login_records... " />
-            <marker date="1474250274104" expanded="true" signature="24736:24769" placeholder="SELECT MAX(i... login_records" />
-            <marker date="1474250274104" expanded="true" signature="24863:24997" placeholder="UPDATE login... " />
-            <marker date="1474250274104" expanded="true" signature="25051:25096" placeholder="SELECT FAIL_... system_preference_misc" />
-            <marker date="1474250274104" expanded="true" signature="25197:25311" placeholder="SELECT FAILE... staff" />
-            <marker date="1474250274104" expanded="true" signature="25776:25883" placeholder="UPDATE staff... " />
-            <marker date="1474250274104" expanded="true" signature="26689:26798" placeholder="SELECT FAILE... students" />
-            <marker date="1474250274104" expanded="true" signature="27038:27148" placeholder="UPDATE stude... " />
-            <marker date="1474250274104" expanded="true" signature="28083:28491" placeholder="SELECT COUNT... students" />
-            <marker date="1474250274104" expanded="true" signature="28418:28489" placeholder="SELECT MAX(S... student_enrollment" />
-            <marker date="1474250274104" expanded="true" signature="30466:30575" placeholder="..." />
-            <marker date="1474250274104" expanded="true" signature="30769:31168" placeholder="..." />
-            <marker date="1474250274104" expanded="true" signature="30816:31099" placeholder="..." />
-            <marker date="1474250274104" expanded="false" signature="31043:31068" placeholder="..." />
+            <marker date="1474270940746" expanded="true" signature="3039:3103" placeholder="DELETE FROM " />
+            <marker date="1474270940746" expanded="true" signature="4148:4251" placeholder="SELECT DISTI... schedule" />
+            <marker date="1474270940746" expanded="true" signature="4363:4495" placeholder="SELECT * FRO... schedule" />
+            <marker date="1474270940746" expanded="true" signature="4663:4913" placeholder="UPDATE cours... " />
+            <marker date="1474270940746" expanded="true" signature="4744:4912" placeholder="SELECT COURS... schedule" />
+            <marker date="1474270940746" expanded="true" signature="4930:5149" placeholder="UPDATE sched... " />
+            <marker date="1474270940746" expanded="true" signature="5783:5963" placeholder="SELECT s.STU... students" />
+            <marker date="1474270940746" expanded="true" signature="6145:6213" placeholder="SELECT SYSTE... system_preference_misc" />
+            <marker date="1474270940746" expanded="true" signature="6331:6446" placeholder="SELECT USERN... staff" />
+            <marker date="1474270940746" expanded="true" signature="6551:6665" placeholder="SELECT SYEAR... school_years" />
+            <marker date="1474270940746" expanded="true" signature="6610:6664" placeholder="SELECT MAX(S... school_years" />
+            <marker date="1474270940746" expanded="true" signature="6779:7026" placeholder="SELECT COUNT... staff_school_relationship" />
+            <marker date="1474270940746" expanded="true" signature="7161:7341" placeholder="SELECT COUNT... staff_school_relationship" />
+            <marker date="1474270940746" expanded="true" signature="7621:8068" placeholder="SELECT USERN... staff" />
+            <marker date="1474270940746" expanded="true" signature="8636:8944" placeholder="SELECT se.ID... student_enrollment" />
+            <marker date="1474270940746" expanded="true" signature="8783:8856" placeholder="SELECT MAX(S... student_enrollment" />
+            <marker date="1474270940746" expanded="true" signature="9227:9402" placeholder="SELECT STAFF... staff_school_relationship" />
+            <marker date="1474270940746" expanded="true" signature="9453:9628" placeholder="SELECT STAFF... staff_school_relationship" />
+            <marker date="1474270940746" expanded="true" signature="9872:10317" placeholder="SELECT s.USE... students" />
+            <marker date="1474270940746" expanded="true" signature="10158:10229" placeholder="SELECT MAX(S... student_enrollment" />
+            <marker date="1474270940746" expanded="true" signature="10660:10747" placeholder="SELECT STAFF... staff" />
+            <marker date="1474270940746" expanded="true" signature="11205:11755" placeholder="SELECT s.USE... staff" />
+            <marker date="1474270940746" expanded="true" signature="11572:11713" placeholder="SELECT MAX(s... staff_school_relationship" />
+            <marker date="1474270940746" expanded="true" signature="11827:12198" placeholder="SELECT s.FIR... students" />
+            <marker date="1474270940746" expanded="true" signature="12039:12110" placeholder="SELECT MAX(S... student_enrollment" />
+            <marker date="1474270940746" expanded="true" signature="12296:12387" placeholder="SELECT STAFF... staff" />
+            <marker date="1474270940746" expanded="true" signature="12527:12817" placeholder="SELECT USERN... staff" />
+            <marker date="1474270940746" expanded="true" signature="12669:12777" placeholder="SELECT MAX(S... staff" />
+            <marker date="1474270940746" expanded="true" signature="12872:13243" placeholder="SELECT s.FIR... students" />
+            <marker date="1474270940746" expanded="true" signature="13084:13155" placeholder="SELECT MAX(S... student_enrollment" />
+            <marker date="1474270940746" expanded="true" signature="13700:13761" placeholder="SELECT MAX(S... school_years" />
+            <marker date="1474270940746" expanded="true" signature="14775:14857" placeholder="INSERT INTO log_maintain... " />
+            <marker date="1474270940746" expanded="true" signature="14890:14972" placeholder="SELECT MIN(i... log_maintain" />
+            <marker date="1474270940746" expanded="true" signature="15047:15089" placeholder="SELECT VALUE... log_maintain" />
+            <marker date="1474270940746" expanded="true" signature="15176:15258" placeholder="SELECT MAX(i... log_maintain" />
+            <marker date="1474270940746" expanded="true" signature="15333:15375" placeholder="SELECT VALUE... log_maintain" />
+            <marker date="1474270940746" expanded="true" signature="15960:16316" placeholder="INSERT INTO login_records... " />
+            <marker date="1474270940746" expanded="true" signature="16912:16957" placeholder="SELECT FAIL_... system_preference_misc" />
+            <marker date="1474270940746" expanded="true" signature="17111:17236" placeholder="UPDATE staff... " />
+            <marker date="1474270940746" expanded="true" signature="17571:17619" placeholder="SELECT ACTIV... system_preference_misc" />
+            <marker date="1474270940746" expanded="true" signature="18098:18293" placeholder="UPDATE staff... " />
+            <marker date="1474270940746" expanded="true" signature="18633:18725" placeholder="UPDATE staff... " />
+            <marker date="1474270940746" expanded="true" signature="18759:18869" placeholder="UPDATE staff... " />
+            <marker date="1474270940746" expanded="true" signature="19293:19320" placeholder="UPDATE confi... " />
+            <marker date="1474270940746" expanded="true" signature="19566:19611" placeholder="SELECT FAIL_... system_preference_misc" />
+            <marker date="1474270940746" expanded="true" signature="21018:21394" placeholder="INSERT INTO login_records... " />
+            <marker date="1474270940746" expanded="true" signature="21488:21533" placeholder="SELECT FAIL_... system_preference_misc" />
+            <marker date="1474270940746" expanded="true" signature="21669:21756" placeholder="UPDATE stude... " />
+            <marker date="1474270940746" expanded="true" signature="22088:22136" placeholder="SELECT ACTIV... system_preference_misc" />
+            <marker date="1474270940746" expanded="true" signature="22468:22555" placeholder="UPDATE stude... " />
+            <marker date="1474270940746" expanded="true" signature="22756:22848" placeholder="UPDATE staff... " />
+            <marker date="1474270940746" expanded="true" signature="22882:23001" placeholder="UPDATE stude... " />
+            <marker date="1474270940746" expanded="true" signature="23145:23315" placeholder="SELECT MAX(S... staff" />
+            <marker date="1474270940746" expanded="true" signature="23336:23456" placeholder="UPDATE staff... " />
+            <marker date="1474270940746" expanded="true" signature="23475:23598" placeholder="UPDATE stude... " />
+            <marker date="1474270940746" expanded="true" signature="24505:24692" placeholder="INSERT INTO login_records... " />
+            <marker date="1474270940746" expanded="true" signature="24736:24769" placeholder="SELECT MAX(i... login_records" />
+            <marker date="1474270940746" expanded="true" signature="24863:24997" placeholder="UPDATE login... " />
+            <marker date="1474270940746" expanded="true" signature="25051:25096" placeholder="SELECT FAIL_... system_preference_misc" />
+            <marker date="1474270940746" expanded="true" signature="25197:25311" placeholder="SELECT FAILE... staff" />
+            <marker date="1474270940746" expanded="true" signature="25776:25883" placeholder="UPDATE staff... " />
+            <marker date="1474270940746" expanded="true" signature="26689:26798" placeholder="SELECT FAILE... students" />
+            <marker date="1474270940746" expanded="true" signature="27038:27148" placeholder="UPDATE stude... " />
+            <marker date="1474270940746" expanded="true" signature="28083:28491" placeholder="SELECT COUNT... students" />
+            <marker date="1474270940746" expanded="true" signature="28418:28489" placeholder="SELECT MAX(S... student_enrollment" />
+            <marker date="1474270940746" expanded="true" signature="30466:30575" placeholder="..." />
+            <marker date="1474270940746" expanded="true" signature="30769:31168" placeholder="..." />
+            <marker date="1474270940746" expanded="true" signature="30816:31099" placeholder="..." />
+            <marker date="1474270940746" expanded="false" signature="31043:31068" placeholder="..." />
           </folding>
         </state>
       </provider>
@@ -472,7 +663,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <marker date="1407882706000" expanded="true" signature="71:244" placeholder="&lt;IfModule mod_rewrite.c&gt;" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -508,75 +701,75 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1474250274104" expanded="true" signature="3039:3103" placeholder="DELETE FROM " />
-            <marker date="1474250274104" expanded="true" signature="4148:4251" placeholder="SELECT DISTI... schedule" />
-            <marker date="1474250274104" expanded="true" signature="4363:4495" placeholder="SELECT * FRO... schedule" />
-            <marker date="1474250274104" expanded="true" signature="4663:4913" placeholder="UPDATE cours... " />
-            <marker date="1474250274104" expanded="true" signature="4744:4912" placeholder="SELECT COURS... schedule" />
-            <marker date="1474250274104" expanded="true" signature="4930:5149" placeholder="UPDATE sched... " />
-            <marker date="1474250274104" expanded="true" signature="5783:5963" placeholder="SELECT s.STU... students" />
-            <marker date="1474250274104" expanded="true" signature="6145:6213" placeholder="SELECT SYSTE... system_preference_misc" />
-            <marker date="1474250274104" expanded="true" signature="6331:6446" placeholder="SELECT USERN... staff" />
-            <marker date="1474250274104" expanded="true" signature="6551:6665" placeholder="SELECT SYEAR... school_years" />
-            <marker date="1474250274104" expanded="true" signature="6610:6664" placeholder="SELECT MAX(S... school_years" />
-            <marker date="1474250274104" expanded="true" signature="6779:7026" placeholder="SELECT COUNT... staff_school_relationship" />
-            <marker date="1474250274104" expanded="true" signature="7161:7341" placeholder="SELECT COUNT... staff_school_relationship" />
-            <marker date="1474250274104" expanded="true" signature="7621:8068" placeholder="SELECT USERN... staff" />
-            <marker date="1474250274104" expanded="true" signature="8636:8944" placeholder="SELECT se.ID... student_enrollment" />
-            <marker date="1474250274104" expanded="true" signature="8783:8856" placeholder="SELECT MAX(S... student_enrollment" />
-            <marker date="1474250274104" expanded="true" signature="9227:9402" placeholder="SELECT STAFF... staff_school_relationship" />
-            <marker date="1474250274104" expanded="true" signature="9453:9628" placeholder="SELECT STAFF... staff_school_relationship" />
-            <marker date="1474250274104" expanded="true" signature="9872:10317" placeholder="SELECT s.USE... students" />
-            <marker date="1474250274104" expanded="true" signature="10158:10229" placeholder="SELECT MAX(S... student_enrollment" />
-            <marker date="1474250274104" expanded="true" signature="10660:10747" placeholder="SELECT STAFF... staff" />
-            <marker date="1474250274104" expanded="true" signature="11205:11755" placeholder="SELECT s.USE... staff" />
-            <marker date="1474250274104" expanded="true" signature="11572:11713" placeholder="SELECT MAX(s... staff_school_relationship" />
-            <marker date="1474250274104" expanded="true" signature="11827:12198" placeholder="SELECT s.FIR... students" />
-            <marker date="1474250274104" expanded="true" signature="12039:12110" placeholder="SELECT MAX(S... student_enrollment" />
-            <marker date="1474250274104" expanded="true" signature="12296:12387" placeholder="SELECT STAFF... staff" />
-            <marker date="1474250274104" expanded="true" signature="12527:12817" placeholder="SELECT USERN... staff" />
-            <marker date="1474250274104" expanded="true" signature="12669:12777" placeholder="SELECT MAX(S... staff" />
-            <marker date="1474250274104" expanded="true" signature="12872:13243" placeholder="SELECT s.FIR... students" />
-            <marker date="1474250274104" expanded="true" signature="13084:13155" placeholder="SELECT MAX(S... student_enrollment" />
-            <marker date="1474250274104" expanded="true" signature="13700:13761" placeholder="SELECT MAX(S... school_years" />
-            <marker date="1474250274104" expanded="true" signature="14775:14857" placeholder="INSERT INTO log_maintain... " />
-            <marker date="1474250274104" expanded="true" signature="14890:14972" placeholder="SELECT MIN(i... log_maintain" />
-            <marker date="1474250274104" expanded="true" signature="15047:15089" placeholder="SELECT VALUE... log_maintain" />
-            <marker date="1474250274104" expanded="true" signature="15176:15258" placeholder="SELECT MAX(i... log_maintain" />
-            <marker date="1474250274104" expanded="true" signature="15333:15375" placeholder="SELECT VALUE... log_maintain" />
-            <marker date="1474250274104" expanded="true" signature="15960:16316" placeholder="INSERT INTO login_records... " />
-            <marker date="1474250274104" expanded="true" signature="16912:16957" placeholder="SELECT FAIL_... system_preference_misc" />
-            <marker date="1474250274104" expanded="true" signature="17111:17236" placeholder="UPDATE staff... " />
-            <marker date="1474250274104" expanded="true" signature="17571:17619" placeholder="SELECT ACTIV... system_preference_misc" />
-            <marker date="1474250274104" expanded="true" signature="18098:18293" placeholder="UPDATE staff... " />
-            <marker date="1474250274104" expanded="true" signature="18633:18725" placeholder="UPDATE staff... " />
-            <marker date="1474250274104" expanded="true" signature="18759:18869" placeholder="UPDATE staff... " />
-            <marker date="1474250274104" expanded="true" signature="19293:19320" placeholder="UPDATE confi... " />
-            <marker date="1474250274104" expanded="true" signature="19566:19611" placeholder="SELECT FAIL_... system_preference_misc" />
-            <marker date="1474250274104" expanded="true" signature="21018:21394" placeholder="INSERT INTO login_records... " />
-            <marker date="1474250274104" expanded="true" signature="21488:21533" placeholder="SELECT FAIL_... system_preference_misc" />
-            <marker date="1474250274104" expanded="true" signature="21669:21756" placeholder="UPDATE stude... " />
-            <marker date="1474250274104" expanded="true" signature="22088:22136" placeholder="SELECT ACTIV... system_preference_misc" />
-            <marker date="1474250274104" expanded="true" signature="22468:22555" placeholder="UPDATE stude... " />
-            <marker date="1474250274104" expanded="true" signature="22756:22848" placeholder="UPDATE staff... " />
-            <marker date="1474250274104" expanded="true" signature="22882:23001" placeholder="UPDATE stude... " />
-            <marker date="1474250274104" expanded="true" signature="23145:23315" placeholder="SELECT MAX(S... staff" />
-            <marker date="1474250274104" expanded="true" signature="23336:23456" placeholder="UPDATE staff... " />
-            <marker date="1474250274104" expanded="true" signature="23475:23598" placeholder="UPDATE stude... " />
-            <marker date="1474250274104" expanded="true" signature="24505:24692" placeholder="INSERT INTO login_records... " />
-            <marker date="1474250274104" expanded="true" signature="24736:24769" placeholder="SELECT MAX(i... login_records" />
-            <marker date="1474250274104" expanded="true" signature="24863:24997" placeholder="UPDATE login... " />
-            <marker date="1474250274104" expanded="true" signature="25051:25096" placeholder="SELECT FAIL_... system_preference_misc" />
-            <marker date="1474250274104" expanded="true" signature="25197:25311" placeholder="SELECT FAILE... staff" />
-            <marker date="1474250274104" expanded="true" signature="25776:25883" placeholder="UPDATE staff... " />
-            <marker date="1474250274104" expanded="true" signature="26689:26798" placeholder="SELECT FAILE... students" />
-            <marker date="1474250274104" expanded="true" signature="27038:27148" placeholder="UPDATE stude... " />
-            <marker date="1474250274104" expanded="true" signature="28083:28491" placeholder="SELECT COUNT... students" />
-            <marker date="1474250274104" expanded="true" signature="28418:28489" placeholder="SELECT MAX(S... student_enrollment" />
-            <marker date="1474250274104" expanded="true" signature="30466:30575" placeholder="..." />
-            <marker date="1474250274104" expanded="true" signature="30769:31168" placeholder="..." />
-            <marker date="1474250274104" expanded="true" signature="30816:31099" placeholder="..." />
-            <marker date="1474250274104" expanded="false" signature="31043:31068" placeholder="..." />
+            <marker date="1474270940746" expanded="true" signature="3039:3103" placeholder="DELETE FROM " />
+            <marker date="1474270940746" expanded="true" signature="4148:4251" placeholder="SELECT DISTI... schedule" />
+            <marker date="1474270940746" expanded="true" signature="4363:4495" placeholder="SELECT * FRO... schedule" />
+            <marker date="1474270940746" expanded="true" signature="4663:4913" placeholder="UPDATE cours... " />
+            <marker date="1474270940746" expanded="true" signature="4744:4912" placeholder="SELECT COURS... schedule" />
+            <marker date="1474270940746" expanded="true" signature="4930:5149" placeholder="UPDATE sched... " />
+            <marker date="1474270940746" expanded="true" signature="5783:5963" placeholder="SELECT s.STU... students" />
+            <marker date="1474270940746" expanded="true" signature="6145:6213" placeholder="SELECT SYSTE... system_preference_misc" />
+            <marker date="1474270940746" expanded="true" signature="6331:6446" placeholder="SELECT USERN... staff" />
+            <marker date="1474270940746" expanded="true" signature="6551:6665" placeholder="SELECT SYEAR... school_years" />
+            <marker date="1474270940746" expanded="true" signature="6610:6664" placeholder="SELECT MAX(S... school_years" />
+            <marker date="1474270940746" expanded="true" signature="6779:7026" placeholder="SELECT COUNT... staff_school_relationship" />
+            <marker date="1474270940746" expanded="true" signature="7161:7341" placeholder="SELECT COUNT... staff_school_relationship" />
+            <marker date="1474270940746" expanded="true" signature="7621:8068" placeholder="SELECT USERN... staff" />
+            <marker date="1474270940746" expanded="true" signature="8636:8944" placeholder="SELECT se.ID... student_enrollment" />
+            <marker date="1474270940746" expanded="true" signature="8783:8856" placeholder="SELECT MAX(S... student_enrollment" />
+            <marker date="1474270940746" expanded="true" signature="9227:9402" placeholder="SELECT STAFF... staff_school_relationship" />
+            <marker date="1474270940746" expanded="true" signature="9453:9628" placeholder="SELECT STAFF... staff_school_relationship" />
+            <marker date="1474270940746" expanded="true" signature="9872:10317" placeholder="SELECT s.USE... students" />
+            <marker date="1474270940746" expanded="true" signature="10158:10229" placeholder="SELECT MAX(S... student_enrollment" />
+            <marker date="1474270940746" expanded="true" signature="10660:10747" placeholder="SELECT STAFF... staff" />
+            <marker date="1474270940746" expanded="true" signature="11205:11755" placeholder="SELECT s.USE... staff" />
+            <marker date="1474270940746" expanded="true" signature="11572:11713" placeholder="SELECT MAX(s... staff_school_relationship" />
+            <marker date="1474270940746" expanded="true" signature="11827:12198" placeholder="SELECT s.FIR... students" />
+            <marker date="1474270940746" expanded="true" signature="12039:12110" placeholder="SELECT MAX(S... student_enrollment" />
+            <marker date="1474270940746" expanded="true" signature="12296:12387" placeholder="SELECT STAFF... staff" />
+            <marker date="1474270940746" expanded="true" signature="12527:12817" placeholder="SELECT USERN... staff" />
+            <marker date="1474270940746" expanded="true" signature="12669:12777" placeholder="SELECT MAX(S... staff" />
+            <marker date="1474270940746" expanded="true" signature="12872:13243" placeholder="SELECT s.FIR... students" />
+            <marker date="1474270940746" expanded="true" signature="13084:13155" placeholder="SELECT MAX(S... student_enrollment" />
+            <marker date="1474270940746" expanded="true" signature="13700:13761" placeholder="SELECT MAX(S... school_years" />
+            <marker date="1474270940746" expanded="true" signature="14775:14857" placeholder="INSERT INTO log_maintain... " />
+            <marker date="1474270940746" expanded="true" signature="14890:14972" placeholder="SELECT MIN(i... log_maintain" />
+            <marker date="1474270940746" expanded="true" signature="15047:15089" placeholder="SELECT VALUE... log_maintain" />
+            <marker date="1474270940746" expanded="true" signature="15176:15258" placeholder="SELECT MAX(i... log_maintain" />
+            <marker date="1474270940746" expanded="true" signature="15333:15375" placeholder="SELECT VALUE... log_maintain" />
+            <marker date="1474270940746" expanded="true" signature="15960:16316" placeholder="INSERT INTO login_records... " />
+            <marker date="1474270940746" expanded="true" signature="16912:16957" placeholder="SELECT FAIL_... system_preference_misc" />
+            <marker date="1474270940746" expanded="true" signature="17111:17236" placeholder="UPDATE staff... " />
+            <marker date="1474270940746" expanded="true" signature="17571:17619" placeholder="SELECT ACTIV... system_preference_misc" />
+            <marker date="1474270940746" expanded="true" signature="18098:18293" placeholder="UPDATE staff... " />
+            <marker date="1474270940746" expanded="true" signature="18633:18725" placeholder="UPDATE staff... " />
+            <marker date="1474270940746" expanded="true" signature="18759:18869" placeholder="UPDATE staff... " />
+            <marker date="1474270940746" expanded="true" signature="19293:19320" placeholder="UPDATE confi... " />
+            <marker date="1474270940746" expanded="true" signature="19566:19611" placeholder="SELECT FAIL_... system_preference_misc" />
+            <marker date="1474270940746" expanded="true" signature="21018:21394" placeholder="INSERT INTO login_records... " />
+            <marker date="1474270940746" expanded="true" signature="21488:21533" placeholder="SELECT FAIL_... system_preference_misc" />
+            <marker date="1474270940746" expanded="true" signature="21669:21756" placeholder="UPDATE stude... " />
+            <marker date="1474270940746" expanded="true" signature="22088:22136" placeholder="SELECT ACTIV... system_preference_misc" />
+            <marker date="1474270940746" expanded="true" signature="22468:22555" placeholder="UPDATE stude... " />
+            <marker date="1474270940746" expanded="true" signature="22756:22848" placeholder="UPDATE staff... " />
+            <marker date="1474270940746" expanded="true" signature="22882:23001" placeholder="UPDATE stude... " />
+            <marker date="1474270940746" expanded="true" signature="23145:23315" placeholder="SELECT MAX(S... staff" />
+            <marker date="1474270940746" expanded="true" signature="23336:23456" placeholder="UPDATE staff... " />
+            <marker date="1474270940746" expanded="true" signature="23475:23598" placeholder="UPDATE stude... " />
+            <marker date="1474270940746" expanded="true" signature="24505:24692" placeholder="INSERT INTO login_records... " />
+            <marker date="1474270940746" expanded="true" signature="24736:24769" placeholder="SELECT MAX(i... login_records" />
+            <marker date="1474270940746" expanded="true" signature="24863:24997" placeholder="UPDATE login... " />
+            <marker date="1474270940746" expanded="true" signature="25051:25096" placeholder="SELECT FAIL_... system_preference_misc" />
+            <marker date="1474270940746" expanded="true" signature="25197:25311" placeholder="SELECT FAILE... staff" />
+            <marker date="1474270940746" expanded="true" signature="25776:25883" placeholder="UPDATE staff... " />
+            <marker date="1474270940746" expanded="true" signature="26689:26798" placeholder="SELECT FAILE... students" />
+            <marker date="1474270940746" expanded="true" signature="27038:27148" placeholder="UPDATE stude... " />
+            <marker date="1474270940746" expanded="true" signature="28083:28491" placeholder="SELECT COUNT... students" />
+            <marker date="1474270940746" expanded="true" signature="28418:28489" placeholder="SELECT MAX(S... student_enrollment" />
+            <marker date="1474270940746" expanded="true" signature="30466:30575" placeholder="..." />
+            <marker date="1474270940746" expanded="true" signature="30769:31168" placeholder="..." />
+            <marker date="1474270940746" expanded="true" signature="30816:31099" placeholder="..." />
+            <marker date="1474270940746" expanded="false" signature="31043:31068" placeholder="..." />
           </folding>
         </state>
       </provider>
@@ -599,7 +792,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <marker date="1407882706000" expanded="true" signature="71:244" placeholder="&lt;IfModule mod_rewrite.c&gt;" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -634,7 +829,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <marker date="1407882706000" expanded="true" signature="71:244" placeholder="&lt;IfModule mod_rewrite.c&gt;" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -665,9 +862,249 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/modules/School_Setup/Courses.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="189">
+          <caret line="394" column="20" selection-start-line="394" selection-start-column="20" selection-end-line="394" selection-end-column="20" />
+          <folding>
+            <marker date="1407882706000" expanded="true" signature="2087:2182" placeholder="UPDATE cours... " />
+            <marker date="1407882706000" expanded="true" signature="2343:2450" placeholder="SELECT SUBJE... course_subjects" />
+            <marker date="1407882706000" expanded="true" signature="3134:3384" placeholder="SELECT SUBJE... course_subjects" />
+            <marker date="1407882706000" expanded="true" signature="3421:3673" placeholder="SELECT SUBJE... courses" />
+            <marker date="1407882706000" expanded="true" signature="3724:4065" placeholder="SELECT c.SUB... course_periods" />
+            <marker date="1407882706000" expanded="true" signature="7108:7256" placeholder="SELECT TEACH... course_periods" />
+            <marker date="1407882706000" expanded="true" signature="8627:8710" placeholder="SELECT FIRST... staff" />
+            <marker date="1407882706000" expanded="true" signature="8745:8877" placeholder="SELECT TITLE... school_periods" />
+            <marker date="1407882706000" expanded="true" signature="13094:13167" placeholder="SELECT GRADE... course_periods" />
+            <marker date="1407882706000" expanded="true" signature="15261:15340" placeholder="SELECT COUNT... attendance_period" />
+            <marker date="1407882706000" expanded="true" signature="16195:16257" placeholder="DELETE FROM " />
+            <marker date="1407882706000" expanded="true" signature="20412:20424" placeholder="INSERT INTO ${$table_name}... " />
+            <marker date="1407882706000" expanded="true" signature="22819:22913" placeholder="SELECT FIRST... staff" />
+            <marker date="1407882706000" expanded="true" signature="23027:23168" placeholder="SELECT TITLE... school_periods" />
+            <marker date="1407882706000" expanded="true" signature="27726:27783" placeholder="SELECT MAX(C... course_periods" />
+            <marker date="1407882706000" expanded="true" signature="27804:27901" placeholder="UPDATE cours... " />
+            <marker date="1407882706000" expanded="true" signature="28950:29032" placeholder="UPDATE cours... " />
+            <marker date="1407882706000" expanded="true" signature="29048:29123" placeholder="DELETE FROM " />
+            <marker date="1407882706000" expanded="true" signature="29139:29208" placeholder="DELETE FROM " />
+            <marker date="1407882706000" expanded="true" signature="29332:29410" placeholder="SELECT COURS... course_periods" />
+            <marker date="1407882706000" expanded="true" signature="29586:29640" placeholder="DELETE FROM " />
+            <marker date="1407882706000" expanded="true" signature="29895:29973" placeholder="SELECT COURS... course_periods" />
+            <marker date="1407882706000" expanded="true" signature="30034:30112" placeholder="UPDATE cours... " />
+            <marker date="1407882706000" expanded="true" signature="30154:30215" placeholder="DELETE FROM " />
+            <marker date="1407882706000" expanded="true" signature="30231:30286" placeholder="DELETE FROM " />
+            <marker date="1407882706000" expanded="true" signature="30302:30366" placeholder="DELETE FROM " />
+            <marker date="1407882706000" expanded="true" signature="30887:30907" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="31099:31153" placeholder="DELETE FROM " />
+            <marker date="1407882706000" expanded="true" signature="31408:31486" placeholder="SELECT COURS... course_periods" />
+            <marker date="1407882706000" expanded="true" signature="31547:31625" placeholder="UPDATE cours... " />
+            <marker date="1407882706000" expanded="true" signature="31667:31728" placeholder="DELETE FROM " />
+            <marker date="1407882706000" expanded="true" signature="31744:31799" placeholder="DELETE FROM " />
+            <marker date="1407882706000" expanded="true" signature="31815:31879" placeholder="DELETE FROM " />
+            <marker date="1407882706000" expanded="true" signature="32158:32224" placeholder="SELECT COURS... courses" />
+            <marker date="1407882706000" expanded="true" signature="32313:32377" placeholder="DELETE FROM " />
+            <marker date="1407882706000" expanded="true" signature="32409:32475" placeholder="SELECT COURS... courses" />
+            <marker date="1407882706000" expanded="true" signature="32562:32624" placeholder="DELETE FROM " />
+            <marker date="1407882706000" expanded="true" signature="32857:32943" placeholder="SELECT COURS... course_periods" />
+            <marker date="1407882706000" expanded="true" signature="33010:33089" placeholder="UPDATE cours... " />
+            <marker date="1407882706000" expanded="true" signature="33143:33212" placeholder="DELETE FROM " />
+            <marker date="1407882706000" expanded="true" signature="33230:33293" placeholder="DELETE FROM " />
+            <marker date="1407882706000" expanded="true" signature="33311:33383" placeholder="DELETE FROM " />
+            <marker date="1407882706000" expanded="true" signature="33696:33716" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="33890:33954" placeholder="DELETE FROM " />
+            <marker date="1407882706000" expanded="true" signature="33986:34052" placeholder="SELECT COURS... courses" />
+            <marker date="1407882706000" expanded="true" signature="34139:34201" placeholder="DELETE FROM " />
+            <marker date="1407882706000" expanded="true" signature="34434:34520" placeholder="SELECT COURS... course_periods" />
+            <marker date="1407882706000" expanded="true" signature="34587:34666" placeholder="UPDATE cours... " />
+            <marker date="1407882706000" expanded="true" signature="34720:34789" placeholder="DELETE FROM " />
+            <marker date="1407882706000" expanded="true" signature="34807:34870" placeholder="DELETE FROM " />
+            <marker date="1407882706000" expanded="true" signature="34888:34960" placeholder="DELETE FROM " />
+            <marker date="1407882706000" expanded="true" signature="35919:36045" placeholder="SELECT SUBJE... course_subjects" />
+            <marker date="1407882706000" expanded="true" signature="36607:37018" placeholder="SELECT PAREN... course_periods" />
+            <marker date="1407882706000" expanded="true" signature="37165:37247" placeholder="SELECT TITLE... courses" />
+            <marker date="1407882706000" expanded="true" signature="38423:38711" placeholder="SELECT STAFF... staff" />
+            <marker date="1407882706000" expanded="true" signature="39580:39709" placeholder="SELECT PERIO... school_periods" />
+            <marker date="1407882706000" expanded="true" signature="40290:40435" placeholder="SELECT MARKI... school_quarters" />
+            <marker date="1407882706000" expanded="true" signature="40290:40750" placeholder="SELECT MARKI... " />
+            <marker date="1407882706000" expanded="true" signature="40442:40588" placeholder="SELECT MARKI... school_semesters" />
+            <marker date="1407882706000" expanded="true" signature="40595:40737" placeholder="SELECT MARKI... school_years" />
+            <marker date="1407882706000" expanded="true" signature="40862:40997" placeholder="SELECT (TOTA... course_periods" />
+            <marker date="1407882706000" expanded="true" signature="41736:41754" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="42360:42472" placeholder="SELECT TITLE... report_card_grade_scales" />
+            <marker date="1407882706000" expanded="true" signature="42822:43075" placeholder="SELECT COUNT... gradebook_assignments" />
+            <marker date="1407882706000" expanded="true" signature="45110:45253" placeholder="SELECT TITLE... attendance_calendars" />
+            <marker date="1407882706000" expanded="true" signature="45429:45651" placeholder="SELECT COUNT... schedule" />
+            <marker date="1407882706000" expanded="true" signature="49273:49433" placeholder="SELECT cp.TI... course_periods" />
+            <marker date="1407882706000" expanded="true" signature="49644:49801" placeholder="SELECT COURS... course_periods" />
+            <marker date="1407882706000" expanded="true" signature="52356:52432" placeholder="SELECT ID,TI... school_gradelevels" />
+            <marker date="1407882706000" expanded="true" signature="52491:52687" placeholder="SELECT c.TIT... courses" />
+            <marker date="1407882706000" expanded="true" signature="52859:52966" placeholder="SELECT TITLE... course_subjects" />
+            <marker date="1407882706000" expanded="true" signature="54855:54949" placeholder="SELECT TITLE... course_subjects" />
+            <marker date="1407882706000" expanded="true" signature="57211:57424" placeholder="SELECT COURS... courses" />
+            <marker date="1407882706000" expanded="true" signature="58969:59056" placeholder="SELECT MP_TY... marking_periods" />
+            <marker date="1407882706000" expanded="true" signature="59728:59902" placeholder="SELECT COURS... course_periods" />
+            <marker date="1407882706000" expanded="true" signature="62121:62212" placeholder="SELECT TITLE... course_periods" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/login.inc.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-546">
+          <caret line="32" column="66" selection-start-line="32" selection-start-column="66" selection-end-line="32" selection-end-column="66" />
+          <folding>
+            <marker date="1407882706000" expanded="true" signature="1544:1595" placeholder="SELECT MESSA... login_message" />
+            <marker date="1407882706000" expanded="true" signature="1944:2177" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="1986:2167" placeholder="{...}" />
+            <marker date="1407882706000" expanded="true" signature="3381:4639" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="3460:4639" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="3467:4639" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="3506:4639" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="3599:4639" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="3621:4081" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="3651:4067" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="3743:4062" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="3762:4041" placeholder="..." />
+            <marker date="1407882706000" expanded="false" signature="3877:3896" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="4094:4639" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="4125:4639" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="4188:4639" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="4207:4639" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="4228:4639" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="4291:4639" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="4316:4639" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="4366:4613" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="4429:4608" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="4460:4575" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="4720:4729" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="4900:5784" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="4943:5784" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="5006:5784" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="5037:5784" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="5070:5784" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="5168:5784" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="5209:5426" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="5449:5678" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="5702:5784" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="6274:12812" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="6322:6531" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="6558:12801" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="6831:12788" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="6898:12774" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="6911:12757" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="6939:8457" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="8485:9978" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="10006:11542" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="11556:12743" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="12847:12880" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="12873:12880" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="13301:13916" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="13356:13892" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="13438:13881" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="13448:13873" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="14006:14160" placeholder="..." />
+            <marker date="1407882706000" expanded="false" signature="14083:14095" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="14305:14902" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="14348:14888" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="14411:14883" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="14430:14491" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="14510:14862" placeholder="..." />
+            <marker date="1407882706000" expanded="true" signature="14564:14842" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="140" column="50" selection-start-line="140" selection-start-column="43" selection-end-line="140" selection-end-column="50" />
+          <folding>
+            <marker date="1474270940746" expanded="true" signature="3039:3103" placeholder="DELETE FROM " />
+            <marker date="1474270940746" expanded="true" signature="4148:4251" placeholder="SELECT DISTI... schedule" />
+            <marker date="1474270940746" expanded="true" signature="4363:4495" placeholder="SELECT * FRO... schedule" />
+            <marker date="1474270940746" expanded="true" signature="4663:4913" placeholder="UPDATE cours... " />
+            <marker date="1474270940746" expanded="true" signature="4744:4912" placeholder="SELECT COURS... schedule" />
+            <marker date="1474270940746" expanded="true" signature="4930:5149" placeholder="UPDATE sched... " />
+            <marker date="1474270940746" expanded="true" signature="5783:5963" placeholder="SELECT s.STU... students" />
+            <marker date="1474270940746" expanded="true" signature="6145:6213" placeholder="SELECT SYSTE... system_preference_misc" />
+            <marker date="1474270940746" expanded="true" signature="6331:6446" placeholder="SELECT USERN... staff" />
+            <marker date="1474270940746" expanded="true" signature="6551:6665" placeholder="SELECT SYEAR... school_years" />
+            <marker date="1474270940746" expanded="true" signature="6610:6664" placeholder="SELECT MAX(S... school_years" />
+            <marker date="1474270940746" expanded="true" signature="6779:7026" placeholder="SELECT COUNT... staff_school_relationship" />
+            <marker date="1474270940746" expanded="true" signature="7161:7341" placeholder="SELECT COUNT... staff_school_relationship" />
+            <marker date="1474270940746" expanded="true" signature="7621:8068" placeholder="SELECT USERN... staff" />
+            <marker date="1474270940746" expanded="true" signature="8636:8944" placeholder="SELECT se.ID... student_enrollment" />
+            <marker date="1474270940746" expanded="true" signature="8783:8856" placeholder="SELECT MAX(S... student_enrollment" />
+            <marker date="1474270940746" expanded="true" signature="9227:9402" placeholder="SELECT STAFF... staff_school_relationship" />
+            <marker date="1474270940746" expanded="true" signature="9453:9628" placeholder="SELECT STAFF... staff_school_relationship" />
+            <marker date="1474270940746" expanded="true" signature="9872:10317" placeholder="SELECT s.USE... students" />
+            <marker date="1474270940746" expanded="true" signature="10158:10229" placeholder="SELECT MAX(S... student_enrollment" />
+            <marker date="1474270940746" expanded="true" signature="10660:10747" placeholder="SELECT STAFF... staff" />
+            <marker date="1474270940746" expanded="true" signature="11205:11755" placeholder="SELECT s.USE... staff" />
+            <marker date="1474270940746" expanded="true" signature="11572:11713" placeholder="SELECT MAX(s... staff_school_relationship" />
+            <marker date="1474270940746" expanded="true" signature="11827:12198" placeholder="SELECT s.FIR... students" />
+            <marker date="1474270940746" expanded="true" signature="12039:12110" placeholder="SELECT MAX(S... student_enrollment" />
+            <marker date="1474270940746" expanded="true" signature="12296:12387" placeholder="SELECT STAFF... staff" />
+            <marker date="1474270940746" expanded="true" signature="12527:12817" placeholder="SELECT USERN... staff" />
+            <marker date="1474270940746" expanded="true" signature="12669:12777" placeholder="SELECT MAX(S... staff" />
+            <marker date="1474270940746" expanded="true" signature="12872:13243" placeholder="SELECT s.FIR... students" />
+            <marker date="1474270940746" expanded="true" signature="13084:13155" placeholder="SELECT MAX(S... student_enrollment" />
+            <marker date="1474270940746" expanded="true" signature="13700:13761" placeholder="SELECT MAX(S... school_years" />
+            <marker date="1474270940746" expanded="true" signature="14775:14857" placeholder="INSERT INTO log_maintain... " />
+            <marker date="1474270940746" expanded="true" signature="14890:14972" placeholder="SELECT MIN(i... log_maintain" />
+            <marker date="1474270940746" expanded="true" signature="15047:15089" placeholder="SELECT VALUE... log_maintain" />
+            <marker date="1474270940746" expanded="true" signature="15176:15258" placeholder="SELECT MAX(i... log_maintain" />
+            <marker date="1474270940746" expanded="true" signature="15333:15375" placeholder="SELECT VALUE... log_maintain" />
+            <marker date="1474270940746" expanded="true" signature="15960:16316" placeholder="INSERT INTO login_records... " />
+            <marker date="1474270940746" expanded="true" signature="16912:16957" placeholder="SELECT FAIL_... system_preference_misc" />
+            <marker date="1474270940746" expanded="true" signature="17111:17236" placeholder="UPDATE staff... " />
+            <marker date="1474270940746" expanded="true" signature="17571:17619" placeholder="SELECT ACTIV... system_preference_misc" />
+            <marker date="1474270940746" expanded="true" signature="18098:18293" placeholder="UPDATE staff... " />
+            <marker date="1474270940746" expanded="true" signature="18633:18725" placeholder="UPDATE staff... " />
+            <marker date="1474270940746" expanded="true" signature="18759:18869" placeholder="UPDATE staff... " />
+            <marker date="1474270940746" expanded="true" signature="19293:19320" placeholder="UPDATE confi... " />
+            <marker date="1474270940746" expanded="true" signature="19566:19611" placeholder="SELECT FAIL_... system_preference_misc" />
+            <marker date="1474270940746" expanded="true" signature="21018:21394" placeholder="INSERT INTO login_records... " />
+            <marker date="1474270940746" expanded="true" signature="21488:21533" placeholder="SELECT FAIL_... system_preference_misc" />
+            <marker date="1474270940746" expanded="true" signature="21669:21756" placeholder="UPDATE stude... " />
+            <marker date="1474270940746" expanded="true" signature="22088:22136" placeholder="SELECT ACTIV... system_preference_misc" />
+            <marker date="1474270940746" expanded="true" signature="22468:22555" placeholder="UPDATE stude... " />
+            <marker date="1474270940746" expanded="true" signature="22756:22848" placeholder="UPDATE staff... " />
+            <marker date="1474270940746" expanded="true" signature="22882:23001" placeholder="UPDATE stude... " />
+            <marker date="1474270940746" expanded="true" signature="23145:23315" placeholder="SELECT MAX(S... staff" />
+            <marker date="1474270940746" expanded="true" signature="23336:23456" placeholder="UPDATE staff... " />
+            <marker date="1474270940746" expanded="true" signature="23475:23598" placeholder="UPDATE stude... " />
+            <marker date="1474270940746" expanded="true" signature="24505:24692" placeholder="INSERT INTO login_records... " />
+            <marker date="1474270940746" expanded="true" signature="24736:24769" placeholder="SELECT MAX(i... login_records" />
+            <marker date="1474270940746" expanded="true" signature="24863:24997" placeholder="UPDATE login... " />
+            <marker date="1474270940746" expanded="true" signature="25051:25096" placeholder="SELECT FAIL_... system_preference_misc" />
+            <marker date="1474270940746" expanded="true" signature="25197:25311" placeholder="SELECT FAILE... staff" />
+            <marker date="1474270940746" expanded="true" signature="25776:25883" placeholder="UPDATE staff... " />
+            <marker date="1474270940746" expanded="true" signature="26689:26798" placeholder="SELECT FAILE... students" />
+            <marker date="1474270940746" expanded="true" signature="27038:27148" placeholder="UPDATE stude... " />
+            <marker date="1474270940746" expanded="true" signature="28083:28491" placeholder="SELECT COUNT... students" />
+            <marker date="1474270940746" expanded="true" signature="28418:28489" placeholder="SELECT MAX(S... student_enrollment" />
+            <marker date="1474270940746" expanded="true" signature="30466:30575" placeholder="..." />
+            <marker date="1474270940746" expanded="true" signature="30769:31168" placeholder="..." />
+            <marker date="1474270940746" expanded="true" signature="30816:31099" placeholder="..." />
+            <marker date="1474270940746" expanded="false" signature="31043:31068" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/modules/Tools/Backup.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="666" column="9" selection-start-line="666" selection-start-column="9" selection-end-line="666" selection-end-column="9" />
+          <folding>
+            <marker date="1407882706000" expanded="true" signature="32427:32453" placeholder="select * fro... ${$table}" />
+            <marker date="1407882706000" expanded="true" signature="33140:33166" placeholder="insert into `${$table}`... " />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/database.inc.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="672">
+        <state relative-caret-position="124">
           <caret line="57" column="9" selection-start-line="57" selection-start-column="9" selection-end-line="57" selection-end-column="9" />
           <folding>
             <marker date="1407882706000" expanded="true" signature="8432:8944" placeholder="..." />
@@ -679,80 +1116,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/index.php">
+    <entry file="file://$PROJECT_DIR$/cli/cron.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="42">
-          <caret line="28" column="17" selection-start-line="28" selection-start-column="17" selection-end-line="28" selection-end-column="17" />
+        <state relative-caret-position="63">
+          <caret line="3" column="17" selection-start-line="3" selection-start-column="17" selection-end-line="3" selection-end-column="17" />
           <folding>
-            <marker date="1474250274104" expanded="true" signature="3039:3103" placeholder="DELETE FROM " />
-            <marker date="1474250274104" expanded="true" signature="4148:4251" placeholder="SELECT DISTI... schedule" />
-            <marker date="1474250274104" expanded="true" signature="4363:4495" placeholder="SELECT * FRO... schedule" />
-            <marker date="1474250274104" expanded="true" signature="4663:4913" placeholder="UPDATE cours... " />
-            <marker date="1474250274104" expanded="true" signature="4744:4912" placeholder="SELECT COURS... schedule" />
-            <marker date="1474250274104" expanded="true" signature="4930:5149" placeholder="UPDATE sched... " />
-            <marker date="1474250274104" expanded="true" signature="5783:5963" placeholder="SELECT s.STU... students" />
-            <marker date="1474250274104" expanded="true" signature="6145:6213" placeholder="SELECT SYSTE... system_preference_misc" />
-            <marker date="1474250274104" expanded="true" signature="6331:6446" placeholder="SELECT USERN... staff" />
-            <marker date="1474250274104" expanded="true" signature="6551:6665" placeholder="SELECT SYEAR... school_years" />
-            <marker date="1474250274104" expanded="true" signature="6610:6664" placeholder="SELECT MAX(S... school_years" />
-            <marker date="1474250274104" expanded="true" signature="6779:7026" placeholder="SELECT COUNT... staff_school_relationship" />
-            <marker date="1474250274104" expanded="true" signature="7161:7341" placeholder="SELECT COUNT... staff_school_relationship" />
-            <marker date="1474250274104" expanded="true" signature="7621:8068" placeholder="SELECT USERN... staff" />
-            <marker date="1474250274104" expanded="true" signature="8636:8944" placeholder="SELECT se.ID... student_enrollment" />
-            <marker date="1474250274104" expanded="true" signature="8783:8856" placeholder="SELECT MAX(S... student_enrollment" />
-            <marker date="1474250274104" expanded="true" signature="9227:9402" placeholder="SELECT STAFF... staff_school_relationship" />
-            <marker date="1474250274104" expanded="true" signature="9453:9628" placeholder="SELECT STAFF... staff_school_relationship" />
-            <marker date="1474250274104" expanded="true" signature="9872:10317" placeholder="SELECT s.USE... students" />
-            <marker date="1474250274104" expanded="true" signature="10158:10229" placeholder="SELECT MAX(S... student_enrollment" />
-            <marker date="1474250274104" expanded="true" signature="10660:10747" placeholder="SELECT STAFF... staff" />
-            <marker date="1474250274104" expanded="true" signature="11205:11755" placeholder="SELECT s.USE... staff" />
-            <marker date="1474250274104" expanded="true" signature="11572:11713" placeholder="SELECT MAX(s... staff_school_relationship" />
-            <marker date="1474250274104" expanded="true" signature="11827:12198" placeholder="SELECT s.FIR... students" />
-            <marker date="1474250274104" expanded="true" signature="12039:12110" placeholder="SELECT MAX(S... student_enrollment" />
-            <marker date="1474250274104" expanded="true" signature="12296:12387" placeholder="SELECT STAFF... staff" />
-            <marker date="1474250274104" expanded="true" signature="12527:12817" placeholder="SELECT USERN... staff" />
-            <marker date="1474250274104" expanded="true" signature="12669:12777" placeholder="SELECT MAX(S... staff" />
-            <marker date="1474250274104" expanded="true" signature="12872:13243" placeholder="SELECT s.FIR... students" />
-            <marker date="1474250274104" expanded="true" signature="13084:13155" placeholder="SELECT MAX(S... student_enrollment" />
-            <marker date="1474250274104" expanded="true" signature="13700:13761" placeholder="SELECT MAX(S... school_years" />
-            <marker date="1474250274104" expanded="true" signature="14775:14857" placeholder="INSERT INTO log_maintain... " />
-            <marker date="1474250274104" expanded="true" signature="14890:14972" placeholder="SELECT MIN(i... log_maintain" />
-            <marker date="1474250274104" expanded="true" signature="15047:15089" placeholder="SELECT VALUE... log_maintain" />
-            <marker date="1474250274104" expanded="true" signature="15176:15258" placeholder="SELECT MAX(i... log_maintain" />
-            <marker date="1474250274104" expanded="true" signature="15333:15375" placeholder="SELECT VALUE... log_maintain" />
-            <marker date="1474250274104" expanded="true" signature="15960:16316" placeholder="INSERT INTO login_records... " />
-            <marker date="1474250274104" expanded="true" signature="16912:16957" placeholder="SELECT FAIL_... system_preference_misc" />
-            <marker date="1474250274104" expanded="true" signature="17111:17236" placeholder="UPDATE staff... " />
-            <marker date="1474250274104" expanded="true" signature="17571:17619" placeholder="SELECT ACTIV... system_preference_misc" />
-            <marker date="1474250274104" expanded="true" signature="18098:18293" placeholder="UPDATE staff... " />
-            <marker date="1474250274104" expanded="true" signature="18633:18725" placeholder="UPDATE staff... " />
-            <marker date="1474250274104" expanded="true" signature="18759:18869" placeholder="UPDATE staff... " />
-            <marker date="1474250274104" expanded="true" signature="19293:19320" placeholder="UPDATE confi... " />
-            <marker date="1474250274104" expanded="true" signature="19566:19611" placeholder="SELECT FAIL_... system_preference_misc" />
-            <marker date="1474250274104" expanded="true" signature="21018:21394" placeholder="INSERT INTO login_records... " />
-            <marker date="1474250274104" expanded="true" signature="21488:21533" placeholder="SELECT FAIL_... system_preference_misc" />
-            <marker date="1474250274104" expanded="true" signature="21669:21756" placeholder="UPDATE stude... " />
-            <marker date="1474250274104" expanded="true" signature="22088:22136" placeholder="SELECT ACTIV... system_preference_misc" />
-            <marker date="1474250274104" expanded="true" signature="22468:22555" placeholder="UPDATE stude... " />
-            <marker date="1474250274104" expanded="true" signature="22756:22848" placeholder="UPDATE staff... " />
-            <marker date="1474250274104" expanded="true" signature="22882:23001" placeholder="UPDATE stude... " />
-            <marker date="1474250274104" expanded="true" signature="23145:23315" placeholder="SELECT MAX(S... staff" />
-            <marker date="1474250274104" expanded="true" signature="23336:23456" placeholder="UPDATE staff... " />
-            <marker date="1474250274104" expanded="true" signature="23475:23598" placeholder="UPDATE stude... " />
-            <marker date="1474250274104" expanded="true" signature="24505:24692" placeholder="INSERT INTO login_records... " />
-            <marker date="1474250274104" expanded="true" signature="24736:24769" placeholder="SELECT MAX(i... login_records" />
-            <marker date="1474250274104" expanded="true" signature="24863:24997" placeholder="UPDATE login... " />
-            <marker date="1474250274104" expanded="true" signature="25051:25096" placeholder="SELECT FAIL_... system_preference_misc" />
-            <marker date="1474250274104" expanded="true" signature="25197:25311" placeholder="SELECT FAILE... staff" />
-            <marker date="1474250274104" expanded="true" signature="25776:25883" placeholder="UPDATE staff... " />
-            <marker date="1474250274104" expanded="true" signature="26689:26798" placeholder="SELECT FAILE... students" />
-            <marker date="1474250274104" expanded="true" signature="27038:27148" placeholder="UPDATE stude... " />
-            <marker date="1474250274104" expanded="true" signature="28083:28491" placeholder="SELECT COUNT... students" />
-            <marker date="1474250274104" expanded="true" signature="28418:28489" placeholder="SELECT MAX(S... student_enrollment" />
-            <marker date="1474250274104" expanded="true" signature="30466:30575" placeholder="..." />
-            <marker date="1474250274104" expanded="true" signature="30769:31168" placeholder="..." />
-            <marker date="1474250274104" expanded="true" signature="30816:31099" placeholder="..." />
-            <marker date="1474250274104" expanded="false" signature="31043:31068" placeholder="..." />
+            <marker date="1474273842499" expanded="true" signature="1060:1104" placeholder="SELECT id, i... m_mnet_host" />
+            <marker date="1474273842499" expanded="true" signature="1308:1329" placeholder="select * fro... courses" />
           </folding>
         </state>
       </provider>
