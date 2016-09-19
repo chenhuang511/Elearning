@@ -100,6 +100,10 @@ a:focus {
 
 /*editting V */
 
+.fitem_actionbuttons div.felement.fgroup{
+    margin: 0 !important;
+}
+
 .movecourses{
     padding: 7px 16px !important;
 }
