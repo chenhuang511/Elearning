@@ -4897,6 +4897,12 @@ class api
     static function hook_course_module_deleted(stdClass $cm)
     {
         global $DB;
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $params = array();
+            $params['parameters[0][name]'] = "cmid";
+            $params['parameters[0][value]'] = $cm->remoteid;
+            delete_remote_course_modules(course_module_competency::TABLE, $params);
+        }
         $DB->delete_records(course_module_competency::TABLE, array('cmid' => $cm->id));
     }
 

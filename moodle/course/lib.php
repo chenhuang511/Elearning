@@ -1066,7 +1066,7 @@ function get_array_of_activities($courseid)
                     $mod[$seq]->completionexpected = $rawmods[$seq]->completionexpected;
                     $mod[$seq]->showdescription = $rawmods[$seq]->showdescription;
                     $mod[$seq]->availability = $rawmods[$seq]->availability;
-                    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+                    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
                         $mod[$seq]->remoteid = $rawmods[$seq]->remoteid;
                     }
 
@@ -1733,10 +1733,18 @@ function course_delete_module($cmid)
 {
     global $CFG, $DB;
 
-    require_once($CFG->libdir . '/gradelib.php');
-    require_once($CFG->libdir . '/questionlib.php');
-    require_once($CFG->dirroot . '/blog/lib.php');
-    require_once($CFG->dirroot . '/calendar/lib.php');
+    if(MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        if (!$cm = $DB->get_record('course_modules', array('id' => $cmid))) {
+            return true;
+        }
+
+        delete_remote_course_delete_module_by($cm->remoteid);
+    }
+
+    require_once($CFG->libdir.'/gradelib.php');
+    require_once($CFG->libdir.'/questionlib.php');
+    require_once($CFG->dirroot.'/blog/lib.php');
+    require_once($CFG->dirroot.'/calendar/lib.php');
 
     // Get the course module.
     if (!$cm = $DB->get_record('course_modules', array('id' => $cmid))) {
@@ -1792,7 +1800,7 @@ function course_delete_module($cmid)
 
     // Delete events from calendar.
     if ($events = $DB->get_records('event', array('instance' => $cm->instance, 'modulename' => $modulename))) {
-        foreach ($events as $event) {
+        foreach($events as $event) {
             $calendarevent = calendar_event::load($event->id);
             $calendarevent->delete();
         }
@@ -1800,8 +1808,7 @@ function course_delete_module($cmid)
 
     // Delete grade items, outcome items and grades attached to modules.
     if ($grade_items = grade_item::fetch_all(array('itemtype' => 'mod', 'itemmodule' => $modulename,
-        'iteminstance' => $cm->instance, 'courseid' => $cm->course))
-    ) {
+        'iteminstance' => $cm->instance, 'courseid' => $cm->course))) {
         foreach ($grade_items as $grade_item) {
             $grade_item->delete('moddelete');
         }
@@ -1836,11 +1843,11 @@ function course_delete_module($cmid)
     // Trigger event for course module delete action.
     $event = \core\event\course_module_deleted::create(array(
         'courseid' => $cm->course,
-        'context' => $modcontext,
+        'context'  => $modcontext,
         'objectid' => $cm->id,
-        'other' => array(
+        'other'    => array(
             'modulename' => $modulename,
-            'instanceid' => $cm->instance,
+            'instanceid'   => $cm->instance,
         )
     ));
     $event->add_record_snapshot('course_modules', $cm);

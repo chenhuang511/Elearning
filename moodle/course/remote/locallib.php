@@ -271,11 +271,12 @@ function delete_remote_course_modules_completion($cmid)
 /**
  * Get record remote course module completion by userid and course moduleid
  *
- * @param int $userremoteid   -  The id of user on hub
- * @param int $cmremoteid     -  The id of course module on hub
+ * @param int $userremoteid -  The id of user on hub
+ * @param int $cmremoteid -  The id of course module on hub
  * @return object $completion -  The information of completion base on userid & cmid hub
  */
-function get_remote_course_modules_completion_by_userid_cmid($userremoteid, $cmremoteid){
+function get_remote_course_modules_completion_by_userid_cmid($userremoteid, $cmremoteid)
+{
 
     $result = moodle_webservice_client(
         array(
@@ -289,7 +290,7 @@ function get_remote_course_modules_completion_by_userid_cmid($userremoteid, $cmr
         ), false
     );
 
-    if (isset($result->exception)){
+    if (isset($result->exception)) {
         return 0;
     }
 
@@ -753,4 +754,60 @@ function get_remote_update_moduleinfo_by($cm, $moduleinfo, $courseid, $mform)
     }
 
     return 0;
+}
+
+function delete_remote_course_modules($modname, $parameters)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_delete_course_modules',
+            'params' => array_merge(array('modname' => $modname), $parameters),
+        )
+    );
+
+    return $result->status;
+}
+
+function delete_remote_instance_by($contextlevel, $instanceid)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_delete_instance_by',
+            'params' => array('contextlevel' => $contextlevel, 'instanceid' => $instanceid),
+        )
+    );
+
+    return $result->status;
+}
+
+function delete_remote_mod_from_section_by($modid, $sectionid)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_delete_mod_from_section_by',
+            'params' => array('modid' => $modid, 'sectionid' => $sectionid),
+        )
+    );
+
+    return $result->status;
+}
+
+function delete_remote_course_delete_module_by($cmid)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_course_delete_module_by',
+            'params' => array('cmid' => $cmid),
+        ), false
+    );
+
+    return $result->status;
 }
