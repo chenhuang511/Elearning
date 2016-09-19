@@ -117,11 +117,7 @@ function quiz_update_instance($quiz, $mform) {
     }
 
     // Get the current value, so we can see what changed.
-    if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-        $oldquiz = $DB->get_record('quiz', array('id' => $quiz->instance));
-    } else {
-        $oldquiz = $DB->get_record('quiz', array('remoteid' => $quiz->instance));
-    }
+    $oldquiz = $DB->get_record('quiz', array('id' => $quiz->instance));
 
     // We need two values from the existing DB record that are not in the form,
     // in some of the function calls below.

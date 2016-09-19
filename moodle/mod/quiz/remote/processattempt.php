@@ -46,6 +46,7 @@ $timeup        = optional_param('timeup',        0,      PARAM_BOOL); // True if
 $scrollpos     = optional_param('scrollpos',     '',     PARAM_RAW);
 
 $attemptobj = quiz_attempt::create($attemptid);
+$quiz = $attemptobj->get_quiz();
 
 // Set $nexturl now.
 if ($next) {

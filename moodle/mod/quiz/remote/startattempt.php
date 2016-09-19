@@ -114,6 +114,7 @@ $user = get_remote_mapping_user();
 $preview = $quizobj->is_preview_user();
 
 $setting = array();
+$quiz = $quizobj->get_quiz();
 if($quiz->settinglocal){
     $fields =  array(
         'timeopen',

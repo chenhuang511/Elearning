@@ -52,6 +52,7 @@ if (!has_capability('moodle/course:manageactivities', $context) && $nonajax == f
     $CFG->nonajax = true;
 }
 $setting = array();
+$quiz = $attemptobj->get_quiz();
 if($quiz->settinglocal){
     $fields =  array(
         'timeopen',

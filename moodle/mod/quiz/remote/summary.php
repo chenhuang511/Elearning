@@ -78,6 +78,7 @@ if ($accessmanager->is_preflight_check_required($attemptobj->get_attemptid())) {
 $displayoptions = $attemptobj->get_display_options(false);
 
 $settinglocal = array();
+$quiz = $attemptobj->get_quiz();
 if($quiz->settinglocal){
     $fields =  array(
         'timeopen',
