@@ -25,6 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['numberofuser'] = 'Số phản hồi';
+$string['numberofuserinpercentage'] = 'Phần trăm phản hồi';
 $string['options'] = 'Tùy chọn';
 $string['search:activity'] = 'Câu hỏi thăm dò - thông tin hoạt động';
 $string['withselected'] = 'Với lựa chọn';

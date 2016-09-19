@@ -26,3 +26,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['dimensiondescription'] = 'Mô tả';
+$string['pluginname'] = 'Bình luận';

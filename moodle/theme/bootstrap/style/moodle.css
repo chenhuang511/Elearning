@@ -3785,7 +3785,7 @@ select[multiple].input-lg {
 .btn {
     display: inline-block;
     margin-bottom: 0;
-    font-weight: normal;
+    font-weight: bold;
     text-align: center;
     vertical-align: middle;
     touch-action: manipulation;
@@ -19349,7 +19349,7 @@ input[type="submit"],
 input[type="reset"] {
   display: inline-block;
   margin-bottom: 0;
-  font-weight: normal;
+  font-weight: bold;
   text-align: center;
   vertical-align: middle;
   touch-action: manipulation;
@@ -19922,7 +19922,7 @@ td.submit input .badge {
 .submit.buttons input[name="cancel"] {
     display: inline-block;
     margin-bottom: 0;
-    font-weight: normal;
+    font-weight: bold;
     text-align: center;
     vertical-align: middle;
     touch-action: manipulation;

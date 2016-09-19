@@ -1526,14 +1526,6 @@ ORDER BY
                         )
                     )
                 ),
-                'orderbyparam' => new  external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'name' => new external_value(PARAM_RAW, 'name'),
-                            'value' => new external_value(PARAM_RAW, 'value'),
-                        )
-                    ), 'orderby param', VALUE_DEFAULT, array()
-                ),
             )
         );
     }
@@ -1544,12 +1536,13 @@ ORDER BY
      * @since Moodle 3.1 Options available
      * @since Moodle 3.1
      */
-    public static function load_questions_usages_where_question_in_state($summarystate, $slot, $questionid, $orderby, $limitfrom, $pagesize, $qubawhere, $qubaparam, $orderbyparam) {
+    public static function load_questions_usages_where_question_in_state($summarystate, $slot, $questionid, $orderby, $limitfrom, $pagesize, $qubawhere, $qubaparam/*, $orderbyparam*/) {
         global $CFG, $DB;
+        $dm = new question_engine_data_mapper();
 
         $params = self::validate_parameters(self::load_questions_usages_where_question_in_state_parameters(),
             array('summarystate' => $summarystate, 'slot' => $slot, 'questionid' => $questionid, 'orderby' => $orderby, 'limitfrom' => $limitfrom,
-                'pagesize' => $pagesize, 'qubawhere' => $qubawhere, 'qubaparam' => $qubaparam, 'orderbyparam' => $orderbyparam));
+                'pagesize' => $pagesize, 'qubawhere' => $qubawhere, 'qubaparam' => $qubaparam));
 
         $qubaparamdata = array();
         foreach ($qubaparam as $element) {
@@ -1557,13 +1550,33 @@ ORDER BY
         }
         
         $qubaids = new qubaid_join('{quiz_attempts} quiza', 'quiza.uniqueid', $qubawhere, $qubaparamdata);
-        $orderbyparamdata = array();
-        foreach ($orderbyparam as $element) {
-            $orderbyparamdata[$element['name']] = $element['value'];
+
+        $params = array();
+        if ($orderby == 'date') {
+            list($statetest, $params) = $dm->in_summary_state_test(
+                'manuallygraded', false, 'mangrstate');
+            $orderby = "(
+                    SELECT MAX(sortqas.timecreated)
+                    FROM {question_attempt_steps} sortqas
+                    WHERE sortqas.questionattemptid = qa.id
+                        AND sortqas.state $statetest
+                    )";
+        } else if ($orderby == 'studentfirstname' || $orderby == 'studentlastname' || $orderby == 'idnumber') {
+            $qubaids->from .= " JOIN {user} u ON quiza.userid = u.id ";
+            // For name sorting, map orderby form value to
+            // actual column names; 'idnumber' maps naturally
+            switch ($orderby) {
+                case "studentlastname":
+                    $orderby = "u.lastname, u.firstname";
+                    break;
+                case "studentfirstname":
+                    $orderby = "u.firstname, u.lastname";
+                    break;
+            }
         }
-        $dm = new question_engine_data_mapper();
+        
         $result = $dm->load_questions_usages_where_question_in_state($qubaids, $summarystate,
-            $slot, $questionid, $orderby, $orderbyparamdata, $limitfrom, $pagesize);
+            $slot, $questionid, $orderby, $params, $limitfrom, $pagesize);
         $res = array();
         $res['qubaids'] = $result[0];
         $res['count'] = $result[1];

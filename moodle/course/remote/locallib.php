@@ -269,18 +269,33 @@ function delete_remote_course_modules_completion($cmid)
 }
 
 /**
- * Convert email user to id user.
+ * Get record remote course module completion by userid and course moduleid
  *
- * @param $email - The email of user
- * @return int          - The id of user
+ * @param int $userremoteid   -  The id of user on hub
+ * @param int $cmremoteid     -  The id of course module on hub
+ * @return object $completion -  The information of completion base on userid & cmid hub
  */
-function change_email_to_userid($email)
-{
-    global $DB;
+function get_remote_course_modules_completion_by_userid_cmid($userremoteid, $cmremoteid){
 
-    $userid = $DB->get_record('user', array('email' => $email))->id;
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_get_remote_course_modules_completion_by_userid_cmid',
+            'params' => array(
+                'userid' => $userremoteid,
+                'coursemoduleid' => $cmremoteid
+            )
+        ), false
+    );
 
-    return $userid;
+    if (isset($result->exception)){
+        return 0;
+    }
+
+    $completion = $result->completion;
+
+    return $completion;
 }
 
 /**
@@ -416,32 +431,6 @@ function delete_remote_course_completion_crit_compl($courseid)
 }
 
 /**
- * Determines how much completion data exists for an activity. This is used when
- * deciding whether completion information should be 'locked' in the module
- * editing form.
- *
- * @param int $coursemoduleid - The id of course module
- * @return int $result           - Count user id
- */
-function count_remote_user_data_completion($coursemoduleid)
-{
-    $hostip = gethostip();
-
-    $result = moodle_webservice_client(
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_get_course_completion_count_user_data',
-            'params' => array(
-                'coursemoduleid' => $coursemoduleid,
-                'hostip' => $hostip),
-        ), false
-    );
-
-    return $result;
-}
-
-/**
  * Factory method - uses the parameters to retrieve all matching instances from the DB.
  *
  * @final
@@ -539,33 +528,6 @@ function update_remote_course_completions($data)
     return $result;
 }
 
-function save_remote_mdl_course($modname, $data)
-{
-    $result = moodle_webservice_client(
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_save_mdl_course',
-            'params' => array_merge(array('modname' => $modname), $data),
-        )
-    );
-
-    return $result->newid;
-}
-
-function update_remote_mdl_course($modname, $id, $data)
-{
-    $result = moodle_webservice_client(
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_update_mdl_course',
-            'params' => array_merge(array('modname' => $modname, "id" => $id), $data),
-        )
-    );
-
-    return $result->id;
-}
 
 function get_remote_course_sections_by($parameters, $strictness = IGNORE_MISSING)
 {
@@ -779,7 +741,7 @@ function get_remote_update_moduleinfo_by($cm, $moduleinfo, $courseid, $mform)
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
-            'function_name' => 'local_add_moduleinfo_by',
+            'function_name' => 'local_update_moduleinfo_by',
             'params' => array('cm' => $cm, 'moduleinfo' => $moduleinfo, 'courseid' => $courseid, 'mform' => $mform),
         ), false
     );

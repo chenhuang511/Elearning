@@ -660,6 +660,7 @@ class quiz_grading_report extends quiz_default_report {
         }
 
         $qubaids = $this->get_qubaids_condition();
+        $orderbydata = $orderby;
 
         $params = array();
         if ($orderby == 'date') {
@@ -695,17 +696,10 @@ class quiz_grading_report extends quiz_default_report {
                 $qubaparam["qubaparam[$index][value]"]=$val;
                 $index++;
             }
-            $orderbyparam = array();
-            $i = 0;
-            foreach ($params as $key => $val){
-                $orderbyparam["orderbyparam[$i][name]"]=$key;
-                $orderbyparam["orderbyparam[$i][value]"]=$val;
-                $i++;
-            }
             $qubawhere = $qubaids->where;
 
             $res = get_remote_load_questions_usages_where_question_in_state($qubaparam, $qubawhere, $summarystate,
-                $slot, $questionid, $orderby, $orderbyparam, $limitfrom, $pagesize);
+                $slot, $questionid, $orderbydata, $limitfrom, $pagesize);
             $result = array($res->qubaids, $res->count);
         }else{
             $result = $dm->load_questions_usages_where_question_in_state($qubaids, $summarystate,

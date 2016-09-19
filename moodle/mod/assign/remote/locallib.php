@@ -73,32 +73,6 @@ function get_remote_assign_by_id_instanceid($assignid, $remotecm)
 }
 
 /**
- * get assign submission status
- *
- * @param int $assignid - the id of assign
- * @param int $userid - the id of user - default is null
- *
- * @return stdClass $submissionstatus
- */
-function get_remote_get_submission_status($assignid, $userid = null)
-{
-    $ruser = get_remote_mapping_user($userid);
-    $rassignment = get_local_assign_record($assignid, true)->remoteid;
-
-    return moodle_webservice_client(
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_assign_get_remote_submission_status',
-            'params' => array(
-                'assignid' => $rassignment,
-                'userid' => $ruser[0]->id
-            ),
-        ), false
-    );
-}
-
-/**
  * get assign onlinetext submission on hub
  *
  * @param int $submissionid . the id of submission
@@ -702,8 +676,6 @@ function get_remote_assign_grades_get_grades($courseid, $component, $activityid,
  */
 function core_grades_update_grades($source, $courseid, $component, $activityid, $itemnumber, $rgrades, $itemdetails){
 
-    $rcmid = get_local_course_modules_record($activityid, true)->remoteid;
-
     $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
@@ -713,7 +685,7 @@ function core_grades_update_grades($source, $courseid, $component, $activityid, 
                 'source' => $source,
                 'courseid' => $courseid,
                 'component' => $component,
-                'activityid' => $rcmid,
+                'activityid' => $activityid,
                 'itemnumber' => $itemnumber,
                 'grades' => array($rgrades),
                 'itemdetails' => $itemdetails,
@@ -721,10 +693,34 @@ function core_grades_update_grades($source, $courseid, $component, $activityid, 
         ), false
     );
 
-    // Difficult to find affected users, just purge all completion cache.
-    cache::make('core', 'completion')->purge();
+    update_course_module_completion_from_hub($rgrades['studentid'], $activityid);
 
     return $resp;
+}
+
+function update_course_module_completion_from_hub($remoteuserid, $remotecmid){
+
+    global $DB;
+    // Change userid, cmid, from hub to host
+    $userid = get_remote_mapping_localuserid($remoteuserid);
+    $cmid = get_local_course_modules_record($remotecmid)->id;
+
+    $cmcompletion = get_remote_course_modules_completion_by_userid_cmid($remoteuserid, $remotecmid);
+
+    // Merge value from hub
+    $cmcompletion->coursemoduleid = $cmid;
+    $cmcompletion->userid = $userid;
+
+    $cmcompletionid = $DB->get_field('course_modules_completion', 'id', array('coursemoduleid' => $cmid, 'userid' => $userid));
+    if (!$cmcompletionid) {
+        $DB->insert_record('course_modules_completion', $cmcompletion);
+    } else {
+        $cmcompletion->id = $cmcompletionid;
+        $DB->update_record('course_modules_completion', $cmcompletion);
+    }
+
+    // Difficult to find affected users, just purge all completion cache.
+    cache::make('core', 'completion')->purge();
 }
 
 /**

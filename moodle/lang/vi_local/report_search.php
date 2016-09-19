@@ -25,4 +25,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['delete'] = 'Xóa';
 $string['pluginname'] = 'Tìm kiếm thông tin toàn cầu';

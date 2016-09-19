@@ -26,13 +26,13 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['description'] = 'Ngăn chặn truy cập cho đến khi (hoặc từ khi) một ngày tháng và thời gian cụ thể.';
-$string['direction_before'] = 'Ngày tháng';
+$string['direction_before'] = 'Ngày';
 $string['full_from'] = 'Đó là sau <strong>{$a}</strong>';
 $string['full_until'] = 'Đó là trước <strong>{$a}</strong>';
 $string['full_until_date'] = 'Đó là trước khi kết thúc <strong>{$a}</strong>';
-$string['pluginname'] = 'Hạn chế bằng ngày';
+$string['pluginname'] = 'Hạn chế theo ngày';
 $string['short_from'] = 'Có hiệu lực từ <strong>{$a}</strong>';
 $string['short_from_date'] = 'Có hiệu lực từ <strong>{$a}</strong>';
 $string['short_until'] = 'Có hiệu lực cho đến <strong>{$a}</strong>';
 $string['short_until_date'] = 'Có hiệu lực cho đến khi kết thúc <strong>{$a}</strong>';
-$string['title'] = 'Ngày tháng';
+$string['title'] = 'Ngày';

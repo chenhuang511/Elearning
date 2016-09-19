@@ -99,30 +99,30 @@ class local_mod_forum_external extends external_api
             array(
                 'forum' => new external_single_structure(
                     array(
-                        'id' => new external_value(PARAM_INT, 'the forum id'),
-                        'course' => new external_value(PARAM_INT, 'the course id'),
-                        'type' => new external_value(PARAM_RAW, 'type'),
-                        'name' => new external_value(PARAM_RAW, 'forum name'),
-                        'intro' => new external_value(PARAM_RAW, 'Page introduction text.'),
+                        'id' => new external_value(PARAM_INT, 'the forum id', VALUE_OPTIONAL),
+                        'course' => new external_value(PARAM_INT, 'the course id', VALUE_OPTIONAL),
+                        'type' => new external_value(PARAM_RAW, 'type', VALUE_OPTIONAL),
+                        'name' => new external_value(PARAM_RAW, 'forum name', VALUE_OPTIONAL),
+                        'intro' => new external_value(PARAM_RAW, 'Page introduction text.', VALUE_OPTIONAL),
                         'introformat' => new external_format_value(PARAM_INT, 'intro format', VALUE_OPTIONAL),
-                        'assessed' => new external_value(PARAM_INT, 'assessed'),
-                        'assesstimestart' => new external_value(PARAM_INT, 'assess time start'),
-                        'assesstimefinish' => new external_value(PARAM_INT, 'assess time finish'),
-                        'scale' => new external_format_value(PARAM_INT, 'scale'),
-                        'maxbytes' => new external_value(PARAM_INT, 'max bytes'),
-                        'maxattachments' => new external_value(PARAM_INT, 'max attachments'),
-                        'forcesubscribe' => new external_value(PARAM_INT, 'force subscribe'),
-                        'trackingtype' => new external_value(PARAM_INT, 'tracking type'),
-                        'rsstype' => new external_value(PARAM_INT, 'rss type'),
-                        'rssarticles' => new external_value(PARAM_INT, 'rss articles'),
-                        'timemodified' => new external_format_value(PARAM_INT, 'time modified'),
-                        'warnafter' => new external_value(PARAM_INT, 'warn after'),
-                        'blockafter' => new external_value(PARAM_INT, 'block after'),
-                        'blockperiod' => new external_value(PARAM_INT, 'block period'),
-                        'completiondiscussions' => new external_value(PARAM_INT, 'completion discussions'),
-                        'completionreplies' => new external_value(PARAM_INT, 'completion replies'),
-                        'completionposts' => new external_value(PARAM_INT, 'completion posts'),
-                        'displaywordcount' => new external_value(PARAM_INT, 'display word count')
+                        'assessed' => new external_value(PARAM_INT, 'assessed', VALUE_OPTIONAL),
+                        'assesstimestart' => new external_value(PARAM_INT, 'assess time start', VALUE_OPTIONAL),
+                        'assesstimefinish' => new external_value(PARAM_INT, 'assess time finish', VALUE_OPTIONAL),
+                        'scale' => new external_format_value(PARAM_INT, 'scale', VALUE_OPTIONAL),
+                        'maxbytes' => new external_value(PARAM_INT, 'max bytes', VALUE_OPTIONAL),
+                        'maxattachments' => new external_value(PARAM_INT, 'max attachments', VALUE_OPTIONAL),
+                        'forcesubscribe' => new external_value(PARAM_INT, 'force subscribe', VALUE_OPTIONAL),
+                        'trackingtype' => new external_value(PARAM_INT, 'tracking type', VALUE_OPTIONAL),
+                        'rsstype' => new external_value(PARAM_INT, 'rss type', VALUE_OPTIONAL),
+                        'rssarticles' => new external_value(PARAM_INT, 'rss articles', VALUE_OPTIONAL),
+                        'timemodified' => new external_format_value(PARAM_INT, 'time modified', VALUE_OPTIONAL),
+                        'warnafter' => new external_value(PARAM_INT, 'warn after', VALUE_OPTIONAL),
+                        'blockafter' => new external_value(PARAM_INT, 'block after', VALUE_OPTIONAL),
+                        'blockperiod' => new external_value(PARAM_INT, 'block period', VALUE_OPTIONAL),
+                        'completiondiscussions' => new external_value(PARAM_INT, 'completion discussions', VALUE_OPTIONAL),
+                        'completionreplies' => new external_value(PARAM_INT, 'completion replies', VALUE_OPTIONAL),
+                        'completionposts' => new external_value(PARAM_INT, 'completion posts', VALUE_OPTIONAL),
+                        'displaywordcount' => new external_value(PARAM_INT, 'display word count', VALUE_OPTIONAL)
                     )
                 ),
                 'warnings' => new external_warnings()
@@ -189,19 +189,19 @@ class local_mod_forum_external extends external_api
             array(
                 'discussion' => new external_single_structure(
                     array(
-                        'id' => new external_value(PARAM_INT, 'the id'),
-                        'course' => new external_value(PARAM_INT, 'the course id'),
-                        'forum' => new external_value(PARAM_INT, 'the forum id'),
-                        'name' => new external_value(PARAM_RAW, 'the name'),
-                        'firstpost' => new external_value(PARAM_INT, 'first post'),
-                        'userid' => new external_value(PARAM_INT, 'the user id'),
-                        'groupid' => new external_value(PARAM_INT, 'the group id'),
-                        'assessed' => new external_value(PARAM_INT, 'the assessed'),
-                        'timemodified' => new external_value(PARAM_INT, 'time modified'),
-                        'usermodified' => new external_value(PARAM_INT, 'user modified'),
-                        'timestart' => new external_value(PARAM_INT, 'time start'),
-                        'timeend' => new external_value(PARAM_INT, 'time end'),
-                        'pinned' => new external_value(PARAM_INT, 'pinned')
+                        'id' => new external_value(PARAM_INT, 'the id', VALUE_OPTIONAL),
+                        'course' => new external_value(PARAM_INT, 'the course id', VALUE_OPTIONAL),
+                        'forum' => new external_value(PARAM_INT, 'the forum id', VALUE_OPTIONAL),
+                        'name' => new external_value(PARAM_RAW, 'the name', VALUE_OPTIONAL),
+                        'firstpost' => new external_value(PARAM_INT, 'first post', VALUE_OPTIONAL),
+                        'userid' => new external_value(PARAM_INT, 'the user id', VALUE_OPTIONAL),
+                        'groupid' => new external_value(PARAM_INT, 'the group id', VALUE_OPTIONAL),
+                        'assessed' => new external_value(PARAM_INT, 'the assessed', VALUE_OPTIONAL),
+                        'timemodified' => new external_value(PARAM_INT, 'time modified', VALUE_OPTIONAL),
+                        'usermodified' => new external_value(PARAM_INT, 'user modified', VALUE_OPTIONAL),
+                        'timestart' => new external_value(PARAM_INT, 'time start', VALUE_OPTIONAL),
+                        'timeend' => new external_value(PARAM_INT, 'time end', VALUE_OPTIONAL),
+                        'pinned' => new external_value(PARAM_INT, 'pinned', VALUE_OPTIONAL)
                     )
                 ),
                 'warnings' => new external_warnings()
@@ -489,9 +489,9 @@ class local_mod_forum_external extends external_api
             array(
                 'track' => new external_single_structure(
                     array(
-                        'id' => new external_value(PARAM_INT, 'the id'),
-                        'userid' => new external_value(PARAM_INT, 'the user id'),
-                        'forumid' => new external_value(PARAM_INT, 'created')
+                        'id' => new external_value(PARAM_INT, 'the id', VALUE_OPTIONAL),
+                        'userid' => new external_value(PARAM_INT, 'the user id', VALUE_OPTIONAL),
+                        'forumid' => new external_value(PARAM_INT, 'created', VALUE_OPTIONAL)
                     )
                 ),
                 'warnings' => new external_warnings()
@@ -558,9 +558,9 @@ class local_mod_forum_external extends external_api
             array(
                 'subscription' => new external_single_structure(
                     array(
-                        'id' => new external_value(PARAM_INT, 'the id'),
-                        'userid' => new external_value(PARAM_INT, 'the user id'),
-                        'forum' => new external_value(PARAM_INT, 'the forum')
+                        'id' => new external_value(PARAM_INT, 'the id', VALUE_OPTIONAL),
+                        'userid' => new external_value(PARAM_INT, 'the user id', VALUE_OPTIONAL),
+                        'forum' => new external_value(PARAM_INT, 'the forum', VALUE_OPTIONAL)
                     )
                 ),
                 'warnings' => new external_warnings()
@@ -627,14 +627,14 @@ class local_mod_forum_external extends external_api
             array(
                 'scale' => new external_single_structure(
                     array(
-                        'id' => new external_value(PARAM_INT, 'the id'),
-                        'courseid' => new external_value(PARAM_INT, 'the course id'),
-                        'userid' => new external_value(PARAM_INT, 'the user id'),
-                        'name' => new external_value(PARAM_RAW, 'the name'),
-                        'scale' => new external_value(PARAM_RAW, 'the scale'),
-                        'description' => new external_value(PARAM_RAW, 'the description'),
-                        'descriptionformat' => new external_value(PARAM_INT, 'description format'),
-                        'timemodified' => new external_value(PARAM_INT, 'time modified')
+                        'id' => new external_value(PARAM_INT, 'the id', VALUE_OPTIONAL),
+                        'courseid' => new external_value(PARAM_INT, 'the course id', VALUE_OPTIONAL),
+                        'userid' => new external_value(PARAM_INT, 'the user id', VALUE_OPTIONAL),
+                        'name' => new external_value(PARAM_RAW, 'the name', VALUE_OPTIONAL),
+                        'scale' => new external_value(PARAM_RAW, 'the scale', VALUE_OPTIONAL),
+                        'description' => new external_value(PARAM_RAW, 'the description', VALUE_OPTIONAL),
+                        'descriptionformat' => new external_value(PARAM_INT, 'description format', VALUE_OPTIONAL),
+                        'timemodified' => new external_value(PARAM_INT, 'time modified', VALUE_OPTIONAL)
                     )
                 ),
                 'warnings' => new external_warnings()
@@ -704,30 +704,30 @@ class local_mod_forum_external extends external_api
                 'forums' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'id' => new external_value(PARAM_INT, 'the forum id'),
-                            'course' => new external_value(PARAM_INT, 'the course id'),
-                            'type' => new external_value(PARAM_RAW, 'type'),
-                            'name' => new external_value(PARAM_RAW, 'forum name'),
-                            'intro' => new external_value(PARAM_RAW, 'Page introduction text.'),
+                            'id' => new external_value(PARAM_INT, 'the forum id', VALUE_OPTIONAL),
+                            'course' => new external_value(PARAM_INT, 'the course id', VALUE_OPTIONAL),
+                            'type' => new external_value(PARAM_RAW, 'type', VALUE_OPTIONAL),
+                            'name' => new external_value(PARAM_RAW, 'forum name', VALUE_OPTIONAL),
+                            'intro' => new external_value(PARAM_RAW, 'Page introduction text.', VALUE_OPTIONAL),
                             'introformat' => new external_format_value(PARAM_INT, 'intro format', VALUE_OPTIONAL),
-                            'assessed' => new external_value(PARAM_INT, 'assessed'),
-                            'assesstimestart' => new external_value(PARAM_INT, 'assess time start'),
-                            'assesstimefinish' => new external_value(PARAM_INT, 'assess time finish'),
-                            'scale' => new external_format_value(PARAM_INT, 'scale'),
-                            'maxbytes' => new external_value(PARAM_INT, 'max bytes'),
-                            'maxattachments' => new external_value(PARAM_INT, 'max attachments'),
-                            'forcesubscribe' => new external_value(PARAM_INT, 'force subscribe'),
-                            'trackingtype' => new external_value(PARAM_INT, 'tracking type'),
-                            'rsstype' => new external_value(PARAM_INT, 'rss type'),
-                            'rssarticles' => new external_value(PARAM_INT, 'rss articles'),
-                            'timemodified' => new external_format_value(PARAM_INT, 'time modified'),
-                            'warnafter' => new external_value(PARAM_INT, 'warn after'),
-                            'blockafter' => new external_value(PARAM_INT, 'block after'),
-                            'blockperiod' => new external_value(PARAM_INT, 'block period'),
-                            'completiondiscussions' => new external_value(PARAM_INT, 'completion discussions'),
-                            'completionreplies' => new external_value(PARAM_INT, 'completion replies'),
-                            'completionposts' => new external_value(PARAM_INT, 'completion posts'),
-                            'displaywordcount' => new external_value(PARAM_INT, 'display word count')
+                            'assessed' => new external_value(PARAM_INT, 'assessed', VALUE_OPTIONAL),
+                            'assesstimestart' => new external_value(PARAM_INT, 'assess time start', VALUE_OPTIONAL),
+                            'assesstimefinish' => new external_value(PARAM_INT, 'assess time finish', VALUE_OPTIONAL),
+                            'scale' => new external_format_value(PARAM_INT, 'scale', VALUE_OPTIONAL),
+                            'maxbytes' => new external_value(PARAM_INT, 'max bytes', VALUE_OPTIONAL),
+                            'maxattachments' => new external_value(PARAM_INT, 'max attachments', VALUE_OPTIONAL),
+                            'forcesubscribe' => new external_value(PARAM_INT, 'force subscribe', VALUE_OPTIONAL),
+                            'trackingtype' => new external_value(PARAM_INT, 'tracking type', VALUE_OPTIONAL),
+                            'rsstype' => new external_value(PARAM_INT, 'rss type', VALUE_OPTIONAL),
+                            'rssarticles' => new external_value(PARAM_INT, 'rss articles', VALUE_OPTIONAL),
+                            'timemodified' => new external_format_value(PARAM_INT, 'time modified', VALUE_OPTIONAL),
+                            'warnafter' => new external_value(PARAM_INT, 'warn after', VALUE_OPTIONAL),
+                            'blockafter' => new external_value(PARAM_INT, 'block after', VALUE_OPTIONAL),
+                            'blockperiod' => new external_value(PARAM_INT, 'block period', VALUE_OPTIONAL),
+                            'completiondiscussions' => new external_value(PARAM_INT, 'completion discussions', VALUE_OPTIONAL),
+                            'completionreplies' => new external_value(PARAM_INT, 'completion replies', VALUE_OPTIONAL),
+                            'completionposts' => new external_value(PARAM_INT, 'completion posts', VALUE_OPTIONAL),
+                            'displaywordcount' => new external_value(PARAM_INT, 'display word count', VALUE_OPTIONAL)
                         )
                     ), 'forum discussions'
                 ),
@@ -798,19 +798,19 @@ class local_mod_forum_external extends external_api
                 'discussions' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'id' => new external_value(PARAM_INT, 'the id'),
-                            'course' => new external_value(PARAM_INT, 'the course id'),
-                            'forum' => new external_value(PARAM_INT, 'the forum id'),
-                            'name' => new external_value(PARAM_RAW, 'the name'),
-                            'firstpost' => new external_value(PARAM_INT, 'first post'),
-                            'userid' => new external_value(PARAM_INT, 'the user id'),
-                            'groupid' => new external_value(PARAM_INT, 'the group id'),
-                            'assessed' => new external_value(PARAM_INT, 'the assessed'),
-                            'timemodified' => new external_value(PARAM_INT, 'time modified'),
-                            'usermodified' => new external_value(PARAM_INT, 'user modified'),
-                            'timestart' => new external_value(PARAM_INT, 'time start'),
-                            'timeend' => new external_value(PARAM_INT, 'time end'),
-                            'pinned' => new external_value(PARAM_INT, 'pinned')
+                            'id' => new external_value(PARAM_INT, 'the id', VALUE_OPTIONAL),
+                            'course' => new external_value(PARAM_INT, 'the course id', VALUE_OPTIONAL),
+                            'forum' => new external_value(PARAM_INT, 'the forum id', VALUE_OPTIONAL),
+                            'name' => new external_value(PARAM_RAW, 'the name', VALUE_OPTIONAL),
+                            'firstpost' => new external_value(PARAM_INT, 'first post', VALUE_OPTIONAL),
+                            'userid' => new external_value(PARAM_INT, 'the user id', VALUE_OPTIONAL),
+                            'groupid' => new external_value(PARAM_INT, 'the group id', VALUE_OPTIONAL),
+                            'assessed' => new external_value(PARAM_INT, 'the assessed', VALUE_OPTIONAL),
+                            'timemodified' => new external_value(PARAM_INT, 'time modified', VALUE_OPTIONAL),
+                            'usermodified' => new external_value(PARAM_INT, 'user modified', VALUE_OPTIONAL),
+                            'timestart' => new external_value(PARAM_INT, 'time start', VALUE_OPTIONAL),
+                            'timeend' => new external_value(PARAM_INT, 'time end', VALUE_OPTIONAL),
+                            'pinned' => new external_value(PARAM_INT, 'pinned', VALUE_OPTIONAL)
                         )
                     ), 'forum discussions'
                 ),
@@ -954,20 +954,20 @@ class local_mod_forum_external extends external_api
                 'posts' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'id' => new external_value(PARAM_INT, 'the id'),
-                            'discussion' => new external_value(PARAM_INT, 'the discussion id'),
-                            'parent' => new external_value(PARAM_INT, 'the parent'),
-                            'userid' => new external_value(PARAM_INT, 'the user id'),
-                            'created' => new external_value(PARAM_INT, 'created'),
-                            'modified' => new external_value(PARAM_INT, 'modified'),
-                            'mailed' => new external_value(PARAM_INT, 'mailed'),
-                            'subject' => new external_value(PARAM_RAW, 'the subject'),
-                            'message' => new external_value(PARAM_RAW, 'the message'),
-                            'messageformat' => new external_value(PARAM_INT, 'message format'),
-                            'messagetrust' => new external_value(PARAM_INT, 'message trust'),
-                            'attachment' => new external_value(PARAM_RAW, 'attachment'),
-                            'totalscore' => new external_value(PARAM_INT, 'total score'),
-                            'mailnow' => new external_value(PARAM_INT, 'mail now')
+                            'id' => new external_value(PARAM_INT, 'the id', VALUE_OPTIONAL),
+                            'discussion' => new external_value(PARAM_INT, 'the discussion id', VALUE_OPTIONAL),
+                            'parent' => new external_value(PARAM_INT, 'the parent', VALUE_OPTIONAL),
+                            'userid' => new external_value(PARAM_INT, 'the user id', VALUE_OPTIONAL),
+                            'created' => new external_value(PARAM_INT, 'created', VALUE_OPTIONAL),
+                            'modified' => new external_value(PARAM_INT, 'modified', VALUE_OPTIONAL),
+                            'mailed' => new external_value(PARAM_INT, 'mailed', VALUE_OPTIONAL),
+                            'subject' => new external_value(PARAM_RAW, 'the subject', VALUE_OPTIONAL),
+                            'message' => new external_value(PARAM_RAW, 'the message', VALUE_OPTIONAL),
+                            'messageformat' => new external_value(PARAM_INT, 'message format', VALUE_OPTIONAL),
+                            'messagetrust' => new external_value(PARAM_INT, 'message trust', VALUE_OPTIONAL),
+                            'attachment' => new external_value(PARAM_RAW, 'attachment', VALUE_OPTIONAL),
+                            'totalscore' => new external_value(PARAM_INT, 'total score', VALUE_OPTIONAL),
+                            'mailnow' => new external_value(PARAM_INT, 'mail now', VALUE_OPTIONAL)
                         )
                     ), 'forum posts'
                 ),
@@ -1111,13 +1111,13 @@ class local_mod_forum_external extends external_api
                 'reads' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'id' => new external_value(PARAM_INT, 'the id'),
-                            'userid' => new external_value(PARAM_INT, 'the user id'),
-                            'forumid' => new external_value(PARAM_INT, 'the forumid'),
-                            'discussionid' => new external_value(PARAM_INT, 'the discussion id'),
-                            'postid' => new external_value(PARAM_INT, 'the post id'),
-                            'firstread' => new external_value(PARAM_INT, 'first read'),
-                            'lastread' => new external_value(PARAM_INT, 'last read')
+                            'id' => new external_value(PARAM_INT, 'the id', VALUE_OPTIONAL),
+                            'userid' => new external_value(PARAM_INT, 'the user id', VALUE_OPTIONAL),
+                            'forumid' => new external_value(PARAM_INT, 'the forumid', VALUE_OPTIONAL),
+                            'discussionid' => new external_value(PARAM_INT, 'the discussion id', VALUE_OPTIONAL),
+                            'postid' => new external_value(PARAM_INT, 'the post id', VALUE_OPTIONAL),
+                            'firstread' => new external_value(PARAM_INT, 'first read', VALUE_OPTIONAL),
+                            'lastread' => new external_value(PARAM_INT, 'last read', VALUE_OPTIONAL)
                         )
                     ), 'forum read'
                 ),
@@ -1188,11 +1188,11 @@ class local_mod_forum_external extends external_api
                 'subs' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'id' => new external_value(PARAM_INT, 'the id'),
-                            'forum' => new external_value(PARAM_INT, 'the forum id'),
-                            'userid' => new external_value(PARAM_INT, 'the user id'),
-                            'discussion' => new external_value(PARAM_INT, 'the discussion id'),
-                            'preference' => new external_value(PARAM_INT, 'the preference')
+                            'id' => new external_value(PARAM_INT, 'the id', VALUE_OPTIONAL),
+                            'forum' => new external_value(PARAM_INT, 'the forum id', VALUE_OPTIONAL),
+                            'userid' => new external_value(PARAM_INT, 'the user id', VALUE_OPTIONAL),
+                            'discussion' => new external_value(PARAM_INT, 'the discussion id', VALUE_OPTIONAL),
+                            'preference' => new external_value(PARAM_INT, 'the preference', VALUE_OPTIONAL)
                         )
                     ), 'forum discussion subs'
                 ),
@@ -1819,36 +1819,36 @@ class local_mod_forum_external extends external_api
                 'data' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'id' => new external_value(PARAM_INT, 'the id of post'),
-                            'subject' => new external_value(PARAM_RAW, 'the subject of post'),
-                            'modified' => new external_value(PARAM_INT, 'the modified of post'),
-                            'discussion' => new external_value(PARAM_INT, 'the discussion of post'),
-                            'userid' => new external_value(PARAM_INT, 'the userid of post'),
-                            'name' => new external_value(PARAM_RAW, 'the name of discussion'),
-                            'timemodified' => new external_value(PARAM_INT, 'the time modified of discussion'),
-                            'usermodified' => new external_value(PARAM_INT, 'the user modified of discussion'),
-                            'groupid' => new external_value(PARAM_INT, 'the groupid of discussion'),
-                            'timestart' => new external_value(PARAM_INT, 'the time start of discussion'),
-                            'timeend' => new external_value(PARAM_INT, 'the time end of discussion'),
-                            'pinned' => new external_value(PARAM_INT, 'the pinned of discussion'),
-                            'firstnamephonetic' => new external_value(PARAM_RAW, 'the first name phonetic of user'),
-                            'lastnamephonetic' => new external_value(PARAM_RAW, 'the last name phonetic of user'),
-                            'middlename' => new external_value(PARAM_RAW, 'the middle name of user'),
-                            'alternatename' => new external_value(PARAM_RAW, 'the alternate name of user'),
-                            'firstname' => new external_value(PARAM_RAW, 'the first name of user'),
-                            'lastname' => new external_value(PARAM_RAW, 'the last name of user'),
-                            'email' => new external_value(PARAM_RAW, 'the email of user'),
-                            'picture' => new external_value(PARAM_RAW, 'the email of user'),
-                            'imagealt' => new external_value(PARAM_RAW, 'the email of user'),
-                            'umfirstnamephonetic' => new external_value(PARAM_RAW, 'the first name phonetic of user modified'),
-                            'umlastnamephonetic' => new external_value(PARAM_RAW, 'the last name phonetic of user modified'),
-                            'ummiddlename' => new external_value(PARAM_RAW, 'the middle name of user modified'),
-                            'umalternatename' => new external_value(PARAM_RAW, 'the alternate name of user modified'),
-                            'umfirstname' => new external_value(PARAM_RAW, 'the first name of user modified'),
-                            'umlastname' => new external_value(PARAM_RAW, 'the last name of user modified'),
-                            'umemail' => new external_value(PARAM_RAW, 'the email of user modified'),
-                            'umpicture' => new external_value(PARAM_RAW, 'the email of user modified'),
-                            'umimagealt' => new external_value(PARAM_RAW, 'the email of user modified'),
+                            'id' => new external_value(PARAM_INT, 'the id of post', VALUE_OPTIONAL),
+                            'subject' => new external_value(PARAM_RAW, 'the subject of post', VALUE_OPTIONAL),
+                            'modified' => new external_value(PARAM_INT, 'the modified of post', VALUE_OPTIONAL),
+                            'discussion' => new external_value(PARAM_INT, 'the discussion of post', VALUE_OPTIONAL),
+                            'userid' => new external_value(PARAM_INT, 'the userid of post', VALUE_OPTIONAL),
+                            'name' => new external_value(PARAM_RAW, 'the name of discussion', VALUE_OPTIONAL),
+                            'timemodified' => new external_value(PARAM_INT, 'the time modified of discussion', VALUE_OPTIONAL),
+                            'usermodified' => new external_value(PARAM_INT, 'the user modified of discussion', VALUE_OPTIONAL),
+                            'groupid' => new external_value(PARAM_INT, 'the groupid of discussion', VALUE_OPTIONAL),
+                            'timestart' => new external_value(PARAM_INT, 'the time start of discussion', VALUE_OPTIONAL),
+                            'timeend' => new external_value(PARAM_INT, 'the time end of discussion', VALUE_OPTIONAL),
+                            'pinned' => new external_value(PARAM_INT, 'the pinned of discussion', VALUE_OPTIONAL),
+                            'firstnamephonetic' => new external_value(PARAM_RAW, 'the first name phonetic of user', VALUE_OPTIONAL),
+                            'lastnamephonetic' => new external_value(PARAM_RAW, 'the last name phonetic of user', VALUE_OPTIONAL),
+                            'middlename' => new external_value(PARAM_RAW, 'the middle name of user', VALUE_OPTIONAL),
+                            'alternatename' => new external_value(PARAM_RAW, 'the alternate name of user', VALUE_OPTIONAL),
+                            'firstname' => new external_value(PARAM_RAW, 'the first name of user', VALUE_OPTIONAL),
+                            'lastname' => new external_value(PARAM_RAW, 'the last name of user', VALUE_OPTIONAL),
+                            'email' => new external_value(PARAM_RAW, 'the email of user', VALUE_OPTIONAL),
+                            'picture' => new external_value(PARAM_RAW, 'the email of user', VALUE_OPTIONAL),
+                            'imagealt' => new external_value(PARAM_RAW, 'the email of user', VALUE_OPTIONAL),
+                            'umfirstnamephonetic' => new external_value(PARAM_RAW, 'the first name phonetic of user modified', VALUE_OPTIONAL),
+                            'umlastnamephonetic' => new external_value(PARAM_RAW, 'the last name phonetic of user modified', VALUE_OPTIONAL),
+                            'ummiddlename' => new external_value(PARAM_RAW, 'the middle name of user modified', VALUE_OPTIONAL),
+                            'umalternatename' => new external_value(PARAM_RAW, 'the alternate name of user modified', VALUE_OPTIONAL),
+                            'umfirstname' => new external_value(PARAM_RAW, 'the first name of user modified', VALUE_OPTIONAL),
+                            'umlastname' => new external_value(PARAM_RAW, 'the last name of user modified', VALUE_OPTIONAL),
+                            'umemail' => new external_value(PARAM_RAW, 'the email of user modified', VALUE_OPTIONAL),
+                            'umpicture' => new external_value(PARAM_RAW, 'the email of user modified', VALUE_OPTIONAL),
+                            'umimagealt' => new external_value(PARAM_RAW, 'the email of user modified', VALUE_OPTIONAL),
                         )
                     ), 'data'
                 ),
@@ -1993,9 +1993,9 @@ class local_mod_forum_external extends external_api
                 'replies' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'discussion' => new external_value(PARAM_INT, 'the discussion id'),
-                            'replies' => new external_value(PARAM_INT, 'the count of reply'),
-                            'lastpostid' => new external_value(PARAM_INT, 'the last post id'),
+                            'discussion' => new external_value(PARAM_INT, 'the discussion id', VALUE_OPTIONAL),
+                            'replies' => new external_value(PARAM_INT, 'the count of reply', VALUE_OPTIONAL),
+                            'lastpostid' => new external_value(PARAM_INT, 'the last post id', VALUE_OPTIONAL),
                         )
                     ), 'reply data'
                 ),
@@ -2056,30 +2056,30 @@ class local_mod_forum_external extends external_api
             array(
                 'post' => new external_single_structure(
                     array(
-                        'id' => new external_value(PARAM_INT, 'the id'),
-                        'discussion' => new external_value(PARAM_INT, 'the discussion id'),
-                        'parent' => new external_value(PARAM_INT, 'the parent'),
-                        'userid' => new external_value(PARAM_INT, 'the user id'),
-                        'created' => new external_value(PARAM_INT, 'created'),
-                        'modified' => new external_value(PARAM_INT, 'modified'),
-                        'mailed' => new external_value(PARAM_INT, 'mailed'),
-                        'subject' => new external_value(PARAM_RAW, 'the subject'),
-                        'message' => new external_value(PARAM_RAW, 'the message'),
-                        'messageformat' => new external_value(PARAM_INT, 'message format'),
-                        'messagetrust' => new external_value(PARAM_INT, 'message trust'),
-                        'attachment' => new external_value(PARAM_RAW, 'attachment'),
-                        'totalscore' => new external_value(PARAM_INT, 'total score'),
-                        'mailnow' => new external_value(PARAM_INT, 'mail now'),
-                        'forum' => new external_value(PARAM_INT, 'the id of forum'),
-                        'firstnamephonetic' => new external_value(PARAM_RAW, 'the first name phonetic of user'),
-                        'lastnamephonetic' => new external_value(PARAM_RAW, 'the last name phonetic of user'),
-                        'middlename' => new external_value(PARAM_RAW, 'the middle name of user'),
-                        'alternatename' => new external_value(PARAM_RAW, 'the alternate name of user'),
-                        'firstname' => new external_value(PARAM_RAW, 'the first name of user'),
-                        'lastname' => new external_value(PARAM_RAW, 'the last name of user'),
-                        'email' => new external_value(PARAM_RAW, 'the email of user'),
-                        'picture' => new external_value(PARAM_RAW, 'the email of user'),
-                        'imagealt' => new external_value(PARAM_RAW, 'the email of user'),
+                        'id' => new external_value(PARAM_INT, 'the id', VALUE_OPTIONAL),
+                        'discussion' => new external_value(PARAM_INT, 'the discussion id', VALUE_OPTIONAL),
+                        'parent' => new external_value(PARAM_INT, 'the parent', VALUE_OPTIONAL),
+                        'userid' => new external_value(PARAM_INT, 'the user id', VALUE_OPTIONAL),
+                        'created' => new external_value(PARAM_INT, 'created', VALUE_OPTIONAL),
+                        'modified' => new external_value(PARAM_INT, 'modified', VALUE_OPTIONAL),
+                        'mailed' => new external_value(PARAM_INT, 'mailed', VALUE_OPTIONAL),
+                        'subject' => new external_value(PARAM_RAW, 'the subject', VALUE_OPTIONAL),
+                        'message' => new external_value(PARAM_RAW, 'the message', VALUE_OPTIONAL),
+                        'messageformat' => new external_value(PARAM_INT, 'message format', VALUE_OPTIONAL),
+                        'messagetrust' => new external_value(PARAM_INT, 'message trust', VALUE_OPTIONAL),
+                        'attachment' => new external_value(PARAM_RAW, 'attachment', VALUE_OPTIONAL),
+                        'totalscore' => new external_value(PARAM_INT, 'total score', VALUE_OPTIONAL),
+                        'mailnow' => new external_value(PARAM_INT, 'mail now', VALUE_OPTIONAL),
+                        'forum' => new external_value(PARAM_INT, 'the id of forum', VALUE_OPTIONAL),
+                        'firstnamephonetic' => new external_value(PARAM_RAW, 'the first name phonetic of user', VALUE_OPTIONAL),
+                        'lastnamephonetic' => new external_value(PARAM_RAW, 'the last name phonetic of user', VALUE_OPTIONAL),
+                        'middlename' => new external_value(PARAM_RAW, 'the middle name of user', VALUE_OPTIONAL),
+                        'alternatename' => new external_value(PARAM_RAW, 'the alternate name of user', VALUE_OPTIONAL),
+                        'firstname' => new external_value(PARAM_RAW, 'the first name of user', VALUE_OPTIONAL),
+                        'lastname' => new external_value(PARAM_RAW, 'the last name of user', VALUE_OPTIONAL),
+                        'email' => new external_value(PARAM_RAW, 'the email of user', VALUE_OPTIONAL),
+                        'picture' => new external_value(PARAM_RAW, 'the email of user', VALUE_OPTIONAL),
+                        'imagealt' => new external_value(PARAM_RAW, 'the email of user', VALUE_OPTIONAL),
                     )
                 ),
                 'warnings' => new external_warnings()
@@ -2247,29 +2247,29 @@ class local_mod_forum_external extends external_api
                 'posts' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'id' => new external_value(PARAM_INT, 'the id'),
-                            'discussion' => new external_value(PARAM_INT, 'the discussion id'),
-                            'parent' => new external_value(PARAM_INT, 'the parent'),
-                            'userid' => new external_value(PARAM_INT, 'the user id'),
-                            'created' => new external_value(PARAM_INT, 'created'),
-                            'modified' => new external_value(PARAM_INT, 'modified'),
-                            'mailed' => new external_value(PARAM_INT, 'mailed'),
-                            'subject' => new external_value(PARAM_RAW, 'the subject'),
-                            'message' => new external_value(PARAM_RAW, 'the message'),
-                            'messageformat' => new external_value(PARAM_INT, 'message format'),
-                            'messagetrust' => new external_value(PARAM_INT, 'message trust'),
-                            'attachment' => new external_value(PARAM_RAW, 'attachment'),
-                            'totalscore' => new external_value(PARAM_INT, 'total score'),
-                            'mailnow' => new external_value(PARAM_INT, 'mail now'),
-                            'firstnamephonetic' => new external_value(PARAM_RAW, 'the first name phonetic of user'),
-                            'lastnamephonetic' => new external_value(PARAM_RAW, 'the last name phonetic of user'),
-                            'middlename' => new external_value(PARAM_RAW, 'the middle name of user'),
-                            'alternatename' => new external_value(PARAM_RAW, 'the alternate name of user'),
-                            'firstname' => new external_value(PARAM_RAW, 'the first name of user'),
-                            'lastname' => new external_value(PARAM_RAW, 'the last name of user'),
-                            'email' => new external_value(PARAM_RAW, 'the email of user'),
-                            'picture' => new external_value(PARAM_RAW, 'the email of user'),
-                            'imagealt' => new external_value(PARAM_RAW, 'the email of user'),
+                            'id' => new external_value(PARAM_INT, 'the id', VALUE_OPTIONAL),
+                            'discussion' => new external_value(PARAM_INT, 'the discussion id', VALUE_OPTIONAL),
+                            'parent' => new external_value(PARAM_INT, 'the parent', VALUE_OPTIONAL),
+                            'userid' => new external_value(PARAM_INT, 'the user id', VALUE_OPTIONAL),
+                            'created' => new external_value(PARAM_INT, 'created', VALUE_OPTIONAL),
+                            'modified' => new external_value(PARAM_INT, 'modified', VALUE_OPTIONAL),
+                            'mailed' => new external_value(PARAM_INT, 'mailed', VALUE_OPTIONAL),
+                            'subject' => new external_value(PARAM_RAW, 'the subject', VALUE_OPTIONAL),
+                            'message' => new external_value(PARAM_RAW, 'the message', VALUE_OPTIONAL),
+                            'messageformat' => new external_value(PARAM_INT, 'message format', VALUE_OPTIONAL),
+                            'messagetrust' => new external_value(PARAM_INT, 'message trust', VALUE_OPTIONAL),
+                            'attachment' => new external_value(PARAM_RAW, 'attachment', VALUE_OPTIONAL),
+                            'totalscore' => new external_value(PARAM_INT, 'total score', VALUE_OPTIONAL),
+                            'mailnow' => new external_value(PARAM_INT, 'mail now', VALUE_OPTIONAL),
+                            'firstnamephonetic' => new external_value(PARAM_RAW, 'the first name phonetic of user', VALUE_OPTIONAL),
+                            'lastnamephonetic' => new external_value(PARAM_RAW, 'the last name phonetic of user', VALUE_OPTIONAL),
+                            'middlename' => new external_value(PARAM_RAW, 'the middle name of user', VALUE_OPTIONAL),
+                            'alternatename' => new external_value(PARAM_RAW, 'the alternate name of user', VALUE_OPTIONAL),
+                            'firstname' => new external_value(PARAM_RAW, 'the first name of user', VALUE_OPTIONAL),
+                            'lastname' => new external_value(PARAM_RAW, 'the last name of user', VALUE_OPTIONAL),
+                            'email' => new external_value(PARAM_RAW, 'the email of user', VALUE_OPTIONAL),
+                            'picture' => new external_value(PARAM_RAW, 'the email of user', VALUE_OPTIONAL),
+                            'imagealt' => new external_value(PARAM_RAW, 'the email of user', VALUE_OPTIONAL),
                         )
                     ), 'data post'
                 ),
@@ -2456,30 +2456,30 @@ class local_mod_forum_external extends external_api
                 'rs_search' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'id' => new external_value(PARAM_INT, 'the post id'),
-                            'discussion' => new external_value(PARAM_INT, 'the discussion id'),
-                            'parent' => new external_value(PARAM_INT, 'the parent'),
-                            'userid' => new external_value(PARAM_INT, 'the user id'),
-                            'created' => new external_value(PARAM_INT, 'created'),
-                            'modified' => new external_value(PARAM_INT, 'modified'),
-                            'mailed' => new external_value(PARAM_INT, 'mailed'),
-                            'subject' => new external_value(PARAM_RAW, 'the subject'),
-                            'message' => new external_value(PARAM_RAW, 'the message'),
-                            'messageformat' => new external_value(PARAM_INT, 'message format'),
-                            'messagetrust' => new external_value(PARAM_INT, 'message trust'),
-                            'attachment' => new external_value(PARAM_RAW, 'attachment'),
-                            'totalscore' => new external_value(PARAM_INT, 'total score'),
-                            'mailnow' => new external_value(PARAM_INT, 'mail now'),
-                            'forum' => new external_value(PARAM_INT, 'forum id'),
-                            'firstnamephonetic' => new external_value(PARAM_RAW, 'the first name phonetic of user'),
-                            'lastnamephonetic' => new external_value(PARAM_RAW, 'the last name phonetic of user'),
-                            'middlename' => new external_value(PARAM_RAW, 'the middle name of user'),
-                            'alternatename' => new external_value(PARAM_RAW, 'the alternate name of user'),
-                            'firstname' => new external_value(PARAM_RAW, 'the first name of user'),
-                            'lastname' => new external_value(PARAM_RAW, 'the last name of user'),
-                            'email' => new external_value(PARAM_RAW, 'the email of user'),
-                            'picture' => new external_value(PARAM_RAW, 'the email of user'),
-                            'imagealt' => new external_value(PARAM_RAW, 'the email of user')
+                            'id' => new external_value(PARAM_INT, 'the post id', VALUE_OPTIONAL),
+                            'discussion' => new external_value(PARAM_INT, 'the discussion id', VALUE_OPTIONAL),
+                            'parent' => new external_value(PARAM_INT, 'the parent', VALUE_OPTIONAL),
+                            'userid' => new external_value(PARAM_INT, 'the user id', VALUE_OPTIONAL),
+                            'created' => new external_value(PARAM_INT, 'created', VALUE_OPTIONAL),
+                            'modified' => new external_value(PARAM_INT, 'modified', VALUE_OPTIONAL),
+                            'mailed' => new external_value(PARAM_INT, 'mailed', VALUE_OPTIONAL),
+                            'subject' => new external_value(PARAM_RAW, 'the subject', VALUE_OPTIONAL),
+                            'message' => new external_value(PARAM_RAW, 'the message', VALUE_OPTIONAL),
+                            'messageformat' => new external_value(PARAM_INT, 'message format', VALUE_OPTIONAL),
+                            'messagetrust' => new external_value(PARAM_INT, 'message trust', VALUE_OPTIONAL),
+                            'attachment' => new external_value(PARAM_RAW, 'attachment', VALUE_OPTIONAL),
+                            'totalscore' => new external_value(PARAM_INT, 'total score', VALUE_OPTIONAL),
+                            'mailnow' => new external_value(PARAM_INT, 'mail now', VALUE_OPTIONAL),
+                            'forum' => new external_value(PARAM_INT, 'forum id', VALUE_OPTIONAL),
+                            'firstnamephonetic' => new external_value(PARAM_RAW, 'the first name phonetic of user', VALUE_OPTIONAL),
+                            'lastnamephonetic' => new external_value(PARAM_RAW, 'the last name phonetic of user', VALUE_OPTIONAL),
+                            'middlename' => new external_value(PARAM_RAW, 'the middle name of user', VALUE_OPTIONAL),
+                            'alternatename' => new external_value(PARAM_RAW, 'the alternate name of user', VALUE_OPTIONAL),
+                            'firstname' => new external_value(PARAM_RAW, 'the first name of user', VALUE_OPTIONAL),
+                            'lastname' => new external_value(PARAM_RAW, 'the last name of user', VALUE_OPTIONAL),
+                            'email' => new external_value(PARAM_RAW, 'the email of user', VALUE_OPTIONAL),
+                            'picture' => new external_value(PARAM_RAW, 'the email of user', VALUE_OPTIONAL),
+                            'imagealt' => new external_value(PARAM_RAW, 'the email of user', VALUE_OPTIONAL)
                         )
                     ), 'result data'
                 ),
@@ -2644,49 +2644,49 @@ class local_mod_forum_external extends external_api
             array(
                 'forum' => new external_single_structure(
                     array(
-                        'id' => new external_value(PARAM_INT, 'the forum id'),
-                        'course' => new external_value(PARAM_INT, 'the course id'),
-                        'type' => new external_value(PARAM_RAW, 'type'),
-                        'name' => new external_value(PARAM_RAW, 'forum name'),
-                        'intro' => new external_value(PARAM_RAW, 'Page introduction text.'),
+                        'id' => new external_value(PARAM_INT, 'the forum id', VALUE_OPTIONAL),
+                        'course' => new external_value(PARAM_INT, 'the course id', VALUE_OPTIONAL),
+                        'type' => new external_value(PARAM_RAW, 'type', VALUE_OPTIONAL),
+                        'name' => new external_value(PARAM_RAW, 'forum name', VALUE_OPTIONAL),
+                        'intro' => new external_value(PARAM_RAW, 'Page introduction text.', VALUE_OPTIONAL),
                         'introformat' => new external_format_value(PARAM_INT, 'intro format', VALUE_OPTIONAL),
-                        'assessed' => new external_value(PARAM_INT, 'assessed'),
-                        'assesstimestart' => new external_value(PARAM_INT, 'assess time start'),
-                        'assesstimefinish' => new external_value(PARAM_INT, 'assess time finish'),
-                        'scale' => new external_format_value(PARAM_INT, 'scale'),
-                        'maxbytes' => new external_value(PARAM_INT, 'max bytes'),
-                        'maxattachments' => new external_value(PARAM_INT, 'max attachments'),
-                        'forcesubscribe' => new external_value(PARAM_INT, 'force subscribe'),
-                        'trackingtype' => new external_value(PARAM_INT, 'tracking type'),
-                        'rsstype' => new external_value(PARAM_INT, 'rss type'),
-                        'rssarticles' => new external_value(PARAM_INT, 'rss articles'),
-                        'timemodified' => new external_format_value(PARAM_INT, 'time modified'),
-                        'warnafter' => new external_value(PARAM_INT, 'warn after'),
-                        'blockafter' => new external_value(PARAM_INT, 'block after'),
-                        'blockperiod' => new external_value(PARAM_INT, 'block period'),
-                        'completiondiscussions' => new external_value(PARAM_INT, 'completion discussions'),
-                        'completionreplies' => new external_value(PARAM_INT, 'completion replies'),
-                        'completionposts' => new external_value(PARAM_INT, 'completion posts'),
-                        'displaywordcount' => new external_value(PARAM_INT, 'display word count')
+                        'assessed' => new external_value(PARAM_INT, 'assessed', VALUE_OPTIONAL),
+                        'assesstimestart' => new external_value(PARAM_INT, 'assess time start', VALUE_OPTIONAL),
+                        'assesstimefinish' => new external_value(PARAM_INT, 'assess time finish', VALUE_OPTIONAL),
+                        'scale' => new external_format_value(PARAM_INT, 'scale', VALUE_OPTIONAL),
+                        'maxbytes' => new external_value(PARAM_INT, 'max bytes', VALUE_OPTIONAL),
+                        'maxattachments' => new external_value(PARAM_INT, 'max attachments', VALUE_OPTIONAL),
+                        'forcesubscribe' => new external_value(PARAM_INT, 'force subscribe', VALUE_OPTIONAL),
+                        'trackingtype' => new external_value(PARAM_INT, 'tracking type', VALUE_OPTIONAL),
+                        'rsstype' => new external_value(PARAM_INT, 'rss type', VALUE_OPTIONAL),
+                        'rssarticles' => new external_value(PARAM_INT, 'rss articles', VALUE_OPTIONAL),
+                        'timemodified' => new external_format_value(PARAM_INT, 'time modified', VALUE_OPTIONAL),
+                        'warnafter' => new external_value(PARAM_INT, 'warn after', VALUE_OPTIONAL),
+                        'blockafter' => new external_value(PARAM_INT, 'block after', VALUE_OPTIONAL),
+                        'blockperiod' => new external_value(PARAM_INT, 'block period', VALUE_OPTIONAL),
+                        'completiondiscussions' => new external_value(PARAM_INT, 'completion discussions', VALUE_OPTIONAL),
+                        'completionreplies' => new external_value(PARAM_INT, 'completion replies', VALUE_OPTIONAL),
+                        'completionposts' => new external_value(PARAM_INT, 'completion posts', VALUE_OPTIONAL),
+                        'displaywordcount' => new external_value(PARAM_INT, 'display word count', VALUE_OPTIONAL)
                     )
                 ),
                 'post' => new external_single_structure(
                     array(
-                        'id' => new external_value(PARAM_INT, 'the id'),
-                        'discussion' => new external_value(PARAM_INT, 'the discussion id'),
-                        'parent' => new external_value(PARAM_INT, 'the parent'),
-                        'userid' => new external_value(PARAM_INT, 'the user id'),
-                        'created' => new external_value(PARAM_INT, 'created'),
-                        'modified' => new external_value(PARAM_INT, 'modified'),
-                        'mailed' => new external_value(PARAM_INT, 'mailed'),
-                        'subject' => new external_value(PARAM_RAW, 'the subject'),
-                        'message' => new external_value(PARAM_RAW, 'the message'),
-                        'messageformat' => new external_value(PARAM_INT, 'message format'),
-                        'messagetrust' => new external_value(PARAM_INT, 'message trust'),
-                        'attachments' => new external_value(PARAM_RAW, 'attachments'),
-                        'forum' => new external_value(PARAM_INT, 'the forum id'),
-                        'course' => new external_value(PARAM_INT, 'the course id'),
-                        'mailnow' => new external_value(PARAM_INT, 'mail now')
+                        'id' => new external_value(PARAM_INT, 'the id', VALUE_OPTIONAL),
+                        'discussion' => new external_value(PARAM_INT, 'the discussion id', VALUE_OPTIONAL),
+                        'parent' => new external_value(PARAM_INT, 'the parent', VALUE_OPTIONAL),
+                        'userid' => new external_value(PARAM_INT, 'the user id', VALUE_OPTIONAL),
+                        'created' => new external_value(PARAM_INT, 'created', VALUE_OPTIONAL),
+                        'modified' => new external_value(PARAM_INT, 'modified', VALUE_OPTIONAL),
+                        'mailed' => new external_value(PARAM_INT, 'mailed', VALUE_OPTIONAL),
+                        'subject' => new external_value(PARAM_RAW, 'the subject', VALUE_OPTIONAL),
+                        'message' => new external_value(PARAM_RAW, 'the message', VALUE_OPTIONAL),
+                        'messageformat' => new external_value(PARAM_INT, 'message format', VALUE_OPTIONAL),
+                        'messagetrust' => new external_value(PARAM_INT, 'message trust', VALUE_OPTIONAL),
+                        'attachments' => new external_value(PARAM_RAW, 'attachments', VALUE_OPTIONAL),
+                        'forum' => new external_value(PARAM_INT, 'the forum id', VALUE_OPTIONAL),
+                        'course' => new external_value(PARAM_INT, 'the course id', VALUE_OPTIONAL),
+                        'mailnow' => new external_value(PARAM_INT, 'mail now', VALUE_OPTIONAL)
                     )
                 ),
                 'warnings' => new external_warnings()

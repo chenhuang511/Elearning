@@ -65,6 +65,7 @@ $string['downloadall'] = 'Tải xuống tất cả các bài nộp';
 $string['downloadselectedsubmissions'] = 'Tải bài nộp đã chọn';
 $string['duedatereached'] = 'Ngày hết hạn nộp bài đã qua';
 $string['editaction'] = 'Hành động';
+$string['editattemptfeedback'] = 'Chỉnh sửa điểm và phản hồi cho lần thi số {$a}.';
 $string['editsubmission_help'] = 'Thực hiện thay đổi bài nộp của bạn';
 $string['enabled'] = 'Đã kích hoạt';
 $string['eventassessablesubmitted'] = 'Một bài nộp đã được nộp.';

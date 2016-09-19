@@ -27,3 +27,4 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['customintro'] = 'Mô tả';
 $string['notyetanswered'] = 'Chưa trả lời';
+$string['responses'] = 'Phản hồi';

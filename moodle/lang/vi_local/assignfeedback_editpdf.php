@@ -25,6 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['clear'] = 'Xóa';
+$string['comment'] = 'Bình luận';
 $string['deletecomment'] = 'Xóa nhận xét';
 $string['deletefeedback'] = 'Xóa phản hồi PDF';
 $string['filter'] = 'Lọc nhận xét...';

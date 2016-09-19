@@ -25,4 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['enrolenddate'] = 'Ngày kết thúc';
+$string['enrolstartdate'] = 'Ngày bắt đầu';
 $string['mailstudents'] = 'Thông báo cho học viên';

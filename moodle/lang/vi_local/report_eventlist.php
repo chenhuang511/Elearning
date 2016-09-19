@@ -25,8 +25,19 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['all'] = 'Tất cả';
+$string['clear'] = 'Xóa';
 $string['component'] = 'Thành phần';
+$string['create'] = 'tạo';
+$string['crud'] = 'Loại truy vấn cơ sở dữ liệu';
+$string['delete'] = 'xóa';
 $string['dname'] = 'Tên';
+$string['edulevel'] = 'Trình độ học vấn';
 $string['filter'] = 'Bộ lọc';
 $string['name'] = 'Tên';
+$string['other'] = 'Khác';
+$string['participating'] = 'Người tham gia';
 $string['pluginname'] = 'Danh sách sự kiện';
+$string['read'] = 'đọc';
+$string['teaching'] = 'Giáo viên';
+$string['update'] = 'cập nhật';

@@ -33,4 +33,6 @@ $string['categorybinexpiry_desc'] = 'Nên duy trì khóa học bị xóa trong t
 $string['coursebinenable'] = 'Kích hoạt thùng rác của khóa học';
 $string['coursebinexpiry'] = 'Vòng đời của mục';
 $string['coursebinexpiry_desc'] = 'Nên để mục bị xóa duy trì bao lâu trong thùng rác?';
+$string['datedeleted'] = 'Ngày đã xóa';
+$string['deleteall'] = 'Xóa tất cả';
 $string['pluginname'] = 'Thùng rác';

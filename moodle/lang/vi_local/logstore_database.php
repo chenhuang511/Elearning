@@ -26,4 +26,10 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['conectexception'] = 'Không thể kết nối đến cơ sở dữ liệu';
+$string['create'] = 'Tạo';
 $string['databasetable'] = 'Bảng cơ sở dữ liệu';
+$string['other'] = 'Khác';
+$string['participating'] = 'Người tham gia';
+$string['read'] = 'Đọc';
+$string['teaching'] = 'Giáo viên';
+$string['update'] = 'Cập nhật';

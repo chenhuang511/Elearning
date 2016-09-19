@@ -1123,31 +1123,20 @@ function assign_grade_item_update($assign, $grades=null) {
             $grades,
             $params);
     } else{
-        if (empty($assign->courseremoteid)) {
-            return grade_update('mod/assign',
-                $assign->courseid,
-                'mod',
-                'assign',
-                $assign->id,
-                0,
-                $grades,
-                $params);
-        } else {
-            $rgrades = array(
-                'studentid' => get_remote_mapping_user($grades['userid'])[0]->id,
-                'grade' => $grades['rawgrade'],
-                'str_feedback' => $grades['feedback']
-            );
-            return core_grades_update_grades(
-                'mod/assign',
-                $assign->courseremoteid,
-                'mod_assign',
-                $assign->cmid,
-                0,
-                $rgrades,
-                $params
-            );
-        }
+        $rgrades = array(
+            'studentid' => get_remote_mapping_user($grades['userid'])[0]->id,
+            'grade' => $grades['rawgrade'],
+            'str_feedback' => $grades['feedback']
+        );
+        return core_grades_update_grades(
+            'mod/assign',
+            $assign->courseremoteid,
+            'mod_assign',
+            $assign->cmremoteid,
+            0,
+            $rgrades,
+            $params
+        );
     }
 }
 
@@ -1571,6 +1560,26 @@ function assign_get_local_settings_info($courseid, $instance)
     }
 
     return $assignment->id;
+}
+
+function assign_merge_module_info($instance){
+    global $DB;
+
+    $localassign = $DB->get_record('assign', array('id'=>$instance), '*', MUST_EXIST);
+
+    $remoteassign = get_remote_assign_by_id($localassign->remoteid);
+
+    // Return local if not found on hub
+    if (!$remoteassign){
+        return $localassign;
+    }
+
+    // Merge
+    $localassign->name = $remoteassign->name;
+    $localassign->intro = $remoteassign->intro;
+    $localassign->introformat = $remoteassign->introformat;
+
+    return $localassign;
 }
 
 /**

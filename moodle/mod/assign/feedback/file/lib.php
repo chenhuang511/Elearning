@@ -56,15 +56,8 @@ function assignfeedback_file_pluginfile($course,
     }
     $userid = $record->userid;
 
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-        if (!$assign = $DB->get_record('assign', array('id'=>$cm->instance))) {
-            return false;
-        }
-    } else {
-        if (!$assign = get_remote_assign_by_id($cm->instance)) {
-            return false;
-        }
-        $assign = get_local_assign_record($assign->id);
+    if (!$assign = $DB->get_record('assign', array('id'=>$cm->instance))) {
+        return false;
     }
 
     if ($assign->id != $record->assignment) {

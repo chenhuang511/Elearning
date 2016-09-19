@@ -30,6 +30,7 @@ $string['alreadygraded'] = 'Đã chấm điểm';
 $string['introduction'] = 'Mô tả';
 $string['nothingfound'] = 'Không có gì để hiển thị';
 $string['noyoursubmission'] = 'Bạn chưa nộp công vieeccj của bạn';
+$string['overallfeedbackmode_0'] = 'Vô hiệu hóa';
 $string['previewassessmentform'] = 'Xem trước';
 $string['resetsubmissions'] = 'Xóa tất cả lần nộp';
 $string['submissionsettings'] = 'Cài đặt nộp bài';

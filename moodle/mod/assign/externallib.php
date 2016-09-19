@@ -1534,11 +1534,7 @@ class mod_assign_external extends external_api {
                 'userid' => $userid,
                 'jsonformdata' => $jsonformdata
             ));
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-            $cm = get_coursemodule_from_instance('assign', $params['assignmentid'], 0, false, MUST_EXIST);
-        } else {
-            $cm = get_remote_course_module_by_instance("assign", $params['assignmentid']);
-        }
+        $cm = get_coursemodule_from_instance('assign', $params['assignmentid'], 0, false, MUST_EXIST);
 
         $context = context_module::instance($cm->id);
         self::validate_context($context);
@@ -2614,12 +2610,8 @@ class mod_assign_external extends external_api {
                                             ));
         $warnings = array();
 
-        try {
             // Request and permission validation.
-            $assign = $DB->get_record('assign', array('id' => $params['assignid']), 'id', MUST_EXIST);
-        } catch (Exception $e) {
-            $assign = get_remote_assign_by_id($params['assignid']);
-        }
+        $assign = $DB->get_record('assign', array('id' => $params['assignid']), 'id', MUST_EXIST);
         list($course, $cm) = get_course_and_cm_from_instance($assign, 'assign');
 
         $context = context_module::instance($cm->id);
@@ -2785,12 +2777,8 @@ class mod_assign_external extends external_api {
         ));
 
         // Request and permission validation.
-        try {
-            // Request and permission validation.
-            $assign = $DB->get_record('assign', array('id' => $params['assignid']), 'id', MUST_EXIST);
-        } catch (dml_exception $e) {
-            $assign = get_remote_assign_by_id($params['assignid']);
-        }
+        $assign = $DB->get_record('assign', array('id' => $params['assignid']), 'id', MUST_EXIST);
+
         list($course, $cm) = get_course_and_cm_from_instance($assign, 'assign');
 
         $context = context_module::instance($cm->id);

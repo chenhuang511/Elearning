@@ -25,9 +25,13 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['allentries'] = 'Tất cả';
 $string['answer'] = 'Đáp án';
 $string['cantinsertcat'] = 'Không thể chèn danh mục';
 $string['category'] = 'Danh mục';
 $string['categorydeleted'] = 'Danh mục đã xóa';
+$string['comments'] = 'Bình luận';
+$string['date'] = 'ngày';
+$string['dateview'] = 'Trình duyệt theo ngày';
 $string['duplicatecategory'] = 'Nhân đôi danh mục';
 $string['question'] = 'Câu hỏi';

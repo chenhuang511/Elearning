@@ -37,6 +37,7 @@ $string['coursegrade'] = 'Điểm khóa học';
 $string['coursetimereq'] = 'Thời gian bắt buộc của khóa học';
 $string['customtext'] = 'Bản văn người dùng';
 $string['datefmt'] = 'Định dạng ngày';
+$string['datehelp'] = 'Ngày';
 $string['deletissuedcertificates'] = 'Xóa chứng chỉ';
 $string['delivery'] = 'Cách nhận';
 $string['designoptions'] = 'Tùy chỉnh thiết kế';
