@@ -48,9 +48,9 @@ h2.main, #pageheading {
     color: #187bb2;
 }
 
-.submitbtns a {
-    color: #FFFFFF;
-}
+/*.submitbtns a {*/
+    /*color: #FFFFFF;*/
+/*}*/
 
 .mdl-align a, .row-fluid a, .othernav-mcboy, .endtestlink {
     color: #337ab7;
