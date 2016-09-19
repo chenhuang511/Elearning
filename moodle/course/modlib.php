@@ -474,7 +474,7 @@ function can_add_moduleinfo($course, $modulename, $section)
  */
 function can_update_moduleinfo($cm)
 {
-    global $DB, $USER;
+    global $DB, $USER, $CFG;
 
     // Check the $USER has the right capability.
     $context = context_module::instance($cm->id);
@@ -483,9 +483,21 @@ function can_update_moduleinfo($cm)
     // Check module exists.
     $module = $DB->get_record('modules', array('id' => $cm->module), '*', MUST_EXIST);
 
-    // Check the moduleinfo exists.
-    $data = $DB->get_record($module->name, array('id' => $cm->instance), '*', MUST_EXIST);
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        // Check the moduleinfo exists.
+        $data = $DB->get_record($module->name, array('id' => $cm->instance), '*', MUST_EXIST);
+    } else {
+        // Merge module info
+        $functionname = $module->name . "_merge_module_info";
 
+        include_once("$CFG->dirroot/mod/$module->name/lib.php");
+
+        if ($hasfunction = function_exists($functionname)) {
+            $data = $functionname($cm->instance);
+        } else {
+            $data = $DB->get_record($module->name, array('id' => $cm->instance), '*', MUST_EXIST);
+        }
+    }
     // Check the course section exists.
     $cw = $DB->get_record('course_sections', array('id' => $cm->section), '*', MUST_EXIST);
 
@@ -510,15 +522,13 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null)
     global $DB, $CFG, $USER;
 
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $activity = $DB->get_record('course_modules_createdby', array('course' => $course->id, 'coursemodule' => $cm->id, 'userid' => $USER->id), '*', MUST_EXIST);
+        $activity = $DB->get_record('course_modules_createdby', array('course' => $course->id, 'coursemodule' => $cm->id, 'userid' => $USER->id), '*');
 
-        if (!$activity) {
-            print_error("No permission to edit this activity");
-        }
-
-        $rs = get_remote_update_moduleinfo_by(json_encode($cm), json_encode($moduleinfo), $course->remoteid, json_encode($mform));
-        if (!$rs) {
-            print_error('Occur error');
+        if ($activity) {
+            $rs = get_remote_update_moduleinfo_by(json_encode($cm), json_encode($moduleinfo), $course->remoteid, json_encode($mform));
+            if (!$rs) {
+                print_error('Occur error');
+            }
         }
     }
 
