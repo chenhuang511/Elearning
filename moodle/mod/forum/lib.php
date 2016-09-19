@@ -363,29 +363,14 @@ function forum_delete_instance($id)
 {
     global $DB;
 
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $params = array();
-        $params['parameters[0][name]'] = "id";
-        $params['parameters[0][value]'] = $id;
-        if (!$forum = get_remote_forum_by($params)) {
-            return false;
-        }
-        if (!$cm = get_remote_course_module_by_instance('forum', $forum->id)) {
-            return false;
-        }
-        if (!$course = get_local_course_record($cm->course, true)) {
-            return false;
-        }
-    } else {
-        if (!$forum = $DB->get_record('forum', array('id' => $id))) {
-            return false;
-        }
-        if (!$cm = get_coursemodule_from_instance('forum', $forum->id)) {
-            return false;
-        }
-        if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
-            return false;
-        }
+    if (!$forum = $DB->get_record('forum', array('id' => $id))) {
+        return false;
+    }
+    if (!$cm = get_coursemodule_from_instance('forum', $forum->id)) {
+        return false;
+    }
+    if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
+        return false;
     }
 
     $context = context_module::instance($cm->id);
@@ -400,11 +385,11 @@ function forum_delete_instance($id)
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
         $prs = array();
         $prs['parameters[0][name]'] = "forum";
-        $prs['parameters[0][value]'] = $forum->id;
+        $prs['parameters[0][value]'] = $forum->remoteid;
 
-        $result = delete_remote_mdl_forum("forum_digests", $prs);
-        $result = delete_remote_mdl_forum("forum_subscriptions", $prs);
-        $result = delete_remote_mdl_forum("forum_discussion_subs", $prs);
+        delete_remote_mdl_forum("forum_digests", $prs);
+        delete_remote_mdl_forum("forum_subscriptions", $prs);
+        delete_remote_mdl_forum("forum_discussion_subs", $prs);
     } else {
         $DB->delete_records('forum_digests', array('forum' => $forum->id));
         $DB->delete_records('forum_subscriptions', array('forum' => $forum->id));
@@ -414,7 +399,7 @@ function forum_delete_instance($id)
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
         $params = array();
         $params['parameters[0][name]'] = "forum";
-        $params['parameters[0][value]'] = $forum->id;
+        $params['parameters[0][value]'] = $forum->remoteid;
         $discussions = get_remote_forum_discussions_by($params);
     } else {
         $discussions = $DB->get_records('forum_discussions', array('forum' => $forum->id));
@@ -427,18 +412,18 @@ function forum_delete_instance($id)
         }
     }
 
-    forum_tp_delete_read_records(-1, -1, -1, $forum->id);
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        forum_tp_delete_read_records(-1, -1, -1, $forum->remoteid);
         $prs = array();
         $prs['parameters[0][name]'] = "id";
-        $prs['parameters[0][value]'] = $forum->id;
+        $prs['parameters[0][value]'] = $forum->remoteid;
         if (!delete_remote_mdl_forum("forum", $prs)) {
             $result = false;
         }
-    } else {
-        if (!$DB->delete_records('forum', array('id' => $forum->id))) {
-            $result = false;
-        }
+    }
+    forum_tp_delete_read_records(-1, -1, -1, $forum->id);
+    if (!$DB->delete_records('forum', array('id' => $forum->id))) {
+        $result = false;
     }
 
     forum_grade_item_delete($forum);

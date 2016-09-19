@@ -62,7 +62,7 @@ function get_remote_forum_by($parameters, $sort = '', $mustexists = FALSE)
             'params' => array_merge(array('sort' => $sort, 'mustexists' => $mustexists), $parameters),
         ), false
     );
-    if (!isset($result->exception))
+    if (!isset($result->exception) && (isset($result->forum->id) && $result->forum->id != null))
         $forum = $result->forum;
     else
         $forum = 0;

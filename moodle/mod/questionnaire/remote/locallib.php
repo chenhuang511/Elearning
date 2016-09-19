@@ -17,23 +17,14 @@ require_once($CFG->dirroot . '/lib/additionallib.php');
  * @param $id
  * @return false|mixed
  */
-function get_remote_questionnaire_by_id($id) {
+function get_remote_questionnaire_by_id($id, $merge = true) {
     global $DB;
-    $resp = moodle_webservice_client(
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_questionnaire_get_question_by_id',
-            'params' => array('id' => $id)
-        )
-    );
-    if (isset($resp->exception)) {
-        return 0;
-    }
     /**
-     *  override questionnaire setting hub
+     *  get questionnaire setting local
      */
-    $fields = ' remoteid,
+    if($merge == true) {
+        $fields = ' id,
+                remoteid,
                 opendate,
                 closedate,
                 qtype,
@@ -46,14 +37,32 @@ function get_remote_questionnaire_by_id($id) {
                 completionsubmit,
                 autonum,
                 grade';
-    $local_questionnaire_data = $DB->get_record('questionnaire', array('remoteid' => $resp->id), $fields);
-    if(empty($local_questionnaire_data)){ // check data questionnaire in local db
-        $resp->remoteid = $resp->id;
+        $local_questionnaire_data = $DB->get_record('questionnaire', array('id' => $id), $fields);
+        $remoteid = $local_questionnaire_data->remoteid;
     } else {
+        $remoteid = $id;
+    }
+
+    $resp = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_questionnaire_get_question_by_id',
+            'params' => array('id' => $remoteid)
+        )
+    );
+    if (isset($resp->exception)) {
+        return 0;
+    }
+    /**
+     *  override questionnaire setting hub
+     */
+    if($merge === true) {
         foreach ($local_questionnaire_data as $key => $value){
             $resp->$key = $value;
         }
     }
+
     return $resp;
 }
 

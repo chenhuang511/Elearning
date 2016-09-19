@@ -4338,9 +4338,9 @@ table.flexible > thead > tr > th:last-child {
 form#personsearch input[type="submit"] {
     padding: 6px 11px;
 }
-div#enterlink a{
-    color: white;
-}
+/*div#enterlink a{*/
+    /*color: white;*/
+/*}*/
 
 .sublink-active {
     font-weight: 700;

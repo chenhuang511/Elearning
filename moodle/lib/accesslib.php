@@ -1461,20 +1461,20 @@ function get_context_info_array($contextid)
     $cm = null;
 
     if ($context->contextlevel == CONTEXT_COURSE) {
-        $course = $DB->get_record('course', array('id'=>$context->instanceid), '*', MUST_EXIST);
+        $course = $DB->get_record('course', array('id' => $context->instanceid), '*', MUST_EXIST);
 
     } else if ($context->contextlevel == CONTEXT_MODULE) {
         $cm = get_coursemodule_from_id('', $context->instanceid, 0, false, MUST_EXIST);
-        $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+        $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
     } else if ($context->contextlevel == CONTEXT_BLOCK) {
         $parent = $context->get_parent_context();
 
         if ($parent->contextlevel == CONTEXT_COURSE) {
-            $course = $DB->get_record('course', array('id'=>$parent->instanceid), '*', MUST_EXIST);
+            $course = $DB->get_record('course', array('id' => $parent->instanceid), '*', MUST_EXIST);
         } else if ($parent->contextlevel == CONTEXT_MODULE) {
             $cm = get_coursemodule_from_id('', $parent->instanceid, 0, false, MUST_EXIST);
-            $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+            $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
         }
     }
 
@@ -6341,6 +6341,9 @@ class context_helper extends context
     {
         global $DB;
 
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            delete_remote_instance_by($contextlevel, $instanceid);
+        }
         // double check the context still exists
         if ($record = $DB->get_record('context', array('contextlevel' => $contextlevel, 'instanceid' => $instanceid))) {
             $context = context::create_instance_from_record($record);

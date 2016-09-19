@@ -52,11 +52,7 @@ function certificate_update_instance($certificate) {
 
     // Update the certificate.
     $certificate->timemodified = time();
-    if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-        $certificate->id = $certificate->instance;
-    } else {
-        $certificate->id = $DB->get_field('certificate', 'id', array('remoteid' => $certificate->instance));
-    }
+    $certificate->id = $certificate->instance;
 
     return $DB->update_record('certificate', $certificate);
 }
@@ -349,16 +345,17 @@ function certificate_get_local_settings_info($courseid, $instance)
     global $CFG, $DB;
     require_once($CFG->dirroot . '/mod/certificate/remote/locallib.php');
 
-    $certificate = get_remote_certificate_by_id($instance);
-    if (!$certificate) {
-        return 0;
-    }
-    $id = $DB->get_field('certificate', 'id', array('remoteid' => $instance));
-    if(empty($id)){ // check data questionnaire in local db
+    $local_certificate = $DB->get_record('questionnaire', array('remoteid' => $instance));
+    if(!$local_certificate){ // check data questionnaire in local db
+        $certificate = get_remote_questionnaire_by_id($instance, false);
+        if (!$certificate) {
+            return 0;
+        }
+        $certificate->remoteid = $certificate->id;
         $certificate->course = $courseid;
-        $certificate->id = $DB->insert_record('certificate', $certificate, true);
+        $id = $DB->insert_record('questionnaire', $certificate, true);
     } else {
-        $certificate->id = $id;
+        $id = $local_certificate->id;
     }
-    return $certificate->id;
+    return $id;
 }

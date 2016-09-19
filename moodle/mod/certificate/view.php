@@ -44,14 +44,13 @@ if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
         print_error('course module is incorrect');
     }
 } else {
-    if (!$cm = get_remote_course_module_by_cmid('certificate', $id)) {
+    if (!$cm = get_coursemodule_from_id('certificate', $id)) {
         print_error('Course Module ID was incorrect');
     }
-    if (!$course = get_local_course_record($cm->course, true)) {
+    if (!$course = $DB->get_record('course', array('id'=> $cm->course))) {
         print_error('course is misconfigured');
     }
-
-    if (! $certificate = get_remote_certificate_by_id($cm->instance)) {
+    if (!$certificate = get_remote_certificate_by_id($cm->instance)) {
         print_error('course module is incorrect');
     }
 }
@@ -104,9 +103,9 @@ if ($certificate->requiredtime && !has_capability('mod/certificate:manage', $con
 $certrecord = certificate_get_issue($course, $USER, $certificate, $cm);
 
 make_cache_directory('tcpdf');
-
 // Load the specific certificate type.
-require("$CFG->dirroot/mod/certificate/type/$certificate->certificatetype/certificate.php");
+
+require_once("$CFG->dirroot/mod/certificate/type/$certificate->certificatetype/certificate.php");
 
 if (empty($action)) { // Not displaying PDF
     echo $OUTPUT->header();

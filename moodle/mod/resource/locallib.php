@@ -275,9 +275,7 @@ function remote_resource_print_workaround($resource, $cm, $course, $file)
 {
     global $CFG, $OUTPUT;
 
-    if ($CFG->nonajax == true) {
-        resource_print_header($resource, $cm, $course);
-    }
+    resource_print_header($resource, $cm, $course);
     resource_print_heading($resource, $cm, $course, true);
     resource_print_intro($resource, $cm, $course, true);
 
@@ -319,9 +317,7 @@ function remote_resource_print_workaround($resource, $cm, $course, $file)
     }
     echo '</div>';
 
-    if ($CFG->nonajax == true) {
-        echo $OUTPUT->footer();
-    }
+    echo $OUTPUT->footer();
     die;
 }
 
