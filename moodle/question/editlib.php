@@ -35,29 +35,14 @@ define('MAXIMUM_QUESTIONS_PER_PAGE', 1000);
 
 function get_module_from_cmid($cmid) {
     global $CFG, $DB;
-    $sql = "SELECT cm.*, md.name as modname
-               FROM {course_modules} cm,
-                    {modules} md
-               WHERE cm.id = ? AND
-                     md.id = cm.module";
-    if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-        $paramdata["param[0][name]"] = 0;
-        $paramdata["param[0][value]"]= $cmid;
-//        $cm = remote_db_get_record_sql($sql, $paramdata);
-//        $cmrec = merge_local_course_module($cm);
-        $cmrec = $DB->get_record_sql($sql, array($cmid));
-
-        $cond = array();
-        $cond['conditions[0][name]'] = 'id';
-        $cond['conditions[0][value]'] = $cmrec->instance;
-        $modrec = remote_db_get_record($cmrec->modname, $cond);
-    }else{
-        $cmrec = $DB->get_record_sql($sql, array($cmid));
-        $modrec = $DB->get_record($cmrec->modname, array('id' => $cmrec->instance));
-    }
-    if (!$cmrec ){
+    if (!$cmrec = $DB->get_record_sql("SELECT cm.*, md.name as modname
+                               FROM {course_modules} cm,
+                                    {modules} md
+                               WHERE cm.id = ? AND
+                                     md.id = cm.module", array($cmid))){
         print_error('invalidcoursemodule');
-    } elseif (!$modrec) {
+    } elseif (!$modrec = (MOODLE_RUN_MODE === MOODLE_MODE_HUB)?get_remote_quiz_by_id($cmrec->instance, false)
+        :$DB->get_record($cmrec->modname, array('id' => $cmrec->instance))) {
         print_error('invalidcoursemodule');
     }
     $modrec->instance = $modrec->id;

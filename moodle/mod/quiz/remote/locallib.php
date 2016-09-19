@@ -673,7 +673,7 @@ function remote_db_record_exists($table, $condition)
         ), false
     );
     if(!is_bool($result->status)){
-        throw new coding_exception('Invalid local_mod_delete_response_by_mbl API. Please check your API');
+        throw new coding_exception('Invalid local_mod_quiz_db_record_exists API. Please check your API');
     }
     return $result->status;
 }
