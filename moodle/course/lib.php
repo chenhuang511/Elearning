@@ -4164,3 +4164,26 @@ function course_get_tagged_course_modules($tag, $exclusivemode = false, $fromcon
             $exclusivemode, $fromcontextid, $contextid, $recursivecontext, $page, $totalpages);
     }
 }
+
+/**
+ * Merge setting for each module info. Keep all setting from host,
+ * except 3 attribute: name, intro, introformat from hub.
+ *
+ * @param string $modname - The name of modules
+ * @param int $moduleid   - The id of modules
+ * @return object $data   - The setting of module after merge
+ */
+function activity_merge_module_info($modname, $moduleid){
+    global $DB, $CFG;
+    $functionname = $modname . "_merge_module_info";
+
+    include_once("$CFG->dirroot/mod/$modname/lib.php");
+
+    if ($hasfunction = function_exists($functionname)) {
+        $data = $functionname($moduleid);
+    } else {
+        $data = $DB->get_record($modname, array('id' => $moduleid), '*', MUST_EXIST);
+    }
+
+    return $data;
+}

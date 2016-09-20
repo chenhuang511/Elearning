@@ -897,9 +897,6 @@ abstract class moodleform_mod extends moodleform {
 
         // Can't change general setting for host
         $mform->freeze('name');
-        $mform->addElement('hidden', 'introeditor');
-        $mform->setType('introeditor', PARAM_RAW);
-
         $mform->addElement('html', '<div class="introdesc">');
 
         if (isset($this->current->introattachments)) {
@@ -908,6 +905,7 @@ abstract class moodleform_mod extends moodleform {
         }
         $mform->addElement('htmleditor', 'intro', $label);
         $mform->freeze('intro');
+
         $mform->addElement('html', '</div>');
     }
 

@@ -638,9 +638,19 @@ class completion_info {
         // Check grade
         if (!is_null($cm->completiongradeitemnumber)) {
             require_once($CFG->libdir.'/gradelib.php');
-            $item = grade_item::fetch(array('courseid'=>$cm->course, 'itemtype'=>'mod',
-                'itemmodule'=>$cm->modname, 'iteminstance'=>$cm->instance,
-                'itemnumber'=>$cm->completiongradeitemnumber));
+
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+                if (!is_null($cm->modname)) {
+                    $instanceid = $DB->get_field($cm->modname, 'remoteid', array('id'=>$cm->instance), MUST_EXIST);
+                }
+            }
+
+            $item = grade_item::fetch(array('courseid' => $cm->course,
+                'itemtype' => 'mod',
+                'itemmodule' => $cm->modname,
+                'iteminstance' => (MOODLE_RUN_MODE === MOODLE_MODE_HUB) ? $instanceid : $cm->instance,
+                'itemnumber'=> $cm->completiongradeitemnumber));
+
             if ($item) {
                 // Fetch 'grades' (will be one or none)
                 $grades = grade_grade::fetch_users_grades($item, array($userid), false);

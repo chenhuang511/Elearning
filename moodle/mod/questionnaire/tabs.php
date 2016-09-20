@@ -30,35 +30,31 @@ if (!isset($SESSION->questionnaire)) {
     $SESSION->questionnaire = new stdClass();
 }
 $currenttab = $SESSION->questionnaire->current_tab;
-if($CFG->nonajax == true){
-    $nonajax = '&nonajax=1';
-} else {
-    $nonajax = "";
-}
+
 // In a questionnaire instance created "using" a PUBLIC questionnaire, prevent anyone from editing settings, editing questions,
 // viewing all responses...except in the course where that PUBLIC questionnaire was originally created.
 
 $owner = !empty($questionnaire->sid) && (trim($questionnaire->survey->owner) == trim($questionnaire->course->id));
 if ($questionnaire->capabilities->manage  && $owner) {
     $row[] = new tabobject('settings', $CFG->wwwroot.htmlspecialchars('/mod/questionnaire/qsettings.php?'.
-            'id='.$questionnaire->cm->id.$nonajax), get_string('advancedsettings'));
+            'id='.$questionnaire->cm->id), get_string('advancedsettings'));
 }
 
 if ($questionnaire->capabilities->editquestions && $owner) {
     $row[] = new tabobject('questions', $CFG->wwwroot.htmlspecialchars('/mod/questionnaire/questions.php?'.
-            'id='.$questionnaire->cm->id.$nonajax), get_string('questions', 'questionnaire'));
+            'id='.$questionnaire->cm->id), get_string('questions', 'questionnaire'));
 }
 
 if ($questionnaire->capabilities->preview && $owner) {
     if (!empty($questionnaire->questions)) {
         $row[] = new tabobject('preview', $CFG->wwwroot.htmlspecialchars('/mod/questionnaire/preview.php?'.
-                        'id='.$questionnaire->cm->id.$nonajax), get_string('preview_label', 'questionnaire'));
+                        'id='.$questionnaire->cm->id), get_string('preview_label', 'questionnaire'));
     }
 }
 
 $usernumresp = $questionnaire->count_submissions($USER->id);
 if ($questionnaire->capabilities->readownresponses && ($usernumresp > 0)) {
-    $argstr = 'instance='.$questionnaire->id.'&user='.$USER->id.'&group='.$currentgroupid.$nonajax;
+    $argstr = 'instance='.$questionnaire->id.'&user='.$USER->id.'&group='.$currentgroupid;
     if ($usernumresp == 1) {
         $argstr .= '&byresponse=1&action=vresp';
         $yourrespstring = get_string('yourresponse', 'questionnaire');
@@ -111,7 +107,7 @@ $canviewallgroups = has_capability('moodle/site:accessallgroups', $context);
 
 if (($canviewallgroups || ($canviewgroups && $questionnaire->capabilities->readallresponseanytime))
                 && $numresp > 0 && $owner && $numselectedresps > 0) {
-    $argstr = 'instance='.$questionnaire->id.$nonajax;
+    $argstr = 'instance='.$questionnaire->id;
     $row[] = new tabobject('allreport', $CFG->wwwroot.htmlspecialchars('/mod/questionnaire/report.php?'.
                            $argstr.'&action=vall'), get_string('viewallresponses', 'questionnaire'));
     if (in_array($currenttab, array('vall', 'vresp', 'valldefault', 'vallasort', 'vallarsort', 'deleteall', 'downloadcsv',
@@ -183,7 +179,7 @@ if (($canviewallgroups || ($canviewgroups && $questionnaire->capabilities->reada
             ($questionnaire->resp_view == QUESTIONNAIRE_STUDENTVIEWRESPONSES_WHENANSWERED
                 && $usernumresp > 0 )) &&
            $questionnaire->is_survey_owner()) {
-    $argstr = 'instance='.$questionnaire->id.'&sid='.$questionnaire->sid.$nonajax;
+    $argstr = 'instance='.$questionnaire->id.'&sid='.$questionnaire->sid;
     $row[] = new tabobject('allreport', $CFG->wwwroot.htmlspecialchars('/mod/questionnaire/report.php?'.
                            $argstr.'&action=vall&group='.$currentgroupid), get_string('viewallresponses', 'questionnaire'));
     if (in_array($currenttab, array('valldefault',  'vallasort', 'vallarsort', 'deleteall', 'downloadcsv'))) {

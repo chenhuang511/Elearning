@@ -342,12 +342,12 @@ function get_remote_course_completion_progress($course, $userid)
 {
     global $DB;
 
-    $cms = get_remote_course_mods($course->id, true);
-    $totalmoduletracking = 0;
-    foreach ($cms as $cm) {
-        if ($cm->completion) {
-            $totalmoduletracking++;
-        }
+    $totalmoduletracking = $DB->count_records_sql("SELECT COUNT(1) 
+                FROM {course_modules} 
+                WHERE course = ? AND completion <> 0", array($course->id));
+
+    if(empty($totalmoduletracking)){
+        return 0;
     }
 
     $result = moodle_webservice_client(

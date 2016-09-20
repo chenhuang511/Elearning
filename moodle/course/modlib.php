@@ -496,15 +496,7 @@ function can_update_moduleinfo($cm)
         $data = $DB->get_record($module->name, array('id' => $cm->instance), '*', MUST_EXIST);
     } else {
         // Merge module info
-        $functionname = $module->name . "_merge_module_info";
-
-        include_once("$CFG->dirroot/mod/$module->name/lib.php");
-
-        if ($hasfunction = function_exists($functionname)) {
-            $data = $functionname($cm->instance);
-        } else {
-            $data = $DB->get_record($module->name, array('id' => $cm->instance), '*', MUST_EXIST);
-        }
+        $data = activity_merge_module_info($module->name, $cm->instance);
     }
     // Check the course section exists.
     $cw = $DB->get_record('course_sections', array('id' => $cm->section), '*', MUST_EXIST);
@@ -606,13 +598,19 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null)
     $DB->update_record('course_modules', $cm);
 
     $modcontext = context_module::instance($moduleinfo->coursemodule);
-
     // Update embedded links and save files.
     if (plugin_supports('mod', $moduleinfo->modulename, FEATURE_MOD_INTRO, true)) {
-        $moduleinfo->intro = file_save_draft_area_files($moduleinfo->introeditor['itemid'], $modcontext->id,
-            'mod_' . $moduleinfo->modulename, 'intro', 0,
-            array('subdirs' => true), $moduleinfo->introeditor['text']);
-        $moduleinfo->introformat = $moduleinfo->introeditor['format'];
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            $moduleinfo->intro = file_save_draft_area_files($moduleinfo->introeditor['itemid'], $modcontext->id,
+                'mod_' . $moduleinfo->modulename, 'intro', 0,
+                array('subdirs' => true), $moduleinfo->introeditor['text']);
+            $moduleinfo->introformat = $moduleinfo->introeditor['format'];
+        } else {
+            $data = activity_merge_module_info($moduleinfo->modulename, $moduleinfo->instance);
+            $moduleinfo->name = $data->name;
+            $moduleinfo->intro = $data->intro;
+            $moduleinfo->introformat = $data->introformat;
+        }
         unset($moduleinfo->introeditor);
     }
 
