@@ -1,36 +1,31 @@
 {
-    "name": "laravel/lumen",
-    "description": "The Laravel Lumen Framework.",
-    "keywords": ["framework", "laravel", "lumen"],
-    "license": "MIT",
-    "type": "project",
-    "require": {
-        "php": ">=5.6.4",
-        "laravel/lumen-framework": "5.3.*",
-        "vlucas/phpdotenv": "~2.2",
-        "owasp/phprbac": "2.0.*@dev"
-    },
-    "require-dev": {
-        "fzaninotto/faker": "~1.4",
-        "phpunit/phpunit": "~5.0",
-        "mockery/mockery": "~0.9"
-    },
-    "autoload": {
-        "psr-4": {
-            "App\\": "app/"
-        }
-    },
-    "autoload-dev": {
-        "classmap": [
-            "tests/",
-            "database/"
-        ]
-    },
-    "scripts": {
-        "post-root-package-install": [
-            "php -r \"copy('.env.example', '.env');\""
-        ]
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+	"name": "anchorcms/anchor-cms",
+	"description": "Anchor is a free, lightweight, faster-than-a-bullet, simple blogging system, made for art–directed posts.",
+	"type": "CMS",
+	"keywords": ["CMS", "anchor", "anchorcms"],
+	"license": "GPL-3.0",
+	"authors": [
+		{
+			"name": "Idiot",
+			"email": "iam@visualidiot.com"
+		},
+		{
+			"name": "Kieron",
+			"email": "rwarasaurus@gmail.com"
+		},
+		{
+			"name": "Craig",
+			"email": "childscraig17@gmail.com"
+		},
+		{
+			"name": "David",
+			"email": "me@daviddarnes.com"
+		}
+	],
+	"require": {
+		"php": ">=5.3.6",
+		"ircmaxell/random-lib": "^1.1",
+		"ircmaxell/password-compat": "^1.0",
+		"indigophp/hash-compat": "^1.1"
+	}
 }
