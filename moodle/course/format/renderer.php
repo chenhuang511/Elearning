@@ -713,7 +713,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      *
      * @return string HTML to output.
      */
-    protected function section_nav_selection($course, $sections, $displaysection) {
+    protected function section_nav_selection($course, $sections, $displaysection,  $options = array()) {
         global $CFG;
         $o = '';
         $sectionmenu = array();
@@ -723,7 +723,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         while ($section <= $course->numsections) {
             $thissection = $modinfo->get_section_info($section);
             $showsection = $thissection->uservisible or !$course->hiddensections;
-            if (($showsection) && ($section != $displaysection) && ($url = course_get_url($course, $section))) {
+            if (($showsection) && ($section != $displaysection) && ($url = course_get_url($course, $section, $options))) {
                 $sectionmenu[$url->out(false)] = get_section_name($course, $section);
             }
             $section++;
@@ -1039,7 +1039,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             $sectionbottomnav .= html_writer::start_tag('div', array('class' => 'section-navigation mdl-bottom'));
             $sectionbottomnav .= html_writer::tag('span', $sectionnavlinks['previous'], array('class' => 'mdl-left'));
             $sectionbottomnav .= html_writer::tag('span', $sectionnavlinks['next'], array('class' => 'mdl-right'));
-            $sectionbottomnav .= html_writer::tag('div', $this->section_nav_selection($course, $sections, $displaysection),
+            $sectionbottomnav .= html_writer::tag('div', $this->section_nav_selection($course, $sections, $displaysection, ['student' => 1]),
                 array('class' => 'mdl-align'));
             $sectionbottomnav .= html_writer::end_tag('div');
             echo $sectionbottomnav;

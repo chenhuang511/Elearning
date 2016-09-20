@@ -110,6 +110,12 @@ class format_weeks extends format_base
         if (array_key_exists('sr', $options)) {
             $sr = $options['sr'];
         }
+        //for student
+        $student = false;
+        if (array_key_exists('student', $options)) {
+            $student = $options['student'];
+        }
+        //end
         if (is_object($section)) {
             $sectionno = $section->section;
         } else {
@@ -125,6 +131,9 @@ class format_weeks extends format_base
                 }
             } else {
                 $usercoursedisplay = $course->coursedisplay;
+            }
+            if($student) {
+                $usercoursedisplay = COURSE_DISPLAY_MULTIPAGE;
             }
             if ($sectionno != 0 && $usercoursedisplay == COURSE_DISPLAY_MULTIPAGE) {
                 $url->param('section', $sectionno);

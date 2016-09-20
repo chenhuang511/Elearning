@@ -25,6 +25,7 @@ function get_remote_questionnaire_by_id($id, $merge = true) {
     if($merge == true) {
         $fields = ' id,
                 remoteid,
+                course,
                 opendate,
                 closedate,
                 qtype,

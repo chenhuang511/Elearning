@@ -88,12 +88,12 @@ echo $OUTPUT->doctype() ?>
         if ($isstudent) { ?>
             <?php
             $activenode = $PAGE->navigation->find_active_node();
-            if(!is_int($activenode->parent->key)){
+            if($activenode->parent->type == navigation_node::TYPE_ROOTNODE){
                 $keyparentnode = isset($activenode->parent->parent->includesectionnum) ? $activenode->parent->parent->includesectionnum : 1;
                 $keynode = null;
             } else {
                 $keynode = $activenode->key;
-                $keyparentnode = $activenode->parent->key;
+                $keyparentnode = $activenode->parent->key - 1; // not done
             }
             $modinfo = get_fast_modinfo($COURSE->id);
             $sectioninfoall = $modinfo->get_section_info_all();
@@ -134,28 +134,28 @@ echo $OUTPUT->doctype() ?>
                                                 if($key == 0) {
                                                     continue;
                                                 }
-                                                $heading = 'mod-' . $section->id;
-                                                $collapse = 'collapseMod' . $section->id;
+                                                $heading = 'mod-' . $section->section;
+                                                $collapse = 'collapseMod' . $section->section;
                                                 ?>
 
                                                     <div class="panel panel-default">
                                                         <div class="panel-heading" role="tab" id="<?php echo $heading ?>">
                                                             <h4 class="panel-title">
-                                                                <a id="csec-<?php echo $section->id ?>" role="button" data-toggle="collapse"
+                                                                <a id="csec-<?php echo $section->section ?>" role="button" data-toggle="collapse"
                                                                    data-parent="#section-menu"
                                                                    href="#<?php echo $collapse ?>"
                                                                    aria-expanded="false" aria-controls="<?php echo $collapse ?>"
                                                                    class="collapsed toggle-down" data-summary="<?php echo htmlspecialchars($section->summary) ?>">
                                                                     <i class="fa
                                                                      <?php
-                                                                    echo $section->id == $keyparentnode || $key == $keyparentnode ? 'fa-caret-down' : 'fa-caret-right';
+                                                                    echo $section->section == $keyparentnode || $key == $keyparentnode ? 'fa-caret-down' : 'fa-caret-right';
                                                                     ?>
                                                                      icon" aria-hidden="true"></i></a><a href="<?php echo $CFG->wwwroot.'/course/view.php?id=' . $COURSE->id . '&section='. $key ?>&nonajax=1">&nbsp;<?php echo get_section_name($section->course, $section->section); ?> </a>
                                                             </h4>
                                                         </div>
                                                         <div id="<?php echo $collapse ?>" class="panel-collapse collapse
                                                         <?php
-                                                        if($section->id == $keyparentnode || $key == $keyparentnode){
+                                                        if($section->section == $keyparentnode || $key == $keyparentnode){
                                                             echo 'in';
                                                         }
                                                         ?>

@@ -21,6 +21,8 @@ $modchooser = optional_param('modchooser', -1, PARAM_BOOL);
 $return = optional_param('return', 0, PARAM_LOCALURL);
 $nonajax = optional_param('nonajax', true, PARAM_BOOL);
 
+$section = 0; //hardcode - show multiple activity
+
 $params = array();
 if (!empty($name)) {
     $params = array('shortname' => $name);

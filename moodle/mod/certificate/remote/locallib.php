@@ -22,6 +22,7 @@ function get_remote_certificate_by_id($id, $merge = true) {
                 remoteid,
                 emailteachers,
                 emailothers,
+                course,
                 savecert,
                 reportcert,
                 delivery,
