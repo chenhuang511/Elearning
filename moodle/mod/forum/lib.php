@@ -179,11 +179,7 @@ function forum_update_instance($forum, $mform)
         $forum->assesstimestart = 0;
         $forum->assesstimefinish = 0;
     }
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $arr = array('remoteid' => $forum->id);
-    } else {
-        $arr = array('id' => $forum->id);
-    }
+    $arr = array('id' => $forum->id);
     $oldforum = $DB->get_record('forum', $arr);
 
 
@@ -291,20 +287,7 @@ function forum_update_instance($forum, $mform)
         }
     }
 
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $forummapping = new stdClass();
-        foreach ($forum as $key => $val) {
-            if ($key == "id") {
-                $forummapping->$key = $oldforum->id;
-            } else {
-                $forummapping->$key = $val;
-            }
-        }
-        $forummapping->remoteid = $forum->id;
-        $DB->update_record('forum', $forummapping);
-    } else {
-        $DB->update_record('forum', $forum);
-    }
+    $DB->update_record('forum', $forum);
 
     $modcontext = context_module::instance($forum->coursemodule);
     if (($forum->forcesubscribe == FORUM_INITIALSUBSCRIBE) && ($oldforum->forcesubscribe <> $forum->forcesubscribe)) {
@@ -5038,13 +5021,13 @@ function forum_add_new_post($post, $mform, $unused = null)
         }
         if (isset($post->userid)) {
             $localuserid = get_remote_mapping_localuserid($post->userid);
-            if($localuserid) {
+            if ($localuserid) {
                 $post->userid = $localuserid;
             }
         }
-        if(isset($post->usermodified)) {
+        if (isset($post->usermodified)) {
             $localuserid = get_remote_mapping_localuserid($post->usermodified);
-            if($localuserid) {
+            if ($localuserid) {
                 $post->usermodified = $localuserid;
             }
         }
@@ -5103,15 +5086,12 @@ function forum_update_post($post, $mform, &$message)
         $params['parameters[0][name]'] = "id";
         $params['parameters[0][value]'] = $post->discussion;
         $discussion = get_remote_forum_discussions_by($params);
-
-        $params['parameters[0][value]'] = $discussion->forum;
-        $forum = get_remote_forum_by($params);
-        $cm = get_remote_course_module_by_instance('forum', $forum->id);
     } else {
         $discussion = $DB->get_record('forum_discussions', array('id' => $post->discussion));
-        $forum = $DB->get_record('forum', array('id' => $discussion->forum));
-        $cm = get_coursemodule_from_instance('forum', $forum->id);
     }
+    $forum = $DB->get_record('forum', array('id' => $discussion->forum));
+    $cm = get_coursemodule_from_instance('forum', $forum->id);
+
     $context = context_module::instance($cm->id);
 
     $post->modified = time();
@@ -5146,6 +5126,12 @@ function forum_update_post($post, $mform, &$message)
     }
 
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        if (isset($discussion->usermodified)) {
+            $localuserid = get_remote_mapping_localuserid($discussion->usermodified);
+            if ($localuserid) {
+                $discussion->usermodified = $localuserid;
+            }
+        }
         update_remote_mdl_forum("forum_discussions", $discussion->id, $discussion);
     } else {
         $DB->update_record('forum_discussions', $discussion);
@@ -6574,6 +6560,7 @@ function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode,
 
     $forumtracked = forum_tp_is_tracked($forum);
     $posts = forum_get_all_discussion_posts($discussion->id, $sort, $forumtracked);
+
     $post = $posts[$post->id];
 
     foreach ($posts as $pid => $p) {
@@ -7759,7 +7746,7 @@ function forum_discussion_update_last_post($discussionid)
 
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
             $localuserid = get_remote_mapping_localuserid($discussionobject->usermodified);
-            if($localuserid) {
+            if ($localuserid) {
                 $discussionobject->usermodified = $localuserid;
             }
             update_remote_mdl_forum("forum_discussions", $discussionobject->id, $discussionobject);

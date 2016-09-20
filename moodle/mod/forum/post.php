@@ -253,9 +253,17 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
             print_error('invalidparentpostid', 'forum');
         }
     }
-
-    if (!$discussion = $DB->get_record("forum_discussions", array("id" => $post->discussion))) {
-        print_error('notpartofdiscussion', 'forum');
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $param = array();
+        $param['parameters[0][name]'] = "id";
+        $param['parameters[0][value]'] = $post->discussion;
+        if (!$discussion = get_remote_forum_discussions_by($param)) {
+            print_error('notpartofdiscussion', 'forum');
+        }
+    } else {
+        if (!$discussion = $DB->get_record("forum_discussions", array("id" => $post->discussion))) {
+            print_error('notpartofdiscussion', 'forum');
+        }
     }
     if (!$forum = $DB->get_record("forum", array("id" => $discussion->forum))) {
         print_error('invalidforumid', 'forum');
