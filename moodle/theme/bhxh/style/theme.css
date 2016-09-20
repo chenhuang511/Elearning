@@ -109,7 +109,7 @@ a.mod_quiz-next-nav {
     float: right;
 }
 
-.fitem_actionbuttons div.felement.fgroup{
+form#filterform fieldset.hidden div .fitem_actionbuttons div.felement.fgroup{
     margin: 0 !important;
 }
 
@@ -4411,4 +4411,34 @@ form#personsearch input[type="submit"] {
 .modtype_resource .mod-indent-outer {
     display: block;
     width: 50%;
+}
+
+.list-slide-content {
+    background: #f1f1f1;
+    border: 1px solid #d5d5d5;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+
+.list-slide-content .slide-title {
+    margin-top: 0;
+    line-height: 1.2em;
+}
+
+.list-slide-content .btn-edit-slide {
+    background: #f5764b;
+    color: #fff;
+    margin-right: 10px;
+}
+
+.list-slide-content .btn-view-slide {
+    background: #01af98;
+    color: #fff;
+}
+
+@media screen and (min-width: 768px) {
+    .list-slide-content .slide-title {
+        height: 2.4em;
+        overflow: hidden;
+    }
 }

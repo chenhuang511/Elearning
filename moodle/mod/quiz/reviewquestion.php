@@ -30,6 +30,8 @@ require_once('locallib.php');
 $attemptid = required_param('attempt', PARAM_INT);
 $slot = required_param('slot', PARAM_INT);
 $seq = optional_param('step', null, PARAM_INT);
+global $OUTPUT;
+echo $OUTPUT->notification("Chức năng này đang được nâng cấp...");die;
 
 $baseurl = new moodle_url('/mod/quiz/reviewquestion.php',
         array('attempt' => $attemptid, 'slot' => $slot));

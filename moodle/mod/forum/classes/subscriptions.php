@@ -655,20 +655,7 @@ class subscriptions
         $sub->forum = $forum->id;
 
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            $subdata = array();
-            $i = 0;
-            foreach ($sub as $key => $val) {
-                $subdata["data[$i][name]"] = "$key";
-                if ($key == "userid") {
-                    $user = get_remote_mapping_user($val);
-                    $subdata["data[$i][value]"] = $user[0]->id;
-                } else {
-                    $subdata["data[$i][value]"] = $val;
-                }
-                $i++;
-            }
-
-            $result = save_remote_mdl_forum("forum_subscriptions", $subdata);
+            $result = save_remote_mdl_forum("forum_subscriptions", $sub);
         } else {
             $result = $DB->insert_record("forum_subscriptions", $sub);
         }
@@ -902,10 +889,9 @@ class subscriptions
             if ($subscription) {
                 $subscription->preference = time();
                 if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-                    $data = array();
-                    $data['data[0][name]'] = "preference";
-                    $data['data[0][value]'] = time();
-                    update_remote_mdl_forum("forum_discussion_subs", $subscription->id, $data);
+                    $subupdate = new \stdClass();
+                    $subupdate->preference = time();
+                    update_remote_mdl_forum("forum_discussion_subs", $subscription->id, $subupdate);
                 } else {
                     $DB->update_record('forum_discussion_subs', $subscription);
                 }
@@ -917,22 +903,7 @@ class subscriptions
                 $subscription->preference = time();
 
                 if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-                    $data = array();
-                    $i = 0;
-                    foreach ($subscription as $key => $val) {
-                        $data["data[$i][name]"] = $key;
-                        if ($key == "userid") {
-                            $data["data[$i][value]"] = $hubuserid;
-                        } else if ($key == "forum") {
-                            $forum = $DB->get_record('forum', array('id' => $val), 'id, remoteid');
-                            $data["data[$i][value]"] = $forum->remoteid;
-                        } else {
-                            $data["data[$i][value]"] = $val;
-                        }
-                        $i++;
-                    }
-
-                    $subscription->id = save_remote_mdl_forum("forum_discussion_subs", $data);
+                    $subscription->id = save_remote_mdl_forum("forum_discussion_subs", $subscription);
                 } else {
                     $subscription->id = $DB->insert_record('forum_discussion_subs', $subscription);
                 }
@@ -1024,10 +995,7 @@ class subscriptions
             if ($subscription) {
                 $subscription->preference = self::FORUM_DISCUSSION_UNSUBSCRIBED;
                 if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-                    $data = array();
-                    $data['data[0][name]'] = "preference";
-                    $data['data[0][value]'] = self::FORUM_DISCUSSION_UNSUBSCRIBED;
-                    $result = update_remote_mdl_forum("forum_discussion_subs", $subscription->id, $data);
+                    update_remote_mdl_forum("forum_discussion_subs", $subscription->id, $subscription);
                 } else {
                     $DB->update_record('forum_discussion_subs', $subscription);
                 }
@@ -1039,19 +1007,7 @@ class subscriptions
                 $subscription->preference = self::FORUM_DISCUSSION_UNSUBSCRIBED;
 
                 if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-                    $data = array();
-                    $count = 0;
-                    foreach ($subscription as $key => $val) {
-                        $data["data[$count][name]"] = $key;
-                        if ($key == "userid") {
-                            $data["data[$count][value]"] = $hubuserid;
-                        } else {
-                            $data["data[$count][value]"] = $val;
-                        }
-                        $count++;
-                    }
-
-                    $subscription->id = save_remote_mdl_forum("forum_discussion_subs", $data);
+                    $subscription->id = save_remote_mdl_forum("forum_discussion_subs", $subscription);
                 } else {
                     $subscription->id = $DB->insert_record('forum_discussion_subs', $subscription);
                 }

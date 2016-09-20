@@ -56,3 +56,59 @@ function printscriptnewpresentation() {
 </script>";
     return $return;
 }
+
+function printallslidebelongtouser($userid = null) {
+    global $DB, $USER;
+    $output = '';
+    if (!$userid) {
+        $userid = $USER->id;
+    }
+    /**
+     * if user can view slide belong to other user
+     * of course he can view his own slide
+     */
+    if (true) {
+        $slides = $DB->get_records('slide_storage', ['userid' => $userid]);
+        $output .= gethtmlcontentforprintslide($slides);
+    }
+
+    return $output;
+}
+
+function gethtmlcontentforprintslide($slides) {
+    global $CFG;
+    if (!$slides || count($slides) <= 0) {
+        return html_writer::tag('div', get_string('nothingtodisplay'));
+    }
+    $out = html_writer::start_tag('div', ['class' => 'row']);
+
+    $index = 1;
+    foreach ($slides as $slide) {
+        $out .= html_writer::start_tag('div', ['class' => 'col-sm-4']);
+        $out .= html_writer::start_tag('div', ['class' => 'list-slide-content']);
+        $out .= html_writer::start_tag('h4', ['class' => 'slide-title']);
+        $hasfileex = strrpos($slide->filename, '.strut');
+        if($hasfileex === false) {
+            $out .= $slide->filename;
+        } else {
+            $out .= substr($slide->filename, 0, $hasfileex);
+        }
+        $out .= html_writer::end_tag('h4');
+        $out .= html_writer::start_tag('div', ['class' => 'slide-btn-action']);
+        $linkpage = $CFG->wwwroot . '/contentcreator/';
+        $out .= html_writer::link($linkpage . 'edit.php?id=' . $slide->id,
+            get_string('edit'), ['class' => 'btn btn-edit-slide']);
+        $out .= html_writer::link($linkpage . 'view/index.php?id=' . $slide->id,
+            get_string('view'), ['class' => 'btn btn-view-slide', 'target' => '_blank']);
+        $out .= html_writer::end_tag('div');
+        $out .= html_writer::end_tag('div');
+        $out .= html_writer::end_tag('div');
+        if ($index % 3 == 0) {
+            $out .= html_writer::start_tag('div', ['class' => 'clearfix hidden-xs']);
+            $out .= html_writer::end_tag('div');
+        }
+        ++$index;
+    }
+    $out .= html_writer::end_tag('div');
+    return $out;
+}
