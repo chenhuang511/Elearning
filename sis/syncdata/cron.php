@@ -1,7 +1,5 @@
 <?php
 
-require_once('../thirdparty/php-rest/rest.inc.php');
-require_once('../data.php');
 
 define(API_TOKEN_EXT, '0dd5b4427a6f29e7a544f7799e55ed21');
 define(API_TOKEN_INT, 'f1d62833ac40c17e6ffb3efbef3df0ce');
@@ -95,7 +93,7 @@ function sync_course_periods()
 
 error_reporting(ALL_ERROR);
 $funcs = get_defined_functions();
-$mysqlconn = new mysqli($DatabaseServer, $DatabaseUsername, $DatabasePassword, $DatabaseName);
+$mysqlconn = new mysqli("localhost", "root", "rootroot", "sis");
 
 // Check connection
 if ($mysqlconn->connect_error) {
