@@ -77,8 +77,11 @@ function printallslidebelongtouser($userid = null) {
 
 function gethtmlcontentforprintslide($slides) {
     global $CFG;
-    $out = '';
-    $out .= html_writer::start_tag('div', ['class' => 'row']);
+    if (!$slides || count($slides) <= 0) {
+        return html_writer::tag('div', get_string('nothingtodisplay'));
+    }
+    $out = html_writer::start_tag('div', ['class' => 'row']);
+
     $index = 1;
     foreach ($slides as $slide) {
         $out .= html_writer::start_tag('div', ['class' => 'col-sm-4']);
