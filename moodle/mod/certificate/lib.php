@@ -345,15 +345,15 @@ function certificate_get_local_settings_info($courseid, $instance)
     global $CFG, $DB;
     require_once($CFG->dirroot . '/mod/certificate/remote/locallib.php');
 
-    $local_certificate = $DB->get_record('questionnaire', array('remoteid' => $instance));
+    $local_certificate = $DB->get_record('certificate', array('remoteid' => $instance));
     if(!$local_certificate){ // check data questionnaire in local db
-        $certificate = get_remote_questionnaire_by_id($instance, false);
+        $certificate = get_remote_certificate_by_id($instance, false);
         if (!$certificate) {
             return 0;
         }
         $certificate->remoteid = $certificate->id;
         $certificate->course = $courseid;
-        $id = $DB->insert_record('questionnaire', $certificate, true);
+        $id = $DB->insert_record('certificate', $certificate, true);
     } else {
         $id = $local_certificate->id;
     }
