@@ -24,7 +24,8 @@ function() {
 		},
 
 		new_: function(model) {
-			model.newPresentation();
+			// model.newPresentation();
+            window.location.href = '/contentcreator/new.php'
 		}
 	};
 });
