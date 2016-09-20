@@ -83,7 +83,7 @@ $context = $cm ? context_module::instance($cm->id) : false;
 
 $nonajax = optional_param('nonajax', null, PARAM_INT);
 if (!has_capability('moodle/course:manageactivities', $context) && $nonajax != true) {
-    $CFG->nonajax = false;
+    $CFG->nonajax = true;
 } else {
     $CFG->nonajax = true;
 }
