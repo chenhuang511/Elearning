@@ -504,7 +504,7 @@ class local_questionnaire_external extends external_api {
 
         $result = array();
 
-        $DB->delete_records_select($params['tablename'], $params['select'], $params['sort']);
+        $DB->delete_records_select($params['tablename'], $params['select'] . $params['sort']);
 
         $result['status'] = true;
         $result['warnings'] = $warnings;

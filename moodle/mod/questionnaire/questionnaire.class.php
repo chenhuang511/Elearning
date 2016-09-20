@@ -1355,7 +1355,7 @@ class questionnaire {
                     $qsql = ' AND question_id ' . $qsql;
                 } else {
                     $qsql = implode(',', $qids);
-                    $qsql = ' AND response_id IN (' . $qsql . ')';
+                    $qsql = ' AND question_id IN (' . $qsql . ')';
                 }
             }
 
