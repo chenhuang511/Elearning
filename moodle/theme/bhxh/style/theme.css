@@ -109,7 +109,7 @@ a.mod_quiz-next-nav {
     float: right;
 }
 
-.fitem_actionbuttons div.felement.fgroup{
+form#filterform fieldset.hidden div .fitem_actionbuttons div.felement.fgroup{
     margin: 0 !important;
 }
 
