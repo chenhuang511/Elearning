@@ -301,8 +301,17 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     if (!$post = forum_get_post_full($delete)) {
         print_error('invalidpostid', 'forum');
     }
-    if (!$discussion = $DB->get_record("forum_discussions", array("id" => $post->discussion))) {
-        print_error('notpartofdiscussion', 'forum');
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $param = array();
+        $param['parameters[0][name]'] = "id";
+        $param['parameters[0][value]'] = $post->discussion;
+        if (!$discussion = get_remote_forum_discussions_by($param)) {
+            print_error('notpartofdiscussion', 'forum');
+        }
+    } else {
+        if (!$discussion = $DB->get_record("forum_discussions", array("id" => $post->discussion))) {
+            print_error('notpartofdiscussion', 'forum');
+        }
     }
     if (!$forum = $DB->get_record("forum", array("id" => $discussion->forum))) {
         print_error('invalidforumid', 'forum');
@@ -427,8 +436,17 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     if (!$post = forum_get_post_full($prune)) {
         print_error('invalidpostid', 'forum');
     }
-    if (!$discussion = $DB->get_record("forum_discussions", array("id" => $post->discussion))) {
-        print_error('notpartofdiscussion', 'forum');
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $param = array();
+        $param['parameters[0][name]'] = "id";
+        $param['parameters[0][value]'] = $post->discussion;
+        if (!$discussion = get_remote_forum_discussions_by($param)) {
+            print_error('notpartofdiscussion', 'forum');
+        }
+    } else {
+        if (!$discussion = $DB->get_record("forum_discussions", array("id" => $post->discussion))) {
+            print_error('notpartofdiscussion', 'forum');
+        }
     }
     if (!$forum = $DB->get_record("forum", array("id" => $discussion->forum))) {
         print_error('invalidforumid', 'forum');
@@ -470,14 +488,22 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         $newdiscussion->timestart = $discussion->timestart;
         $newdiscussion->timeend = $discussion->timeend;
 
-        $newid = $DB->insert_record('forum_discussions', $newdiscussion);
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $newid = save_remote_mdl_forum("forum_discussions", $newdiscussion);
+        } else {
+            $newid = $DB->insert_record('forum_discussions', $newdiscussion);
+        }
 
         $newpost = new stdClass();
         $newpost->id = $post->id;
         $newpost->parent = 0;
         $newpost->subject = $name;
 
-        $DB->update_record("forum_posts", $newpost);
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            update_remote_mdl_forum("forum_posts", $newpost->id, $newpost);
+        } else {
+            $DB->update_record("forum_posts", $newpost);
+        }
 
         forum_change_discussionid($post->id, $newid);
 

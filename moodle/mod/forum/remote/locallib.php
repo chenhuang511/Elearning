@@ -140,9 +140,9 @@ function get_remote_forum_discussion_subs_by($parameters, $sort = '', $mustexist
     );
 
     $sub = $result->sub;
-    if($sub) {
+    if ($sub) {
         $forum = $DB->get_record('forum', array('remoteid' => $sub->forum), 'id, remoteid');
-        if($forum) {
+        if ($forum) {
             $sub->forum = $forum->id;
         }
         $sub->userid = get_remote_mapping_localuserid($sub->userid);
@@ -394,8 +394,48 @@ function delete_remote_mdl_forum_select($modname, $select, $parameters)
     return $result->status;
 }
 
-function save_remote_mdl_forum($modname, $data)
+function save_remote_mdl_forum($modname, $obj)
 {
+    global $DB;
+    if (isset($obj->course)) {
+        $course = $DB->get_record('course', array('id' => $obj->course), 'id, remoteid');
+        if ($course) {
+            $obj->course = $course->remoteid;
+        }
+    }
+    if (isset($obj->forum)) {
+        $forum = $DB->get_record('forum', array('id' => $obj->forum), 'id, remoteid');
+        if ($forum) {
+            $obj->forum = $forum->remoteid;
+        }
+    }
+    if (isset($obj->forumid)) {
+        $forum = $DB->get_record('forum', array('id' => $obj->forumid), 'id, remoteid');
+        if ($forum) {
+            $obj->forumid = $forum->remoteid;
+        }
+    }
+    if (isset($obj->userid)) {
+        $user = get_remote_mapping_user($obj->userid);
+        if ($user) {
+            $obj->userid = $user[0]->id;
+        }
+    }
+    if (isset($obj->usermodified)) {
+        $user = get_remote_mapping_user($obj->usermodified);
+        if ($user) {
+            $obj->usermodified = $user[0]->id;
+        }
+    }
+
+    $data = array();
+    $i = 0;
+    foreach ($obj as $key => $val) {
+        $data["data[$i][name]"] = "$key";
+        $data["data[$i][value]"] = $val;
+        $i++;
+    }
+
     $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
@@ -408,8 +448,50 @@ function save_remote_mdl_forum($modname, $data)
     return $result->newid;
 }
 
-function update_remote_mdl_forum($modname, $id, $data)
+function update_remote_mdl_forum($modname, $id, $obj)
 {
+    global $DB;
+    if (isset($obj->course)) {
+        $course = $DB->get_record('course', array('id' => $obj->course), 'id, remoteid');
+        if ($course) {
+            $obj->course = $course->remoteid;
+        }
+    }
+    if (isset($obj->forum)) {
+        $forum = $DB->get_record('forum', array('id' => $obj->forum), 'id, remoteid');
+        if ($forum) {
+            $obj->forum = $forum->remoteid;
+        }
+    }
+    if (isset($obj->forumid)) {
+        $forum = $DB->get_record('forum', array('id' => $obj->forumid), 'id, remoteid');
+        if ($forum) {
+            $obj->forumid = $forum->remoteid;
+        }
+    }
+    if (isset($obj->userid)) {
+        $user = get_remote_mapping_user($obj->userid);
+        if ($user) {
+            $obj->userid = $user[0]->id;
+        }
+    }
+    if (isset($obj->usermodified)) {
+        $user = get_remote_mapping_user($obj->usermodified);
+        if ($user) {
+            $obj->usermodified = $user[0]->id;
+        }
+    }
+
+    $data = array();
+    $i = 0;
+    foreach ($obj as $key => $val) {
+        if ($key != "id") {
+            $data["data[$i][name]"] = "$key";
+            $data["data[$i][value]"] = $val;
+            $i++;
+        }
+    }
+
     $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,

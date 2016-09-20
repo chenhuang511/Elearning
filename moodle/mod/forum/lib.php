@@ -281,39 +281,9 @@ function forum_update_instance($forum, $mform)
         }
 
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            $postdata = array();
-            $i = 0;
-            foreach ($post as $key => $val) {
-                if ($key != "id") {
-                    $postdata["data[$i][name]"] = "$key";
-                    if ($key == "userid") {
-                        $user = get_remote_mapping_user($val);
-                        $postdata["data[$i][value]"] = $user[0]->id;
-                    } else {
-                        $postdata["data[$i][value]"] = $val;
-                    }
-                    $i++;
-                }
-            }
-            $result = update_remote_mdl_forum('forum_posts', $post->id, $postdata);
-
+            update_remote_mdl_forum('forum_posts', $post->id, $post);
             $discussion->name = $forum->name;
-
-            $discussiondata = array();
-            $icount = 0;
-            foreach ($discussion as $key => $val) {
-                if ($key != "id") {
-                    $discussiondata["data[$icount][name]"] = "$key";
-                    if ($key == "userid") {
-                        $user = get_remote_mapping_user($val);
-                        $discussiondata["data[$icount][value]"] = $user[0]->id;
-                    } else {
-                        $discussiondata["data[$icount][value]"] = $val;
-                    }
-                    $icount++;
-                }
-            }
-            $result = $DB->update_remote_mdl_forum('forum_discussions', $discussion->id, $discussiondata);
+            update_remote_mdl_forum('forum_discussions', $discussion->id, $discussion);
         } else {
             $DB->update_record('forum_posts', $post);
             $discussion->name = $forum->name;
@@ -946,19 +916,7 @@ function forum_cron()
                     $queue->postid = $post->id;
                     $queue->timemodified = $post->created;
                     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-                        $queuedata = array();
-                        $i = 0;
-                        foreach ($queue as $key => $val) {
-                            $queuedata["data[$i][name]"] = "$key";
-                            if ($key == "userid") {
-                                $user = get_remote_mapping_user($val);
-                                $queuedata["data[$i][value]"] = $user[0]->id;
-                            } else {
-                                $queuedata["data[$i][value]"] = $val;
-                            }
-                            $i++;
-                            $result = save_remote_mdl_forum("forum_queue", $queuedata);
-                        }
+                        $result = save_remote_mdl_forum("forum_queue", $queue);
                     } else {
                         $DB->insert_record('forum_queue', $queue);
                     }
@@ -1121,12 +1079,12 @@ function forum_cron()
         foreach ($posts as $post) {
             mtrace($mailcount[$post->id] . " users were sent post $post->id, '$post->subject'");
             if ($errorcount[$post->id]) {
-                $DB->set_field('forum_posts', 'mailed', FORUM_MAILED_ERROR, array('id' => $post->id));
                 if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-                    $updatedata = array();
-                    $updatedata['data[0][name]'] = "mailed";
-                    $updatedata['data[0][value]'] = FORUM_MAILED_ERROR;
-                    $result = update_remote_mdl_forum("forum_posts", $post->id, $updatedata);
+                    $postupdate = new stdClass();
+                    $postupdate->mailed = FORUM_MAILED_ERROR;
+                    update_remote_mdl_forum("forum_posts", $post->id, $postupdate);
+                } else {
+                    $DB->set_field('forum_posts', 'mailed', FORUM_MAILED_ERROR, array('id' => $post->id));
                 }
             }
         }
@@ -3522,16 +3480,7 @@ function forum_get_course_forum($courseid, $type)
     $forum->timemodified = time();
 
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $data = array();
-        $i = 0;
-
-        foreach ($forum as $key => $val) {
-            $data["data[$i][name]"] = $key;
-            $data["data[$i][value]"] = $val;
-            $i++;
-        }
-
-        $forum->id = save_remote_mdl_forum("forum", $data);
+        $forum->id = save_remote_mdl_forum("forum", $forum);
     } else {
         $forum->id = $DB->insert_record("forum", $forum);
     }
@@ -4625,21 +4574,7 @@ function forum_move_attachments($discussion, $forumfrom, $forumto)
                 // Weird - let's fix it
                 $post->attachment = '1';
                 if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-                    $postdata = array();
-                    $i = 0;
-                    foreach ($post as $key => $val) {
-                        if ($key != "id") {
-                            $postdata["data[$i][name]"] = "$key";
-                            if ($key == "userid") {
-                                $user = get_remote_mapping_user($val);
-                                $postdata["data[$i][value]"] = $user[0]->id;
-                            } else {
-                                $postdata["data[$i][value]"] = $val;
-                            }
-                            $i++;
-                        }
-                    }
-                    $result = update_remote_mdl_forum('forum_posts', $post->id, $postdata);
+                    update_remote_mdl_forum('forum_posts', $post->id, $post);
                 } else {
                     $DB->update_record('forum_posts', $post);
                 }
@@ -4647,21 +4582,7 @@ function forum_move_attachments($discussion, $forumfrom, $forumto)
                 // Weird - let's fix it
                 $post->attachment = '';
                 if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-                    $postdata = array();
-                    $i = 0;
-                    foreach ($post as $key => $val) {
-                        if ($key != "id") {
-                            $postdata["data[$i][name]"] = "$key";
-                            if ($key == "userid") {
-                                $user = get_remote_mapping_user($val);
-                                $postdata["data[$i][value]"] = $user[0]->id;
-                            } else {
-                                $postdata["data[$i][value]"] = $val;
-                            }
-                            $i++;
-                        }
-                    }
-                    $result = update_remote_mdl_forum('forum_posts', $post->id, $postdata);
+                    update_remote_mdl_forum('forum_posts', $post->id, $post);
                 } else {
                     $DB->update_record('forum_posts', $post);
                 }
@@ -5055,12 +4976,12 @@ function forum_add_attachment($post, $forum, $cm, $mform = null, $unused = null)
     file_save_draft_area_files($post->attachments, $context->id, 'mod_forum', 'attachment', $post->id,
         mod_forum_post_form::attachment_options($forum));
 
-    $DB->set_field('forum_posts', 'attachment', $present, array('id' => $post->id));
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $updatedata = array();
-        $updatedata['data[0][name]'] = "attachment";
-        $updatedata['data[0][value]'] = $present;
-        $result = update_remote_mdl_forum("forum_posts", $post->id, $updatedata);
+        $postupd = new stdClass();
+        $postupd->attachment = $present;
+        update_remote_mdl_forum("forum_posts", $post->id, $postupd);
+    } else {
+        $DB->set_field('forum_posts', 'attachment', $present, array('id' => $post->id));
     }
 
     return true;
@@ -5107,50 +5028,49 @@ function forum_add_new_post($post, $mform, $unused = null)
     }
 
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $postdata = array();
-        $i = 0;
-        foreach ($post as $key => $val) {
-            $postdata["data[$i][name]"] = "$key";
-            if ($key == "userid") {
-                $user = get_remote_mapping_user($val);
-                $postdata["data[$i][value]"] = $user[0]->id;
-            } else if ($key == "course") {
-                $localcourse = $DB->get_record('course', array('id' => $val), 'id, remoteid', MUST_EXIST);
-                $postdata["data[$i][value]"] = $localcourse->remoteid;
-            } else if ($key == "forum") {
-                $postdata["data[$i][value]"] = $forum->remoteid;
-            } else {
-                $postdata["data[$i][value]"] = $val;
-            }
-            $i++;
-        }
+        $post->id = save_remote_mdl_forum("forum_posts", $post);
 
-        $post->id = save_remote_mdl_forum("forum_posts", $postdata);
+        if (isset($post->course)) {
+            $post->course = $forum->course;
+        }
+        if (isset($post->forum)) {
+            $post->forum = $forum->id;
+        }
+        if (isset($post->userid)) {
+            $localuserid = get_remote_mapping_localuserid($post->userid);
+            if($localuserid) {
+                $post->userid = $localuserid;
+            }
+        }
+        if(isset($post->usermodified)) {
+            $localuserid = get_remote_mapping_localuserid($post->usermodified);
+            if($localuserid) {
+                $post->usermodified = $localuserid;
+            }
+        }
     } else {
         $post->id = $DB->insert_record("forum_posts", $post);
     }
     $post->message = file_save_draft_area_files($post->itemid, $context->id, 'mod_forum', 'post', $post->id,
         mod_forum_post_form::editor_options($context, null), $post->message);
-    $DB->set_field('forum_posts', 'message', $post->message, array('id' => $post->id));
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $updatedata = array();
-        $updatedata['data[0][name]'] = "message";
-        $updatedata['data[0][value]'] = $post->message;
-        $result = update_remote_mdl_forum("forum_posts", $post->id, $updatedata);
+        $postup = new stdClass();
+        $postup->message = $post->message;
+        update_remote_mdl_forum("forum_posts", $post->id, $postup);
+    } else {
+        $DB->set_field('forum_posts', 'message', $post->message, array('id' => $post->id));
     }
     forum_add_attachment($post, $forum, $cm, $mform);
 
     // Update discussion modified date
-    $DB->set_field("forum_discussions", "timemodified", $post->modified, array("id" => $post->discussion));
-    $DB->set_field("forum_discussions", "usermodified", $post->userid, array("id" => $post->discussion));
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $userhub = get_remote_mapping_user($post->userid);
-        $updata = array();
-        $updata['data[0][name]'] = "timemodified";
-        $updata['data[0][value]'] = $post->modified;
-        $updata['data[1][name]'] = "usermodified";
-        $updata['data[1][value]'] = $userhub[0]->id;
-        $result = update_remote_mdl_forum("forum_discussions", $post->id, $updata);
+        $discuss = new stdClass();
+        $discuss->timemodified = $post->modified;
+        $discuss->usermodified = $post->userid;
+        update_remote_mdl_forum("forum_discussions", $post->discussion, $discuss);
+    } else {
+        $DB->set_field("forum_discussions", "timemodified", $post->modified, array("id" => $post->discussion));
+        $DB->set_field("forum_discussions", "usermodified", $post->userid, array("id" => $post->discussion));
     }
 
     if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {
@@ -5197,23 +5117,7 @@ function forum_update_post($post, $mform, &$message)
     $post->modified = time();
 
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $postdata = array();
-        $i = 0;
-
-        foreach ($post as $key => $val) {
-            if ($key != "id") {
-                $postdata["data[$i][name]"] = "$key";
-                if ($key == "course") {
-                    $localcourse = $DB->get_record('course', array('id' => $val));
-                    $postdata["data[$i][value]"] = $localcourse->remoteid;
-                } else {
-                    $postdata["data[$i][value]"] = $val;
-                }
-                $i++;
-            }
-        }
-
-        $result = update_remote_mdl_forum("forum_posts", $post->id, $postdata);
+        update_remote_mdl_forum("forum_posts", $post->id, $post);
     } else {
         $DB->update_record('forum_posts', $post);
     }
@@ -5232,30 +5136,17 @@ function forum_update_post($post, $mform, &$message)
     }
     $post->message = file_save_draft_area_files($post->itemid, $context->id, 'mod_forum', 'post', $post->id,
         mod_forum_post_form::editor_options($context, $post->id), $post->message);
-    $DB->set_field('forum_posts', 'message', $post->message, array('id' => $post->id));
+
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $updatedata = array();
-        $updatedata['data[0][name]'] = "message";
-        $updatedata['data[0][value]'] = $post->message;
-        $result = update_remote_mdl_forum("forum_posts", $post->id, $updatedata);
+        $postupdate = new stdClass();
+        $postupdate->message = $post->message;
+        update_remote_mdl_forum("forum_posts", $post->id, $postupdate);
+    } else {
+        $DB->set_field('forum_posts', 'message', $post->message, array('id' => $post->id));
     }
 
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $discussiondata = array();
-        $count = 0;
-        foreach ($discussion as $key => $val) {
-            if ($key != "id") {
-                $discussiondata["data[$count][name]"] = "$key";
-                if ($key == "course") {
-                    $localcourse = $DB->get_record('course', array('id' => $val));
-                    $discussiondata["data[$count][value]"] = $localcourse->remoteid;
-                } else {
-                    $discussiondata["data[$count][value]"] = $val;
-                }
-                $count++;
-            }
-        }
-        $result = update_remote_mdl_forum("forum_discussions", $discussion->id, $discussiondata);
+        update_remote_mdl_forum("forum_discussions", $discussion->id, $discussion);
     } else {
         $DB->update_record('forum_discussions', $discussion);
     }
@@ -7068,12 +6959,12 @@ function forum_change_discussionid($postid, $discussionid)
 {
     global $DB;
 
-    $DB->set_field('forum_posts', 'discussion', $discussionid, array('id' => $postid));
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $updatedata = array();
-        $updatedata['data[0][name]'] = "discussion";
-        $updatedata['data[0][value]'] = $discussionid;
-        $result = update_remote_mdl_forum("forum_posts", $postid, $updatedata);
+        $postupdate = new stdClass();
+        $postupdate->discussion = $discussionid;
+        update_remote_mdl_forum("forum_posts", $postid, $postupdate);
+    } else {
+        $DB->set_field('forum_posts', 'discussion', $discussionid, array('id' => $postid));
     }
 
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
@@ -7774,19 +7665,7 @@ function forum_tp_stop_tracking($forumid, $userid = false)
         $track_prefs->forumid = $forumid;
 
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            $trackdata = array();
-            $i = 0;
-            foreach ($track_prefs as $key => $val) {
-                $trackdata["data[$i][name]"] = "$key";
-                if ($key == "userid") {
-                    $user = get_remote_mapping_user($val);
-                    $trackdata["data[$i][value]"] = $user[0]->id;
-                } else {
-                    $trackdata["data[$i][value]"] = $val;
-                }
-                $i++;
-            }
-            $result = save_remote_mdl_forum("forum_track_prefs", $trackdata);
+            $newid = save_remote_mdl_forum("forum_track_prefs", $track_prefs);
         } else {
             $DB->insert_record('forum_track_prefs', $track_prefs);
         }
@@ -7879,16 +7758,11 @@ function forum_discussion_update_last_post($discussionid)
         $discussionobject->timemodified = $lastpost->modified;
 
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            $discussionobjectdata = array();
-            $i = 0;
-            foreach ($discussionobject as $key => $val) {
-                if ($key != "id") {
-                    $discussionobjectdata["data[$i][name]"] = "$key";
-                    $discussionobjectdata["data[$i][value]"] = $val;
-                    $i++;
-                }
+            $localuserid = get_remote_mapping_localuserid($discussionobject->usermodified);
+            if($localuserid) {
+                $discussionobject->usermodified = $localuserid;
             }
-            $result = update_remote_mdl_forum("forum_discussions", $discussionobject->id, $discussionobjectdata);
+            update_remote_mdl_forum("forum_discussions", $discussionobject->id, $discussionobject);
         } else {
             $DB->update_record('forum_discussions', $discussionobject);
         }
@@ -9012,10 +8886,9 @@ function forum_set_user_maildigest($forum, $maildigest, $user = null)
 
             $subscription->maildigest = $maildigest;
             if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-                $updatedata = array();
-                $updatedata['data[0][name]'] = "maildigest";
-                $updatedata['data[0][value]'] = $maildigest;
-                $result = update_remote_mdl_forum("forum_digests", $subscription->id, $updatedata);
+                $digest = new stdClass();
+                $digest->maildigest = $maildigest;
+                update_remote_mdl_forum("forum_digests", $subscription->id, $digest);
             } else {
                 $DB->update_record('forum_digests', $subscription);
             }
@@ -9030,19 +8903,7 @@ function forum_set_user_maildigest($forum, $maildigest, $user = null)
             $subscription->maildigest = $maildigest;
 
             if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-                $subscriptiondata = array();
-                $i = 0;
-                foreach ($subscription as $key => $val) {
-                    $subscriptiondata["data[$i][name]"] = "$key";
-                    if ($key == "userid") {
-                        $user = get_remote_mapping_user($val);
-                        $subscriptiondata["data[$i][value]"] = $user[0]->id;
-                    } else {
-                        $subscriptiondata["data[$i][value]"] = $val;
-                    }
-                    $i++;
-                }
-                $subscription->id = save_remote_mdl_forum("forum_digests", $subscriptiondata);
+                $subscription->id = save_remote_mdl_forum("forum_digests", $subscription);
             } else {
                 $subscription->id = $DB->insert_record('forum_digests', $subscription);
             }
@@ -9199,12 +9060,12 @@ function forum_discussion_pin($modcontext, $forum, $discussion)
 {
     global $DB;
 
-    $DB->set_field('forum_discussions', 'pinned', FORUM_DISCUSSION_PINNED, array('id' => $discussion->id));
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $updatedata = array();
-        $updatedata['data[0][name]'] = "pinned";
-        $updatedata['data[0][value]'] = FORUM_DISCUSSION_PINNED;
-        $result = update_remote_mdl_forum("forum_discussions", $discussion->id, $updatedata);
+        $discussupdate = new stdClass();
+        $discussupdate->pinned = FORUM_DISCUSSION_PINNED;
+        update_remote_mdl_forum("forum_discussions", $discussion->id, $discussupdate);
+    } else {
+        $DB->set_field('forum_discussions', 'pinned', FORUM_DISCUSSION_PINNED, array('id' => $discussion->id));
     }
 
     $params = array(
@@ -9230,12 +9091,12 @@ function forum_discussion_unpin($modcontext, $forum, $discussion)
 {
     global $DB;
 
-    $DB->set_field('forum_discussions', 'pinned', FORUM_DISCUSSION_UNPINNED, array('id' => $discussion->id));
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $updatedata = array();
-        $updatedata['data[0][name]'] = "pinned";
-        $updatedata['data[0][value]'] = FORUM_DISCUSSION_PINNED;
-        $result = update_remote_mdl_forum("forum_discussions", $discussion->id, $updatedata);
+        $discussionupdate = new stdClass();
+        $discussionupdate->pinned = FORUM_DISCUSSION_PINNED;
+        update_remote_mdl_forum("forum_discussions", $discussion->id, $discussionupdate);
+    } else {
+        $DB->set_field('forum_discussions', 'pinned', FORUM_DISCUSSION_UNPINNED, array('id' => $discussion->id));
     }
 
     $params = array(
