@@ -66,8 +66,18 @@ if (!isloggedin() or isguestuser()) {
         if (!$parent = forum_get_post_full($reply)) {
             print_error('invalidparentpostid', 'forum');
         }
-        if (!$discussion = $DB->get_record('forum_discussions', array('id' => $parent->discussion))) {
-            print_error('notpartofdiscussion', 'forum');
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $prs = array();
+            $prs['parameters[0][name]'] = "id";
+            $prs['parameters[0][value]'] = $parent->discussion;
+
+            if (!$discussion = get_remote_forum_discussions_by($prs)) {
+                print_error('notpartofdiscussion', 'forum');
+            }
+        } else {
+            if (!$discussion = $DB->get_record('forum_discussions', array('id' => $parent->discussion))) {
+                print_error('notpartofdiscussion', 'forum');
+            }
         }
         if (!$forum = $DB->get_record('forum', array('id' => $discussion->forum))) {
             print_error('invalidforumid');
