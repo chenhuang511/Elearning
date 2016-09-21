@@ -322,4 +322,12 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_get_fetch_subscribed_users' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'get_fetch_subscribed_users',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'fetch subscribed users',
+        'type' => 'read',
+        'ajax' => true
+    ),
 );
