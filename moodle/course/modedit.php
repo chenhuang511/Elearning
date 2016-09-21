@@ -225,9 +225,13 @@ else if (!empty($update)) {
             }
         }
 
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+            if (!is_null($cm->modname)) {
+                $instanceid = $DB->get_field($cm->modname, 'remoteid', array('id'=>$cm->instance), MUST_EXIST);
+            }
+        }
         if ($items = grade_item::fetch_all(array('itemtype' => 'mod', 'itemmodule' => $data->modulename,
-            'iteminstance' => $data->instance, 'courseid' => $course->id))
-        ) {
+            'iteminstance' => (MOODLE_RUN_MODE === MOODLE_MODE_HUB)?$instanceid:$data->instance, 'courseid' => $course->id))) {
             // Add existing outcomes.
             foreach ($items as $item) {
                 if (!empty($item->outcomeid)) {
@@ -295,6 +299,8 @@ if ($isaccess) {
 
     $mformclassname = 'mod_' . $module->name . '_mod_form';
     $mform = new $mformclassname($data, $cw->section, $cm, $course);
+//    echo "<pre>";
+//    print_r($data);die;
     $mform->set_data($data);
 
     if ($mform->is_cancelled()) {
