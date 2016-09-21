@@ -4512,13 +4512,8 @@ function forum_move_attachments($discussion, $forumfrom, $forumto)
 
     $fs = get_file_storage();
 
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $newcm = get_remote_course_module_by_instance('forum', $forumto);
-        $oldcm = get_remote_course_module_by_instance('forum', $forumfrom);
-    } else {
-        $newcm = get_coursemodule_from_instance('forum', $forumto);
-        $oldcm = get_coursemodule_from_instance('forum', $forumfrom);
-    }
+    $newcm = get_coursemodule_from_instance('forum', $forumto);
+    $oldcm = get_coursemodule_from_instance('forum', $forumfrom);
 
     $newcontext = context_module::instance($newcm->id);
     $oldcontext = context_module::instance($oldcm->id);

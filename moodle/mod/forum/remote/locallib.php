@@ -761,3 +761,69 @@ function save_remote_forum_add_discussions($discussion, $userid)
     return array($forum, $post);
 }
 
+function get_remote_recordset_forum_subscriptions($forumid)
+{
+    global $DB;
+    $forum = $DB->get_record('forum', array('id' => $forumid), 'id,remoteid');
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_recordset_forum_subscriptions',
+            'params' => array('forumid' => $forum ? $forum->remoteid : $forumid, 'hostip' => gethostip())
+        ), false
+    );
+
+    $subscriptions = $result->subscriptions;
+    if ($subscriptions) {
+        foreach ($subscriptions as $subscription) {
+            $localuserid = get_remote_mapping_localuserid($subscription->userid);
+            if ($localuserid) {
+                $subscription->userid = $localuserid;
+            }
+        }
+    }
+    return $subscriptions;
+}
+
+function get_remote_fetch_subscribed_users($sql, $params)
+{
+    global $DB;
+    if (isset($params['eu1_courseid'])) {
+        $course = $DB->get_record('course', array('id' => $params['eu1_courseid']), 'id, remoteid');
+        if ($course) {
+            $params['eu1_courseid'] = $course->remoteid;
+        }
+    }
+
+    $parameters = array();
+    $i = 0;
+    foreach ($params as $key => $val) {
+        $parameters["parameters[$i][name]"] = "$key";
+        $parameters["parameters[$i][value]"] = $val;
+        $i++;
+    }
+
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_fetch_subscribed_users',
+            'params' => array_merge(array('sql' => $sql, 'hostip' => gethostip()), $parameters)
+        ), false
+    );
+    $rslt = array();
+    $rs = $result->rs;
+    if ($rs) {
+        foreach ($rs as $r) {
+            $localuserid = get_remote_mapping_localuserid($r->id);
+            if ($localuserid) {
+                $r->id = $localuserid;
+            }
+
+            $rslt[$r->id] = $r;
+        }
+    }
+    return $rslt;
+}
+
