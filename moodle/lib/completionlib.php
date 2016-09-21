@@ -626,11 +626,7 @@ class completion_info {
 
         // Modname hopefully is provided in $cm but just in case it isn't, let's grab it
         if (!isset($cm->modname)) {
-            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-                $cm->modname = $DB->get_field('modules', 'name', array('id'=>$cm->module));
-            } else {
-                $cm->modname = get_remote_modules_by_id($cm->module)->name;
-            }
+            $cm->modname = $DB->get_field('modules', 'name', array('id'=>$cm->module));
         }
 
         $newstate = COMPLETION_COMPLETE;

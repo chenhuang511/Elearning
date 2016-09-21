@@ -721,6 +721,8 @@ function update_course_module_completion_from_hub($remoteuserid, $remotecmid){
 
     // Difficult to find affected users, just purge all completion cache.
     cache::make('core', 'completion')->purge();
+    cache::make('availability_grade', 'scores')->purge();
+
 }
 
 /**
@@ -1109,26 +1111,27 @@ function count_remote_all_submission_and_grade($params){
 function get_all_grade_by_userid_courseid($gradeitemid, $grabthelot, $userid, $courseid) {
     $ruserid = get_remote_mapping_user($userid)[0]->id;
     $rcourseid = get_local_course_record($courseid, true)->remoteid;
-    $rgradeitemid = get_local_grade_items_record($gradeitemid, true)->remoteid;
-
     $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_assign_get_all_grade_by_userid_courseid',
             'params' => array(
-                'gradeitemid' => $rgradeitemid,
+                'gradeitemid' => $gradeitemid,
                 'grabthelot' => $grabthelot,
                 'userid' => $ruserid,
                 'courseid' => $rcourseid
             )
         ), false
     );
+
+    if (isset($resp->exception)){
+         print_error($resp->exception);
+    }
     if ($grabthelot){
         return $resp->hasgrab;
     } else {
         $resp->notgrab->userid = $userid;
-        $resp->notgrab->itemid = $gradeitemid;
 
         return $resp->notgrab;
     }
