@@ -458,29 +458,15 @@ function forum_get_completion_state($course, $cm, $userid, $type)
     }
 
     // Get forum details
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $params = array();
-        $params['parameters[0][name]'] = "id";
-        $params['parameters[0][value]'] = $cm->instance;
-        if (!($forum = get_remote_forum_by($params))) {
-            throw new Exception("Can't find forum {$cm->instance}");
-        }
-    } else {
-        if (!($forum = $DB->get_record('forum', array('id' => $cm->instance)))) {
-            throw new Exception("Can't find forum {$cm->instance}");
-        }
+    if (!($forum = $DB->get_record('forum', array('id' => $cm->instance)))) {
+        throw new Exception("Can't find forum {$cm->instance}");
     }
 
     $result = $type; // Default return value
 
-    $postcountparams = array('userid' => $hubuserid, 'forumid' => $forum->id);
-    $postcountsql = "
-SELECT
-    COUNT(1)
-FROM
-    {forum_posts} fp
-    INNER JOIN {forum_discussions} fd ON fp.discussion=fd.id
-WHERE
+    $postcountparams = array('userid' => $userid, 'forumid' => $forum->id);
+    $postcountsql = "SELECT COUNT(1) FROM {forum_posts} fp
+    INNER JOIN {forum_discussions} fd ON fp.discussion=fd.id WHERE
     fp.userid=:userid AND fd.forum=:forumid";
 
     if ($forum->completiondiscussions) {
@@ -489,7 +475,7 @@ WHERE
             $params['parameters[0][name]'] = "userid";
             $params['parameters[0][value]'] = $hubuserid;
             $params['parameters[1][name]'] = "forum";
-            $params['parameters[1][value]'] = $forum->id;
+            $params['parameters[1][value]'] = $forum->remoteid;
             $value = $forum->completiondiscussions <= get_remote_count_forum_by("forum_discussions", $params);
         } else {
             $value = $forum->completiondiscussions <=
@@ -506,8 +492,8 @@ WHERE
             $prs = array();
             $prs['parameters[0][name]'] = "userid";
             $prs['parameters[0][value]'] = $hubuserid;
-            $prs['parameters[1][name]'] = "forum";
-            $prs['parameters[1][value]'] = $forum->id;
+            $prs['parameters[1][name]'] = "forumid";
+            $prs['parameters[1][value]'] = $forum->remoteid;
             $value = $forum->completionreplies <= get_remote_field_forum_sql($postcountsql . ' AND fp.parent<>0', $prs);
         } else {
             $value = $forum->completionreplies <=
@@ -524,7 +510,7 @@ WHERE
             $prs = array();
             $prs['parameters[0][name]'] = "userid";
             $prs['parameters[0][value]'] = $hubuserid;
-            $prs['parameters[1][name]'] = "forum";
+            $prs['parameters[1][name]'] = "forumid";
             $prs['parameters[1][value]'] = $forum->id;
             $value = $forum->completionposts <= get_remote_field_forum_sql($postcountsql, $prs);
         } else {
