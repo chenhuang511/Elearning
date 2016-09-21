@@ -966,11 +966,12 @@ class subscriptions
         }
         // No discussion-level preference. Check for a forum level subscription.
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $forum = $DB->get_record('forum', array('id' => $discussion->forum), 'id, remoteid');
             $params = array();
             $params['parameters[0][name]'] = "userid";
             $params['parameters[0][value]'] = $hubuserid;
             $params['parameters[1][name]'] = "forum";
-            $params['parameters[1][value]'] = $discussion->forum;
+            $params['parameters[1][value]'] = $forum ? $forum->remoteid : $discussion->forum;
             $isexists = check_remote_record_forum_exists("forum_subscriptions", $params);
         } else {
             $isexists = $DB->record_exists('forum_subscriptions', array('userid' => $userid, 'forum' => $discussion->forum));
