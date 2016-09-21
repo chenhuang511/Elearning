@@ -1260,10 +1260,9 @@ class assign {
             return $this->gradeitem;
         }
         $instance = $this->get_instance();
-        $iteminstance = ISREMOTE ? $instance->remoteid : $instance->id;
         $params = array('itemtype' => 'mod',
                         'itemmodule' => 'assign',
-                        'iteminstance' => $iteminstance,
+                        'iteminstance' => $instance->id,
                         'courseid' => $instance->course,
                         'itemnumber' => 0);
         $this->gradeitem = grade_item::fetch($params);
