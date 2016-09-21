@@ -2,34 +2,34 @@
 
 return array(
 
-	'comments' => 'Comments',
-	'nocomments_desc' => 'No comments yet.',
-	'editing_comment' => 'Editing comment',
-	'view_comment' => 'View comment',
+	'comments' => 'Bình luận',
+	'nocomments_desc' => 'Chưa có bình luận nào.',
+	'editing_comment' => 'Sửa bình luận',
+	'view_comment' => 'Xem bình luận',
 
 	// form fields
-	'name' => 'Name',
-	'name_explain' => 'Author name',
-	'name_missing' => 'Please enter a name',
+	'name' => 'Tên',
+	'name_explain' => 'Tên của bạn?',
+	'name_missing' => 'Vui lòng nhập tên của bạn',
 
-	'email' => 'Email address',
-	'email_explain' => 'Author email',
-	'email_missing' => 'Please enter a valid email address', // frontend message (appears on your site!)
+	'email' => 'Email',
+	'email_explain' => 'Email của bạn',
+	'email_missing'=> 'Vui lòng nhập địa chỉ email có thật', // frontend message (appears on your site!)
 
-	'text' => 'Comment',
+	'text' => 'Bình luận',
 	'text_explain' => '',
-	'text_missing' => 'Please enter comment text', // frontend message (appears on your site!)
+	'text_missing' => 'Vui lòng nhập nội dung bình luận', // frontend message (appears on your site!)
 
-	'status' => 'Status',
+	'status' => 'Trạng thái',
 	'status_explain' => '',
 
 	// messages
-	'created' => 'Your comment has been added', // frontend message (appears on your site!)
-	'updated' => 'Your comment has been updated',
-	'deleted' => 'Your comment has been deleted',
+	'created' => 'Bình luận của bạn đã được gửi đi', // frontend message (appears on your site!)
+	'updated' => 'Bình luận đã được cập nhật',
+	'deleted' => 'Bình luận đã bị xóa',
 
 	// email notification
-	'notify_subject' => 'New comment has been added',
-	'nofity_heading' => 'A new comment has been submitted to your site.'
+	'notify_subject' => 'Có bình luận mới',
+	'nofity_heading' => 'Vừa có bình luận gửi lên site của bạn.'
 
 );

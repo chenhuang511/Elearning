@@ -2,8 +2,8 @@
 
 return array(
 
-	'panel' => 'Administration Panel',
-	'title' => 'Welcome to your Anchor site',
-	'message' => 'Here you will find all of the tools you will need to produce content for your website, manage users, posts and pages. For more information on what you can do with Anchor, please see our documentation at <a href="https://anchorcms.com/docs">http://anchorcms.com/docs</a>',
+	'panel' => 'Bảng quản trị',
+	'title' => 'Chào mừng bạn đến Anchor site',
+	'message' => 'Ở đây bạn sẽ tìm thấy tất cả các công cụ bạn cần để tạo ra nội dung cho trang web của bạn, quản lý người dùng, bài viết và trang. Để biết thêm thông tin về những gì bạn có thể làm với Anchor, xin vui lòng xem tài liệu của chúng tôi tại <a href="https://anchorcms.com/docs">http://anchorcms.com/docs</a>',
 	
 );

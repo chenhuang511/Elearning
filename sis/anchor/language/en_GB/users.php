@@ -2,66 +2,66 @@
 
 return array(
 
-	'users' => 'Users',
+	'users' => 'Thành viên',
 
-	'create_user' => 'Create a new user',
-	'add_user' => 'Add a new user',
-	'editing_user' => 'Editing %s&rsquo;s Profile',
-	'remembered' => 'I know my password',
-	'forgotten_password' => 'Forgotten your password?',
+	'create_user' => 'Tạo thành viên',
+	'add_user' => 'Tạo mới một thành viên',
+	'editing_user' => 'Sửa %s&rsquo;s Hồ sơ',
+	'remembered' => 'Ghi nhớ mật khẩu',
+	'forgotten_password' => 'Quên mật khẩu?',
 
 	// roles
-	'administrator' => 'Admin',
+	'administrator' => 'Quản trị',
 	'administrator_explain' => '',
 
-	'editor' => 'Editor',
+	'editor' => 'Biên tập',
 	'editor_explain' => '',
 
-	'user' => 'User',
+	'user' => 'Thành viên',
 	'user_explain' => '',
 
 	// form fields
-	'real_name' => 'Real Name',
+	'real_name' => 'Tên thực',
 	'real_name_explain' => '',
 
-	'bio' => 'Biography',
+	'bio' => 'Giới thiệu bản thân',
 	'bio_explain' => '',
 
-	'status' => 'Status',
+	'status' => 'Trạng thái',
 	'status_explain' => '',
 
-	'role' => 'Role',
+	'role' => 'Quyền',
 	'role_explain' => '',
 
-	'username' => 'Username',
+	'username' => 'Tài khoản',
 	'username_explain' => '',
-	'username_missing' => 'Please enter a username, must be at least %s characters',
+	'username_missing' => 'Vui lòng nhập tài khoản, phải chứa ít nhất %s ký tự',
 
-	'password' => 'Password',
+	'password' => 'Mật khẩu',
 	'password_explain' => '',
-	'password_too_short' => 'Password must be at least %s characters',
+	'password_too_short' => 'Mật khẩu phải chứa ít nhất %s ký tự',
 
-	'new_password' => 'New Password',
+	'new_password' => 'Mật khẩu mới',
 
 	'email' => 'Email',
 	'email_explain' => '',
-	'email_missing' => 'Please enter a valid email address',
-	'email_not_found' => 'Profile not found.',
+	'email_missing' => 'Vui lòng nhập địa chỉ email',
+	'email_not_found' => 'Không tìm thấy hồ sơ.',
 
 	// messages
-	'updated' => 'User profile updated.',
-	'created' => 'User profile created.',
-	'deleted' => 'User profile deleted.',
-	'delete_error' => 'You cannot delete your own profile',
-	'login_error' => 'Username or password is wrong.',
-	'logout_notice' => 'You are now logged out.',
-	'recovery_sent' => 'We have sent you an email to confirm your password change.',
-	'recovery_expired' => 'Password recovery token has expired, please try again.',
-	'password_reset' => 'Your new password has been set. Go and login now!',
+	'updated' => 'Hồ sơ thành viên đã được cập nhật.',
+	'created' => 'Hồ sơ thành viên đã được tạo.',
+	'deleted' => 'Hò sơ thành viên đã bị xóa.',
+	'delete_error' => 'Bạn không thể tự xóa hồ sơ thành viên của mình',
+	'login_error' => 'Sai tài khoản hoặc mật khẩu.',
+	'logout_notice' => 'Bạn đã đăng xuất.',
+	'recovery_sent' => 'Chúng tôi đã gửi cho bạn một email xác thực sự thay đổi mật khẩu.',
+	'recovery_expired' => 'Mã thay đổi mật khẩu đã quá hạn.',
+	'password_reset' => 'Mật khẩu mới đã được cập nhật. Vui lòng đăng nhập lại!',
 
 	// password recovery email
-	'recovery_subject' => 'Password Reset',
-	'recovery_message' => 'You have requested to reset your password.' .
-		'To continue follow the link below.' . PHP_EOL . '%s',
+	'recovery_subject' => 'Đổi mật khẩu',
+	'recovery_message' => 'Bạn vừa gửi yêu cầu khôi phục mật khẩu.' .
+		'Để tiếp tục vui lòng nhấn link bên dưới.' . PHP_EOL . '%s',
 
 );

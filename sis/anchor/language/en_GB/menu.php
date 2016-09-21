@@ -2,7 +2,6 @@
 
 return array(
 
-	'menu' 		=> 'Menu',
-	'edit_menu' => 'Edit menu'
-
+	'menu' => 'Trình đơn',
+	'edit_menu' => 'Chỉnh sửa trình đơn'
 );

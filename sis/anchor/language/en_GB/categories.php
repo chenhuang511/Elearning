@@ -2,27 +2,27 @@
 
 return array(
 
-	'category' => 'Category',
-	'categories' => 'Categories',
+	'category' => 'Danh mục',
+	'categories' => 'Các danh mục',
 
-	'create_category' => 'Create a new category',
-	'edit_category' => 'Editing &ldquo;%s&rdquo;',
+	'create_category' => 'Tạo danh mục',
+	'edit_category' => 'Sửa &ldquo;%s&rdquo;',
 
 	// form fields
-	'title' => 'Title',
-	'title_explain' => 'Your category title.',
-	'title_missing' => 'Please enter a title, it must be a minimum of 3 characters.',
+	'title' => 'Tên danh mục',
+	'title_explain' => 'Tên danh mục của bạn.',
+	'title_missing' => 'Vui lòng nhập tên danh mục',
 
-	'slug' => 'Slug',
-	'slug_explain' => 'The slug for your category.',
+	'slug' => 'Đường dẫn',
+	'slug_explain' => 'Đường dẫn của danh mục.',
 
-	'description' => 'Description',
-	'description_explain' => 'What your category is about.',
+	'description' => 'Miêu tả',
+	'description_explain' => 'Miêu tả về danh mục.',
 
 	// messages
-	'created' => 'Your new category has been added.',
-	'updated' => 'Your category has been updated.',
-	'deleted' => 'Your category has been deleted.',
-	'delete_error' => 'You must have at least one category.',
+	'created' => 'Một danh mục vừa được thêm mới.',
+	'updated' => 'Danh mục đã được cập nhật.',
+	'deleted' => 'Đã xóa danh mục.',
+	'delete_error' => 'Bạn phải có ít nhất một danh mục.',
 
 );

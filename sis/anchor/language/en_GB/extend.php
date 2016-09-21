@@ -2,80 +2,80 @@
 
 return array(
 
-	'extend' => 'Extend',
+	'extend' => 'Mở rộng',
 
-	'fields' => 'Custom Fields',
-	'fields_desc' => 'Create additional fields',
+	'fields' => 'Trường tùy biến',
+	'fields_desc' => 'Tạo ra một trường dữ liệu mới',
 
-	'pagetypes' => 'Site Page Types',
-	'pagetypes_desc' => 'Create different page types',
+	'pagetypes' => 'Kiểu trang web',
+	'pagetypes_desc' => 'Tạo các loại trang khác nhau',
 
-	'variables' => 'Site Variables',
-	'variables_desc' => 'Create additional metadata',
+	'variables' => 'Biến',
+	'variables_desc' => 'Tạo ra một dữ liệu cho trang web',
 
-	'create_field' => 'Create a new field',
-	'editing_custom_field' => 'Editing field &ldquo;%s&rdquo;',
-	'nofields_desc' => 'No fields yet',
+	'create_field' => 'Tạo trường mới',
+	'editing_custom_field' => 'Chỉnh sửa trường &ldquo;%s&rdquo;',
+	'nofields_desc' => 'Chưa có trường dữ liệu nào',
 
-	'create_variable' => 'Create a new variable',
-	'editing_variable' => 'Editing variable &ldquo;%s&rdquo;',
-	'novars_desc' => 'No variables yet',
+	'create_variable' => 'Tạo mới biến',
+	'editing_variable' => 'Chỉnh sửa biến&ldquo;%s&rdquo;',
+	'novars_desc' => 'Chưa có biến nào',
 
-	'create_pagetype' => 'Create a new page type',
-	'editing_pagetype' => 'Editing page type &ldquo;%s&rdquo;',
-
+	'create_pagetype' => 'Tạo một kiểu trang mới',
+	'editing_pagetype' => 'Chỉnh sửa kiểu trang &ldquo;%s&rdquo;',
+	
 	// form fields
-	'type' => 'Type',
-	'type_explain' => 'The type of content you want to add this field to.',
-	'notypes_desc' => 'No page types yet',
+	'type' => 'Kiểu',
+	'type_explain' => 'Kiểu nội dung bạn muốn gán cho trường.',
+	'notypes_desc' => 'Không có kiểu trang',
 
-	'pagetype' => 'Page Type',
+	'pagetype' => 'Kiểu trang',
 	'pagetype_explain' => 'The type of page you want to add this field to.',
 
-	'field' => 'Field',
-	'field_explain' => 'Html input type',
+	'field' => 'Trường',
+	'field_explain' => 'Kiểu nhập liệu Html',
 
-	'key' => 'Unique Key',
-	'key_explain' => 'The unique key for your field',
-	'key_missing' => 'Please enter a unique key',
-	'key_exists' => 'Key is already in use',
+	'key' => 'Khóa của trường',
+	'key_explain' => 'Khóa duy nhất cho trường',
+	'key_missing' => 'Vui lòng nhập khóa cho trường',
+	'key_exists' => 'Khóa đã tồn tại',
 
-	'label' => 'Label',
-	'label_explain' => 'Human readable name for your field',
-	'label_missing' => 'Please enter a label',
+	'label' => 'Nhãn',
+	'label_explain' => 'Nhãn cho trường của bạn',
+	'label_missing' => 'Vui lòng nhập nhãn',
 
-	'attribute_type' => 'File types',
-	'attribute_type_explain' => 'Comma separated list of accepted file types, empty to accept all.',
+	'attribute_type' => 'Các kiểu tệp',
+	'attribute_type_explain' => 'Các kiểu tệp cách nhau bởi dấu phẩy, để trống nếu chấp nhận tất cả các kiểu.',
 
 	// images
-	'attributes_size_width' => 'Image max width',
-	'attributes_size_width_explain' => 'Images will be resized if they are bigger than the max size',
+	'attributes_size_width' => 'Chiều dài tối tối đa của ảnh',
+	'attributes_size_width_explain' => 'Ảnh sẽ bị thay đổi kích thước nếu có chiểu dài lớn hơn chiều dài tối đa',
 
-	'attributes_size_height' => 'Image max height',
-	'attributes_size_height_explain' => 'Images will be resized if they are bigger than the max size',
+	'attributes_size_height' => 'Chiều cao tối đa của ảnh',
+	'attributes_size_height_explain' => 'Ảnh sẽ bị thay đổi kích thước nếu có chiều cao lớn hơn chiều cao tối đa',
 
 	// custom vars
-	'name' => 'Name',
-	'name_explain' => 'A unique name',
-	'name_missing' => 'Please enter a unique name',
-	'name_exists' => 'Name is already in use',
+	'name' => 'Tên',
+	'name_explain' => 'Tên biến',
+	'name_missing' => 'Vui lòng nhập tên biến',
+	'name_exists' => 'Tên này đã tồn tại',
 
-	'value' => 'Value',
-	'value_explain' => 'The data you want to store (up to 64kb)',
-	'value_code_snipet' => 'Snippet to insert into your template:<br>
+	'value' => 'Giá trị',
+	'value_explain' => 'Dữ liệu bạn muốn lưu (kích thước có thể lên tới 64kb)',
+	'value_code_snipet' => 'Mã lệnh sẵn để gắn vào mẫu:<br>
 		<code>' . e('<?php echo site_meta(\'%s\'); ?>') . '</code>',
 
 	// messages
-	'variable_created' => 'Your variable was created',
-	'variable_updated' => 'Your variable was updated',
-	'variable_deleted' => 'Your variable was deleted',
+	'variable_created' => 'Biến vừa được tạo',
+	'variable_updated' => 'Biến vừa được cập nhật',
+	'variable_deleted' => 'Biến vừa bị xóa',
 
-	'pagetype_created' => 'Your page type was created',
-	'pagetype_updated' => 'Your page type was updated',
-	'pagetype_deleted' => 'Your page type was deleted',
+	'pagetype_created' => 'Kiểu trang vừa được tạo',
+	'pagetype_updated' => 'Kiểu trang vừa được cập nhật',
+	'pagetype_deleted' => 'Kiểu trang vừa bị xóa',
 
-	'field_created' => 'Your field was created',
-	'field_updated' => 'Your field was updated',
-	'field_deleted' => 'Your field was deleted'
+	'field_created' => 'Trường vừa được tạo',
+	'field_updated' => 'Trường vừa được cập nhât',
+	'field_deleted' => 'Trường vừa bị xóa'
 
 );

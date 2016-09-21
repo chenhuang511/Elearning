@@ -9,56 +9,56 @@
 return array(
 
 	// words
-	'save' => 'Save',
-	'saving' => 'Saving...',
-	'delete' => 'Delete',
-	'deleting' => 'Deleting...',
-	'update' => 'Update',
-	'updating' => 'Updating...',
-	'edit' => 'Edit',
-	'editing' => 'Editing',
-	'create' => 'Create',
-	'created' => 'Created',
-	'submit' => 'Submit',
-	'close' => 'Close',
-	'status' => 'Status',
-	'manage' => 'Manage',
+	'save' => 'Lưu',
+	'saving' => 'Đang lưu...',
+	'delete' => 'Xóa',
+	'deleting' => 'Đang xóa...',
+	'update' => 'Cập nhật',
+	'updating' => 'Đang cập nhật...',
+	'edit' => 'Sửa',
+	'editing' => 'Chỉnh sửa',
+	'create' => 'Tạo',
+	'created' => 'Đã xóa',
+	'submit' => 'Gửi',
+	'close' => 'Đóng',
+	'status' => 'Trạng thái',
+	'manage' => 'Quản lý',
 	'reset' => 'Reset',
-	'all' => 'All',
+	'all' => 'Tất cả',
 	'cancel' => 'Cancel',
 
 	// pagination
-	'next' => 'Next',
-	'previous' => 'Previous',
-	'first' => 'First',
-	'last' => 'Last',
+	'next' => 'Tiếp',
+	'previous' => 'Quay lại',
+	'first' => 'Đầu',
+	'last' => 'Cuối',
 
 	// statuses
-	'draft' => 'Draft',
+	'draft' => 'Nháp',
 	'archived' => 'Archived',
-	'published' => 'Published',
-	'pending' => 'Pending',
-	'approved' => 'Approved',
+	'published' => 'Đã xuất bản',
+	'pending' => 'Chờ',
+	'approved' => 'Đã kiểm duyệt',
 	'spam' => 'Spam',
 
-	'inactive' => 'Inactive',
-	'active' => 'Active',
+	'inactive' => 'Chưa kích hoạt',
+	'active' => 'Kích hoạt',
 
 	// roles
-	'administrator' => 'Admin',
-	'editor' => 'Editor',
-	'user' => 'User',
+	'administrator' => 'Quản trị',
+	'editor' => 'Biên tập',
+	'user' => 'Thành viên',
 
-	'log_in' => 'Log in',
-	'login' => 'Login',
-	'log_out' => 'Log out',
-	'logout' => 'Logout',
+	'log_in' => 'Đăng nhập',
+	'login' => 'Đăng nhập',
+	'log_out' => 'Thoát',
+	'logout' => 'Thoát',
 
-	// phrases
-	'visit_your_site' => 'Visit your site',
-	'powered_by_anchor' => 'Powered by Anchor, version %s',
-	'make_blogging_beautiful' => 'Make blogging beautiful',
-
+	// pharses
+	'visit_your_site' => 'Xem site',
+	'powered_by_anchor' => 'Được tạo bởi Anchor, phiên bản %s',
+	'make_blogging_beautiful' => 'Tạo blog đẹp.',
+	
 	// intro
 	'welcome_to_anchor' => 'Welcome to Anchor',
 	'welcome_to_anchor_lets_go' => 'Welcome to Anchor. Let’s go.',
@@ -76,6 +76,6 @@ return array(
 	'profile_memory_usage' => 'Total memory usage',
 
 	// messages
-	'confirm_delete' => 'Are you sure you want to delete? This can’t be undone!'
+	'confirm_delete' => 'Bạn chắc chắn muốn xóa? Hành động này không thể khôi phục!'
 
 );

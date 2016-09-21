@@ -2,50 +2,50 @@
 
 return array(
 
-	'posts' => 'Posts',
+	'posts' => 'Bài viết',
 
-	'create_post' => 'Create a new post',
-	'noposts_desc' => 'You don’t have any posts!',
+	'create_post' => 'Đăng bài',
+	'noposts_desc' => 'Bạn chưa có bài đăng nào!',
 
 	// form fields
-	'title' => 'Post title',
+	'title' => 'Tiêu đề',
 	'title_explain' => '',
-	'title_missing' => 'The title of this post must be atleast 3 characters',
+	'title_missing' => 'Vui lòng nhập tiêu đề bài viết',
 
-	'content' => 'Post Content',
+	'content' => 'Nội dung bài viết',
 	'content_explain' => 'Just write.',
 
-	'slug' => 'Slug',
-	'slug_explain' => 'Slug uri to identify your post, should only contain ascii characters',
-	'slug_missing' => 'The slug must be atleast 3 characters, slugs can only contain ascii characters',
-	'slug_duplicate' => 'Slug already exists',
-	'slug_invalid' => 'Slug must contain letters',
+	'slug' => 'Đường dẫn',
+	'slug_explain' => 'Đường dẫn dùng để xác định bài viết của bạn, chỉ nhập những ký tự không dấu',
+	'slug_missing' => 'Vui lòng nhập đường dẫn, đường dẫn chỉ chứa ký tự không dấu',
+	'slug_duplicate' => 'Dường dẫn này đã tồn tại',
+	'slug_invalid' => 'Đường dẫn phải chứa ký tự chữ cái',
 
 	'time' => 'Published on (GMT)',
-	'time_explain' => 'Pattern: YYYY-MM-DD HH:MM:SS',
-	'time_invalid' => 'Invalid time pattern',
+	'time_explain' => 'Mẫu: YYYY-MM-DD HH:MM:SS',
+	'time_invalid' => 'mẫu thời gian không hợp lệ',
 
-	'description' => 'Description',
+	'description' => 'Miêu tả',
 	'description_explain' => '',
 
-	'status' => 'Status',
+	'status' => 'Trạng thái',
 	'status_explain' => '',
 
-	'category' => 'Category',
+	'category' => 'Danh mục',
 	'category_explain' => '',
 
-	'allow_comments' => 'Allow Comments',
+	'allow_comments' => 'Cho phép đăng bình luận',
 	'allow_comments_explain' => '',
 
-	'custom_css' => 'Custom CSS',
+	'custom_css' => 'Css tùy chỉnh',
 	'custom_css_explain' => '',
 
-	'custom_js' => 'Custom JS',
+	'custom_js' => 'Js tùy chỉnh',
 	'custom_js_explain' => '',
 
 	// messages
-	'updated' => 'Your article has been updated',
-	'created' => 'Your new article was created',
-	'deleted' => 'Your article has been deleted'
+	'updated' => 'Bài viết vừa được cập nhật',
+	'created' => 'Bài viết mới đã được tạo',
+	'deleted' => 'Bài viết đã bị xóa'
 
 );
