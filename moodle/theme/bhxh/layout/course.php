@@ -93,8 +93,10 @@ echo $OUTPUT->doctype() ?>
                 $keynode = null;
             } else {
                 $keynode = $activenode->key;
-                $keyparentnode = $activenode->parent->key - 1; // not done
+                global  $DB;
+                $keyparentnode = $DB->get_field('course_sections', 'section', array('id' => $activenode->parent->key));
             }
+
             $modinfo = get_fast_modinfo($COURSE->id);
             $sectioninfoall = $modinfo->get_section_info_all();
             $cms = $modinfo->get_cms();
