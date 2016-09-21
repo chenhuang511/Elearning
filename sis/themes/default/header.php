@@ -6,12 +6,14 @@
 
 		<meta name="description" content="<?php echo site_description(); ?>">
 
+		<link rel="stylesheet" href="<?php echo asset_url('/css/bootstrap.min.css'); ?>">
 		<link rel="stylesheet" href="<?php echo theme_url('/css/reset.css'); ?>">
 		<link rel="stylesheet" href="<?php echo theme_url('/css/style.css'); ?>">
+		<link rel="stylesheet" href="<?php echo asset_url('css/bhxh.css'); ?>">
 		<link rel="stylesheet" href="<?php echo theme_url('/css/small.css'); ?>" media="(max-width: 400px)">
 
 		<link rel="alternate" type="application/rss+xml" title="RSS" href="<?php echo rss_url(); ?>">
-		<link rel="shortcut icon" href="<?php echo theme_url('img/favicon.png'); ?>">
+		<link rel="shortcut icon" href="<?php echo asset_url('img/favicon.png'); ?>">
 
 		<!--[if lt IE 9]>
 			<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -19,7 +21,7 @@
 
 		<script>var base = '<?php echo theme_url(); ?>';</script>
 		<script src="<?php echo asset_url('/js/zepto.js'); ?>"></script>
-		<script src="<?php echo theme_url('/js/main.js'); ?>"></script>
+		<script src="<?php echo asset_url('/js/jquery-3.1.0.min.js'); ?>"></script>
 
 	    <meta name="viewport" content="width=device-width">
 	    <meta name="generator" content="Anchor CMS">
@@ -40,48 +42,39 @@
 		<?php endif; ?>
 	</head>
 	<body class="<?php echo body_class(); ?>">
-		<div class="main-wrap">
-			<div class="slidey" id="tray">
-				<div class="wrap">
-					<form id="search" action="<?php echo search_url(); ?>" method="post">
-						<label for="term">Search my blog:</label>
-						<input type="search" id="term" name="term" placeholder="To search, type and hit enter&hellip;" value="<?php echo search_term(); ?>">
-						<input type="hidden" id="whatSearch" name="whatSearch" value="all" />
-					</form>
-
-					<aside>
-						<b>Categories</b>
-						<ul>
-						<?php while(categories()): 
-								if (category_count() > 0) { ?>
-							<li>
-								<a href="<?php echo category_url(); ?>" title="<?php echo category_description(); ?>">
-									<?php echo category_title(); ?> <span><?php echo category_count(); ?></span>
-								</a>
-							</li>
-						<?php } endwhile; ?>
-						</ul>
-					</aside>
+		<header class="header navbar navbar-default navbar-fixed-top no-site-messages" id="header">
+			<div class="container">
+				<div id="logo-area" class="logo-area bhxh-table">
+					<div class="logo-section bhxh-td">
+						<a href="<?php echo base_url(); ?>" class="logo">
+							<img src="<?php echo asset_url('/img/site-logo.png'); ?>" alt="qldt">
+						</a>
+					</div>
+					<div class="logo-section bhxh-td">
+						<p class="logo-title">
+							<?php echo site_name(); ?>
+						</p>
+					</div>
 				</div>
 			</div>
-
-			<header id="top">
-				<a id="logo" href="<?php echo base_url(); ?>"><?php echo site_name(); ?></a>
-
-				<nav id="main" role="navigation">
-					<ul>
-						<?php if(has_menu_items()):
-							while(menu_items()): ?>
-						<li <?php echo (menu_active() ? 'class="active"' : ''); ?>>
-							<a href="<?php echo menu_url(); ?>" title="<?php echo menu_title(); ?>">
-								<?php echo menu_name(); ?>
-							</a>
-						</li>
+		</header>
+		<div class="top-menu container">
+			<nav id="main" role="navigation">
+				<ul>
+					<?php if(has_menu_items()):
+						while(menu_items()): ?>
+							<li <?php echo (menu_active() ? 'class="active"' : ''); ?>>
+								<a href="<?php echo menu_url(); ?>" title="<?php echo menu_title(); ?>">
+									<?php echo menu_name(); ?>
+								</a>
+							</li>
 						<?php endwhile;
-							endif; ?>
-						<li class="tray">
-							<a href="#tray" class="linky"><img src="<?php echo theme_url('img/categories.png'); ?>" alt="Categories" title="View my posts by category"></a>
-						</li>
-					</ul>
-				</nav>
-			</header>
+					endif; ?>
+					<li class="tray">
+						<a href="#tray" class="linky"><img src="<?php echo theme_url('img/categories.png'); ?>" alt="Categories" title="View my posts by category"></a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+		<div class="main-wrap">
+			<div class="container">

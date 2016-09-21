@@ -48,7 +48,7 @@ class Anchor {
 	}
 
 	public static function functions() {
-		if( ! is_admin()) {
+		//if( ! is_admin()) { // comment for all
 			$fi = new FilesystemIterator(APP . 'functions', FilesystemIterator::SKIP_DOTS);
 
 			foreach($fi as $file) {
@@ -63,7 +63,7 @@ class Anchor {
 			if(is_readable($path = PATH . 'themes' . DS . Config::meta('theme') . DS . 'functions.php')) {
 				require $path;
 			}
-		}
+		//}
 	}
 
 	public static function register() {

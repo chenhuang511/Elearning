@@ -35,7 +35,7 @@ fieldset, a, img {
 	Layout
 */
 .wrap, .profile {
-	width: 960px;
+	/*width: 960px;*/
 	margin: 0 auto;
 	overflow: hidden;
 }
@@ -433,73 +433,6 @@ hgroup {
     .statuses a.draft .icon { background-position: 0 -80px; }
         .statuses a.draft:hover .icon { background-position: -16px -80px; }
         .statuses a.draft.active .icon { background-position: -32px -80px; }
-
-/*
-	Login
-*/
-body.login {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-left: -150px;
-}
-.login .wrap, .login .content {
-	width: 300px;
-}
-	.login h1 {
-		padding-bottom: 25px;
-
-		font-size: 25px;
-		line-height: 60px;
-		font-weight: lighter;
-		color: #fff;
-	}
-
-	.login #logo {
-		padding: 0;
-	}
-
-	.login label {
-		display: none;
-	}
-
-	.login fieldset {
-		border: none;
-	}
-
-	.login input {
-		width: 300px;
-		margin-bottom: 20px;
-
-		padding: 14px 16px;
-	}
-
-	.login .buttons a {
-		float: right;
-		font-size: 13px;
-		line-height: 38px;
-		font-weight: 500;
-	}
-
-
-		.posts.empty .icon {
-			width: 52px;
-			background-position: -204px 0;
-		}
-
-		.comments.empty .icon {
-			width: 55px;
-			background-position: -256px 0;
-		}
-
-		.pages.empty .icon {
-			width: 45px;
-			background-position: -311px 0;
-		}
-
-	.empty a {
-		margin-top: 80px;
-	}
 
 /*
 	Post content

@@ -1,0 +1,201 @@
+/*start header*/
+.f-nav {
+    position: fixed !important;
+}
+@media (max-width: 768px) {
+    .f-nav {
+        position: inherit !important;
+    }
+    .main-nav .nav li a {
+        border: none;
+    }
+}
+
+.f-nav .logo-area {
+    padding: 3px 0;
+}
+.f-nav .logo-area .logo img {
+    max-width: 35px;
+    margin-right: 10px;
+}
+#header.f-nav {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+#header.f-nav .logo-area .logo-title {
+    font-size: 16px;
+}
+.f-nav .admin-title {
+    display: none;
+}
+#header .logo-area .logo-title {
+    color: #333;
+    margin: 0;
+    font-size: 18px;
+}
+#header {
+    border: none;
+    background-color: #fff;
+    position: relative;
+    padding: 10px 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e8e3e3;
+}
+#header a {
+    color: #333;
+}
+
+.logo-area .logo {
+    margin-right: 0;
+}
+.logo-area .logo img {
+    max-width: 76px;
+    max-height: none;
+    margin-right: 10px;
+}
+#header #mail {
+    padding: 3px 20px;
+}
+#header #mail .nav-title {
+    position: relative;
+}
+#mail .navcount.unreadmessagecount {
+    top: -5px;
+    right: -20px;
+}
+#header .top-right-nav .icon {
+    width: 20px;
+}
+
+.top-menu {
+    overflow: hidden;
+}
+.top-menu a {
+    float: left;
+
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+
+    color: #8895a7;
+}
+.top-menu ul a:hover, .top-menu ul .active a, .posts .items li:first-child h2 a:hover, p a:hover {
+    color: #4171b1;
+}
+.top-menu ul {
+    list-style: none;
+    float: right;
+}
+.top-menu ul li {
+    float: left;
+    padding-left: 40px;
+}
+.top-menu ul a {
+    display: inline-block;
+    color: #555f6d;
+}
+.top-menu ul img {
+    display: inline-block;
+    vertical-align: middle;
+
+    position: relative;
+    top: -2px;
+
+    width: 16px;
+    height: 16px;
+
+    opacity: .4;
+}
+.top-menu ul a:hover img {
+    opacity: .7;
+}
+.top-menu ul a.active img {
+    opacity: 1;
+}
+
+
+/*menu home*/
+#main-nav {
+    background-color: #fff;
+}
+#main-nav .bhxh-nav-home {
+    border-bottom: solid 1px #126f9a;
+    margin: 0;
+}
+#main-nav .bhxh-nav-home a, #main-nav .navbar-link {
+    color: #126f9a ;
+}
+#main-nav .bhxh-nav-home a:hover {
+    color: #fff;
+    background-color: #126f9a;
+}
+#main-nav .bhxh-nav-home .active > a {
+    background-color: #126f9a;
+    color: #fff;
+}
+/*end menu home */
+
+.li-square > a {
+    border-radius: 0 !important;
+}
+/*end header*/
+
+/*footer*/
+#footer {
+    background: #187bb2;
+    color: #fff;
+    padding: 20px 0;
+    margin-top: 20px;
+}
+#footer .footer-inner{
+    padding: 0;
+}
+#footer .mahara-logo {
+    padding-top: 20px;
+}
+#footer a {
+    color: #fff;
+}
+
+.logo-area .logo-section {
+    vertical-align: middle;
+}
+.logo-area .logo-title {
+    color: #fff;
+    font-size: 16px;
+    padding: 0;
+}
+
+#footer .footer-nav li > a {
+    padding: 0 10px 0 10px;
+    color: #eee;
+    font-size: 14px;
+    border-right: #ddd solid 1px;
+}
+#footer .footer-nav li:last-child > a{
+    border-right: none;
+}
+#footer .footer-nav li > a:hover, #footer .footer-nav li > a:visited {
+    background: none ;
+    text-decoration: underline;
+}
+#footer .footer-inner {
+    margin: 15px 0;
+    background: none;
+    border: none;
+}
+.footer-nav > li > a {
+    border-radius: 0;
+}
+/*end footer*/
+/*help*/
+.bhxh-table    { display: table }
+.bhxh-tr       { display: table-row }
+.bhxh-thead    { display: table-header-group }
+.bhxh-tbody    { display: table-row-group }
+.bhxh-tfoot    { display: table-footer-group }
+.bhxh-col      { display: table-column }
+.bhxh-colgroup { display: table-column-group }
+.bhxh-td, th   { display: table-cell }
+.bhxh-caption  { display: table-caption }
+.no-padding    { padding: 0; margin: 0; }

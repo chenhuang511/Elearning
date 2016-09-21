@@ -2,7 +2,6 @@
 .notifications {
 	margin-bottom: 10px;
 }
-
 	.notifications .notice, .notifications .error, .notifications .success {
 		padding: 10px 18px;
 		margin-bottom: 20px;
@@ -16,7 +15,7 @@
 
 	.notifications .notice {
 		color: #fff;
-		background: #578cd9;
+		background: #126f9a;
 	}
 
 	.notifications .error {
