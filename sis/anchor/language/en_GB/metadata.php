@@ -2,47 +2,47 @@
 
 return array(
 
-	'metadata' => 'Site Metadata',
-	'metadata_desc' => 'Manage your site data',
+	'metadata' => 'Dữ liệu trang web',
+	'metadata_desc' => 'Quản lý dữ liệu của trang web',
 
-	'comment_settings' => 'Comments',
-	'theme_settings' => 'Appearance',
+	'comment_settings' => 'Bình luận',
+	'theme_settings' => 'Giao diện',
 
 	// form fields
-	'sitename' => 'Site name',
+	'sitename' => 'Tên trang web',
 	'sitename_explain' => '',
-	'sitename_missing' => 'Your site needs a name!',
+	'sitename_missing' => 'Trang web của bạn cần một cái tên!',
 
-	'sitedescription' => 'Site description',
+	'sitedescription' => 'Miêu tả về trang web',
 	'sitedescription_explain' => '',
-	'sitedescription_missing' => 'Your site needs a description!',
+	'sitedescription_missing' => 'Miêu tả về trang web của bạn!',
 
-	'homepage' => 'Home Page',
+	'homepage' => 'Trang chủ',
 	'homepage_explain' => '',
 
-	'postspage' => 'Posts Page',
+	'postspage' => 'Trang danh sách bài viết',
 	'postspage_explain' => '',
 
-	'posts_per_page' => 'Posts per page',
+	'posts_per_page' => 'Số bài viết mỗi trang',
 	'posts_per_page_explain' => '',
-
+	
 	'show_all_posts' => 'Show all posts',
 	'show_all_posts_explain' => 'Grab posts without pagination (could be slow)',
 
-	'auto_publish_comments' => 'Auto-allow comments',
+	'auto_publish_comments' => 'Tự động cho phép bình luận',
 	'auto_publish_comments_explain' => '',
 
-	'comment_notifications' => 'Email notification for new comments',
+	'comment_notifications' => 'Gửi mail thông báo khi có bình luận mới',
 	'comment_notifications_explain' => '',
 
-	'comment_moderation_keys' => 'Spam keywords',
-	'comment_moderation_keys_explain' => 'Comma separated list of keywords to blacklist against.
-		Comments will automatically be set as spam.',
+	'comment_moderation_keys' => 'Từ khóa spam',
+	'comment_moderation_keys_explain' => 'Các từ khóa phân cách nhau bởi dấu phẩy.
+		Nội dung bình luận chứa từ khóa sẽ bị đánh dấu là spam.',
 
-	'current_theme' => 'Current theme',
+	'current_theme' => 'Giao diện hiện tại',
 	'current_theme_explain' => '',
 
 	// messages
-	'updated' => 'Metadata updated',
+	'updated' => 'Dữ liệu website đã được cập nhật',
 
 );

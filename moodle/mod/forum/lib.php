@@ -7846,6 +7846,19 @@ function forum_check_throttling($forum, $cm = null)
     $timenow = time();
     $timeafter = $timenow - $forum->blockperiod;
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $sql = 'SELECT COUNT(p.id) FROM {forum_posts} p
+                                        JOIN {forum_discussions} d
+                                        ON p.discussion = d.id WHERE d.forum = ?
+                                        AND p.userid = ? AND p.created > ?';
+        $user = get_remote_mapping_user($USER->id);
+        $param = array();
+        $param['parameters[0][name]'] = "0";
+        $param['parameters[0][value]'] = $forum->remoteid;
+        $param['parameters[1][name]'] = "1";
+        $param['parameters[1][value]'] = $user ? $user[0]->id : $USER->id;
+        $param['parameters[2][name]'] = "2";
+        $param['parameters[2][value]'] = $timeafter;
+        $numposts = get_remote_count_forum_sql($sql, $param);
     } else {
         $numposts = $DB->count_records_sql('SELECT COUNT(p.id) FROM {forum_posts} p
                                         JOIN {forum_discussions} d

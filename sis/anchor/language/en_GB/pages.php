@@ -2,47 +2,49 @@
 
 return array(
 
-	'pages' => 'Pages',
+	'pages' => 'Trang',
 
-	'create_page' => 'Create a new page',
-	'nopages_desc' => 'You don’t have any pages.',
-	'redirect' => 'Redirect',
+	'create_page' => 'Tạo trang mới',
+	'nopages_desc' => 'Bạn không có trang nào.',
+	'redirect' => 'Chuyển hướng',
 
 	// form fields
-	'redirect_url' => 'Redirect Url',
-	'redirect_missing' => 'Please enter a valid url',
+	'redirect_url' => 'Đường dẫn chuyển hướng',
+	'redirect_missing' => 'Vui lòng nhập đường dẫn',
 
-	'title' => 'Page title',
+	'title' => 'Tiêu đề trang',
 	'title_explain' => '',
-	'title_missing' => 'The title of this page must be atleast 3 characters',
+	'title_missing' => 'Vui lòng nhập tiêu đề trang',
 
-	'content' => 'Content',
-	'content_explain' => 'Your page’s content. Uses Markdown.',
+	'content' => 'Nội dung',
+	'content_explain' => 'Nộ dung của trang. Nội dung dược định dạng theo định dạng Markdowns.',
 
-	'show_in_menu' => 'Show In Menu',
+	'show_in_menu' => 'Hiển thị ở trình đơn',
 	'show_in_menu_explain' => '',
 
-	'name' => 'Name',
+	'name' => 'Tên',
 	'name_explain' => '',
 
-	'slug' => 'Slug',
-	'slug_explain' => 'Slug uri to identify your page, should only contain ascii characters',
-	'slug_missing' => 'The slug must be atleast 3 characters, slugs can only contain ascii characters',
-	'slug_duplicate' => 'Slug already exists',
-	'slug_invalid' => 'Slug must contain letters',
-
-	'status' => 'Status',
+	'slug' => 'Đường dẫn',
+	'slug_explain' => 'Đường dẫn dùng để xác định bài viết của bạn, chỉ nhập những ký tự không dấu',
+	'slug_missing' => 'Vui lòng nhập đường dẫn, đường dẫn chỉ chứa ký tự không dấu',
+	'slug_duplicate' => 'Dường dẫn này đã tồn tại',
+	'slug_invalid' => 'Đường dẫn phải chứa ký tự chữ cái',
+	'status' => 'Trạng thái',
 	'status_explain' => '',
 
-	'parent' => 'Parent',
+	'parent' => 'Cấp cha',
 	'parent_explain' => '',
 
-	'pagetype' => 'Page Type',
+	'pagetype' => 'Kiểu trang',
 	'pagetype_explain' => 'Select the set of field this page belong too.',
 
 	// messages
-	'updated' => 'Your page was updated.',
-	'created' => 'Your page was created.',
-	'deleted' => 'Your page was deleted.'
+	'updated' => 'Trang vừa được cập nhật.',
+	'created' => 'Trang đã được tạo.',
+	'deleted' => 'Trang đã bị xóa.',
+
+	'cannot_delete_home_page' => 'Bạn không thể xóa trang chủ',
+	'cannot_delete_posts_page' => 'Bạn không thể xóa trang danh sách bài viết',
 
 );
