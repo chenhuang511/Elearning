@@ -314,4 +314,12 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_get_recordset_forum_subscriptions' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'get_recordset_forum_subscriptions',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'get list subscriptions by forum and mnethostid',
+        'type' => 'read',
+        'ajax' => true
+    ),
 );
