@@ -75,9 +75,9 @@ if ($certificate->orientation == 'L') {
     $codey = 250;
 }
 
-// Get font families.
-$fontsans = "Times";// set temp font fontsans
-$fontserif = "Times";
+// Get font families. - fix fonts becase we only have one font support utf8
+$fontsans = "freeserif";
+$fontserif = "freeserif";
 
 // Add images and lines
 certificate_print_image($pdf, $certificate, CERT_IMAGE_BORDER, $brdrx, $brdry, $brdrw, $brdrh);

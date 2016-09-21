@@ -3001,14 +3001,7 @@ class global_navigation_for_ajax extends global_navigation
                         FROM {course} c
                         LEFT JOIN {course_sections} cs ON cs.course = c.id
                         WHERE cs.id = ?';
-                if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
-                    $course = $DB->get_record_sql($sql, array($this->instanceid), MUST_EXIST);
-                } else {
-                    $course = get_remote_course_section_nav_by_section($this->instanceid);
-                    $course = (object)array_merge((array)$course, array('remoteid' => $course->id));
-                    $course->id = get_course_id_by_remote_id($course->remoteid);
-                    $course->category = get_cat_id_by_remote_id($course->category);
-                }
+                $course = $DB->get_record_sql($sql, array($this->instanceid), MUST_EXIST);
                 require_course_login($course, true, null, false, true);
                 $this->page->set_context(context_course::instance($course->id));
                 $coursenode = $this->add_course($course);

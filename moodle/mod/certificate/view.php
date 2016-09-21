@@ -105,6 +105,7 @@ $certrecord = certificate_get_issue($course, $USER, $certificate, $cm);
 make_cache_directory('tcpdf');
 // Load the specific certificate type.
 
+$certificate->certificatetype = "A4_embedded"; // Fix type hardcode
 require_once("$CFG->dirroot/mod/certificate/type/$certificate->certificatetype/certificate.php");
 
 if (empty($action)) { // Not displaying PDF
