@@ -737,12 +737,14 @@ function save_remote_forum_add_discussions($discussion, $userid)
         $i++;
     }
 
+    $user = get_remote_mapping_user($userid);
+
     $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_mod_forum_add_discussions',
-            'params' => array_merge(array('userid' => $userid), $data),
+            'params' => array_merge(array('userid' => $user ? $user[0]->id : $userid), $data),
         )
     );
 

@@ -511,7 +511,7 @@ function forum_get_completion_state($course, $cm, $userid, $type)
             $prs['parameters[0][name]'] = "userid";
             $prs['parameters[0][value]'] = $hubuserid;
             $prs['parameters[1][name]'] = "forumid";
-            $prs['parameters[1][value]'] = $forum->id;
+            $prs['parameters[1][value]'] = $forum->remoteid;
             $value = $forum->completionposts <= get_remote_field_forum_sql($postcountsql, $prs);
         } else {
             $value = $forum->completionposts <= $DB->get_field_sql($postcountsql, $postcountparams);
@@ -5155,15 +5155,8 @@ function forum_add_discussion($discussion, $mform = null, $unused = null, $useri
         $userid = $USER->id;
     }
 
-    $hubuserid = $userid;
-
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $hubuser = get_remote_mapping_user($userid);
-        if ($hubuser) {
-            $hubuserid = $hubuser[0]->id;
-        }
-
-        $result = save_remote_forum_add_discussions($discussion, $hubuserid);
+        $result = save_remote_forum_add_discussions($discussion, $userid);
         $forum = $result[0];
         $post = $result[1];
         $cm = get_coursemodule_from_instance('forum', $forum->id);
