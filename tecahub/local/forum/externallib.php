@@ -2693,4 +2693,60 @@ class local_mod_forum_external extends external_api
             )
         );
     }
+
+    public static function get_recordset_forum_subscriptions_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'forumid' => new external_value(PARAM_INT, 'the id of forum'),
+                'hostip' => new external_value(PARAM_HOST, 'the host ip')
+            )
+        );
+    }
+
+    public static function get_recordset_forum_subscriptions($forumid, $hostip)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_recordset_forum_subscriptions_parameters(), array(
+            'forumid' => $forumid,
+            'hostip' => $hostip
+        ));
+
+        $hostid = $DB->get_field('mnet_host', 'id', array('ip_address' => $params['hostip']));
+
+        $sql = "SELECT id, userid FROM {forum_subscriptions} WHERE forum = :forum AND userid IN (SELECT id FROM {user} WHERE mnethostid = :hostid)";
+
+        $subscriptions = $DB->get_records_sql($sql, array(
+            'forum' => $params['forumid'],
+            'hostid' => $hostid
+        ));
+
+        if (!$subscriptions) {
+            $subscriptions = array();
+        }
+
+        $result = array();
+        $result['subscriptions'] = $subscriptions;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    public static function get_recordset_forum_subscriptions_returns()
+    {
+        return new external_single_structure(
+            array(
+                'subscriptions' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'the id of subscription'),
+                            'userid' => new external_value(PARAM_INT, 'the id of user')
+                        )
+                    ), 'data'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

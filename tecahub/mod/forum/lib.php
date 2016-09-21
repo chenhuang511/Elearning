@@ -7909,8 +7909,12 @@ function mod_forum_myprofile_navigation(core_user\output\myprofile\tree $tree, $
 
 function forum_formatted_moduleinfo($moduleinfo)
 {
+    global $USER;
     if (isset($moduleinfo->introeditor)) {
         $moduleinfo->introeditor = (array)$moduleinfo->introeditor;
+    }
+    if($moduleinfo->type == 'single' && isset($moduleinfo->userid)) {
+        $USER->id = $moduleinfo->userid;
     }
     return $moduleinfo;
 }

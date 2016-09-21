@@ -778,7 +778,7 @@ abstract class moodleform_mod extends moodleform {
     }
 
     public function standard_grading_coursemodule_elements() {
-        global $COURSE, $CFG;
+        global $COURSE, $CFG, $DB;
         $mform =& $this->_form;
         $isupdate = !empty($this->_cm);
         $gradeoptions = array('isupdate' => $isupdate,

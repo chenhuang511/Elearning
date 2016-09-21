@@ -626,11 +626,7 @@ class completion_info {
 
         // Modname hopefully is provided in $cm but just in case it isn't, let's grab it
         if (!isset($cm->modname)) {
-            if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-                $cm->modname = $DB->get_field('modules', 'name', array('id'=>$cm->module));
-            } else {
-                $cm->modname = get_remote_modules_by_id($cm->module)->name;
-            }
+            $cm->modname = $DB->get_field('modules', 'name', array('id'=>$cm->module));
         }
 
         $newstate = COMPLETION_COMPLETE;
@@ -639,16 +635,10 @@ class completion_info {
         if (!is_null($cm->completiongradeitemnumber)) {
             require_once($CFG->libdir.'/gradelib.php');
 
-            if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-                if (!is_null($cm->modname)) {
-                    $instanceid = $DB->get_field($cm->modname, 'remoteid', array('id'=>$cm->instance), MUST_EXIST);
-                }
-            }
-
             $item = grade_item::fetch(array('courseid' => $cm->course,
                 'itemtype' => 'mod',
                 'itemmodule' => $cm->modname,
-                'iteminstance' => (MOODLE_RUN_MODE === MOODLE_MODE_HUB) ? $instanceid : $cm->instance,
+                'iteminstance' => $cm->instance,
                 'itemnumber'=> $cm->completiongradeitemnumber));
 
             if ($item) {

@@ -226,8 +226,7 @@ else if (!empty($update)) {
         }
 
         if ($items = grade_item::fetch_all(array('itemtype' => 'mod', 'itemmodule' => $data->modulename,
-            'iteminstance' => $data->instance, 'courseid' => $course->id))
-        ) {
+            'iteminstance' => $data->instance, 'courseid' => $course->id))) {
             // Add existing outcomes.
             foreach ($items as $item) {
                 if (!empty($item->outcomeid)) {
