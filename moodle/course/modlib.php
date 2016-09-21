@@ -47,6 +47,9 @@ function add_moduleinfo($moduleinfo, $course, $mform = null)
     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
         $remotemoduleinfo = clone $moduleinfo;
 
+        $user = get_remote_mapping_user($USER->id);
+        $remotemoduleinfo->userid = $user ? $user[0]->id : $USER->id;
+
         $remotemoduleinfo = merge_module_info_send_to_hub($remotemoduleinfo);
 
         $moduleinforet = get_remote_add_moduleinfo_by(json_encode($remotemoduleinfo), $course->remoteid);
@@ -62,7 +65,7 @@ function add_moduleinfo($moduleinfo, $course, $mform = null)
         $activity->id = $DB->insert_record('course_modules_createdby', $activity);
 
         // Merge moduleinfo to return host
-        if ($moduleinforet){
+        if ($moduleinforet) {
             $cm = get_local_course_modules_record($moduleinforet->coursemodule);
             $moduleinfo->coursemodule = $cm->id;
         }
@@ -491,7 +494,7 @@ function can_update_moduleinfo($cm)
     // Check module exists.
     $module = $DB->get_record('modules', array('id' => $cm->module), '*', MUST_EXIST);
 
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
         // Check the moduleinfo exists.
         $data = $DB->get_record($module->name, array('id' => $cm->instance), '*', MUST_EXIST);
     } else {
@@ -600,7 +603,7 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null)
     $modcontext = context_module::instance($moduleinfo->coursemodule);
     // Update embedded links and save files.
     if (plugin_supports('mod', $moduleinfo->modulename, FEATURE_MOD_INTRO, true)) {
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
             $moduleinfo->intro = file_save_draft_area_files($moduleinfo->introeditor['itemid'], $modcontext->id,
                 'mod_' . $moduleinfo->modulename, 'intro', 0,
                 array('subdirs' => true), $moduleinfo->introeditor['text']);
