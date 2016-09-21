@@ -797,14 +797,9 @@ abstract class moodleform_mod extends moodleform {
             if (!$this->_features->rating) {
 
                 if ($isupdate) {
-                    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-                        if (!is_null($this->_cm->modname)) {
-                            $instanceid = $DB->get_field($this->_cm->modname, 'remoteid', array('id'=>$this->_cm->instance), MUST_EXIST);
-                        }
-                    }
                     $gradeitem = grade_item::fetch(array('itemtype' => 'mod',
                                                          'itemmodule' => $this->_cm->modname,
-                                                         'iteminstance' => (MOODLE_RUN_MODE === MOODLE_MODE_HUB) ? $instanceid : $this->_cm->instance,
+                                                         'iteminstance' => $this->_cm->instance,
                                                          'itemnumber' => 0,
                                                          'courseid' => $COURSE->id));
                     if ($gradeitem) {

@@ -256,6 +256,10 @@ abstract class grade_object
                         $usersmapping[$value] = $uval;
                     } elseif (strpos($var, 'courseid') !== false) {
                         $value = get_local_course_record($value, true)->remoteid;
+                    } elseif (strpos($var, 'iteminstance') !== false) {
+                        if (isset($params['itemmodule']) && !empty($params['itemmodule'])) {
+                            $value = $DB->get_field($params['itemmodule'], 'remoteid', array('id'=>$value), MUST_EXIST);
+                        }
                     }
                     $newparams[$placeholder] = $value;
                     ++$index;
