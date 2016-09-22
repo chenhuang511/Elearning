@@ -409,19 +409,21 @@ class helper {
                 );
             }
         }
-        // Backup.
-        if ($course->can_backup()) {
-            $actions['backup'] = array(
-                'url' => new \moodle_url('/backup/backup.php', array('id' => $course->id)),
-                'string' => \get_string('backup')
-            );
-        }
-        // Restore.
-        if ($course->can_restore()) {
-            $actions['restore'] = array(
-                'url' => new \moodle_url('/backup/restorefile.php', array('contextid' => $course->get_context()->id)),
-                'string' => \get_string('restore')
-            );
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            // Backup.
+            if ($course->can_backup()) {
+                $actions['backup'] = array(
+                    'url' => new \moodle_url('/backup/backup.php', array('id' => $course->id)),
+                    'string' => \get_string('backup')
+                );
+            }
+            // Restore.
+            if ($course->can_restore()) {
+                $actions['restore'] = array(
+                    'url' => new \moodle_url('/backup/restorefile.php', array('contextid' => $course->get_context()->id)),
+                    'string' => \get_string('restore')
+                );
+            }
         }
         return $actions;
     }

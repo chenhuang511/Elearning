@@ -4035,33 +4035,35 @@ class settings_navigation extends navigation_node
         }
 
         // Backup this course
-        if (has_capability('moodle/backup:backupcourse', $coursecontext)) {
-            $url = new moodle_url('/backup/backup.php', array('id' => $course->id));
-            $coursenode->add(get_string('backup'), $url, self::TYPE_SETTING, null, 'backup', new pix_icon('i/backup', ''));
-        }
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            if (has_capability('moodle/backup:backupcourse', $coursecontext)) {
+                $url = new moodle_url('/backup/backup.php', array('id' => $course->id));
+                $coursenode->add(get_string('backup'), $url, self::TYPE_SETTING, null, 'backup', new pix_icon('i/backup', ''));
+            }
 
-        // Restore to this course
-        if (has_capability('moodle/restore:restorecourse', $coursecontext)) {
-            $url = new moodle_url('/backup/restorefile.php', array('contextid' => $coursecontext->id));
-            $coursenode->add(get_string('restore'), $url, self::TYPE_SETTING, null, 'restore', new pix_icon('i/restore', ''));
-        }
+            // Restore to this course
+            if (has_capability('moodle/restore:restorecourse', $coursecontext)) {
+                $url = new moodle_url('/backup/restorefile.php', array('contextid' => $coursecontext->id));
+                $coursenode->add(get_string('restore'), $url, self::TYPE_SETTING, null, 'restore', new pix_icon('i/restore', ''));
+            }
 
-        // Import data from other courses
-        if (has_capability('moodle/restore:restoretargetimport', $coursecontext)) {
-            $url = new moodle_url('/backup/import.php', array('id' => $course->id));
-            $coursenode->add(get_string('import'), $url, self::TYPE_SETTING, null, 'import', new pix_icon('i/import', ''));
-        }
+            // Import data from other courses
+            if (has_capability('moodle/restore:restoretargetimport', $coursecontext)) {
+                $url = new moodle_url('/backup/import.php', array('id' => $course->id));
+                $coursenode->add(get_string('import'), $url, self::TYPE_SETTING, null, 'import', new pix_icon('i/import', ''));
+            }
 
-        // Publish course on a hub
-        if (has_capability('moodle/course:publish', $coursecontext)) {
-            $url = new moodle_url('/course/publish/index.php', array('id' => $course->id));
-            $coursenode->add(get_string('publish'), $url, self::TYPE_SETTING, null, 'publish', new pix_icon('i/publish', ''));
-        }
+            // Publish course on a hub
+            if (has_capability('moodle/course:publish', $coursecontext)) {
+                $url = new moodle_url('/course/publish/index.php', array('id' => $course->id));
+                $coursenode->add(get_string('publish'), $url, self::TYPE_SETTING, null, 'publish', new pix_icon('i/publish', ''));
+            }
 
-        // Reset this course
-        if (has_capability('moodle/course:reset', $coursecontext)) {
-            $url = new moodle_url('/course/reset.php', array('id' => $course->id));
-            $coursenode->add(get_string('reset'), $url, self::TYPE_SETTING, null, 'reset', new pix_icon('i/return', ''));
+            // Reset this course
+            if (has_capability('moodle/course:reset', $coursecontext)) {
+                $url = new moodle_url('/course/reset.php', array('id' => $course->id));
+                $coursenode->add(get_string('reset'), $url, self::TYPE_SETTING, null, 'reset', new pix_icon('i/return', ''));
+            }
         }
 
         // Questions
@@ -4196,18 +4198,20 @@ class settings_navigation extends navigation_node
         foreach ($reports as $reportfunction) {
             $reportfunction($modulenode, $this->page->cm);
         }
-        // Add a backup link
-        $featuresfunc = $this->page->activityname . '_supports';
-        if (function_exists($featuresfunc) && $featuresfunc(FEATURE_BACKUP_MOODLE2) && has_capability('moodle/backup:backupactivity', $this->page->cm->context)) {
-            $url = new moodle_url('/backup/backup.php', array('id' => $this->page->cm->course, 'cm' => $this->page->cm->id));
-            $modulenode->add(get_string('backup'), $url, self::TYPE_SETTING, null, 'backup');
-        }
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            // Add a backup link
+            $featuresfunc = $this->page->activityname . '_supports';
+            if (function_exists($featuresfunc) && $featuresfunc(FEATURE_BACKUP_MOODLE2) && has_capability('moodle/backup:backupactivity', $this->page->cm->context)) {
+                $url = new moodle_url('/backup/backup.php', array('id' => $this->page->cm->course, 'cm' => $this->page->cm->id));
+                $modulenode->add(get_string('backup'), $url, self::TYPE_SETTING, null, 'backup');
+            }
 
-        // Restore this activity
-        $featuresfunc = $this->page->activityname . '_supports';
-        if (function_exists($featuresfunc) && $featuresfunc(FEATURE_BACKUP_MOODLE2) && has_capability('moodle/restore:restoreactivity', $this->page->cm->context)) {
-            $url = new moodle_url('/backup/restorefile.php', array('contextid' => $this->page->cm->context->id));
-            $modulenode->add(get_string('restore'), $url, self::TYPE_SETTING, null, 'restore');
+            // Restore this activity
+            $featuresfunc = $this->page->activityname . '_supports';
+            if (function_exists($featuresfunc) && $featuresfunc(FEATURE_BACKUP_MOODLE2) && has_capability('moodle/restore:restoreactivity', $this->page->cm->context)) {
+                $url = new moodle_url('/backup/restorefile.php', array('contextid' => $this->page->cm->context->id));
+                $modulenode->add(get_string('restore'), $url, self::TYPE_SETTING, null, 'restore');
+            }
         }
 
         // Allow the active advanced grading method plugin to append its settings
@@ -4950,16 +4954,18 @@ class settings_navigation extends navigation_node
             }
         }
 
-        // Backup this course
-        if (has_capability('moodle/backup:backupcourse', $coursecontext)) {
-            $url = new moodle_url('/backup/backup.php', array('id' => $course->id));
-            $frontpage->add(get_string('backup'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/backup', ''));
-        }
+        if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+            // Backup this course
+            if (has_capability('moodle/backup:backupcourse', $coursecontext)) {
+                $url = new moodle_url('/backup/backup.php', array('id' => $course->id));
+                $frontpage->add(get_string('backup'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/backup', ''));
+            }
 
-        // Restore to this course
-        if (has_capability('moodle/restore:restorecourse', $coursecontext)) {
-            $url = new moodle_url('/backup/restorefile.php', array('contextid' => $coursecontext->id));
-            $frontpage->add(get_string('restore'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/restore', ''));
+            // Restore to this course
+            if (has_capability('moodle/restore:restorecourse', $coursecontext)) {
+                $url = new moodle_url('/backup/restorefile.php', array('contextid' => $coursecontext->id));
+                $frontpage->add(get_string('restore'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/restore', ''));
+            }
         }
 
         // Questions
