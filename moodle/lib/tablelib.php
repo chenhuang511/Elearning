@@ -1548,7 +1548,9 @@ class table_sql extends flexible_table {
         $result = array();
         foreach ($hostusers as $key => $val){
             if(substr(trim($key),0,1) == 'u'){
-                $val = get_remote_mapping_user($val)[0]->id;
+                if ($val > 0){
+                    $val = get_remote_mapping_user($val)[0]->id;
+                }
             }
             $result[trim($key)] = $val;
         }
@@ -1591,7 +1593,7 @@ class table_sql extends flexible_table {
                     $countparams["countparam[$index][value]"]=$val;
                     $index++;
                 }
-                $grandtotal = get_remote_report_get_grand_total($this->countsql, $countparams)->grandtotal;
+                $grandtotal = get_remote_report_get_grand_total($this->countsql, $countparams);
             }else{
                 $grandtotal = $DB->count_records_sql($this->countsql, $this->countparams);
             }
@@ -1653,8 +1655,10 @@ class table_sql extends flexible_table {
                 $mappingassign = array();
                 foreach ($oldparams as $k => $v) {
                     if (substr(trim($k),0,1) == 'u') {
-                        $remoteuser = get_remote_mapping_user($v)[0]->id;
-                        $mapusers[$remoteuser] = $v;
+                        if ($v > 0){
+                            $remoteuser = get_remote_mapping_user($v)[0]->id;
+                            $mapusers[$remoteuser] = $v;
+                        }
                     }
                     if (strpos(trim($k), 'assignment') !== false) {
                         $remoteassignid = get_local_assign_record($v, true)->remoteid;

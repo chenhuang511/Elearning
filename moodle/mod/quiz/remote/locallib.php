@@ -302,7 +302,8 @@ function get_remote_significant_questions($quizid) {
 }
 
 function get_remote_report_get_grand_total($countsql, $countparam) {
-    return moodle_webservice_client(
+
+    $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
@@ -310,7 +311,11 @@ function get_remote_report_get_grand_total($countsql, $countparam) {
             'params' => array_merge(array('countsql' => $countsql), $countparam)
         ), false
     );
-    
+    if (isset($resp->exception)){
+        return 0;
+    }
+
+    return $resp->grandtotal;
 }
 
 function get_remote_report_get_rowdata($sql, $param, $pagestart, $pagesize) {
