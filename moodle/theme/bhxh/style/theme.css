@@ -100,6 +100,19 @@ a:focus {
 
 /*editting V */
 
+@media (min-width: 1200px) {
+    div.submitconfirm form#mform1 fieldset.hidden div div#fitem_id_confirmmessage .mform .fitem .felement {
+        float: left;
+        width: 100%;
+    }
+
+    div.submitconfirm form#mform1 fieldset.hidden div div#fgroup_id_buttonar.fitem_actionbuttons .mform .fitem_actionbuttons>div.felement {
+        float: left;
+        width: 100%;
+        margin-left: 0 !important;
+    }
+}
+
 a.mod_quiz-next-nav {
     color: #0070a8 !important;
     text-decoration: none;
