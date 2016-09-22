@@ -669,13 +669,13 @@ function questionnaire_extend_settings_navigation(settings_navigation $settings,
             new moodle_url('/mod/questionnaire/report.php',
                 array('instance' => $questionnaire->id, 'action' => 'vallarsort', 'group' => $currentgroupid)));
 
-        if ($questionnaire->capabilities->deleteresponses) {
+        if ($questionnaire->capabilities->deleteresponses && MOODLE_MODE_HOST === MOODLE_RUN_MODE ) {
             $summarynode->add(get_string('deleteallresponses', 'questionnaire'),
                 new moodle_url('/mod/questionnaire/report.php',
                     array('instance' => $questionnaire->id, 'action' => 'delallresp', 'group' => $currentgroupid)));
         }
 
-        if ($questionnaire->capabilities->downloadresponses && MOODLE_MODE_HOST === MOODLE_RUN_MODE && MOODLE_MODE_HOST === MOODLE_RUN_MODE) {
+        if ($questionnaire->capabilities->downloadresponses && MOODLE_MODE_HOST === MOODLE_RUN_MODE) {
             $summarynode->add(get_string('downloadtextformat', 'questionnaire'),
                 new moodle_url('/mod/questionnaire/report.php',
                     array('instance' => $questionnaire->id, 'action' => 'dwnpg', 'group' => $currentgroupid)));

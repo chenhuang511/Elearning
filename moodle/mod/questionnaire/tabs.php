@@ -147,7 +147,7 @@ if (($canviewallgroups || ($canviewgroups && $questionnaire->capabilities->reada
             $row3[] = new tabobject('vallarsort', $CFG->wwwroot.htmlspecialchars('/mod/questionnaire/report.php?'.$argstr2),
                                     get_string('order_descending', 'questionnaire'));
         }
-        if ($questionnaire->capabilities->deleteresponses) {
+        if ($questionnaire->capabilities->deleteresponses && MOODLE_MODE_HOST === MOODLE_RUN_MODE ) {
             $argstr2 = $argstr.'&action=delallresp&group='.$currentgroupid;
             $row3[] = new tabobject('deleteall', $CFG->wwwroot.htmlspecialchars('/mod/questionnaire/report.php?'.$argstr2),
                                     get_string('deleteallresponses', 'questionnaire'));
@@ -201,7 +201,7 @@ if (($canviewallgroups || ($canviewgroups && $questionnaire->capabilities->reada
         $argstr2 = $argstr.'&action=vallarsort&group='.$currentgroupid;
         $row3[] = new tabobject('vallarsort', $CFG->wwwroot.htmlspecialchars('/mod/questionnaire/report.php?'.$argstr2),
                                 get_string('order_descending', 'questionnaire'));
-        if ($questionnaire->capabilities->deleteresponses) {
+        if ($questionnaire->capabilities->deleteresponses && MOODLE_MODE_HOST === MOODLE_RUN_MODE ) {
             $argstr2 = $argstr.'&action=delallresp';
             $row2[] = new tabobject('deleteall', $CFG->wwwroot.htmlspecialchars('/mod/questionnaire/report.php?'.$argstr2),
                                     get_string('deleteallresponses', 'questionnaire'));
