@@ -689,7 +689,7 @@ function questionnaire_extend_settings_navigation(settings_navigation $settings,
                 new moodle_url('/mod/questionnaire/report.php',
                     array('instance' => $questionnaire->id, 'action' => 'vresp', 'byresponse' => 1, 'group' => $currentgroupid)));
 
-            if ($individualresponse) {
+            if ($individualresponse && MOODLE_MODE_HOST === MOODLE_RUN_MODE) {
                 $byresponsenode->add(get_string('deleteresp', 'questionnaire'),
                     new moodle_url('/mod/questionnaire/report.php',
                         array('instance' => $questionnaire->id, 'action' => 'dresp', 'byresponse' => 1,

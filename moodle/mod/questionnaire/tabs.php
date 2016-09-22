@@ -165,7 +165,7 @@ if (($canviewallgroups || ($canviewgroups && $questionnaire->capabilities->reada
         if ($currenttab != 'deleteresp') {
             $activated[] = 'vresp';
         }
-        if ($questionnaire->capabilities->deleteresponses) {
+        if ($questionnaire->capabilities->deleteresponses && MOODLE_MODE_HOST === MOODLE_RUN_MODE) {
             $argstr2 = $argstr.'&action=dresp&rid='.$rid.'&individualresponse=1';
             $row2[] = new tabobject('deleteresp', $CFG->wwwroot.htmlspecialchars('/mod/questionnaire/report.php?'.$argstr2),
                             get_string('deleteresp', 'questionnaire'));
