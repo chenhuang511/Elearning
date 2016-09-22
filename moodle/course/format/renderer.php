@@ -996,7 +996,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
 
         // Title with section navigation links.
         if($shownav) {
-            $sectionnavlinks = $this->get_nav_links($course, $modinfo->get_section_info_all(), $displaysection, ['student' => 1]);
+            $sectionnavlinks = $this->get_nav_links($course, $modinfo->get_section_info_all(), $displaysection, array('student' => 1));
 
             $sectiontitle = '';
             $sectiontitle .= html_writer::start_tag('div', array('class' => 'section-navigation navigationtitle student-navigation'));
