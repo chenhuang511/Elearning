@@ -258,7 +258,9 @@ abstract class grade_object
                         $value = get_local_course_record($value, true)->remoteid;
                     } elseif (strpos($var, 'iteminstance') !== false) {
                         if (isset($params['itemmodule']) && !empty($params['itemmodule'])) {
-                            $value = $DB->get_field($params['itemmodule'], 'remoteid', array('id'=>$value), MUST_EXIST);
+                            if ($remotemoduleid = $DB->get_field($params['itemmodule'], 'remoteid', array('id'=>$value))){
+                                 $value = $remotemoduleid;
+                            }
                         }
                     }
                     $newparams[$placeholder] = $value;

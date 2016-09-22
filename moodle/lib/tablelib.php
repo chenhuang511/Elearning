@@ -1641,7 +1641,7 @@ class table_sql extends flexible_table {
                 }
                 $replacefrom = array('\\\\', 'firstname LIKE :ifirstc1', 'lastname LIKE :ilastc1');
                 $replaceto = array('\\', 'LOWER(firstname) LIKE LOWER(:ifirstc1)', 'LOWER(lastname) LIKE LOWER(:ilastc1)');
-                $sql = str_replace( $replacefrom, , $sql);
+                $sql = str_replace( $replacefrom, $replaceto, $sql);
                 if ($modname === 'quiz') {
                     // replace sql host to query hub oracle db
                     $this->rawdata = get_remote_report_get_rowdata($sql, $params, $this->get_page_start(), $this->get_page_size());
