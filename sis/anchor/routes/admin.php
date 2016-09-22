@@ -211,6 +211,11 @@ Route::get('admin/extend', array('before' => 'auth', 'main' => function($page = 
 		->partial('footer', 'partials/footer');
 }));
 
+
+
+
+
+
 Route::post('admin/get_fields', array('before' => 'auth', 'main' => function() {
 	$input = Input::get(array('id', 'pagetype'));
 
@@ -238,6 +243,8 @@ Route::post('admin/upload', array('before' => 'auth', 'main' => function() {
 
 	return Response::json($output);
 }));
+
+
 
 /*
 	404 error

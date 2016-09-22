@@ -364,9 +364,10 @@ function get_remote_course_completion_progress($course, $userid)
 
     if ($completioncount > 0) {
         $completion = ($completioncount * 100) / $totalmoduletracking;
+        return intval($completioncount);
     }
 
-    return intval($completion);
+    return 0;
 }
 
 function get_remote_list_course_completion($userid)
