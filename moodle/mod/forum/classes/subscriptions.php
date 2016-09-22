@@ -495,6 +495,7 @@ class subscriptions
                         AND u.id IN (SELECT id FROM {user} WHERE mnethostid = :hostid)
                         ORDER BY u.email ASC";
                 }
+                $results = get_remote_fetch_subscribed_users($sql, $params);
             } else {
                 $params['forumid'] = $forum->id;
                 if ($includediscussionsubscriptions) {
@@ -525,11 +526,6 @@ class subscriptions
                           s.forum = :forumid
                         ORDER BY u.email ASC";
                 }
-            }
-
-            if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-                $results = get_remote_fetch_subscribed_users($sql, $params);
-            } else {
                 $results = $DB->get_records_sql($sql, $params);
             }
         }
@@ -779,7 +775,7 @@ class subscriptions
                 $params["parameters[$i][value]"] = $val;
                 $i++;
             }
-            $result = delete_remote_mdl_forum("forum_digests", $params);
+            delete_remote_mdl_forum("forum_digests", $params);
             $forumsubscription = get_remote_forum_subscriptions_by($params);
         } else {
             $DB->delete_records('forum_digests', $sqlparams);
@@ -791,7 +787,7 @@ class subscriptions
                 $params = array();
                 $params['parameters[0][name]'] = "id";
                 $params['parameters[0][value]'] = $forumsubscription->id;
-                $result = delete_remote_mdl_forum("forum_subscriptions", $params);
+                delete_remote_mdl_forum("forum_subscriptions", $params);
             } else {
                 $DB->delete_records('forum_subscriptions', array('id' => $forumsubscription->id));
             }
@@ -816,7 +812,7 @@ class subscriptions
                     $params['parameters[1][value]'] = $forum->id;
                     $params['parameters[2][name]'] = "preference";
                     $params['parameters[2][value]'] = self::FORUM_DISCUSSION_UNSUBSCRIBED;
-                    $result = delete_remote_mdl_forum("forum_discussion_subs", $params);
+                    delete_remote_mdl_forum("forum_discussion_subs", $params);
                 } else {
                     $discussionsubscriptions = $DB->get_recordset('forum_discussion_subs', $sqlparams);
                     $DB->delete_records('forum_discussion_subs',

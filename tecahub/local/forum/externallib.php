@@ -1396,7 +1396,6 @@ class local_mod_forum_external extends external_api
         $obj = $DB->get_record($params['modname'], array("id" => $params['id']));
 
         if (!$obj) {
-            $warnings['message'] = "Not found data record";
             $result['id'] = 0;
             $result['warnings'] = $warnings;
             return $result;
@@ -1474,7 +1473,6 @@ class local_mod_forum_external extends external_api
         $obj = $DB->get_record($params['modname'], $prs);
 
         if (!$obj) {
-            $warnings['message'] = "Not found data record";
             $result['id'] = 0;
             $result['warnings'] = $warnings;
             return $result;
