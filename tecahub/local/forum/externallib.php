@@ -1478,22 +1478,23 @@ class local_mod_forum_external extends external_api
             $result['id'] = 0;
             $result['warnings'] = $warnings;
             return $result;
+        } else {
+
+            foreach ($params['data'] as $element) {
+                $obj->$element['name'] = $element['value'];
+            }
+
+            $transaction = $DB->start_delegated_transaction();
+
+            $cid = $DB->update_record($params['modname'], $obj);
+
+            $transaction->allow_commit();
+
+            $result['id'] = $cid;
+            $result['warnings'] = $warnings;
+
+            return $result;
         }
-
-        foreach ($params['data'] as $element) {
-            $obj->$element['name'] = $element['value'];
-        }
-
-        $transaction = $DB->start_delegated_transaction();
-
-        $cid = $DB->update_record($params['modname'], $obj);
-
-        $transaction->allow_commit();
-
-        $result['id'] = $cid;
-        $result['warnings'] = $warnings;
-
-        return $result;
     }
 
     public static function update_mdl_forum_by_returns()
@@ -2803,7 +2804,8 @@ class local_mod_forum_external extends external_api
         return $result;
     }
 
-    public static function get_fetch_subscribed_users_returns() {
+    public static function get_fetch_subscribed_users_returns()
+    {
         return new external_single_structure(
             array(
                 'rs' => new external_multiple_structure(
