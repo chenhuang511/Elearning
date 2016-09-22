@@ -2778,7 +2778,7 @@ class local_course_external extends external_api
           ORDER BY courseid ASC, name ASC";
         $arr = array($params['courseid']);
 
-        $scales = $DB->get_records_sql_menu($sql, $arr);
+        $scales = $DB->get_records_sql($sql, $arr);
 
         if (!$scales) {
             $scales = array();
