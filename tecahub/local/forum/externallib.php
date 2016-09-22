@@ -2749,4 +2749,72 @@ class local_mod_forum_external extends external_api
             )
         );
     }
+
+    public static function get_fetch_subscribed_users_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'sql' => new external_value(PARAM_RAW, 'the sql query'),
+                'hostip' => new external_value(PARAM_HOST, 'the host ip'),
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                )
+            )
+        );
+    }
+
+    public static function get_fetch_subscribed_users($sql, $hostip, $parameters)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_fetch_subscribed_users_parameters(), array(
+            'sql' => $sql,
+            'hostip' => $hostip,
+            'parameters' => $parameters
+        ));
+
+        $hostid = $DB->get_field('mnet_host', 'id', array('ip_address' => $params['hostip']));
+
+        $arr = array();
+
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $arr = array_merge($arr, array('hostid' => $hostid));
+
+        $sqlQuery = $params['sql'];
+
+        $rs = $DB->get_records_sql($sqlQuery, $arr);
+
+        if (!$rs) {
+            $rs = array();
+        }
+
+        $result = array();
+        $result['rs'] = $rs;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    public static function get_fetch_subscribed_users_returns() {
+        return new external_single_structure(
+            array(
+                'rs' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'the id of user', VALUE_OPTIONAL)
+                        )
+                    ), 'data'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

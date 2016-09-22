@@ -361,9 +361,14 @@ class subscriptions
                     }
                 }
             } else {
-                $subscriptions = $DB->get_recordset('forum_subscriptions', array(
-                    'forum' => $forumid,
-                ), '', 'id, userid');
+                if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+                    $subdata = get_remote_recordset_forum_subscriptions($forumid);
+                    $subscriptions = new \json_moodle_recordset($subdata);
+                } else {
+                    $subscriptions = $DB->get_recordset('forum_subscriptions', array(
+                        'forum' => $forumid,
+                    ), '', 'id, userid');
+                }
                 foreach ($subscriptions as $id => $data) {
                     if (!isset(self::$forumcache[$data->userid])) {
                         self::$forumcache[$data->userid] = array();
@@ -458,14 +463,46 @@ class subscriptions
         } else {
             // Only active enrolled users or everybody on the frontpage.
             list($esql, $params) = get_enrolled_sql($context, '', $groupid, true);
-            $params['forumid'] = $forum->id;
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+                $params['forumid'] = $forum->remoteid;
+                if ($includediscussionsubscriptions) {
+                    $params['sforumid'] = $forum->remoteid;
+                    $params['dsforumid'] = $forum->remoteid;
+                    $params['unsubscribed'] = self::FORUM_DISCUSSION_UNSUBSCRIBED;
 
-            if ($includediscussionsubscriptions) {
-                $params['sforumid'] = $forum->id;
-                $params['dsforumid'] = $forum->id;
-                $params['unsubscribed'] = self::FORUM_DISCUSSION_UNSUBSCRIBED;
+                    $sql = "SELECT $fields
+                        FROM (
+                            SELECT userid FROM {forum_subscriptions} s
+                            WHERE
+                                s.forum = :sforumid
+                                UNION
+                            SELECT userid FROM {forum_discussion_subs} ds
+                            WHERE
+                                ds.forum = :dsforumid AND ds.preference <> :unsubscribed
+                        ) subscriptions
+                        JOIN {user} u ON u.id = subscriptions.userid
+                        JOIN ($esql) je ON je.id = u.id
+                        AND u.id IN (SELECT id FROM {user} WHERE mnethostid = :hostid)
+                        ORDER BY u.email ASC";
 
-                $sql = "SELECT $fields
+                } else {
+                    $sql = "SELECT $fields
+                        FROM {user} u
+                        JOIN ($esql) je ON je.id = u.id
+                        JOIN {forum_subscriptions} s ON s.userid = u.id
+                        WHERE
+                          s.forum = :forumid
+                        AND u.id IN (SELECT id FROM {user} WHERE mnethostid = :hostid)
+                        ORDER BY u.email ASC";
+                }
+            } else {
+                $params['forumid'] = $forum->id;
+                if ($includediscussionsubscriptions) {
+                    $params['sforumid'] = $forum->id;
+                    $params['dsforumid'] = $forum->id;
+                    $params['unsubscribed'] = self::FORUM_DISCUSSION_UNSUBSCRIBED;
+
+                    $sql = "SELECT $fields
                         FROM (
                             SELECT userid FROM {forum_subscriptions} s
                             WHERE
@@ -479,27 +516,30 @@ class subscriptions
                         JOIN ($esql) je ON je.id = u.id
                         ORDER BY u.email ASC";
 
-            } else {
-                $sql = "SELECT $fields
+                } else {
+                    $sql = "SELECT $fields
                         FROM {user} u
                         JOIN ($esql) je ON je.id = u.id
                         JOIN {forum_subscriptions} s ON s.userid = u.id
                         WHERE
                           s.forum = :forumid
                         ORDER BY u.email ASC";
+                }
             }
-            $results = $DB->get_records_sql($sql, $params);
+
+            if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+                $results = get_remote_fetch_subscribed_users($sql, $params);
+            } else {
+                $results = $DB->get_records_sql($sql, $params);
+            }
         }
 
         // Guest user should never be subscribed to a forum.
         unset($results[$CFG->siteguest]);
 
         // Apply the activity module availability resetrictions.
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            $cm = get_remote_course_module_by_instance('forum', $forum->id);
-        } else {
-            $cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course);
-        }
+        $cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course);
+
         $modinfo = get_fast_modinfo($forum->course);
         $info = new \core_availability\info_module($modinfo->get_cm($cm->id));
         $results = $info->filter_user_list($results);
