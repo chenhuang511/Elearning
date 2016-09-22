@@ -692,7 +692,6 @@ function core_grades_update_grades($source, $courseid, $component, $activityid, 
             ),
         ), false
     );
-
     update_course_module_completion_from_hub($rgrades['studentid'], $activityid);
 
     return $resp;
@@ -707,22 +706,23 @@ function update_course_module_completion_from_hub($remoteuserid, $remotecmid){
 
     $cmcompletion = get_remote_course_modules_completion_by_userid_cmid($remoteuserid, $remotecmid);
 
-    // Merge value from hub
-    $cmcompletion->coursemoduleid = $cmid;
-    $cmcompletion->userid = $userid;
+    if($cmcompletion) {
+        // Merge value from hub
+        $cmcompletion->coursemoduleid = $cmid;
+        $cmcompletion->userid = $userid;
 
-    $cmcompletionid = $DB->get_field('course_modules_completion', 'id', array('coursemoduleid' => $cmid, 'userid' => $userid));
-    if (!$cmcompletionid) {
-        $DB->insert_record('course_modules_completion', $cmcompletion);
-    } else {
-        $cmcompletion->id = $cmcompletionid;
-        $DB->update_record('course_modules_completion', $cmcompletion);
+        $cmcompletionid = $DB->get_field('course_modules_completion', 'id', array('coursemoduleid' => $cmid, 'userid' => $userid));
+        if (!$cmcompletionid) {
+            $DB->insert_record('course_modules_completion', $cmcompletion);
+        } else {
+            $cmcompletion->id = $cmcompletionid;
+            $DB->update_record('course_modules_completion', $cmcompletion);
+        }
+
+        // Difficult to find affected users, just purge all completion cache.
+        cache::make('core', 'completion')->purge();
+        cache::make('availability_grade', 'scores')->purge();
     }
-
-    // Difficult to find affected users, just purge all completion cache.
-    cache::make('core', 'completion')->purge();
-    cache::make('availability_grade', 'scores')->purge();
-
 }
 
 /**

@@ -557,7 +557,10 @@ function update_remote_mdl_forum_by($modname, $parameters, $obj)
         )
     );
 
-    return $result->id;
+    if($result->id) {
+        return true;
+    }
+    return false;
 }
 
 function check_remote_record_forum_exists($modname, $parameters)
