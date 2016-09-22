@@ -236,4 +236,4 @@ switch ($forum->type) {
 // Add the subscription toggle JS.
 $PAGE->requires->yui_module('moodle-mod_forum-subscriptiontoggle', 'Y.M.mod_forum.subscriptiontoggle.init');
 
-echo $OUTPUT->footer($course);
+echo $OUTPUT->footer();
