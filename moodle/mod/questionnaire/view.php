@@ -114,8 +114,14 @@ if (!$questionnaire->is_active()) {
     }
     echo ('<div class="message">'.get_string("alreadyfilled", "questionnaire", $msgstring).'</div>');
 } else if ($questionnaire->user_can_take($USER->id)) {
-    $select = 'survey_id = '.$questionnaire->survey->id.' AND username = \''.$USER->id.'\' AND complete = \'n\'';
-    $resume = $DB->get_record_select('questionnaire_response', $select, null) !== false;
+    if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+        $select = 'survey_id = '.$questionnaire->survey->id.' AND username = \''.$USER->id.'\' AND complete = \'n\'';
+        $resume = $DB->get_record_select('questionnaire_response', $select, null) !== false;
+    } else {
+        $remoteuserid = get_remote_mapping_user($USER->id)[0]->id;
+        $sql_select = 'survey_id = '.$questionnaire->survey->id.' AND username = \''. $remoteuserid .'\' AND complete = \'n\'';
+        $resume = !empty(get_remote_questionnaire_response($sql_select));
+    }
     if (!$resume) {
         $complete = get_string('answerquestions', 'questionnaire');
     } else {
@@ -129,7 +135,7 @@ if (!$questionnaire->is_active()) {
 if ($questionnaire->is_active() && !$questionnaire->questions) {
     echo '<p>'.get_string('noneinuse', 'questionnaire').'</p>';
 }
-if ($questionnaire->is_active() && $questionnaire->capabilities->editquestions && !$questionnaire->questions) { // Sanity check.
+if ($questionnaire->is_active() && $questionnaire->capabilities->editquestions && !$questionnaire->questions && MOODLE_RUN_MODE == MOODLE_MODE_HOST) { // Sanity check.
     echo '<a href="'.$CFG->wwwroot.htmlspecialchars('/mod/questionnaire/questions.php?'.
                 'id='.$questionnaire->cm->id).'">'.'<strong>'.get_string('addquestions', 'questionnaire').'</strong></a>';
 }

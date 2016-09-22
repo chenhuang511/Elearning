@@ -647,6 +647,45 @@ class local_questionnaire_external extends external_api {
     /**
      * get record questionnaire response by condition
      */
+    public static function get_questionnaire_response_user_parameters()
+    {
+        return self::get_questionnaire_attempts_parameters();
+    }
+
+    public function get_questionnaire_response_user($condition, $sort)
+    {
+        global $CFG, $DB;
+        //validate parameter
+        $params = self::validate_parameters(self::get_questionnaire_response_user_parameters(),
+            array('condition' => $condition, 'sort' => $sort));
+
+        $sql = 'SELECT R.id AS responseid, R.submitted AS submitted, U.username AS username, U.id as userid '.
+            'FROM {questionnaire_response} R, {user} U '.
+            'WHERE '.$params['condition'];
+        if(!empty($params['sort'])){
+            $sql .= ' ORDER BY '.$params['sort'];
+        }
+        $res = array();
+        $res = $DB->get_records_sql($sql);
+        return $res;
+    }
+
+    public static function get_questionnaire_response_user_returns()
+    {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'responseid' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
+                    'userid' => new external_value(PARAM_INT, 'Standard Moodle primary key.'),
+                    'submitted' => new external_value(PARAM_INT, 'content'),
+                    'username' => new external_value(PARAM_TEXT, 'value'),
+                )
+            )
+        );
+    }
+    /**
+     * get record questionnaire response by condition
+     */
     public static function get_questionnaire_bool_question_parameters()
     {
         return self::get_questionnaire_attempts_parameters();

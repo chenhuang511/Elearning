@@ -610,7 +610,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      * @param int $sectionno The section number in the coruse which is being dsiplayed
      * @return array associative array with previous and next section link
      */
-    protected function get_nav_links($course, $sections, $sectionno) {
+    protected function get_nav_links($course, $sections, $sectionno, $option = array()) {
         // FIXME: This is really evil and should by using the navigation API.
         $course = course_get_format($course)->get_course();
         $canviewhidden = has_capability('moodle/course:viewhiddensections', context_course::instance($course->id))
@@ -626,7 +626,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                 }
                 $previouslink = html_writer::tag('span', $this->output->larrow(), array('class' => 'larrow'));
                 $previouslink .= get_section_name($course, $sections[$back]);
-                $links['previous'] = html_writer::link(course_get_url($course, $back), $previouslink, $params);
+                $links['previous'] = html_writer::link(course_get_url($course, $back, $option), $previouslink, $params);
             }
             $back--;
         }
@@ -640,7 +640,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                 }
                 $nextlink = get_section_name($course, $sections[$forward]);
                 $nextlink .= html_writer::tag('span', $this->output->rarrow(), array('class' => 'rarrow'));
-                $links['next'] = html_writer::link(course_get_url($course, $forward), $nextlink, $params);
+                $links['next'] = html_writer::link(course_get_url($course, $forward, $option), $nextlink, $params);
             }
             $forward++;
         }
@@ -996,7 +996,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
 
         // Title with section navigation links.
         if($shownav) {
-            $sectionnavlinks = $this->get_nav_links($course, $modinfo->get_section_info_all(), $displaysection);
+            $sectionnavlinks = $this->get_nav_links($course, $modinfo->get_section_info_all(), $displaysection, ['student' => 1]);
 
             $sectiontitle = '';
             $sectiontitle .= html_writer::start_tag('div', array('class' => 'section-navigation navigationtitle student-navigation'));

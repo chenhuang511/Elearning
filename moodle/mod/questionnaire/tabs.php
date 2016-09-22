@@ -77,7 +77,7 @@ if ($questionnaire->capabilities->readownresponses && ($usernumresp > 0)) {
         $argstr2 = $argstr.'&byresponse=0&action=vall&group='.$currentgroupid;
         $row2[] = new tabobject('myvall', $CFG->wwwroot.htmlspecialchars('/mod/questionnaire/myreport.php?'.$argstr2),
                                 get_string('myresponses', 'questionnaire'));
-        if ($questionnaire->capabilities->downloadresponses) {
+        if ($questionnaire->capabilities->downloadresponses && MOODLE_MODE_HOST === MOODLE_RUN_MODE) {
             $argstr2 = $argstr.'&action=dwnpg';
             $link  = $CFG->wwwroot.htmlspecialchars('/mod/questionnaire/report.php?'.$argstr2);
             $row2[] = new tabobject('mydownloadcsv', $link, get_string('downloadtext'));
@@ -153,7 +153,7 @@ if (($canviewallgroups || ($canviewgroups && $questionnaire->capabilities->reada
                                     get_string('deleteallresponses', 'questionnaire'));
         }
 
-        if ($questionnaire->capabilities->downloadresponses) {
+        if ($questionnaire->capabilities->downloadresponses && MOODLE_MODE_HOST === MOODLE_RUN_MODE) {
             $argstr2 = $argstr.'&action=dwnpg&group='.$currentgroupid;
             $link  = $CFG->wwwroot.htmlspecialchars('/mod/questionnaire/report.php?'.$argstr2);
             $row3[] = new tabobject('downloadcsv', $link, get_string('downloadtext'));
@@ -207,7 +207,7 @@ if (($canviewallgroups || ($canviewgroups && $questionnaire->capabilities->reada
                                     get_string('deleteallresponses', 'questionnaire'));
         }
 
-        if ($questionnaire->capabilities->downloadresponses) {
+        if ($questionnaire->capabilities->downloadresponses && MOODLE_MODE_HOST === MOODLE_RUN_MODE) {
             $argstr2 = $argstr.'&action=dwnpg';
             $link  = htmlspecialchars('/mod/questionnaire/report.php?'.$argstr2);
             $row2[] = new tabobject('downloadcsv', $link, get_string('downloadtext'));
@@ -218,7 +218,7 @@ if (($canviewallgroups || ($canviewgroups && $questionnaire->capabilities->reada
     }
 }
 
-if ($questionnaire->capabilities->viewsingleresponse && ($canviewallgroups || $canviewgroups)) {
+if ($questionnaire->capabilities->viewsingleresponse && ($canviewallgroups || $canviewgroups) && MOODLE_MODE_HOST === MOODLE_RUN_MODE) {
     $nonrespondenturl = new moodle_url('/mod/questionnaire/show_nonrespondents.php', array('id' => $questionnaire->cm->id));
     $row[] = new tabobject('nonrespondents',
                     $nonrespondenturl->out(),

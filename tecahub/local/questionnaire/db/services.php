@@ -138,6 +138,14 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_mod_get_questionnaire_response_user' => array(
+		'classname'	  => 'local_questionnaire_external',
+		'methodname'  => 'get_questionnaire_response_user',
+		'classpath'	  => 'local/questionnaire/externallib.php',
+		'description' => "Get questionnaire response and user ",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 	'local_mod_get_questionnaire_bool_question' => array(
 		'classname'	  => 'local_questionnaire_external',
 		'methodname'  => 'get_questionnaire_bool_question',

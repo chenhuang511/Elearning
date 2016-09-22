@@ -628,7 +628,7 @@ function questionnaire_extend_settings_navigation(settings_navigation $settings,
             $urlargs = array('instance' => $questionnaire->id, 'userid' => $USER->id,
                 'byresponse' => 0, 'action' => 'vall', 'group' => $currentgroupid);
             $myreportnode->add(get_string('myresponses', 'questionnaire'), new moodle_url($url, $urlargs));
-            if ($questionnaire->capabilities->downloadresponses) {
+            if ($questionnaire->capabilities->downloadresponses && MOODLE_MODE_HOST === MOODLE_RUN_MODE) {
                 $urlargs = array('instance' => $questionnaire->id, 'user' => $USER->id,
                     'action' => 'dwnpg', 'group' => $currentgroupid);
                 $myreportnode->add(get_string('downloadtext'), new moodle_url('/mod/questionnaire/report.php', $urlargs));
@@ -675,7 +675,7 @@ function questionnaire_extend_settings_navigation(settings_navigation $settings,
                     array('instance' => $questionnaire->id, 'action' => 'delallresp', 'group' => $currentgroupid)));
         }
 
-        if ($questionnaire->capabilities->downloadresponses) {
+        if ($questionnaire->capabilities->downloadresponses && MOODLE_MODE_HOST === MOODLE_RUN_MODE && MOODLE_MODE_HOST === MOODLE_RUN_MODE) {
             $summarynode->add(get_string('downloadtextformat', 'questionnaire'),
                 new moodle_url('/mod/questionnaire/report.php',
                     array('instance' => $questionnaire->id, 'action' => 'dwnpg', 'group' => $currentgroupid)));
@@ -704,7 +704,7 @@ function questionnaire_extend_settings_navigation(settings_navigation $settings,
         $canviewgroups = groups_has_membership($cm, $USER->id);
     }
     $canviewallgroups = has_capability('moodle/site:accessallgroups', $context);
-    if ($questionnaire->capabilities->viewsingleresponse && ($canviewallgroups || $canviewgroups)) {
+    if ($questionnaire->capabilities->viewsingleresponse && ($canviewallgroups || $canviewgroups) && MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
         $url = '/mod/questionnaire/show_nonrespondents.php';
         $node = navigation_node::create(get_string('show_nonrespondents', 'questionnaire'),
             new moodle_url($url, array('id' => $cmid)),

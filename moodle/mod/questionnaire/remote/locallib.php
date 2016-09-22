@@ -246,6 +246,25 @@ function get_remote_questionnaire_response_group_username($condition, $sort='')
 }
 
 /**
+ * get questionnaire_response
+ *
+ * @param $branch
+ * @return false|mixed
+ */
+function get_remote_questionnaire_response_user($condition, $sort='')
+{
+    $res = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_questionnaire_response_user',
+            'params' => array('condition' => $condition, 'sort' => $sort)
+        )
+    );
+    return $res;
+}
+
+/**
  * get questionnaire boolean and question
  *
  * @param $branch

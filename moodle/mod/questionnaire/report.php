@@ -745,9 +745,7 @@ switch ($action) {
         // Print the page header.
         $PAGE->set_title(get_string('questionnairereport', 'questionnaire'));
         $PAGE->set_heading(format_string($course->fullname));
-        if($CFG->nonajax == true){
-            echo $OUTPUT->header();
-        }
+        echo $OUTPUT->header();
 
         // Print the tabs.
         if ($byresponse) {
@@ -786,8 +784,6 @@ switch ($action) {
         echo $OUTPUT->box_end();
 
         // Finish the page.
-        if($CFG->nonajax == true){
-            echo $OUTPUT->footer($course);
-        }
+        echo $OUTPUT->footer($course);
         break;
 }

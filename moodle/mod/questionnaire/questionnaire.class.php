@@ -24,7 +24,6 @@ class questionnaire {
      * @var \mod_questionnaire\question\base[] $quesitons
      */
     public $questions = [];
-    private $nonajax;
 
     /**
      * The survey record.
@@ -41,11 +40,7 @@ class questionnaire {
     public function __construct($id = 0, $questionnaire = null, &$course, &$cm, $addquestions = true) {
         global $DB, $CFG;
         require_once($CFG->dirroot . '/mod/questionnaire/remote/locallib.php');
-        if($CFG->nonajax == true){
-            $this->nonajax = "&nonajax=1";
-        } else {
-            $this->nonajax = "";
-        }
+
         if ($id) {
             if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
                 $questionnaire = $DB->get_record('questionnaire', array('id' => $id));
@@ -170,9 +165,7 @@ class questionnaire {
         // Initialise the JavaScript.
         $PAGE->requires->js_init_call('M.mod_questionnaire.init_attempt_form', null, false, questionnaire_get_js_module());
 
-        if($CFG->nonajax == true){
-            echo $OUTPUT->header();
-        }
+        echo $OUTPUT->header();
 
         $questionnaire = $this;
 
@@ -183,13 +176,9 @@ class questionnaire {
         if (!$this->capabilities->view) {
             echo('<br/>');
             questionnaire_notify(get_string("noteligible", "questionnaire", $this->name));
-            if($this->nonajax == true){
-                echo('<div><a href="'.$CFG->wwwroot.'/course/view.php?id='.$this->course->id.$this->nonajax.'">'.
-                    get_string("continue").'</a></div>');
-            } else {
-                echo('<div><a class="sublink get-remote-content remote-link-action" href="'.$CFG->wwwroot.'/course/view.php?id='.$this->course->id.'">'.
-                    get_string("continue").'</a></div>');
-            }
+            echo('<div><a href="'.$CFG->wwwroot.'/course/view.php?id='.$this->course->id.'">'.
+                get_string("continue").'</a></div>');
+
             exit;
         }
 
@@ -300,9 +289,7 @@ class questionnaire {
         }
 
         // Finish the page.
-        if($CFG->nonajax == true){
-            echo $OUTPUT->footer($this->course);
-        }
+        echo $OUTPUT->footer($this->course);
     }
 
     /*
@@ -768,7 +755,7 @@ class questionnaire {
         $formdatarid = isset($formdata->rid) ? $formdata->rid : '0';
         echo '<div class="generalbox">';
         echo '
-                <form id="phpesp_response" method="post" action="'.$action.$this->nonajax.'">
+                <form id="phpesp_response" method="post" action="'.$action.'">
                 <div>
                 <input type="hidden" name="referer" value="'.$formdatareferer.'" />
                 <input type="hidden" name="a" value="'.$this->id.'" />
@@ -793,11 +780,7 @@ class questionnaire {
             if ($formdata->sec == $numsections) {
                 echo '
                     <div><input type="hidden" name="submittype" value="Submit Survey" />';
-                if($this->nonajax == true){
                     echo '<input type="submit" name="submit" value="'.get_string('submitsurvey', 'questionnaire').'" /></div>';
-                } else {
-                    echo '<input id="id_submit" type="submit" name="submit" value="'.get_string('submitsurvey', 'questionnaire').'" /></div>';
-                }
             } else {
                 echo '&nbsp;<div><input type="submit" name="next" value="'.
                                 get_string('nextpage', 'questionnaire').'&nbsp;>>" /></div>';
@@ -2183,26 +2166,13 @@ class questionnaire {
             $currentgroupid = 0;
         }
         if ($this->capabilities->readownresponses) {
-            if($this->nonajax){
                 echo('<a href="'.$CFG->wwwroot.'/mod/questionnaire/myreport.php?id='.
-                    $this->cm->id.'&amp;instance='.$this->cm->instance.'&amp;user='.$USER->id.'&byresponse=0&action=vresp'.$this->nonajax.'">'.
+                    $this->cm->id.'&amp;instance='.$this->cm->instance.'&amp;user='.$USER->id.'&byresponse=0&action=vresp">'.
                     get_string("continue").'</a>');
-            } else {
-                echo '<a class="sublink get-remote-content remote-link-action" data-module=\'';
-                echo json_encode(array('url' => $CFG->wwwroot.'/mod/questionnaire/myreport.php', 'params' => array('id' => $this->cm->id, 'instance' => $this->cm->instance, 'user' => $USER->id, 'byresponse' => 0, 'action' => 'vresp'  ), 'method' => 'get'));
-                echo '\' href="#">'.get_string("continue");
-                echo '</a>';
-            }
+
         } else {
-            if($this->nonajax){
-                echo('<a href="'.$CFG->wwwroot.'/course/view.php?id='.$this->course->id.'">'.
-                    get_string("continue").'</a>');
-            } else {
-                echo '<a class="sublink get-remote-content remote-link-action" data-module=\'';
-                echo json_encode(array('url' => $CFG->wwwroot.'/course/view.php', 'params' => array('id' => $this->course->id), 'method' => 'get'));
-                echo '\' href="#">'.get_string("continue");
-                echo '</a>';
-            }
+            echo('<a href="'.$CFG->wwwroot.'/course/view.php?id='.$this->course->id.'">'.
+                get_string("continue").'</a>');
         }
         return;
     }
@@ -2249,14 +2219,24 @@ class questionnaire {
             ' AND U.id = '.$castsql.
             $selectgroupid.
             'ORDER BY U.lastname, U.firstname, R.submitted DESC';
+
+            $sql_remote = ' R.survey_id='.$this->survey->id. ' AND complete = \'y\' AND U.id = R.username ORDER BY U.lastname, U.firstname, R.submitted DESC';
+            $anonymous = false;
         } else {
             $sql = 'SELECT R.id AS responseid, R.submitted
                    FROM {questionnaire_response} R
                    WHERE R.survey_id = ?
                    AND complete = ?
                    ORDER BY R.submitted DESC';
+            $sql_remote = "survey_id = " . $this->survey->id . " AND complete = 'y' ";
+            $anonymous = true;
         }
-        if (!$responses = $DB->get_records_sql ($sql, array('survey_id' => $this->survey->id, 'complete' => 'y'))) {
+        if($ishost = MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
+            $responses = $DB->get_records_sql ($sql, array('survey_id' => $this->survey->id, 'complete' => 'y'));
+        } else {
+            $responses = $anonymous ? get_remote_questionnaire_response($sql_remote, "submitted DESC") : get_remote_questionnaire_response_user($sql_remote);
+        }
+        if (!$responses) {
             return;
         }
         $total = count($responses);
@@ -2272,9 +2252,13 @@ class questionnaire {
         $i = 0;
         $currpos = -1;
         foreach ($responses as $response) {
+            if(!$ishost && $anonymous === true) {
+                $response->responseid = $response->id;
+                $response->userid = $response->username;
+            }
             array_push($rids, $response->responseid);
             if ($isfullname) {
-                $user = $DB->get_record('user', array('id' => $response->userid));
+                $user = $DB->get_record('user', array('id' => $response->userid));// mapping
                 $userfullname = fullname($user);
                 array_push($ridssub, $response->submitted);
                 array_push($ridsuserfullname, fullname($user));
@@ -2339,7 +2323,7 @@ class questionnaire {
                                 title="'.$lastuserfullname .'">'.
                                 get_string('lastrespondent', 'questionnaire').'</a>&nbsp;<b>>></b>');
             }
-            $url = $CFG->wwwroot.'/mod/questionnaire/report.php?action=vresp&byresponse=1&group='.$currentgroupid.$this->nonajax;
+            $url = $CFG->wwwroot.'/mod/questionnaire/report.php?action=vresp&byresponse=1&group='.$currentgroupid;
             // Display navbar.
             echo $OUTPUT->box_start('respondentsnavbar');
             echo implode(' | ', $linkarr);
@@ -2348,7 +2332,7 @@ class questionnaire {
             // Display a "print this response" icon here in prevision of total removal of tabs in version 2.6.
             $linkname = '&nbsp;'.get_string('print', 'questionnaire');
             $url = '/mod/questionnaire/print.php?qid='.$this->id.'&amp;rid='.$currrid.
-            '&amp;courseid='.$this->course->id.'&amp;sec=1'.$this->nonajax;
+            '&amp;courseid='.$this->course->id.'&amp;sec=1';
             $title = get_string('printtooltip', 'questionnaire');
             $options = array('menubar' => true, 'location' => false, 'scrollbars' => true,
                             'resizable' => true, 'height' => 600, 'width' => 800);
@@ -2461,7 +2445,6 @@ class questionnaire {
         } else {
             $url = 'report.php?instance='.$instance.'&amp;user='.$userid.'&amp;action=vresp&amp;byresponse=1&amp;sid='.$sid;
         }
-        $url .= $this->nonajax;
         $linkarr = array();
         $displaypos = 1;
         if ($prevrid != null) {
