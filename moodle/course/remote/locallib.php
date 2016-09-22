@@ -346,7 +346,7 @@ function get_remote_course_completion_progress($course, $userid)
                 FROM {course_modules} 
                 WHERE course = ? AND completion <> 0", array($course->id));
 
-    if(empty($totalmoduletracking)){
+    if (empty($totalmoduletracking)) {
         return 0;
     }
 
@@ -814,4 +814,27 @@ function delete_remote_course_delete_module_by($cmid)
     );
 
     return $result->status;
+}
+
+function get_remote_scales_menu_sql($courseid)
+{
+    global $DB;
+    $course = $DB->get_record('course', array('id' => $courseid), 'id, remoteid');
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_get_scales_menu_sql',
+            'params' => array('courseid' => $course ? $course->remoteid : $courseid),
+        )
+    );
+
+    $scales = array();
+
+    if($result->scales) {
+        foreach ($result->scales as $scale) {
+            $scales[$scale->id] = $scale->name;
+        }
+    }
+    return $scales;
 }

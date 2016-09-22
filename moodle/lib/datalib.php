@@ -35,9 +35,9 @@ defined('MOODLE_INTERNAL') || die();
 define('MAX_COURSES_IN_CATEGORY', 10000);
 
 /**
-  * The maximum number of course categories
-  * MAX_COURSES_IN_CATEGORY * MAX_COURSE_CATEGORIES must not be more than max integer!
-  */
+ * The maximum number of course categories
+ * MAX_COURSES_IN_CATEGORY * MAX_COURSE_CATEGORIES must not be more than max integer!
+ */
 define('MAX_COURSE_CATEGORIES', 10000);
 
 /**
@@ -56,7 +56,8 @@ if (!defined('LASTACCESS_UPDATE_SECS')) {
  * @static stdClass $mainadmin
  * @return stdClass {@link $USER} record from DB, false if not found
  */
-function get_admin() {
+function get_admin()
+{
     global $CFG, $DB;
 
     static $mainadmin = null;
@@ -75,7 +76,7 @@ function get_admin() {
     $mainadmin = null;
 
     foreach (explode(',', $CFG->siteadmins) as $id) {
-        if ($user = $DB->get_record('user', array('id'=>$id, 'deleted'=>0))) {
+        if ($user = $DB->get_record('user', array('id' => $id, 'deleted' => 0))) {
             $mainadmin = $user;
             break;
         }
@@ -95,7 +96,8 @@ function get_admin() {
  *
  * @return array
  */
-function get_admins() {
+function get_admins()
+{
     global $DB, $CFG;
 
     if (empty($CFG->siteadmins)) {  // Should not happen on an ordinary site
@@ -138,10 +140,11 @@ function get_admins() {
  * @param array $exceptions A list of IDs to ignore, eg 2,4,5,8,9,10
  * @return array
  */
-function search_users($courseid, $groupid, $searchtext, $sort='', array $exceptions=null) {
+function search_users($courseid, $groupid, $searchtext, $sort = '', array $exceptions = null)
+{
     global $DB;
 
-    $fullname  = $DB->sql_fullname('u.firstname', 'u.lastname');
+    $fullname = $DB->sql_fullname('u.firstname', 'u.lastname');
 
     if (!empty($exceptions)) {
         list($exceptions, $params) = $DB->get_in_or_equal($exceptions, SQL_PARAMS_NAMED, 'ex', false);
@@ -157,7 +160,7 @@ function search_users($courseid, $groupid, $searchtext, $sort='', array $excepti
         $order = "";
     }
 
-    $select = "u.deleted = 0 AND u.confirmed = 1 AND (".$DB->sql_like($fullname, ':search1', false)." OR ".$DB->sql_like('u.email', ':search2', false).")";
+    $select = "u.deleted = 0 AND u.confirmed = 1 AND (" . $DB->sql_like($fullname, ':search1', false) . " OR " . $DB->sql_like('u.email', ':search2', false) . ")";
     $params['search1'] = "%$searchtext%";
     $params['search2'] = "%$searchtext%";
 
@@ -224,7 +227,8 @@ function search_users($courseid, $groupid, $searchtext, $sort='', array $excepti
  *     parameters (using named placeholders).
  */
 function users_search_sql($search, $u = 'u', $searchanywhere = true, array $extrafields = array(),
-        array $exclude = null, array $includeonly = null) {
+                          array $exclude = null, array $includeonly = null)
+{
     global $DB, $CFG;
     $params = array();
     $tests = array();
@@ -337,7 +341,8 @@ function users_search_sql($search, $u = 'u', $searchanywhere = true, array $extr
  *      string SQL fragment to use in the ORDER BY clause. For example, "firstname, lastname".
  *      array of parameters used in the SQL fragment.
  */
-function users_order_by_sql($usertablealias = '', $search = null, context $context = null) {
+function users_order_by_sql($usertablealias = '', $search = null, context $context = null)
+{
     global $DB, $PAGE;
 
     if ($usertablealias) {
@@ -360,8 +365,8 @@ function users_order_by_sql($usertablealias = '', $search = null, context $conte
     $exactconditions = array();
     $paramkey = 'usersortexact1';
 
-    $exactconditions[] = $DB->sql_fullname($tableprefix . 'firstname', $tableprefix  . 'lastname') .
-            ' = :' . $paramkey;
+    $exactconditions[] = $DB->sql_fullname($tableprefix . 'firstname', $tableprefix . 'lastname') .
+        ' = :' . $paramkey;
     $params[$paramkey] = $search;
     $paramkey++;
 
@@ -373,7 +378,7 @@ function users_order_by_sql($usertablealias = '', $search = null, context $conte
     }
 
     $sort = 'CASE WHEN ' . implode(' OR ', $exactconditions) .
-            ' THEN 0 ELSE 1 END, ' . $sort;
+        ' THEN 0 ELSE 1 END, ' . $sort;
 
     return array($sort, $params);
 }
@@ -397,25 +402,26 @@ function users_order_by_sql($usertablealias = '', $search = null, context $conte
  * @return array|int|bool  {@link $USER} records unless get is false in which case the integer count of the records found is returned.
  *                        False is returned if an error is encountered.
  */
-function get_users($get=true, $search='', $confirmed=false, array $exceptions=null, $sort='firstname ASC',
-                   $firstinitial='', $lastinitial='', $page='', $recordsperpage='', $fields='*', $extraselect='', array $extraparams=null) {
+function get_users($get = true, $search = '', $confirmed = false, array $exceptions = null, $sort = 'firstname ASC',
+                   $firstinitial = '', $lastinitial = '', $page = '', $recordsperpage = '', $fields = '*', $extraselect = '', array $extraparams = null)
+{
     global $DB, $CFG;
 
     if ($get && !$recordsperpage) {
         debugging('Call to get_users with $get = true no $recordsperpage limit. ' .
-                'On large installations, this will probably cause an out of memory error. ' .
-                'Please think again and change your code so that it does not try to ' .
-                'load so much data into memory.', DEBUG_DEVELOPER);
+            'On large installations, this will probably cause an out of memory error. ' .
+            'Please think again and change your code so that it does not try to ' .
+            'load so much data into memory.', DEBUG_DEVELOPER);
     }
 
-    $fullname  = $DB->sql_fullname();
+    $fullname = $DB->sql_fullname();
 
     $select = " id <> :guestid AND deleted = 0";
-    $params = array('guestid'=>$CFG->siteguest);
+    $params = array('guestid' => $CFG->siteguest);
 
-    if (!empty($search)){
+    if (!empty($search)) {
         $search = trim($search);
-        $select .= " AND (".$DB->sql_like($fullname, ':search1', false)." OR ".$DB->sql_like('email', ':search2', false)." OR username = :search3)";
+        $select .= " AND (" . $DB->sql_like($fullname, ':search1', false) . " OR " . $DB->sql_like('email', ':search2', false) . " OR username = :search3)";
         $params['search1'] = "%$search%";
         $params['search2'] = "%$search%";
         $params['search3'] = "$search";
@@ -432,11 +438,11 @@ function get_users($get=true, $search='', $confirmed=false, array $exceptions=nu
     }
 
     if ($firstinitial) {
-        $select .= " AND ".$DB->sql_like('firstname', ':fni', false, false);
+        $select .= " AND " . $DB->sql_like('firstname', ':fni', false, false);
         $params['fni'] = "$firstinitial%";
     }
     if ($lastinitial) {
-        $select .= " AND ".$DB->sql_like('lastname', ':lni', false, false);
+        $select .= " AND " . $DB->sql_like('lastname', ':lni', false, false);
         $params['lni'] = "$lastinitial%";
     }
 
@@ -469,32 +475,33 @@ function get_users($get=true, $search='', $confirmed=false, array $exceptions=nu
  *   as appropriate for current user and given context
  * @return array Array of {@link $USER} records
  */
-function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperpage=0,
-                           $search='', $firstinitial='', $lastinitial='', $extraselect='',
-                           array $extraparams=null, $extracontext = null) {
+function get_users_listing($sort = 'lastaccess', $dir = 'ASC', $page = 0, $recordsperpage = 0,
+                           $search = '', $firstinitial = '', $lastinitial = '', $extraselect = '',
+                           array $extraparams = null, $extracontext = null)
+{
     global $DB, $CFG;
 
-    $fullname  = $DB->sql_fullname();
+    $fullname = $DB->sql_fullname();
 
     $select = "deleted <> 1 AND id <> :guestid";
     $params = array('guestid' => $CFG->siteguest);
 
     if (!empty($search)) {
         $search = trim($search);
-        $select .= " AND (". $DB->sql_like($fullname, ':search1', false, false).
-                   " OR ". $DB->sql_like('email', ':search2', false, false).
-                   " OR username = :search3)";
+        $select .= " AND (" . $DB->sql_like($fullname, ':search1', false, false) .
+            " OR " . $DB->sql_like('email', ':search2', false, false) .
+            " OR username = :search3)";
         $params['search1'] = "%$search%";
         $params['search2'] = "%$search%";
         $params['search3'] = "$search";
     }
 
     if ($firstinitial) {
-        $select .= " AND ". $DB->sql_like('firstname', ':fni', false, false);
+        $select .= " AND " . $DB->sql_like('firstname', ':fni', false, false);
         $params['fni'] = "$firstinitial%";
     }
     if ($lastinitial) {
-        $select .= " AND ". $DB->sql_like('lastname', ':lni', false, false);
+        $select .= " AND " . $DB->sql_like('lastname', ':lni', false, false);
         $params['lni'] = "$lastinitial%";
     }
 
@@ -512,7 +519,7 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
     $extrafields = '';
     if ($extracontext) {
         $extrafields = get_extra_user_fields_sql($extracontext, '', '',
-                array('id', 'username', 'email', 'firstname', 'lastname', 'city', 'country',
+            array('id', 'username', 'email', 'firstname', 'lastname', 'city', 'country',
                 'lastaccess', 'confirmed', 'mnethostid'));
     }
     $namefields = get_all_user_name_fields(true);
@@ -533,7 +540,8 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
  * @global object
  * @return array of unconfirmed users
  */
-function get_users_confirmed() {
+function get_users_confirmed()
+{
     global $DB, $CFG;
     return $DB->get_records_sql("SELECT *
                                    FROM {user}
@@ -549,14 +557,15 @@ function get_users_confirmed() {
  *
  * @return object A {@link $COURSE} object for the site, exception if not found
  */
-function get_site() {
+function get_site()
+{
     global $SITE, $DB;
 
     if (!empty($SITE->id)) {   // We already have a global to use, so return that
         return $SITE;
     }
 
-    if ($course = $DB->get_record('course', array('category'=>0))) {
+    if ($course = $DB->get_record('course', array('category' => 0))) {
         return $course;
     } else {
         // course table exists, but the site is not there,
@@ -578,7 +587,8 @@ function get_site() {
  * @return stdClass A course object
  * @throws dml_exception If not found in database
  */
-function get_course($courseid, $clone = true) {
+function get_course($courseid, $clone = true)
+{
     global $DB, $COURSE, $SITE;
     if (!empty($COURSE->id) && $COURSE->id == $courseid) {
         return $clone ? clone($COURSE) : $COURSE;
@@ -612,7 +622,8 @@ function get_course($courseid, $clone = true) {
  * @param string $fields The additional fields to return
  * @return array Array of courses
  */
-function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") {
+function get_courses($categoryid = "all", $sort = "c.sortorder ASC", $fields = "c.*")
+{
 
     global $USER, $CFG, $DB;
 
@@ -683,8 +694,9 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
  * @param string $limitnum The number of courses to limit to
  * @return array Array of courses
  */
-function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c.*",
-                          &$totalcount, $limitfrom="", $limitnum="") {
+function get_courses_page($categoryid = "all", $sort = "c.sortorder ASC", $fields = "c.*",
+                          &$totalcount, $limitfrom = "", $limitnum = "")
+{
     global $USER, $CFG, $DB;
 
     $params = array();
@@ -716,7 +728,7 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
     // pull out all course matching the cat
     $rs = $DB->get_recordset_sql($sql, $params);
     // iteration will have to be done inside loop to keep track of the limitfrom and limitnum
-    foreach($rs as $course) {
+    foreach ($rs as $course) {
         context_helper::preload_from_record($course);
         if ($course->visible <= 0) {
             // for hidden courses, require visibility check
@@ -751,16 +763,17 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
  * @return object {@link $COURSE} records
  */
 function get_courses_search($searchterms, $sort, $page, $recordsperpage, &$totalcount,
-                            $requiredcapabilities = array()) {
+                            $requiredcapabilities = array())
+{
     global $CFG, $DB;
 
     if ($DB->sql_regex_supported()) {
-        $REGEXP    = $DB->sql_regex(true);
+        $REGEXP = $DB->sql_regex(true);
         $NOTREGEXP = $DB->sql_regex(false);
     }
 
     $searchcond = array();
-    $params     = array();
+    $params = array();
     $i = 0;
 
     // Thanks Oracle for your non-ansi concat and type limits in coalesce. MDL-29912
@@ -774,10 +787,10 @@ function get_courses_search($searchterms, $sort, $page, $recordsperpage, &$total
         $i++;
 
         $NOT = false; /// Initially we aren't going to perform NOT LIKE searches, only MSSQL and Oracle
-                   /// will use it to simulate the "-" operator with LIKE clause
+        /// will use it to simulate the "-" operator with LIKE clause
 
-    /// Under Oracle and MSSQL, trim the + and - operators and perform
-    /// simpler LIKE (or NOT LIKE) queries
+        /// Under Oracle and MSSQL, trim the + and - operators and perform
+        /// simpler LIKE (or NOT LIKE) queries
         if (!$DB->sql_regex_supported()) {
             if (substr($searchterm, 0, 1) == '-') {
                 $NOT = true;
@@ -787,21 +800,21 @@ function get_courses_search($searchterms, $sort, $page, $recordsperpage, &$total
 
         // TODO: +- may not work for non latin languages
 
-        if (substr($searchterm,0,1) == '+') {
+        if (substr($searchterm, 0, 1) == '+') {
             $searchterm = trim($searchterm, '+-');
             $searchterm = preg_quote($searchterm, '|');
             $searchcond[] = "$concat $REGEXP :ss$i";
-            $params['ss'.$i] = "(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)";
+            $params['ss' . $i] = "(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)";
 
-        } else if (substr($searchterm,0,1) == "-") {
+        } else if (substr($searchterm, 0, 1) == "-") {
             $searchterm = trim($searchterm, '+-');
             $searchterm = preg_quote($searchterm, '|');
             $searchcond[] = "$concat $NOTREGEXP :ss$i";
-            $params['ss'.$i] = "(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)";
+            $params['ss' . $i] = "(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)";
 
         } else {
-            $searchcond[] = $DB->sql_like($concat,":ss$i", false, true, $NOT);
-            $params['ss'.$i] = "%$searchterm%";
+            $searchcond[] = $DB->sql_like($concat, ":ss$i", false, true, $NOT);
+            $params['ss' . $i] = "%$searchterm%";
         }
     }
 
@@ -816,7 +829,7 @@ function get_courses_search($searchterms, $sort, $page, $recordsperpage, &$total
 
     // Tiki pagination
     $limitfrom = $page * $recordsperpage;
-    $limitto   = $limitfrom + $recordsperpage;
+    $limitto = $limitfrom + $recordsperpage;
 
     $ccselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
     $ccjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
@@ -825,11 +838,11 @@ function get_courses_search($searchterms, $sort, $page, $recordsperpage, &$total
     $sql = "SELECT c.* $ccselect
               FROM {course} c
            $ccjoin
-             WHERE $searchcond AND c.id <> ".SITEID."
+             WHERE $searchcond AND c.id <> " . SITEID . "
           ORDER BY $sort";
 
     $rs = $DB->get_recordset_sql($sql, $params);
-    foreach($rs as $course) {
+    foreach ($rs as $course) {
         // Preload contexts only for hidden courses or courses we need to return.
         context_helper::preload_from_record($course);
         $coursecontext = context_course::instance($course->id);
@@ -869,7 +882,8 @@ function get_courses_search($searchterms, $sort, $page, $recordsperpage, &$total
  * @uses CONTEXT_COURSE
  * @return void
  */
-function fix_course_sortorder() {
+function fix_course_sortorder()
+{
     global $DB, $SITE;
 
     //WARNING: this is PHP5 only code!
@@ -878,19 +892,19 @@ function fix_course_sortorder() {
     // the cache events to purge all cached courses/categories data
     $cacheevents = array();
 
-    if ($unsorted = $DB->get_records('course_categories', array('sortorder'=>0))) {
+    if ($unsorted = $DB->get_records('course_categories', array('sortorder' => 0))) {
         //move all categories that are not sorted yet to the end
-        $DB->set_field('course_categories', 'sortorder', MAX_COURSES_IN_CATEGORY*MAX_COURSE_CATEGORIES, array('sortorder'=>0));
+        $DB->set_field('course_categories', 'sortorder', MAX_COURSES_IN_CATEGORY * MAX_COURSE_CATEGORIES, array('sortorder' => 0));
         $cacheevents['changesincoursecat'] = true;
     }
 
     $allcats = $DB->get_records('course_categories', null, 'sortorder, id', 'id, sortorder, parent, depth, path');
-    $topcats    = array();
+    $topcats = array();
     $brokencats = array();
     foreach ($allcats as $cat) {
         $sortorder = (int)$cat->sortorder;
         if (!$cat->parent) {
-            while(isset($topcats[$sortorder])) {
+            while (isset($topcats[$sortorder])) {
                 $sortorder++;
             }
             $topcats[$sortorder] = $cat;
@@ -903,7 +917,7 @@ function fix_course_sortorder() {
         if (!isset($allcats[$cat->parent]->children)) {
             $allcats[$cat->parent]->children = array();
         }
-        while(isset($allcats[$cat->parent]->children[$sortorder])) {
+        while (isset($allcats[$cat->parent]->children[$sortorder])) {
             $sortorder++;
         }
         $allcats[$cat->parent]->children[$sortorder] = $cat;
@@ -926,7 +940,7 @@ function fix_course_sortorder() {
     }
 
     // detect if there are "multiple" frontpage courses and fix them if needed
-    $frontcourses = $DB->get_records('course', array('category'=>0), 'id');
+    $frontcourses = $DB->get_records('course', array('category' => 0), 'id');
     if (count($frontcourses) > 1) {
         if (isset($frontcourses[SITEID])) {
             $frontcourse = $frontcourses[SITEID];
@@ -936,7 +950,7 @@ function fix_course_sortorder() {
         }
         $defaultcat = reset($topcats);
         foreach ($frontcourses as $course) {
-            $DB->set_field('course', 'category', $defaultcat->id, array('id'=>$course->id));
+            $DB->set_field('course', 'category', $defaultcat->id, array('id' => $course->id));
             $context = context_course::instance($course->id);
             $fixcontexts[$context->id] = $context;
             $cacheevents['changesincourse'] = true;
@@ -964,7 +978,7 @@ function fix_course_sortorder() {
 
     // fix frontpage course sortorder
     if ($frontcourse->sortorder != 1) {
-        $DB->set_field('course', 'sortorder', 1, array('id'=>$frontcourse->id));
+        $DB->set_field('course', 'sortorder', 1, array('id' => $frontcourse->id));
         $cacheevents['changesincourse'] = true;
     }
 
@@ -997,13 +1011,13 @@ function fix_course_sortorder() {
     $sql = "SELECT DISTINCT cc.id, cc.sortorder
               FROM {course_categories} cc
               JOIN {course} c ON c.category = cc.id
-             WHERE c.sortorder < cc.sortorder OR c.sortorder > cc.sortorder + ".MAX_COURSES_IN_CATEGORY;
+             WHERE c.sortorder < cc.sortorder OR c.sortorder > cc.sortorder + " . MAX_COURSES_IN_CATEGORY;
 
     if ($fixcategories = $DB->get_records_sql($sql)) {
         //fix the course sortorder ranges
         foreach ($fixcategories as $cat) {
             $sql = "UPDATE {course}
-                       SET sortorder = ".$DB->sql_modulo('sortorder', MAX_COURSES_IN_CATEGORY)." + ?
+                       SET sortorder = " . $DB->sql_modulo('sortorder', MAX_COURSES_IN_CATEGORY) . " + ?
                      WHERE category = ?";
             $DB->execute($sql, array($cat->sortorder, $cat->id));
         }
@@ -1048,7 +1062,7 @@ function fix_course_sortorder() {
     // fix course sortorders in problematic categories only
     foreach ($fixcategories as $cat) {
         $i = 1;
-        $courses = $DB->get_records('course', array('category'=>$cat->id), 'sortorder ASC, id DESC', 'id, sortorder');
+        $courses = $DB->get_records('course', array('category' => $cat->id), 'sortorder ASC, id DESC', 'id, sortorder');
         foreach ($courses as $course) {
             if ($course->sortorder != $cat->sortorder + $i) {
                 $course->sortorder = $cat->sortorder + $i;
@@ -1081,7 +1095,8 @@ function fix_course_sortorder() {
  * @param array $fixcontexts
  * @return bool if changes were made
  */
-function _fix_course_cats($children, &$sortorder, $parent, $depth, $path, &$fixcontexts) {
+function _fix_course_cats($children, &$sortorder, $parent, $depth, $path, &$fixcontexts)
+{
     global $DB;
 
     $depth++;
@@ -1090,10 +1105,10 @@ function _fix_course_cats($children, &$sortorder, $parent, $depth, $path, &$fixc
     foreach ($children as $cat) {
         $sortorder = $sortorder + MAX_COURSES_IN_CATEGORY;
         $update = false;
-        if ($parent != $cat->parent or $depth != $cat->depth or $path.'/'.$cat->id != $cat->path) {
+        if ($parent != $cat->parent or $depth != $cat->depth or $path . '/' . $cat->id != $cat->path) {
             $cat->parent = $parent;
-            $cat->depth  = $depth;
-            $cat->path   = $path.'/'.$cat->id;
+            $cat->depth = $depth;
+            $cat->path = $path . '/' . $cat->id;
             $update = true;
 
             // make sure context caches are rebuild and dirty contexts marked
@@ -1126,7 +1141,8 @@ function _fix_course_cats($children, &$sortorder, $parent, $depth, $path, &$fixc
  * @param int @userid The user id to get remote courses for
  * @return array Array of {@link $COURSE} of course objects
  */
-function get_my_remotecourses($userid=0) {
+function get_my_remotecourses($userid = 0)
+{
     global $DB, $USER;
 
     if (empty($userid)) {
@@ -1155,7 +1171,8 @@ function get_my_remotecourses($userid=0) {
  * @global object
  * @return array|bool Array of host objects or false
  */
-function get_my_remotehosts() {
+function get_my_remotehosts()
+{
     global $CFG, $USER;
 
     if ($USER->mnethostid == $CFG->mnet_localhost_id) {
@@ -1175,16 +1192,21 @@ function get_my_remotehosts() {
  * @param int $courseid The id of the course as found in the 'course' table.
  * @return array
  */
-function get_scales_menu($courseid=0) {
-    global $DB;
+function get_scales_menu($courseid = 0)
+{
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        return $scales = get_remote_scales_menu_sql($courseid);
+    } else {
+        global $DB;
 
-    $sql = "SELECT id, name
+        $sql = "SELECT id, name
               FROM {scale}
              WHERE courseid = 0 or courseid = ?
           ORDER BY courseid ASC, name ASC";
-    $params = array($courseid);
+        $params = array($courseid);
 
-    return $scales = $DB->get_records_sql_menu($sql, $params);
+        return $scales = $DB->get_records_sql_menu($sql, $params);
+    }
 }
 
 /**
@@ -1201,7 +1223,8 @@ function get_scales_menu($courseid=0) {
  * @param string $select use empty string when updating all records
  * @param array $params optional select parameters
  */
-function increment_revision_number($table, $field, $select, array $params = null) {
+function increment_revision_number($table, $field, $select, array $params = null)
+{
     global $DB;
 
     $now = time();
@@ -1227,7 +1250,8 @@ function increment_revision_number($table, $field, $select, array $params = null
  * @param int $courseid The id of the course as found in the 'course' table.
  * @return array
  */
-function get_course_mods($courseid) {
+function get_course_mods($courseid)
+{
     global $DB;
 
     if (empty($courseid)) {
@@ -1243,7 +1267,7 @@ function get_course_mods($courseid) {
     return $DB->get_records_sql("SELECT cm.*, m.name as modname
                                    FROM {modules} m, {course_modules} cm
                                   WHERE cm.course = ? AND cm.module = m.id AND m.visible = 1",
-            array($courseid)); // no disabled mods
+        array($courseid)); // no disabled mods
 }
 
 
@@ -1264,16 +1288,18 @@ function get_course_mods($courseid) {
  *                        MUST_EXIST means throw exception if no record or multiple records found
  * @return stdClass
  */
-function get_coursemodule_from_id($modulename, $cmid, $courseid=0, $sectionnum=false, $strictness=IGNORE_MISSING) {
+function get_coursemodule_from_id($modulename, $cmid, $courseid = 0, $sectionnum = false, $strictness = IGNORE_MISSING)
+{
     global $DB;
 
-    $params = array('cmid'=>$cmid);
+    $params = array('cmid' => $cmid);
 
     if (!$modulename) {
         if (!$modulename = $DB->get_field_sql("SELECT md.name
                                                  FROM {modules} md
                                                  JOIN {course_modules} cm ON cm.module = md.id
-                                                WHERE cm.id = :cmid", $params, $strictness)) {
+                                                WHERE cm.id = :cmid", $params, $strictness)
+        ) {
             return false;
         }
     } else {
@@ -1286,7 +1312,7 @@ function get_coursemodule_from_id($modulename, $cmid, $courseid=0, $sectionnum=f
 
     $courseselect = "";
     $sectionfield = "";
-    $sectionjoin  = "";
+    $sectionjoin = "";
 
     if ($courseid) {
         $courseselect = "AND cm.course = :courseid";
@@ -1295,13 +1321,13 @@ function get_coursemodule_from_id($modulename, $cmid, $courseid=0, $sectionnum=f
 
     if ($sectionnum) {
         $sectionfield = ", cw.section AS sectionnum";
-        $sectionjoin  = "LEFT JOIN {course_sections} cw ON cw.id = cm.section";
+        $sectionjoin = "LEFT JOIN {course_sections} cw ON cw.id = cm.section";
     }
 
     $sql = "SELECT cm.*, m.name, md.name AS modname $sectionfield
               FROM {course_modules} cm
                    JOIN {modules} md ON md.id = cm.module
-                   JOIN {".$modulename."} m ON m.id = cm.instance
+                   JOIN {" . $modulename . "} m ON m.id = cm.instance
                    $sectionjoin
              WHERE cm.id = :cmid AND md.name = :modulename
                    $courseselect";
@@ -1326,18 +1352,19 @@ function get_coursemodule_from_id($modulename, $cmid, $courseid=0, $sectionnum=f
  *                        MUST_EXIST means throw exception if no record or multiple records found
  * @return stdClass
  */
-function get_coursemodule_from_instance($modulename, $instance, $courseid=0, $sectionnum=false, $strictness=IGNORE_MISSING) {
+function get_coursemodule_from_instance($modulename, $instance, $courseid = 0, $sectionnum = false, $strictness = IGNORE_MISSING)
+{
     global $DB;
 
     if (!core_component::is_valid_plugin_name('mod', $modulename)) {
         throw new coding_exception('Invalid modulename parameter');
     }
 
-    $params = array('instance'=>$instance, 'modulename'=>$modulename);
+    $params = array('instance' => $instance, 'modulename' => $modulename);
 
     $courseselect = "";
     $sectionfield = "";
-    $sectionjoin  = "";
+    $sectionjoin = "";
 
     if ($courseid) {
         $courseselect = "AND cm.course = :courseid";
@@ -1346,13 +1373,13 @@ function get_coursemodule_from_instance($modulename, $instance, $courseid=0, $se
 
     if ($sectionnum) {
         $sectionfield = ", cw.section AS sectionnum";
-        $sectionjoin  = "LEFT JOIN {course_sections} cw ON cw.id = cm.section";
+        $sectionjoin = "LEFT JOIN {course_sections} cw ON cw.id = cm.section";
     }
 
     $sql = "SELECT cm.*, m.name, md.name AS modname $sectionfield
               FROM {course_modules} cm
                    JOIN {modules} md ON md.id = cm.module
-                   JOIN {".$modulename."} m ON m.id = cm.instance
+                   JOIN {" . $modulename . "} m ON m.id = cm.instance
                    $sectionjoin
              WHERE m.id = :instance AND md.name = :modulename
                    $courseselect";
@@ -1368,7 +1395,8 @@ function get_coursemodule_from_instance($modulename, $instance, $courseid=0, $se
  * @param string $extrafields extra fields starting with m.
  * @return array Array of results
  */
-function get_coursemodules_in_course($modulename, $courseid, $extrafields='') {
+function get_coursemodules_in_course($modulename, $courseid, $extrafields = '')
+{
     global $DB;
 
     if (!core_component::is_valid_plugin_name('mod', $modulename)) {
@@ -1384,7 +1412,7 @@ function get_coursemodules_in_course($modulename, $courseid, $extrafields='') {
 
 
     return $DB->get_records_sql("SELECT cm.*, m.name, md.name as modname $extrafields
-                                   FROM {course_modules} cm, {modules} md, {".$modulename."} m
+                                   FROM {course_modules} cm, {modules} md, {" . $modulename . "} m
                                   WHERE cm.course = :courseid AND
                                         cm.instance = m.id AND
                                         md.name = :modulename AND
@@ -1410,7 +1438,8 @@ function get_coursemodules_in_course($modulename, $courseid, $extrafields='') {
  * @return array of module instance objects, including some extra fields from the course_modules
  *          and course_sections tables, or an empty array if an error occurred.
  */
-function get_all_instances_in_courses($modulename, $courses, $userid=NULL, $includeinvisible=false) {
+function get_all_instances_in_courses($modulename, $courses, $userid = NULL, $includeinvisible = false)
+{
     global $CFG, $DB;
 
     if (!core_component::is_valid_plugin_name('mod', $modulename)) {
@@ -1429,12 +1458,13 @@ function get_all_instances_in_courses($modulename, $courses, $userid=NULL, $incl
     if (!$rawmods = $DB->get_records_sql("SELECT cm.id AS coursemodule, m.*, cw.section, cm.visible AS visible,
                                                  cm.groupmode, cm.groupingid
                                             FROM {course_modules} cm, {course_sections} cw, {modules} md,
-                                                 {".$modulename."} m
+                                                 {" . $modulename . "} m
                                            WHERE cm.course $coursessql AND
                                                  cm.instance = m.id AND
                                                  cm.section = cw.id AND
                                                  md.name = :modulename AND
-                                                 md.id = cm.module", $params)) {
+                                                 md.id = cm.module", $params)
+    ) {
         return $outputarray;
     }
 
@@ -1483,7 +1513,8 @@ function get_all_instances_in_courses($modulename, $courses, $userid=NULL, $incl
  * @param int $userid
  * @param int $includeinvisible
  */
-function get_all_instances_in_course($modulename, $course, $userid=NULL, $includeinvisible=false) {
+function get_all_instances_in_course($modulename, $course, $userid = NULL, $includeinvisible = false)
+{
     return get_all_instances_in_courses($modulename, array($course->id => $course), $userid, $includeinvisible);
 }
 
@@ -1501,22 +1532,23 @@ function get_all_instances_in_course($modulename, $course, $userid=NULL, $includ
  * the \core_availability\info_module::is_user_visible() static function.
  *
  * @global object
-
  * @param $moduletype Name of the module eg 'forum'
  * @param $module Object which is the instance of the module
  * @return bool Success
  */
-function instance_is_visible($moduletype, $module) {
+function instance_is_visible($moduletype, $module)
+{
     global $DB;
 
     if (!empty($module->id)) {
-        $params = array('courseid'=>$module->course, 'moduletype'=>$moduletype, 'moduleid'=>$module->id);
+        $params = array('courseid' => $module->course, 'moduletype' => $moduletype, 'moduleid' => $module->id);
         if ($records = $DB->get_records_sql("SELECT cm.instance, cm.visible, cm.groupingid, cm.id, cm.course
                                                FROM {course_modules} cm, {modules} m
                                               WHERE cm.course = :courseid AND
                                                     cm.module = m.id AND
                                                     m.name = :moduletype AND
-                                                    cm.instance = :moduleid", $params)) {
+                                                    cm.instance = :moduleid", $params)
+        ) {
 
             foreach ($records as $record) { // there should only be one - use the first one
                 return $record->visible;
@@ -1535,7 +1567,8 @@ function instance_is_visible($moduletype, $module) {
  * @param bool $forcereload
  * @return \core\log\manager
  */
-function get_log_manager($forcereload = false) {
+function get_log_manager($forcereload = false)
+{
     /** @var \core\log\manager $singleton */
     static $singleton = null;
 
@@ -1574,23 +1607,24 @@ function get_log_manager($forcereload = false) {
  * @category log
  * @global moodle_database $DB
  * @global stdClass $USER
- * @param    string  $name     The name of the configuration change action
-                               For example 'filter_active' when activating or deactivating a filter
- * @param    string  $oldvalue The config setting's previous value
- * @param    string  $value    The config setting's new value
- * @param    string  $plugin   Plugin name, for example a filter name when changing filter configuration
+ * @param    string $name The name of the configuration change action
+ * For example 'filter_active' when activating or deactivating a filter
+ * @param    string $oldvalue The config setting's previous value
+ * @param    string $value The config setting's new value
+ * @param    string $plugin Plugin name, for example a filter name when changing filter configuration
  * @return void
  */
-function add_to_config_log($name, $oldvalue, $value, $plugin) {
+function add_to_config_log($name, $oldvalue, $value, $plugin)
+{
     global $USER, $DB;
 
     $log = new stdClass();
-    $log->userid       = during_initial_install() ? 0 :$USER->id; // 0 as user id during install
+    $log->userid = during_initial_install() ? 0 : $USER->id; // 0 as user id during install
     $log->timemodified = time();
-    $log->name         = $name;
-    $log->oldvalue  = $oldvalue;
-    $log->value     = $value;
-    $log->plugin    = $plugin;
+    $log->name = $name;
+    $log->oldvalue = $oldvalue;
+    $log->value = $value;
+    $log->plugin = $plugin;
     $DB->insert_record('config_log', $log);
 }
 
@@ -1604,10 +1638,11 @@ function add_to_config_log($name, $oldvalue, $value, $plugin) {
  * @global moodle_database $DB
  * @uses LASTACCESS_UPDATE_SECS
  * @uses SITEID
- * @param int $courseid  empty courseid means site
+ * @param int $courseid empty courseid means site
  * @return void
  */
-function user_accesstime_log($courseid=0) {
+function user_accesstime_log($courseid = 0)
+{
     global $USER, $CFG, $DB;
 
     if (!isloggedin() or \core\session\manager::is_loggedinas()) {
@@ -1628,34 +1663,34 @@ function user_accesstime_log($courseid=0) {
 
 /// Store site lastaccess time for the current user
     if ($timenow - $USER->lastaccess > LASTACCESS_UPDATE_SECS) {
-    /// Update $USER->lastaccess for next checks
+        /// Update $USER->lastaccess for next checks
         $USER->lastaccess = $timenow;
 
         $last = new stdClass();
-        $last->id         = $USER->id;
-        $last->lastip     = getremoteaddr();
+        $last->id = $USER->id;
+        $last->lastip = getremoteaddr();
         $last->lastaccess = $timenow;
 
         $DB->update_record_raw('user', $last);
     }
 
     if ($courseid == SITEID) {
-    ///  no user_lastaccess for frontpage
+        ///  no user_lastaccess for frontpage
         return;
     }
 
 /// Store course lastaccess times for the current user
     if (empty($USER->currentcourseaccess[$courseid]) or ($timenow - $USER->currentcourseaccess[$courseid] > LASTACCESS_UPDATE_SECS)) {
 
-        $lastaccess = $DB->get_field('user_lastaccess', 'timeaccess', array('userid'=>$USER->id, 'courseid'=>$courseid));
+        $lastaccess = $DB->get_field('user_lastaccess', 'timeaccess', array('userid' => $USER->id, 'courseid' => $courseid));
 
         if ($lastaccess === false) {
             // Update course lastaccess for next checks
             $USER->currentcourseaccess[$courseid] = $timenow;
 
             $last = new stdClass();
-            $last->userid     = $USER->id;
-            $last->courseid   = $courseid;
+            $last->userid = $USER->id;
+            $last->courseid = $courseid;
             $last->timeaccess = $timenow;
             try {
                 $DB->insert_record_raw('user_lastaccess', $last, false);
@@ -1663,7 +1698,7 @@ function user_accesstime_log($courseid=0) {
                 // During a race condition we can fail to find the data, then it appears.
                 // If we still can't find it, rethrow the exception.
                 $lastaccess = $DB->get_field('user_lastaccess', 'timeaccess', array('userid' => $USER->id,
-                                                                                    'courseid' => $courseid));
+                    'courseid' => $courseid));
                 if ($lastaccess === false) {
                     throw $e;
                 }
@@ -1671,14 +1706,14 @@ function user_accesstime_log($courseid=0) {
                 // We can just continue without having to do anything.
             }
 
-        } else if ($timenow - $lastaccess <  LASTACCESS_UPDATE_SECS) {
+        } else if ($timenow - $lastaccess < LASTACCESS_UPDATE_SECS) {
             // no need to update now, it was updated recently in concurrent login ;-)
 
         } else {
             // Update course lastaccess for next checks
             $USER->currentcourseaccess[$courseid] = $timenow;
 
-            $DB->set_field('user_lastaccess', 'timeaccess', $timenow, array('userid'=>$USER->id, 'courseid'=>$courseid));
+            $DB->set_field('user_lastaccess', 'timeaccess', $timenow, array('userid' => $USER->id, 'courseid' => $courseid));
         }
     }
 }
@@ -1697,7 +1732,8 @@ function user_accesstime_log($courseid=0) {
  * @param int $totalcount Passed in by reference.
  * @return array
  */
-function get_logs($select, array $params=null, $order='l.time DESC', $limitfrom='', $limitnum='', &$totalcount) {
+function get_logs($select, array $params = null, $order = 'l.time DESC', $limitfrom = '', $limitnum = '', &$totalcount)
+{
     global $DB;
 
     if ($order) {
@@ -1705,7 +1741,7 @@ function get_logs($select, array $params=null, $order='l.time DESC', $limitfrom=
     }
 
     $selectsql = "";
-    $countsql  = "";
+    $countsql = "";
 
     if ($select) {
         $select = "WHERE $select";
@@ -1723,7 +1759,7 @@ function get_logs($select, array $params=null, $order='l.time DESC', $limitfrom=
            $select
             $order";
 
-    return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum) ;
+    return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
 }
 
 
@@ -1739,7 +1775,8 @@ function get_logs($select, array $params=null, $order='l.time DESC', $limitfrom=
  * @param string $coursestart unix timestamp representing course start date and time.
  * @return array
  */
-function get_logs_usercourse($userid, $courseid, $coursestart) {
+function get_logs_usercourse($userid, $courseid, $coursestart)
+{
     global $DB;
 
     $params = array();
@@ -1755,11 +1792,11 @@ function get_logs_usercourse($userid, $courseid, $coursestart) {
     // See MDL-27696 and 51c3e85 for details.
     $coursestart = (int)$coursestart;
 
-    return $DB->get_records_sql("SELECT FLOOR((time - $coursestart)/". DAYSECS .") AS day, COUNT(*) AS num
+    return $DB->get_records_sql("SELECT FLOOR((time - $coursestart)/" . DAYSECS . ") AS day, COUNT(*) AS num
                                    FROM {log}
                                   WHERE userid = :userid
                                         AND time > $coursestart $courseselect
-                               GROUP BY FLOOR((time - $coursestart)/". DAYSECS .")", $params);
+                               GROUP BY FLOOR((time - $coursestart)/" . DAYSECS . ")", $params);
 }
 
 /**
@@ -1774,10 +1811,11 @@ function get_logs_usercourse($userid, $courseid, $coursestart) {
  * @param string $daystart unix timestamp of the start of the day for which the logs needs to be retrived
  * @return array
  */
-function get_logs_userday($userid, $courseid, $daystart) {
+function get_logs_userday($userid, $courseid, $daystart)
+{
     global $DB;
 
-    $params = array('userid'=>$userid);
+    $params = array('userid' => $userid);
 
     $courseselect = '';
     if ($courseid) {
@@ -1786,11 +1824,11 @@ function get_logs_userday($userid, $courseid, $daystart) {
     }
     $daystart = (int)$daystart; // note: unfortunately pg complains if you use name parameter or column alias in GROUP BY
 
-    return $DB->get_records_sql("SELECT FLOOR((time - $daystart)/". HOURSECS .") AS hour, COUNT(*) AS num
+    return $DB->get_records_sql("SELECT FLOOR((time - $daystart)/" . HOURSECS . ") AS hour, COUNT(*) AS num
                                    FROM {log}
                                   WHERE userid = :userid
                                         AND time > $daystart $courseselect
-                               GROUP BY FLOOR((time - $daystart)/". HOURSECS .") ", $params);
+                               GROUP BY FLOOR((time - $daystart)/" . HOURSECS . ") ", $params);
 }
 
 /// GENERAL HELPFUL THINGS  ///////////////////////////////////
@@ -1805,7 +1843,8 @@ function get_logs_userday($userid, $courseid, $daystart) {
  * @param mixed $object The data to be printed
  * @return void output is echo'd
  */
-function print_object($object) {
+function print_object($object)
+{
 
     // we may need a lot of memory here
     raise_memory_limit(MEMORY_EXTRA);
@@ -1829,7 +1868,8 @@ function print_object($object) {
  * @param string $message string contains the error message
  * @param object $object object XMLDB object that fired the debug
  */
-function xmldb_debug($message, $object) {
+function xmldb_debug($message, $object)
+{
 
     debugging($message, DEBUG_DEVELOPER);
 }
@@ -1839,7 +1879,8 @@ function xmldb_debug($message, $object) {
  * @uses CONTEXT_COURSECAT
  * @return boolean Whether the user can create courses in any category in the system.
  */
-function user_can_create_courses() {
+function user_can_create_courses()
+{
     global $DB;
     $catsrs = $DB->get_recordset('course_categories');
     foreach ($catsrs as $cat) {
@@ -1874,7 +1915,8 @@ function user_can_create_courses() {
  * @param int $unusedvalue (defaults to -1) a value that is never used in $ordercol.
  */
 function update_field_with_unique_index($table, $field, array $newvalues,
-        array $otherconditions, $unusedvalue = -1) {
+                                        array $otherconditions, $unusedvalue = -1)
+{
     global $DB;
     $safechanges = decompose_update_into_safe_changes($newvalues, $unusedvalue);
 
@@ -1909,7 +1951,8 @@ function update_field_with_unique_index($table, $field, array $newvalues,
  *      arrays array($from, $to).
  *      E.g. array(array(1, -1), array(2, 1), array(4, 2), array(-1, 4)).
  */
-function decompose_update_into_safe_changes(array $newvalues, $unusedvalue) {
+function decompose_update_into_safe_changes(array $newvalues, $unusedvalue)
+{
     $nontrivialmap = array();
     foreach ($newvalues as $from => $to) {
         if ($from == $unusedvalue || $to == $unusedvalue) {
