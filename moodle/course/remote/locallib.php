@@ -350,31 +350,35 @@ function get_remote_course_completion_progress($course, $userid)
         return 0;
     }
 
-    $result = moodle_webservice_client(
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_get_course_completion_progress',
-            'params' => array('courseid' => $course->remoteid, 'userid' => $userid, 'totalmoduletracking' => $totalmoduletracking),
-        ), false
+    $arr = array(
+        'courseid' => $course->id,
+        'userid' => $userid,
     );
 
-    if (isset($result->completion) && $result->completion) {
-        return $result->completion;
-    } else {
-        return 0;
+    $sql = "SELECT COUNT(*) FROM {course_modules_completion} cmc
+                LEFT JOIN {course_modules} cm
+                ON cmc.coursemoduleid = cm.id
+                WHERE cm.course = :courseid AND cmc.userid = :userid AND cmc.completionstate <> 0";
+
+    $completioncount = $DB->count_records_sql($sql, $arr);
+
+    if ($completioncount > 0) {
+        $completion = ($completioncount * 100) / $totalmoduletracking;
     }
 
+    return intval($completion);
 }
 
 function get_remote_list_course_completion($userid)
 {
+    $remoteuserid = get_remote_mapping_user($userid)[0]->id;
+
     $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_get_list_course_completion',
-            'params' => array('userid' => $userid),
+            'params' => array('userid' => $remoteuserid),
         ), false
     );
 

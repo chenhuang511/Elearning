@@ -504,13 +504,55 @@ function update_remote_mdl_forum($modname, $id, $obj)
     return $result->id;
 }
 
-function update_remote_mdl_forum_by($modname, $parameters, $data)
+function update_remote_mdl_forum_by($modname, $parameters, $obj)
 {
+    global $DB;
+    if (isset($obj->course)) {
+        $course = $DB->get_record('course', array('id' => $obj->course), 'id, remoteid');
+        if ($course) {
+            $obj->course = $course->remoteid;
+        }
+    }
+    if (isset($obj->forum)) {
+        $forum = $DB->get_record('forum', array('id' => $obj->forum), 'id, remoteid');
+        if ($forum) {
+            $obj->forum = $forum->remoteid;
+        }
+    }
+    if (isset($obj->forumid)) {
+        $forum = $DB->get_record('forum', array('id' => $obj->forumid), 'id, remoteid');
+        if ($forum) {
+            $obj->forumid = $forum->remoteid;
+        }
+    }
+    if (isset($obj->userid)) {
+        $user = get_remote_mapping_user($obj->userid);
+        if ($user) {
+            $obj->userid = $user[0]->id;
+        }
+    }
+    if (isset($obj->usermodified)) {
+        $user = get_remote_mapping_user($obj->usermodified);
+        if ($user) {
+            $obj->usermodified = $user[0]->id;
+        }
+    }
+
+    $data = array();
+    $i = 0;
+    foreach ($obj as $key => $val) {
+        if ($key != "id") {
+            $data["data[$i][name]"] = "$key";
+            $data["data[$i][value]"] = $val;
+            $i++;
+        }
+    }
+
     $result = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
-            'function_name' => 'local_mod_update_mdl_forum',
+            'function_name' => 'local_mod_update_mdl_forum_by',
             'params' => array_merge(array_merge(array('modname' => $modname), $parameters), $data),
         )
     );

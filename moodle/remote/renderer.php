@@ -54,24 +54,14 @@ class core_remote_renderer extends plugin_renderer_base
         require_once($CFG->libdir . '/remote/lib.php');
         require_once($CFG->dirroot . '/course/remote/locallib.php');
 
-        $hubuserid = $USER->id;
-
         $mycoursecompletion = '';
 
-        $hubuser = get_remote_mapping_user($hubuserid);
-
-        if ($hubuser) {
-            $hubuserid = $hubuser[0]->id;
-        }
-
-        $coursecompletionids = get_remote_list_course_completion($hubuserid);
+        $coursecompletionids = get_remote_list_course_completion($USER->id);
         $countcompletion = count($coursecompletionids);
 
         if (!$coursecompletionids) {
             $mycoursecompletion = 'Bạn chưa hoàn thành khóa học nào';
         }
-
-
 
         // start - enrol course list
         $content = html_writer::start_tag('div', array('id' => 'enrol-course-list', 'class' => 'container'));
@@ -94,7 +84,7 @@ class core_remote_renderer extends plugin_renderer_base
 
         foreach ($courses as $course) {
             $course->iscompletion = 0; // default course
-            $course->completion = get_remote_course_completion_progress($course, $hubuserid);
+            $course->completion = get_remote_course_completion_progress($course, $USER->id);
 
             $classes = 'coursebox clearfix';
 

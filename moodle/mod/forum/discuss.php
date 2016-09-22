@@ -141,12 +141,30 @@ if ($move > 0 and confirm_sesskey()) {
             $subscriptionchanges[$userid] = $subscriptiontime;
         }
     }
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $discussupdate = new stdClass();
+        $discussupdate->forum = $forumto->id;
+        update_remote_mdl_forum("forum_discussions", $discussion->id, $discussupdate);
 
-    $DB->set_field('forum_discussions', 'forum', $forumto->id, array('id' => $discussion->id));
-    $DB->set_field('forum_read', 'forumid', $forumto->id, array('discussionid' => $discussion->id));
+        $readupdate = new stdClass();
+        $readupdate->forumid = $forumto->id;
+        $param = array();
+        $param['parameters[0][name]'] = "discussionid";
+        $param['parameters[0][value]'] = $discussion->id;
+        update_remote_mdl_forum_by("forum_read", $param, $readupdate);
 
-    // Delete the existing per-discussion subscriptions and replace them with the newly calculated ones.
-    $DB->delete_records('forum_discussion_subs', array('discussion' => $discussion->id));
+        // Delete the existing per-discussion subscriptions and replace them with the newly calculated ones.
+        $prs = array();
+        $prs['parameters[0][name]'] = "discussion";
+        $prs['parameters[0][value]'] = $discussion->id;
+        delete_remote_mdl_forum('forum_discussion_subs', $prs);
+    } else {
+        $DB->set_field('forum_discussions', 'forum', $forumto->id, array('id' => $discussion->id));
+        $DB->set_field('forum_read', 'forumid', $forumto->id, array('discussionid' => $discussion->id));
+
+        // Delete the existing per-discussion subscriptions and replace them with the newly calculated ones.
+        $DB->delete_records('forum_discussion_subs', array('discussion' => $discussion->id));
+    }
     $newdiscussion = clone $discussion;
     $newdiscussion->forum = $forumto->id;
     foreach ($subscriptionchanges as $userid => $preference) {
