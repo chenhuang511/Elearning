@@ -2753,4 +2753,57 @@ class local_course_external extends external_api
     {
         return self::delete_course_modules_returns();
     }
+
+    public static function get_scales_menu_sql_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'the id of course')
+            )
+        );
+    }
+
+    public static function get_scales_menu_sql($courseid)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_scales_menu_sql_parameters(), array(
+            'courseid' => $courseid
+        ));
+
+        $sql = "SELECT id, name
+              FROM {scale}
+             WHERE courseid = 0 or courseid = ?
+          ORDER BY courseid ASC, name ASC";
+        $arr = array($params['courseid']);
+
+        $scales = $DB->get_records_sql_menu($sql, $arr);
+
+        if (!$scales) {
+            $scales = array();
+        }
+
+        $result = array();
+        $result['scales'] = $scales;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    public static function get_scales_menu_sql_returns()
+    {
+        return new external_single_structure(
+            array(
+                'scales' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'the id of scale', VALUE_OPTIONAL),
+                            'name' => new external_value(PARAM_RAW, 'the name of scale', VALUE_OPTIONAL)
+                        )
+                    ), 'data'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

@@ -338,4 +338,12 @@ $functions = array(
         'type'		    => 'write',
         'ajax'		    => true
     ),
+    'local_get_scales_menu_sql' => array(
+        'classname'     => 'local_course_external',
+        'methodname'    => 'get_scales_menu_sql',
+        'classpath'     => 'local/course/externallib.php',
+        'description'   => 'get scales menu',
+        'type'		    => 'write',
+        'ajax'		    => true
+    ),
 );
