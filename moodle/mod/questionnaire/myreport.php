@@ -89,7 +89,7 @@ switch ($action) {
             $select = 'survey_id = '.$questionnaire->sid.' AND username = \''.$userid.'\' AND complete=\'y\'';
             $resps = $DB->get_records_select('questionnaire_response', $select);
         } else {
-            $select = 'survey_id = '.$questionnaire->sid.' AND username = \''.$remoteuserid.'\' AND complete=\'y\'';
+            $select = 'R.survey_id = '.$questionnaire->sid.' AND R.username = \''.$remoteuserid.'\' AND R.complete=\'y\'';
             $resps = get_remote_questionnaire_response($select);
             $resps = change_key_by_value($resps, 'id');
         }
@@ -134,7 +134,8 @@ switch ($action) {
             $select = 'survey_id = '.$questionnaire->sid.' AND username = \''.$userid.'\' AND complete=\'y\'';
             $resps = $DB->get_records_select('questionnaire_response', $select, $params = null, $sort);
         } else {
-            $select = 'survey_id = '.$questionnaire->sid.' AND username = \''.$remoteuserid.'\' AND complete=\'y\'';
+            $select = 'R.survey_id = '.$questionnaire->sid.' AND R.username = \''.$remoteuserid.'\' AND R.complete=\'y\'';
+            $sort = 'R.submitted ASC';
             $resps = get_remote_questionnaire_response($select, $sort);
             $resps = change_key_by_value($resps, 'id');
         }
@@ -207,16 +208,16 @@ switch ($action) {
             $params = array();
             $respsuser = $DB->get_records_select('questionnaire_response', $select, $params, $sort = '', $fields);
         } else {
-            $select = 'survey_id = '.$questionnaire->sid.' AND username = \'' . $remoteuserid . '\' AND complete=\'y\'';
+            $select = 'R.survey_id = '.$questionnaire->sid.' AND R.username = \'' . $remoteuserid . '\' AND R.complete=\'y\'';
             $resps = get_remote_questionnaire_response($select, $sort);
             // All participants.
-            $select = 'survey_id = '.$sid.' AND complete=\'y\' ';
-            $sort = 'id ASC';
+            $select = 'R.survey_id = '.$sid.' AND R.complete=\'y\' ';
+            $sort = 'R.id ASC';
             if (!($respsallparticipants = get_remote_questionnaire_response($select, $sort))) {
                 $respsallparticipants = array();
             }
-            $select = 'survey_id = '.$questionnaire->sid.' AND username = \'' . $remoteuserid . '\' AND complete=\'y\'';
-            $sort = 'id ASC';
+            $select = 'R.survey_id = '.$questionnaire->sid.' AND R.username = \'' . $remoteuserid . '\' AND R.complete=\'y\'';
+            $sort = 'R.id ASC';
             $respsuser = get_remote_questionnaire_response($select, $sort);
         }
 

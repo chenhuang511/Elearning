@@ -581,8 +581,8 @@ class local_questionnaire_external extends external_api {
         $params = self::validate_parameters(self::get_questionnaire_response_parameters(),
             array('condition' => $condition, 'sort' => $sort));
 
-        $sql = 'SELECT * '.
-            'FROM {questionnaire_response} INNER JOIN {user} AS U ON U.id = {questionnaire_response}.username INNER JOIN {mnet_host} M ON M.id = U.MNETHOSTID '.
+        $sql = 'SELECT R.* '.
+            'FROM {questionnaire_response} R INNER JOIN {user} U ON U.id = R.username INNER JOIN {mnet_host} M ON M.id = U.MNETHOSTID '.
             'WHERE '.$params['condition'];
 
         if(!empty($params['sort'])){
@@ -623,9 +623,9 @@ class local_questionnaire_external extends external_api {
         $params = self::validate_parameters(self::get_questionnaire_response_group_username_parameters(),
             array('condition' => $condition, 'sort' => $sort));
 
-        $sql = 'SELECT username '.
-            'FROM {questionnaire_response} INNER JOIN {user} AS U ON U.id = {questionnaire_response}.username INNER JOIN {mnet_host} M ON M.id = U.MNETHOSTID '.
-            'WHERE '.$params['condition'] . ' GROUP BY {questionnaire_response}.username ';
+        $sql = 'SELECT R.username '.
+            'FROM {questionnaire_response} R INNER JOIN {user} U ON U.id = {questionnaire_response}.username INNER JOIN {mnet_host} M ON M.id = U.MNETHOSTID '.
+            'WHERE '.$params['condition'] . ' GROUP BY R.username ';
         if(!empty($params['sort'])){
             $sql .= ' ORDER BY '.$params['sort'];
         }

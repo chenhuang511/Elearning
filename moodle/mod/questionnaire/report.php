@@ -131,8 +131,8 @@ if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
          ORDER BY r.id";
 	$respsallparticipants = $DB->get_records_sql($sql, array($sid));
 } else {
-	$sql_select = 'survey_id = '.$sid.' AND complete=\'y\'';
-	$sql_sort = 'id';
+	$sql_select = 'R.survey_id = '.$sid.' AND R.complete=\'y\'';
+	$sql_sort = 'R.id';
 	$respsallparticipants = get_remote_questionnaire_response($sql_select, $sql_sort);
 }
 if (!($respsallparticipants)) {
@@ -278,7 +278,7 @@ switch ($action) {
         if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
             $record = $DB->count_records('questionnaire_response', array('survey_id' => $sid, 'complete' => 'y'));
         } else {
-            $sql_select = "survey_id = $sid AND complete = 'y'";
+            $sql_select = "R.survey_id = $sid AND R.complete = 'y'";
             $record = get_remote_questionnaire_response($sql_select);
         }
 

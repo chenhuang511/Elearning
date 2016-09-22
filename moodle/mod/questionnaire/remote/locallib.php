@@ -144,7 +144,7 @@ function get_remote_questionnaire_question_by_sid($sid) {
 function get_remote_questionnaire_response_by_rid($rid) {
     global $CFG;
     $wwwroot = $CFG->wwwroot;
-    $condition = 'id = \''.$rid.'\' AND M.wwwroot = \'' . $wwwroot . '\' ';
+    $condition = 'R.id = \''.$rid.'\' AND M.wwwroot = \'' . $wwwroot . '\' ';
     $res = moodle_webservice_client(
         array(
             'domain' => HUB_URL,

@@ -609,7 +609,7 @@ class questionnaire {
                 // Provide for groups setting.
                 $select = 'survey_id = '.$this->sid.' AND complete=\'y\'';
             } else {
-                $select = 'survey_id = '.$this->sid.' AND username = \'' . get_remote_mapping_user($userid)[0]->id . '\' AND complete=\'y\'';
+                $select = 'R.survey_id = '.$this->sid.' AND R.username = \'' . get_remote_mapping_user($userid)[0]->id . '\' AND R.complete=\'y\'';
             }
             $resps = get_remote_questionnaire_response($select);
             return count($resps);
@@ -1438,7 +1438,7 @@ class questionnaire {
             if($isremote){
                 return ($DB->get_record_select('questionnaire_response', $select, null, $fields) !== false) ? $rid : '';
             } else {
-                $select = 'id = '.$rid.' AND survey_id = '.$this->sid.' AND username = \''.get_remote_mapping_user($username)[0]->id.'\' AND complete = \'n\'';
+                $select = 'R.id = '.$rid.' AND R.survey_id = '.$this->sid.' AND R.username = \''.get_remote_mapping_user($username)[0]->id.'\' AND R.complete = \'n\'';
                 return (get_remote_questionnaire_response($select) !== false) ? $rid : '';
             }
         } else {
@@ -1448,8 +1448,8 @@ class questionnaire {
                 $records = $DB->get_records_select('questionnaire_response', $select, null, 'submitted DESC',
                     'id,survey_id', 0, 1);
             } else {
-                $select = 'survey_id = '.$this->sid.' AND complete = \'n\' AND username = \''.get_remote_mapping_user($username)[0]->id.'\'';
-                $records = get_remote_questionnaire_response($select, 'submitted DESC');
+                $select = 'R.survey_id = '.$this->sid.' AND R.complete = \'n\' AND R.username = \''.get_remote_mapping_user($username)[0]->id.'\'';
+                $records = get_remote_questionnaire_response($select, 'R.submitted DESC');
             }
             if ($records) {
                 $rec = reset($records);
@@ -2227,13 +2227,13 @@ class questionnaire {
                    WHERE R.survey_id = ?
                    AND complete = ?
                    ORDER BY R.submitted DESC';
-            $sql_remote = "survey_id = " . $this->survey->id . " AND complete = 'y' ";
+            $sql_remote = "R.survey_id = " . $this->survey->id . " AND R.complete = 'y' ";
             $anonymous = true;
         }
         if($ishost = MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
             $responses = $DB->get_records_sql ($sql, array('survey_id' => $this->survey->id, 'complete' => 'y'));
         } else {
-            $responses = $anonymous ? get_remote_questionnaire_response($sql_remote, "submitted DESC") : get_remote_questionnaire_response_user($sql_remote);
+            $responses = $anonymous ? get_remote_questionnaire_response($sql_remote, "R.submitted DESC") : get_remote_questionnaire_response_user($sql_remote);
         }
         if (!$responses) {
             return;
@@ -2569,11 +2569,11 @@ class questionnaire {
                 $rows = $DB->get_records_sql($sql);
             } else {
                 if ($uid !== false) { // One participant only.
-                    $sql_select = "survey_id='{$this->survey->id}' AND username = $uid AND complete='y'";
-                    $sql_sort = 'id';
+                    $sql_select = "R.survey_id='{$this->survey->id}' AND R.username = $uid AND R.complete='y'";
+                    $sql_sort = 'R.id';
                 } else if ($currentgroupid == 0) {
-                    $sql_select = "survey_id='{$this->survey->id}' AND complete='y'";
-                    $sql_sort = 'id';
+                    $sql_select = "R.survey_id='{$this->survey->id}' AND R.complete='y'";
+                    $sql_sort = 'R.id';
                 } else { // Members of a specific group. // not yet
                     $sql = "SELECT r.id, r.survey_id
                           FROM {questionnaire_response} r,
