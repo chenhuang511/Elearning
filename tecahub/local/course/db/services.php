@@ -346,4 +346,12 @@ $functions = array(
         'type'		    => 'write',
         'ajax'		    => true
     ),
+    'local_get_scale_by_id' => array(
+        'classname'     => 'local_course_external',
+        'methodname'    => 'get_scale_by_id',
+        'classpath'     => 'local/course/externallib.php',
+        'description'   => 'get scale by id',
+        'type'		    => 'write',
+        'ajax'		    => true
+    ),
 );

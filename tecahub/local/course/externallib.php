@@ -2806,4 +2806,51 @@ class local_course_external extends external_api
             )
         );
     }
+
+    public static function get_scale_by_id_parameters() {
+        return new external_function_parameters(
+            array(
+                'id' => new external_value(PARAM_INT, 'the id of scale')
+            )
+        );
+    }
+
+    public static function get_scale_by_id($id) {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_scale_by_id_parameters(), array(
+            'id' => $id
+        ));
+
+        $scale = $DB->get_record('scale', array('id' => $params['id']));
+        if(!$scale) {
+            $scale = new stdClass();
+        }
+
+        $result = array();
+        $result['scale'] = $scale;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    public static function get_scale_by_id_returns() {
+        return new external_single_structure(
+            array(
+                'scale' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'the id of scale', VALUE_OPTIONAL),
+                        'courseid' => new external_value(PARAM_INT, 'the id of course', VALUE_OPTIONAL),
+                        'userid' => new external_value(PARAM_INT, 'the id of user', VALUE_OPTIONAL),
+                        'name' => new external_value(PARAM_RAW, 'the name of scale', VALUE_OPTIONAL),
+                        'scale' => new external_value(PARAM_RAW, 'the scale', VALUE_OPTIONAL),
+                        'description' => new external_value(PARAM_RAW, 'the description of scale', VALUE_OPTIONAL),
+                        'descriptionformat' => new external_value(PARAM_INT, 'the description format', VALUE_OPTIONAL),
+                        'timemodified' => new external_value(PARAM_INT, 'the time modified', VALUE_OPTIONAL),
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }
