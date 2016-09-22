@@ -895,11 +895,10 @@ class questionnaire {
         $ruser = '';
         if ($resp && !$blankquestionnaire) {
             if ($userid) {
-                if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-                    $user = $DB->get_record('user', array('id' => $userid));
-                } else {
-                    $user = get_remote_user_by_id($userid);
+                if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+                    $userid = get_remote_mapping_localuserid($userid);
                 }
+                $user = $DB->get_record('user', array('id' => $userid));
                 if ($user) {
                     $ruser = fullname($user);
                 }
@@ -2422,11 +2421,10 @@ class questionnaire {
             $ruser = '';
             if ($reporttype == 'report') {
                 if ($this->respondenttype != 'anonymous') {
-                    if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
-                        $user = $DB->get_record('user', array('id' => $response->username));
-                    } else {
-                        $user = get_remote_user_by_id($response->username);
+                    if(MOODLE_RUN_MODE === MOODLE_MODE_HUB){
+                        $response->username = get_remote_mapping_localuserid($response->username);
                     }
+                    $user = $DB->get_record('user', array('id' => $response->username));
                     if ($user) {
                         $ruser = ' | ' .fullname($user);
                     }

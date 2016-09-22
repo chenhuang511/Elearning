@@ -90,12 +90,14 @@ function get_remote_questionnaire_attempts_course($id) {
  * @return false|mixed
  */
 function get_remote_user_by_id($id) {
+    global $CFG;
+    $wwwroot = $CFG->wwwroot;
     $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_questionnaire_get_user_by_id',
-            'params' => array('id' => $id)
+            'params' => array('id' => $id, 'wwwroot' => $wwwroot)
         )
     );
     return $resp;
@@ -140,7 +142,9 @@ function get_remote_questionnaire_question_by_sid($sid) {
 }
 
 function get_remote_questionnaire_response_by_rid($rid) {
-    $condition = 'id = \''.$rid.'\'';
+    global $CFG;
+    $wwwroot = $CFG->wwwroot;
+    $condition = 'id = \''.$rid.'\' AND M.wwwroot = \'' . $wwwroot . '\' ';
     $res = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
@@ -216,6 +220,9 @@ function get_remote_questionnaire_attempts($condition, $sort='')
  */
 function get_remote_questionnaire_response($condition, $sort='')
 {
+    global $CFG;
+    $wwwroot = $CFG->wwwroot;
+    $condition .= " AND M.wwwroot = '" . $wwwroot . "' ";
     $res = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
@@ -234,6 +241,9 @@ function get_remote_questionnaire_response($condition, $sort='')
  */
 function get_remote_questionnaire_response_group_username($condition, $sort='')
 {
+    global $CFG;
+    $wwwroot = $CFG->wwwroot;
+    $condition .= " AND M.wwwroot = '" . $wwwroot . "' ";
     $res = moodle_webservice_client(
         array(
             'domain' => HUB_URL,

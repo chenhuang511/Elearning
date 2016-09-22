@@ -582,7 +582,7 @@ class local_questionnaire_external extends external_api {
             array('condition' => $condition, 'sort' => $sort));
 
         $sql = 'SELECT * '.
-            'FROM {questionnaire_response} '.
+            'FROM {questionnaire_response} INNER JOIN {user} AS U ON U.id = {questionnaire_response}.username INNER JOIN {mnet_host} M ON M.id = U.MNETHOSTID '.
             'WHERE '.$params['condition'];
 
         if(!empty($params['sort'])){
@@ -624,8 +624,8 @@ class local_questionnaire_external extends external_api {
             array('condition' => $condition, 'sort' => $sort));
 
         $sql = 'SELECT username '.
-            'FROM {questionnaire_response} '.
-            'WHERE '.$params['condition'] . ' GROUP BY username ';
+            'FROM {questionnaire_response} INNER JOIN {user} AS U ON U.id = {questionnaire_response}.username INNER JOIN {mnet_host} M ON M.id = U.MNETHOSTID '.
+            'WHERE '.$params['condition'] . ' GROUP BY {questionnaire_response}.username ';
         if(!empty($params['sort'])){
             $sql .= ' ORDER BY '.$params['sort'];
         }
