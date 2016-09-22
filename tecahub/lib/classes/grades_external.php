@@ -512,6 +512,9 @@ class core_grades_external extends external_api {
         $gradestructure = array();
         foreach ($grades as $grade) {
             $editinggrades = true;
+            if ($grade['grade'] == -1){
+                $grade['grade'] = null;
+            }
             $gradestructure[ $grade['studentid'] ] = array('userid' => $grade['studentid'], 'rawgrade' => $grade['grade']);
         }
         if (!empty($params['itemdetails'])) {
