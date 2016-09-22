@@ -210,8 +210,10 @@ class grade_grade extends grade_object {
             foreach ($params as $key => $value) {
                 $remoteparamvalue = $value;
                 if (strpos($key, 'uid') !== false) {
-                    $remoteparamvalue = get_remote_mapping_user($value)[0]->id;
-                    $oldmappinguser[$remoteparamvalue] = $value;
+                    if ($value > 0){
+                        $remoteparamvalue = get_remote_mapping_user($value)[0]->id;
+                        $oldmappinguser[$remoteparamvalue] = $value;
+                    }
                 } elseif (strpos($key, 'giid') !== false) {
                     $remoteparamvalue = get_local_grade_items_record($value, true)->remoteid;
                 }
