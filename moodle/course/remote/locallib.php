@@ -839,3 +839,17 @@ function get_remote_scales_menu_sql($courseid)
     }
     return $scales;
 }
+
+function get_remote_scale_by_id($id)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_get_scale_by_id',
+            'params' => array('id' => $id),
+        )
+    );
+
+    return $result->scale;
+}
