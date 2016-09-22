@@ -192,9 +192,10 @@ function forum_update_instance($forum, $mform)
 
     if ($forum->type == 'single') {  // Update related discussion and post.
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $localforum = $DB->get_record('forum', array('id' => $forum->id), 'id, remoteid');
             $params = array();
             $params['parameters[0][name]'] = "forum";
-            $params['parameters[0][value]'] = $forum->id;
+            $params['parameters[0][value]'] = $localforum ? $localforum->remoteid : $forum->id;
             $discussions = get_remote_list_forum_discussions_sql($params, "timemodified ASC");
         } else {
             $discussions = $DB->get_records('forum_discussions', array('forum' => $forum->id), 'timemodified ASC');
@@ -224,7 +225,7 @@ function forum_update_instance($forum, $mform)
             if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
                 $params = array();
                 $params['parameters[0][name]'] = "forum";
-                $params['parameters[0][value]'] = $forum->id;
+                $params['parameters[0][value]'] = $forum->remoteid;
                 if (!$discussion = get_remote_forum_discussions_by($params)) {
                     print_error('cannotadd', 'forum');
                 }
@@ -248,11 +249,7 @@ function forum_update_instance($forum, $mform)
             }
         }
 
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            $cm = get_remote_course_module_by_instance('forum', $forum->id);
-        } else {
-            $cm = get_coursemodule_from_instance('forum', $forum->id);
-        }
+        $cm = get_coursemodule_from_instance('forum', $forum->id);
         $modcontext = context_module::instance($cm->id, MUST_EXIST);
 
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
@@ -279,6 +276,18 @@ function forum_update_instance($forum, $mform)
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
             update_remote_mdl_forum('forum_posts', $post->id, $post);
             $discussion->name = $forum->name;
+            if(isset($discussion->userid)) {
+                $localuserid = get_remote_mapping_localuserid($discussion->userid);
+                if($localuserid) {
+                    $discussion->userid = $localuserid;
+                }
+            }
+            if(isset($discussion->usermodified)) {
+                $localuserid = get_remote_mapping_localuserid($discussion->usermodified);
+                if($localuserid) {
+                    $discussion->usermodified = $localuserid;
+                }
+            }
             update_remote_mdl_forum('forum_discussions', $discussion->id, $discussion);
         } else {
             $DB->update_record('forum_posts', $post);
