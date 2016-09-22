@@ -675,6 +675,9 @@ function get_remote_assign_grades_get_grades($courseid, $component, $activityid,
  * @return stdClass $resp - Returns student course total grade and grades for activities
  */
 function core_grades_update_grades($source, $courseid, $component, $activityid, $itemnumber, $rgrades, $itemdetails){
+    if (is_null($rgrades['grade'])){
+        $rgrades['grade'] = -1;
+    }
 
     $resp = moodle_webservice_client(
         array(
@@ -947,6 +950,10 @@ function update_remote_grade($grade){
     $suserid = get_remote_mapping_user($grade->userid)[0]->id;
     $grader = get_remote_mapping_user($grade->grader)[0]->id;
     $rassignment = get_local_assign_record($grade->assignment, true)->remoteid;
+
+    if (is_null($grade->grade)){
+        $grade->grade = -1;
+    }
 
     $resp = moodle_webservice_client(
         array(
