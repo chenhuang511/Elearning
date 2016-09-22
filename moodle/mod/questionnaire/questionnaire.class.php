@@ -2220,7 +2220,7 @@ class questionnaire {
             $selectgroupid.
             'ORDER BY U.lastname, U.firstname, R.submitted DESC';
 
-            $sql_remote = ' R.survey_id='.$this->survey->id. ' AND complete = \'y\' AND U.id = R.username M.WWWWROOT = ' . $CFG->wwwroot . ' ORDER BY U.lastname, U.firstname, R.submitted DESC';
+            $sql_remote = 'R.survey_id='.$this->survey->id. ' AND complete = \'y\' AND U.id = R.username AND M.WWWROOT = \'' . $CFG->wwwroot . '\' ORDER BY U.lastname, U.firstname, R.submitted DESC';
             $anonymous = false;
         } else {
             $sql = 'SELECT R.id AS responseid, R.submitted
@@ -2258,7 +2258,7 @@ class questionnaire {
                     $response->responseid = $response->id;
                     $response->userid = $response->username;
                 }
-                get_remote_mapping_localuserid($response->userid);
+                $response->userid = get_remote_mapping_localuserid($response->userid);
             }
             array_push($rids, $response->responseid);
             if ($isfullname) {
