@@ -660,8 +660,8 @@ class local_questionnaire_external extends external_api {
             array('condition' => $condition, 'sort' => $sort));
 
         $sql = 'SELECT R.id AS responseid, R.submitted AS submitted, U.username AS username, U.id as userid '.
-            'FROM {questionnaire_response} R, {user} U '.
-            'WHERE '.$params['condition'];
+            'FROM {questionnaire_response} R, {user} U, {mnet_host} M '.
+            ' WHERE M.id = U.MNETHOSTID '.$params['condition'];
         if(!empty($params['sort'])){
             $sql .= ' ORDER BY '.$params['sort'];
         }
