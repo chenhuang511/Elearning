@@ -276,15 +276,15 @@ function forum_update_instance($forum, $mform)
         if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
             update_remote_mdl_forum('forum_posts', $post->id, $post);
             $discussion->name = $forum->name;
-            if(isset($discussion->userid)) {
+            if (isset($discussion->userid)) {
                 $localuserid = get_remote_mapping_localuserid($discussion->userid);
-                if($localuserid) {
+                if ($localuserid) {
                     $discussion->userid = $localuserid;
                 }
             }
-            if(isset($discussion->usermodified)) {
+            if (isset($discussion->usermodified)) {
                 $localuserid = get_remote_mapping_localuserid($discussion->usermodified);
-                if($localuserid) {
+                if ($localuserid) {
                     $discussion->usermodified = $localuserid;
                 }
             }
@@ -2497,11 +2497,7 @@ function forum_get_user_posts($forumid, $userid)
     $params = array($forumid, $userid);
 
     if (!empty($CFG->forum_enabletimedposts)) {
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            $cm = get_remote_course_module_by_instance('forum', $forumid);
-        } else {
-            $cm = get_coursemodule_from_instance('forum', $forumid);
-        }
+        $cm = get_coursemodule_from_instance('forum', $forumid);
         if (!has_capability('mod/forum:viewhiddentimedposts', context_module::instance($cm->id))) {
             $now = time();
             $timedsql = "AND (d.timestart < ? AND (d.timeend = 0 OR d.timeend > ?))";
@@ -2539,11 +2535,7 @@ function forum_get_user_involved_discussions($forumid, $userid)
     $timedsql = "";
     $params = array($forumid, $userid);
     if (!empty($CFG->forum_enabletimedposts)) {
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            $cm = get_remote_course_module_by_instance('forum', $forumid);
-        } else {
-            $cm = get_coursemodule_from_instance('forum', $forumid);
-        }
+        $cm = get_coursemodule_from_instance('forum', $forumid);
         if (!has_capability('mod/forum:viewhiddentimedposts', context_module::instance($cm->id))) {
             $now = time();
             $timedsql = "AND (d.timestart < ? AND (d.timeend = 0 OR d.timeend > ?))";
@@ -2577,11 +2569,8 @@ function forum_count_user_posts($forumid, $userid)
     $timedsql = "";
     $params = array($forumid, $userid);
     if (!empty($CFG->forum_enabletimedposts)) {
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            $cm = get_remote_course_module_by_instance('forum', $forumid);
-        } else {
-            $cm = get_coursemodule_from_instance('forum', $forumid);
-        }
+        $cm = get_coursemodule_from_instance('forum', $forumid);
+
         if (!has_capability('mod/forum:viewhiddentimedposts', context_module::instance($cm->id))) {
             $now = time();
             $timedsql = "AND (d.timestart < ? AND (d.timeend = 0 OR d.timeend > ?))";
@@ -3478,14 +3467,8 @@ function forum_get_course_forum($courseid, $type)
         return false;
     }
     $sectionid = course_add_cm_to_section($courseid, $mod->coursemodule, 0);
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $params = array();
-        $params['parameters[0][name]'] = "id";
-        $params['parameters[0][value]'] = $forum->id;
-        return get_remote_forum_by($params);
-    } else {
-        return $DB->get_record("forum", array("id" => "$forum->id"));
-    }
+
+    return $DB->get_record("forum", array("id" => "$forum->id"));
 }
 
 /**
@@ -3981,17 +3964,15 @@ function forum_rating_validate($params)
         $prs['parameters[0][name]'] = "id";
         $prs['parameters[0][value]'] = $post->discussion;
         $discussion = get_remote_forum_discussions_by($params, '', true);
-        $prs['parameters[0][value]'] = $discussion->forum;
-        $forum = get_remote_forum_by($params, '', true);
-        $course = get_local_course_record($forum->course);
-        $cm = get_remote_course_module_by_instance('forum', $forum->id);
     } else {
         $post = $DB->get_record('forum_posts', array('id' => $params['itemid'], 'userid' => $params['rateduserid']), '*', MUST_EXIST);
         $discussion = $DB->get_record('forum_discussions', array('id' => $post->discussion), '*', MUST_EXIST);
-        $forum = $DB->get_record('forum', array('id' => $discussion->forum), '*', MUST_EXIST);
-        $course = $DB->get_record('course', array('id' => $forum->course), '*', MUST_EXIST);
-        $cm = get_coursemodule_from_instance('forum', $forum->id, $course->id, false, MUST_EXIST);
     }
+
+    $forum = $DB->get_record('forum', array('id' => $discussion->forum), '*', MUST_EXIST);
+    $course = $DB->get_record('course', array('id' => $forum->course), '*', MUST_EXIST);
+    $cm = get_coursemodule_from_instance('forum', $forum->id, $course->id, false, MUST_EXIST);
+
     $context = context_module::instance($cm->id);
 
     // Make sure the context provided is the context of the forum
@@ -4103,18 +4084,13 @@ function mod_forum_rating_can_see_item_ratings($params)
         $prs['parameters[0][name]'] = "id";
         $prs['parameters[0][value]'] = $post->discussion;
         $discussion = get_remote_forum_discussions_by($params, '', true);
-        $prs['parameters[0][value]'] = $discussion->forum;
-        $forum = get_remote_forum_by($params, '', true);
-        $course = get_local_course_record($forum->course);
-        $cm = get_remote_course_module_by_instance('forum', $forum->id);
     } else {
         $post = $DB->get_record('forum_posts', array('id' => $params['itemid']), '*', MUST_EXIST);
         $discussion = $DB->get_record('forum_discussions', array('id' => $post->discussion), '*', MUST_EXIST);
-        $forum = $DB->get_record('forum', array('id' => $discussion->forum), '*', MUST_EXIST);
-        $course = $DB->get_record('course', array('id' => $forum->course), '*', MUST_EXIST);
-        $cm = get_coursemodule_from_instance('forum', $forum->id, $course->id, false, MUST_EXIST);
     }
-
+    $forum = $DB->get_record('forum', array('id' => $discussion->forum), '*', MUST_EXIST);
+    $course = $DB->get_record('course', array('id' => $forum->course), '*', MUST_EXIST);
+    $cm = get_coursemodule_from_instance('forum', $forum->id, $course->id, false, MUST_EXIST);
 
     // Perform some final capability checks.
     if (!forum_user_can_see_post($forum, $discussion, $post, $USER, $cm)) {
@@ -6191,14 +6167,8 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions = -1, $
     global $CFG, $USER, $OUTPUT, $DB;
 
     if (!$cm) {
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            if (!$cm = get_coursemodule_from_instance('forum', $forum->remoteid)) {
-                print_error('invalidcoursemodule');
-            }
-        } else {
-            if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
-                print_error('invalidcoursemodule');
-            }
+        if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
+            print_error('invalidcoursemodule');
         }
     }
     $context = context_module::instance($cm->id);
@@ -7485,14 +7455,7 @@ function forum_tp_can_track_forums($forum = false, $user = false)
     // Work toward always passing an object...
     if (is_numeric($forum)) {
         debugging('Better use proper forum object.', DEBUG_DEVELOPER);
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            $params = array();
-            $params['parameters[0][name]'] = "id";
-            $params['parameters[0][value]'] = $forum;
-            $forum = get_remote_forum_by($params);
-        } else {
-            $forum = $DB->get_record('forum', array('id' => $forum), '', 'id,trackingtype');
-        }
+        $forum = $DB->get_record('forum', array('id' => $forum), '', 'id,trackingtype');
     }
 
     $forumallows = ($forum->trackingtype == FORUM_TRACKING_OPTIONAL);
@@ -7533,14 +7496,8 @@ function forum_tp_is_tracked($forum, $user = false)
     // Work toward always passing an object...
     if (is_numeric($forum)) {
         debugging('Better use proper forum object.', DEBUG_DEVELOPER);
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            $params = array();
-            $params['parameters[0][name]'] = "id";
-            $params['parameters[0][value]'] = $forum;
-            $forum = get_remote_forum_by($params);
-        } else {
-            $forum = $DB->get_record('forum', array('id' => $forum));
-        }
+        $forum = $DB->get_record('forum', array('id' => $forum));
+
     }
 
     if (!forum_tp_can_track_forums($forum, $user)) {
@@ -7790,14 +7747,7 @@ function forum_check_throttling($forum, $cm = null)
     global $CFG, $DB, $USER;
 
     if (is_numeric($forum)) {
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            $params = array();
-            $params['parameters[0][name]'] = "id";
-            $params['parameters[0][value]'] = $forum;
-            $forum = get_remote_forum_by($params, '', true);
-        } else {
-            $forum = $DB->get_record('forum', array('id' => $forum), '*', MUST_EXIST);
-        }
+        $forum = $DB->get_record('forum', array('id' => $forum), '*', MUST_EXIST);
     }
 
     if (!is_object($forum)) {
@@ -7805,11 +7755,7 @@ function forum_check_throttling($forum, $cm = null)
     }
 
     if (!$cm) {
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            $cm = get_remote_course_module_by_instance('forum', $forum->remoteid);
-        } else {
-            $cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course, false, MUST_EXIST);
-        }
+        $cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course, false, MUST_EXIST);
     }
 
     if (empty($forum->blockafter)) {
@@ -8803,14 +8749,7 @@ function forum_set_user_maildigest($forum, $maildigest, $user = null)
     global $DB, $USER;
 
     if (is_number($forum)) {
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            $params = array();
-            $params['parameters[0][name]'] = "id";
-            $params['parameters[0][value]'] = $forum;
-            $forum = get_remote_forum_by($params);
-        } else {
-            $forum = $DB->get_record('forum', array('id' => $forum));
-        }
+        $forum = $DB->get_record('forum', array('id' => $forum));
     }
 
     if ($user === null) {
@@ -8968,11 +8907,7 @@ function forum_get_context($forumid, $context = null)
         ) {
             $context = $PAGE->context;
         } else {
-            if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-                $cm = get_remote_course_module_by_instance('forum', $forumid);
-            } else {
-                $cm = get_coursemodule_from_instance('forum', $forumid);
-            }
+            $cm = get_coursemodule_from_instance('forum', $forumid);
             $context = \context_module::instance($cm->id);
         }
     }
@@ -9138,11 +9073,12 @@ function forum_get_local_settings_info($courseid, $instance)
     $params['parameters[0][name]'] = "id";
     $params['parameters[0][value]'] = $instance;
     $forum = get_remote_forum_by($params);
-    if (!$forum) {
+    if (!$forum || $forum->type == "single") {
         return 0;
     }
+
     $localforum = $DB->get_record('forum', array('remoteid' => $instance));
-    if (!$localforum) {
+    if (!$localforum && $forum->type != "single") {
         $forum->remoteid = $forum->id;
         $forum->course = $courseid;
         unset($forum->id);
