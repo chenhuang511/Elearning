@@ -4236,8 +4236,8 @@ function get_local_list_course_completion($userid)
 
     $completions = $DB->get_records_sql($sql, array($userid));
 
-    if (!$completions){
-        return 0;
+    if (empty($completions)){
+        return null;
     }
 
     return $completions;

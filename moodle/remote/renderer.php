@@ -59,7 +59,7 @@ class core_remote_renderer extends plugin_renderer_base
         $coursecompletionids = get_local_list_course_completion($USER->id);
         $countcompletion = count($coursecompletionids);
 
-        if (!$coursecompletionids) {
+        if (!$countcompletion) {
             $mycoursecompletion = 'Bạn chưa hoàn thành khóa học nào';
         }
 
