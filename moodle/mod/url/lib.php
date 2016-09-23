@@ -351,3 +351,33 @@ function url_view($url, $course, $cm, $context) {
     $completion = new completion_info($course);
     $completion->set_module_viewed($cm);
 }
+
+
+/**
+ * Insert mod url to host
+ *
+ * @param stdClass $courseid  - The id of host
+ * @return stdClass $instance   - The id of instance id
+ */
+function url_get_local_settings_info($courseid, $instance)
+{
+    global $CFG, $DB;
+    require_once($CFG->dirroot . '/mod/url/remote/locallib.php');
+    if (!$url = $DB->get_record('url', array('remoteid' => $instance))) {
+        // Get remote url
+        if (!$url = get_remote_url_by_id($instance)) {
+            print_error('Not Found url id on host');
+        }
+
+        // Check if not exist then insert local DB
+        unset($url->id);
+        $url->course = $courseid;
+        $url->remoteid = $instance;
+
+        // From this point we make database changes, so start transaction.
+        $url->id = $DB->insert_record('url', $url);
+        return $url->id;
+    }
+
+    return 0;
+}

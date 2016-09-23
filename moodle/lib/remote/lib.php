@@ -325,24 +325,29 @@ function add_local_course_module($cm)
     if ($localcourse) {
         if (!$coursemodule = $DB->get_record('course_modules', array('remoteid' => $cm->id))) {
             $transaction = $DB->start_delegated_transaction();
-            // Make params to insert DB host
-            $cm->remoteid = $cm->id;
-            unset($cm->id);
-
-            // Change course id on host
-            $cm->course = $localcourse->id;
-
             // Change module id on host
             $modulehub = get_remote_modules_by_id($cm->module);
             $modulehost = $DB->get_record('modules', array('name' => $modulehub->name));
             if ($modulehost) {
+                // Make params to insert DB host
+                $cm->remoteid = $cm->id;
+                unset($cm->id);
+
+                // Change module id on host
                 $cm->module = $modulehost->id;
 
-                // Change instance id on host
-                $cm->instance = merge_local_course_module_instance($cm->course, $cm->instance, $modulehost->name);
-            }
+                // Change course id on host
+                $cm->course = $localcourse->id;
 
-            $DB->insert_record('course_modules', $cm);
+                // Change instance id on host
+                $instance = merge_local_course_module_instance($cm->course, $cm->instance, $modulehost->name);
+
+                // Check if handle module on hub then insert course module
+                if ($instance){
+                    $cm->instance = $instance;
+                    $DB->insert_record('course_modules', $cm);
+                }
+            }
             $transaction->allow_commit();
         }
     }
@@ -427,6 +432,8 @@ function merge_local_sequence_course_section($sequence, $updatecm = false, $seci
                 }
                 $DB->update_record('course_modules', $cm);
             }
+        } else {
+            unset($seq);
         }
     }
     // Update sequence in course_sections
@@ -450,7 +457,7 @@ function merge_local_course_module_instance($courseid, $instance, $modname)
     $functionname = $modname . '_get_local_settings_info';
 
     if (!file_exists("$CFG->dirroot/mod/$modname/lib.php")) {
-        return $instance;
+        return 0;
     }
 
     include_once("$CFG->dirroot/mod/$modname/lib.php");
@@ -460,7 +467,7 @@ function merge_local_course_module_instance($courseid, $instance, $modname)
         }
     }
 
-    return $instance;
+    return 0;
 }
 
 /**

@@ -739,7 +739,8 @@ function bigbluebuttonbn_get_local_settings_info($courseid, $instance)
         $bigbluebuttonbn->remoteid = $instance;
         // From this point we make database changes, so start transaction.
         $bigbluebuttonbn->id = $DB->insert_record('bigbluebuttonbn', $bigbluebuttonbn);
+        return $bigbluebuttonbn->id;
     }
 
-    return $bigbluebuttonbn->id;
+    return 0;
 }

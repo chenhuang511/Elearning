@@ -56,7 +56,7 @@ class core_remote_renderer extends plugin_renderer_base
 
         $mycoursecompletion = '';
 
-        $coursecompletionids = get_remote_list_course_completion($USER->id);
+        $coursecompletionids = get_local_list_course_completion($USER->id);
         $countcompletion = count($coursecompletionids);
 
         if (!$coursecompletionids) {
@@ -84,7 +84,7 @@ class core_remote_renderer extends plugin_renderer_base
 
         foreach ($courses as $course) {
             $course->iscompletion = 0; // default course
-            $course->completion = get_remote_course_completion_progress($course, $USER->id);
+            $course->completion = get_local_course_completion_progress($course, $USER->id);
 
             $classes = 'coursebox clearfix';
 
