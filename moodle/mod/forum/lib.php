@@ -701,11 +701,7 @@ function forum_cron()
                 }
             }
             if (!isset($coursemodules[$forumid])) {
-                if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-                    $cm = get_remote_course_module_by_instance('forum', $forumid, $courseid);
-                } else {
-                    $cm = get_coursemodule_from_instance('forum', $forumid, $courseid);
-                }
+                $cm = get_coursemodule_from_instance('forum', $forumid, $courseid);
                 if ($cm) {
                     $coursemodules[$forumid] = $cm;
                 } else {
@@ -1176,11 +1172,7 @@ function forum_cron()
                 }
 
                 if (!isset($coursemodules[$forumid])) {
-                    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-                        $cm = get_remote_course_module_by_instance('forum', $forumid);
-                    } else {
-                        $cm = get_coursemodule_from_instance('forum', $forumid, $courseid);
-                    }
+                    $cm = get_coursemodule_from_instance('forum', $forumid, $courseid);
                     if ($cm) {
                         $coursemodules[$forumid] = $cm;
                     } else {
@@ -4270,14 +4262,8 @@ function forum_print_nondiscussion($forum, $cm = null)
     global $CFG, $USER, $OUTPUT, $DB;
 
     if (!$cm) {
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            if (!$cm = get_remote_course_module_by_instance('forum', $forum->id)) {
-                print_error('invalidcoursemodule');
-            }
-        } else {
-            if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
-                print_error('invalidcoursemodule');
-            }
+        if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
+            print_error('invalidcoursemodule');
         }
     }
     $context = context_module::instance($cm->id);
@@ -5816,14 +5802,8 @@ function forum_user_can_post($forum, $discussion, $user = NULL, $cm = NULL, $cou
 
     if (!$cm) {
         debugging('missing cm', DEBUG_DEVELOPER);
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            if (!$cm = get_remote_course_module_by_instance('forum', $forum->id)) {
-                print_error('invalidcoursemodule');
-            }
-        } else {
-            if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
-                print_error('invalidcoursemodule');
-            }
+        if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
+            print_error('invalidcoursemodule');
         }
     }
 
@@ -5954,19 +5934,9 @@ function forum_user_can_see_discussion($forum, $discussion, $context, $user = NU
     // retrieve objects (yuk)
     if (is_numeric($forum)) {
         debugging('missing full forum', DEBUG_DEVELOPER);
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            $params = array();
-            $params['parameters[0][name]'] = "id";
-            $params['parameters[0][value]'] = $forum;
-            if (!$forum = get_remote_forum_by($params)) {
-                return false;
-            }
-        } else {
-            if (!$forum = $DB->get_record('forum', array('id' => $forum))) {
-                return false;
-            }
+        if (!$forum = $DB->get_record('forum', array('id' => $forum))) {
+            return false;
         }
-
     }
     if (is_numeric($discussion)) {
         debugging('missing full discussion', DEBUG_DEVELOPER);
@@ -5983,16 +5953,9 @@ function forum_user_can_see_discussion($forum, $discussion, $context, $user = NU
             }
         }
     }
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        if (!$cm = get_remote_course_module_by_instance('forum', $forum->id)) {
-            print_error('invalidcoursemodule');
-        }
-    } else {
-        if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
-            print_error('invalidcoursemodule');
-        }
+    if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
+        print_error('invalidcoursemodule');
     }
-
     if (!has_capability('mod/forum:viewdiscussion', $context)) {
         return false;
     }
@@ -7928,14 +7891,8 @@ function forum_reset_userdata($data)
         $fs = get_file_storage();
         if ($forums) {
             foreach ($forums as $forumid => $unused) {
-                if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-                    if (!$cm = get_remote_course_module_by_instance('forum', $forumid)) {
-                        continue;
-                    }
-                } else {
-                    if (!$cm = get_coursemodule_from_instance('forum', $forumid)) {
-                        continue;
-                    }
+                if (!$cm = get_coursemodule_from_instance('forum', $forumid)) {
+                    continue;
                 }
                 $context = context_module::instance($cm->id);
                 $fs->delete_area_files($context->id, 'mod_forum', 'attachment');
@@ -7981,14 +7938,8 @@ function forum_reset_userdata($data)
     if (!empty($data->reset_forum_ratings)) {
         if ($forums) {
             foreach ($forums as $forumid => $unused) {
-                if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-                    if (!$cm = get_remote_course_module_by_instance('forum', $forumid)) {
-                        continue;
-                    }
-                } else {
-                    if (!$cm = get_coursemodule_from_instance('forum', $forumid)) {
-                        continue;
-                    }
+                if (!$cm = get_coursemodule_from_instance('forum', $forumid)) {
+                    continue;
                 }
                 $context = context_module::instance($cm->id);
 
@@ -8735,13 +8686,9 @@ function forum_set_user_maildigest($forum, $maildigest, $user = null)
         $user = $USER;
     }
 
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $course = get_local_course_record($forum->course);
-        $cm = get_remote_course_module_by_instance('forum', $forum->id);
-    } else {
-        $course = $DB->get_record('course', array('id' => $forum->course), '*', MUST_EXIST);
-        $cm = get_coursemodule_from_instance('forum', $forum->id, $course->id, false, MUST_EXIST);
-    }
+    $course = $DB->get_record('course', array('id' => $forum->course), '*', MUST_EXIST);
+    $cm = get_coursemodule_from_instance('forum', $forum->id, $course->id, false, MUST_EXIST);
+
     $context = context_module::instance($cm->id);
 
     // User must be allowed to see this forum.
