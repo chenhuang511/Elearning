@@ -1295,64 +1295,6 @@ class local_course_external extends external_api
         );
     }
 
-    public static function get_course_completion_progress_parameters()
-    {
-        return new external_function_parameters(
-            array(
-                'courseid' => new external_value(PARAM_INT, ' the id of course'),
-                'userid' => new external_value(PARAM_INT, ' the id of course'),
-                'totalmoduletracking' => new external_value(PARAM_INT, 'the total count of couse module is tracking')
-            )
-        );
-    }
-
-    public static function get_course_completion_progress($courseid, $userid, $totalmoduletracking)
-    {
-        global $DB;
-        $warnings = array();
-
-        $params = self::validate_parameters(self::get_course_completion_progress_parameters(), array(
-            'courseid' => $courseid,
-            'userid' => $userid,
-            'totalmoduletracking' => $totalmoduletracking
-        ));
-
-        $result = array();
-
-        $arr = array();
-        $arr['courseid'] = $params['courseid'];
-        $arr['userid'] = $params['userid'];
-
-
-        $completion = 0;
-
-        if ($params['totalmoduletracking'] > 0) {
-            $sql = "SELECT COUNT(*) FROM {course_modules_completion} cmc
-                LEFT JOIN {course_modules} cm
-                ON cmc.coursemoduleid = cm.id
-                WHERE cm.course = :courseid AND cmc.userid = :userid AND cmc.completionstate <> 0";
-            $completioncount = $DB->count_records_sql($sql, $arr);
-
-            if ($completioncount > 0) {
-                $completion = ($completioncount * 100) / $totalmoduletracking;
-            }
-        }
-
-        $result['completion'] = intval($completion);
-        $result['warnings'] = $warnings;
-        return $result;
-    }
-
-    public static function get_course_completion_progress_returns()
-    {
-        return new external_single_structure(
-            array(
-                'completion' => new external_value(PARAM_TEXT, 'the completion'),
-                'warnings' => new external_warnings()
-            )
-        );
-    }
-
     /**
      * Describes the parameters for delete_remote_course_completions
      *
@@ -1461,59 +1403,6 @@ class local_course_external extends external_api
     public static function delete_remote_course_completion_crit_compl_returns()
     {
         return new external_value(PARAM_INT, 'true if success');
-    }
-
-
-    public static function get_list_course_completion_parameters()
-    {
-        return new external_function_parameters(
-            array(
-                'userid' => new external_value(PARAM_INT, 'the id of user')
-            )
-        );
-    }
-
-    public static function get_list_course_completion($userid)
-    {
-        global $DB;
-        $warnings = array();
-
-        $params = self::validate_parameters(self::get_list_course_completion_parameters(), array(
-            'userid' => $userid
-        ));
-
-        $result = array();
-
-        $sql = "SELECT cc.course FROM {course} c 
-                LEFT JOIN {course_completions} cc ON c.id = cc.course
-                WHERE cc.timecompleted IS NOT NULL AND cc.userid = ?";
-
-        $completions = $DB->get_records_sql($sql, array($params['userid']));
-
-        if (!$completions) {
-            $completions = array();
-        }
-
-        $result['completions'] = $completions;
-        $result['warnings'] = $warnings;
-
-        return $result;
-    }
-
-    public static function get_list_course_completion_returns()
-    {
-        return new external_single_structure(
-            array(
-                'completions' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'course' => new external_value(PARAM_INT, 'the course id'),
-                        )
-                    ), 'the course id'
-                ),
-                'warnings' => new external_warnings()
-            )
-        );
     }
 
     /**

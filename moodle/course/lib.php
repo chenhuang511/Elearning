@@ -4187,3 +4187,59 @@ function activity_merge_module_info($modname, $moduleid){
 
     return $data;
 }
+
+/**
+ * Get course completion on hub
+ * @param int $courseid - The id of course
+ * @param int $userid - The id of user
+ * @return mixed $result  - The information of course completion
+ */
+function get_local_course_completion_progress($course, $userid)
+{
+    global $DB;
+
+    $totalmoduletracking = $DB->count_records_sql("SELECT COUNT(1) 
+                FROM {course_modules} 
+                WHERE course = ? AND completion <> 0", array($course->id));
+
+    if (empty($totalmoduletracking)) {
+        return 0;
+    }
+
+    $arr = array(
+        'courseid' => $course->id,
+        'userid' => $userid,
+    );
+
+    $sql = "SELECT COUNT(*) FROM {course_modules_completion} cmc
+                LEFT JOIN {course_modules} cm
+                ON cmc.coursemoduleid = cm.id
+                WHERE cm.course = :courseid AND cmc.userid = :userid AND cmc.completionstate <> 0";
+
+    $completioncount = $DB->count_records_sql($sql, $arr);
+
+    if ($completioncount > 0) {
+        $completion = ($completioncount * 100) / $totalmoduletracking;
+        return intval($completion);
+    }
+
+    return 0;
+}
+
+function get_local_list_course_completion($userid)
+{
+    global $DB;
+
+    $sql = "SELECT cc.course FROM {course} c 
+                LEFT JOIN {course_completions} cc ON c.id = cc.course
+                WHERE cc.timecompleted IS NOT NULL AND cc.userid = ?";
+
+    $completions = $DB->get_records_sql($sql, array($userid));
+
+    if (!$completions){
+        return 0;
+    }
+
+    return $completions;
+}
+

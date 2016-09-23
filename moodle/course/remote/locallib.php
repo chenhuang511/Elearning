@@ -333,60 +333,6 @@ function create_update_remote_course_modules_completion($cmc)
 }
 
 /**
- * Get course completion on hub
- * @param int $courseid - The id of course
- * @param int $userid - The id of user
- * @return mixed $result  - The information of course completion
- */
-function get_remote_course_completion_progress($course, $userid)
-{
-    global $DB;
-
-    $totalmoduletracking = $DB->count_records_sql("SELECT COUNT(1) 
-                FROM {course_modules} 
-                WHERE course = ? AND completion <> 0", array($course->id));
-
-    if (empty($totalmoduletracking)) {
-        return 0;
-    }
-
-    $arr = array(
-        'courseid' => $course->id,
-        'userid' => $userid,
-    );
-
-    $sql = "SELECT COUNT(*) FROM {course_modules_completion} cmc
-                LEFT JOIN {course_modules} cm
-                ON cmc.coursemoduleid = cm.id
-                WHERE cm.course = :courseid AND cmc.userid = :userid AND cmc.completionstate <> 0";
-
-    $completioncount = $DB->count_records_sql($sql, $arr);
-
-    if ($completioncount > 0) {
-        $completion = ($completioncount * 100) / $totalmoduletracking;
-        return intval($completioncount);
-    }
-
-    return 0;
-}
-
-function get_remote_list_course_completion($userid)
-{
-    $remoteuserid = get_remote_mapping_user($userid)[0]->id;
-
-    $result = moodle_webservice_client(
-        array(
-            'domain' => HUB_URL,
-            'token' => HOST_TOKEN,
-            'function_name' => 'local_get_list_course_completion',
-            'params' => array('userid' => $remoteuserid),
-        ), false
-    );
-
-    return $result->completions;
-}
-
-/**
  * Detele tbl course_completions by courseid & userid on host
  *
  * @param int $courseid - The id of course
