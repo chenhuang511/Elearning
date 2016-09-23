@@ -1507,7 +1507,7 @@ class local_course_external extends external_api
                 'completions' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'course' => new external_value(PARAM_INT, 'the course id'),
+                            'course' => new external_value(PARAM_INT, 'the course id', VALUE_OPTIONAL),
                         )
                     ), 'the course id'
                 ),
@@ -2807,7 +2807,8 @@ class local_course_external extends external_api
         );
     }
 
-    public static function get_scale_by_id_parameters() {
+    public static function get_scale_by_id_parameters()
+    {
         return new external_function_parameters(
             array(
                 'id' => new external_value(PARAM_INT, 'the id of scale')
@@ -2815,7 +2816,8 @@ class local_course_external extends external_api
         );
     }
 
-    public static function get_scale_by_id($id) {
+    public static function get_scale_by_id($id)
+    {
         global $DB;
         $warnings = array();
 
@@ -2824,7 +2826,7 @@ class local_course_external extends external_api
         ));
 
         $scale = $DB->get_record('scale', array('id' => $params['id']));
-        if(!$scale) {
+        if (!$scale) {
             $scale = new stdClass();
         }
 
@@ -2834,7 +2836,8 @@ class local_course_external extends external_api
         return $result;
     }
 
-    public static function get_scale_by_id_returns() {
+    public static function get_scale_by_id_returns()
+    {
         return new external_single_structure(
             array(
                 'scale' => new external_single_structure(
