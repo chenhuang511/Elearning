@@ -351,3 +351,17 @@ function url_view($url, $course, $cm, $context) {
     $completion = new completion_info($course);
     $completion->set_module_viewed($cm);
 }
+
+/**
+ * Convert object to array for url
+ *
+ * @param $moduleinfo
+ * @return mixed
+ */
+function url_formatted_moduleinfo($moduleinfo)
+{
+    if (isset($moduleinfo->introeditor)) {
+        $moduleinfo->introeditor = (array)$moduleinfo->introeditor;
+    }
+    return $moduleinfo;
+}
