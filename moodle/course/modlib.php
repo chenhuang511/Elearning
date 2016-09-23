@@ -400,11 +400,7 @@ function set_moduleinfo_defaults($moduleinfo)
         $moduleinfo->coursemodule = '';
     } else {
         // Update.
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
-            $cm = get_coursemodule_from_id('', $moduleinfo->coursemodule, 0, false, MUST_EXIST);
-        } else {
-            $cm = get_remote_course_module_by_cmid('', $moduleinfo->coursemodule);
-        }
+        $cm = get_coursemodule_from_id('', $moduleinfo->coursemodule, 0, false, MUST_EXIST);
         $moduleinfo->instance = $cm->instance;
         $moduleinfo->coursemodule = $cm->id;
     }
