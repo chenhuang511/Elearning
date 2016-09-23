@@ -872,3 +872,28 @@ function get_remote_fetch_subscribed_users($sql, $params)
     return $rslt;
 }
 
+function get_remote_forum_get_firstpost_from_discussion_by($discussionid)
+{
+    global $DB;
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_forum_get_firstpost_from_discussion_by',
+            'params' => array('discussionid' => $discussionid, 'hostip' => gethostip())
+        ), false
+    );
+
+    $post = $result->post;
+    if($post) {
+        if(isset($post->userid)) {
+            $localuserid = get_remote_mapping_localuserid($post->userid);
+            if($localuserid) {
+                $post->userid = $localuserid;
+            }
+        }
+    }
+
+    return $post;
+}
+

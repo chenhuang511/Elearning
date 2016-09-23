@@ -2636,11 +2636,15 @@ function forum_get_firstpost_from_discussion($discussionid)
 {
     global $CFG, $DB;
 
-    return $DB->get_record_sql("SELECT p.*
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        return get_remote_forum_get_firstpost_from_discussion_by($discussionid);
+    } else {
+        return $DB->get_record_sql("SELECT p.*
                              FROM {forum_discussions} d,
                                   {forum_posts} p
                             WHERE d.id = ?
                               AND d.firstpost = p.id ", array($discussionid));
+    }
 }
 
 /**
@@ -4118,22 +4122,10 @@ function forum_print_discussion_header(&$post, $forum, $group = -1, $datestring 
     static $rowcount;
     static $strmarkalldread;
 
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-        $localcourseid = $DB->get_field('course', 'id', array('remoteid' => $forum->course));
-        if ($localcourseid) {
-            $forum->course = $localcourseid;
-        }
-    }
 
     if (empty($modcontext)) {
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            if (!$cm = get_remote_course_module_by_instance('forum', $forum->id)) {
-                print_error('invalidcoursemodule');
-            }
-        } else {
-            if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
-                print_error('invalidcoursemodule');
-            }
+        if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
+            print_error('invalidcoursemodule');
         }
         $modcontext = context_module::instance($cm->id);
     }
@@ -5688,9 +5680,10 @@ function forum_get_user_posted_time($did, $userid)
 {
     global $DB;
     if (MOODLE_RUN_MODE == MOODLE_MODE_HUB) {
+        $user = get_remote_mapping_user($userid);
         $params = array();
         $params['parameters[0][name]'] = "userid";
-        $params['parameters[0][value]'] = $userid;
+        $params['parameters[0][value]'] = $user ? $user[0]->id : $userid;
         $params['parameters[1][name]'] = "discussion";
         $params['parameters[1][value]'] = $did;
         $posttime = get_remote_field_forum_by("forum_posts", $params, "MIN(created)");
@@ -6086,14 +6079,8 @@ function forum_user_can_see_post($forum, $discussion, $post, $user = NULL, $cm =
 
     if (!$cm) {
         debugging('missing cm', DEBUG_DEVELOPER);
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            if (!$cm = get_remote_course_module_by_instance('forum', $forum->id)) {
-                print_error('invalidcoursemodule');
-            }
-        } else {
-            if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
-                print_error('invalidcoursemodule');
-            }
+        if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course)) {
+            print_error('invalidcoursemodule');
         }
     }
 
