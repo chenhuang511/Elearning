@@ -1557,9 +1557,9 @@ function assign_get_local_settings_info($courseid, $instance)
         if (!$DB->get_records('assign_plugin_config', array('assignment' => $assignment->id))) {
             $DB->insert_records('assign_plugin_config', $pluginconfigs);
         }
+        return $assignment->id;
     }
-
-    return $assignment->id;
+    return 0;
 }
 
 function assign_merge_module_info($instance){

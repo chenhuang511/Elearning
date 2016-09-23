@@ -122,12 +122,7 @@ function label_delete_instance($id) {
 function label_get_coursemodule_info($coursemodule) {
     global $DB, $CFG;
 
-    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
-        $label = $DB->get_record('label', array('id'=>$coursemodule->instance), 'id, name, intro, introformat');
-    } else {
-        require_once($CFG->dirroot . '/mod/label/remote/locallib.php');
-        $label = get_remote_label_by_id($coursemodule->instance);
-    }
+    $label = $DB->get_record('label', array('id'=>$coursemodule->instance), 'id, name, intro, introformat');
 
     if ($label) {
         if (empty($label->name)) {
@@ -331,3 +326,31 @@ function label_generate_resized_image(stored_file $file, $maxwidth, $maxheight) 
         return $img;
     }
 }
+
+/**
+ * Insert mod label to host
+ *
+ * @param stdClass $courseid  - The id of host
+ * @return stdClass $instance   - The id of instance id
+ */
+function label_get_local_settings_info($courseid, $instance)
+{
+    global $CFG, $DB;
+    require_once($CFG->dirroot . '/mod/label/remote/locallib.php');
+
+    if (!$label = $DB->get_record('label', array('remoteid' => $instance))) {
+        // Get remote label
+        if (!$label = get_remote_label_by_id($instance)) {
+            print_error('Not Found label id on host');
+        }
+        // Check if not exist then insert local DB
+        unset($label->id);
+        $label->course = $courseid;
+        $label->remoteid = $instance;
+        // From this point we make database changes, so start transaction.
+        $label->id = $DB->insert_record('label', $label);
+        return $label->id;
+    }
+    return 0;
+}
+

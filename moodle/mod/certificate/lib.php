@@ -354,8 +354,8 @@ function certificate_get_local_settings_info($courseid, $instance)
         $certificate->remoteid = $certificate->id;
         $certificate->course = $courseid;
         $id = $DB->insert_record('certificate', $certificate, true);
-    } else {
-        $id = $local_certificate->id;
+        return $id;
     }
-    return $id;
+
+    return 0;
 }

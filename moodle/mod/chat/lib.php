@@ -1395,7 +1395,8 @@ function chat_get_local_settings_info($courseid, $instance)
         $chat->remoteid = $instance;
         // From this point we make database changes, so start transaction.
         $chat->id = $DB->insert_record('chat', $chat);
+        return $chat->id;
     }
 
-    return $chat->id;
+    return 0;
 }

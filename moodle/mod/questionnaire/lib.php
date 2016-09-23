@@ -1187,9 +1187,9 @@ function questionnaire_get_local_settings_info($courseid, $instance)
         $questionnaire->remoteid = $questionnaire->id;
         $questionnaire->course = $courseid;
         $id = $DB->insert_record('questionnaire', $questionnaire, true);
-    } else {
-        $id = $local_questionnaire->id;
+        return $id;
     }
-    return $id;
+
+    return 0;
 }
 

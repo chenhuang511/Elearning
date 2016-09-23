@@ -1921,8 +1921,9 @@ function quiz_get_local_settings_info($courseid, $instance)
     if($quiz->settinglocal === false){ // check data quiz in local db
         $quiz->course = $courseid;
         $quiz->id = $DB->insert_record('quiz', $quiz, true);
+        return $quiz->id;
     }
-    return $quiz->id;
+    return 0;
 }
 
 function quiz_merge_module_info($instance){

@@ -573,7 +573,8 @@ function resource_get_local_settings_info($courseid, $instance)
         $resource->remoteid = $instance;
         // From this point we make database changes, so start transaction.
         $resource->id = $DB->insert_record('resource', $resource);
+        return $resource->id;
     }
 
-    return $resource->id;
+    return 0;
 }
