@@ -296,7 +296,7 @@ class Query extends Builder {
 		}
 		else $table = $this->wrap($table);
 
-		$this->join[] = $type . ' JOIN ' . $table . ' ON (' . $this->wrap($left) . ' ' . $operator . ' ' . $this->wrap($right) . ')';
+		$this->join[] = $type . ' JOIN ' . $table . ' ON (' . $this->wrap($right) . ' ' . $operator . ' ' . $this->wrap($left) . ')';
 
 		return $this;
 	}
@@ -313,7 +313,12 @@ class Query extends Builder {
 	public function left_join($table, $left, $operator, $right) {
 		return $this->join($table, $left, $operator, $right, 'LEFT');
 	}
-
+    public function right_join($table, $left, $operator, $right) {
+        return $this->join($table, $left, $operator, $right, 'RIGHT');
+    }
+    public function _join($table, $left, $operator, $right) {
+        return $this->join($table, $left, $operator, $right, 'FULL OUTER');
+    }
 	/**
 	 * Add a sort by column to the query
 	 *

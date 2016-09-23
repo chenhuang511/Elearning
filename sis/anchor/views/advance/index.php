@@ -26,12 +26,13 @@
         </nav>
 
     </nav>
-    <?php if($advance): ?>
+    <?php if($advance->results): ?>
         <ul class="main list">
-            <?php foreach($advance as $article): ?>
+
+            <?php foreach($advance->results as $article): ?>
                 <li>
-                    <a href="<?php echo Uri::to('admin/advance/edit/' . $article->id); ?>">
-                        <strong>Đơn tạm ứng: <?php echo $article->id?></strong>
+                    <a href="">
+                        <strong>Đơn tạm ứng số: <?php echo $article->id?></strong>
                         <span>
                             <p>Người yêu cầu: <?php echo $article->full_name?> </p>
                             <p>Chức vụ: <?php echo $article->position ?> </p>
@@ -54,9 +55,10 @@
                     </a>
                 </li>
             <?php endforeach; ?>
+
         </ul>
 
-<!--        <aside class="paging">--><?php //echo $posts->links(); ?><!--</aside>-->
+        <aside class="paging"><?php echo $advance->links(); ?></aside>
 
     <?php else: ?>
 

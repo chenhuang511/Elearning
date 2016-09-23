@@ -8,6 +8,7 @@
 
     <input name="token" type="hidden" value="<?php echo $token; ?>">
 
+    <?php echo $messages; ?>
     <fieldset class="header">
         <div class="wrap">
 
@@ -31,18 +32,15 @@
         <div class="wrap">
             <p>
                 <label for="label-slug"><?php echo __('advance.applicant'); ?>:</label>
-                <?php echo Form::select('staff', $staff, Input::previous('staff'), array('id' => 'label-staff')); ?>
-                <!--                <em>--><?php //echo __('posts.slug_explain'); ?><!--</em>-->
+                <?php echo Form::select('applicant_id', $staff, Input::previous('applicant_id'), array('id' => 'label-applicant_id')); ?>
             </p>
             <p>
                 <label for="label-status"><?php echo __('advance.money'); ?>:</label>
-                <?php echo Form::text('slug', Input::previous('slug'), array('id' => 'label-slug')); ?>
-                <em><?php echo __('posts.status_explain'); ?></em>
+                <?php echo Form::text('money', Input::previous('money'), array('id' => 'label-money')); ?>
             </p>
             <p>
                 <label for="label-description"><?php echo __('advance.reason'); ?>:</label>
-                <?php echo Form::textarea('description', Input::previous('description'), array('id' => 'label-description')); ?>
-                <em><?php echo __('posts.description_explain'); ?></em>
+                <?php echo Form::textarea('reason', Input::previous('reason'), array('id' => 'label-reason')); ?>
             </p>
 
 

@@ -289,7 +289,7 @@ CREATE TABLE `anchor_advance` (
   `money` 	bigint(20) NOT NULL,
   `time` date NOT NULL,
   `reason` text NOT NULL,
-  `status` enum('draft','published',) NOT NULL,
+  `status` enum('draft','published') NOT NULL,
   `user_check_id` int(6) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;

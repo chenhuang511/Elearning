@@ -11,8 +11,8 @@ return array(
     'published' => 'Đã được ứng',
     'draft' => 'Yêu cầu',
 
-    'money' => 'Số tiền muốn tạm ứng ',
-    'money' => 'Số tiền muốn tạm ứng ',
+    'created' => 'Tạo đơn tạm ứng thành công',
+    'money_not_int' => 'Nhập lại số tiền bằng số',
 
 
 );
