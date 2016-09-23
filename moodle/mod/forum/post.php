@@ -745,9 +745,19 @@ if ($mform_post->is_cancelled()) {
         $message = '';
 
         //fix for bug #4314
-        if (!$realpost = $DB->get_record('forum_posts', array('id' => $fromform->id))) {
-            $realpost = new stdClass();
-            $realpost->userid = -1;
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            $param = array();
+            $param['parameters[0][name]'] = "id";
+            $param['parameters[0][value]'] = $fromform->id;
+            if (!$realpost = get_remote_forum_posts_by($param)) {
+                $realpost = new stdClass();
+                $realpost->userid = -1;
+            }
+        } else {
+            if (!$realpost = $DB->get_record('forum_posts', array('id' => $fromform->id))) {
+                $realpost = new stdClass();
+                $realpost->userid = -1;
+            }
         }
 
 
