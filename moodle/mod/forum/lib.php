@@ -894,7 +894,7 @@ function forum_cron()
                     $queue->postid = $post->id;
                     $queue->timemodified = $post->created;
                     if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-                        $result = save_remote_mdl_forum("forum_queue", $queue);
+                        save_remote_mdl_forum("forum_queue", $queue);
                     } else {
                         $DB->insert_record('forum_queue', $queue);
                     }
@@ -1503,18 +1503,10 @@ function forum_user_complete($course, $user, $mod, $forum)
     }
 
     if ($posts = forum_get_user_posts($forum->id, $user->id)) {
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
-            if (!$cm = get_remote_course_module_by_instance('forum', $forum->id)) {
-                print_error('invalidcoursemodule');
-            }
-        } else {
-            if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
-                print_error('invalidcoursemodule');
-            }
+        if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
+            print_error('invalidcoursemodule');
         }
-
         $discussions = forum_get_user_involved_discussions($forum->id, $user->id);
-
         foreach ($posts as $post) {
             if (!isset($discussions[$post->discussion])) {
                 continue;
