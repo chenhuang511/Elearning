@@ -62,7 +62,7 @@
 			<div class="container">
 				<div class="bhxh-nav-home clearfix">
 					<ul id="dropdown-nav" class="nav navbar-nav">
-						<?php $menu = array('panel', 'posts', 'comments', 'pages', 'categories', 'users', 'extend','advance'); ?>
+						<?php $menu = array('panel', 'posts', 'comments', 'pages', 'categories', 'users', 'instructor', 'extend','advance'); ?>
 						<?php foreach($menu as $url): ?>
 							<li <?php if(strpos(Uri::current(), $url) !== false) echo 'class="home active dropdown-nav-home"'; ?>>
 								<a href="<?php echo Uri::to('admin/' . $url); ?>">
