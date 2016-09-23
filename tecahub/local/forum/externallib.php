@@ -2817,4 +2817,70 @@ class local_mod_forum_external extends external_api
             )
         );
     }
+
+    public static function forum_get_firstpost_from_discussion_by_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'discussionid' => new external_value(PARAM_INT, 'the id of discussion'),
+                'hostip' => new external_value(PARAM_HOST, 'the ip address of host')
+            )
+        );
+    }
+
+    public static function forum_get_firstpost_from_discussion_by($discussionid, $hostip)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::forum_get_firstpost_from_discussion_by_parameters(), array(
+            'discussionid' => $discussionid,
+            'hostip' => $hostip
+        ));
+
+        $hostid = $DB->get_field('mnet_host', 'id', array('ip_address' => $params['hostip']));
+
+        $post = $DB->get_record_sql("SELECT p.*
+                             FROM {forum_discussions} d,
+                                  {forum_posts} p
+                            WHERE d.id = ?
+                              AND d.firstpost = p.id 
+                              AND p.userid IN (SELECT id FROM m_user WHERE mnethostid = ?)", array($params['discussionid'], $hostid));
+
+        if (!$post) {
+            $post = new stdClass();
+        }
+
+        $result = array();
+        $result['post'] = $post;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    public static function forum_get_firstpost_from_discussion_by_returns()
+    {
+        return new external_single_structure(
+            array(
+                'post' => new external_single_structure(
+                    array(
+                        'id' => new external_value(PARAM_INT, 'the id', VALUE_OPTIONAL),
+                        'discussion' => new external_value(PARAM_INT, 'the discussion id', VALUE_OPTIONAL),
+                        'parent' => new external_value(PARAM_INT, 'the parent', VALUE_OPTIONAL),
+                        'userid' => new external_value(PARAM_INT, 'the user id', VALUE_OPTIONAL),
+                        'created' => new external_value(PARAM_INT, 'created', VALUE_OPTIONAL),
+                        'modified' => new external_value(PARAM_INT, 'modified', VALUE_OPTIONAL),
+                        'mailed' => new external_value(PARAM_INT, 'mailed', VALUE_OPTIONAL),
+                        'subject' => new external_value(PARAM_RAW, 'the subject', VALUE_OPTIONAL),
+                        'message' => new external_value(PARAM_RAW, 'the message', VALUE_OPTIONAL),
+                        'messageformat' => new external_value(PARAM_INT, 'message format', VALUE_OPTIONAL),
+                        'messagetrust' => new external_value(PARAM_INT, 'message trust', VALUE_OPTIONAL),
+                        'attachment' => new external_value(PARAM_RAW, 'attachment', VALUE_OPTIONAL),
+                        'totalscore' => new external_value(PARAM_INT, 'total score', VALUE_OPTIONAL),
+                        'mailnow' => new external_value(PARAM_INT, 'mail now', VALUE_OPTIONAL)
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

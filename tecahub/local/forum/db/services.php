@@ -330,4 +330,12 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_forum_get_firstpost_from_discussion_by' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'forum_get_firstpost_from_discussion_by',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'forum get firstpost from discussion',
+        'type' => 'read',
+        'ajax' => true
+    ),
 );
