@@ -101,4 +101,4 @@ $button->add_action(new popup_action('click', $link, array('height' => 600, 'wid
 
 echo html_writer::tag('div', $OUTPUT->render($button), array('style' => 'text-align:center'));
 
-echo $OUTPUT->footer($course);
+echo $OUTPUT->footer();

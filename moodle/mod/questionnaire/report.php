@@ -269,7 +269,7 @@ switch ($action) {
 
         // Finish the page.
         if($CFG->nonajax == true){
-            echo $OUTPUT->footer($course);
+            echo $OUTPUT->footer();
         }
         break;
 
@@ -315,7 +315,7 @@ switch ($action) {
 
             // Finish the page.
             if($CFG->nonajax == true){
-                echo $OUTPUT->footer($course);
+                echo $OUTPUT->footer();
             }
         }
         break;
@@ -500,7 +500,7 @@ switch ($action) {
         echo $OUTPUT->box_end();
 
         if($CFG->nonajax == true){
-            echo $OUTPUT->footer($course);
+            echo $OUTPUT->footer();
         }
 
         // Log saved as text action.
@@ -555,7 +555,7 @@ switch ($action) {
 
             // Finish the page.
             if($CFG->nonajax == true){
-                echo $OUTPUT->footer($course);
+                echo $OUTPUT->footer();
             }
             break;
         }
@@ -655,7 +655,7 @@ switch ($action) {
 
         // Finish the page.
         if($CFG->nonajax == true){
-            echo $OUTPUT->footer($course);
+            echo $OUTPUT->footer();
         }
         break;
 
@@ -784,6 +784,6 @@ switch ($action) {
         echo $OUTPUT->box_end();
 
         // Finish the page.
-        echo $OUTPUT->footer($course);
+        echo $OUTPUT->footer();
         break;
 }

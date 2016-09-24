@@ -205,7 +205,7 @@ class questionnaire {
 
             if ($this->survey->realm == 'template') {
                 print_string('templatenotviewable', 'questionnaire');
-                echo $OUTPUT->footer($this->course);
+                echo $OUTPUT->footer();
                 exit();
             }
 
@@ -289,7 +289,7 @@ class questionnaire {
         }
 
         // Finish the page.
-        echo $OUTPUT->footer($this->course);
+        echo $OUTPUT->footer();
     }
 
     /*

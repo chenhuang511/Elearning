@@ -97,7 +97,7 @@ if (!$questionnaire->is_active()) {
 } else if ($questionnaire->survey->realm == 'template') {
     print_string('templatenotviewable', 'questionnaire');
     echo $OUTPUT->box_end();
-    echo $OUTPUT->footer($questionnaire->course);
+    echo $OUTPUT->footer();
     exit();
 } else if (!$questionnaire->user_is_eligible($USER->id)) {
     if ($questionnaire->questions) {

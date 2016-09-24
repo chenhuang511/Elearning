@@ -690,7 +690,7 @@ function certificate_get_grade_categories($courseid) {
             }
         }
     }
-
+    var_dump($grade_categories);
     return $grade_category_options;
 }
 

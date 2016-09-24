@@ -119,7 +119,7 @@ switch ($action) {
 
         // Finish the page.
         if($CFG->nonajax == true) {
-            echo $OUTPUT->footer($course);
+            echo $OUTPUT->footer();
         }
         break;
 
@@ -155,7 +155,7 @@ switch ($action) {
 
         // Finish the page.
         if($CFG->nonajax == true) {
-            echo $OUTPUT->footer($course);
+            echo $OUTPUT->footer();
         }
         break;
 
@@ -346,7 +346,7 @@ switch ($action) {
         echo $OUTPUT->box_end();
         // Finish the page.
         if($CFG->nonajax == true) {
-            echo $OUTPUT->footer($course);
+            echo $OUTPUT->footer();
         }
         break;
 

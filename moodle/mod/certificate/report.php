@@ -125,7 +125,7 @@ if (!$users = certificate_get_issues($certificate->id, $DB->sql_fullname(), $gro
     groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/certificate/report.php?id='.$id);
     echo $OUTPUT->notification(get_string('nocertificatesissued', 'certificate'));
     if($CFG->nonajax = true){
-        echo $OUTPUT->footer($course);
+        echo $OUTPUT->footer();
     }
     exit();
 }
@@ -335,5 +335,5 @@ if(MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
     echo html_writer::tag('div', html_writer::table($tablebutton), array('style' => 'margin:auto'));
 }
 if($CFG->nonajax = true){
-    echo $OUTPUT->footer($course);
+    echo $OUTPUT->footer();
 }

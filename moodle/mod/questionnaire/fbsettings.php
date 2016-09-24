@@ -150,4 +150,4 @@ if (isset($settings->savesettings)) {
     $PAGE->navbar->add(get_string('feedbackeditingmessages', 'questionnaire'));
     echo $OUTPUT->header();
     $feedbackform->display();
-    echo $OUTPUT->footer($course);
+    echo $OUTPUT->footer();

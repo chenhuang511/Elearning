@@ -259,4 +259,4 @@ echo '<div><input type="submit" name="savesettings" value="'.get_string('feedbac
       </div>';
 echo '</form>';
 echo $OUTPUT->box_end();
-echo $OUTPUT->footer($course);
+echo $OUTPUT->footer();

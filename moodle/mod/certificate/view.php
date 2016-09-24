@@ -147,7 +147,7 @@ if (empty($action)) { // Not displaying PDF
     }
 
     echo html_writer::tag('div', $OUTPUT->render($button), array('style' => 'text-align:center'));
-    echo $OUTPUT->footer($course);
+    echo $OUTPUT->footer();
     exit;
 } else { // Output to pdf
     // No debugging here, sorry.

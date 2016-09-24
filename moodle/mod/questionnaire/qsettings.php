@@ -188,4 +188,4 @@ $PAGE->navbar->add(get_string('editingquestionnaire', 'questionnaire'));
 echo $OUTPUT->header();
 require('tabs.php');
 $settingsform->display();
-echo $OUTPUT->footer($course);
+echo $OUTPUT->footer();

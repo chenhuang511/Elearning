@@ -161,7 +161,7 @@ $questionnaire->survey_print_render('', 'preview', $course->id, $rid = 0, $popup
 if ($popup) {
     echo $OUTPUT->close_window_button();
 }
-echo $OUTPUT->footer($course);
+echo $OUTPUT->footer();
 
 // Log this questionnaire preview.
 $context = context_module::instance($questionnaire->cm->id);
