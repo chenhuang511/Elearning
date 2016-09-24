@@ -2888,7 +2888,8 @@ class local_mod_forum_external extends external_api
     {
         return new external_function_parameters(
             array(
-                'sql' => new external_value(PARAM_RAW, 'the query'),
+                'coursewhere' => new external_value(PARAM_RAW, 'the query'),
+                'join' => new external_value(PARAM_RAW, 'the query'),
                 'parameters' => new external_multiple_structure(
                     new external_single_structure(
                         array(
@@ -2897,23 +2898,41 @@ class local_mod_forum_external extends external_api
                         )
                     ), 'the params'
                 ),
-                'limitfrom' => new external_value(PARAM_TEXT, 'the limit from'),
-                'limitnum' => new external_value(PARAM_TEXT, 'the limit num')
+                'limitfrom' => new external_value(PARAM_RAW, 'the limit from'),
+                'limitnum' => new external_value(PARAM_RAW, 'the limit num')
             )
         );
     }
 
-    public static function forum_get_forums_user_posted_in($sql, $parameters, $limitfrom, $limitnum)
+    public static function forum_get_forums_user_posted_in($coursewhere, $join, $parameters, $limitfrom, $limitnum)
     {
         global $DB;
         $warnings = array();
 
         $params = self::validate_parameters(self::forum_get_forums_user_posted_in_parameters(), array(
-            'sql' => $sql,
+            'coursewhere' => $coursewhere,
+            'join' => $join,
             'parameters' => $parameters,
             'limitfrom' => $limitfrom,
             'limitnum' => $limitnum
         ));
+
+        $join_param  = $params['join'];
+        $coursewhere_param = $params['coursewhere'];
+
+        $sql = "SELECT f.*, cm.id AS cmid
+              FROM {forum} f
+              JOIN {course_modules} cm ON cm.instance = f.id
+              JOIN {modules} m ON m.id = cm.module
+              JOIN (
+                  SELECT f.id
+                    FROM {forum} f
+                    {$join_param}
+                   WHERE ff.userid = :userid
+                GROUP BY f.id
+                   ) j ON j.id = f.id
+             WHERE m.name = :forum
+                 {$coursewhere_param}";
 
         $arr = array();
         foreach ($params['parameters'] as $p) {
@@ -2923,9 +2942,7 @@ class local_mod_forum_external extends external_api
         $limitfrom_param = $params['limitfrom'] == '' ? null : $params['limitfrom'];
         $limitnum_param = $params['limitnum'] == '' ? null : $params['limitnum'];
 
-        $querySQL = $params['sql'];
-
-        $forums = $DB->get_records_sql($querySQL, $arr, $limitfrom_param, $limitnum_param);
+        $forums = $DB->get_records_sql($sql, $arr, $limitfrom_param, $limitnum_param);
         if (!$forums) {
             $forums = array();
         }
