@@ -2751,7 +2751,7 @@ class local_course_external extends external_api
         return new external_function_parameters(
             array(
                 'sql' => new external_value(PARAM_RAW, 'the query sql'),
-                new external_single_structure(
+                'parameters' => new external_single_structure(
                     array(
                         'name' => new external_value(PARAM_RAW, 'param name'),
                         'value' => new external_value(PARAM_RAW, 'param value'),
