@@ -5,7 +5,7 @@
 
 	<?php if(Auth::admin()) : ?>
 	<nav>
-		<?php echo Html::link('admin/instructor/add', __('instructor.create_user'), array('class' => 'btn')); ?>
+		<?php echo Html::link('admin/instructor/add', __('instructor.create_instructor'), array('class' => 'btn')); ?>
 	</nav>
 	<?php endif; ?>
 </hgroup>
@@ -24,9 +24,9 @@
 			?>
 			<li>
 				<a href="<?php echo Uri::to('admin/instructor/edit/' . $id); ?>">
-					<strong><?php echo $row['username'] ?></strong>
+					<strong><?php echo $row['lastname']." ".$row['firstname'] ?></strong>
 					<span><?php echo __('instructor.subject') ; ?>:<?php echo $row['subject'] ?></span>
-					<em class="highlight"><?php echo __('instructor.' . $row['email']); ?></em>
+					<em class="highlight"><?php echo __($row['email']); ?></em>
 				</a>
 			</li>
 		<?php }	?>

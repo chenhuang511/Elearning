@@ -4,7 +4,7 @@ return array(
 
 	'instructor' => 'Giảng viên',
 	'users' => 'Thành viên',
-
+	'create_instructor' => 'Tạo giảng viên',
 	'create_user' => 'Tạo thành viên',
 	'add_user' => 'Tạo mới một thành viên',
 	'editing_user' => 'Sửa chữa Hồ sơ',
@@ -55,6 +55,11 @@ return array(
 	'password_too_short' => 'Mật khẩu phải chứa ít nhất %s ký tự',
 
 	'new_password' => 'Mật khẩu mới',
+	
+	'firstname_missing' => 'Vui lòng nhập lại tên',
+	'lastname_missing' => 'Vui lòng nhập lại họ',
+	'birthday_missing' => 'Vui lòng nhập lại ngày sinh',
+	'subject_missing' => 'Vui lòng nhập lại môn học',
 
 	'email' => 'Email',
 	'email_explain' => '',
