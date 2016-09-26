@@ -11,7 +11,7 @@ SET FOREIGN_KEY_CHECKS=0;
 -- ----------------------------
 ALTER TABLE `anchor_users`
 ADD COLUMN `remoteid` int(11) DEFAULT NULL,
-ADD COLUMN `auth` varchar(140) NOT NULL DEFAULT 'manual'
+ADD COLUMN `auth` varchar(140) NOT NULL DEFAULT 'manual';
 -- ----------------------------
 -- Table structure for `anchor_courses`
 -- ----------------------------

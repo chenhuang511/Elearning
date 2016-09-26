@@ -5,6 +5,15 @@
 </hgroup>
 
 <?php
+    $idstudent = $student->id;
+
+    $mysqlconn = new mysqli("localhost", "root", "vannhuthe", "anchor");
+    $sql = "SELECT * FROM anchor_student_course WHERE studentid = ".$idstudent;
+    $result = $mysqlconn->query($sql);
+
+?>
+
+<?php
 
 ?>
 
@@ -42,6 +51,29 @@
                     <?php echo Form::text('address', Input::previous('address', $student->address), array('id' => 'label-address')); ?>
                     <em><?php echo __('students.address_explain'); ?></em>
                 </p>
+                <?php
+                    while($row = $result->fetch_assoc())
+                    {
+                        $courseid = $row["courseid"];
+                        //var_dump($courseid);
+                        $sql1 = "SELECT * FROM anchor_courses WHERE id = ".$courseid;
+                        $result1 = $mysqlconn->query($sql1);
+
+                        while($row1 = $result1->fetch_assoc())
+                        {
+                            $id = $row1['id'];
+                            //var_dump($shortname);
+                            //die;
+                ?>
+                            <p>
+                            <label for="label-idcourse"><?php echo __('ID course'); ?>:</label>
+                            <?php echo Form::text('idcourse', Input::previous('idcourse', $id), array('id' => 'label-idcourse')); ?>
+                            </p>
+                <?php
+                        }
+                    }
+                    //die;
+                ?>
             </fieldset>
 
             <fieldset class="half split">
@@ -76,6 +108,38 @@
                     <?php echo Form::text('city', Input::previous('city', $student->city), array('id' => 'label-city')); ?>
                     <em><?php echo __('students.city_explain'); ?></em>
                 </p>
+                <?php
+
+                //var_dump("test");
+                //die;
+
+                $result3 = $mysqlconn->query($sql);
+
+                while($row2 = $result3->fetch_assoc())
+                {
+                    //var_dump("test");
+                    //die;
+                    $courseid = $row2["courseid"];
+                   // var_dump($courseid);
+                   // die;
+                    $sql2 = "SELECT * FROM anchor_courses WHERE id = ".$courseid;
+                    $result4 = $mysqlconn->query($sql2);
+
+                    while($row3 = $result4->fetch_assoc())
+                    {
+                        $fullname = $row3['fullname'];
+                        //var_dump($shortname);
+                        //die;
+                        ?>
+                        <p>
+                            <label for="label-fullname"><?php echo __('Full Name'); ?>:</label>
+                            <?php echo Form::text('fullname', Input::previous('fullname', $fullname), array('id' => 'label-fullname')); ?>
+                        </p>
+                        <?php
+                    }
+                }
+                //die;
+                ?>
             </fieldset>
             <aside class="buttons">
                 <?php echo Form::button(__('global.update'), array(

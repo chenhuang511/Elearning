@@ -114,6 +114,7 @@ function get_remote_network_peer()
                      VALUES(" . $newid . " ," . $courseid . ")";
                     break;
             }
+
             $mysqlconn->query($sql);
         }
     }
@@ -164,7 +165,7 @@ function sync_course_periods()
 
 //  error_reporting(ALL_ERROR);
 //$mysqlconn = new mysqli($DatabaseServer, $DatabaseUsername, $DatabasePassword, $DatabaseName);
-$mysqlconn = new mysqli("localhost", "root", "12345678", "anchor");
+$mysqlconn = new mysqli("localhost", "root", "vannhuthe", "anchor");
 
 
 // Check connection

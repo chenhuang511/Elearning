@@ -2,9 +2,9 @@
 
 return array(
 
-    'students' => 'Students',
+    'students' => 'Học viên',
 
-    'create_student' => 'Create a new student',
+    'create_student' => 'Tạo học viên',
     'add_student' => 'Add a new student',
     'editing_student' => 'Editing Student Profile',
     'remembered' => 'I know my password',
