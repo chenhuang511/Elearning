@@ -11,7 +11,7 @@
 </hgroup>
 
 <section class="wrap">
-
+    <?php echo $messages; ?>
     <nav class="sidebar">
         <nav class="statuses">
             <p>Tình trạng</p>
@@ -27,11 +27,11 @@
 
     </nav>
     <?php if($advance->results): ?>
-        <ul class="main list">
+        <ul class="main list" href="">
 
             <?php foreach($advance->results as $article): ?>
                 <li>
-                    <a href="">
+                    <a href="<?php echo Uri::to('admin/advance/edit/' . $article->id); ?>">
                         <strong>Đơn tạm ứng số: <?php echo $article->id?></strong>
                         <span>
                             <p>Người yêu cầu: <?php echo $article->full_name?> </p>
