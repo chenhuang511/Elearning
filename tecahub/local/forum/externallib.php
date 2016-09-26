@@ -3027,4 +3027,165 @@ class local_mod_forum_external extends external_api
             )
         );
     }
+
+    public static function forum_get_posts_user_posted_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'sql' => new external_value(PARAM_RAW, 'the query sql'),
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                ),
+                'limitfrom' => new external_value(PARAM_RAW, 'the limit from'),
+                'limitnum' => new external_value(PARAM_RAW, 'the limit num')
+            )
+        );
+    }
+
+    public static function forum_get_posts_user_posted($sql, $parameters, $limitfrom, $limitnum)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::forum_get_posts_user_posted_parameters(), array(
+            'sql' => $sql,
+            'parameters' => $parameters,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $limitfrom_param = $params['limitfrom'] == '' ? null : $params['limitfrom'];
+        $limitnum_param = $params['limitnum'] == '' ? null : $params['limitnum'];
+
+        $posts = $DB->get_records_sql($params['sql'], $arr, $limitfrom_param, $limitnum_param);
+
+        if (!$posts) {
+            $posts = array();
+        }
+
+        $result = array();
+        $result['posts'] = $posts;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    public static function forum_get_posts_user_posted_returns()
+    {
+        return new external_single_structure(
+            array(
+                'posts' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'the id', VALUE_OPTIONAL),
+                            'discussion' => new external_value(PARAM_INT, 'the discussion id', VALUE_OPTIONAL),
+                            'parent' => new external_value(PARAM_INT, 'the parent', VALUE_OPTIONAL),
+                            'userid' => new external_value(PARAM_INT, 'the user id', VALUE_OPTIONAL),
+                            'created' => new external_value(PARAM_INT, 'created', VALUE_OPTIONAL),
+                            'modified' => new external_value(PARAM_INT, 'modified', VALUE_OPTIONAL),
+                            'mailed' => new external_value(PARAM_INT, 'mailed', VALUE_OPTIONAL),
+                            'subject' => new external_value(PARAM_RAW, 'the subject', VALUE_OPTIONAL),
+                            'message' => new external_value(PARAM_RAW, 'the message', VALUE_OPTIONAL),
+                            'messageformat' => new external_value(PARAM_INT, 'message format', VALUE_OPTIONAL),
+                            'messagetrust' => new external_value(PARAM_INT, 'message trust', VALUE_OPTIONAL),
+                            'attachment' => new external_value(PARAM_RAW, 'attachment', VALUE_OPTIONAL),
+                            'totalscore' => new external_value(PARAM_INT, 'total score', VALUE_OPTIONAL),
+                            'mailnow' => new external_value(PARAM_INT, 'mail now', VALUE_OPTIONAL),
+                            'forum' => new external_value(PARAM_INT, 'the id of forum', VALUE_OPTIONAL),
+                            'discussionname' => new external_value(PARAM_RAW, 'the name of discussion', VALUE_OPTIONAL),
+                            'useridx' => new external_value(PARAM_INT, 'the id of user', VALUE_OPTIONAL),
+                            'picture' => new external_value(PARAM_RAW, 'picture', VALUE_OPTIONAL),
+                            'firstname' => new external_value(PARAM_RAW, 'first name', VALUE_OPTIONAL),
+                            'lastname' => new external_value(PARAM_RAW, 'last name', VALUE_OPTIONAL),
+                            'firstnamephonetic' => new external_value(PARAM_RAW, 'first name phonetic', VALUE_OPTIONAL),
+                            'lastnamephonetic' => new external_value(PARAM_RAW, 'last name phonetic', VALUE_OPTIONAL),
+                            'middlename' => new external_value(PARAM_RAW, 'middle name', VALUE_OPTIONAL),
+                            'alternatename' => new external_value(PARAM_RAW, 'alternate name', VALUE_OPTIONAL),
+                            'imagealt' => new external_value(PARAM_RAW, 'imagealt', VALUE_OPTIONAL),
+                            'email' => new external_value(PARAM_RAW, 'email', VALUE_OPTIONAL),
+                        )
+                    ), 'post data'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_list_discussions_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                )
+            )
+        );
+    }
+
+    public static function get_list_discussions($parameters)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_list_discussions_parameters(), array(
+            'parameters' => $parameters
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $discussions = $DB->get_records_list('forum_discussions', 'id', array_unique($arr));
+
+        if(!$discussions) {
+            $discussions = array();
+        }
+
+        $result = array();
+        $result['discussions'] = $discussions;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    public static function get_list_discussions_returns() {
+        return new external_single_structure(
+            array(
+                'discussions' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'the id', VALUE_OPTIONAL),
+                            'course' => new external_value(PARAM_INT, 'the course id', VALUE_OPTIONAL),
+                            'forum' => new external_value(PARAM_INT, 'the forum id', VALUE_OPTIONAL),
+                            'name' => new external_value(PARAM_RAW, 'the name', VALUE_OPTIONAL),
+                            'firstpost' => new external_value(PARAM_INT, 'first post', VALUE_OPTIONAL),
+                            'userid' => new external_value(PARAM_INT, 'the user id', VALUE_OPTIONAL),
+                            'groupid' => new external_value(PARAM_INT, 'the group id', VALUE_OPTIONAL),
+                            'assessed' => new external_value(PARAM_INT, 'the assessed', VALUE_OPTIONAL),
+                            'timemodified' => new external_value(PARAM_INT, 'time modified', VALUE_OPTIONAL),
+                            'usermodified' => new external_value(PARAM_INT, 'user modified', VALUE_OPTIONAL),
+                            'timestart' => new external_value(PARAM_INT, 'time start', VALUE_OPTIONAL),
+                            'timeend' => new external_value(PARAM_INT, 'time end', VALUE_OPTIONAL),
+                            'pinned' => new external_value(PARAM_INT, 'pinned', VALUE_OPTIONAL)
+                        )
+                    ), 'data of discussion'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

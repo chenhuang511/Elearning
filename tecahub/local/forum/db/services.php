@@ -354,4 +354,20 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_forum_get_posts_user_posted' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'forum_get_posts_user_posted',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'get list posts',
+        'type' => 'read',
+        'ajax' => true
+    ),
+    'local_mod_get_list_discussions' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'get_list_discussions',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'get list discussions',
+        'type' => 'read',
+        'ajax' => true
+    ),
 );
