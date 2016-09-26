@@ -20,7 +20,7 @@ class Staff extends Base {
 
         return $query->get();
     }
-    public static function page_read($params = array(), $perpage , $page = 1) {
+    public static function page_read( $perpage , $page = 1,$params = array()) {
 
         $query = static::join(Base::table('advance'), Base::table('staff.id'), '=', Base::table('advance.applicant_id')) ;
 
@@ -38,6 +38,11 @@ class Staff extends Base {
         $query = static::join(Base::table('advance'), Base::table('staff.id'), '=', Base::table('advance.applicant_id'))->where(Base::table('advance.status'), '=', $status) ;
 
         return $query->get();
+    }
+
+    public static function find($id =  1){
+        $query = static::join(Base::table('advance'), Base::table('staff.id'), '=', Base::table('advance.applicant_id'))->where(Base::table('advance.id'), '=', $id) ;
+        return $query->get()[0];
     }
 
 

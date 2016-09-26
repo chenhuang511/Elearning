@@ -35,34 +35,22 @@
          $e = oci_error();
          trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
      }
- 
-     $stid = oci_parse($conn, 'SELECT * FROM m_user_enrolments');
-     oci_execute($stid);
-     while ($row = oci_fetch_array($stid, OCI_ASSOC+OCI_RETURN_NULLS))
-     {
-         $userid  = $row['USERID'];
-         $enrolid = $row['ENROLID'];
-
-         $stid1 = oci_parse($conn, 'SELECT * FROM m_enrol WHERE ID = ' . $enrolid); 
-         oci_execute($stid1);
-         while ($row1 = oci_fetch_array($stid1, OCI_ASSOC+OCI_RETURN_NULLS))
-         {
-             $courseid = $row1['COURSEID'];
-
-             $stid2 = oci_parse($conn, 'SELECT * FROM m_course WHERE ID = ' . $courseid);
-             oci_execute($stid2);
-             while ($row2 = oci_fetch_array($stid2, OCI_ASSOC+OCI_RETURN_NULLS))
+             $sql_courses = oci_parse($conn, 'SELECT * FROM m_course');
+             oci_execute($sql_courses);
+             while ($courses = oci_fetch_array($sql_courses, OCI_ASSOC+OCI_RETURN_NULLS))
              {
-                 $fullname  = $row2['FULLNAME'];
-                 $shortname = $row2['SHORTNAME'];
-                 $summary   = $row2['SUMMARY']->load();
-
-                 $sql = "INSERT INTO anchor_courses(userid, courseid, fullname, shortname, summary) 
-                         VALUES('" . $userid . "'" . " ,'" .  $courseid . "'" . " ,'" . $fullname . "'" . " ,'" .  $shortname . "'" . " ,'" . $summary . "')";    
-                 $mysqlconn->query($sql);
+                 $remoteid  = $courses['ID'];
+                 $fullname  = $courses['FULLNAME'];
+                 $shortname = $courses['SHORTNAME'];
+                 $summary   = $courses['SUMMARY']->load();
+                 if($mysqlconn->query("SELECT id FROM anchor_courses WHERE remoteid = " . $remoteid)->fetch_row()) {
+                     $sql = "UPDATE anchor_courses SET fullname = '" . $fullname . "', shortname = '" . $shortname . "', summary = '" . $summary . "' WHERE remoteid = " . $remoteid;
+                 } else {
+                     $sql = "INSERT INTO anchor_courses(remoteid, fullname, shortname, summary) 
+                         VALUES('" . $remoteid . "'" . " ,'" . $fullname . "'" . " ,'" .  $shortname . "'" . " ,'" . $summary . "')";
+                 }
+                  $mysqlconn->query($sql);
              }
-         }  
-     }
  }
  
  function sync_school()
@@ -110,7 +98,7 @@
  
 //  error_reporting(ALL_ERROR);
   //$mysqlconn = new mysqli($DatabaseServer, $DatabaseUsername, $DatabasePassword, $DatabaseName);
-  $mysqlconn = new mysqli("localhost", "root", "vannhuthe", "anchor");
+  $mysqlconn = new mysqli("localhost", "root", "12345678", "anchor");
 
  
  // Check connection
