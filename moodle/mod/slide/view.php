@@ -18,7 +18,7 @@
 /**
  * URL module main user interface
  *
- * @package    mod_url
+ * @package    mod_slide
  * @copyright  2009 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -102,9 +102,9 @@ switch ($displaytype) {
         url_display_embed($url, $cm, $course);
         break;
     case RESOURCELIB_DISPLAY_FRAME:
-        url_display_frame($url, $cm, $course);
+        slide_display_frame($url, $cm, $course);
         break;
     default:
-        url_print_workaround($url, $cm, $course);
+        slide_print_workaround($url, $cm, $course);
         break;
 }

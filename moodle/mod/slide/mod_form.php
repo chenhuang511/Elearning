@@ -18,7 +18,7 @@
 /**
  * URL configuration form
  *
- * @package    mod_url
+ * @package    mod_slide
  * @copyright  2009 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -45,7 +45,7 @@ class mod_slide_mod_form extends moodleform_mod {
         }
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
-        $mform->addElement('url', 'externalurl', get_string('externalurl', 'url'), array('size'=>'60'), array('usefilepicker'=>true));
+        $mform->addElement('url', 'externalurl', get_string('externalurl', 'slide'), array('size'=>'60'), array('usefilepicker'=>true));
         $mform->setType('externalurl', PARAM_RAW_TRIMMED);
         $mform->addRule('externalurl', null, 'required', null, 'client');
         $this->standard_intro_elements();
@@ -67,20 +67,20 @@ class mod_slide_mod_form extends moodleform_mod {
             reset($options);
             $mform->setDefault('display', key($options));
         } else {
-            $mform->addElement('select', 'display', get_string('displayselect', 'url'), $options);
+            $mform->addElement('select', 'display', get_string('displayselect', 'slide'), $options);
             $mform->setDefault('display', $config->display);
-            $mform->addHelpButton('display', 'displayselect', 'url');
+            $mform->addHelpButton('display', 'displayselect', 'slide');
         }
 
         if (array_key_exists(RESOURCELIB_DISPLAY_POPUP, $options)) {
-            $mform->addElement('text', 'popupwidth', get_string('popupwidth', 'url'), array('size'=>3));
+            $mform->addElement('text', 'popupwidth', get_string('popupwidth', 'slide'), array('size'=>3));
             if (count($options) > 1) {
                 $mform->disabledIf('popupwidth', 'display', 'noteq', RESOURCELIB_DISPLAY_POPUP);
             }
             $mform->setType('popupwidth', PARAM_INT);
             $mform->setDefault('popupwidth', $config->popupwidth);
 
-            $mform->addElement('text', 'popupheight', get_string('popupheight', 'url'), array('size'=>3));
+            $mform->addElement('text', 'popupheight', get_string('popupheight', 'slide'), array('size'=>3));
             if (count($options) > 1) {
                 $mform->disabledIf('popupheight', 'display', 'noteq', RESOURCELIB_DISPLAY_POPUP);
             }
@@ -91,7 +91,7 @@ class mod_slide_mod_form extends moodleform_mod {
         if (array_key_exists(RESOURCELIB_DISPLAY_AUTO, $options) or
           array_key_exists(RESOURCELIB_DISPLAY_EMBED, $options) or
           array_key_exists(RESOURCELIB_DISPLAY_FRAME, $options)) {
-            $mform->addElement('checkbox', 'printintro', get_string('printintro', 'url'));
+            $mform->addElement('checkbox', 'printintro', get_string('printintro', 'slide'));
             $mform->disabledIf('printintro', 'display', 'eq', RESOURCELIB_DISPLAY_POPUP);
             $mform->disabledIf('printintro', 'display', 'eq', RESOURCELIB_DISPLAY_OPEN);
             $mform->disabledIf('printintro', 'display', 'eq', RESOURCELIB_DISPLAY_NEW);
@@ -99,8 +99,8 @@ class mod_slide_mod_form extends moodleform_mod {
         }
 
         //-------------------------------------------------------
-        $mform->addElement('header', 'parameterssection', get_string('parametersheader', 'url'));
-        $mform->addElement('static', 'parametersinfo', '', get_string('parametersheader_help', 'url'));
+        $mform->addElement('header', 'parameterssection', get_string('parametersheader', 'slide'));
+        $mform->addElement('static', 'parametersinfo', '', get_string('parametersheader_help', 'slide'));
 
         if (empty($this->current->parameters)) {
             $parcount = 5;
@@ -108,7 +108,7 @@ class mod_slide_mod_form extends moodleform_mod {
             $parcount = 5 + count(unserialize($this->current->parameters));
             $parcount = ($parcount > 100) ? 100 : $parcount;
         }
-        $options = url_get_variable_options($config);
+        $options = slide_get_variable_options($config);
 
         for ($i=0; $i < $parcount; $i++) {
             $parameter = "parameter_$i";
@@ -118,7 +118,7 @@ class mod_slide_mod_form extends moodleform_mod {
                 $mform->createElement('text', $parameter, '', array('size'=>'12')),
                 $mform->createElement('selectgroups', $variable, '', $options),
             );
-            $mform->addGroup($group, $pargroup, get_string('parameterinfo', 'url'), ' ', false);
+            $mform->addGroup($group, $pargroup, get_string('parameterinfo', 'slide'), ' ', false);
             $mform->setType($parameter, PARAM_RAW);
         }
 
@@ -156,7 +156,7 @@ class mod_slide_mod_form extends moodleform_mod {
     function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
-        // Validating Entered url, we are looking for obvious problems only,                                       $settings
+        // Validating Entered url, we are looking for obvious problems only,
         // teachers are responsible for testing if it actually works.
 
         // This is not a security validation!! Teachers are allowed to enter "javascript:alert(666)" for example.
@@ -170,8 +170,8 @@ class mod_slide_mod_form extends moodleform_mod {
 
             } else if (preg_match('|^[a-z]+://|i', $url) or preg_match('|^https?:|i', $url) or preg_match('|^ftp:|i', $url)) {
                 // normal URL
-                if (!url_appears_valid_url($url)) {
-                    $errors['externalurl'] = get_string('invalidurl', 'url');
+                if (!slide_appears_valid_url($url)) {
+                    $errors['externalurl'] = get_string('invalidurl', 'slide');
                 }
 
             } else if (preg_match('|^[a-z]+:|i', $url)) {
@@ -181,8 +181,8 @@ class mod_slide_mod_form extends moodleform_mod {
             } else {
                 // invalid URI, we try to fix it by adding 'http://' prefix,
                 // relative links are NOT allowed because we display the link on different pages!
-                if (!url_appears_valid_url('http://'.$url)) {
-                    $errors['externalurl'] = get_string('invalidurl', 'url');
+                if (!slide_appears_valid_url('http://'.$url)) {
+                    $errors['externalurl'] = get_string('invalidurl', 'slide');
                 }
             }
         }

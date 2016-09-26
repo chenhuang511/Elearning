@@ -15,25 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The mod_url instance list viewed event.
+ * Installation for the URL repository
  *
- * @package    mod_url
- * @copyright  2013 Mark Nelson <markn@moodle.com>
+ * @package    repository_slide
+ * @category   repository
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace mod_slide\event;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
- * The mod_url instance list viewed event class.
+ * Create a default instance of the URL repository
  *
- * @package    mod_url
- * @since      Moodle 2.7
- * @copyright  2013 Mark Nelson <markn@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @return bool A status indicating success or failure
  */
-class course_module_instance_list_viewed extends \core\event\course_module_instance_list_viewed {
-
+function xmldb_repository_slide_install() {
+    global $CFG;
+    $result = true;
+    require_once($CFG->dirroot.'/repository/lib.php');
+    $urlplugin = new repository_type('slide', array(), true);
+    if(!$id = $urlplugin->create(true)) {
+        $result = false;
+    }
+    return $result;
 }

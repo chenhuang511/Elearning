@@ -50,7 +50,7 @@ function slide_supports($feature) {
  * Returns all other caps used in module
  * @return array
  */
-function url_get_extra_capabilities() {
+function slide_get_extra_capabilities() {
     return array('moodle/site:accessallgroups');
 }
 
@@ -59,7 +59,7 @@ function url_get_extra_capabilities() {
  * @param $data the data submitted from the reset course.
  * @return array status array
  */
-function url_reset_userdata($data) {
+function slide_reset_userdata($data) {
     return array();
 }
 
@@ -73,7 +73,7 @@ function url_reset_userdata($data) {
  *
  * @return array
  */
-function url_get_view_actions() {
+function slide_get_view_actions() {
     return array('view', 'view all');
 }
 
@@ -87,7 +87,7 @@ function url_get_view_actions() {
  *
  * @return array
  */
-function url_get_post_actions() {
+function slide_get_post_actions() {
     return array('update', 'add');
 }
 
@@ -97,10 +97,10 @@ function url_get_post_actions() {
  * @param object $mform
  * @return int new url instance id
  */
-function url_add_instance($data, $mform) {
+function slide_add_instance($data, $mform) {
     global $CFG, $DB;
 
-    require_once($CFG->dirroot.'/mod/url/locallib.php');
+    require_once($CFG->dirroot.'/mod/slide/locallib.php');
 
     $parameters = array();
     for ($i=0; $i < 100; $i++) {
@@ -123,10 +123,10 @@ function url_add_instance($data, $mform) {
     }
     $data->displayoptions = serialize($displayoptions);
 
-    $data->externalurl = url_fix_submitted_url($data->externalurl);
+    $data->externalurl = slide_fix_submitted_url($data->externalurl);
 
     $data->timemodified = time();
-    $data->id = $DB->insert_record('url', $data);
+    $data->id = $DB->insert_record('slide', $data);
 
     return $data->id;
 }
@@ -163,7 +163,7 @@ function slide_update_instance($data, $mform) {
     }
     $data->displayoptions = serialize($displayoptions);
 
-    $data->externalurl = url_fix_submitted_url($data->externalurl);
+    $data->externalurl = slide_fix_submitted_url($data->externalurl);
 
     $data->timemodified = time();
     $data->id           = $data->instance;
@@ -215,9 +215,9 @@ function slide_get_coursemodule_info($coursemodule) {
     $info->name = $slide->name;
 
     //note: there should be a way to differentiate links from normal resources
-    $info->icon = url_guess_icon($slide->externalurl, 24);
+    $info->icon = slide_guess_icon($slide->externalurl, 24);
 
-    $display = url_get_final_display_type($slide);
+    $display = slide_get_final_display_type($slide);
 
     if ($display == RESOURCELIB_DISPLAY_POPUP) {
         $fullslide = "$CFG->wwwroot/mod/slide/view.php?id=$coursemodule->id&amp;redirect=1";
@@ -266,7 +266,7 @@ function slide_export_contents($cm, $baseslide) {
     $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
     $sliderecord = $DB->get_record('slide', array('id'=>$cm->instance), '*', MUST_EXIST);
 
-    $fullslide = str_replace('&amp;', '&', url_get_full_url($sliderecord, $cm, $course));
+    $fullslide = str_replace('&amp;', '&', slide_get_full_url($sliderecord, $cm, $course));
     $isslide = clean_param($fullslide, PARAM_URL);
     if (empty($isslide)) {
         return null;
@@ -293,9 +293,9 @@ function slide_export_contents($cm, $baseslide) {
  * Register the ability to handle drag and drop file uploads
  * @return array containing details of the files / types the mod can handle
  */
-function url_dndupload_register() {
+function slide_dndupload_register() {
     return array('types' => array(
-                     array('identifier' => 'url', 'message' => get_string('createurl', 'url'))
+                     array('identifier' => 'slide', 'message' => get_string('createurl', 'slide'))
                  ));
 }
 
@@ -304,7 +304,7 @@ function url_dndupload_register() {
  * @param object $uploadinfo details of the file / content that has been uploaded
  * @return int instance id of the newly created mod
  */
-function url_dndupload_handle($uploadinfo) {
+function slide_dndupload_handle($uploadinfo) {
     // Gather all the required data.
     $data = new stdClass();
     $data->course = $uploadinfo->course->id;
@@ -315,13 +315,13 @@ function url_dndupload_handle($uploadinfo) {
     $data->timemodified = time();
 
     // Set the display options to the site defaults.
-    $config = get_config('url');
+    $config = get_config('slide');
     $data->display = $config->display;
     $data->popupwidth = $config->popupwidth;
     $data->popupheight = $config->popupheight;
     $data->printintro = $config->printintro;
 
-    return url_add_instance($data, null);
+    return slide_add_instance($data, null);
 }
 
 /**
@@ -341,7 +341,7 @@ function slide_view($slide, $course, $cm, $context) {
         'objectid' => $slide->id
     );
 
-    $event = \mod_url\event\course_module_viewed::create($params);
+    $event = \mod_slide\event\course_module_viewed::create($params);
     $event->add_record_snapshot('course_modules', $cm);
     $event->add_record_snapshot('course', $course);
     $event->add_record_snapshot('slide', $slide);
@@ -352,20 +352,19 @@ function slide_view($slide, $course, $cm, $context) {
     $completion->set_module_viewed($cm);
 }
 
-
 /**
  * Insert mod url to host
  *
  * @param stdClass $courseid  - The id of host
  * @return stdClass $instance   - The id of instance id
  */
-function url_get_local_settings_info($courseid, $instance)
+function slide_get_local_settings_info($courseid, $instance)
 {
     global $CFG, $DB;
-    require_once($CFG->dirroot . '/mod/url/remote/locallib.php');
-    if (!$url = $DB->get_record('url', array('remoteid' => $instance))) {
+    require_once($CFG->dirroot . '/mod/slide/remote/locallib.php');
+    if (!$url = $DB->get_record('slide', array('remoteid' => $instance))) {
         // Get remote url
-        if (!$url = get_remote_url_by_id($instance)) {
+        if (!$url = get_remote_slide_by_id($instance)) {
             print_error('Not Found url id on host');
         }
 
@@ -375,7 +374,7 @@ function url_get_local_settings_info($courseid, $instance)
         $url->remoteid = $instance;
 
         // From this point we make database changes, so start transaction.
-        $url->id = $DB->insert_record('url', $url);
+        $url->id = $DB->insert_record('slide', $url);
         return $url->id;
     }
 

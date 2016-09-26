@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_url\search;
+namespace mod_slide\search;
 
 defined('MOODLE_INTERNAL') || die();
 

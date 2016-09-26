@@ -25,6 +25,7 @@ switch($_POST['action']){
         $data->content_json = json_encode($slidedata->contentJSON);
         $data->content_html = $slidedata->contentHTML;
         $data->id = $slidedata->id;
+        $data->visibility = is_null($slidedata->visibility) ? 1 : $slidedata->visibility;
         $slide = null;
         $slideid = $data->id;
         if ($slideid > 0) {

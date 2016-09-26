@@ -15,25 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The mod_url instance list viewed event.
+ * Version details
  *
- * @package    mod_url
- * @copyright  2013 Mark Nelson <markn@moodle.com>
+ * @package    repository
+ * @subpackage url
+ * @copyright  2009 Dongsheng Cai
+ * @author     Dongsheng Cai <dongsheng@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace mod_slide\event;
 
 defined('MOODLE_INTERNAL') || die();
 
-/**
- * The mod_url instance list viewed event class.
- *
- * @package    mod_url
- * @since      Moodle 2.7
- * @copyright  2013 Mark Nelson <markn@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class course_module_instance_list_viewed extends \core\event\course_module_instance_list_viewed {
-
-}
+$plugin->version   = 2016052301;        // The current plugin version (Date: YYYYMMDDXX)
+$plugin->requires  = 2016051900;        // Requires this Moodle version
+$plugin->component = 'repository_slide';  // Full name of the plugin (used for diagnostics)

@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once("$CFG->libdir/filelib.php");
 require_once("$CFG->libdir/resourcelib.php");
-require_once("$CFG->dirroot/mod/url/lib.php");
+require_once("$CFG->dirroot/mod/slide/lib.php");
 
 /**
  * This methods does weak url validation, we are looking for major problems only,
@@ -36,7 +36,7 @@ require_once("$CFG->dirroot/mod/url/lib.php");
  * @param $url
  * @return bool true is seems valid, false if definitely not valid URL
  */
-function url_appears_valid_url($url) {
+function slide_appears_valid_url($url) {
     if (preg_match('/^(\/|https?:|ftp:)/i', $url)) {
         // note: this is not exact validation, we look for severely malformed URLs only
         return (bool)preg_match('/^[a-z]+:\/\/([^:@\s]+:[^@\s]+@)?[a-z0-9_\.\-]+(:[0-9]+)?(\/[^#]*)?(#.*)?$/i', $url);
@@ -54,7 +54,7 @@ function url_appears_valid_url($url) {
  * @param string $url
  * @return string
  */
-function url_fix_submitted_url($url) {
+function slide_fix_submitted_url($url) {
     // note: empty urls are prevented in form validation
     $url = trim($url);
 
@@ -138,7 +138,7 @@ function slide_get_full_url($slide, $cm, $course, $config=null) {
  * @param array $matches
  * @return string
  */
-function url_filter_callback($matches) {
+function slide_filter_callback($matches) {
     return rawurlencode($matches[0]);
 }
 
@@ -185,7 +185,7 @@ function slide_print_intro($slide, $cm, $course, $ignoresettings=false) {
     $options = empty($slide->displayoptions) ? array() : unserialize($slide->displayoptions);
     if ($ignoresettings or !empty($options['printintro'])) {
         if (trim(strip_tags($slide->intro))) {
-            echo $OUTPUT->box_start('mod_introbox', 'urlintro');
+            echo $OUTPUT->box_start('mod_introbox', 'slideintro');
             echo format_module_intro('slide', $slide, $cm->id);
             echo $OUTPUT->box_end();
         }
@@ -199,30 +199,30 @@ function slide_print_intro($slide, $cm, $course, $ignoresettings=false) {
  * @param object $course
  * @return does not return
  */
-function url_display_frame($url, $cm, $course) {
+function slide_display_frame($slide, $cm, $course) {
     global $PAGE, $OUTPUT, $CFG;
 
     $frame = optional_param('frameset', 'main', PARAM_ALPHA);
 
     if ($frame === 'top') {
         $PAGE->set_pagelayout('frametop');
-        url_print_header($url, $cm, $course);
-        url_print_heading($url, $cm, $course);
-        url_print_intro($url, $cm, $course);
+        slide_print_header($slide, $cm, $course);
+        slide_print_heading($slide, $cm, $course);
+        slide_print_intro($slide, $cm, $course);
         echo $OUTPUT->footer();
         die;
 
     } else {
-        $config = get_config('url');
+        $config = get_config('slide');
         $context = context_module::instance($cm->id);
-        $exteurl = url_get_full_url($url, $cm, $course, $config);
-        $navurl = "$CFG->wwwroot/mod/url/view.php?id=$cm->id&amp;frameset=top";
+        $exteurl = slide_get_full_url($slide, $cm, $course, $config);
+        $navurl = "$CFG->wwwroot/mod/slide/view.php?id=$cm->id&amp;frameset=top";
         $coursecontext = context_course::instance($course->id);
         $courseshortname = format_string($course->shortname, true, array('context' => $coursecontext));
-        $title = strip_tags($courseshortname.': '.format_string($url->name));
+        $title = strip_tags($courseshortname.': '.format_string($slide->name));
         $framesize = $config->framesize;
-        $modulename = s(get_string('modulename','url'));
-        $contentframetitle = s(format_string($url->name));
+        $modulename = s(get_string('modulename','slide'));
+        $contentframetitle = s(format_string($slide->name));
         $dir = get_string('thisdirection', 'langconfig');
 
         $extframe = <<<EOF
@@ -252,19 +252,19 @@ EOF;
  * @param object $course
  * @return does not return
  */
-function url_print_workaround($url, $cm, $course) {
+function slide_print_workaround($slide, $cm, $course) {
     global $OUTPUT;
 
-    url_print_header($url, $cm, $course);
-    url_print_heading($url, $cm, $course, true);
-    url_print_intro($url, $cm, $course, true);
+    slide_print_header($slide, $cm, $course);
+    slide_print_heading($slide, $cm, $course, true);
+    slide_print_intro($slide, $cm, $course, true);
 
-    $fullurl = url_get_full_url($url, $cm, $course);
+    $fullurl = slide_get_full_url($slide, $cm, $course);
 
-    $display = url_get_final_display_type($url);
+    $display = slide_get_final_display_type($slide);
     if ($display == RESOURCELIB_DISPLAY_POPUP) {
         $jsfullurl = addslashes_js($fullurl);
-        $options = empty($url->displayoptions) ? array() : unserialize($url->displayoptions);
+        $options = empty($slide->displayoptions) ? array() : unserialize($slide->displayoptions);
         $width  = empty($options['popupwidth'])  ? 620 : $options['popupwidth'];
         $height = empty($options['popupheight']) ? 450 : $options['popupheight'];
         $wh = "width=$width,height=$height,toolbar=no,location=no,menubar=no,copyhistory=no,status=no,directories=no,scrollbars=yes,resizable=yes";
@@ -278,7 +278,7 @@ function url_print_workaround($url, $cm, $course) {
     }
 
     echo '<div class="urlworkaround">';
-    print_string('clicktoopen', 'url', "<a href=\"$fullurl\" $extra>$fullurl</a>");
+    print_string('clicktoopen', 'slide', "<a href=\"$fullurl\" $extra>$fullurl</a>");
     echo '</div>';
 
     echo $OUTPUT->footer();
@@ -292,18 +292,18 @@ function url_print_workaround($url, $cm, $course) {
  * @param object $course
  * @return does not return
  */
-function url_display_embed($url, $cm, $course) {
+function slide_display_embed($slide, $cm, $course) {
     global $CFG, $PAGE, $OUTPUT;
 
-    $mimetype = resourcelib_guess_url_mimetype($url->externalurl);
-    $fullurl  = url_get_full_url($url, $cm, $course);
-    $title    = $url->name;
+    $mimetype = resourcelib_guess_url_mimetype($slide->externalurl);
+    $fullurl  = slide_get_full_url($slide, $cm, $course);
+    $title    = $slide->name;
 
     $link = html_writer::tag('a', $fullurl, array('href'=>str_replace('&amp;', '&', $fullurl)));
-    $clicktoopen = get_string('clicktoopen', 'url', $link);
+    $clicktoopen = get_string('clicktoopen', 'slide', $link);
     $moodleurl = new moodle_url($fullurl);
 
-    $extension = resourcelib_get_extension($url->externalurl);
+    $extension = resourcelib_get_extension($slide->externalurl);
 
     $mediarenderer = $PAGE->get_renderer('core', 'media');
     $embedoptions = array(
@@ -323,12 +323,12 @@ function url_display_embed($url, $cm, $course) {
         $code = resourcelib_embed_general($fullurl, $title, $clicktoopen, $mimetype);
     }
 
-    url_print_header($url, $cm, $course);
-    url_print_heading($url, $cm, $course);
+    slide_print_header($slide, $cm, $course);
+    slide_print_heading($slide, $cm, $course);
 
     echo $code;
 
-    url_print_intro($url, $cm, $course);
+    slide_print_intro($slide, $cm, $course);
 
     echo $OUTPUT->footer();
     die;
@@ -380,11 +380,11 @@ function slide_get_final_display_type($slide) {
  * @param object $config url module config options
  * @return array array describing opt groups
  */
-function url_get_variable_options($config) {
+function slide_get_variable_options($config) {
     global $CFG;
 
     $options = array();
-    $options[''] = array('' => get_string('chooseavariable', 'url'));
+    $options[''] = array('' => get_string('chooseavariable', 'slide'));
 
     $options[get_string('course')] = array(
         'courseid'        => 'id',
@@ -395,16 +395,16 @@ function url_get_variable_options($config) {
         'courseformat'    => get_string('format'),
     );
 
-    $options[get_string('modulename', 'url')] = array(
-        'urlinstance'     => 'id',
-        'urlcmid'         => 'cmid',
-        'urlname'         => get_string('name'),
-        'urlidnumber'     => get_string('idnumbermod'),
+    $options[get_string('modulename', 'slide')] = array(
+        'slideinstance'     => 'id',
+        'slidecmid'         => 'cmid',
+        'slidename'         => get_string('name'),
+        'slideidnumber'     => get_string('idnumbermod'),
     );
 
     $options[get_string('miscellaneous')] = array(
         'sitename'        => get_string('fullsitename'),
-        'serverurl'       => get_string('serverurl', 'url'),
+        'serverurl'       => get_string('serverurl', 'slide'),
         'currenttime'     => get_string('time'),
         'lang'            => get_string('language'),
     );
@@ -469,10 +469,10 @@ function slide_get_variable_values($slide, $cm, $course, $config) {
         'sitename'        => format_string($site->fullname),
         'serverurl'       => $CFG->wwwroot,
         'currenttime'     => time(),
-        'urlinstance'     => $slide->id,
-        'urlcmid'         => $cm->id,
-        'urlname'         => format_string($slide->name),
-        'urlidnumber'     => $cm->idnumber,
+        'slideinstance'     => $slide->id,
+        'slidecmid'         => $cm->id,
+        'slidename'         => format_string($slide->name),
+        'slideidnumber'     => $cm->idnumber,
     );
 
     if (isloggedin()) {
@@ -499,7 +499,7 @@ function slide_get_variable_values($slide, $cm, $course, $config) {
     // NOTE: login hack is not included in 2.0 any more, new contrib auth plugin
     //       needs to be createed if somebody needs the old functionality!
     if (!empty($config->secretphrase)) {
-        $values['encryptedcode'] = url_get_encrypted_parameter($url, $config);
+        $values['encryptedcode'] = slide_get_encrypted_parameter($slide, $config);
     }
 
     //hmm, this is pretty fragile and slow, why do we need it here??
@@ -520,13 +520,13 @@ function slide_get_variable_values($slide, $cm, $course, $config) {
  * @param object $config
  * @return string
  */
-function url_get_encrypted_parameter($url, $config) {
+function slide_get_encrypted_parameter($slide, $config) {
     global $CFG;
 
     if (file_exists("$CFG->dirroot/local/externserverfile.php")) {
         require_once("$CFG->dirroot/local/externserverfile.php");
         if (function_exists('extern_server_file')) {
-            return extern_server_file($url, $config);
+            return extern_server_file($slide, $config);
         }
     }
     return md5(getremoteaddr().$config->secretphrase);
@@ -538,7 +538,7 @@ function url_get_encrypted_parameter($url, $config) {
  * @param int $size of the icon.
  * @return string|null mimetype or null when the filetype is not relevant.
  */
-function url_guess_icon($fullurl, $size = null) {
+function slide_guess_icon($fullurl, $size = null) {
     global $CFG;
     require_once("$CFG->libdir/filelib.php");
 
