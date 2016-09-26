@@ -44,4 +44,7 @@ class Auth {
 		Session::erase(static::$session);
 	}
 
+	public static function get_userid() {
+		return Session::get(static::$session);
+	}
 }

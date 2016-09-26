@@ -1,11 +1,10 @@
 <?php
-
 Route::collection(array('before' => 'auth,csrf'), function() {
 
     Route::get(array('admin/courses', 'admin/courses/(:num)'), function($page = 1) {
 
         // get public listings
-        $userid = 1; // hardcode for example
+        $userid = Auth::get_userid();
         list($total, $pages) = Course::get_courses_by_user($userid, $page, $perpage = Config::get('admin.posts_per_page'));
 
         $url = Uri::to('admin/courses');
@@ -35,12 +34,12 @@ Route::collection(array('before' => 'auth,csrf'), function() {
             ->partial('footer', 'partials/footer');
     });
 
-    Route::get(array('admin/grades/(:num)', 'admin/grades/(:num)/(:num)'), function($courseid, $page = 1) {
+    Route::get(array('admin/courses/grades/(:num)', 'admin/courses/grades/(:num)/(:num)'), function($courseid, $page = 1) {
 
         // get public listings
         list($total, $pages) = Course::get_grade_by_course($courseid, $page, $perpage = Config::get('admin.posts_per_page'));
 
-        $url = Uri::to('admin/grades/' . $courseid);
+        $url = Uri::to('admin/courses/grades/' . $courseid);
 
         $pagination = new Paginator($pages, $total, $page, $perpage, $url);
 

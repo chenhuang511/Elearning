@@ -11,7 +11,7 @@
                                 <div class="bhxh-course">
                                     <strong><?php echo $page->data['fullname']; ?></strong>
                                     <span>
-                                        <em class="status">status</em>
+                                        <em class="status"><?php echo $page->data['grade']; ?></em>
                                     </span>
                                 </div>
                             </a>
