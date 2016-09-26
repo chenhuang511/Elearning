@@ -2751,12 +2751,14 @@ class local_course_external extends external_api
         return new external_function_parameters(
             array(
                 'sql' => new external_value(PARAM_RAW, 'the query sql'),
-                'parameters' => new external_single_structure(
-                    array(
-                        'name' => new external_value(PARAM_RAW, 'param name'),
-                        'value' => new external_value(PARAM_RAW, 'param value'),
-                    )
-                ), 'the params'
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                )
             )
         );
     }
