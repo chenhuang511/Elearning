@@ -1,4 +1,16 @@
 <?php theme_include('header'); ?>
+		<div class="top-menu container">
+			<nav id="main" role="navigation">
+				<ul>
+					<?php if(has_menu_items()):
+						while(menu_items()): ?>
+							<li class="active"><a href="/">Anchor Blog  </a></li>
+							<li><a>&rsaquo; <?php echo article_title(); ?></a></li>
+						<?php endwhile;
+					endif; ?>
+				</ul>
+			</nav>
+		</div>
 		<section class="content wrap" id="article-<?php echo article_id(); ?>">
 			<h1><?php echo article_title(); ?></h1>
 
