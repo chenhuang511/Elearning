@@ -151,10 +151,10 @@ h1 {
 				color: #fff;
 			}
 	.items .content {
-		padding: 10px 0 0;
+		padding: 0px 0 0;
 	}
 		.items .content p {
-			padding-bottom: 15px;
+			padding-bottom: 10px;
 		}
 
 /**
@@ -220,6 +220,8 @@ h1 {
 }
 	.footnote {
 		padding: 20px 0 40px;
+	    float: right;
+	    margin-right: 42px;
 	}
 
 /**
@@ -332,3 +334,7 @@ ul.commentlist {
 		#bottom a {
 			text-decoration: none;
 		}
+.items footer {
+	float: right;
+	margin-right: 20px;
+}
