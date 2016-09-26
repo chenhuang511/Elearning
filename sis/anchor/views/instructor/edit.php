@@ -8,45 +8,39 @@
 	<?php echo $messages; ?>
 
 	<?php if(Auth::admin()) : ?>
-	<form method="post" action="<?php echo Uri::to('admin/instructor/edit/' . $user->id); ?>" novalidate autocomplete="off" enctype="multipart/form-data">
+	<form method="post" action="<?php echo Uri::to('admin/instructor/edit/' . $instructor->id); ?>" novalidate autocomplete="off" enctype="multipart/form-data">
 
 		<input name="token" type="hidden" value="<?php echo $token; ?>">
 		
 		<fieldset class="half split">
-		<?php
-			$mysqlconn = new mysqli("localhost", "root", "", "anchor");
-        	$sql_instructor = "SELECT * FROM anchor_instructors WHERE anchor_instructors.id=" . $user->id ;
-        	$result_instructor = $mysqlconn->query($sql_instructor);
-			while($row = $result_instructor->fetch_assoc())
-			{
-		?>
+		
 			<p>
-				<label for="label-first_name"><?php echo __('instructor.first_name'); ?>:</label>
-				<?php echo Form::text('first_name', $row['firstname'], array('id' => 'label-first_name')); ?>
+				<label for="label-firstname"><?php echo __('instructor.first_name'); ?>:</label>
+				<?php echo Form::text('firstname', Input::previous('firstname', $instructor->firstname), array('id' => 'label-firstname')); ?>
 			</p>
 			<p>
-				<label for="label-last_name"><?php echo __('instructor.last_name'); ?>:</label>
-				<?php echo Form::text('last_name', $row['lastname'], array('id' => 'label-last_name')); ?>
+				<label for="label-lastname"><?php echo __('instructor.last_name'); ?>:</label>
+				<?php echo Form::text('lastname', Input::previous('lastname', $instructor->lastname), array('id' => 'label-lastname')); ?>
 			</p>
 			<p>
 				<label for="label-email"><?php echo __('instructor.email'); ?>:</label>
-				<?php echo Form::text('email', $row['email'], array('id' => 'label-email')); ?>
+				<?php echo Form::text('email', Input::previous('email', $instructor->email), array('id' => 'label-email')); ?>
 			</p>
 			<p>
 				<label for="label-birthday"><?php echo __('instructor.birthday'); ?>:</label>
-				<?php echo Form::text('birthday', $row['birthday'], array('id' => 'label-birthday')); ?>
+				<?php echo Form::text('birthday', Input::previous('birthday', $instructor->birthday), array('id' => 'label-birthday')); ?>
 			</p>
 			<p>
 				<label for="label-subject"><?php echo __('instructor.subject'); ?>:</label>
-				<?php echo Form::text('subject', $row['subject'], array('id' => 'label-subject')); ?>
+				<?php echo Form::text('subject', Input::previous('subject', $instructor->subject), array('id' => 'label-subject')); ?>
 			</p>
-		<?php } ?>
+		
 		</fieldset>
 
 		<fieldset class="half split">
 		<?php
-			
-        	$sql_contract = "SELECT * FROM anchor_instructor_contract WHERE anchor_instructor_contract.instructor_id=".$user->id;
+			$mysqlconn = new mysqli("localhost", "root", "", "anchor");
+        	$sql_contract = "SELECT * FROM anchor_instructor_contract WHERE anchor_instructor_contract.instructor_id=".$instructor->id;
         	$result_contract = $mysqlconn->query($sql_contract);
 			while($row = $result_contract->fetch_assoc())
 			{
@@ -76,7 +70,7 @@
 				<label for="label-state"><?php echo __('instructor.state'); ?>:</label>
 				<?php echo Form::text('state', $row['state'], array('id' => 'label-state')); ?>
 			</p>
-		</div>
+		</div></br>
 		<?php } ?>
 		</fieldset>
 		<aside class="buttons">
@@ -87,7 +81,7 @@
 
 			<?php echo Html::link('admin/instructor' , __('global.cancel'), array('class' => 'btn cancel blue')); ?>
 
-			<?php echo Html::link('admin/usinstructorers/delete/' . $user->id, __('global.delete'), array('class' => 'btn delete red')); ?>
+			<?php echo Html::link('admin/instructor/delete/' . $instructor->id, __('global.delete'), array('class' => 'btn delete red')); ?>
 		</aside>
 	</form>
 	<?php else : ?>
