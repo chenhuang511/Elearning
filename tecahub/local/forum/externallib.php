@@ -2920,7 +2920,7 @@ class local_mod_forum_external extends external_api
         $join_param  = $params['join'];
         $coursewhere_param = $params['coursewhere'];
 
-        $sql = "SELECT f.*, cm.id AS cmid
+        $sql = "SELECT f.id, cm.id AS cmid
               FROM {forum} f
               JOIN {course_modules} cm ON cm.instance = f.id
               JOIN {modules} m ON m.id = cm.module
@@ -2961,29 +2961,6 @@ class local_mod_forum_external extends external_api
                     new external_single_structure(
                         array(
                             'id' => new external_value(PARAM_INT, 'the forum id', VALUE_OPTIONAL),
-                            'course' => new external_value(PARAM_INT, 'the course id', VALUE_OPTIONAL),
-                            'type' => new external_value(PARAM_RAW, 'type', VALUE_OPTIONAL),
-                            'name' => new external_value(PARAM_RAW, 'forum name', VALUE_OPTIONAL),
-                            'intro' => new external_value(PARAM_RAW, 'Page introduction text.', VALUE_OPTIONAL),
-                            'introformat' => new external_format_value(PARAM_INT, 'intro format', VALUE_OPTIONAL),
-                            'assessed' => new external_value(PARAM_INT, 'assessed', VALUE_OPTIONAL),
-                            'assesstimestart' => new external_value(PARAM_INT, 'assess time start', VALUE_OPTIONAL),
-                            'assesstimefinish' => new external_value(PARAM_INT, 'assess time finish', VALUE_OPTIONAL),
-                            'scale' => new external_format_value(PARAM_INT, 'scale', VALUE_OPTIONAL),
-                            'maxbytes' => new external_value(PARAM_INT, 'max bytes', VALUE_OPTIONAL),
-                            'maxattachments' => new external_value(PARAM_INT, 'max attachments', VALUE_OPTIONAL),
-                            'forcesubscribe' => new external_value(PARAM_INT, 'force subscribe', VALUE_OPTIONAL),
-                            'trackingtype' => new external_value(PARAM_INT, 'tracking type', VALUE_OPTIONAL),
-                            'rsstype' => new external_value(PARAM_INT, 'rss type', VALUE_OPTIONAL),
-                            'rssarticles' => new external_value(PARAM_INT, 'rss articles', VALUE_OPTIONAL),
-                            'timemodified' => new external_format_value(PARAM_INT, 'time modified', VALUE_OPTIONAL),
-                            'warnafter' => new external_value(PARAM_INT, 'warn after', VALUE_OPTIONAL),
-                            'blockafter' => new external_value(PARAM_INT, 'block after', VALUE_OPTIONAL),
-                            'blockperiod' => new external_value(PARAM_INT, 'block period', VALUE_OPTIONAL),
-                            'completiondiscussions' => new external_value(PARAM_INT, 'completion discussions', VALUE_OPTIONAL),
-                            'completionreplies' => new external_value(PARAM_INT, 'completion replies', VALUE_OPTIONAL),
-                            'completionposts' => new external_value(PARAM_INT, 'completion posts', VALUE_OPTIONAL),
-                            'displaywordcount' => new external_value(PARAM_INT, 'display word count', VALUE_OPTIONAL),
                             'cmid' => new external_value(PARAM_INT, 'the id of course module', VALUE_OPTIONAL)
                         )
                     ), 'data of forum'
