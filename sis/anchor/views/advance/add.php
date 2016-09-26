@@ -8,10 +8,10 @@
 
     <input name="token" type="hidden" value="<?php echo $token; ?>">
 
-    <?php echo $messages; ?>
+
     <fieldset class="header">
         <div class="wrap">
-
+            <?php echo $messages; ?>
 
             <aside class="buttons">
                 <?php echo Form::button(__('global.save'), array(
