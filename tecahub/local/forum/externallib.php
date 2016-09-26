@@ -3069,7 +3069,7 @@ class local_mod_forum_external extends external_api
 
         $posts = $DB->get_records_sql($params['sql'], $arr, $limitfrom_param, $limitnum_param);
 
-        if(!$posts) {
+        if (!$posts) {
             $posts = array();
         }
 
@@ -3114,6 +3114,64 @@ class local_mod_forum_external extends external_api
                             'email' => new external_value(PARAM_RAW, 'email', VALUE_OPTIONAL),
                         )
                     ), 'post data'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_list_discussions_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'parameters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the params'
+                )
+            )
+        );
+    }
+
+    public static function get_list_discussions($parameters)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_list_discussions_parameters(), array(
+            'parameters' => $parameters
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $discussions = $DB->get_records_list('forum_discussions', 'id', array_unique($arr));
+        var_dump($discussions); die();
+
+        if(!$discussions) {
+            $discussions = array();
+        }
+
+        $result = array();
+        $result['discussions'] = $discussions;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    public static function get_list_discussions_returns() {
+        return new external_single_structure(
+            array(
+                'discussions' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'the id of discussion', VALUE_OPTIONAL)
+                        )
+                    ), 'data of discussion'
                 ),
                 'warnings' => new external_warnings()
             )
