@@ -4093,3 +4093,7 @@ form#personsearch input[type="submit"] {
     text-align: left;
     margin-top: 0;
 }
+
+form input[type=text] {
+    font-family: Arial, sans-serif, Tahoma, 'Times New Roman' !important;
+}
