@@ -778,7 +778,7 @@ function get_remote_scales_menu_sql($courseid)
 
     $scales = array();
 
-    if($result->scales) {
+    if ($result->scales) {
         foreach ($result->scales as $scale) {
             $scales[$scale->id] = $scale->name;
         }
@@ -798,4 +798,18 @@ function get_remote_scale_by_id($id)
     );
 
     return $result->scale;
+}
+
+function get_remote_count_sql($sql, $parameters)
+{
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_get_count_sql',
+            'params' => array_merge(array('sql' => $sql), $parameters)
+        )
+    );
+
+    return $result->count;
 }

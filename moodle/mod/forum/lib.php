@@ -8307,7 +8307,16 @@ function forum_get_courses_user_posted_in($user, $discussionsonly = false, $incl
             FROM {course} c
             $ctxjoin
             WHERE c.id IN ($subquery)";
-    $courses = $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
+    if (MOODLE_RUN_MODE == MOODLE_MODE_HUB) {
+        $querySQL = "SELECT c.id
+            FROM {course} c
+            $ctxjoin
+            WHERE c.id IN ($subquery)";
+
+        $courses = get_remote_forum_get_courses_user_posted_in($querySQL, $params, $limitfrom, $limitnum);
+    } else {
+        $courses = $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
+    }
     if ($includecontexts) {
         array_map('context_helper::preload_from_record', $courses);
     }
@@ -8332,6 +8341,15 @@ function forum_get_forums_user_posted_in($user, array $courseids = null, $discus
     global $DB;
 
     if (!is_null($courseids)) {
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            foreach ($courseids as $key => $courseid) {
+                $course = $DB->get_record('course', array('id' => $courseid), 'id,remoteid');
+                if ($course) {
+                    $courseids[$key] = $course->remoteid;
+                }
+            }
+        }
+
         list($coursewhere, $params) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED, 'courseid');
         $coursewhere = ' AND f.course ' . $coursewhere;
     } else {
@@ -8361,8 +8379,11 @@ function forum_get_forums_user_posted_in($user, array $courseids = null, $discus
                    ) j ON j.id = f.id
              WHERE m.name = :forum
                  {$coursewhere}";
-
-    $courseforums = $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $courseforums = get_remote_forum_get_forums_user_posted_in($coursewhere, $join, $params, $limitfrom, $limitnum);
+    } else {
+        $courseforums = $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
+    }
     return $courseforums;
 }
 
@@ -8649,9 +8670,30 @@ function forum_get_posts_by_user($user, array $courses, $musthaveaccess = false,
     $forumsearchparams['userid'] = $user->id;
 
     // Set the total number posts made by the requested user that the current user can see
-    $return->totalcount = $DB->count_records_sql($countsql . $sql, $forumsearchparams);
-    // Set the collection of posts that has been requested
-    $return->posts = $DB->get_records_sql($selectsql . $sql . $orderby, $forumsearchparams, $limitfrom, $limitnum);
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $params = array();
+        $i = 0;
+        foreach ($forumsearchparams as $key => $val) {
+            $params["parameters[$i][name]"] = $key;
+            if ($key == 'userid') {
+                $user = get_remote_mapping_user($val);
+                $params["parameters[$i][value]"] = $user ? $user[0]->id : $val;
+            } else if (strpos($key, 'fula') !== FALSE) {
+                $forumid = $DB->get_field('forum', 'remoteid', array('id' => $val));
+                $params["parameters[$i][value]"] = $forumid ? $forumid : $val;
+            } else {
+                $params["parameters[$i][value]"] = $val;
+            }
+            $i++;
+        }
+        $return->totalcount = get_remote_count_sql($countsql . $sql, $params);
+        // Set the collection of posts that has been requested
+        $return->posts = get_remote_forum_get_posts_user_posted($selectsql . $sql . $orderby, $params, $limitfrom == null ? '' : $limitfrom, $limitnum == null ? '' : $limitnum);
+    } else {
+        $return->totalcount = $DB->count_records_sql($countsql . $sql, $forumsearchparams);
+        // Set the collection of posts that has been requested
+        $return->posts = $DB->get_records_sql($selectsql . $sql . $orderby, $forumsearchparams, $limitfrom, $limitnum);
+    }
 
     // We need to build an array of forums for which posts will be displayed.
     // We do this here to save the caller needing to retrieve them themselves before

@@ -557,7 +557,7 @@ function update_remote_mdl_forum_by($modname, $parameters, $obj)
         )
     );
 
-    if($result->id) {
+    if ($result->id) {
         return true;
     }
     return false;
@@ -885,15 +885,186 @@ function get_remote_forum_get_firstpost_from_discussion_by($discussionid)
     );
 
     $post = $result->post;
-    if($post) {
-        if(isset($post->userid)) {
+    if ($post) {
+        if (isset($post->userid)) {
             $localuserid = get_remote_mapping_localuserid($post->userid);
-            if($localuserid) {
+            if ($localuserid) {
                 $post->userid = $localuserid;
             }
         }
     }
 
     return $post;
+}
+
+function get_remote_forum_get_forums_user_posted_in($coursewhere, $join, $params, $limitfrom, $limitnum)
+{
+    global $DB;
+
+    if (isset($params['userid'])) {
+        $user = get_remote_mapping_user($params['userid']);
+        if ($user) {
+            $params['userid'] = $user[0]->id;
+        }
+    }
+
+    $parameters = array();
+    $i = 0;
+    foreach ($params as $key => $val) {
+        $parameters["parameters[$i][name]"] = "$key";
+        $parameters["parameters[$i][value]"] = $val;
+        $i++;
+    }
+
+    $limitfrom = $limitfrom == null ? '' : $limitfrom;
+    $limitnum = $limitnum == null ? '' : $limitnum;
+
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_forum_get_forums_user_posted_in',
+            'params' => array_merge(array('coursewhere' => $coursewhere, 'join' => $join, 'limitfrom' => $limitfrom, 'limitnum' => $limitnum), $parameters)
+        ), false
+    );
+
+    $forums = array();
+    if ($result->forums) {
+        $sql = "SELECT f.*, cm.id AS cmid 
+              FROM {forum} f
+              JOIN {course_modules} cm ON cm.instance = f.id
+              WHERE f.remoteid = :forumid AND cm.remoteid = :cmid";
+
+        foreach ($result->forums as $f) {
+            $forum = $DB->get_record_sql($sql, array('forumid' => $f->id, 'cmid' => $f->cmid));
+            if ($forum) {
+                $forums[$forum->id] = $forum;
+            }
+        }
+    }
+
+    return $forums;
+}
+
+function get_remote_forum_get_courses_user_posted_in($sql, $params, $limitfrom, $limitnum)
+{
+    global $DB;
+
+    if (isset($params['userid'])) {
+        $user = get_remote_mapping_user($params['userid']);
+        if ($user) {
+            $params['userid'] = $user[0]->id;
+        }
+    }
+
+    $limitfrom = $limitfrom == null ? '' : $limitfrom;
+    $limitnum = $limitnum == null ? '' : $limitnum;
+
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_forum_get_courses_user_posted_in',
+            'params' => array('sql' => $sql, 'userid' => $params['userid'], 'contextlevel' => isset($params['contextlevel']) ? $params['contextlevel'] : 0, 'limitfrom' => $limitfrom, 'limitnum' => $limitnum)
+        ), false
+    );
+
+    $courses = array();
+    if ($result->courses) {
+        $sql = "SELECT c.* , ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel, ctx.instanceid AS ctxinstance
+            FROM {course} c
+            LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)
+            WHERE c.remoteid = :courseid ";
+
+        foreach ($result->courses as $c) {
+            $course = $DB->get_record_sql($sql, array('courseid' => $c->id, 'contextlevel' => $params['contextlevel']));
+            if ($course) {
+                $courses[$course->id] = $course;
+            }
+        }
+    }
+
+    return $courses;
+}
+
+function get_remote_forum_get_posts_user_posted($sql, $parameters, $limitfrom, $limitnum)
+{
+    global $DB;
+
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_forum_get_posts_user_posted',
+            'params' => array_merge(array('sql' => $sql, 'limitfrom' => $limitfrom, 'limitnum' => $limitnum), $parameters)
+        ), false
+    );
+
+    $posts = array();
+    if ($result->posts) {
+        foreach ($result->posts as $p) {
+            $localuserid = get_remote_mapping_localuserid($p->userid);
+            if ($localuserid) {
+                $p->userid = $localuserid;
+                $p->useridx = $localuserid;
+            }
+
+            $localforumid = $DB->get_field('forum', 'id', array('remoteid' => $p->forum));
+            if ($localforumid) {
+                $p->forum = $localforumid;
+            }
+
+            $posts[$p->id] = $p;
+        }
+    }
+
+    return $posts;
+}
+
+function get_remote_list_discussions($params)
+{
+    global $DB;
+
+    $parameters = array();
+    $i = 0;
+    foreach ($params as $key => $val) {
+        $parameters["parameters[$i][name]"] = "$key";
+        $parameters["parameters[$i][value]"] = $val;
+        $i++;
+    }
+
+    $result = moodle_webservice_client(
+        array(
+            'domain' => HUB_URL,
+            'token' => HOST_TOKEN,
+            'function_name' => 'local_mod_get_list_discussions',
+            'params' => array_merge($parameters)
+        ), false
+    );
+
+    $discussions = array();
+    if ($result->discussions) {
+        foreach ($result->discussions as $d) {
+            $localcourseid = $DB->get_field('course', 'id', array('remoteid' => $d->course));
+            if ($localcourseid) {
+                $d->course = $localcourseid;
+            }
+            $localforumid = $DB->get_field('forum', 'id', array('remoteid' => $d->forum));
+            if ($localforumid) {
+                $d->forum = $localforumid;
+            }
+            $localuserid = get_remote_mapping_localuserid($d->userid);
+            if ($localuserid) {
+                $d->userid = $localuserid;
+            }
+            $localusermodified = get_remote_mapping_localuserid($d->usermodified);
+            if ($localusermodified) {
+                $d->usermodified = $localusermodified;
+            }
+            $discussions[$d->id] = $d;
+        }
+    }
+
+    return $discussions;
 }
 
