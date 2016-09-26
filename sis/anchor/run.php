@@ -76,6 +76,7 @@ if(is_admin()) {
     require APP . 'routes/advance' . EXT;
 	require APP . 'routes/students' . EXT;
     require APP . 'routes/schools' . EXT;
+    require APP . 'routes/grades' . EXT;
 }
 else {
 	require APP . 'routes/site' . EXT;
