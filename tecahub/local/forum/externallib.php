@@ -3151,7 +3151,6 @@ class local_mod_forum_external extends external_api
         }
 
         $discussions = $DB->get_records_list('forum_discussions', 'id', array_unique($arr));
-        var_dump($discussions); die();
 
         if(!$discussions) {
             $discussions = array();
@@ -3169,7 +3168,19 @@ class local_mod_forum_external extends external_api
                 'discussions' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'id' => new external_value(PARAM_INT, 'the id of discussion', VALUE_OPTIONAL)
+                            'id' => new external_value(PARAM_INT, 'the id', VALUE_OPTIONAL),
+                            'course' => new external_value(PARAM_INT, 'the course id', VALUE_OPTIONAL),
+                            'forum' => new external_value(PARAM_INT, 'the forum id', VALUE_OPTIONAL),
+                            'name' => new external_value(PARAM_RAW, 'the name', VALUE_OPTIONAL),
+                            'firstpost' => new external_value(PARAM_INT, 'first post', VALUE_OPTIONAL),
+                            'userid' => new external_value(PARAM_INT, 'the user id', VALUE_OPTIONAL),
+                            'groupid' => new external_value(PARAM_INT, 'the group id', VALUE_OPTIONAL),
+                            'assessed' => new external_value(PARAM_INT, 'the assessed', VALUE_OPTIONAL),
+                            'timemodified' => new external_value(PARAM_INT, 'time modified', VALUE_OPTIONAL),
+                            'usermodified' => new external_value(PARAM_INT, 'user modified', VALUE_OPTIONAL),
+                            'timestart' => new external_value(PARAM_INT, 'time start', VALUE_OPTIONAL),
+                            'timeend' => new external_value(PARAM_INT, 'time end', VALUE_OPTIONAL),
+                            'pinned' => new external_value(PARAM_INT, 'pinned', VALUE_OPTIONAL)
                         )
                     ), 'data of discussion'
                 ),
