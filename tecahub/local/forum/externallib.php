@@ -2917,7 +2917,7 @@ class local_mod_forum_external extends external_api
             'limitnum' => $limitnum
         ));
 
-        $join_param  = $params['join'];
+        $join_param = $params['join'];
         $coursewhere_param = $params['coursewhere'];
 
         $sql = "SELECT f.id, cm.id AS cmid
@@ -2964,6 +2964,64 @@ class local_mod_forum_external extends external_api
                             'cmid' => new external_value(PARAM_INT, 'the id of course module', VALUE_OPTIONAL)
                         )
                     ), 'data of forum'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function forum_get_courses_user_posted_in_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'sql' => new external_value(PARAM_RAW, 'the query sql'),
+                'userid' => new external_value(PARAM_INT, 'the id of user'),
+                'contextlevel' => new external_value(PARAM_INT, 'the context level'),
+                'limitfrom' => new external_value(PARAM_RAW, 'the limit from'),
+                'limitnum' => new external_value(PARAM_RAW, 'the limit num')
+            )
+        );
+    }
+
+    public static function forum_get_courses_user_posted_in($sql, $userid, $contextlevel, $limitfrom, $limitnum)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::forum_get_courses_user_posted_in_parameters(), array(
+            'sql' => $sql,
+            'userid' => $userid,
+            'contextlevel' => $contextlevel,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum
+        ));
+
+        $arr = array('userid' => $params['userid'], 'contextlevel' => $params['contextlevel']);
+        $limitfrom_param = $params['limitfrom'] == '' ? null : $params['limitfrom'];
+        $limitnum_param = $params['limitnum'] == '' ? null : $params['limitnum'];
+
+        $courses = $DB->get_records_sql($params['sql'], $arr, $limitfrom_param, $limitnum_param);
+
+        if (!$courses) {
+            $courses = array();
+        }
+
+        $result = array();
+        $result['courses'] = $courses;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    public static function forum_get_courses_user_posted_in_returns()
+    {
+        return new external_single_structure(
+            array(
+                'courses' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'the id of course', VALUE_OPTIONAL)
+                        )
+                    )
                 ),
                 'warnings' => new external_warnings()
             )

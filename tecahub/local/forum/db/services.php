@@ -346,4 +346,12 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_forum_get_courses_user_posted_in' => array(
+        'classname' => 'local_mod_forum_external',
+        'methodname' => 'forum_get_courses_user_posted_in',
+        'classpath' => 'local/forum/externallib.php',
+        'description' => 'get list course by user posted',
+        'type' => 'read',
+        'ajax' => true
+    ),
 );
