@@ -338,4 +338,12 @@ $functions = array(
         'type'		    => 'write',
         'ajax'		    => true
     ),
+    'local_get_count_sql' => array(
+        'classname'     => 'local_course_external',
+        'methodname'    => 'get_count_sql',
+        'classpath'     => 'local/course/externallib.php',
+        'description'   => 'get count sql',
+        'type'		    => 'write',
+        'ajax'		    => true
+    ),
 );

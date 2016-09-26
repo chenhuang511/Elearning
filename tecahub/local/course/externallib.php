@@ -2696,7 +2696,8 @@ class local_course_external extends external_api
         );
     }
 
-    public static function get_scale_by_id_parameters() {
+    public static function get_scale_by_id_parameters()
+    {
         return new external_function_parameters(
             array(
                 'id' => new external_value(PARAM_INT, 'the id of scale')
@@ -2704,7 +2705,8 @@ class local_course_external extends external_api
         );
     }
 
-    public static function get_scale_by_id($id) {
+    public static function get_scale_by_id($id)
+    {
         global $DB;
         $warnings = array();
 
@@ -2713,7 +2715,7 @@ class local_course_external extends external_api
         ));
 
         $scale = $DB->get_record('scale', array('id' => $params['id']));
-        if(!$scale) {
+        if (!$scale) {
             $scale = new stdClass();
         }
 
@@ -2723,7 +2725,8 @@ class local_course_external extends external_api
         return $result;
     }
 
-    public static function get_scale_by_id_returns() {
+    public static function get_scale_by_id_returns()
+    {
         return new external_single_structure(
             array(
                 'scale' => new external_single_structure(
@@ -2738,6 +2741,54 @@ class local_course_external extends external_api
                         'timemodified' => new external_value(PARAM_INT, 'the time modified', VALUE_OPTIONAL),
                     )
                 ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    public static function get_count_sql_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'sql' => new external_value(PARAM_RAW, 'the query sql'),
+                new external_single_structure(
+                    array(
+                        'name' => new external_value(PARAM_RAW, 'param name'),
+                        'value' => new external_value(PARAM_RAW, 'param value'),
+                    )
+                ), 'the params'
+            )
+        );
+    }
+
+    public static function get_count_sql($sql, $parameters)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_count_sql_parameters(), array(
+            'sql' => $sql,
+            'parameters' => $parameters
+        ));
+
+        $arr = array();
+        foreach ($params['parameters'] as $p) {
+            $arr = array_merge($arr, array($p['name'] => $p['value']));
+        }
+
+        $count = $DB->count_records_sql($params['sql'], $arr);
+
+        $result = array();
+        $result['count'] = $count;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    public static function get_count_sql_returns()
+    {
+        return new external_single_structure(
+            array(
+                'count' => new external_value(PARAM_INT, 'the count'),
                 'warnings' => new external_warnings()
             )
         );
