@@ -50,6 +50,7 @@
     Route::get(array('admin/advance/status/(:any)','admin/advance/status/(:any)/(:num)'), array('before' => 'auth', 'main' => function($status, $page = 1) {
         $total =  count(Staff::page_read_status($status));
         $vars['ds'] =  Staff::read_status(1,$page  ,$status);
+        $vars['messages'] = Notify::read();
         $vars['token'] = Csrf::token();
         $url = Uri::to('admin/advance/status/'.$status );
         $pagination = new Paginator(Staff::read_status(5, $page ,$status), $total, $page, 5, $url);
