@@ -48,10 +48,18 @@
 				<?php endwhile; ?>
 
 			</div>
-			<div class="col-md-3">
-				<li></li>
+			<div class="right-block col-md-3 block-search">
+				<form id="" action="" method="get">
+					<div class="search-box">
+						<h3 class="el-sidebar-heading"> Search <?php echo menu_name(); ?></h3>
+					</div>
+					<div class="search-input">
+						<input type="text" name="search" value="">
+						<input type="submit" class="search-btn" value="Search">
+					</div>
+				</form>
 			</div>
-			<div class="col-md-3">
+			<div class="col-md-3 block-posts">
 				<li>
 					<h3 class="el-sidebar-heading"> New <?php echo menu_name(); ?></h3>
 				</li>
