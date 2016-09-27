@@ -221,16 +221,18 @@ function remote_assign_role_to_user($roleid, $userid, $courseid)
     global $DB;
 
     $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
+    $remotecourse = $DB->get_field('course', 'remoteid', array('id' => $courseid));
     $remoteuser = get_remote_mapping_user($user);
 
-    return moodle_webservice_client(
+    $resp = moodle_webservice_client(
         array(
             'domain' => HUB_URL,
             'token' => HOST_TOKEN,
             'function_name' => 'local_remote_assign_role_to_user',
-            'params' => array('roleid' => $roleid, 'userid' => $remoteuser[0]->id, 'courseid' => $courseid)
+            'params' => array('roleid' => $roleid, 'userid' => $remoteuser[0]->id, 'courseid' => $remotecourse)
         ), false
     );
+    return $resp;
 }
 
 function get_remote_cm_info($modname, $instanceid)
