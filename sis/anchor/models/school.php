@@ -2,7 +2,7 @@
 
 class School extends Base {
 
-    public static $table = 'school_list';
+    public static $table = 'schools';
 
 //    public static function search($params = array()) {
 //        $query = static::where('status', '=', 'active');

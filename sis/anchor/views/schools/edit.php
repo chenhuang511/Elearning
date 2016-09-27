@@ -1,14 +1,14 @@
 <?php echo $header; ?>
 
 <hgroup class="wrap">
-    <h1><?php echo __('Edit school', $school->name); ?></h1>
+    <h1><?php echo __('Edit school '. $school->name); ?></h1>
 </hgroup>
 
 <?php
 $idschool = $school->remoteid;
 
 $mysqlconn = new mysqli("localhost", "root", "vannhuthe", "anchor");
-$sql = "SELECT * FROM anchor_school WHERE schoolid = ".$idschool;
+$sql = "SELECT * FROM anchor_school_student WHERE schoolid = ".$school->id;
 $result = $mysqlconn->query($sql);
 
 ?>
@@ -24,23 +24,23 @@ $result = $mysqlconn->query($sql);
             <fieldset class="half split">
                 <p>
                     <label for="label-id"><?php echo __('id'); ?>:</label>
-                    <?php echo Form::text('id', Input::previous('id', $school->id), array('id' => 'label-id')); ?>
-                    <em><?php echo __('schools.username_explain'); ?></em>
+                    <?php // echo Form::text('id', Input::previous('id', $school->id), array('id' => 'label-id')); ?>
+                    <label id="label-id"><?php echo $school->id ?></label>
+
                 </p>
                 <?php
-                while($row = $result->fetch_assoc())
+                while ($row = $result->fetch_assoc())
                 {
                     $userid = $row["userid"];
-                    //var_dump($courseid);
 
-                        ?>
-                        <p>
-                            <label for="label-iduser"><?php echo __('ID Student'); ?>:</label>
-                            <?php echo Form::text('iduser', Input::previous('iduser', $userid), array('id' => 'label-iduser')); ?>
-                        </p>
-                        <?php
+                    ?>
+                    <p>
+                        <label for="label-iduser"><?php echo __('ID Student'); ?>:</label>
+                        <?php // echo Form::text('iduser', Input::previous('iduser', $userid), array('id' => 'label-iduser')); ?>
+                        <label id="label-iduser"><?php echo $userid  ?></label>
+                    </p>
+                    <?php
                 }
-                //die;
                 ?>
             </fieldset>
 
@@ -54,23 +54,21 @@ $result = $mysqlconn->query($sql);
                 <p>
                     <label for="label-name"><?php echo __('School name'); ?>:</label>
                     <?php echo Form::text('schoolname', Input::previous('schoolname', $school->name), array('id' => 'label-schoolname')); ?>
-
                 </p>
                 <?php
                 $result1 = $mysqlconn->query($sql);
                 while($row = $result1->fetch_assoc())
                 {
                     $username = $row["username"];
-                    //var_dump($courseid);
 
                     ?>
                     <p>
                         <label for="label-username"><?php echo __('User Student'); ?>:</label>
-                        <?php echo Form::text('username', Input::previous('username', $username), array('id' => 'label-username')); ?>
+                        <?php // echo Form::text('username', Input::previous('username', $username), array('id' => 'label-username')); ?>
+                        <label id="label-username"><?php echo $username ?></label>
                     </p>
                     <?php
                 }
-                //die;
                 ?>
             </fieldset>
             <aside class="buttons">

@@ -133,14 +133,13 @@ select {
 	float: left;
 	height: 39px;
 	padding: 0 18px;
-
 	text-align: center;
 	line-height: 39px;
-
 	-webkit-user-select: none;
-
 	border-radius: 5px 0 0 5px;
-	min-width: 200px;
+	min-width: 150px;
+	max-width: 350px;
+	margin: 5px;
 }
 
 	.split label + input, .split label + textarea {

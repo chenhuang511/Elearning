@@ -42,7 +42,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
     });
 
     Route::post('admin/schools/edit/(:num)', function($id) {
-        $input = Input::get(array('id', 'name'));
+        $input = Input::get(array('name'));
         //$password_reset = false;
 
         // A little higher to avoid messing with the password
@@ -120,7 +120,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
     });
 
     Route::post('admin/schools/add', function() {
-        $input = Input::get(array('id', 'name'));
+        $input = Input::get(array('name'));
 
         foreach($input as $key => &$value) {
             //if($key === 'password') continue; // Can't avoid, so skip.
@@ -170,8 +170,9 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         }
 
         School::where('id', '=', $id)->delete();
+        StudentSchool::where('schoolid', '=', $id)->delete();
 
-        Query::table(Base::table('school_meta'))->where('school', '=', $id)->delete();
+        //Query::table(Base::table('school_meta'))->where('school', '=', $id)->delete();
 
         Notify::success(__('schools.deleted'));
 

@@ -40,7 +40,7 @@
      oci_execute($stid);
      while ($row = oci_fetch_array($stid, OCI_ASSOC+OCI_RETURN_NULLS))
      {
-         $userid   = $row['USERID'];
+         $userid   = $row['ID'];
          $username = $row['USERNAME'];
          $schoolid = $row['MNETHOSTID'];
          $auth     = $row['AUTH'];
@@ -51,10 +51,28 @@
             oci_execute($stid1);
             while ($row1 = oci_fetch_array($stid1, OCI_ASSOC+OCI_RETURN_NULLS))
             {
+
+                $mysqlconn = new mysqli("localhost", "root", "vannhuthe", "anchor");
+                $sql = "SELECT * FROM anchor_schools WHERE remoteid = ".$schoolid;
+                $result = $mysqlconn->query($sql);
+
+                while($row2 = $result->fetch_assoc())
+                {
+                    $idsch = $row2["id"];
+                }
+
+                $sql1 = "SELECT * FROM anchor_students WHERE remoteid = ".$userid;
+                $result1 = $mysqlconn->query($sql1);
+
+                while($row3 = $result1->fetch_assoc())
+                {
+                    $idstu = $row3["id"];
+                }
+
                 $schoolname = $row1['NAME'];
 
-                $sql = "INSERT INTO anchor_school(userid, schoolid, username, schoolname) 
-                        VALUES('" . $userid . "'" . " ,'" .  $schoolid . "'" . " ,'" . $username . "'" . " ,'" .  $schoolname . "')";    
+                $sql = "INSERT INTO anchor_school_student 
+                        VALUES('" . $idsch . "'" . " ,'" . $idstu . "'" . " ,'" . $username . "'" . " ,'" .  $schoolname . "')";
                 $mysqlconn->query($sql);
             }
          }
