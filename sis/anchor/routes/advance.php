@@ -10,6 +10,13 @@
             'draft' => __('advance.draft'),
         );
         $vars['advance'] =  $pagination;
+        foreach ($pagination->results as $data){
+            if($data->user_check_id){
+                $user_check_id = $data->user_check_id;
+                $data->user_check = User::get_id($user_check_id);
+            }
+
+        }
         return View::create('advance/index', $vars)
             ->partial('header', 'partials/header')
             ->partial('footer', 'partials/footer');
@@ -58,6 +65,13 @@
             'published' => __('advance.published'),
             'draft' => __('advance.draft'),
         );
+        foreach ($pagination->results as $data){
+            if($data->user_check_id){
+                $user_check_id = $data->user_check_id;
+                $data->user_check = User::get_id($user_check_id);
+            }
+
+        }
         $vars['advance'] =  $pagination;
         return View::create('advance/index', $vars)
             ->partial('header', 'partials/header')
@@ -102,8 +116,10 @@
 
             return Response::redirect('admin/advance/edit/' . $id);
         }
-
-
+        $user = Auth::user();
+        if($input['status'] == 'published' || $input['status'] == 'rebuff'){
+            $input['user_check_id'] =  $user->id;
+        }
         Advance::update($id, $input);
 
         Extend::process('post', $id);
@@ -113,4 +129,13 @@
         return Response::redirect('admin/advance/edit/' . $id);
     });
 
+    Route::get('admin/advance/delete/(:num)', function($id) {
+        Advance::find($id)->delete();
+
+
+
+        Notify::success(__('posts.deleted'));
+
+        return Response::redirect('admin/advance');
+    });
 

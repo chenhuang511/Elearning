@@ -23,6 +23,10 @@
                 <?php echo Html::link('admin/advance' , __('global.cancel'), array(
                     'class' => 'btn cancel blue'
                 )); ?>
+
+                <?php echo Html::link('admin/advance/delete/' . $article->id, __('global.delete'), array(
+                    'class' => 'btn delete red'
+                )); ?>
             </aside>
         </div>
     </fieldset>
@@ -48,7 +52,7 @@
             </p>
             <p>
                 <label for="label-slug"><?php echo __('advance.status'); ?>:</label>
-                <?php echo Form::select('status',  ['draft' => 'draff', 'published' => 'published'], Input::previous('status', $article->status), array('id' => 'label-applicant_id' )); ?>
+                <?php echo Form::select('status',  ['draft' => 'Đang yêu cầu', 'published' => 'Chấp nhận','rebuff' => 'Từ chối yêu cầu'], Input::previous('status', $article->status), array('id' => 'label-applicant_id' )); ?>
             </p>
 
 

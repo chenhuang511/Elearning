@@ -15,6 +15,7 @@
 		<link rel="stylesheet" href="<?php echo asset('anchor/views/assets/css/notifications.css'); ?>">
 		<link rel="stylesheet" href="<?php echo asset('anchor/views/assets/css/forms.css'); ?>">
 		<link rel="stylesheet" href="<?php echo asset('anchor/views/assets/css/font-awesome.min.css'); ?>">
+		<link rel="stylesheet" href="<?php echo asset('anchor/views/assets/css/advance.css'); ?>">
 
 		<link rel="stylesheet" href="<?php echo asset_url('css/bootstrap.min.css'); ?>">
 		<link rel="stylesheet" href="<?php echo asset_url('css/bhxh.css'); ?>">

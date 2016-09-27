@@ -23,5 +23,8 @@ class User extends Base {
 
 		return new Paginator($results, $count, $page, $perpage, Uri::to('admin/users'));
 	}
+	public static function get_id($id = 1){
+        return static::get('id', $id)[0]->username;
+    }
 
 }

@@ -12,7 +12,9 @@ return array(
 
 
     'published' => 'Đã được ứng',
-    'draft' => 'Yêu cầu',
+    'draft' => 'Đang yêu cầu',
+    'rebuff' => 'Từ chối',
+
 
     'created' => 'Tạo đơn tạm ứng thành công',
     'money_not_int' => 'Nhập lại số tiền bằng số',

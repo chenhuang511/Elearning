@@ -31,25 +31,38 @@
 
             <?php foreach($advance->results as $article): ?>
                 <li>
-                    <a href="<?php echo Uri::to('admin/advance/edit/' . $article->id); ?>">
-                        <strong>Đơn tạm ứng số: <?php echo $article->id?></strong>
-                        <span>
-                            <p>Người yêu cầu: <?php echo $article->full_name?> </p>
-                            <p>Chức vụ: <?php echo $article->position ?> </p>
-                            <p>Số tiền: <strong><?php echo $article->money ?></strong></p>
-                            <p>Lí do: <?php echo $article->reason ?></p>
-                            <?php if($article->status == 'draft'){
-                                ?>
-                                    <p>Đang yêu cầu</p>
-                                <?php
-                            } else{
-                                ?>
-                                    <p>Đã được đáp ứng</p>
-                                <?php
+                    <a class="advance-link" href="<?php echo Uri::to('admin/advance/edit/' . $article->id); ?>">
+                        <strong style=" font-size: 30px; padding-bottom: 73px;">Đơn tạm ứng số: <?php echo $article->id?></strong>
+                        <table class="table-advance">
+                            <tr>
+                                <td>Người yêu cầu:</td>
+                                <td><?php echo $article->full_name?></td>
+                            </tr>
+                            <tr>
+                                <td>Chức vụ:</td>
+                                <td><?php echo $article->position?></td>
+                            </tr>
+                            <tr>
+                                <td>Số tiền:</td>
+                                <td style="font-size: 25px;"><?php echo $article->money?></td>
+                            </tr>
+                            <tr>
+                                <td>Lí do:</td>
+                                <td><?php echo $article->reason?></td>
+                            </tr>
+                            <tr>
+                                <td>Tình trạng:</td>
+                                <td><?php echo __('advance.' . $article->status); ?></td>
+                            </tr>
+                            <?php
+                            if($article->user_check){
+                            ?><tr>
+                                <td>Người xác nhận:</td>
+                                <td> <?php echo $article->user_check ;?></td>
+                            </tr>
+                                <?php }?>
+                        </table>
 
-                            }?>
-
-				        </span>
 
 <!--                        <p>--><?php //echo strip_tags($article->description); ?><!--</p>-->
                     </a>
