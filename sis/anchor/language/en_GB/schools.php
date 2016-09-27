@@ -2,9 +2,9 @@
 
 return array(
 
-    'schools' => 'Schools',
+    'schools' => 'Trường học',
 
-    'create_school' => 'Create a new school',
+    'create_school' => 'Tạo trường học',
     'add_school' => 'Add a new school',
     'editing_school' => 'Editing School Profile',
     'remembered' => 'I know my password',

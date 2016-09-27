@@ -17,8 +17,8 @@
 		<?php foreach($students->results as $student): ?>
 		<li>
 			<a href="<?php echo Uri::to('admin/students/edit/' . $student->id); ?>">
-				<strong><?php echo $student->firstname; ?></strong>
-				<span><?php echo __('students.username'); ?>: <?php echo $student->username; ?></span>
+				<strong><?php echo $student->id; ?></strong>
+				<span><?php echo __('Name'); ?>: <?php echo $student->fullname; ?></span>
 
 				<em class="highlight"><?php echo __($student->email); ?></em>
 			</a>
