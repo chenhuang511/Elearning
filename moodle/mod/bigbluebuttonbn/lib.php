@@ -730,7 +730,7 @@ function bigbluebuttonbn_get_local_settings_info($courseid, $instance)
     require_once($CFG->dirroot . '/mod/bigbluebuttonbn/remote/locallib.php');
     if (!$bigbluebuttonbn = $DB->get_record('bigbluebuttonbn', array('remoteid' => $instance))) {
         // Get remote assign
-        if (!$bigbluebuttonbn = get_remote_bigbluebuttonbn_by_id($instance)) {
+        if (!$bigbluebuttonbn = get_remote_bigbluebuttonbn_by_id($instance, false)) {
             return 0;
         }
         // Check if not exist then insert local DB

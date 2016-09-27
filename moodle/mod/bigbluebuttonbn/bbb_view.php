@@ -26,7 +26,7 @@ if ($id) {
         $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
         $bigbluebuttonbn = $DB->get_record('bigbluebuttonbn', array('id' => $cm->instance), '*', MUST_EXIST);
     } else {
-        if (!$cm = get_remote_course_module_by_cmid('bigbluebuttonbn', $id)) {
+        if (!$cm = get_coursemodule_from_id('bigbluebuttonbn', $id, 0, false, MUST_EXIST)) {
             print_error('invalidcoursemodule');
         }
         if (!$course = get_local_course_record($cm->course, true)) {
