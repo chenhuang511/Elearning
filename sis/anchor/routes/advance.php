@@ -1,5 +1,6 @@
 <?php
-    Route::get(array('admin/advance','admin/advance/(:num)'), array('before' => 'auth', 'main' => function($page = 1) {
+Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
+    Route::get(array('admin/advance','admin/advance/(:num)'),function($page = 1) {
         $total =  count(Staff::_read());
         $vars['messages'] = Notify::read();
         $vars['token'] = Csrf::token();
@@ -20,9 +21,9 @@
         return View::create('advance/index', $vars)
             ->partial('header', 'partials/header')
             ->partial('footer', 'partials/footer');
-    }));
+    });
 
-    Route::get('admin/advance/add', array('before' => 'auth', 'main' => function($page = 1) {
+    Route::get('admin/advance/add',function() {
         $vars['messages'] = Notify::read();
         $vars['staff'] = Staff::read();
         $vars['token'] = Csrf::token();
@@ -30,7 +31,7 @@
         return View::create('advance/add', $vars)
             ->partial('header', 'partials/header')
             ->partial('footer', 'partials/footer');
-    }));
+    });
 
     Route::post('admin/advance/add', function() {
         $input = Input::get(array('applicant_id', 'money', 'reason'));
@@ -54,7 +55,7 @@
 
     });
 
-    Route::get(array('admin/advance/status/(:any)','admin/advance/status/(:any)/(:num)'), array('before' => 'auth', 'main' => function($status, $page = 1) {
+    Route::get(array('admin/advance/status/(:any)','admin/advance/status/(:any)/(:num)'), function($status, $page = 1) {
         $total =  count(Staff::page_read_status($status));
         $vars['ds'] =  Staff::read_status(1,$page  ,$status);
         $vars['messages'] = Notify::read();
@@ -76,7 +77,7 @@
         return View::create('advance/index', $vars)
             ->partial('header', 'partials/header')
             ->partial('footer', 'partials/footer');
-    }));
+    });
 
 
 
@@ -139,3 +140,4 @@
         return Response::redirect('admin/advance');
     });
 
+});
