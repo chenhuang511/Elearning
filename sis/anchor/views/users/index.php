@@ -26,7 +26,7 @@
 		<?php endforeach; */ ?>
 
         <?php
-        $mysqlconn = new mysqli("localhost", "root", "vannhuthe", "anchor");
+        $mysqlconn = new mysqli("localhost", "root", "12345678", "anchor");
         $sql = "SELECT * FROM anchor_users";
         $result = $mysqlconn->query($sql);
 

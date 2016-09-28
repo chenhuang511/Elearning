@@ -98,7 +98,7 @@
  
 //  error_reporting(ALL_ERROR);
   //$mysqlconn = new mysqli($DatabaseServer, $DatabaseUsername, $DatabasePassword, $DatabaseName);
-  $mysqlconn = new mysqli("localhost", "root", "vannhuthe", "anchor");
+  $mysqlconn = new mysqli("127.0.0.1", "root", "12345678", "anchor");
 
  
  // Check connection
