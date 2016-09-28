@@ -42,7 +42,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
     });
 
     Route::post('admin/students/edit/(:num)', function($id) {
-        $input = Input::get(array('id', 'fullname', 'email'));
+        $input = Input::get(array('fullname', 'email'));
         //$password_reset = false;
 
         // A little higher to avoid messing with the password
@@ -61,8 +61,8 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
             return ($str != 'inactive' and Auth::user()->id == $id);
         });
 
-        $validator->check('username')
-            ->is_max(2, __('students.username_missing', 2));
+        $validator->check('fullname')
+            ->is_max(2, __('students.studentname_missing', 2));
 
         $validator->check('email')
             ->is_email(__('students.email_missing'));

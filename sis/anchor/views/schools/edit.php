@@ -53,7 +53,7 @@ $result = $mysqlconn->query($sql);
                 <?php endforeach; ?>
                 <p>
                     <label for="label-name"><?php echo __('School name'); ?>:</label>
-                    <?php echo Form::text('schoolname', Input::previous('schoolname', $school->name), array('id' => 'label-schoolname')); ?>
+                    <?php echo Form::text('name', Input::previous('name', $school->name), array('id' => 'label-name')); ?>
                 </p>
                 <?php
                 $result1 = $mysqlconn->query($sql);

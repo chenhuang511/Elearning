@@ -43,10 +43,12 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
     Route::post('admin/schools/edit/(:num)', function($id) {
         $input = Input::get(array('name'));
+        var_dump($input);
         //$password_reset = false;
 
         // A little higher to avoid messing with the password
         foreach($input as $key => &$value) {
+            var_dump($value);
             $value = eq($value);
         }
 
@@ -62,7 +64,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         });
 
         $validator->check('name')
-            ->is_max(2, __('schools.username_missing', 2));
+            ->is_max(2, __('schools.schoolname_missing', 2));
 
 //        $validator->check('email')
 //            ->is_email(__('students.email_missing'));

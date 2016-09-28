@@ -37,7 +37,7 @@ return array(
 
     'username' => 'Username',
     'username_explain' => '',
-    'username_missing' => 'Please enter a username, must be at least %s characters',
+    'studentname_missing' => 'Please enter a student name, must be at least %s characters',
 
     'password' => 'Password',
     'password_explain' => '',
