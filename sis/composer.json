@@ -26,6 +26,8 @@
 		"php": ">=5.3.6",
 		"ircmaxell/random-lib": "^1.1",
 		"ircmaxell/password-compat": "^1.0",
-		"indigophp/hash-compat": "^1.1"
+		"indigophp/hash-compat": "^1.1",
+		"phpmentors/workflower": "1.1.*",
+		"php-curl-class/php-curl-class": "^7.0"
 	}
 }
