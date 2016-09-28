@@ -61,4 +61,41 @@ class local_role_external extends external_api {
     public static function remote_assign_role_to_user_returns() {
         return new external_value(PARAM_INT, 'role assignments id');
     }
+
+    public static function remote_unassign_role_to_user_parameters() {
+        return new external_function_parameters(
+            array('roleid' => new external_value(PARAM_TEXT, 'Role id'),
+                'userid' => new external_value(PARAM_TEXT, 'user id'),
+                'courseid' => new external_value(PARAM_TEXT, 'Course id'))
+        );
+    }
+
+    public static function remote_unassign_role_to_user($roleid, $userid, $courseid) {
+        global $CFG, $DB, $PAGE;
+
+        //validate parameter
+        $params = self::validate_parameters(self::remote_unassign_role_to_user_parameters(),
+            array('roleid' => $roleid, 'userid' => $userid, 'courseid' => $courseid));
+
+        $course = $DB->get_record("course", array('id' => $courseid), "*", MUST_EXIST);
+        $context = context_course::instance($course->id);
+        $msg = 'successfully';
+        try {
+            role_unassign($roleid, $userid, $context->id, 'enrol_mnet', NULL);
+        } catch (Exception $e) {
+            $msg = 'unassign fail';
+        }
+        return $msg;
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.9 Options available
+     * @since Moodle 2.2
+     */
+    public static function remote_unassign_role_to_user_returns() {
+        return new external_value(PARAM_TEXT, 'notice');
+    }
 }
