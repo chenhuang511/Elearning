@@ -28,7 +28,7 @@
 			</p>
 			<p>
 				<label for="label-birthday"><?php echo __('instructor.birthday'); ?>:</label>
-				<?php echo Form::text('birthday', Input::previous('birthday', $instructor->birthday), array('id' => 'label-birthday')); ?>
+				<?php echo Form::date('birthday', Input::previous('birthday', $instructor->birthday), array('id' => 'label-birthday')); ?>
 			</p>
 			<p>
 				<label for="label-subject"><?php echo __('instructor.subject'); ?>:</label>
@@ -38,40 +38,38 @@
 		</fieldset>
 
 		<fieldset class="half split">
-		<?php
-			$mysqlconn = new mysqli("localhost", "root", "", "anchor");
-        	$sql_contract = "SELECT * FROM anchor_instructor_contract WHERE anchor_instructor_contract.instructor_id=".$instructor->id;
-        	$result_contract = $mysqlconn->query($sql_contract);
-			while($row = $result_contract->fetch_assoc())
-			{
-		?>
+		<?php foreach($contract as $contract): ?>
 		<div style="border:1px solid;border-color:blue">
 			<p>
-				<label for="label-school"><?php echo __('instructor.school'); ?>:</label>
-				<?php echo Form::text('school', $row['school_name'], array('id' => 'label-school')); ?>
+				<label for="label-type"><?php echo __('contract.type'); ?>:</label>
+				<?php echo Form::text('type', Input::previous('type', $contract->type), array('id' => 'label-type')); ?>
 			</p>
 			<p>
-				<label for="label-start_date"><?php echo __('instructor.start_date'); ?>:</label>
-				<?php echo Form::text('start_date', $row['start_date'], array('id' => 'label-start_date')); ?>
+				<label for="label-name_partner"><?php echo __('contract.name_partner'); ?>:</label>
+				<?php echo Form::text('name_partner', Input::previous('name_partner', $contract->name_partner), array('id' => 'label-name_partner')); ?>
 			</p>
 			<p>
-				<label for="label-end_date"><?php echo __('instructor.end_date'); ?>:</label>
-				<?php echo Form::text('end_date', $row['end_date'], array('id' => 'label-end_date')); ?>
+				<label for="label-start_date"><?php echo __('contract.start_date'); ?>:</label>
+				<?php echo Form::date('start_date', Input::previous('start_date', $contract->start_date), array('id' => 'label-start_date')); ?>
 			</p>
 			<p>
-				<label for="label-salary"><?php echo __('instructor.salary'); ?>:</label>
-				<?php echo Form::text('salary', $row['salary'], array('id' => 'label-salary')); ?>
+				<label for="label-end_date"><?php echo __('contract.end_date'); ?>:</label>
+				<?php echo Form::date('end_date', Input::previous('end_date', $contract->end_date), array('id' => 'label-end_date')); ?>
 			</p>
 			<p>
-				<label for="label-rules"><?php echo __('instructor.rules'); ?>:</label>
-				<?php echo Form::text('rules', $row['rules'], array('id' => 'label-rules')); ?>
+				<label for="label-salary"><?php echo __('contract.salary'); ?>:</label>
+				<?php echo Form::text('salary', Input::previous('salary', $contract->salary), array('id' => 'label-salary')); ?>
 			</p>
 			<p>
-				<label for="label-state"><?php echo __('instructor.state'); ?>:</label>
-				<?php echo Form::text('state', $row['state'], array('id' => 'label-state')); ?>
+				<label for="label-state"><?php echo __('contract.state'); ?>:</label>
+				<?php echo Form::text('state', Input::previous('state', $contract->state), array('id' => 'label-state')); ?>
 			</p>
+			<p>
+				<label for="label-rules"><?php echo __('contract.rules'); ?>:</label>
+				<?php echo Form::textarea('rules', Input::previous('rules', $contract->rules), array('cols' => 20 ,'id' => 'label-rules')); ?>
+			</p>			
 		</div></br>
-		<?php } ?>
+		<?php endforeach; ?>
 		</fieldset>
 		<aside class="buttons">
 			<?php echo Form::button(__('global.update'), array(
