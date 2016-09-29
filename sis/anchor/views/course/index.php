@@ -2,22 +2,50 @@
 <section class="wrap">
     <?php echo $messages; ?>
     <?php if ($pages->count): ?>
-        <ul class="main list">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Mã</th>
+                <th>Tên khoá học</th>
+                <th>Ngày bắt đầu</th>
+                <th>Ngày kết thúc</th>
+                <th>Quản lý</th>
+            </tr>
+            </thead>
+            <tbody>
             <?php foreach ($pages->results as $item): $display_pages = array($item); ?>
                 <?php foreach ($display_pages as $page) : ?>
-                    <li>
-                        <a href="<?php echo Uri::to('admin/courses/edit/' . $page->data['id']); ?>">
-                            <div class="bhxh-course">
-                                <strong><?php echo $page->data['fullname']; ?></strong>
-                                <span>
-                                        <em class="status">status</em>
-                                    </span>
-                            </div>
-                        </a>
-                    </li>
+                    <tr>
+                        <td><?php echo $page->data['id'] ?></td>
+                        <td>
+                            <a href="<?php echo Uri::to('admin/courses/edit/' . $page->data['id']); ?>">
+                                <span class="bhxh-course">
+                                    <?php echo $page->data['fullname']; ?>
+                                </span>
+                            </a>
+                        </td>
+                        <td><?php
+                            if (isset($page->data['startdate']) && $page->data['startdate'] !== NULL)
+                                echo date('d-m-Y', $page->data['startdate']);
+                            else
+                                echo 'chưa khởi tạo';
+                            ?></td>
+                        <td>
+                            <?php
+                            if (isset($page->data['enddate']) && $page->data['enddate'] !== NULL)
+                                echo date('d-m-Y', $page->data['enddate']);
+                            else
+                                echo 'chưa khởi tạo';
+                            ?>
+                        </td>
+                        <td>
+                            <a href="<?php echo Uri::to('admin/curriculum/' . $page->data['id']); ?>" class="btn btn-primary">lịch giảng</a>
+                        </td>
+                    </tr>
                 <?php endforeach; ?>
             <?php endforeach; ?>
-        </ul>
+            </tbody>
+        </table>
 
         <aside class="paging"><?php echo $pages->links(); ?></aside>
 

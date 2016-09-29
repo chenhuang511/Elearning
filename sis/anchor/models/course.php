@@ -25,8 +25,7 @@ class Course extends Base
         $courses = $query->take($perpage)
             ->skip(--$page * $perpage)
             ->get(array(
-                Base::table('courses.*'),
-                Base::table('users.username')
+                Base::table('courses.*')
             ));
 
         return array($total, $courses);
