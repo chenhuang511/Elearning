@@ -4,9 +4,22 @@
 	<h1><?php echo __('students.students'); ?></h1>
 
 	<?php if(Auth::admin()) : ?>
-	<nav>
-		<?php echo Html::link('admin/students/add', __('students.create_student'), array('class' => 'btn')); ?>
-	</nav>
+		<nav>
+			<div style="float: right; margin: 20px 0 0 20px;">
+				<?php echo Html::link('admin/students/add', __('students.create_student'), array('class' => 'btn')); ?>
+			</div>
+
+			<form style="float: right; margin-top: 20px;" method="get" action="<?php echo Uri::to('admin/students/search'); ?>" novalidate>
+
+				<?php echo Form::text('text-search', Input::previous('text-search'), array('id' => 'text-search')); ?>
+				<?php echo Form::button('Tìm kiếm', array(
+					'class' => 'btn search blue',
+					'type' => 'submit'
+				)); ?>
+
+			</form>
+
+		</nav>
 	<?php endif; ?>
 </hgroup>
 
