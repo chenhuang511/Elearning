@@ -1,6 +1,6 @@
 <?php
 
-class Curriculumn extends Base
+class Curriculum extends Base
 {
     public static $table = 'curriculum';
 

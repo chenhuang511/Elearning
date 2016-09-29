@@ -23,5 +23,10 @@ class Instructor extends Base {
 		$results = $query->take($perpage)->skip(($page - 1) * $perpage)->get();
 		return new Paginator($results, $count, $page, $perpage, Uri::to('admin/instructor'));
 	}
+	
+	public static function get_name_instructor() {
+		$query = Query::table(static::table());
+		return $query->get();
+	}
 
 }

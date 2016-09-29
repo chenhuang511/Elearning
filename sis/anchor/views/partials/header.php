@@ -65,7 +65,7 @@
         <div class="container">
             <div class="bhxh-nav-home clearfix">
                 <ul id="dropdown-nav" class="nav navbar-nav">
-                    <?php $menu = array('panel', 'posts', 'comments', 'pages', 'categories', 'users', 'students', 'schools', 'instructor', 'extend', 'advance', 'grade', 'courses', 'curriculum'); ?>
+                    <?php $menu = array('panel', 'posts', 'comments', 'pages', 'categories', 'users', 'students', 'schools', 'instructor', 'contract', 'extend', 'advance', 'grade', 'courses', 'curriculum'); ?>
                     <?php foreach ($menu as $url): ?>
                         <li <?php if (strpos(Uri::current(), $url) !== false) echo 'class="home active dropdown-nav-home"'; ?>>
                             <?php if ($url === 'curriculum') { ?>
@@ -86,3 +86,4 @@
 <?php endif; ?>
 <div class="bhxh-body">
     <div class="container">
+

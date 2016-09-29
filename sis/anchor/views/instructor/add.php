@@ -23,7 +23,7 @@
 			</p>
 			<p>
 				<label for="label-birthday"><?php echo __('instructor.birthday'); ?>:</label>
-				<?php echo Form::text('birthday', Input::previous('birthday'), array('id' => 'label-birthday')); ?>
+				<?php echo Form::date('birthday', Input::previous('birthday'), array('id' => 'label-birthday')); ?>
 			</p>
 		</fieldset>
 

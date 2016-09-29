@@ -28,6 +28,10 @@ return array(
 	'first_name' => 'Tên',
 	'last_name' => 'Họ',
 
+	'type' => 'Loại hợp đồng',
+	'name_personal/organization' => 'Tên Cá nhân/Tổ chức',
+	'personal' => 'Cá nhân',
+	'organization' => 'Tổ chức',
 	'birthday' => 'Ngày sinh',
 	'subject' => 'Môn học',
 	'school' => 'Trường',

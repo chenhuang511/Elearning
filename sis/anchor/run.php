@@ -71,6 +71,7 @@ if(is_admin()) {
 	require APP . 'routes/posts' . EXT;
 	require APP . 'routes/users' . EXT;
 	require APP . 'routes/instructor' . EXT;
+	require APP . 'routes/contract' . EXT;
 	require APP . 'routes/variables' . EXT;
 	require APP . 'routes/pagetypes' . EXT;
     require APP . 'routes/advance' . EXT;

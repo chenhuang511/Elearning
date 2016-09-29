@@ -1,18 +1,21 @@
 <?php echo $header; ?>
 
-<form method="post" class="form-horizontal" action="<?php echo Uri::to('admin/curriculum/add'); ?>" enctype="multipart/form-data" novalidate>
+<form method="post" class="form-horizontal" action="<?php echo Uri::to('admin/curriculum/add'); ?>"
+      enctype="multipart/form-data" novalidate>
     <input name="token" type="hidden" value="<?php echo $token; ?>">
     <div class="form-group notification">
         <?php echo $messages; ?>
     </div>
     <div class="form-group">
-        <label for="coursename" class="control-label"><?php echo __('courses.coursename') ?></label>
-        <?php echo Form::text('title', Input::previous('title'), array(
-            'placeholder' => __('posts.title'),
-            'autocomplete' => 'off',
-            'autofocus' => 'true',
-            'class' => 'form-control'
-        )); ?>
+        <label for="coursename" class="col-sm-2 control-label"><?php echo __('courses.coursename') ?> </label>
+        <div class="col-sm-10">
+            <?php echo Form::text('title', Input::previous('title'), array(
+                'placeholder' => __('posts.title'),
+                'autocomplete' => 'off',
+                'autofocus' => 'true',
+                'class' => 'form-control'
+            )); ?>
+        </div>
     </div>
     <fieldset class="header">
         <div class="wrap">
