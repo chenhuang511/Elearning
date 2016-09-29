@@ -4,12 +4,18 @@
 	<h1><?php echo __('schools.schools'); ?></h1>
 
 	<?php if(Auth::admin()) : ?>
-	<nav class="split">
-		<label style="display: none"></label>
-		<?php echo Form::text('text-search', Input::previous('text-search'), array('id' => 'text-search')); ?>
-		<?php // echo Form::button(__('global.create'), array('class' => 'btn', 'type' => 'submit')); ?>
-		<?php echo Html::link('admin/schools/search/', __('Tìm Kiếm'), array('class' => 'btn search blue')); ?>
+	<nav>
+		<div style="float: right; margin: 20px 0 0 20px;">
 		<?php echo Html::link('admin/schools/add', __('schools.create_school'), array('class' => 'btn')); ?>
+		</div>
+
+		<form style="float: right; margin-top: 20px;" method="get" action="<?php echo Uri::to('admin/schools/search'); ?>" novalidate>
+			<?php echo Form::text('text-search', Input::previous('text-search'), array('id' => 'text-search')); ?>
+			<?php echo Form::button('Tìm kiếm', array(
+				'class' => 'btn search blue',
+				'type' => 'submit'
+			)); ?>
+		</form>
 	</nav>
 	<?php endif; ?>
 </hgroup>

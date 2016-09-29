@@ -55,6 +55,8 @@ return array(
     'created' => 'User profile created.',
     'deleted' => 'User profile deleted.',
     'delete_error' => 'You cannot delete your own profile',
+    'searched' => 'User profile searched',
+    'search_error' => 'You cannot search your own profile',
     'login_error' => 'Username or password is wrong.',
     'logout_notice' => 'You are now logged out.',
     'recovery_sent' => 'We have sent you an email to confirm your password change.',

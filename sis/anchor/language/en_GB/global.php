@@ -25,7 +25,7 @@ return array(
 	'manage' => 'Quản lý',
 	'reset' => 'Reset',
 	'all' => 'Tất cả',
-	'cancel' => 'Cancel',
+	'cancel' => 'Hủy bỏ',
 
 	// pagination
 	'next' => 'Tiếp',

@@ -10,6 +10,7 @@
                 <th>Ngày bắt đầu</th>
                 <th>Ngày kết thúc</th>
                 <th>Quản lý</th>
+                <th>Quản lý điểm</th>
             </tr>
             </thead>
             <tbody>
@@ -40,6 +41,9 @@
                         </td>
                         <td>
                             <a href="<?php echo Uri::to('admin/curriculum/' . $page->data['id']); ?>" class="btn btn-primary">lịch giảng</a>
+                        </td>
+                        <td>
+                            <a href="<?php echo Uri::to('admin/grade/course/' . $page->data['id']); ?>" class="btn btn-primary">quản lý điểm</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

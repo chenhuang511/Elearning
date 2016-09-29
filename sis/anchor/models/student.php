@@ -14,6 +14,23 @@ class Student extends Base {
 //        return $query->fetch();
 //    }
 
+    public static function getSchoolByStudent($id)
+    {
+        $query = static::join(Base::table('schools'), Base::table('schools.id'), '=', Base::table('students.schoolid'))
+                 ->where(Base::table('students.id'), '=', $id)->get();
+
+        return $query;
+    }
+
+    public static function getCoursesByStudent($id)
+    {
+        $query = static::join(Base::table('student_course'), Base::table('student_course.studentid'), '=', Base::table('students.id'))
+            ->join(Base::table('courses'), Base::table('courses.id'), '=', Base::table('student_course.courseid'))
+            ->where(Base::table('students.id'), '=', $id)->get();
+
+        return $query;
+    }
+
     public static function paginate($page = 1, $perpage = 10) {
         $query = Query::table(static::table());
 

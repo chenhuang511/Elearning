@@ -21,6 +21,8 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         $vars['messages'] = Notify::read();
         $vars['token'] = Csrf::token();
         $vars['student'] = Student::find($id);
+        $vars['studentschool'] = Student::getSchoolByStudent($id);
+        $vars['studentcourse'] = Student::getCoursesByStudent($id);
 
         // extended fields
         $vars['fields'] = Extend::fields('student', $id);
@@ -40,6 +42,24 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
             ->partial('header', 'partials/header')
             ->partial('footer', 'partials/footer');
     });
+
+    /*
+        Search student
+    */
+
+    Route::get('admin/students/search', function() {
+        $vars['messages'] = Notify::read();
+        $vars['token'] = Csrf::token();
+        //$key = Input::get(array('text-search'));
+        $key = $_GET['text-search'];
+
+        $vars['student'] = Student::where('fullname', 'LIKE', '%' . $key . '%')->get();
+
+        return View::create('students/search', $vars)
+            ->partial('header', 'partials/header')
+            ->partial('footer', 'partials/footer');
+    });
+
 
     Route::post('admin/students/edit/(:num)', function($id) {
         $input = Input::get(array('fullname', 'email'));
@@ -171,7 +191,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
         Student::where('id', '=', $id)->delete();
         StudentCourse::where('studentid', '=', $id)->delete();
-        StudentSchool::where('userid', '=', $id)->delete();
+        //StudentSchool::where('userid', '=', $id)->delete();
 
         //Query::table(Base::table('student_meta'))->where('student', '=', $id)->delete();
 
