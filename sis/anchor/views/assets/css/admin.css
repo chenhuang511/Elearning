@@ -715,6 +715,10 @@ input[type='range'] {
     margin-top: 15px;
 }
 
+.datepicker, .datepicker-dropdown {
+    z-index: 999 !important;
+}
+
 /*
 	Focus mode
 */

@@ -1,100 +1,153 @@
 <?php echo $header; ?>
 
-<form method="post" class="form-horizontal" action="<?php echo Uri::to('admin/curriculum/add'); ?>"
+<form method="post" class="form-horizontal" action="<?php echo Uri::to('admin/curriculum/add/course'); ?>"
       enctype="multipart/form-data" novalidate>
     <input name="token" type="hidden" value="<?php echo $token; ?>">
     <div class="form-group notification">
-        <?php echo $messages; ?>
+        <?php
+        if (count($errors) == 0) {
+            echo $messages;
+        }
+        ?>
     </div>
-    <div class="form-group">
-        <label for="coursename" class="col-sm-2 control-label"><?php echo __('courses.coursename') ?> </label>
+    <div class="form-group <?php if (isset($errors['fullname'])) {
+        echo 'has-error';
+    } else {
+        echo '';
+    } ?>">
+        <label for="fullname" class="col-sm-2 control-label"><?php echo __('courses.fullname') ?> <span
+                class="text-danger">*</span></label>
         <div class="col-sm-10">
-            <?php echo Form::text('title', Input::previous('title'), array(
-                'placeholder' => __('posts.title'),
+            <?php echo Form::text('fullname', Input::previous('fullname'), array(
+                'placeholder' => __('courses.fullname'),
                 'autocomplete' => 'off',
                 'autofocus' => 'true',
                 'class' => 'form-control'
             )); ?>
+            <?php if (isset($errors['fullname'])) { ?>
+                <p class="help-block"><?php echo $errors['fullname'][0] ?></p>
+            <?php } ?>
         </div>
     </div>
-    <fieldset class="header">
-        <div class="wrap">
-
-
-            <aside class="buttons">
-                <?php echo Form::button(__('global.save'), array(
-                    'type' => 'submit',
-                    'class' => 'btn',
-                    'data-loading' => __('global.saving')
-                )); ?>
-
-                <?php echo Html::link('admin/posts', __('global.cancel'), array(
-                    'class' => 'btn cancel blue'
-                )); ?>
-            </aside>
-        </div>
-    </fieldset>
-
-    <fieldset class="main">
-        <div class="wrap">
-            <?php echo Form::textarea('markdown', Input::previous('markdown'), array(
-                'placeholder' => __('posts.content_explain')
+    <div class="form-group <?php if (isset($errors['shortname'])) {
+        echo 'has-error';
+    } else {
+        echo '';
+    } ?>">
+        <label for="shortname" class="col-sm-2 control-label"><?php echo __('courses.shortname') ?> <span
+                class="text-danger">*</span></label>
+        <div class="col-sm-4">
+            <?php echo Form::text('shortname', Input::previous('shortname'), array(
+                'placeholder' => __('courses.shortname'),
+                'autocomplete' => 'off',
+                'autofocus' => 'true',
+                'class' => 'form-control'
             )); ?>
-
-            <?php echo $editor; ?>
+            <?php if (isset($errors['shortname'])) { ?>
+                <p class="help-block"><?php echo $errors['shortname'][0] ?></p>
+            <?php } ?>
         </div>
-    </fieldset>
-
-    <fieldset class="meta split">
-        <div class="wrap">
-            <p>
-                <label for="label-slug"><?php echo __('posts.slug'); ?>:</label>
-                <?php echo Form::text('slug', Input::previous('slug'), array('id' => 'label-slug')); ?>
-                <em><?php echo __('posts.slug_explain'); ?></em>
-            </p>
-            <p>
-                <label for="label-description"><?php echo __('posts.description'); ?>:</label>
-                <?php echo Form::textarea('description', Input::previous('description'), array('id' => 'label-description')); ?>
-                <em><?php echo __('posts.description_explain'); ?></em>
-            </p>
-            <p>
-                <label for="label-status"><?php echo __('posts.status'); ?>:</label>
-                <?php echo Form::select('status', $statuses, Input::previous('status'), array('id' => 'label-status')); ?>
-                <em><?php echo __('posts.status_explain'); ?></em>
-            </p>
-            <p>
-                <label for="label-comments"><?php echo __('posts.allow_comments'); ?>:</label>
-                <?php echo Form::checkbox('comments', 1, Input::previous('comments', 0) == 1, array('id' => 'label-comments')); ?>
-                <em><?php echo __('posts.allow_comments_explain'); ?></em>
-            </p>
-            <p>
-                <label for="label-css"><?php echo __('posts.custom_css'); ?>:</label>
-                <?php echo Form::textarea('css', Input::previous('css'), array('id' => 'label-css')); ?>
-                <em><?php echo __('posts.custom_css_explain'); ?></em>
-            </p>
-            <p>
-                <label for="label-js"><?php echo __('posts.custom_js', 'Custom JS'); ?>:</label>
-                <?php echo Form::textarea('js', Input::previous('js'), array('id' => 'label-js')); ?>
-                <em><?php echo __('posts.custom_js_explain'); ?></em>
-            </p>
-            <?php foreach ($fields as $field): ?>
-                <p>
-                    <label for="extend_<?php echo $field->key; ?>"><?php echo $field->label; ?>:</label>
-                    <?php echo Extend::html($field); ?>
-                </p>
-            <?php endforeach; ?>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group <?php if (isset($errors['startdate'])) {
+                echo 'has-error';
+            } else {
+                echo '';
+            } ?>">
+                <label for="startdate"
+                       class="col-sm-4 control-label"><?php echo __('courses.startdate') ?> <span
+                        class="text-danger">*</span></label>
+                <div class="col-sm-8">
+                    <div class='input-group date' id='datetimepicker_startdate'>
+                        <input id="startdate" name="startdate" type='text' class="form-control" readonly/>
+                        <span class="input-group-addon">
+                            <i class="fa fa-calendar" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <?php if (isset($errors['startdate'])) { ?>
+                        <p class="help-block"><?php echo $errors['startdate'][0] ?></p>
+                    <?php } ?>
+                </div>
+            </div>
         </div>
-    </fieldset>
+        <div class="col-sm-6">
+            <div class="form-group <?php if (isset($errors['enddate'])) {
+                echo 'has-error';
+            } else {
+                echo '';
+            } ?>">
+                <label for="datetimepicker_enddate"
+                       class="col-sm-4 control-label"><?php echo __('courses.enddate') ?> <span
+                        class="text-danger">*</span></label>
+                <div class="col-sm-8">
+                    <div class='input-group date' id='datetimepicker_enddate'>
+                        <input id="enddate" name="enddate" type='text' class="form-control" readonly/>
+                        <span class="input-group-addon">
+                            <i class="fa fa-calendar" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <?php if (isset($errors['enddate'])) { ?>
+                        <p class="help-block"><?php echo $errors['enddate'][0] ?></p>
+                    <?php } ?>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group <?php if (isset($errors['summary'])) {
+        echo 'has-error';
+    } else {
+        echo '';
+    } ?>">
+        <label for="summary" class="col-sm-2 control-label"><?php echo __('courses.summary') ?></label>
+        <div class="col-sm-10">
+            <?php echo Form::textarea('summary', Input::previous('summary'), array('id' => 'summary', 'class' => 'form-control')); ?>
+            <em><?php echo __('courses.summary_explain'); ?></em>
+            <?php if (isset($errors['summary'])) { ?>
+                <p class="help-block"><?php echo $errors['summary'][0] ?></p>
+            <?php } ?>
+        </div>
+    </div>
+    <div class="form-group text-right">
+        <aside class="buttons">
+            <?php echo Form::button(__('global.continue'), array(
+                'type' => 'submit',
+                'class' => 'btn btn-primary btn-continue'
+            )); ?>
+            <?php echo Html::link('admin/posts', __('global.cancel'), array(
+                'class' => 'btn btn-danger btn-cancel'
+            )); ?>
+        </aside>
+    </div>
 </form>
+<script src="<?php echo asset('anchor/views/assets/js/bootstrap-datetimepicker.js'); ?>"></script>
+<script type="text/javascript">
+    $(function () {
+        $('#datetimepicker_startdate').datetimepicker({
+            language: 'fr',
+            startDate: new Date(),
+            startView: 2,
+            minView: 2,
+            format: 'dd/mm/yyyy',
+            pickTime: false,
+        });
+        $('#datetimepicker_enddate').datetimepicker({
+            language: 'fr',
+            pickTime: false,
+            startView: 2,
+            minView: 2,
+            format: 'dd/mm/yyyy'
+        });
 
-<script src="<?php echo asset('anchor/views/assets/js/slug.js'); ?>"></script>
-<script src="<?php echo asset('anchor/views/assets/js/dragdrop.js'); ?>"></script>
-<script src="<?php echo asset('anchor/views/assets/js/upload-fields.js'); ?>"></script>
-<script src="<?php echo asset('anchor/views/assets/js/text-resize.js'); ?>"></script>
-<script src="<?php echo asset('anchor/views/assets/js/editor.js'); ?>"></script>
-<script src="<?php echo asset('anchor/views/assets/js/autosave.js'); ?>"></script>
-<script>
-    $('textarea[name=markdown]').editor();
+        $("#datetimepicker_startdate").on("changeDate", function (e) {
+            $('#datetimepicker_enddate').datetimepicker('setStartDate', e.date);
+        });
+        $("#datetimepicker_enddate").on("changeDate", function (e) {
+            $('#datetimepicker_startdate').datetimepicker('setEndDate', e.date);
+        });
+    });
 </script>
+<script>
 
+</script>
 <?php echo $footer; ?>

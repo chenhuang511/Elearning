@@ -9,7 +9,7 @@
 return array(
 
 	// words
-	'save' => 'Lưu',
+	'save' => 'Hoàn tất',
 	'saving' => 'Đang lưu...',
 	'delete' => 'Xóa',
 	'deleting' => 'Đang xóa...',
@@ -26,6 +26,8 @@ return array(
 	'reset' => 'Reset',
 	'all' => 'Tất cả',
 	'cancel' => 'Hủy bỏ',
+    'continue' => 'Tiếp tục',
+    'tempsave' => 'Lưu tạm',
 
 	// pagination
 	'next' => 'Tiếp',
