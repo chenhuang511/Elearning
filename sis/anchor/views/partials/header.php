@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="<?php echo asset('anchor/views/assets/css/forms.css'); ?>">
     <link rel="stylesheet" href="<?php echo asset('anchor/views/assets/css/font-awesome.min.css'); ?>">
     <link rel="stylesheet" href="<?php echo asset('anchor/views/assets/css/advance.css'); ?>">
+    <link rel="stylesheet" href="<?php echo asset('anchor/views/assets/css/bootstrap-datetimepicker.min.css'); ?>">
 
     <link rel="stylesheet" href="<?php echo asset_url('css/bootstrap.min.css'); ?>">
     <link rel="stylesheet" href="<?php echo asset_url('css/bhxh.css'); ?>">
@@ -25,6 +26,7 @@
     <script src="<?php echo asset_url('/js/jquery-3.1.0.min.js'); ?>"></script>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <meta name="viewport" content="width=600">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 </head>
 <body
     class="<?php echo Auth::guest() ? 'login' : 'admin'; ?> <?php echo str_replace('_', '-', Config::app('language')); ?>">
@@ -69,7 +71,7 @@
                     <?php foreach ($menu as $url): ?>
                         <li <?php if (strpos(Uri::current(), $url) !== false) echo 'class="home active dropdown-nav-home"'; ?>>
                             <?php if ($url === 'curriculum') { ?>
-                                <a href="<?php echo Uri::to('admin/' . $url . '/add'); ?>">
+                                <a href="<?php echo Uri::to('admin/' . $url . '/add/course'); ?>">
                                     <?php echo ucfirst(__($url . '.' . $url)); ?>
                                 </a>
                             <?php } else { ?>
