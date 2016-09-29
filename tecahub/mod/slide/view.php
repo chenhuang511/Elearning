@@ -18,14 +18,14 @@
 /**
  * URL module main user interface
  *
- * @package    mod_url
+ * @package    mod_slide
  * @copyright  2009 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require('../../config.php');
-require_once("$CFG->dirroot/mod/url/lib.php");
-require_once("$CFG->dirroot/mod/url/locallib.php");
+require_once("$CFG->dirroot/mod/slide/lib.php");
+require_once("$CFG->dirroot/mod/slide/locallib.php");
 require_once($CFG->libdir . '/completionlib.php');
 
 $id       = optional_param('id', 0, PARAM_INT);        // Course module ID
@@ -33,38 +33,38 @@ $u        = optional_param('u', 0, PARAM_INT);         // URL instance id
 $redirect = optional_param('redirect', 0, PARAM_BOOL);
 
 if ($u) {  // Two ways to specify the module
-    $url = $DB->get_record('url', array('id'=>$u), '*', MUST_EXIST);
-    $cm = get_coursemodule_from_instance('url', $url->id, $url->course, false, MUST_EXIST);
+    $url = $DB->get_record('slide', array('id'=>$u), '*', MUST_EXIST);
+    $cm = get_coursemodule_from_instance('slide', $url->id, $url->course, false, MUST_EXIST);
 
 } else {
-    $cm = get_coursemodule_from_id('url', $id, 0, false, MUST_EXIST);
-    $url = $DB->get_record('url', array('id'=>$cm->instance), '*', MUST_EXIST);
+    $cm = get_coursemodule_from_id('slide', $id, 0, false, MUST_EXIST);
+    $url = $DB->get_record('slide', array('id'=>$cm->instance), '*', MUST_EXIST);
 }
 
 $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
 
 require_course_login($course, true, $cm);
 $context = context_module::instance($cm->id);
-require_capability('mod/url:view', $context);
+require_capability('mod/slide:view', $context);
 
 // Completion and trigger events.
-url_view($url, $course, $cm, $context);
+slide_view($url, $course, $cm, $context);
 
-$PAGE->set_url('/mod/url/view.php', array('id' => $cm->id));
+$PAGE->set_url('/mod/slide/view.php', array('id' => $cm->id));
 
 // Make sure URL exists before generating output - some older sites may contain empty urls
 // Do not use PARAM_URL here, it is too strict and does not support general URIs!
 $exturl = trim($url->externalurl);
 if (empty($exturl) or $exturl === 'http://') {
-    url_print_header($url, $cm, $course);
-    url_print_heading($url, $cm, $course);
-    url_print_intro($url, $cm, $course);
-    notice(get_string('invalidstoredurl', 'url'), new moodle_url('/course/view.php', array('id'=>$cm->course)));
+    slide_print_header($url, $cm, $course);
+    slide_print_heading($url, $cm, $course);
+    slide_print_intro($url, $cm, $course);
+    notice(get_string('invalidstoredurl', 'slide'), new moodle_url('/course/view.php', array('id'=>$cm->course)));
     die;
 }
 unset($exturl);
 
-$displaytype = url_get_final_display_type($url);
+$displaytype = slide_get_final_display_type($url);
 if ($displaytype == RESOURCELIB_DISPLAY_OPEN) {
     // For 'open' links, we always redirect to the content - except if the user
     // just chose 'save and display' from the form then that would be confusing
@@ -76,7 +76,7 @@ if ($displaytype == RESOURCELIB_DISPLAY_OPEN) {
 if ($redirect) {
     // coming from course page or url index page,
     // the redirection is needed for completion tracking and logging
-    $fullurl = str_replace('&amp;', '&', url_get_full_url($url, $cm, $course));
+    $fullurl = str_replace('&amp;', '&', slide_get_full_url($url, $cm, $course));
 
     if (!course_get_format($course)->has_view_page()) {
         // If course format does not have a view page, add redirection delay with a link to the edit page.
@@ -99,12 +99,12 @@ if ($redirect) {
 
 switch ($displaytype) {
     case RESOURCELIB_DISPLAY_EMBED:
-        url_display_embed($url, $cm, $course);
+        slide_display_embed($url, $cm, $course);
         break;
     case RESOURCELIB_DISPLAY_FRAME:
-        url_display_frame($url, $cm, $course);
+        slide_display_frame($url, $cm, $course);
         break;
     default:
-        url_print_workaround($url, $cm, $course);
+        slide_print_workaround($url, $cm, $course);
         break;
 }

@@ -15,26 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * URL external functions and service definitions.
+ * Version details
  *
- * @package    mod_slide
- * @category   external
- * @copyright  2015 Juan Leyva <juan@moodle.com>
+ * @package    repository
+ * @subpackage url
+ * @copyright  2009 Dongsheng Cai
+ * @author     Dongsheng Cai <dongsheng@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 3.0
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-$functions = array(
-
-    'mod_slide_view_slide' => array(
-        'classname'     => 'mod_slide_external',
-        'methodname'    => 'view_slide',
-        'description'   => 'Trigger the course module viewed event and update the module completion status.',
-        'type'          => 'write',
-        'capabilities'  => 'mod/slide:view',
-        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ),
-
-);
+$plugin->version   = 2016052301;        // The current plugin version (Date: YYYYMMDDXX)
+$plugin->requires  = 2016051900;        // Requires this Moodle version
+$plugin->component = 'repository_slide';  // Full name of the plugin (used for diagnostics)

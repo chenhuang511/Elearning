@@ -16,9 +16,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * List of urls in course
+ * List of slides in course
  *
- * @package    mod_url
+ * @package    mod_slide
  * @copyright  2009 onwards Martin Dougiamas (http://dougiamas.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -35,24 +35,24 @@ $PAGE->set_pagelayout('incourse');
 $params = array(
     'context' => context_course::instance($course->id)
 );
-$event = \mod_url\event\course_module_instance_list_viewed::create($params);
+$event = \mod_slide\event\course_module_instance_list_viewed::create($params);
 $event->add_record_snapshot('course', $course);
 $event->trigger();
 
-$strurl       = get_string('modulename', 'url');
-$strurls      = get_string('modulenameplural', 'url');
+$strurl       = get_string('modulename', 'slide');
+$strurls      = get_string('modulenameplural', 'slide');
 $strname         = get_string('name');
 $strintro        = get_string('moduleintro');
 $strlastmodified = get_string('lastmodified');
 
-$PAGE->set_url('/mod/url/index.php', array('id' => $course->id));
+$PAGE->set_url('/mod/slide/index.php', array('id' => $course->id));
 $PAGE->set_title($course->shortname.': '.$strurls);
 $PAGE->set_heading($course->fullname);
 $PAGE->navbar->add($strurls);
 echo $OUTPUT->header();
 echo $OUTPUT->heading($strurls);
 
-if (!$urls = get_all_instances_in_course('url', $course)) {
+if (!$urls = get_all_instances_in_course('slide', $course)) {
     notice(get_string('thereareno', 'moodle', $strurls), "$CFG->wwwroot/course/view.php?id=$course->id");
     exit;
 }

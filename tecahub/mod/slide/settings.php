@@ -28,34 +28,36 @@ defined('MOODLE_INTERNAL') || die;
 if ($ADMIN->fulltree) {
     require_once("$CFG->libdir/resourcelib.php");
 
-    $displayoptions = resourcelib_get_displayoptions(array(RESOURCELIB_DISPLAY_AUTO,
-                                                           RESOURCELIB_DISPLAY_EMBED,
-                                                           RESOURCELIB_DISPLAY_FRAME,
-                                                          ));
-    $defaultdisplayoptions = array(RESOURCELIB_DISPLAY_EMBED,
-                                   RESOURCELIB_DISPLAY_AUTO,
-                                  );
+    $displayoptions = resourcelib_get_displayoptions(array(
+        RESOURCELIB_DISPLAY_AUTO,
+        RESOURCELIB_DISPLAY_EMBED,
+        RESOURCELIB_DISPLAY_FRAME,
+    ));
+    $defaultdisplayoptions = array(
+        RESOURCELIB_DISPLAY_AUTO,
+        RESOURCELIB_DISPLAY_EMBED,
+    );
 
     //--- general settings -----------------------------------------------------------------------------------
-    $settings->add(new admin_setting_configtext('url/framesize',
-        get_string('framesize', 'url'), get_string('configframesize', 'url'), 130, PARAM_INT));
+    $settings->add(new admin_setting_configtext('slide/framesize',
+        get_string('framesize', 'slide'), get_string('configframesize', 'slide'), 130, PARAM_INT));
     $settings->add(new admin_setting_configpasswordunmask('url/secretphrase', get_string('password'),
-        get_string('configsecretphrase', 'url'), ''));
-    $settings->add(new admin_setting_configcheckbox('url/rolesinparams',
-        get_string('rolesinparams', 'url'), get_string('configrolesinparams', 'url'), false));
-    $settings->add(new admin_setting_configmultiselect('url/displayoptions',
-        get_string('displayoptions', 'url'), get_string('configdisplayoptions', 'url'),
+        get_string('configsecretphrase', 'slide'), ''));
+    $settings->add(new admin_setting_configcheckbox('slide/rolesinparams',
+        get_string('rolesinparams', 'slide'), get_string('configrolesinparams', 'slide'), false));
+    $settings->add(new admin_setting_configmultiselect('slide/displayoptions',
+        get_string('displayoptions', 'slide'), get_string('configdisplayoptions', 'slide'),
         $defaultdisplayoptions, $displayoptions));
 
     //--- modedit defaults -----------------------------------------------------------------------------------
-    $settings->add(new admin_setting_heading('urlmodeditdefaults', get_string('modeditdefaults', 'admin'), get_string('condifmodeditdefaults', 'admin')));
+    $settings->add(new admin_setting_heading('slidemodeditdefaults', get_string('modeditdefaults', 'admin'), get_string('condifmodeditdefaults', 'admin')));
 
-    $settings->add(new admin_setting_configcheckbox('url/printintro',
-        get_string('printintro', 'url'), get_string('printintroexplain', 'url'), 1));
-    $settings->add(new admin_setting_configselect('url/display',
-        get_string('displayselect', 'url'), get_string('displayselectexplain', 'url'), RESOURCELIB_DISPLAY_AUTO, $displayoptions));
-    $settings->add(new admin_setting_configtext('url/popupwidth',
-        get_string('popupwidth', 'url'), get_string('popupwidthexplain', 'url'), 620, PARAM_INT, 7));
-    $settings->add(new admin_setting_configtext('url/popupheight',
-        get_string('popupheight', 'url'), get_string('popupheightexplain', 'url'), 450, PARAM_INT, 7));
+    $settings->add(new admin_setting_configcheckbox('slide/printintro',
+        get_string('printintro', 'slide'), get_string('printintroexplain', 'slide'), 1));
+    $settings->add(new admin_setting_configselect('slide/display',
+        get_string('displayselect', 'slide'), get_string('displayselectexplain', 'slide'), RESOURCELIB_DISPLAY_EMBED, $displayoptions));
+    $settings->add(new admin_setting_configtext('slide/popupwidth',
+        get_string('popupwidth', 'slide'), get_string('popupwidthexplain', 'slide'), 620, PARAM_INT, 7));
+    $settings->add(new admin_setting_configtext('slide/popupheight',
+        get_string('popupheight', 'slide'), get_string('popupheightexplain', 'slide'), 450, PARAM_INT, 7));
 }

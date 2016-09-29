@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,26 +16,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * URL external functions and service definitions.
+ * Strings for component 'repository_url', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package    mod_slide
- * @category   external
- * @copyright  2015 Juan Leyva <juan@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 3.0
+ * @package   repository_url
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
-
-$functions = array(
-
-    'mod_slide_view_slide' => array(
-        'classname'     => 'mod_slide_external',
-        'methodname'    => 'view_slide',
-        'description'   => 'Trigger the course module viewed event and update the module completion status.',
-        'type'          => 'write',
-        'capabilities'  => 'mod/slide:view',
-        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ),
-
-);
+$string['download'] = 'Download';
+$string['rename'] = 'Name';
+$string['pluginname'] = 'Slide Importer';
+$string['url'] = 'Slide';
+$string['url:view'] = 'Use Slide Importer in file picker';
+$string['validname'] = 'You must provide a valid file name';
+$string['configplugin'] = 'Slide Importer repository type configuration';
+$string['validfiletype'] = 'You must provide a Slide URL to an image file or a page containing images.';

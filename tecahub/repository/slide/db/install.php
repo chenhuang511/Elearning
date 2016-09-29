@@ -15,26 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * URL external functions and service definitions.
+ * Installation for the URL repository
  *
- * @package    mod_slide
- * @category   external
- * @copyright  2015 Juan Leyva <juan@moodle.com>
+ * @package    repository_slide
+ * @category   repository
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 3.0
  */
 
-defined('MOODLE_INTERNAL') || die;
-
-$functions = array(
-
-    'mod_slide_view_slide' => array(
-        'classname'     => 'mod_slide_external',
-        'methodname'    => 'view_slide',
-        'description'   => 'Trigger the course module viewed event and update the module completion status.',
-        'type'          => 'write',
-        'capabilities'  => 'mod/slide:view',
-        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ),
-
-);
+/**
+ * Create a default instance of the URL repository
+ *
+ * @return bool A status indicating success or failure
+ */
+function xmldb_repository_slide_install() {
+    global $CFG;
+    $result = true;
+    require_once($CFG->dirroot.'/repository/lib.php');
+    $urlplugin = new repository_type('slide', array(), true);
+    if(!$id = $urlplugin->create(true)) {
+        $result = false;
+    }
+    return $result;
+}

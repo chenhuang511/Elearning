@@ -18,7 +18,7 @@
 /**
  * Mandatory public API of url module
  *
- * @package    mod_url
+ * @package    mod_slide
  * @copyright  2009 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die;
  * @param string $feature FEATURE_xx constant for requested feature
  * @return mixed True if module supports feature, false if not, null if doesn't know
  */
-function url_supports($feature) {
+function slide_supports($feature) {
     switch($feature) {
         case FEATURE_MOD_ARCHETYPE:           return MOD_ARCHETYPE_RESOURCE;
         case FEATURE_GROUPS:                  return false;
@@ -50,7 +50,7 @@ function url_supports($feature) {
  * Returns all other caps used in module
  * @return array
  */
-function url_get_extra_capabilities() {
+function slide_get_extra_capabilities() {
     return array('moodle/site:accessallgroups');
 }
 
@@ -59,7 +59,7 @@ function url_get_extra_capabilities() {
  * @param $data the data submitted from the reset course.
  * @return array status array
  */
-function url_reset_userdata($data) {
+function slide_reset_userdata($data) {
     return array();
 }
 
@@ -73,7 +73,7 @@ function url_reset_userdata($data) {
  *
  * @return array
  */
-function url_get_view_actions() {
+function slide_get_view_actions() {
     return array('view', 'view all');
 }
 
@@ -87,20 +87,20 @@ function url_get_view_actions() {
  *
  * @return array
  */
-function url_get_post_actions() {
+function slide_get_post_actions() {
     return array('update', 'add');
 }
 
 /**
- * Add url instance.
+ * Add slide instance.
  * @param object $data
  * @param object $mform
- * @return int new url instance id
+ * @return int new slide instance id
  */
-function url_add_instance($data, $mform) {
+function slide_add_instance($data, $mform) {
     global $CFG, $DB;
 
-    require_once($CFG->dirroot.'/mod/url/locallib.php');
+    require_once($CFG->dirroot.'/mod/slide/locallib.php');
 
     $parameters = array();
     for ($i=0; $i < 100; $i++) {
@@ -123,24 +123,24 @@ function url_add_instance($data, $mform) {
     }
     $data->displayoptions = serialize($displayoptions);
 
-    $data->externalurl = url_fix_submitted_url($data->externalurl);
+    $data->externalurl = slide_fix_submitted_url($data->externalurl);
 
     $data->timemodified = time();
-    $data->id = $DB->insert_record('url', $data);
+    $data->id = $DB->insert_record('slide', $data);
 
     return $data->id;
 }
 
 /**
- * Update url instance.
+ * Update slide instance.
  * @param object $data
  * @param object $mform
  * @return bool true
  */
-function url_update_instance($data, $mform) {
+function slide_update_instance($data, $mform) {
     global $CFG, $DB;
 
-    require_once($CFG->dirroot.'/mod/url/locallib.php');
+    require_once($CFG->dirroot.'/mod/slide/locallib.php');
 
     $parameters = array();
     for ($i=0; $i < 100; $i++) {
@@ -163,31 +163,31 @@ function url_update_instance($data, $mform) {
     }
     $data->displayoptions = serialize($displayoptions);
 
-    $data->externalurl = url_fix_submitted_url($data->externalurl);
+    $data->externalurl = slide_fix_submitted_url($data->externalurl);
 
     $data->timemodified = time();
     $data->id           = $data->instance;
 
-    $DB->update_record('url', $data);
+    $DB->update_record('slide', $data);
 
     return true;
 }
 
 /**
- * Delete url instance.
+ * Delete slide instance.
  * @param int $id
  * @return bool true
  */
-function url_delete_instance($id) {
+function slide_delete_instance($id) {
     global $DB;
 
-    if (!$url = $DB->get_record('url', array('id'=>$id))) {
+    if (!$url = $DB->get_record('slide', array('id'=>$id))) {
         return false;
     }
 
     // note: all context files are deleted automatically
 
-    $DB->delete_records('url', array('id'=>$url->id));
+    $DB->delete_records('slide', array('id'=>$url->id));
 
     return true;
 }
@@ -202,40 +202,40 @@ function url_delete_instance($id) {
  * @param object $coursemodule
  * @return cached_cm_info info
  */
-function url_get_coursemodule_info($coursemodule) {
+function slide_get_coursemodule_info($coursemodule) {
     global $CFG, $DB;
-    require_once("$CFG->dirroot/mod/url/locallib.php");
+    require_once("$CFG->dirroot/mod/slide/locallib.php");
 
-    if (!$url = $DB->get_record('url', array('id'=>$coursemodule->instance),
+    if (!$slide = $DB->get_record('slide', array('id'=>$coursemodule->instance),
             'id, name, display, displayoptions, externalurl, parameters, intro, introformat')) {
         return NULL;
     }
 
     $info = new cached_cm_info();
-    $info->name = $url->name;
+    $info->name = $slide->name;
 
     //note: there should be a way to differentiate links from normal resources
-    $info->icon = url_guess_icon($url->externalurl, 24);
+    $info->icon = slide_guess_icon($slide->externalurl, 24);
 
-    $display = url_get_final_display_type($url);
+    $display = slide_get_final_display_type($slide);
 
     if ($display == RESOURCELIB_DISPLAY_POPUP) {
-        $fullurl = "$CFG->wwwroot/mod/url/view.php?id=$coursemodule->id&amp;redirect=1";
-        $options = empty($url->displayoptions) ? array() : unserialize($url->displayoptions);
+        $fullurl = "$CFG->wwwroot/mod/slide/view.php?id=$coursemodule->id&amp;redirect=1";
+        $options = empty($slide->displayoptions) ? array() : unserialize($slide->displayoptions);
         $width  = empty($options['popupwidth'])  ? 620 : $options['popupwidth'];
         $height = empty($options['popupheight']) ? 450 : $options['popupheight'];
         $wh = "width=$width,height=$height,toolbar=no,location=no,menubar=no,copyhistory=no,status=no,directories=no,scrollbars=yes,resizable=yes";
         $info->onclick = "window.open('$fullurl', '', '$wh'); return false;";
 
     } else if ($display == RESOURCELIB_DISPLAY_NEW) {
-        $fullurl = "$CFG->wwwroot/mod/url/view.php?id=$coursemodule->id&amp;redirect=1";
+        $fullurl = "$CFG->wwwroot/mod/slide/view.php?id=$coursemodule->id&amp;redirect=1";
         $info->onclick = "window.open('$fullurl'); return false;";
 
     }
 
     if ($coursemodule->showdescription) {
         // Convert intro to html. Do not filter cached version, filters run at display time.
-        $info->content = format_module_intro('url', $url, $coursemodule->id, false);
+        $info->content = format_module_intro('url', $slide, $coursemodule->id, false);
     }
 
     return $info;
@@ -247,7 +247,7 @@ function url_get_coursemodule_info($coursemodule) {
  * @param stdClass $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block
  */
-function url_page_type_list($pagetype, $parentcontext, $currentcontext) {
+function slide_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $module_pagetype = array('mod-url-*'=>get_string('page-mod-url-x', 'url'));
     return $module_pagetype;
 }
@@ -257,34 +257,34 @@ function url_page_type_list($pagetype, $parentcontext, $currentcontext) {
  *
  * @return array of file content
  */
-function url_export_contents($cm, $baseurl) {
+function slide_export_contents($cm, $baseurl) {
     global $CFG, $DB;
-    require_once("$CFG->dirroot/mod/url/locallib.php");
+    require_once("$CFG->dirroot/mod/slide/locallib.php");
     $contents = array();
     $context = context_module::instance($cm->id);
 
     $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
-    $urlrecord = $DB->get_record('url', array('id'=>$cm->instance), '*', MUST_EXIST);
+    $sliderecord = $DB->get_record('slide', array('id'=>$cm->instance), '*', MUST_EXIST);
 
-    $fullurl = str_replace('&amp;', '&', url_get_full_url($urlrecord, $cm, $course));
+    $fullurl = str_replace('&amp;', '&', slide_get_full_url($sliderecord, $cm, $course));
     $isurl = clean_param($fullurl, PARAM_URL);
     if (empty($isurl)) {
         return null;
     }
 
-    $url = array();
-    $url['type'] = 'url';
-    $url['filename']     = clean_param(format_string($urlrecord->name), PARAM_FILE);
-    $url['filepath']     = null;
-    $url['filesize']     = 0;
-    $url['fileurl']      = $fullurl;
-    $url['timecreated']  = null;
-    $url['timemodified'] = $urlrecord->timemodified;
-    $url['sortorder']    = null;
-    $url['userid']       = null;
-    $url['author']       = null;
-    $url['license']      = null;
-    $contents[] = $url;
+    $slide = array();
+    $slide['type'] = 'slide';
+    $slide['filename']     = clean_param(format_string($sliderecord->name), PARAM_FILE);
+    $slide['filepath']     = null;
+    $slide['filesize']     = 0;
+    $slide['fileurl']      = $fullurl;
+    $slide['timecreated']  = null;
+    $slide['timemodified'] = $sliderecord->timemodified;
+    $slide['sortorder']    = null;
+    $slide['userid']       = null;
+    $slide['author']       = null;
+    $slide['license']      = null;
+    $contents[] = $slide;
 
     return $contents;
 }
@@ -293,9 +293,9 @@ function url_export_contents($cm, $baseurl) {
  * Register the ability to handle drag and drop file uploads
  * @return array containing details of the files / types the mod can handle
  */
-function url_dndupload_register() {
+function slide_dndupload_register() {
     return array('types' => array(
-                     array('identifier' => 'url', 'message' => get_string('createurl', 'url'))
+                     array('identifier' => 'slide', 'message' => get_string('createurl', 'slide'))
                  ));
 }
 
@@ -304,7 +304,7 @@ function url_dndupload_register() {
  * @param object $uploadinfo details of the file / content that has been uploaded
  * @return int instance id of the newly created mod
  */
-function url_dndupload_handle($uploadinfo) {
+function slide_dndupload_handle($uploadinfo) {
     // Gather all the required data.
     $data = new stdClass();
     $data->course = $uploadinfo->course->id;
@@ -315,36 +315,36 @@ function url_dndupload_handle($uploadinfo) {
     $data->timemodified = time();
 
     // Set the display options to the site defaults.
-    $config = get_config('url');
+    $config = get_config('slide');
     $data->display = $config->display;
     $data->popupwidth = $config->popupwidth;
     $data->popupheight = $config->popupheight;
     $data->printintro = $config->printintro;
 
-    return url_add_instance($data, null);
+    return slide_add_instance($data, null);
 }
 
 /**
  * Mark the activity completed (if required) and trigger the course_module_viewed event.
  *
- * @param  stdClass $url        url object
+ * @param  stdClass $slide      slide object
  * @param  stdClass $course     course object
  * @param  stdClass $cm         course module object
  * @param  stdClass $context    context object
  * @since Moodle 3.0
  */
-function url_view($url, $course, $cm, $context) {
+function slide_view($slide, $course, $cm, $context) {
 
     // Trigger course_module_viewed event.
     $params = array(
         'context' => $context,
-        'objectid' => $url->id
+        'objectid' => $slide->id
     );
 
-    $event = \mod_url\event\course_module_viewed::create($params);
+    $event = \mod_slide\event\course_module_viewed::create($params);
     $event->add_record_snapshot('course_modules', $cm);
     $event->add_record_snapshot('course', $course);
-    $event->add_record_snapshot('url', $url);
+    $event->add_record_snapshot('slide', $slide);
     $event->trigger();
 
     // Completion.
@@ -358,7 +358,7 @@ function url_view($url, $course, $cm, $context) {
  * @param $moduleinfo
  * @return mixed
  */
-function url_formatted_moduleinfo($moduleinfo)
+function slide_formatted_moduleinfo($moduleinfo)
 {
     if (isset($moduleinfo->introeditor)) {
         $moduleinfo->introeditor = (array)$moduleinfo->introeditor;
