@@ -54,6 +54,7 @@ class Course extends Base
         // get total
         $query = static::join(Base::table('student_course'), Base::table('courses.id'), '=', Base::table('student_course.courseid'))
             ->join(Base::table('students'), Base::table('students.id'), '=', Base::table('student_course.studentid'))
+            ->join(Base::table('schools'), Base::table('schools.id'), '=', Base::table('students.schoolid'))
             ->where(Base::table('courses.id'), '=', $courseid);
 
         $total = $query->count();
@@ -63,7 +64,8 @@ class Course extends Base
             ->skip(--$page * $per_page)
             ->get(array(Base::table('students.*'),
                 Base::table('student_course.grade'),
-                Base::table('courses.id as courseid')));
+                Base::table('courses.id as courseid'),
+                Base::table('schools.name as schoolname')));
 
         return array($total, $posts);
     }

@@ -1,11 +1,11 @@
 <?php
 Route::collection(array('before' => 'auth,csrf'), function () {
 
-    Route::get(array('admin/courses', 'admin/courses/(:any)/(:num)'), function ($tab = '', $page = 1) {
+    Route::get(array('admin/courses', 'admin/courses/(:num)'), function ($page = 1) {
 
         // get public listings
         $userid = Auth::get_userid();
-        list($total, $pages) = Course::getCoursesBy($tab === 'grade' ? $userid : null, $page, $perpage = Config::get('admin.posts_per_page'));
+        list($total, $pages) = Course::getCoursesBy( null, $page, $perpage = Config::get('admin.posts_per_page'));
 
         $url = Uri::to('admin/courses');
 
