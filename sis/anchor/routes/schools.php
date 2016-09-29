@@ -22,6 +22,11 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         $vars['token'] = Csrf::token();
         $vars['school'] = School::find($id);
 
+        $vars['schoolstudent'] = Student::where('schoolid', '=', $id)->get();
+
+        //echo '<pre>';
+        //var_dump($vars['student-school']);die;
+
         // extended fields
         $vars['fields'] = Extend::fields('school', $id);
 

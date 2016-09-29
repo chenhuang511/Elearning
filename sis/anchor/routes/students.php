@@ -21,6 +21,11 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         $vars['messages'] = Notify::read();
         $vars['token'] = Csrf::token();
         $vars['student'] = Student::find($id);
+        $vars['studentschool'] = Student::getSchoolByStudent($id);
+        $vars['studentcourse'] = Student::getCoursesByStudent($id);
+
+
+        //echo '<pre>';var_dump($vars['studentcourse']);die;
 
         // extended fields
         $vars['fields'] = Extend::fields('student', $id);
@@ -199,7 +204,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
         Student::where('id', '=', $id)->delete();
         StudentCourse::where('studentid', '=', $id)->delete();
-        StudentSchool::where('userid', '=', $id)->delete();
+        //StudentSchool::where('userid', '=', $id)->delete();
 
         //Query::table(Base::table('student_meta'))->where('student', '=', $id)->delete();
 
