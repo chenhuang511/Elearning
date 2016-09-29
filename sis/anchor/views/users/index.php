@@ -14,7 +14,7 @@
 	<?php echo $messages; ?>
 
 	<ul class="list">
-		<?php /*foreach($users->results as $user): ?>
+		<?php foreach($users->results as $user): ?>
 		<li>
 			<a href="<?php echo Uri::to('admin/users/edit/' . $user->id); ?>">
 				<strong><?php echo $user->real_name; ?></strong>
@@ -23,27 +23,7 @@
 				<em class="highlight"><?php echo __('users.' . $user->role); ?></em>
 			</a>
 		</li>
-		<?php endforeach; */ ?>
-
-        <?php
-        $mysqlconn = new mysqli("localhost", "root", "12345678", "anchor");
-        $sql = "SELECT * FROM anchor_users";
-        $result = $mysqlconn->query($sql);
-
-        while($row = $result->fetch_assoc())
-        {
-            $id = $row["id"];
-        ?>
-
-            <li>
-                <a href="<?php echo Uri::to('admin/users/edit/' . $id); ?>">
-                    <strong><?php echo $row['real_name'] ?></strong>
-                    <span><?php echo __('users.username'); ?>: <?php echo $row['username'] ?></span>
-                    <em class="highlight"><?php echo __('users.' . $row['email']); ?></em>
-                </a>
-            </li>
-
-		<?php } ?>
+		<?php endforeach;  ?>
 	</ul>
 
 	<aside class="paging"><?php echo $users->links(); ?></aside>

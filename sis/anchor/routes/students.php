@@ -24,9 +24,6 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         $vars['studentschool'] = Student::getSchoolByStudent($id);
         $vars['studentcourse'] = Student::getCoursesByStudent($id);
 
-
-        //echo '<pre>';var_dump($vars['studentcourse']);die;
-
         // extended fields
         $vars['fields'] = Extend::fields('student', $id);
 
@@ -54,19 +51,9 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         $vars['messages'] = Notify::read();
         $vars['token'] = Csrf::token();
         //$key = Input::get(array('text-search'));
-
         $key = $_GET['text-search'];
-        //$vars['keysearch'] = $key;
 
-        //var_dump($key);die;
-
-        // extended fields
-//        echo '<pre>';
         $vars['student'] = Student::where('fullname', 'LIKE', '%' . $key . '%')->get();
-
-//        echo '<pre>';
-//        var_dump($vars['school']);
-//        die;
 
         return View::create('students/search', $vars)
             ->partial('header', 'partials/header')
