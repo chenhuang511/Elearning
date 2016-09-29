@@ -1,7 +1,7 @@
 <?php
 Route::collection(array('before' => 'auth,csrf'), function() {
 
-    Route::get(array('admin/courses', 'admin/courses/(:num)'), function($page = 1) {
+    Route::get(array('admin/courses/grade', 'admin/courses/grade/(:num)'), function($page = 1) {
 
         // get public listings
         $userid = Auth::get_userid();
