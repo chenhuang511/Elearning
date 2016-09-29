@@ -1,7 +1,7 @@
 <?php
 Route::collection(array('before' => 'auth,csrf'), function() {
 
-    Route::get(array('admin/courses/grade', 'admin/courses/grade/(:num)'), function($page = 1) {
+    Route::get(array('admin/grade', 'admin/courses/grade/(:num)'), function($page = 1) {
 
         // get public listings
         $userid = Auth::get_userid();
@@ -19,7 +19,7 @@ Route::collection(array('before' => 'auth,csrf'), function() {
             ->partial('footer', 'partials/footer');
     });
 
-    Route::get(array('admin/courses/info/(:num)'), function($id = 1) {
+    Route::get(array('admin/grade/info/(:num)'), function($id = 1) {
 
         // get public listings
         $pages = Course::where('id', '=', $id)->get()[0];
@@ -34,7 +34,7 @@ Route::collection(array('before' => 'auth,csrf'), function() {
             ->partial('footer', 'partials/footer');
     });
 
-    Route::get(array('admin/courses/grades/(:num)', 'admin/courses/grades/(:num)/(:num)'), function($courseid, $page = 1) {
+    Route::get(array('admin/grade/grades/(:num)', 'admin/courses/grades/(:num)/(:num)'), function($courseid, $page = 1) {
 
         // get public listings
         list($total, $pages) = Course::get_grade_by_course($courseid, $page, $perpage = Config::get('admin.posts_per_page'));
