@@ -289,3 +289,27 @@ input.search-btn {
 .bhxh-td, th   { display: table-cell }
 .bhxh-caption  { display: table-caption }
 .no-padding    { padding: 0; margin: 0; }
+.mb10 {
+    margin-bottom: 10px;
+}
+
+/*table sort*/
+.sort-table .header::after {
+    float: right;
+    font: normal normal normal 14px/1 FontAwesome;
+    content: "\f0dc";
+}
+.headerSortDown, .headerSortUp {
+
+}
+.sort-table .headerSortDown::after {
+    float: right;
+    font: normal normal normal 14px/1 FontAwesome;
+    content: "\f0dd";
+}
+
+.sort-table .headerSortUp::after {
+    float: right;
+    font: normal normal normal 14px/1 FontAwesome;
+    content: "\f0de";
+}

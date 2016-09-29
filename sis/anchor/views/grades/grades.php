@@ -2,7 +2,19 @@
 <section class="wrap">
     <?php echo $messages; ?>
     <?php if ($pages->count): ?>
-        <table class="table table-hover">
+        <form action="<?php echo Uri::to('admin/grade/course/' . $courseid . '/search') ?>" method="get" class="pull-right form-inline mb10">
+            <div class="form-group">
+                <label for="gradeMin">Điểm</label>
+                <?php echo Form::number('gradeMin', Input::get('gradeMin'), array('class' => 'form-control', 'id' => 'gradeMin')); ?>
+                <label for="gradeMax">Tới</label>
+                <?php echo Form::number('gradeMax', Input::get('gradeMax'), array('class' => 'form-control', 'id' => 'gradeMax')); ?>
+            </div>
+            <div class="form-group">
+                <?php echo Form::text('key', Input::get('key'), array('class' => 'form-control', 'placeholder' => 'Tên sinh viên')); ?>
+            </div>
+            <?php echo Form::button( __('Tìm Kiếm'), array('type' => 'submit', 'class' => 'btn btn-primary')); ?>
+        </form>
+        <table class="sort-table table table-hover" id="mytable">
             <thead>
             <tr>
                 <th>Mã</th>
@@ -37,5 +49,12 @@
         </aside>
     <?php endif; ?>
 </section>
+
+<script src="<?php echo asset_url('js/jquery.tablesorter.min.js'); ?>"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#mytable').tablesorter();
+    } );
+</script>
 <?php echo $footer; ?>
 
