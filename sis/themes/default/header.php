@@ -11,7 +11,7 @@
 		<link rel="stylesheet" href="<?php echo theme_url('/css/style.css'); ?>">
 		<link rel="stylesheet" href="<?php echo asset_url('css/bhxh.css'); ?>">
 		<link rel="stylesheet" href="<?php echo theme_url('/css/small.css'); ?>" media="(max-width: 400px)">
-
+		<link rel="stylesheet" href="<?php echo asset('anchor/views/assets/css/font-awesome.min.css'); ?>">
 		<link rel="alternate" type="application/rss+xml" title="RSS" href="<?php echo rss_url(); ?>">
 		<link rel="shortcut icon" href="<?php echo asset_url('img/favicon.png'); ?>">
 
@@ -22,7 +22,7 @@
 		<script>var base = '<?php echo theme_url(); ?>';</script>
 		<script src="<?php echo asset_url('/js/zepto.js'); ?>"></script>
 		<script src="<?php echo asset_url('/js/jquery-3.1.0.min.js'); ?>"></script>
-
+		<script src="<?php echo asset_url('/js/text-limit.js'); ?>"></script>
 	    <meta name="viewport" content="width=device-width">
 	    <meta name="generator" content="Anchor CMS">
 
@@ -44,10 +44,10 @@
 	<body class="<?php echo body_class(); ?>">
 		<header class="header navbar navbar-default navbar-fixed-top no-site-messages" id="header">
 			<div class="container">
-				<div id="logo-area" class="logo-area bhxh-table">
+				<div id="logo-area" class="logo-area bhxh-table pull-left">
 					<div class="logo-section bhxh-td">
 						<a href="<?php echo base_url(); ?>" class="logo">
-							<img src="<?php echo asset_url('/img/site-logo.png'); ?>" alt="qldt">
+							<img src="<?php echo asset_url('img/site-logo.png'); ?>" alt="qldt">
 						</a>
 					</div>
 					<div class="logo-section bhxh-td">
@@ -56,6 +56,22 @@
 						</p>
 					</div>
 				</div>
+				<div class="right-menu pull-right">
+					<ul class="nav nav-pills" role="tablist">
+						<?php if(Auth::user()): ?>
+							<li class="username li-square">
+								<a href="#" class="fa fa-user"> <?= user_authed_name() ?></a>
+							</li>
+							<li class="logout li-square">
+								<?php echo Html::link('admin/logout', __('global.logout'), array('class' => 'fa fa-sign-out')); ?>
+							</li>
+						<?php else: ?>
+							<li class="logout li-square">
+								<a href="<?php echo Uri::to('admin/login'); ?>"><i class="fa fa-sign-in" aria-hidden="true"></i><span>Login</span></a>
+							</li>
+						<?php endif; ?>
+					</ul>
+				</div>
 			</div>
 		</header>
 		<div class="top-menu container">
@@ -63,18 +79,12 @@
 				<ul>
 					<?php if(has_menu_items()):
 						while(menu_items()): ?>
-							<li <?php echo (menu_active() ? 'class="active"' : ''); ?>>
-								<a href="<?php echo menu_url(); ?>" title="<?php echo menu_title(); ?>">
-									<?php echo menu_name(); ?>
-								</a>
-							</li>
+
 						<?php endwhile;
 					endif; ?>
-					<li class="tray">
-						<a href="#tray" class="linky"><img src="<?php echo theme_url('img/categories.png'); ?>" alt="Categories" title="View my posts by category"></a>
-					</li>
 				</ul>
 			</nav>
 		</div>
 		<div class="main-wrap">
 			<div class="container">
+

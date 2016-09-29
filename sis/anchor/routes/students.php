@@ -42,7 +42,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
     });
 
     Route::post('admin/students/edit/(:num)', function($id) {
-        $input = Input::get(array('id', 'username', 'firstname', 'lastname', 'email', 'address', 'city', 'firstaccess', 'lastaccess', 'lastlogin', 'timecreate'));
+        $input = Input::get(array('fullname', 'email'));
         //$password_reset = false;
 
         // A little higher to avoid messing with the password
@@ -61,8 +61,8 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
             return ($str != 'inactive' and Auth::user()->id == $id);
         });
 
-        $validator->check('username')
-            ->is_max(2, __('students.username_missing', 2));
+        $validator->check('fullname')
+            ->is_max(2, __('students.studentname_missing', 2));
 
         $validator->check('email')
             ->is_email(__('students.email_missing'));
@@ -120,7 +120,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
     });
 
     Route::post('admin/students/add', function() {
-        $input = Input::get(array('id', 'username', 'firstname', 'lastname', 'email', 'address', 'city', 'firstaccess', 'lastaccess', 'lastlogin', 'timecreate'));
+        $input = Input::get(array('fullname', 'email'));
 
         foreach($input as $key => &$value) {
             //if($key === 'password') continue; // Can't avoid, so skip.
@@ -129,7 +129,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
         $validator = new Validator($input);
 
-        $validator->check('username')
+        $validator->check('fullname')
             ->is_max(3, __('students.username_missing', 2));
 
         $validator->check('email')
@@ -170,8 +170,10 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         }
 
         Student::where('id', '=', $id)->delete();
+        StudentCourse::where('studentid', '=', $id)->delete();
+        StudentSchool::where('userid', '=', $id)->delete();
 
-        Query::table(Base::table('student_meta'))->where('student', '=', $id)->delete();
+        //Query::table(Base::table('student_meta'))->where('student', '=', $id)->delete();
 
         Notify::success(__('students.deleted'));
 

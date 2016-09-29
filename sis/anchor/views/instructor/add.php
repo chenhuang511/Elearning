@@ -14,48 +14,27 @@
 
 		<fieldset class="half split">
 			<p>
-				<label for="label-real_name"><?php echo __('instructor.real_name'); ?>:</label>
-				<?php echo Form::text('real_name', Input::previous('real_name'), array('id' => 'label-real_name')); ?>
-				<em><?php echo __('instructor.real_name_explain'); ?></em>
+				<label for="label-firstname"><?php echo __('instructor.first_name'); ?>:</label>
+				<?php echo Form::text('firstname', Input::previous('firstname'), array('id' => 'label-firstname')); ?>
 			</p>
 			<p>
-				<label for="label-bio"><?php echo __('instructor.bio'); ?>:</label>
-				<?php echo Form::textarea('bio', Input::previous('bio'), array('cols' => 20, 'id' => 'label-bio')); ?>
-				<em><?php echo __('instructor.bio_explain'); ?></em>
+				<label for="label-lastname"><?php echo __('instructor.last_name'); ?>:</label>
+				<?php echo Form::text('lastname', Input::previous('lastname'), array('id' => 'label-lastname')); ?>
 			</p>
 			<p>
-				<label for="label-status"><?php echo __('instructor.status'); ?>:</label>
-				<?php echo Form::select('status', $statuses, Input::previous('status'), array('id' => 'label-status')); ?>
-				<em><?php echo __('instructor.status_explain'); ?></em>
-			</p>
-			<p>
-				<label for="label-role"><?php echo __('instructor.role'); ?>:</label>
-				<?php echo Form::select('role', $roles, Input::previous('role'), array('id' => 'label-role')); ?>
-				<em><?php echo __('instructor.role_explain'); ?></em>
+				<label for="label-birthday"><?php echo __('instructor.birthday'); ?>:</label>
+				<?php echo Form::date('birthday', Input::previous('birthday'), array('id' => 'label-birthday')); ?>
 			</p>
 		</fieldset>
 
 		<fieldset class="half split">
-			<?php foreach($fields as $field): ?>
-			<p>
-				<label for="extend_<?php echo $field->key; ?>"><?php echo $field->label; ?>:</label>
-				<?php echo Extend::html($field); ?>
-			</p>
-			<?php endforeach; ?>
-			<p>
-				<label for="label-username"><?php echo __('instructor.username'); ?>:</label>
-				<?php echo Form::text('username', Input::previous('username'), array('id' => 'label-username')); ?>
-				<em><?php echo __('instructor.role_explain'); ?></em>
-			</p>
-			<p>
-				<label for="label-password"><?php echo __('instructor.password'); ?>:</label>
-				<?php echo Form::password('password', array('id' => 'label-password')); ?>
-				<em><?php echo __('instructor.password_explain'); ?></em>
-			</p>
 			<p>
 				<label for="label-email"><?php echo __('instructor.email'); ?>:</label>
 				<?php echo Form::text('email', Input::previous('email'), array('id' => 'label-email')); ?>
-				<em><?php echo __('instructor.email_explain'); ?></em>
+			</p>
+			<p>
+				<label for="label-subject"><?php echo __('instructor.subject'); ?>:</label>
+				<?php echo Form::text('subject', Input::previous('subject'), array('id' => 'label-subject')); ?>
 			</p>
 		</fieldset>
 

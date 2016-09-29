@@ -18,10 +18,38 @@ class Auth {
 		if($id = Session::get(static::$session)) {
 			return User::find($id)->role == "administrator";
 		}
-
 		return false;
 	}
-
+    public static function student() {
+        if($id = Session::get(static::$session)) {
+            return User::find($id)->role == "student";
+        }
+        return false;
+    }
+    public static function teacher() {
+        if($id = Session::get(static::$session)) {
+            return User::find($id)->role == "teacher";
+        }
+        return false;
+    }
+    public static function office() {
+        if($id = Session::get(static::$session)) {
+            return User::find($id)->role == "office";
+        }
+        return false;
+    }
+    public static function training() {
+        if($id = Session::get(static::$session)) {
+            return User::find($id)->role == "training";
+        }
+        return false;
+    }
+    public static function specialized() {
+        if($id = Session::get(static::$session)) {
+            return User::find($id)->role == "specialized";
+        }
+        return false;
+    }
 	public static function me($id) {
 		return $id == Session::get(static::$session);
 	}
@@ -44,4 +72,7 @@ class Auth {
 		Session::erase(static::$session);
 	}
 
+	public static function get_userid() {
+		return Session::get(static::$session);
+	}
 }

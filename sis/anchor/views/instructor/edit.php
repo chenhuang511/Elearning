@@ -8,76 +8,68 @@
 	<?php echo $messages; ?>
 
 	<?php if(Auth::admin()) : ?>
-	<form method="post" action="<?php echo Uri::to('admin/instructor/edit/' . $user->id); ?>" novalidate autocomplete="off" enctype="multipart/form-data">
+	<form method="post" action="<?php echo Uri::to('admin/instructor/edit/' . $instructor->id); ?>" novalidate autocomplete="off" enctype="multipart/form-data">
 
 		<input name="token" type="hidden" value="<?php echo $token; ?>">
 		
 		<fieldset class="half split">
-		<?php
-			$mysqlconn = new mysqli("localhost", "root", "", "anchor");
-        	$sql_instructor = "SELECT * FROM anchor_instructors WHERE anchor_instructors.id=" . $user->id ;
-        	$result_instructor = $mysqlconn->query($sql_instructor);
-			while($row = $result_instructor->fetch_assoc())
-			{
-		?>
+		
 			<p>
-				<label for="label-first_name"><?php echo __('instructor.first_name'); ?>:</label>
-				<?php echo Form::text('first_name', $row['firstname'], array('id' => 'label-first_name')); ?>
+				<label for="label-firstname"><?php echo __('instructor.first_name'); ?>:</label>
+				<?php echo Form::text('firstname', Input::previous('firstname', $instructor->firstname), array('id' => 'label-firstname')); ?>
 			</p>
 			<p>
-				<label for="label-last_name"><?php echo __('instructor.last_name'); ?>:</label>
-				<?php echo Form::text('last_name', $row['lastname'], array('id' => 'label-last_name')); ?>
+				<label for="label-lastname"><?php echo __('instructor.last_name'); ?>:</label>
+				<?php echo Form::text('lastname', Input::previous('lastname', $instructor->lastname), array('id' => 'label-lastname')); ?>
 			</p>
 			<p>
 				<label for="label-email"><?php echo __('instructor.email'); ?>:</label>
-				<?php echo Form::text('email', $row['email'], array('id' => 'label-email')); ?>
+				<?php echo Form::text('email', Input::previous('email', $instructor->email), array('id' => 'label-email')); ?>
 			</p>
 			<p>
 				<label for="label-birthday"><?php echo __('instructor.birthday'); ?>:</label>
-				<?php echo Form::text('birthday', $row['birthday'], array('id' => 'label-birthday')); ?>
+				<?php echo Form::date('birthday', Input::previous('birthday', $instructor->birthday), array('id' => 'label-birthday')); ?>
 			</p>
 			<p>
 				<label for="label-subject"><?php echo __('instructor.subject'); ?>:</label>
-				<?php echo Form::text('subject', $row['subject'], array('id' => 'label-subject')); ?>
+				<?php echo Form::text('subject', Input::previous('subject', $instructor->subject), array('id' => 'label-subject')); ?>
 			</p>
-		<?php } ?>
+		
 		</fieldset>
 
 		<fieldset class="half split">
-		<?php
-			
-        	$sql_contract = "SELECT * FROM anchor_instructor_contract WHERE anchor_instructor_contract.instructor_id=".$user->id;
-        	$result_contract = $mysqlconn->query($sql_contract);
-			while($row = $result_contract->fetch_assoc())
-			{
-		?>
+		<?php foreach($contract as $contract): ?>
 		<div style="border:1px solid;border-color:blue">
 			<p>
-				<label for="label-school"><?php echo __('instructor.school'); ?>:</label>
-				<?php echo Form::text('school', $row['school_name'], array('id' => 'label-school')); ?>
+				<label for="label-type"><?php echo __('contract.type'); ?>:</label>
+				<?php echo Form::text('type', Input::previous('type', $contract->type), array('id' => 'label-type')); ?>
 			</p>
 			<p>
-				<label for="label-start_date"><?php echo __('instructor.start_date'); ?>:</label>
-				<?php echo Form::text('start_date', $row['start_date'], array('id' => 'label-start_date')); ?>
+				<label for="label-name_partner"><?php echo __('contract.name_partner'); ?>:</label>
+				<?php echo Form::text('name_partner', Input::previous('name_partner', $contract->name_partner), array('id' => 'label-name_partner')); ?>
 			</p>
 			<p>
-				<label for="label-end_date"><?php echo __('instructor.end_date'); ?>:</label>
-				<?php echo Form::text('end_date', $row['end_date'], array('id' => 'label-end_date')); ?>
+				<label for="label-start_date"><?php echo __('contract.start_date'); ?>:</label>
+				<?php echo Form::date('start_date', Input::previous('start_date', $contract->start_date), array('id' => 'label-start_date')); ?>
 			</p>
 			<p>
-				<label for="label-salary"><?php echo __('instructor.salary'); ?>:</label>
-				<?php echo Form::text('salary', $row['salary'], array('id' => 'label-salary')); ?>
+				<label for="label-end_date"><?php echo __('contract.end_date'); ?>:</label>
+				<?php echo Form::date('end_date', Input::previous('end_date', $contract->end_date), array('id' => 'label-end_date')); ?>
 			</p>
 			<p>
-				<label for="label-rules"><?php echo __('instructor.rules'); ?>:</label>
-				<?php echo Form::text('rules', $row['rules'], array('id' => 'label-rules')); ?>
+				<label for="label-salary"><?php echo __('contract.salary'); ?>:</label>
+				<?php echo Form::text('salary', Input::previous('salary', $contract->salary), array('id' => 'label-salary')); ?>
 			</p>
 			<p>
-				<label for="label-state"><?php echo __('instructor.state'); ?>:</label>
-				<?php echo Form::text('state', $row['state'], array('id' => 'label-state')); ?>
+				<label for="label-state"><?php echo __('contract.state'); ?>:</label>
+				<?php echo Form::text('state', Input::previous('state', $contract->state), array('id' => 'label-state')); ?>
 			</p>
-		</div>
-		<?php } ?>
+			<p>
+				<label for="label-rules"><?php echo __('contract.rules'); ?>:</label>
+				<?php echo Form::textarea('rules', Input::previous('rules', $contract->rules), array('cols' => 20 ,'id' => 'label-rules')); ?>
+			</p>			
+		</div></br>
+		<?php endforeach; ?>
 		</fieldset>
 		<aside class="buttons">
 			<?php echo Form::button(__('global.update'), array(
@@ -87,7 +79,7 @@
 
 			<?php echo Html::link('admin/instructor' , __('global.cancel'), array('class' => 'btn cancel blue')); ?>
 
-			<?php echo Html::link('admin/usinstructorers/delete/' . $user->id, __('global.delete'), array('class' => 'btn delete red')); ?>
+			<?php echo Html::link('admin/instructor/delete/' . $instructor->id, __('global.delete'), array('class' => 'btn delete red')); ?>
 		</aside>
 	</form>
 	<?php else : ?>

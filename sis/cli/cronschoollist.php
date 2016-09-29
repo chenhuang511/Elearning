@@ -43,9 +43,9 @@
          $id   = $row['ID'];
          $name = $row['NAME'];
 
-         if($id != 1)
+         if($name != " ")
          {
-            $sql = "INSERT INTO anchor_school_list 
+            $sql = "INSERT INTO anchor_school_list (remoteid, name) 
                     VALUES('" . $id . "'" . " ,'" .  $name . "')";    
             $mysqlconn->query($sql);       
          }

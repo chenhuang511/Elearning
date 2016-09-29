@@ -1,5 +1,7 @@
 <?php
 
 return array(
-    'courses' => 'Quản lý Điểm',
+    'courses' => 'Khóa học',
+
+    'coursename' => 'Tên khóa học',
 );

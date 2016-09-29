@@ -2,9 +2,9 @@
 
 return array(
 
-    'students' => 'Students',
+    'students' => 'Học viên',
 
-    'create_student' => 'Create a new student',
+    'create_student' => 'Tạo học viên',
     'add_student' => 'Add a new student',
     'editing_student' => 'Editing Student Profile',
     'remembered' => 'I know my password',
@@ -37,7 +37,7 @@ return array(
 
     'username' => 'Username',
     'username_explain' => '',
-    'username_missing' => 'Please enter a username, must be at least %s characters',
+    'studentname_missing' => 'Please enter a student name, must be at least %s characters',
 
     'password' => 'Password',
     'password_explain' => '',

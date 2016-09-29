@@ -4,18 +4,15 @@
         <?php echo $messages; ?>
         <?php if($pages->count): ?>
             <ul class="main list">
-                <?php foreach($pages->results as $item): $display_pages = array_merge(array($item), $item->children());?>
+                <?php foreach($pages->results as $item): $display_pages = array($item);?>
                     <?php foreach($display_pages as $page) : ?>
                         <li>
-                            <a href="<?php echo Uri::to('admin/pages/edit/' . $page->data['id']); ?>">
-                                <div class="<?php echo ($page->data['parent'] != 0 ? 'indent' : ''); ?>">
-                                    <strong><?php echo $page->data['name']; ?></strong>
-						<span>
-							<?php echo $page->data['slug']; ?>
-                            <em class="status <?php echo $page->data['status']; ?>" title="<?php echo __('global.' . $page->data['status']); ?>">
-								<?php echo __('global.' . $page->data['status']); ?>
-							</em>
-						</span>
+                            <a href="<?php echo Uri::to('admin/courses/grades/' . $page->data['courseid']); ?>">
+                                <div class="bhxh-course">
+                                    <strong><?php echo $page->data['fullname']; ?></strong>
+                                    <span>
+                                        <em class="status">status</em>
+                                    </span>
                                 </div>
                             </a>
                         </li>

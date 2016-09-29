@@ -1,5 +1,6 @@
 <?php
-    Route::get(array('admin/advance','admin/advance/(:num)'), array('before' => 'auth', 'main' => function($page = 1) {
+Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
+    Route::get(array('admin/advance','admin/advance/(:num)'),function($page = 1) {
         $total =  count(Staff::_read());
         $vars['messages'] = Notify::read();
         $vars['token'] = Csrf::token();
@@ -10,12 +11,19 @@
             'draft' => __('advance.draft'),
         );
         $vars['advance'] =  $pagination;
+        foreach ($pagination->results as $data){
+            if($data->user_check_id){
+                $user_check_id = $data->user_check_id;
+                $data->user_check = User::get_id($user_check_id);
+            }
+
+        }
         return View::create('advance/index', $vars)
             ->partial('header', 'partials/header')
             ->partial('footer', 'partials/footer');
-    }));
+    });
 
-    Route::get('admin/advance/add', array('before' => 'auth', 'main' => function($page = 1) {
+    Route::get('admin/advance/add',function() {
         $vars['messages'] = Notify::read();
         $vars['staff'] = Staff::read();
         $vars['token'] = Csrf::token();
@@ -23,7 +31,7 @@
         return View::create('advance/add', $vars)
             ->partial('header', 'partials/header')
             ->partial('footer', 'partials/footer');
-    }));
+    });
 
     Route::post('admin/advance/add', function() {
         $input = Input::get(array('applicant_id', 'money', 'reason'));
@@ -47,9 +55,10 @@
 
     });
 
-    Route::get(array('admin/advance/status/(:any)','admin/advance/status/(:any)/(:num)'), array('before' => 'auth', 'main' => function($status, $page = 1) {
+    Route::get(array('admin/advance/status/(:any)','admin/advance/status/(:any)/(:num)'), function($status, $page = 1) {
         $total =  count(Staff::page_read_status($status));
         $vars['ds'] =  Staff::read_status(1,$page  ,$status);
+        $vars['messages'] = Notify::read();
         $vars['token'] = Csrf::token();
         $url = Uri::to('admin/advance/status/'.$status );
         $pagination = new Paginator(Staff::read_status(5, $page ,$status), $total, $page, 5, $url);
@@ -57,11 +66,18 @@
             'published' => __('advance.published'),
             'draft' => __('advance.draft'),
         );
+        foreach ($pagination->results as $data){
+            if($data->user_check_id){
+                $user_check_id = $data->user_check_id;
+                $data->user_check = User::get_id($user_check_id);
+            }
+
+        }
         $vars['advance'] =  $pagination;
         return View::create('advance/index', $vars)
             ->partial('header', 'partials/header')
             ->partial('footer', 'partials/footer');
-    }));
+    });
 
 
 
@@ -101,8 +117,10 @@
 
             return Response::redirect('admin/advance/edit/' . $id);
         }
-
-
+        $user = Auth::user();
+        if($input['status'] == 'published' || $input['status'] == 'rebuff'){
+            $input['user_check_id'] =  $user->id;
+        }
         Advance::update($id, $input);
 
         Extend::process('post', $id);
@@ -112,4 +130,14 @@
         return Response::redirect('admin/advance/edit/' . $id);
     });
 
+    Route::get('admin/advance/delete/(:num)', function($id) {
+        Advance::find($id)->delete();
 
+
+
+        Notify::success(__('posts.deleted'));
+
+        return Response::redirect('admin/advance');
+    });
+
+});

@@ -77,7 +77,7 @@ require_login($attemptobj->get_course(), false, $attemptobj->get_cm());
 
 // Check that this attempt belongs to this user.
 $user = get_remote_mapping_user();
-if ($attemptobj->get_userid() != $USER->id) {
+if ($attemptobj->get_userid() != $user[0]->id) {
     if ($attemptobj->has_capability('mod/quiz:viewreports')) {
         redirect($attemptobj->review_url(null, $page));
     } else {

@@ -4449,6 +4449,10 @@ form#personsearch input[type="submit"] {
     color: #fff;
 }
 
+form input[type=text] {
+    font-family: Arial, sans-serif, Tahoma, 'Times New Roman' !important;
+}
+
 @media screen and (min-width: 768px) {
     .list-slide-content .slide-title {
         height: 2.4em;

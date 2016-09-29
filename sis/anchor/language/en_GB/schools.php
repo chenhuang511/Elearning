@@ -2,9 +2,9 @@
 
 return array(
 
-    'schools' => 'Schools',
+    'schools' => 'Trường học',
 
-    'create_school' => 'Create a new school',
+    'create_school' => 'Tạo trường học',
     'add_school' => 'Add a new school',
     'editing_school' => 'Editing School Profile',
     'remembered' => 'I know my password',
@@ -37,7 +37,7 @@ return array(
 
     'name' => 'Name',
     'username_explain' => '',
-    'username_missing' => 'Please enter a username, must be at least %s characters',
+    'schoolname_missing' => 'Please enter a school name, must be at least %s characters',
 
     'password' => 'Password',
     'password_explain' => '',

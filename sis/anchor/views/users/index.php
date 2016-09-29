@@ -26,8 +26,8 @@
 		<?php endforeach; */ ?>
 
         <?php
-        $mysqlconn = new mysqli("localhost", "root", "vannhuthe", "anchor");
-        $sql = "SELECT * FROM anchor_students";
+        $mysqlconn = new mysqli("localhost", "root", "12345678", "anchor");
+        $sql = "SELECT * FROM anchor_users";
         $result = $mysqlconn->query($sql);
 
         while($row = $result->fetch_assoc())
@@ -37,7 +37,7 @@
 
             <li>
                 <a href="<?php echo Uri::to('admin/users/edit/' . $id); ?>">
-                    <strong><?php echo $row['firstname'] ?></strong>
+                    <strong><?php echo $row['real_name'] ?></strong>
                     <span><?php echo __('users.username'); ?>: <?php echo $row['username'] ?></span>
                     <em class="highlight"><?php echo __('users.' . $row['email']); ?></em>
                 </a>

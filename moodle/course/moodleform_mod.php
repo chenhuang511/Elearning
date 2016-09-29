@@ -514,7 +514,7 @@ abstract class moodleform_mod extends moodleform
             $rm = new rating_manager();
 
             $disabled = '';
-            if(MOODLE_RUN_MODE === MOODLE_MODE_HUB && ($this->_modname == "forum" && $this->_instance == 9)) {
+            if(MOODLE_RUN_MODE === MOODLE_MODE_HUB && ($this->_modname == "forum")) {
                 $disabled = 'disabled';
             }
 

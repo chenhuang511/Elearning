@@ -21,7 +21,7 @@ $recordingid = optional_param('recordingid', 0, PARAM_TEXT);
 $nonajax  = optional_param('nonajax', true, PARAM_BOOL);
 
 if ($id) {
-    if (!$cm = get_remote_course_module_by_cmid('bigbluebuttonbn', $id)) {
+    if (!$cm = get_coursemodule_from_id('bigbluebuttonbn', $id)) {
         print_error('invalidcoursemodule');
     }
     if (!$course = get_local_course_record($cm->course, true)) {

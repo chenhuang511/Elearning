@@ -708,6 +708,9 @@ class course_enrolment_manager {
                     continue;
                 }
             }
+            if(MOODLE_MODE_HUB === MOODLE_RUN_MODE) {
+                remote_unassign_role_to_user($ra->roleid, $ra->userid, $ra->contextid);
+            }
             role_unassign($ra->roleid, $ra->userid, $ra->contextid, $ra->component, $ra->itemid);
         }
         return true;

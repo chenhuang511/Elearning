@@ -42,4 +42,12 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_remote_unassign_role_to_user' => array(
+		'classname'	  => 'local_role_external',
+		'methodname'  => 'remote_unassign_role_to_user',
+		'classpath'	  => 'local/role/externallib.php',
+		'description' => "Unassign role to user",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 );

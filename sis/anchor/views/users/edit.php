@@ -1,4 +1,4 @@
-<?php echo $header; ?>
+ <?php echo $header; ?>
 
 <hgroup class="wrap">
 	<h1><?php echo __('users.editing_user', $user->username); ?></h1>

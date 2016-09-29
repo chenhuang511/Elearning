@@ -71,12 +71,15 @@ if(is_admin()) {
 	require APP . 'routes/posts' . EXT;
 	require APP . 'routes/users' . EXT;
 	require APP . 'routes/instructor' . EXT;
+	require APP . 'routes/contract' . EXT;
 	require APP . 'routes/variables' . EXT;
 	require APP . 'routes/pagetypes' . EXT;
     require APP . 'routes/advance' . EXT;
 	require APP . 'routes/students' . EXT;
     require APP . 'routes/schools' . EXT;
     require APP . 'routes/grades' . EXT;
+    require APP . 'routes/curriculum' . EXT;
+    require APP . 'routes/course' . EXT;
 }
 else {
 	require APP . 'routes/site' . EXT;
