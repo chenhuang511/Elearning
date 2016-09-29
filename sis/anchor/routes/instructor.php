@@ -7,7 +7,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 	*/
 	Route::get(array('admin/instructor', 'admin/instructor/(:num)'), function($page = 1) {
 		$vars['messages'] = Notify::read();
-		$vars['users'] = User::paginate($page, Config::get('admin.posts_per_page'));
+		$vars['instructor'] = Instructor::paginate($page, Config::get('admin.posts_per_page'));
 
 		return View::create('instructor/index', $vars)
 			->partial('header', 'partials/header')
@@ -21,6 +21,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 		$vars['messages'] = Notify::read();
 		$vars['token'] = Csrf::token();
 		$vars['instructor'] = Instructor::find($id);
+		$vars['contract'] = Contract::search_by_instructor_id($id);
 
 		// extended fields
 		$vars['fields'] = Extend::fields('instructor', $id);
@@ -36,10 +37,6 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 		// A little higher to avoid messing with the password
 		
 		$validator = new Validator($input);
-		
-		$validator->add('safe', function($str) use($id) {
-			return (Auth::instructor()->id == $id);
-		});
 
 		$validator->check('firstname')
 		 	->is_max(2, __('instructor.firstname_missing', 2));
@@ -49,9 +46,6 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
 		$validator->check('email')
 			->is_email(__('instructor.email_missing'));
-
-		$validator->check('birthday')
-			->is_regex('#([012]?[1-9]|[12]0|3[01])\/(0?[1-9]|1[012])\/([0-9]{4})$#', __('instructor.birthday_missing'));
 
 		$validator->check('subject')
 		 	->is_max(2, __('instructor.subject_missing', 2));
@@ -83,17 +77,6 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 		// extended fields
 		$vars['fields'] = Extend::fields('user');
 
-		$vars['statuses'] = array(
-			'inactive' => __('global.inactive'),
-			'active' => __('global.active')
-		);
-
-		$vars['roles'] = array(
-			'administrator' => __('global.administrator'),
-			'editor' => __('global.editor'),
-			'user' => __('global.user')
-		);
-
 		return View::create('instructor/add', $vars)
 			->partial('header', 'partials/header')
 			->partial('footer', 'partials/footer');
@@ -111,9 +94,6 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
 		$validator->check('email')
 			->is_email(__('instructor.email_missing'));
-
-		$validator->check('birthday')
-			->is_regex('#([012]?[1-9]|[12]0|3[01])\/(0?[1-9]|1[012])\/([0-9]{4})$#', __('instructor.birthday_missing'));
 
 		$validator->check('subject')
 		 	->is_max(2, __('instructor.subject_missing', 2));
@@ -138,9 +118,8 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 		Delete user
 	*/
 	Route::get('admin/instructor/delete/(:num)', function($id) {
-		$mysqlconn = new mysqli("localhost", "root", "", "anchor");
-        $sql= "DELETE anchor_instructors.*,anchor_instructor_contract.* FROM anchor_instructors LEFT JOIN anchor_instructor_contract ON anchor_instructors.id=anchor_instructor_contract.instructor_id WHERE anchor_instructors.id=".$id;
-        mysqli_query($mysqlconn,$sql);
+		Instructor::where('id', '=', $id)->delete();
+		Query::table(Base::table('instructor_contract'))->where('instructor_id', '=', $id)->delete();
 		Notify::success(__('instructor.deleted'));
 		return Response::redirect('admin/instructor');
 		
