@@ -4,11 +4,15 @@
  * Admin actions
  */
 Route::action('auth', function() {
-	if(Auth::guest()) return Response::redirect('admin/login');
+	if(Auth::guest()) {
+	    return Response::redirect('admin/login');
+    }elseif (!Auth::admin()){
+        return Response::redirect('/');
+    }
 });
 
 Route::action('guest', function() {
-	if(Auth::user()) return Response::redirect('admin/post');
+	if(Auth::user()) return Response::redirect('admin/posts');
 });
 
 Route::action('csrf', function() {
@@ -40,7 +44,7 @@ Route::get('admin', function() {
 // Why check if we haven't deleted the install directory, BEFORE we've logged in? Isn't that just unlocking the door for the burglars to enter?
 //Route::get('admin/login', array('before' => 'install_exists', 'main' => function() {
 Route::get('admin/login', array('before' => 'guest', 'main' => function() {
-	if(!Auth::guest()) return Response::redirect('admin/posts');
+	if(!Auth::guest() && Auth::admin()) return Response::redirect('admin/posts');
 	$vars['messages'] = Notify::read();
 	$vars['token'] = Csrf::token();
 
