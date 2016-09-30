@@ -537,6 +537,10 @@ function get_url_file_resource($cmid) {
     $fs = get_file_storage();
     $files = $fs->get_area_files($context->id, 'mod_resource', 'content', 0, 'sortorder DESC, id ASC', false); // TODO: this is not very efficient!!
 
+    if (count($files) < 1) {
+        return null;
+    }
+
     $file = reset($files);
     $url = moodle_url::make_pluginfile_url(
         $file->get_contextid(),
