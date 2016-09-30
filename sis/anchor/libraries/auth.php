@@ -22,31 +22,36 @@ class Auth {
 	}
     public static function student() {
         if($id = Session::get(static::$session)) {
-            return User::find($id)->role == "student";
+            $rid = User::find($id)->role_id;
+            return UserRole::find($rid)->role == "students";
         }
         return false;
     }
     public static function teacher() {
         if($id = Session::get(static::$session)) {
-            return User::find($id)->role == "teacher";
+            $rid = User::find($id)->role_id;
+            return UserRole::find($rid)->role == "instructor";
         }
         return false;
     }
-    public static function office() {
+    public static function contract() {
         if($id = Session::get(static::$session)) {
-            return User::find($id)->role == "office";
+            $rid = User::find($id)->role_id;
+            return UserRole::find($rid)->role == "contract";
         }
         return false;
     }
-    public static function training() {
+    public static function person() {
         if($id = Session::get(static::$session)) {
-            return User::find($id)->role == "training";
+            $rid = User::find($id)->role_id;
+            return UserRole::find($rid)->role == "users";
         }
         return false;
     }
-    public static function specialized() {
+    public static function school() {
         if($id = Session::get(static::$session)) {
-            return User::find($id)->role == "specialized";
+            $rid = User::find($id)->role_id;
+            return UserRole::find($rid)->role == "schools";
         }
         return false;
     }

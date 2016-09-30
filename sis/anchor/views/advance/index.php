@@ -12,6 +12,7 @@
 
 <section class="wrap">
     <?php echo $messages; ?>
+
     <nav class="sidebar advance_sidebar">
         <nav class="statuses" style="margin-bottom: 40px">
             <p>Tình trạng</p>
@@ -24,63 +25,66 @@
                 )); ?>
             <?php endforeach; ?>
         </nav>
-        <nav class="search">
-            <form method="post" action="<?php echo Uri::to('admin/advance/search'); ?>" enctype="multipart/form-data" novalidate>
-                <p>Tìm kiếm</p>
-                <?php echo Form::text('name_user', Input::previous('name_user'), array('id' => 'label-name_user','placeholder'=>'Người xin tạm ứng','style'=>'height: 35px;')); ?>
-                <?php echo Form::button(__('global.search'), array(
-                    'type' => 'submit',
-                    'class' => 'btn',
-                    'data-loading' => __('global.searching')
-                )); ?>
-            </form>
-        </nav>
 
     </nav>
     <?php if($advance->results): ?>
-        <ul class="main list" href="">
+        <ul class="main list list_advance" href="">
+            <form action="<?php echo Uri::to('admin/advance/search'); ?>" method="get" class="pull-right form-inline mb10">
+                <div class="form-group">
+                    <label for="gradeMin">Tiền</label>
+                    <?php echo Form::number('moneyMin', Input::get('gradeMin'), array('class' => 'form-control', 'id' => 'moneyMin')); ?>
+                    <label for="gradeMax">Tới</label>
+                    <?php echo Form::number('moneyMax', Input::get('gradeMax'), array('class' => 'form-control', 'id' => 'moneyMax')); ?>
+                </div>
+                <div class="form-group">
+                    <?php echo Form::text('key_course', Input::get('key'), array('class' => 'form-control', 'placeholder' => 'Khóa học')); ?>
+                    <?php echo Form::text('key_name', Input::get('key'), array('class' => 'form-control', 'placeholder' => 'Tên sinh viên')); ?>
+                </div>
+                <?php echo Form::button( __('Tìm Kiếm'), array('type' => 'submit', 'class' => 'btn btn-primary')); ?>
+            </form>
+            <table class="sort-table table table-hover" id="mytable">
+                <thead>
+                <tr>
+                    <th>Mã</th>
+                    <th>Khóa học</th>
+                    <th>Người yêu cầu</th>
+                    <th>Số tiền</th>
+                    <td>Trạng thái</td>
+                    <th>Thời gian</th>
+                    <td></td>
+                    <td></td>
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($advance->results as $item): $display_pages = array($item); ?>
+                    <?php foreach ($display_pages as $page) : ?>
+                            <tr>
 
-            <?php foreach($advance->results as $article): ?>
-                <li>
-                    <a class="advance-link" style="text-decoration: none;" href="<?php echo Uri::to('admin/advance/edit/' . $article->id); ?>">
-                        <strong style=" font-size: 30px; padding-bottom: 73px;">Đơn tạm ứng số: <?php echo $article->id?></strong>
-                        <table class="table-advance">
-                            <tr>
-                                <td>Khóa học:</td>
-                                <td style="font-size: 20px;"><?php echo $article->course_name?></td>
-                            </tr>
-                            <tr>
-                                <td>Người yêu cầu:</td>
-                                <td style="font-size: 20px;"><?php echo $article->user?></td>
-                            </tr>
-                            <tr>
-                                <td>Số tiền:</td>
-                                <td style="font-size: 25px;"><?php echo $article->money?></td>
-                            </tr>
-                            <tr>
-                                <td>Lí do:</td>
-                                <td style="font-size: 20px;"><?php echo $article->reason?></td>
-                            </tr>
-                            <tr>
-                                <td>Tình trạng:</td>
-                                <td style="font-size: 20px;"><?php echo __('advance.' . $article->status); ?></td>
-                            </tr>
-                            <?php
-                            if($article->user_check){
-                            ?><tr>
-                                <td>Người xác nhận:</td>
-                                <td> <?php echo $article->user_check ;?></td>
-                            </tr>
-                                <?php }?>
-                        </table>
+                                <td><?php echo $page->data['id']; ?></td>
 
-                    </a>
-                </li>
-            <?php endforeach; ?>
+                                <td><?php echo $page->data['course_name']; ?></td>
+
+                                <td><?php echo $page->data['user']; ?></td>
+
+                                <td><?php echo $page->data['money']; ?></td>
+
+                                <td><?php echo __('advance.'.$page->data['status']); ?></td>
+
+                                <td><?php echo $page->data['time']; ?></td>
+
+                                <td><a href="<?php echo Uri::to('admin/advance/edit/' .  $page->data['id']); ?>">Chỉnh sửa</a></td>
+                                <td><a href="<?php echo Uri::to('admin/advance/delete/' .  $page->data['id']); ?>" class="delete">Xóa</a></td>
+                            </tr>
+
+                    <?php endforeach; ?>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+            <aside class="paging"><?php echo $advance->links(); ?></aside>
 
         </ul>
 
-        <aside class="paging"><?php echo $advance->links(); ?></aside>
+
 
     <?php else: ?>
 
@@ -92,5 +96,10 @@
 
     <?php endif; ?>
 </section>
-
+<script src="<?php echo asset_url('js/jquery.tablesorter.min.js'); ?>"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#mytable').tablesorter();
+    } );
+</script>
 <?php echo $footer; ?>

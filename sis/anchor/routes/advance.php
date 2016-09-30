@@ -5,9 +5,9 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         $vars['page'] = $page;
         $vars['messages'] = Notify::read();
         $vars['token'] = Csrf::token();
-        $list =   Advance::get_list(4,$page);
+        $list =   Advance::get_list(10,$page);
         $url = Uri::to('admin/advance');
-        $pagination = new Paginator($list[1], $list[0], $page, 4, $url);
+        $pagination = new Paginator($list[1], $list[0], $page, 10, $url);
         $vars['status'] = array(
             'published' => __('advance.published'),
             'draft' => __('advance.draft'),
@@ -55,9 +55,9 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
     Route::get(array('admin/advance/status/(:any)','admin/advance/status/(:any)/(:num)'), function($status, $page = 1) {
         $vars['messages'] = Notify::read();
         $vars['token'] = Csrf::token();
-        $list =   Advance::get_list_by_status($status,4,$page);
+        $list =   Advance::get_list_by_status($status,10,$page);
         $url = Uri::to('admin/advance/status/'.$status );
-        $pagination = new Paginator($list[1], $list[0], $page, 4, $url);
+        $pagination = new Paginator($list[1], $list[0], $page, 10, $url);
         $vars['status'] = array(
             'published' => __('advance.published'),
             'draft' => __('advance.draft'),
@@ -127,6 +127,46 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         Notify::success(__('posts.deleted'));
 
         return Response::redirect('admin/advance');
+    });
+
+    Route::get(array('admin/advance/search','admin/advance/search/(:num)'), function($page = 1) {
+
+        $vars['messages'] = Notify::read();
+        $vars['token'] = Csrf::token();
+
+        $input =  Input::get(array('key_name',
+            'key_course',
+            'moneyMin',
+            'moneyMax',))  ;
+        if($input['moneyMin'] && $input['moneyMax'] && $input['key_name'] && $input['moneyMax']) {
+            return Response::redirect('admin/advance');
+        }
+        foreach($input as $key => &$value) {
+            $value = eq($value);
+        }
+        $validator = new Validator($input);
+
+        if($errors = $validator->errors()) {
+            Input::flash();
+
+            Notify::error($errors);
+
+            return Response::redirect('admin/posts/edit/');
+        }
+        $whatSearch = '?moneyMin=' . $input['moneyMin'] . '&moneyMax=' . $input['moneyMax'] . '&key_name=' . $input['key_name']. '&key_course=' . $input['key_course'];
+
+        $list = Advance::get_list_advance_by_key(4,$page,$input['key_name'], $input['key_course'], $input['moneyMin'],$input['moneyMax']);
+        $url = Uri::to('admin/advance/search');
+        $pagination = new Paginator($list[1], $list[0], $page, 4, $url,$whatSearch);
+        $vars['status'] = array(
+            'published' => __('advance.published'),
+            'draft' => __('advance.draft'),
+            'rebuff' => __('advance.rebuff')
+        );
+        $vars['advance'] =  $pagination;
+        return View::create('advance/index', $vars)
+            ->partial('header', 'partials/header')
+            ->partial('footer', 'partials/footer');
     });
 
 
