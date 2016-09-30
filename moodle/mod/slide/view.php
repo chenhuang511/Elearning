@@ -99,7 +99,7 @@ if ($redirect) {
 
 switch ($displaytype) {
     case RESOURCELIB_DISPLAY_EMBED:
-        url_display_embed($url, $cm, $course);
+        slide_display_embed($url, $cm, $course);
         break;
     case RESOURCELIB_DISPLAY_FRAME:
         slide_display_frame($url, $cm, $course);
