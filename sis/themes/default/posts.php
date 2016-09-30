@@ -49,13 +49,13 @@
 
 			</div>
 			<div class="right-block col-md-3 block-search">
-				<form id="" action="" method="get">
-					<div class="search-box">
-						<h3 class="el-sidebar-heading"> Search <?php echo menu_name(); ?></h3>
-					</div>
+				<div class="search-box">
+					<h3 class="el-sidebar-heading"> Search <?php echo menu_name(); ?></h3>
+				</div>
+				<form id="" action="/search" method="get">
 					<div class="search-input">
-						<input type="text" name="search" value="">
-						<input type="submit" class="search-btn" value="Search">
+						<input type="text" id="search_term" name="search_term" value="<?php echo search_term(); ?>">
+						<button type="submit" class="search-btn" value="<?php echo search_term(); ?>">Search</button>
 					</div>
 				</form>
 			</div>

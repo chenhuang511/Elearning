@@ -49,7 +49,7 @@ class Course extends Base
         return array($total, $courses);
     }
 
-    public static function get_grade_by_course($courseid, $page = 1, $per_page = 10)
+    public static function get_grade_by_course($courseid, $page = 1, $per_page = 10, $key = '', $grademin = '', $grademax = '')
     {
         // get total
         $query = static::join(Base::table('student_course'), Base::table('courses.id'), '=', Base::table('student_course.courseid'))
@@ -57,6 +57,15 @@ class Course extends Base
             ->join(Base::table('schools'), Base::table('schools.id'), '=', Base::table('students.schoolid'))
             ->where(Base::table('courses.id'), '=', $courseid);
 
+        if($key) {
+            $query = $query->where(Base::table('students.fullname'), 'like', '%' . $key . '%');
+        }
+        if($grademin) {
+            $query = $query->where(Base::table('student_course.grade'), '>', $grademin);
+        }
+        if($grademax) {
+            $query = $query->where(Base::table('student_course.grade'), '<', $grademax);
+        }
         $total = $query->count();
 
         // get posts
@@ -64,9 +73,22 @@ class Course extends Base
             ->skip(--$page * $per_page)
             ->get(array(Base::table('students.*'),
                 Base::table('student_course.grade'),
+                Base::table('student_course.studentid as studentid'),
                 Base::table('courses.id as courseid'),
                 Base::table('schools.name as schoolname')));
 
         return array($total, $posts);
     }
+
+
+    public function get_list_shortname_courses(){
+        $items = array();
+        $query = Query::table(static::table());
+        foreach($query->sort('shortname')->get() as $item) {
+            $items[$item->id] = $item->shortname;
+        }
+
+        return $items;
+    }
+
 }

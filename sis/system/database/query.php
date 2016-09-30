@@ -92,7 +92,12 @@ class Query extends Builder {
 	 * @var array
 	 */
 	public $bind = array();
-
+    /**
+     * Array values to like to the query
+     *
+     * @var array
+     */
+    public $like = array();
 	/**
 	 * Create a new database query instance for chaining
 	 *
@@ -100,6 +105,7 @@ class Query extends Builder {
 	 * @param object Connector
 	 * @return object Query
 	 */
+
 	public static function table($table, $connection = null) {
 		if(is_null($connection)) $connection = DB::connection();
 
@@ -244,6 +250,12 @@ class Query extends Builder {
 
 		return $this;
 	}
+
+    public function like($column, $operator, $value) {
+        $this->where[] = (count($this->where) ? 'AND ' : 'WHERE ') . $this->wrap($column) . ' ' . $operator ."'". '%'.$value.'%'."'";
+
+        return $this;
+    }
 
 	/**
 	 * Add a where clause to the query starting with OR

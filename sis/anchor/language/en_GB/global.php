@@ -9,13 +9,15 @@
 return array(
 
 	// words
-	'save' => 'Lưu',
+	'save' => 'Hoàn tất',
 	'saving' => 'Đang lưu...',
 	'delete' => 'Xóa',
 	'deleting' => 'Đang xóa...',
 	'update' => 'Cập nhật',
 	'updating' => 'Đang cập nhật...',
 	'edit' => 'Sửa',
+    'search' =>'Tìm kiếm',
+    'searching' => 'Đang tìm ...',
 	'editing' => 'Chỉnh sửa',
 	'create' => 'Tạo',
 	'created' => 'Đã xóa',
@@ -26,6 +28,8 @@ return array(
 	'reset' => 'Reset',
 	'all' => 'Tất cả',
 	'cancel' => 'Hủy bỏ',
+    'continue' => 'Tiếp tục',
+    'tempsave' => 'Lưu tạm',
 
 	// pagination
 	'next' => 'Tiếp',

@@ -260,8 +260,7 @@ article.wrap.coursebox {
     padding-left: 12px;
     margin-bottom: 9px;
 }
-input.search-btn {
-    padding: 1px 6px;
+button.search-btn {
     -webkit-appearance: button;
     cursor: pointer;
     padding: 2px 11px;
@@ -273,9 +272,11 @@ input.search-btn {
     text-shadow: none;
     border: 0px;
     margin-top: 2px;
-
 }
-
+.right-block.col-md-3.block-search.search-post {
+    margin-top: 52px;
+    float: right;
+}
 
 /*end footer*/
 /*help*/
@@ -289,3 +290,27 @@ input.search-btn {
 .bhxh-td, th   { display: table-cell }
 .bhxh-caption  { display: table-caption }
 .no-padding    { padding: 0; margin: 0; }
+.mb10 {
+    margin-bottom: 10px;
+}
+
+/*table sort*/
+.sort-table .header::after {
+    float: right;
+    font: normal normal normal 14px/1 FontAwesome;
+    content: "\f0dc";
+}
+.headerSortDown, .headerSortUp {
+
+}
+.sort-table .headerSortDown::after {
+    float: right;
+    font: normal normal normal 14px/1 FontAwesome;
+    content: "\f0dd";
+}
+
+.sort-table .headerSortUp::after {
+    float: right;
+    font: normal normal normal 14px/1 FontAwesome;
+    content: "\f0de";
+}
