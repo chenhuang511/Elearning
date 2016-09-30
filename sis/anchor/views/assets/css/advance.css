@@ -28,5 +28,14 @@
     border-radius: 5px;
 }
 
+.list_advance{
+    width: 880px !important;
+}
+
+#moneyMin,#moneyMax{
+    width: 120px;
+}
+
+
 
 
