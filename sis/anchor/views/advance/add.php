@@ -8,7 +8,6 @@
 
     <input name="token" type="hidden" value="<?php echo $token; ?>">
 
-
     <fieldset class="header">
         <div class="wrap">
             <?php echo $messages; ?>
@@ -30,58 +29,27 @@
 
     <fieldset class="meta split">
         <div class="wrap">
-            <p>
-                <label for="label-slug"><?php echo __('advance.applicant'); ?>:</label>
-                <?php echo Form::select('applicant_id', $staff, Input::previous('applicant_id'), array('id' => 'label-applicant_id')); ?>
-            </p>
-            <p>
-                <label for="label-status"><?php echo __('advance.money'); ?>:</label>
-                <?php echo Form::text('money', Input::previous('money'), array('id' => 'label-money')); ?>
-            </p>
-            <p>
-                <label for="label-description"><?php echo __('advance.reason'); ?>:</label>
-                <?php echo Form::textarea('reason', Input::previous('reason'), array('id' => 'label-reason')); ?>
-            </p>
+            <table class="form_advance">
+                <tr>
+                    <td> <label for="label-slug"><?php echo __('advance.applicant'); ?>:</label></td>
+                    <td><?php echo Form::select('course_id', $course, Input::previous('applicant_id'), array('id' => 'label-course_id')); ?></td>
+                </tr>
+                <tr>
+                    <td> <label for="label-slug"><?php echo __('advance.applicant'); ?>:</label></td>
+                    <td><?php echo Form::select('applicant_id', $user, Input::previous('applicant_id'), array('id' => 'label-applicant_id')); ?></td>
+                </tr>
+                <tr>
+                    <td> <label for="label-status"><?php echo __('advance.money'); ?>:</label></td>
+                    <td><?php echo Form::text('money', Input::previous('money'), array('id' => 'label-money')); ?></td>
+                </tr>
+                <tr>
+                    <td><label for="label-description"><?php echo __('advance.reason'); ?>:</label></td>
+                    <td><?php echo Form::textarea('reason', Input::previous('reason'), array('id' => 'label-reason')); ?></td>
+                </tr>
 
+            </table>
 
     </fieldset>
 </form>
-
-<!--    <section class="wrap">-->
-<!--        --><?php //echo $messages; ?>
-<!---->
-<!--        <ul class="list">-->
-<!--            <li>-->
-<!--                <a href="--><?php //echo Uri::to('admin/extend/pagetypes'); ?><!--">-->
-<!--                    <strong>--><?php //echo __('extend.pagetypes'); ?><!--</strong>-->
-<!--                    <span>--><?php //echo __('extend.pagetypes_desc'); ?><!--</span>-->
-<!--                </a>-->
-<!--            </li>-->
-<!--            <li>-->
-<!--                <a href="--><?php //echo Uri::to('admin/extend/fields'); ?><!--">-->
-<!--                    <strong>--><?php //echo __('extend.fields'); ?><!--</strong>-->
-<!--                    <span>--><?php //echo __('extend.fields_desc'); ?><!--</span>-->
-<!--                </a>-->
-<!--            </li>-->
-<!--            <li>-->
-<!--                <a href="--><?php //echo Uri::to('admin/extend/variables'); ?><!--">-->
-<!--                    <strong>--><?php //echo __('extend.variables'); ?><!--</strong>-->
-<!--                    <span>--><?php //echo __('extend.variables_desc'); ?><!--</span>-->
-<!--                </a>-->
-<!--            </li>-->
-<!--            <li>-->
-<!--                <a href="--><?php //echo Uri::to('admin/extend/metadata'); ?><!--">-->
-<!--                    <strong>--><?php //echo __('metadata.metadata'); ?><!--</strong>-->
-<!--                    <span>--><?php //echo __('metadata.metadata_desc'); ?><!--</span>-->
-<!--                </a>-->
-<!--            </li>-->
-<!--            <li>-->
-<!--                <a href="--><?php //echo Uri::to('admin/extend/plugins'); ?><!--">-->
-<!--                    <strong>Plugins</strong>-->
-<!--                    <span>Coming soon, yo!</span>-->
-<!--                </a>-->
-<!--            </li>-->
-<!--        </ul>-->
-<!--    </section>-->
 
 <?php echo $footer; ?>

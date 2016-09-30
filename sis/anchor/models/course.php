@@ -69,4 +69,16 @@ class Course extends Base
 
         return array($total, $posts);
     }
+
+
+    public function get_list_shortname_courses(){
+        $items = array();
+        $query = Query::table(static::table());
+        foreach($query->sort('shortname')->get() as $item) {
+            $items[$item->id] = $item->shortname;
+        }
+
+        return $items;
+    }
+
 }

@@ -1,23 +1,19 @@
 <?php
 Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
     Route::get(array('admin/advance','admin/advance/(:num)'),function($page = 1) {
-        $total =  count(Staff::_read());
+
+        $vars['page'] = $page;
         $vars['messages'] = Notify::read();
         $vars['token'] = Csrf::token();
+        $list =   Advance::get_list(4,$page);
         $url = Uri::to('admin/advance');
-        $pagination = new Paginator(Staff::page_read(5,$page), $total, $page, 5, $url);
+        $pagination = new Paginator($list[1], $list[0], $page, 4, $url);
         $vars['status'] = array(
             'published' => __('advance.published'),
             'draft' => __('advance.draft'),
+            'rebuff' => __('advance.rebuff')
         );
         $vars['advance'] =  $pagination;
-        foreach ($pagination->results as $data){
-            if($data->user_check_id){
-                $user_check_id = $data->user_check_id;
-                $data->user_check = User::get_id($user_check_id);
-            }
-
-        }
         return View::create('advance/index', $vars)
             ->partial('header', 'partials/header')
             ->partial('footer', 'partials/footer');
@@ -25,16 +21,17 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
     Route::get('admin/advance/add',function() {
         $vars['messages'] = Notify::read();
-        $vars['staff'] = Staff::read();
         $vars['token'] = Csrf::token();
-
+        $vars['course'] = Course::get_list_shortname_courses();
+        $vars['user'] = User::get_list_author('user') ;
+        $vars['courses'] =  Course::read();
         return View::create('advance/add', $vars)
             ->partial('header', 'partials/header')
             ->partial('footer', 'partials/footer');
     });
 
     Route::post('admin/advance/add', function() {
-        $input = Input::get(array('applicant_id', 'money', 'reason'));
+        $input = Input::get(array('applicant_id', 'money', 'reason','course_id'));
         $input['time'] = date("Y-m-d");
 
         $validator = new Validator($input);
@@ -56,23 +53,16 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
     });
 
     Route::get(array('admin/advance/status/(:any)','admin/advance/status/(:any)/(:num)'), function($status, $page = 1) {
-        $total =  count(Staff::page_read_status($status));
-        $vars['ds'] =  Staff::read_status(1,$page  ,$status);
         $vars['messages'] = Notify::read();
         $vars['token'] = Csrf::token();
+        $list =   Advance::get_list_by_status($status,4,$page);
         $url = Uri::to('admin/advance/status/'.$status );
-        $pagination = new Paginator(Staff::read_status(5, $page ,$status), $total, $page, 5, $url);
+        $pagination = new Paginator($list[1], $list[0], $page, 4, $url);
         $vars['status'] = array(
             'published' => __('advance.published'),
             'draft' => __('advance.draft'),
+            'rebuff' => __('advance.rebuff')
         );
-        foreach ($pagination->results as $data){
-            if($data->user_check_id){
-                $user_check_id = $data->user_check_id;
-                $data->user_check = User::get_id($user_check_id);
-            }
-
-        }
         $vars['advance'] =  $pagination;
         return View::create('advance/index', $vars)
             ->partial('header', 'partials/header')
@@ -84,14 +74,16 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
     Route::get('admin/advance/edit/(:num)', function($id) {
         $vars['messages'] = Notify::read();
         $vars['token'] = Csrf::token();
-        $vars['staff'] = Staff::read();
-        $vars['article'] = Staff::find($id);
+        $vars['user'] = User::get_list_author();
+        $vars['article'] = Advance::find($id);
+        $vars['courses'] = Course::get_list_shortname_courses();
         $vars['page'] = Registry::get('posts_page');
 
 
         $vars['statuses'] = array(
             'published' => __('global.published'),
             'draft' => __('global.draft'),
+            'rebuff' => __('advance.rebuff')
         );
         return View::create('advance/edit', $vars)
             ->partial('header', 'partials/header')
@@ -99,8 +91,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
     });
 
     Route::post('admin/advance/edit/(:num)', function($id) {
-        $input = Input::get(array('applicant_id', 'money','time', 'reason','status'));
-             var_dump($input);
+        $input = Input::get(array('applicant_id', 'money','time', 'reason','status','course_id'));
         $validator = new Validator($input);
 
 
@@ -133,11 +124,12 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
     Route::get('admin/advance/delete/(:num)', function($id) {
         Advance::find($id)->delete();
 
-
-
         Notify::success(__('posts.deleted'));
 
         return Response::redirect('admin/advance');
     });
+
+
+
 
 });

@@ -1,3 +1,32 @@
 .table-advance td{
     padding-right: 35px;
 }
+
+.form_advance td>label{
+    background: #cdd3db;
+    text-align: left;
+}
+
+.form_advance td select{
+     margin-bottom: 1px;
+     border-radius: 5px 5px 5px 5px;
+ }
+.form_advance td input{
+    margin-bottom: 1px;
+}
+.form_advance td textarea{
+    margin-bottom: -4px;
+    border-radius: 5px 5px 5px 5px !important;
+}
+
+.advance_sidebar{
+    width : 185px;
+}
+
+.search input{
+    border: 1px solid #cdd3db;
+    border-radius: 5px;
+}
+
+
+

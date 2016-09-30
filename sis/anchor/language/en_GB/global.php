@@ -16,6 +16,8 @@ return array(
 	'update' => 'Cập nhật',
 	'updating' => 'Đang cập nhật...',
 	'edit' => 'Sửa',
+    'search' =>'Tìm kiếm',
+    'searching' => 'Đang tìm ...',
 	'editing' => 'Chỉnh sửa',
 	'create' => 'Tạo',
 	'created' => 'Đã xóa',
