@@ -1740,3 +1740,8 @@ Additional CSS for RTL Support
 	padding: 5px 10px;
 	border-bottom: solid 1px #eee;
 }
+
+.resourcecontent iframe {
+	width: 100%;
+	height: 100vh;
+}
