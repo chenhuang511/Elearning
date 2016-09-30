@@ -56,6 +56,12 @@ try {
  * Import defined routes
  */
 if(is_admin()) {
+	global $CURL;
+	$CURL = new \Curl\Curl();
+	define('TOKEN', '0dd5b4427a6f29e7a544f7799e55ed21');
+	define('TOKEN_M', 'f1d62833ac40c17e6ffb3efbef3df0ce');
+	define('HUB_URL', 'http://192.168.1.252');
+
 	// Set posts per page for admin
 	Config::set('admin.posts_per_page', 6);
 	Config::set('admin.virtual_class_equipments_per_page', 6);
