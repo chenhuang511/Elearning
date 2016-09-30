@@ -255,7 +255,7 @@ EOT;
  * @param string $mimetype
  * @return string html
  */
-function resourcelib_embed_general($fullurl, $title, $clicktoopen, $mimetype) {
+function resourcelib_embed_general($fullurl, $title, $clicktoopen, $mimetype, $initscript = true) {
     global $CFG, $PAGE;
 
     if ($fullurl instanceof moodle_url) {
@@ -273,9 +273,9 @@ function resourcelib_embed_general($fullurl, $title, $clicktoopen, $mimetype) {
   </iframe>
 </div>
 EOT;
-
-    // the size is hardcoded in the boject obove intentionally because it is adjusted by the following function on-the-fly
-    $PAGE->requires->js_init_call('M.util.init_maximised_embed', array('resourceobject'), true);
-
+    if ($initscript) {
+        // the size is hardcoded in the boject obove intentionally because it is adjusted by the following function on-the-fly
+        $PAGE->requires->js_init_call('M.util.init_maximised_embed', array('resourceobject'), true);
+    }
     return $code;
 }

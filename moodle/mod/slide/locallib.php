@@ -320,7 +320,7 @@ function slide_display_embed($slide, $cm, $course) {
 
     } else {
         // anything else - just try object tag enlarged as much as possible
-        $code = resourcelib_embed_general($fullurl, $title, $clicktoopen, $mimetype);
+        $code = resourcelib_embed_general($fullurl, $title, $clicktoopen, $mimetype, false);
     }
 
     slide_print_header($slide, $cm, $course);
