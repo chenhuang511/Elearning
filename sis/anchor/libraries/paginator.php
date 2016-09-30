@@ -7,16 +7,18 @@ class Paginator {
 	public $page = 1;
 	public $perpage = 10;
 
+	public $keysearch;
 	public $first;
 	public $last;
 	public $next;
 	public $prev;
 
-	public function __construct($results, $count, $page, $perpage, $url) {
+	public function __construct($results, $count, $page, $perpage, $url, $keysearch = '') {
 		$this->results = $results;
 		$this->count = $count;
 		$this->page = $page;
 		$this->perpage = $perpage;
+		$this->keysearch = $keysearch;
 		$this->url = rtrim($url, '/');
 
       $this->first = __('global.first');
@@ -56,6 +58,11 @@ class Paginator {
 	}
 
 	public function links() {
+		if($this->keysearch) {
+			$searchurl = '/' . $this->keysearch;
+		} else {
+			$searchurl ='';
+		}
 		$html = '';
 
 		$pages = ceil($this->count / $this->perpage);
@@ -66,8 +73,8 @@ class Paginator {
 			if($this->page > 1) {
 				$page = $this->page - 1;
 
-				$html = '<a href="' . $this->url . '">' . $this->first . '</a>
-					<a href="' . $this->url . '/' . $page . '">' . $this->prev . '</a>';
+				$html = '<a href="' . $this->url . $searchurl .'">' . $this->first . '</a>
+					<a href="' . $this->url . '/' . $page . $searchurl .'">' . $this->prev . '</a>';
 			}
 
 			for($i = $this->page - $range; $i < $this->page + $range; $i++) {
@@ -81,15 +88,15 @@ class Paginator {
 					$html .= ' <strong>' . $page . '</strong> ';
 				}
 				else {
-					$html .= ' ' . $this->link($page, $this->url . '/' . $page) . ' ';
+					$html .= ' ' . $this->link($page, $this->url . '/' . $page . $searchurl) . ' ';
 				}
 			}
 
 			if($this->page < $pages) {
 				$page = $this->page + 1;
 
-				$html .= $this->link($this->next, $this->url . '/' . $page)
-					  .  $this->link($this->last, $this->url . '/' . $pages);
+				$html .= $this->link($this->next, $this->url . '/' . $page . $searchurl)
+					  .  $this->link($this->last, $this->url . '/' . $pages . $searchurl);
 			}
 
 		}

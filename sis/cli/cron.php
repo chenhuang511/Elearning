@@ -7,7 +7,7 @@ global $mysqlconn;
 global $conn;
 //  error_reporting(ALL_ERROR);
 //@todo: need changing
-$mysqlconn = new mysqli("localhost", "root", "12345678", "anchor");
+$mysqlconn = new mysqli("localhost", "root", "vannhuthe", "anchor");
 
 // Check connection
 if ($mysqlconn->connect_error) {

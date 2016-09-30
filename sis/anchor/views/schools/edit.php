@@ -1,17 +1,8 @@
 <?php echo $header; ?>
 
 <hgroup class="wrap">
-    <h1><?php echo __('Edit school '. $school->name); ?></h1>
+    <h1><?php echo __('Thông tin trường học'); ?></h1>
 </hgroup>
-
-<?php
-$idschool = $school->remoteid;
-
-$mysqlconn = new mysqli("localhost", "root", "vannhuthe", "anchor");
-$sql = "SELECT * FROM anchor_school_student WHERE schoolid = ".$school->id;
-$result = $mysqlconn->query($sql);
-
-?>
 
 <section class="wrap">
     <?php echo $messages; ?>
@@ -24,24 +15,16 @@ $result = $mysqlconn->query($sql);
             <fieldset class="half split">
                 <p>
                     <label for="label-id"><?php echo __('id'); ?>:</label>
-                    <?php // echo Form::text('id', Input::previous('id', $school->id), array('id' => 'label-id')); ?>
                     <label id="label-id"><?php echo $school->id ?></label>
-
                 </p>
-                <?php
-                while ($row = $result->fetch_assoc())
-                {
-                    $userid = $row["userid"];
 
-                    ?>
+                <?php foreach ($schoolstudent as $schstu): ?>
                     <p>
                         <label for="label-iduser"><?php echo __('ID Student'); ?>:</label>
-                        <?php // echo Form::text('iduser', Input::previous('iduser', $userid), array('id' => 'label-iduser')); ?>
-                        <label id="label-iduser"><?php echo $userid  ?></label>
+                        <label id="label-iduser"><?php echo $schstu->id ?></label>
                     </p>
-                    <?php
-                }
-                ?>
+                <?php endforeach; ?>
+
             </fieldset>
 
             <fieldset class="half split">
@@ -55,21 +38,15 @@ $result = $mysqlconn->query($sql);
                     <label for="label-name"><?php echo __('School name'); ?>:</label>
                     <?php echo Form::text('name', Input::previous('name', $school->name), array('id' => 'label-name')); ?>
                 </p>
-                <?php
-                $result1 = $mysqlconn->query($sql);
-                while($row = $result1->fetch_assoc())
-                {
-                    $username = $row["username"];
 
-                    ?>
+                <?php foreach($schoolstudent as $schstu): ?>
                     <p>
                         <label for="label-username"><?php echo __('User Student'); ?>:</label>
                         <?php // echo Form::text('username', Input::previous('username', $username), array('id' => 'label-username')); ?>
-                        <label id="label-username"><?php echo $username ?></label>
+                        <label id="label-username"><?php echo $schstu->fullname ?></label>
                     </p>
-                    <?php
-                }
-                ?>
+                <?php endforeach;  ?>
+
             </fieldset>
             <aside class="buttons">
                 <?php echo Form::button(__('global.update'), array(

@@ -1,24 +1,9 @@
 <?php echo $header; ?>
 
 <hgroup class="wrap">
-    <h1><?php echo __('Edit student '. $student->id); ?></h1>
+    <h1><?php echo __('Thông tin học viên'); ?></h1>
 </hgroup>
 
-<?php
-    $idstudent = $student->id;
-
-    $mysqlconn = new mysqli("localhost", "root", "vannhuthe", "anchor");
-    $sql = "SELECT * FROM anchor_student_course WHERE studentid = ".$idstudent;
-    $result = $mysqlconn->query($sql);
-
-    $sqlschool = "SELECT * FROM anchor_school_student WHERE userid = ".$idstudent;
-    $resultschool = $mysqlconn->query($sqlschool);
-
-?>
-
-<?php
-
-?>
 
 <section class="wrap">
     <?php echo $messages; ?>
@@ -54,40 +39,19 @@
 <!--                    --><?php //echo Form::text('address', Input::previous('address', $student->address), array('id' => 'label-address')); ?>
 <!--                    <em>--><?php //echo __('students.address_explain'); ?><!--</em>-->
 <!--                </p>-->
-                <?php
-                    while($rowschool = $resultschool->fetch_assoc())
-                    {
-                        $schoolid = $rowschool["schoolid"];
-                        ?>
-                            <p>
-                                <label for="label-idschool"><?php echo __('ID School'); ?>:</label>
-                                <?php // echo Form::text('idschool', Input::previous('idschool', $schoolid), array('id' => 'label-idschool')); ?>
-                                <label for="label-idschool"><?php echo $schoolid ?></label>
-                            </p>
-                        <?php
-                    }
-                ?>
-                <?php
-                    while ($row = $result->fetch_assoc())
-                    {
-                        $courseid = $row["courseid"];
+                <?php foreach ($studentschool as $stusch) { ?>
+                    <p>
+                        <label for="label-idschool"><?php echo __('ID School'); ?>:</label>
+                        <label for="label-idschool"><?php echo $stusch->id ?></label>
+                    </p>
+                <?php } ?>
 
-                        $sql1 = "SELECT * FROM anchor_courses WHERE id = " . $courseid;
-                        $result1 = $mysqlconn->query($sql1);
-
-                        while ($row1 = $result1->fetch_assoc())
-                        {
-                            $id = $row1['id'];
-                            ?>
+                <?php foreach ($studentcourse as $stucou) { ?>
                             <p>
                                 <label for="label-idcourse"><?php echo __('ID Course'); ?>:</label>
-                                <?php // echo Form::text('idcourse', Input::previous('idcourse', $id), array('id' => 'label-idcourse')); ?>
-                                <label id="label-idcourse"><?php echo $id ?></label>
+                                <label id="label-idcourse"><?php echo $stucou->id ?></label>
                             </p>
-                            <?php
-                        }
-                    }
-                ?>
+                <?php } ?>
             </fieldset>
 
             <fieldset class="half split">
@@ -127,43 +91,19 @@
 <!--                    --><?php //echo Form::text('city', Input::previous('city', $student->city), array('id' => 'label-city')); ?>
 <!--                    <em>--><?php //echo __('students.city_explain'); ?><!--</em>-->
 <!--                </p>-->
-                <?php
-                    $resultschool2 = $mysqlconn->query($sqlschool);
-
-                    while($rowschool = $resultschool2->fetch_assoc())
-                    {
-                        $schoolname = $rowschool["schoolname"];
-                        ?>
+                <?php foreach ($studentschool as $stusch) { ?>
                         <p>
                             <label for="label-schoolname"><?php echo __('School Name'); ?>:</label>
-                            <?php // echo Form::text('schoolname', Input::previous('schoolname', $schoolname), array('id' => 'label-schoolname')); ?>
-                            <label id="label-schoolname"><?php echo $schoolname ?></label>
+                            <label id="label-schoolname"><?php echo $stusch->name ?></label>
                         </p>
-                        <?php
-                    }
-                ?>
-                <?php
-                    $result3 = $mysqlconn->query($sql);
+                <?php } ?>
 
-                    while($row2 = $result3->fetch_assoc())
-                    {
-                        $courseid = $row2["courseid"];
-                        $sql2 = "SELECT * FROM anchor_courses WHERE id = ".$courseid;
-                        $result4 = $mysqlconn->query($sql2);
-
-                        while($row3 = $result4->fetch_assoc())
-                        {
-                            $fullname = $row3['fullname'];
-                            ?>
-                            <p>
-                                <label for="label-fullname"><?php echo __('Course Name'); ?>:</label>
-                                <?php // echo Form::text('fullname', Input::previous('fullname', $fullname), array('id' => 'label-fullname')); ?>
-                                <label id="label-fullname"><?php echo $fullname ?></label>
-                            </p>
-                            <?php
-                        }
-                    }
-                ?>
+                <?php foreach ($studentcourse as $stucou) { ?>
+                    <p>
+                        <label for="label-fullname"><?php echo __('Course Name'); ?>:</label>
+                        <label id="label-fullname"><?php echo $stucou->fullname ?></label>
+                    </p>
+                <?php } ?>
             </fieldset>
             <aside class="buttons">
                 <?php echo Form::button(__('global.update'), array(
