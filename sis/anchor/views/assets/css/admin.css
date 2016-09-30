@@ -378,6 +378,14 @@ hgroup nav {
     background: url('../img/icons.png') no-repeat;
 }
 
+.delete_icon {
+    display: block;
+    width: 26px;
+    height: 26px;
+    margin: 0 auto 15px;
+    background: url('../img/icons.png') no-repeat;
+}
+
 .sidebar + .main {
     float: right;
     width: 760px;

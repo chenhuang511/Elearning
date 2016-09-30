@@ -41,4 +41,12 @@ $functions = array(
         'type'          => 'read',
         'ajax'          => true
     ),
+    'local_mod_remote_enrol_course' => array(
+        'classname'     => 'local_mod_enrol_external',
+        'methodname'    => 'remote_enrol_course',
+        'classpath'     => 'local/enrol/externallib.php',
+        'description'   => 'Enrol course for host',
+        'type'          => 'read',
+        'ajax'          => true
+    ),
 );

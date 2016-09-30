@@ -1,30 +1,33 @@
 <?php
+class RestClient {
 
-define('TOKEN', '');
-define('SRVDOMAIN', '');
+	private function defaulturl($options)
+	{
+		$options['domain'] = $options['domain'] ? $options['domain'] : HUB_URL;
+		$options['token'] = $options['token'] ? $options['token'] : TOKEN;
 
-function defaulturl($restname)
-{
-	return SRVDOMAIN . PATH_SEPARATE . 'ws_service.php?token=' . TOKEN;
-}
+		$serverUrl = $options['domain'] . '/webservice/rest/server.php' . '?wstoken=' .
+			$options['token'] . '&wsfunction=' .
+			$options['function_name'] . '&moodlewsrestformat=json';
 
-function dorest($method, $params)
-{
-	require __DIR__ . '/../vendor/autoload.php';
-
-	use \Curl\Curl;
-
-	$curl = new Curl();
-	$support_method = array('get', 'post');
-	
-	if(!in_array($method, $support_method)) {
-		throw new Exception("method is not supported");
+		return $serverUrl;
 	}
-	
-	return $curl->$method(defaulturl($params['restname']), $params['options']);	
-}
 
-function getgrade()
-{
-	return dorest('post', array('restname'=>'get_grade_...', 'options'=>array('')));
+	public static function dorest($params, $method = 'post')
+	{
+		global $CURL;
+
+		$support_method = array('get', 'post');
+
+		if(!in_array($method, $support_method)) {
+			throw new Exception("method is not supported");
+		}
+
+		if(!isset($params['function_name'])) {
+			throw new Exception("You need a function name");
+		}
+		$url = self::defaulturl($params);
+		
+		return $CURL->$method($url, $params['params']);
+	}
 }

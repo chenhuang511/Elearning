@@ -1,5 +1,4 @@
 <?php
-
 Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
 	/*
