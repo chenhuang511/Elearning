@@ -3,6 +3,9 @@
 <form method="post" class="form-horizontal" action="<?php echo Uri::to('admin/curriculum/add/course'); ?>"
       enctype="multipart/form-data" novalidate>
     <input name="token" type="hidden" value="<?php echo $token; ?>">
+    <div class="form-group">
+        <h4 class="step-heading">Bước 1: Tạo khóa học mới</h4>
+    </div>
     <div class="form-group notification">
         <?php
         if (count($errors) == 0) {
@@ -112,7 +115,8 @@
         <aside class="buttons">
             <?php echo Form::button(__('global.continue'), array(
                 'type' => 'submit',
-                'class' => 'btn btn-primary btn-continue'
+                'class' => 'btn btn-primary btn-continue',
+                'data-loading' => __('global.saving')
             )); ?>
             <?php echo Html::link('admin/posts', __('global.cancel'), array(
                 'class' => 'btn btn-danger btn-cancel'
@@ -121,6 +125,7 @@
     </div>
 </form>
 <script src="<?php echo asset('anchor/views/assets/js/bootstrap-datetimepicker.js'); ?>"></script>
+<script src="<?php echo asset('anchor/views/assets/js/autosave.js'); ?>"></script>
 <script type="text/javascript">
     $(function () {
         $('#datetimepicker_startdate').datetimepicker({
@@ -128,7 +133,7 @@
             startDate: new Date(),
             startView: 2,
             minView: 2,
-            format: 'dd/mm/yyyy',
+            format: 'yyyy-mm-dd',
             pickTime: false,
         });
         $('#datetimepicker_enddate').datetimepicker({
@@ -136,7 +141,7 @@
             pickTime: false,
             startView: 2,
             minView: 2,
-            format: 'dd/mm/yyyy'
+            format: 'yyyy-mm-dd'
         });
 
         $("#datetimepicker_startdate").on("changeDate", function (e) {
@@ -146,8 +151,5 @@
             $('#datetimepicker_startdate').datetimepicker('setEndDate', e.date);
         });
     });
-</script>
-<script>
-
 </script>
 <?php echo $footer; ?>

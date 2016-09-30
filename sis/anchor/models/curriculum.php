@@ -37,4 +37,24 @@ class Curriculum extends Base
 
         return array($total, $curriculumns);
     }
+
+    public static function GetDayOfWeek($date) {
+        $d = date('l', strtotime($date));
+
+        if($d == 'Monday') {
+            return 'Thứ hai';
+        } else if ($d == 'Tuesday') {
+            return 'Thứ ba';
+        } else if ($d == 'Wednesday') {
+            return 'Thứ tư';
+        } else if ($d == 'Thursday') {
+            return 'Thứ năm';
+        } else if ($d == 'Friday') {
+            return 'Thứ sáu';
+        } else if ($d == 'Saturday') {
+            return 'Thứ bảy';
+        } else {
+            return "Chủ nhật";
+        }
+    }
 }

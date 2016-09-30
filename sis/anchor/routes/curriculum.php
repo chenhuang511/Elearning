@@ -64,34 +64,67 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
             Notify::error($errors);
             return Response::redirect('admin/curriculum/add/course');
         }
-        Session::put('errors', '');
-
-
-        echo 'vao day';
-        die();
 
         $user = Auth::user();
 
-        if (!empty($input['startdate'])) {
-            $input['startdate'] = strtotime($input['startdate']);
-        }
-
-        if (!empty($input['enddate'])) {
-            $input['enddate'] = strtotime($input['enddate']);
-        }
-
+        // set remoteid = null
         $input['remoteid'] = null;
-
-        var_dump($input);
-        die();
 
         $course = Course::create($input);
 
+        $ucourse = array(
+            'userid' => $user->id,
+            'courseid' => $course->id,
+            'remoterole' => null
+        );
+
+        $usercourse = UserCourse::create($ucourse);
 
         Notify::success(__('courses.created'));
-        Session::put('errors', null);
 
-        if (Input::get('autosave') === 'true') return Response::redirect('admin/curriculum/add/topic' . $course->id);
-        else return Response::redirect('admin/posts');
+        return Response::redirect('admin/curriculum/add/topic/' . $course->id);
+    });
+
+    /*
+      Add new curriculum
+     */
+    Route::get('admin/curriculum/add/topic/(:any)', function ($courseid) {
+        $vars['errors'] = Session::get('messages.error');
+        $vars['messages'] = Notify::read();
+        $vars['token'] = Csrf::token();
+
+        $course = Course::getById($courseid);
+
+        if (!$course) {
+            Notify::warning(__('courses.notfound'));
+            return Response::redirect('admin/courses');
+        }
+
+        $dates = array();
+
+        $days = ceil(abs(strtotime($course->enddate) - strtotime($course->startdate)) / 86400);
+        $curdate = $course->startdate;
+        for ($i = 1; $i <= $days; $i++) {
+            if ($i == 1) { // start date
+                $dates[$i] = Curriculum::GetDayOfWeek($course->startdate) . ' ' . date('d-m-Y', strtotime($course->startdate));
+            } else {
+                $curdate = date('Y-m-d', strtotime('+1 day', strtotime($curdate)));
+                $dates[$i] = Curriculum::GetDayOfWeek($curdate) . ' ' . date('d-m-Y', strtotime($curdate));
+            }
+        }
+        $dates[($days + 1)] = Curriculum::GetDayOfWeek($course->enddate) . ' ' . date('d-m-Y', strtotime($course->enddate));
+        $vars['dates'] = $dates;
+
+        $teachers = User::dropdown();
+        $teachers = array_merge(array(0 => '--- Chọn giảng viên ---'), $teachers);
+
+        $vars['teachers'] = $teachers;
+
+        // extended fields
+        $vars['fields'] = Extend::fields('curriculum');
+
+        return View::create('curriculum/addtopic', $vars)
+            ->partial('header', 'partials/header')
+            ->partial('footer', 'partials/footer');
     });
 });

@@ -719,6 +719,22 @@ input[type='range'] {
     z-index: 999 !important;
 }
 
+.step-heading {
+    color: #1d1e1e;
+    border-bottom: solid 1px #ddd;
+    padding-bottom: 10px;
+}
+
+.addtopic .panel-title {
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.addtopic .topic-box {
+    display: block;
+    padding: 10px 50px;
+}
+
 /*
 	Focus mode
 */
