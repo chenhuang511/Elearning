@@ -39,10 +39,10 @@ define('HUB_URL', 'http://192.168.1.252');
  * HUB TOKEN - Nccsoft External services
  */
 //define('HOST_TOKEN', '552b1ca988aebfffb80f6f63404fbb7a');
-define('HOST_TOKEN', '0dd5b4427a6f29e7a544f7799e55ed21');
+define('HOST_TOKEN', 'b8229b71fd2e6fedbcb8e61b8a3b95a4');
 
 /**
  *  HUB TOKEN - Mobile services
 */
 //define('HOST_TOKEN_M', '55112a458cf73292710da6ed382cf668');
-define('HOST_TOKEN_M', 'f1d62833ac40c17e6ffb3efbef3df0ce');
+define('HOST_TOKEN_M', 'b8229b71fd2e6fedbcb8e61b8a3b95a4');
