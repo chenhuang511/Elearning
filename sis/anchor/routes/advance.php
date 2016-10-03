@@ -23,7 +23,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         $vars['messages'] = Notify::read();
         $vars['token'] = Csrf::token();
         $vars['course'] = Course::get_list_shortname_courses();
-        $vars['user'] = User::get_list_author('user') ;
+        $vars['user'] = User::get_list_author(1) ;
         $vars['courses'] =  Course::read();
         return View::create('advance/add', $vars)
             ->partial('header', 'partials/header')
@@ -74,7 +74,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
     Route::get('admin/advance/edit/(:num)', function($id) {
         $vars['messages'] = Notify::read();
         $vars['token'] = Csrf::token();
-        $vars['user'] = User::get_list_author();
+        $vars['user'] = User::get_list_author(1);
         $vars['article'] = Advance::find($id);
         $vars['courses'] = Course::get_list_shortname_courses();
         $vars['page'] = Registry::get('posts_page');
@@ -138,6 +138,8 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
             'key_course',
             'moneyMin',
             'moneyMax',))  ;
+        $input['key_name'] = trim($input['key_name'])  ;
+        $input['key_course'] = trim($input['key_course'])  ;
         if($input['moneyMin'] && $input['moneyMax'] && $input['key_name'] && $input['moneyMax']) {
             return Response::redirect('admin/advance');
         }
