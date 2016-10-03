@@ -11,7 +11,8 @@
 
 			<form style="float: right; margin-top: 20px;" method="get" action="<?php echo Uri::to('admin/students/search'); ?>" novalidate>
 
-				<?php echo Form::text('text-search', Input::previous('text-search'), array('id' => 'text-search')); ?>
+				<?php // echo Form::text('text-search', Input::previous('text-search'), array('id' => 'text-search')); ?>
+				<input id="text-search" type="text" name="text-search" placeholder="Tên sinh viên">
 				<?php echo Form::button('Tìm kiếm', array(
 					'class' => 'btn search blue',
 					'type' => 'submit'
@@ -31,7 +32,7 @@
 		<li>
 			<a href="<?php echo Uri::to('admin/students/edit/' . $student->id); ?>">
 				<strong><?php echo $student->id; ?></strong>
-				<span><?php echo __('Name'); ?>: <?php echo $student->fullname; ?></span>
+				<span><?php echo __('students.name'); ?>: <?php echo $student->fullname; ?></span>
 
 				<em class="highlight"><?php echo __($student->email); ?></em>
 			</a>

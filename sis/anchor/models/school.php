@@ -25,4 +25,17 @@ class School extends Base {
         return new Paginator($results, $count, $page, $perpage, Uri::to('admin/schools'));
     }
 
+    public static function search($key, $page = 1, $per_page = 10) {
+
+        $query = static::where('name', 'LIKE', '%' . $key . '%');
+
+        $total = $query->count();
+
+        // get posts
+        $posts = $query->take($per_page)
+            ->skip(--$page * $per_page)
+            ->get();
+
+        return array($total, $posts);
+    }
 }

@@ -24,9 +24,6 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
         $vars['schoolstudent'] = Student::where('schoolid', '=', $id)->get();
 
-        //echo '<pre>';
-        //var_dump($vars['student-school']);die;
-
         // extended fields
         $vars['fields'] = Extend::fields('school', $id);
 
@@ -38,15 +35,25 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
     /*
         Search school
     */
-    Route::get('admin/schools/search', function() {
+    Route::get(array('admin/schools/search', 'admin/schools/search/(:num)'), function($page = 1) {
         $vars['messages'] = Notify::read();
         $vars['token'] = Csrf::token();
-        //$key = Input::get(array('text-search'));
+        //$input = Input::get(array('text-search'));
         $key = $_GET['text-search'];
+        //$key = $input['text-search'];
+        $vars['keysearch'] = $key;
 
-        $vars['school'] = School::where('name', 'LIKE', '%' . $key . '%')->get();
+        $whatSearch = '?text-search=' . $key;
+        //Session::put($whatSearch, $whatSearch);
+        $perpage = Config::get('admin.posts_per_page');
+        list($total, $pages) = School::search($key, $page, $perpage);
+        // get public listings
 
-        //var_dump($vars['school']);die;
+        $url = Uri::to('admin/schools/search');
+
+        $pagination = new Paginator($pages, $total, $page, $perpage, $url, $whatSearch);
+
+        $vars['school'] = $pagination;
 
         return View::create('schools/search', $vars)
             ->partial('header', 'partials/header')
@@ -114,7 +121,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         $validator = new Validator($input);
 
         $validator->check('name')
-            ->is_max(3, __('schools.username_missing', 2));
+            ->is_max(3, __('schools.schoolname_missing', 2));
 
         if($errors = $validator->errors()) {
             Input::flash();

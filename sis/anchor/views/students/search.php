@@ -21,7 +21,7 @@
             <li>
                 <a href="<?php echo Uri::to('admin/students/edit/' . $stu->id); ?>">
                     <strong><?php echo $stu->id; ?></strong>
-                    <span><?php echo __('students.name'); ?>: <?php echo $stu->fullname; ?></span>
+                    <span><?php echo __('Name'); ?>: <?php echo $stu->fullname; ?></span>
                     <em class="highlight"><?php echo __($stu->email); ?></em>
                 </a>
             </li>
@@ -29,6 +29,10 @@
     </ul>
 
     <aside class="paging"><?php // echo $school->links(); ?></aside>
+
+    <aside class="buttons">
+        <?php echo Html::link('admin/students' , __('global.cancel'), array('class' => 'btn cancel blue')); ?>
+    </aside>
 
 </section>
 

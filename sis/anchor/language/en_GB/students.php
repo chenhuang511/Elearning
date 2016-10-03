@@ -2,9 +2,9 @@
 
 return array(
 
-    'students' => 'Học viên',
+    'students' => 'Sinh viên',
 
-    'create_student' => 'Tạo học viên',
+    'create_student' => 'Tạo sinh viên',
     'add_student' => 'Add a new student',
     'editing_student' => 'Editing Student Profile',
     'remembered' => 'I know my password',
@@ -25,6 +25,7 @@ return array(
     'firstname_explain' => '',
 
     'lastname' => 'Last Name',
+    'name' => 'Tên',
 
     'bio' => 'Biography',
     'bio_explain' => '',

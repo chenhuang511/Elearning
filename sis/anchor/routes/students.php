@@ -27,17 +27,6 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         // extended fields
         $vars['fields'] = Extend::fields('student', $id);
 
-//        $vars['statuses'] = array(
-//            'inactive' => __('global.inactive'),
-//            'active' => __('global.active')
-//        );
-//
-//        $vars['roles'] = array(
-//            'administrator' => __('global.administrator'),
-//            'editor' => __('global.editor'),
-//            'user' => __('global.user')
-//        );
-
         return View::create('students/edit', $vars)
             ->partial('header', 'partials/header')
             ->partial('footer', 'partials/footer');
@@ -150,7 +139,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         $validator = new Validator($input);
 
         $validator->check('fullname')
-            ->is_max(3, __('students.username_missing', 2));
+            ->is_max(4, __('students.studentname_missing', 2));
 
         $validator->check('email')
             ->is_email(__('students.email_missing'));
@@ -191,7 +180,6 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
         Student::where('id', '=', $id)->delete();
         StudentCourse::where('studentid', '=', $id)->delete();
-        //StudentSchool::where('userid', '=', $id)->delete();
 
         //Query::table(Base::table('student_meta'))->where('student', '=', $id)->delete();
 

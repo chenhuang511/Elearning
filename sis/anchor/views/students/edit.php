@@ -17,85 +17,12 @@
                 <p>
                     <label for="label-fullname"><?php echo 'Full Name' ?>:</label>
                     <?php echo Form::text('fullname', Input::previous('fullname', $student->fullname), array('id' => 'label-fullname')); ?>
-
                 </p>
-<!--                <p>-->
-<!--                    <label for="label-firstname">--><?php //echo __('students.firstname'); ?><!--:</label>-->
-<!--                    --><?php //echo Form::text('firstname', Input::previous('firstname', $student->firstname), array('id' => 'label-firstname')); ?>
-<!--                    <em>--><?php //echo __('students.firstname_explain'); ?><!--</em>-->
-<!--                </p>-->
-<!--                <p>-->
-<!--                    <label for="label-lastname">--><?php //echo __('students.lastname'); ?><!--:</label>-->
-<!--                    --><?php //echo Form::text('lastname', Input::previous('lastname', $student->lastname), array('id' => 'label-lastname')); ?>
-<!--                    <em>--><?php //echo __('students.lastname_explain'); ?><!--</em>-->
-<!--                </p>-->
-<!--                <p>-->
-<!--                    <label for="label-email">--><?php //echo __('students.email'); ?><!--:</label>-->
-<!--                    --><?php //echo Form::text('email', Input::previous('email', $student->email), array('id' => 'label-email')); ?>
-<!--                    <em>--><?php //echo __('students.email_explain'); ?><!--</em>-->
-<!--                </p>-->
-<!--                <p>-->
-<!--                    <label for="label-address">--><?php //echo __('Address'); ?><!--:</label>-->
-<!--                    --><?php //echo Form::text('address', Input::previous('address', $student->address), array('id' => 'label-address')); ?>
-<!--                    <em>--><?php //echo __('students.address_explain'); ?><!--</em>-->
-<!--                </p>-->
                 <?php foreach ($studentschool as $stusch) { ?>
                     <p>
-                        <label for="label-idschool"><?php echo __('ID School'); ?>:</label>
-                        <label for="label-idschool"><?php echo $stusch->id ?></label>
+                        <label for="label-schoolname"><?php echo __('School Name'); ?>:</label>
+                        <label id="label-schoolname"><?php echo $stusch->name ?></label>
                     </p>
-                <?php } ?>
-
-                <?php foreach ($studentcourse as $stucou) { ?>
-                            <p>
-                                <label for="label-idcourse"><?php echo __('ID Course'); ?>:</label>
-                                <label id="label-idcourse"><?php echo $stucou->id ?></label>
-                            </p>
-                <?php } ?>
-            </fieldset>
-
-            <fieldset class="half split">
-                <?php foreach($fields as $field): ?>
-                    <p>
-                        <label for="extend_<?php echo $field->key; ?>"><?php echo $field->label; ?>:</label>
-                        <?php echo Extend::html($field); ?>
-                    </p>
-                <?php endforeach; ?>
-                <p>
-                    <label for="label-email"><?php echo __('students.email'); ?>:</label>
-                    <?php echo Form::text('email', Input::previous('email', $student->email), array('id' => 'label-email')); ?>
-                    <em><?php echo __('students.email_explain'); ?></em>
-                </p>
-<!--                <p>-->
-<!--                    <label for="label-firstaccess">--><?php //echo __('First Access'); ?><!--:</label>-->
-<!--                    --><?php //echo Form::text('firstaccess', Input::previous('firstaccess', $student->firstaccess), array('id' => 'label-firstaccess')); ?>
-<!--                    <em>--><?php //echo __('students.firstaccess_explain'); ?><!--</em>-->
-<!--                </p>-->
-<!--                <p>-->
-<!--                    <label for="label-lastaccess">--><?php //echo __('Last Access'); ?><!--:</label>-->
-<!--                    --><?php //echo Form::text('lastaccess', Input::previous('lastaccess', $student->lastaccess), array('id' => 'label-lastaccess')); ?>
-<!--                    <em>--><?php //echo __('students.lastaccess_explain'); ?><!--</em>-->
-<!--                </p>-->
-<!--                <p>-->
-<!--                    <label for="label-lastlogin">--><?php //echo __('Last Login'); ?><!--:</label>-->
-<!--                    --><?php //echo Form::text('lastlogin', Input::previous('lastlogin', $student->lastlogin), array('id' => 'label-lastlogin')); ?>
-<!--                    <em>--><?php //echo __('students.lastlogin_explain'); ?><!--</em>-->
-<!--                </p>-->
-<!--                <p>-->
-<!--                    <label for="label-timecreate">--><?php //echo __('Time Created'); ?><!--:</label>-->
-<!--                    --><?php //echo Form::text('timecreate', Input::previous('timecreate', $student->timecreate), array('id' => 'label-timecreate')); ?>
-<!--                    <em>--><?php //echo __('students.timecreate_explain'); ?><!--</em>-->
-<!--                </p>-->
-<!--                <p>-->
-<!--                    <label for="label-city">--><?php //echo __('City'); ?><!--:</label>-->
-<!--                    --><?php //echo Form::text('city', Input::previous('city', $student->city), array('id' => 'label-city')); ?>
-<!--                    <em>--><?php //echo __('students.city_explain'); ?><!--</em>-->
-<!--                </p>-->
-                <?php foreach ($studentschool as $stusch) { ?>
-                        <p>
-                            <label for="label-schoolname"><?php echo __('School Name'); ?>:</label>
-                            <label id="label-schoolname"><?php echo $stusch->name ?></label>
-                        </p>
                 <?php } ?>
 
                 <?php foreach ($studentcourse as $stucou) { ?>
@@ -104,6 +31,21 @@
                         <label id="label-fullname"><?php echo $stucou->fullname ?></label>
                     </p>
                 <?php } ?>
+            </fieldset>
+
+            <fieldset class="half split">
+                <p>
+                    <label for="label-email"><?php echo __('students.email'); ?>:</label>
+                    <?php echo Form::text('email', Input::previous('email', $student->email), array('id' => 'label-email')); ?>
+                </p>
+                <p style="height: 39px;"></p>
+                <?php foreach ($studentcourse as $stucou) { ?>
+                    <p>
+                        <label id="label-point"><?php echo $stucou->grade ?></label>
+                        <a class="btn" href="#" style="margin-left: 30px">Tổng kết</a>
+                    </p>
+                <?php } ?>
+
             </fieldset>
             <aside class="buttons">
                 <?php echo Form::button(__('global.update'), array(
