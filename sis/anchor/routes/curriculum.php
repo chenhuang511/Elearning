@@ -8,7 +8,11 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
     */
     Route::get(array('admin/curriculum', 'admin/curriculum/(:any)', 'admin/curriculum/(:any)/(:num)'), function ($courseid, $page = 1) {
         $vars['messages'] = Notify::read();
-        $vars['curriculums'] = Curriculum::getByCourseId($courseid, $page, Config::get('admin.posts_per_page'));
+        $curriculums = Curriculum::getByCourseId($courseid, $page, Config::get('admin.posts_per_page'));
+        if (count($curriculums) === 0) {
+            Response::redirect('admin/curriculum/add/topic/' . $courseid);
+        }
+        $vars['curriculums'] = $curriculums;
 
         return View::create('curriculum/index', $vars)
             ->partial('header', 'partials/header')
