@@ -17,26 +17,33 @@ function remote_enrol_host($roleid, $hostid, $courseid, $methodname)
 }
 
 
-function remote_fetch_course($hostid = '')
+function remote_fetch_course($schoolid, $hubid = '')
 {
-//test
+    $shool = School::find($schoolid);
+    $domain = $shool->wwwroot;
+    $token = $shool->token;
+
     $resp = RestClient::dorest(
         array(
-            'domain' => 'http://192.168.1.17',
-            'token' => '503fd23417e674e50775369aff31ae13',
+            'domain' => $domain,
+            'token' => $token,
             'function_name'=>'local_host_fetch_course',
-            'params'=>array('hostid' => $hostid)
+            'params'=>array('hubid' => $hubid)
         ));
     return $resp;
 }
-// userid and remote id of remote
-function remote_enrol_user($roleid, $userid, $courseid)
+
+// userid and course id is of remote
+function remote_enrol_user($schoolid, $roleid, $userid, $courseid)
 {
-//test
+    $shool = School::find($schoolid);
+    $domain = $shool->wwwroot;
+    $token = $shool->token;
+
     $resp = RestClient::dorest(
         array(
-            'domain' => 'http://192.168.1.17',
-            'token' => '503fd23417e674e50775369aff31ae13',
+            'domain' => $domain,
+            'token' => $token,
             'function_name'=>'local_host_assign_role_to_user',
             'params'=>array('roleid' => $roleid,
                 'userid' => $userid,

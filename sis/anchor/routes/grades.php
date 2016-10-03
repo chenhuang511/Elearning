@@ -2,8 +2,7 @@
 Route::collection(array('before' => 'auth,csrf'), function() {
 
     Route::get(array('admin/grade', 'admin/grade/(:num)'), function($page = 1) {
-        //var_dump(remote_enrol_user(5, 5, 2)); test
-        // get public listings
+
         $userid = Auth::get_userid();
         list($total, $pages) = Course::getCoursesBy($userid, $page, $perpage = Config::get('admin.posts_per_page'));
 
