@@ -34,12 +34,12 @@
  */
 
 $functions = array(
-	'local_host_fetch_course' => array(
-		'classname'   => 'local_course_external',
-		'methodname'  => 'host_fetch_course',
-		'classpath'   => 'local/course/externallib.php',
-		'description' => "fetch course hub",
-		'type'        => 'read',
-		'ajax'        => true
+	'local_host_certificate_get_link' => array(
+		'classname'     => 'local_certificate_external',
+		'methodname'    => 'certificate_get_link',
+		'classpath'     => 'local/certificate/externallib.php',
+		'description'   => 'Get link certificate by remote id',
+		'type'		    => 'read',
+		'ajax'		    => true
 	),
 );
