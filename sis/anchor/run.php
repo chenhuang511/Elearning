@@ -58,8 +58,8 @@ try {
 if(is_admin()) {
 	global $CURL;
 	$CURL = new \Curl\Curl();
-	define('TOKEN', '0dd5b4427a6f29e7a544f7799e55ed21');
-	define('TOKEN_M', 'f1d62833ac40c17e6ffb3efbef3df0ce');
+	define('TOKEN', 'b8229b71fd2e6fedbcb8e61b8a3b95a4');
+	define('TOKEN_M', 'b8229b71fd2e6fedbcb8e61b8a3b95a4');
 	define('HUB_URL', 'http://192.168.1.252');
 
 	// Set posts per page for admin
