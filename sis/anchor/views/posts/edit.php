@@ -86,7 +86,7 @@
 			<?php foreach($fields as $field): ?>
 			<p>
 				<label for="extend_<?php echo $field->key; ?>"><?php echo $field->label; ?>:</label>
-				<?php echo Extend::html($field); ?>
+				<?php echo Extend::html(($field), array('id' => '#image', 'name' => 'image_url' )); ?>
 			</p>
 			<?php endforeach; ?>
 		</div>
@@ -103,6 +103,20 @@
 <script>
     $('textarea[name=markdown]').editor();
     $('form').changeSaver('textarea[name=markdown]');
+</script>
+<script type="text/javascript">
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#image').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    $('[name="image_url"]').change(function(){
+    readURL(this);
+});
 </script>
 
 <?php echo $footer; ?>
