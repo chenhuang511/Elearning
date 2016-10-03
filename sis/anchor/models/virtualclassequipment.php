@@ -10,7 +10,6 @@ class VirtualClassEquipment extends Base {
 
 		$count = $query->count();
 
-		//$results = $query->take($perpage)->skip(($page - 1) * $perpage)->sort('real_name', 'desc')->get();
 		$results = $query->take($perpage)->skip(($page - 1) * $perpage)->get();
 		return new Paginator($results, $count, $page, $perpage, Uri::to('admin/virtual_class_equipments'));
 	}
