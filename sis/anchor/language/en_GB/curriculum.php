@@ -12,4 +12,9 @@ return array(
 
     // labels
     'addtopic' => 'Tạo chuyên đề',
+
+    // message
+    'topicname_missing' => 'Tên chuyên đề không được để trống',
+    'teacher_missing' => 'Giảng viên thực hiện phải chọn',
+    'created' => 'Tạo lịch giảng thành công',
 );
