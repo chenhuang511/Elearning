@@ -55,6 +55,9 @@ class Auth {
         }
         return false;
     }
+    public static function au_router($router){
+            return UserRouter::get_router($router);
+    }
 	public static function me($id) {
 		return $id == Session::get(static::$session);
 	}

@@ -1,7 +1,7 @@
 <?php echo $header; ?>
 
     <form method="post" class="addtopic"
-          action="<?php echo Uri::to('admin/curriculum/add/calendar'); ?>"
+          action="<?php echo Uri::to('admin/curriculum/add/topic/' . $courseid); ?>"
           enctype="multipart/form-data" novalidate>
         <input name="token" type="hidden" value="<?php echo $token; ?>">
         <div class="form-group notification">
@@ -27,6 +27,11 @@
                                } ?>"
                                aria-controls="collapse_topic_<?php echo $key ?>">
                                 <?php echo $key . '. ' . $date ?> </a>
+
+                            <?php if ((isset($errors['topic_' . $key][0]) && $errors['topic_' . $key][0]) || (isset($errors['teacher_' . $key][0]) && $errors['teacher_' . $key][0])) { ?>
+                                <span class="text-danger"> Có lỗi<i class="fa fa-exclamation"
+                                                                    aria-hidden="true"></i></span>
+                            <?php } ?>
                         </h4>
                     </div>
                     <div class="collapse panel-collapse <?php if ($key == 1) {
@@ -49,19 +54,34 @@
                                                 'id' => 'time_' . $key
                                             )); ?>
                                         </div>
-                                        <div class="form-group">
+                                        <div class="form-group <?php if (isset($errors['topic_' . $key])) {
+                                            echo 'has-error';
+                                        } else {
+                                            echo '';
+                                        } ?>">
                                             <label for="topic"
                                                    class="control-label"><?php echo __('curriculum.topic') ?> <span
                                                     class="text-danger">*</span></label>
                                             <?php echo Form::textarea('topic_' . $key, Input::previous('topic'), array('id' => 'topic_' . $key, 'class' => 'form-control', 'rows' => 3)); ?>
+                                            <?php if (isset($errors['topic_' . $key])) { ?>
+                                                <p class="help-block"><?php echo $errors['topic_' . $key][0] ?></p>
+                                            <?php } ?>
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
-                                        <div class="form-group clearfix">
+                                        <div class="form-group clearfix <?php if (isset($errors['teacher_' . $key])) {
+                                            echo 'has-error';
+                                        } else {
+                                            echo '';
+                                        } ?>">
                                             <label for="teacher"
                                                    class="control-label"><?php echo __('curriculum.teacher') ?> <span
                                                     class="text-danger">*</span></label>
                                             <?php echo Form::select('teacher_' . $key, $teachers, Input::previous('teacher'), array('id' => 'teacher_' . $key, 'class' => 'form-control')); ?>
+                                            <input type="hidden" id="hidden_teacher_id_<?php echo $key; ?>" value="">
+                                            <?php if (isset($errors['teacher_' . $key])) { ?>
+                                                <p class="help-block"><?php echo $errors['teacher_' . $key][0] ?></p>
+                                            <?php } ?>
                                         </div>
                                         <div class="form-group">
                                             <label for="topic"
@@ -71,6 +91,8 @@
                                     </div>
                                 </div>
                                 <div class="form-group text-right">
+                                    <input type="hidden" id="id_topic_<?php echo $key; ?>"
+                                           name="id_topic_<?php echo $key; ?>" value="<?php echo $key; ?>">
                                     <input type="hidden" id="content_topic_<?php echo $key; ?>"
                                            name="content_topic_<?php echo $key; ?>" value="">
                                     <p style="font-style: italic;">(Những thông tin có <span
