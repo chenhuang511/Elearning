@@ -17,7 +17,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
     /*
         Edit student
     */
-    Route::get('admin/students/edit/(:num)', function($id) {
+    Route::get('admin/students/info/(:num)', function($id) {
         $vars['messages'] = Notify::read();
         $vars['token'] = Csrf::token();
         $vars['student'] = Student::find($id);
@@ -35,14 +35,23 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
     /*
         Search student
     */
-
-    Route::get('admin/students/search', function() {
+    Route::get(array('admin/students/search', 'admin/students/search/(:num)'), function($page = 1) {
         $vars['messages'] = Notify::read();
         $vars['token'] = Csrf::token();
-        //$key = Input::get(array('text-search'));
+        //$input = Input::get(array('text-search'));
+        //$key = $input['text-search'];
         $key = $_GET['text-search'];
 
-        $vars['student'] = Student::where('fullname', 'LIKE', '%' . $key . '%')->get();
+        $whatSearch = '?text-search=' . $key;
+        //Session::put($whatSearch, $whatSearch);
+        $perpage = Config::get('admin.posts_per_page');
+        list($total, $pages) = Student::search($key, $page, $perpage);
+
+        $url = Uri::to('admin/students/search');
+
+        $pagination = new Paginator($pages, $total, $page, $perpage, $url, $whatSearch);
+
+        $vars['student'] = $pagination;
 
         return View::create('students/search', $vars)
             ->partial('header', 'partials/header')

@@ -6,7 +6,7 @@
 	<?php if(Auth::admin()) : ?>
 	<nav>
 		<div style="float: right; margin: 20px 0 0 20px;">
-		<?php echo Html::link('admin/schools/add', __('schools.create_school'), array('class' => 'btn')); ?>
+		<?php // echo Html::link('admin/schools/add', __('schools.create_school'), array('class' => 'btn')); ?>
 		</div>
 
 		<form style="float: right; margin-top: 20px;" method="get" action="<?php echo Uri::to('admin/schools/search'); ?>" novalidate>
@@ -27,7 +27,7 @@
 	<ul class="list">
 		<?php foreach($schools->results as $school): ?>
 		<li>
-			<a href="<?php echo Uri::to('admin/schools/edit/' . $school->id); ?>">
+			<a href="<?php echo Uri::to('admin/schools/info/' . $school->id); ?>">
 				<strong><?php echo $school->id; ?></strong>
 				<span><?php echo __('schools.name'); ?>: <?php echo $school->name; ?></span>
 				<em class="highlight"><?php echo __($school->id); ?></em>

@@ -9,14 +9,15 @@
     <?php echo $messages; ?>
 
     <?php if(Auth::admin() || Auth::me($student->id)) : ?>
-        <form method="post" action="<?php echo Uri::to('admin/students/edit/' . $student->id); ?>" novalidate autocomplete="off" enctype="multipart/form-data">
+        <form method="post" action="<?php echo Uri::to('admin/students/info/' . $student->id); ?>" novalidate autocomplete="off" enctype="multipart/form-data">
 
             <input name="token" type="hidden" value="<?php echo $token; ?>">
 
             <fieldset class="half split">
                 <p>
                     <label for="label-fullname"><?php echo 'Full Name' ?>:</label>
-                    <?php echo Form::text('fullname', Input::previous('fullname', $student->fullname), array('id' => 'label-fullname')); ?>
+                    <?php // echo Form::text('fullname', Input::previous('fullname', $student->fullname), array('id' => 'label-fullname')); ?>
+                    <label id="label-fullname"><?php echo $student->fullname ?></label>
                 </p>
                 <?php foreach ($studentschool as $stusch) { ?>
                     <p>
@@ -36,7 +37,8 @@
             <fieldset class="half split">
                 <p>
                     <label for="label-email"><?php echo __('students.email'); ?>:</label>
-                    <?php echo Form::text('email', Input::previous('email', $student->email), array('id' => 'label-email')); ?>
+                    <?php // echo Form::text('email', Input::previous('email', $student->email), array('id' => 'label-email')); ?>
+                    <label id="label-email"><?php echo $student->email ?></label>
                 </p>
                 <p style="height: 39px;"></p>
                 <?php foreach ($studentcourse as $stucou) { ?>

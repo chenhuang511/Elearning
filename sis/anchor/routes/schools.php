@@ -17,7 +17,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
     /*
         Edit school
     */
-    Route::get('admin/schools/edit/(:num)', function($id) {
+    Route::get('admin/schools/info/(:num)', function($id) {
         $vars['messages'] = Notify::read();
         $vars['token'] = Csrf::token();
         $vars['school'] = School::find($id);
@@ -39,15 +39,14 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         $vars['messages'] = Notify::read();
         $vars['token'] = Csrf::token();
         //$input = Input::get(array('text-search'));
-        $key = $_GET['text-search'];
         //$key = $input['text-search'];
+        $key = $_GET['text-search'];
         $vars['keysearch'] = $key;
 
         $whatSearch = '?text-search=' . $key;
         //Session::put($whatSearch, $whatSearch);
         $perpage = Config::get('admin.posts_per_page');
         list($total, $pages) = School::search($key, $page, $perpage);
-        // get public listings
 
         $url = Uri::to('admin/schools/search');
 
