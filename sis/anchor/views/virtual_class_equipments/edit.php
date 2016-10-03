@@ -34,7 +34,10 @@
                     <tr>
                         <td>TRẠNG THÁI: </td>
                         <td>
-                            <?php echo Form::select('status', array('1' => 'Chưa được sử dụng', '0' => 'Đã được sử dụng')); ?>
+                            <select name="status">
+                                <option value="0" <?php if($virtual_class_equipments->status == 0) echo "selected"; ?>>Đã được sử dụng</option>
+                                <option value="1" <?php if($virtual_class_equipments->status == 1) echo "selected"; ?>>Chưa được sử dụng</option>
+                            </select>
                         </td>
                     </tr>
                     <tr>

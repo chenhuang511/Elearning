@@ -1,22 +1,18 @@
 <?php echo $header; ?>
 
 <hgroup class="wrap">
-    <h1><?php echo __('Quản lí thiết bị'); ?></h1>
+    <h1><?php  echo __('Kết quả tìm kiếm'); ?></h1>
+    <nav style="margin-top: 20px;">
+        <form method="get" action="<?php echo Uri::to('admin/virtual_class_equipments/search'); ?>" novalidate>
 
-    <?php if(Auth::admin()) : ?>
+            <?php echo Form::text('text-search', Input::previous('text-search'), array('id' => 'text-search')); ?>
+            <?php echo Form::button('Tìm kiếm', array(
+                'class' => 'btn search blue',
+                'type' => 'submit'
+            )); ?>
 
-    <div style="float: right; margin: 20px 0 0 20px;">
-        <?php echo Html::link('admin/virtual_class_equipments/add', __('Thêm mới'), array('class' => 'btn')); ?>
-    </div>
-
-    <?php endif; ?>
-    <form style="float: right; margin-top: 20px;" method="get" action="<?php echo Uri::to('admin/virtual_class_equipments/search'); ?>" novalidate>
-        <?php echo Form::text('text-search', Input::previous('text-search'), array('id' => 'text-search')); ?>
-        <?php echo Form::button('Tìm kiếm', array(
-            'class' => 'btn search blue',
-            'type' => 'submit'
-        )); ?>
-    </form>
+        </form>
+    </nav>
 </hgroup>
 
 <section class="wrap">
@@ -37,20 +33,20 @@
                 </tr>
             </thead>
             <tbody>
-                <?php foreach($virtual_class_equipments->results as $virtual_class_equipments): ?>
+                <?php foreach($virtual_class_equipments as $virtual_class_equipment): ?>
                     <tr>
-                        <td class="col-sm-1"><?php echo $virtual_class_equipments->id ?></td>
+                        <td class="col-sm-1"><?php echo $virtual_class_equipment->id ?></td>
                         <td class="col-sm-2">
-                            <?php echo $virtual_class_equipments->name ?>
+                            <?php echo $virtual_class_equipment->name ?>
                         </td>
                         <td class="col-sm-2">
                             <?php 
-                                if ($virtual_class_equipments->image_url == null) {
+                                if ($virtual_class_equipment->image_url == null) {
                             ?>
                                 <img src= "<?php echo asset_url('img/noimage.jpg'); ?>" style="width: 180px; height: 150px;">
                             <?php } 
                             else{ ?>
-                                <img src= "<?php echo $virtual_class_equipments->image_url; ?>" style="width: 180px; height: 150px;">    
+                                <img src= "<?php echo $virtual_class_equipment->image_url; ?>" style="width: 180px; height: 150px;">    
                             <?php } ?>
                         </td>
                         <!-- <td>
@@ -62,14 +58,14 @@
                             ?>
                         </td> -->
                         <td class="col-sm-3">
-                            <?php echo $virtual_class_equipments->description ?>
+                            <?php echo $virtual_class_equipment->description ?>
                         </td>
                         <td class="col-sm-1">
-                            <?php echo $virtual_class_equipments->quantity ?>
+                            <?php echo $virtual_class_equipment->quantity ?>
                         </td>
                         <td class="col-sm-1">
                             <?php
-                                if ($virtual_class_equipments->status == 1) {
+                                if ($virtual_class_equipment->status == 1) {
                                     echo 'Chưa được sử dụng';
                                 }
                                 else
@@ -77,14 +73,17 @@
                             ?>
                         </td>
                         <td class="col-sm-2">
-                            <a href="<?php echo Uri::to('admin/virtual_class_equipments/edit/' . $virtual_class_equipments->id); ?>" class="btn btn-primary">Sửa</a>
-                            <a href="<?php echo Uri::to('admin/virtual_class_equipments/delete/' . $virtual_class_equipments->id); ?>" class="btn btn-danger">Xóa</a>
+                            <a href="<?php echo Uri::to('admin/virtual_class_equipments/edit/' . $virtual_class_equipment->id); ?>" class="btn btn-primary">Sửa</a>
+                            <a href="<?php echo Uri::to('admin/virtual_class_equipments/delete/' . $virtual_class_equipment->id); ?>" class="btn btn-danger">Xóa</a>
                         </td>
                     </tr>
             <?php endforeach; ?>
             </tbody>
         </table>
     </ul>
+
+    <aside class="paging"><?php // echo $school->links(); ?></aside>
+
 </section>
 
 <?php echo $footer; ?>

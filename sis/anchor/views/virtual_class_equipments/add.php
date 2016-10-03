@@ -7,7 +7,6 @@
 <section class="wrap">
 	<?php echo $messages; ?>
 	<?php if(Auth::admin()) : ?>
-
 		<div class="col-md-12">
             <form action="<?php echo Uri::to('admin/virtual_class_equipments/add'); ?>" method="POST" enctype="multipart/form-data" autocomplete="off"> 
 				<input name="token" type="hidden" value="<?php echo $token; ?>">                
