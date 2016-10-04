@@ -33,7 +33,7 @@
                     <tr>
                         <td>TRẠNG THÁI: </td>
                         <td>
-                            <?php echo Form::select('status', array('1' => 'Chưa được sử dụng', '0' => 'Đã được sử dụng')); ?>
+                            <?php echo Form::select('status', array('1' => 'Chưa được sử dụng', '0' => 'Đang được sử dụng')); ?>
                         </td>
                     </tr>
                     <tr>
