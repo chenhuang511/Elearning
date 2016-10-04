@@ -27,7 +27,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         // extended fields
         $vars['fields'] = Extend::fields('student', $id);
 
-        return View::create('students/edit', $vars)
+        return View::create('students/info', $vars)
             ->partial('header', 'partials/header')
             ->partial('footer', 'partials/footer');
     });
@@ -51,7 +51,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
         $pagination = new Paginator($pages, $total, $page, $perpage, $url, $whatSearch);
 
-        $vars['student'] = $pagination;
+        $vars['students'] = $pagination;
 
         return View::create('students/search', $vars)
             ->partial('header', 'partials/header')
@@ -59,7 +59,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
     });
 
 
-    Route::post('admin/students/edit/(:num)', function($id) {
+    Route::post('admin/students/info/(:num)', function($id) {
         $input = Input::get(array('fullname', 'email'));
         //$password_reset = false;
 
@@ -95,7 +95,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
             Notify::error($errors);
 
-            return Response::redirect('admin/students/edit/' . $id);
+            return Response::redirect('admin/students/info/' . $id);
         }
 
 //        if($password_reset) {
@@ -108,7 +108,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
         Notify::success(__('students.updated'));
 
-        return Response::redirect('admin/students/edit/' . $id);
+        return Response::redirect('admin/students/info/' . $id);
     });
 
     /*
@@ -184,7 +184,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         if($self->id == $id) {
             Notify::error(__('students.delete_error'));
 
-            return Response::redirect('admin/students/edit/' . $id);
+            return Response::redirect('admin/students/info/' . $id);
         }
 
         Student::where('id', '=', $id)->delete();

@@ -16,6 +16,20 @@ class User extends Base
         return $query->fetch();
     }
 
+    public static function searchuser($key, $page = 1, $per_page = 10) {
+
+        $query = static::where('real_name', 'LIKE', '%' . $key . '%');
+
+        $total = $query->count();
+
+        // get posts
+        $posts = $query->take($per_page)
+            ->skip(--$page * $per_page)
+            ->get();
+
+        return array($total, $posts);
+    }
+
     public static function paginate($page = 1, $perpage = 10)
     {
         $query = Query::table(static::table());

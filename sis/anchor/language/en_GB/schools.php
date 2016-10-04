@@ -9,6 +9,7 @@ return array(
     'editing_school' => 'Editing School Profile',
     'remembered' => 'I know my password',
     'forgotten_password' => 'Forgotten your password?',
+    'nopages_desc' => 'Không tìm thấy trường nào.',
 
     // roles
     'administrator' => 'Admin',

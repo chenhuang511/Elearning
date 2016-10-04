@@ -120,6 +120,11 @@ select {
 		border-left: 4px solid transparent;
 	}
 
+.one-third {
+	width: 32%;
+	float: left;
+	margin-right: 1%;
+}
 
 .half {
 	float: left;
@@ -146,12 +151,12 @@ select {
 	display: inline-block;
 	float: left;
 	height: 39px;
-	padding: 0 18px;
+	padding: 0 15px;
 	text-align: center;
 	line-height: 39px;
 	-webkit-user-select: none;
-	border-radius: 5px 0 0 5px;
-	min-width: 150px;
+	border-radius: 5px;
+	min-width: 130px;
 	max-width: 350px;
 	margin: 0 5px;
 }

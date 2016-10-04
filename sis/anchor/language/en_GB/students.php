@@ -4,6 +4,8 @@ return array(
 
     'students' => 'Sinh viên',
 
+    'nopages_desc' => 'Không tìm thấy sinh viên nào.',
+
     'create_student' => 'Tạo sinh viên',
     'add_student' => 'Add a new student',
     'editing_student' => 'Editing Student Profile',
@@ -21,6 +23,8 @@ return array(
     'student_explain' => '',
 
     // form fields
+    'fullname' => 'Tên đầy đủ',
+
     'firstname' => 'First Name',
     'firstname_explain' => '',
 
