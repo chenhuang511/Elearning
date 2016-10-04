@@ -88,7 +88,7 @@
         <p class="empty posts">
             <span class="icon"></span>
             <?php echo __('posts.noposts_desc'); ?><br>
-            <?php echo Html::link('admin/posts/add', __('posts.create_post'), array('class' => 'btn')); ?>
+            <?php echo Html::link('admin/advance/add', __('advance.create_advance'), array('class' => 'btn')); ?>
         </p>
 
     <?php endif; ?>

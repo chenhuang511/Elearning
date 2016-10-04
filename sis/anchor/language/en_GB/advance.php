@@ -14,7 +14,7 @@ return array(
     'draft' => 'Đang yêu cầu',
     'rebuff' => 'Không chấp nhận',
 
-
+    'create_advance'  => 'Thêm tạm ứng mới',
     'created' => 'Tạo đơn tạm ứng thành công',
     'money_not_int' => 'Nhập lại số tiền bằng số',
     'reason_not_null' => 'Lí do xin tạm ứng còn trống',
