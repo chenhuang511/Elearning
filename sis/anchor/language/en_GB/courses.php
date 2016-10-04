@@ -21,4 +21,6 @@ return array(
 
     //messages
     'created' => 'Tạo mới khóa học thành công',
+    'updated' => 'Cập nhật thông tin khóa học thành công',
+    'course_notfound' => 'Không tìm thấy thông tin khóa học',
 );

@@ -32,9 +32,10 @@ class User extends Base
         return static::get('id', $id)[0]->username;
     }
 
-    public static function  get_list_author($auth = 1,$params = array()){
+    public static function get_list_author($auth = 1, $params = array())
+    {
         $query = static::where('role_id', '=', $auth);
-        foreach($query->sort('real_name')->get() as $item) {
+        foreach ($query->sort('real_name')->get() as $item) {
             $items[$item->id] = $item->real_name;
         }
         return $items;
@@ -66,5 +67,13 @@ class User extends Base
         }
 
         return $items;
+    }
+
+    public static function getRealName($id)
+    {
+        $user = static::where('id', '=', $id)->fetch();
+        if ($user)
+            return $user->real_name;
+        return '';
     }
 }

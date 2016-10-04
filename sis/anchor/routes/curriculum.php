@@ -6,13 +6,33 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
         index page
         display list of curriculum by courseid
     */
-    Route::get(array('admin/curriculum', 'admin/curriculum/(:any)', 'admin/curriculum/(:any)/(:num)'), function ($courseid, $page = 1) {
-        $vars['messages'] = Notify::read();
-        $curriculums = Curriculum::getByCourseId($courseid, $page, Config::get('admin.posts_per_page'));
-        if (count($curriculums) === 0) {
-            Response::redirect('admin/curriculum/add/topic/' . $courseid);
+    Route::get(array('admin/curriculum/(:any)', 'admin/curriculum/(:any)/(:num)'), function ($courseid, $page = 1) {
+
+        $course = Course::getById($courseid);
+
+        if (!$course) {
+            Notify::notice(__('courses.course_notfound'));
+            return Response::redirect('admin/curriculum/add/course');
         }
-        $vars['curriculums'] = $curriculums;
+
+        if ($course->startdate === NULL && $course->enddate === NULL) {
+            Notify::notice(__('courses.course_notfound'));
+            return Response::redirect('admin/curriculum/update/course/' . $courseid);
+        }
+
+        $vars['messages'] = Notify::read();
+
+        list($total, $curriculums) = Curriculum::getByCourseId($courseid, $page, $perpage = Config::get('admin.curriculum_per_page'));
+
+        if (count($curriculums) === 0) {
+            Notify::notice(__('curriculum.notopic'));
+            return Response::redirect('admin/curriculum/add/topic/' . $courseid);
+        }
+
+        $url = Uri::to('admin/curriculum/' . $courseid);
+        $pagination = new Paginator($curriculums, $total, $page, $perpage, $url);
+
+        $vars['pages'] = $pagination;
 
         return View::create('curriculum/index', $vars)
             ->partial('header', 'partials/header')
@@ -121,8 +141,9 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
         $dates[($days + 1)] = Curriculum::GetDayOfWeek($course->enddate) . ' ' . date('d-m-Y', strtotime($course->enddate));
         $vars['dates'] = $dates;
 
-        $teachers = User::dropdown();
-        $teachers = array_merge(array(0 => '--- Chọn giảng viên ---'), $teachers);
+        $teachers = array();
+        $teachers = $teachers + array('0' => '--- Chọn giảng viên ---');
+        $teachers = $teachers + User::dropdown();
 
         $vars['teachers'] = $teachers;
 
@@ -171,14 +192,13 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
         $count = 1;
         foreach ($input as $key => $value) {
             if (isset($input['content_topic_' . $count]) && ($key === 'content_topic_' . $count && $value === '')) {
-                    $validator->check('topic_' . $count)
-                        ->is_max(1, __('curriculum.topicname_missing'));
+                $validator->check('topic_' . $count)
+                    ->is_max(1, __('curriculum.topicname_missing'));
 
-                    $validator->check('teacher_' . $count)
-                        ->is_boolean(__('curriculum.teacher_missing'));
+                $validator->check('teacher_' . $count)
+                    ->is_boolean(__('curriculum.teacher_missing'));
                 $count++;
             }
-
         }
 
         if ($errors = $validator->errors()) {
@@ -190,16 +210,16 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
         $user = Auth::user();
 
         $icount = 1;
+
         foreach ($input as $key => $val) {
-            // choose multi topic
-            if (strpos($key, 'content_topic_') !== FALSE && strlen($val) !== 0) {
+            if ($key === 'content_topic_' . $icount && strlen($val) !== 0) {
                 $topics = json_decode($val);
                 foreach ($topics as $topic) {
                     $arr = array();
                     $arr['course'] = $course->id;
                     $arr['time'] = $dates[$icount];
                     if ($topic->timetopic !== '') {
-                        $arr['topic'] = parse('<strong>' . $topic->timetopic . '</strong> ' . $topic->name);
+                        $arr['topic'] = '<strong>' . $topic->timetopic . '</strong> ' . $topic->name;
                     } else {
                         $arr['topic'] = $topic->name;
                     }
@@ -212,11 +232,76 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
 
                     $curriculum = Curriculum::create($arr);
                 }
+                $icount++;
             }
         }
 
-        Notify::success(__('courses.created'));
+        Notify::success(__('curriculum.created'));
 
         return Response::redirect('admin/curriculum/add/course');
+    });
+
+    /*
+        Update course
+     **/
+    Route::get('admin/curriculum/update/course/(:any)', function ($courseid) {
+
+        $vars['errors'] = Session::get('messages.error');
+        $vars['messages'] = Notify::read();
+        $vars['token'] = Csrf::token();
+        $vars['course'] = Course::getById($courseid);
+
+        // extended fields
+        $vars['fields'] = Extend::fields('courses');
+
+        return View::create('curriculum/update', $vars)
+            ->partial('header', 'partials/header')
+            ->partial('footer', 'partials/footer');
+    });
+
+    Route::post('admin/curriculum/update/course/(:any)', function ($courseid) {
+        $input = Input::get(array('fullname', 'shortname', 'startdate', 'enddate', 'summary'));
+
+        // an array of items that we shouldn't encode - they're no XSS threat
+        $dont_encode = array('summary', 'css', 'js');
+
+        foreach ($input as $key => &$value) {
+            if (in_array($key, $dont_encode)) continue;
+            $value = eq($value);
+        }
+
+        $validator = new Validator($input);
+
+        $validator->check('fullname')
+            ->is_max(1, __('courses.fullname_missing'));
+
+        $validator->check('shortname')
+            ->is_max(1, __('courses.shortname_missing'));
+
+        $validator->check('startdate')
+            ->is_max(1, __('courses.startdate_missing'));
+
+        $validator->check('enddate')
+            ->is_max(1, __('courses.enddate_missing'));
+
+        $validator->check('summary')
+            ->is_max(1, __('courses.summary_missing'));
+
+        if ($errors = $validator->errors()) {
+            Input::flash();
+            Notify::error($errors);
+            return Response::redirect('admin/curriculum/update/course/' . $courseid);
+        }
+
+        $user = Auth::user();
+
+        // set remoteid = null
+        $input['remoteid'] = null;
+
+        Course::update($courseid, $input);
+
+        Notify::success(__('courses.updated'));
+
+        return Response::redirect('admin/curriculum/add/topic/' . $courseid);
     });
 });

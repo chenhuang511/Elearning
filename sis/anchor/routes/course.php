@@ -5,11 +5,18 @@ Route::collection(array('before' => 'auth,csrf'), function () {
 
         // get public listings
         $userid = Auth::get_userid();
-        list($total, $pages) = Course::getCoursesBy( null, $page, $perpage = Config::get('admin.posts_per_page'));
+        list($total, $courses) = Course::getCoursesBy(null, $page, $perpage = Config::get('admin.posts_per_page'));
+
+        foreach ($courses as $course) {
+            if ($course->startdate !== NULL && $course->enddate !== NULL) {
+                $course->startdate = date('d-m-Y', strtotime($course->startdate));
+                $course->enddate = date('d-m-Y', strtotime($course->enddate));
+            }
+        }
 
         $url = Uri::to('admin/courses');
 
-        $pagination = new Paginator($pages, $total, $page, $perpage, $url);
+        $pagination = new Paginator($courses, $total, $page, $perpage, $url);
 
         $vars['messages'] = Notify::read();
         $vars['pages'] = $pagination;

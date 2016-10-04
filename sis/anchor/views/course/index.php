@@ -21,29 +21,30 @@
                         <td>
                             <a href="<?php echo Uri::to('admin/courses/edit/' . $page->data['id']); ?>">
                                 <span class="bhxh-course">
-                                    <?php echo $page->data['fullname']; ?>
+                                    <?php echo $page->fullname; ?>
                                 </span>
                             </a>
                         </td>
                         <td><?php
-                            if (isset($page->data['startdate']) && $page->data['startdate'] !== NULL)
-                                echo date('d-m-Y', $page->data['startdate']);
+                            if ($page->startdate !== NULL)
+                                echo $page->startdate;
                             else
                                 echo 'chưa khởi tạo';
                             ?></td>
-                        <td>
-                            <?php
-                            if (isset($page->data['enddate']) && $page->data['enddate'] !== NULL)
-                                echo date('d-m-Y', $page->data['enddate']);
+                        <td><?php
+                            if ($page->enddate !== NULL)
+                                echo $page->enddate;
                             else
                                 echo 'chưa khởi tạo';
                             ?>
                         </td>
                         <td>
-                            <a href="<?php echo Uri::to('admin/curriculum/' . $page->data['id']); ?>" class="btn btn-primary">lịch giảng</a>
+                            <a href="<?php echo Uri::to('admin/curriculum/' . $page->id); ?>"
+                               class="btn btn-primary">lịch giảng</a>
                         </td>
                         <td>
-                            <a href="<?php echo Uri::to('admin/grade/course/' . $page->data['id']); ?>" class="btn btn-primary">quản lý điểm</a>
+                            <a href="<?php echo Uri::to('admin/grade/course/' . $page->id); ?>"
+                               class="btn btn-primary">quản lý điểm</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
