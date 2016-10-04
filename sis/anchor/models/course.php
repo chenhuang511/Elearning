@@ -93,6 +93,6 @@ class Course extends Base
 
     public static function getById($courseid)
     {
-        return static::where('id', '=', $courseid)->fetch();
+        return static::find($courseid);
     }
 }

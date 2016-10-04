@@ -16,7 +16,8 @@ class User extends Base
         return $query->fetch();
     }
 
-    public static function searchuser($key, $page = 1, $per_page = 10) {
+    public static function searchuser($key, $page = 1, $per_page = 10)
+    {
 
         $query = static::where('real_name', 'LIKE', '%' . $key . '%');
 
@@ -46,9 +47,10 @@ class User extends Base
         return static::get('id', $id)[0]->username;
     }
 
-    public static function  get_list_author($auth = 1,$params = array()){
+    public static function get_list_author($auth = 1, $params = array())
+    {
         $query = static::where('role_id', '=', $auth);
-        foreach($query->sort('real_name')->get() as $item) {
+        foreach ($query->sort('real_name')->get() as $item) {
             $items[$item->id] = $item->real_name;
         }
         return $items;
@@ -82,9 +84,16 @@ class User extends Base
         return $items;
     }
 
-    public static function get_user_check($id = 1){
-        $query = static::where('id', '=', $id);
+    public static function getRealName($id)
+    {
+        $user = self::getUserById($id);
+        if ($user)
+            return $user->real_name;
+        return '';
+    }
 
-        return $query->fetch();
+    public static function getUserById($id = 1)
+    {
+        return static::find($id);
     }
 }
