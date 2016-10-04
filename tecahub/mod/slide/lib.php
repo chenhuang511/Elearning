@@ -295,7 +295,7 @@ function slide_export_contents($cm, $baseurl) {
  */
 function slide_dndupload_register() {
     return array('types' => array(
-                     array('identifier' => 'slide', 'message' => get_string('createurl', 'slide'))
+                     array('identifier' => 'url', 'message' => get_string('createurl', 'slide'))
                  ));
 }
 
