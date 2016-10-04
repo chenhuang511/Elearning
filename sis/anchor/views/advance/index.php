@@ -27,7 +27,7 @@
     <?php if($advance->results): ?>
         <ul class="main list list_advance" href="" >
             <form action="<?php echo Uri::to('admin/advance/search'); ?>" method="get" class="pull-right form-inline mb10">
-                <div class="form-group" >
+                <div class="form-group" style="margin-bottom: 5px;" >
                     <label for="gradeMin">Tiền</label>
                     <?php echo Form::number('moneyMin', Input::get('gradeMin'), array('class' => 'form-control', 'id' => 'moneyMin')); ?>
                     <label for="gradeMax">Tới</label>
@@ -40,14 +40,14 @@
                 </div>
                 <?php echo Form::button( __('Tìm Kiếm'), array('type' => 'submit', 'class' => 'btn btn-primary', 'id' => 'search_')); ?>
             </form>
-            <table class="sort-table table table-hover" id="mytable">
+            <table class="sort-table table table-hover table-responsive" id="mytable">
                 <thead>
                 <tr>
                     <th>Mã</th>
                     <th>Khóa học</th>
                     <th>Người yêu cầu</th>
                     <th>Số tiền</th>
-                    <td>Trạng thái</td>
+                    <th>Trạng thái</th>
                     <th>Thời gian yêu cầu</th>
                     <th>Thời gian xét duyệt</th>
                     <td></td>

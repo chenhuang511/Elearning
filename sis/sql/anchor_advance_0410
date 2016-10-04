@@ -1,0 +1,2 @@
+ALTER TABLE `anchor_advance` CHANGE `time` `time_request` DATE NOT NULL;
+ALTER TABLE `anchor_advance` ADD `time_response` DATE NOT NULL AFTER `time_request`;

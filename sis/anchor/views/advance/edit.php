@@ -65,8 +65,8 @@
                             echo 'Chưa được xét duyệt';
                         } else{
                             ?>
-                            <div class='input-group date' id='datetimepicker_startdate'>
-                                <?php echo Form::text('time_response', Input::previous('time_response',$article->time_response), array('id' => 'label-time datetimepicker_startdate')); ?>
+                            <div class='input-group date' id='datetimepicker_enddate'>
+                                <?php echo Form::text('time_response', Input::previous('time_response',$article->time_response), array('id' => 'label-time datetimepicker_enddate')); ?>
                                 <span class="input-group-addon">
                             <i class="fa fa-calendar" aria-hidden="true"></i>
                         </span>

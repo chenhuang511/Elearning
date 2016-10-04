@@ -88,7 +88,6 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
             $vars['user_check'] = null;
         }
 
-        var_dump($vars['user_check']->real_name);
         $vars['page'] = Registry::get('posts_page');
 
 
