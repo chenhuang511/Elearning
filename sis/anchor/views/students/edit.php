@@ -45,7 +45,7 @@
                     <p>
                         <label id="label-point"><?php echo $stucou->grade ?></label>
                         <?php
-                        $certificate = remote_get_link_certificate($stucou->schoolid, $stucou->id, $stucou->id);
+                        $certificate = remote_get_link_certificate($stucou->schoolid, $stucou->studentid, $stucou->id);
                         if ( $certificate != 'false' && !empty($certificate)) { ?>
                             <a target="_blank" class="btn" href="<?php echo $certificate; ?>" style="margin-left: 30px">Tổng kết</a>
                         <?php } else { ?>
