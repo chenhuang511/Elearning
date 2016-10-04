@@ -4,7 +4,6 @@
     <h1><?php echo __('Quản lí thiết bị'); ?></h1>
 
     <?php if(Auth::admin()) : ?>
-
     <div style="float: right; margin: 20px 0 0 20px;">
         <?php echo Html::link('admin/virtual_class_equipments/add', __('Thêm mới'), array('class' => 'btn')); ?>
     </div>

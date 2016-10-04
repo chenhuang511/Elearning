@@ -95,33 +95,13 @@ class Extend extends Base {
 				break;
 
 			case 'image':
-				$value = isset($item->value->filename) ? $item->value->filename : '';
-
-				$html = '<span class="img">';
-
-				if($value) {
-					$html .= '<img src ="' . asset('content/' . $value) . '" target="_blank" width= "180px" height= "150px">' ;
-				}
-
-				$html .= '</span>
-					<span class="file">
-					<input id="extend_' . $item->key . '" name="extend[' . $item->key . ']" type="file">
-					</span>';
-
-				if($value) {
-					$html .= '</p><p>
-					<label>' . __('global.delete') . ' ' . $item->label . ':</label>
-					<input type="checkbox" name="extend_remove[' . $item->key . ']" value="1">';
-				}
-
-				break;
 			case 'file':
 				$value = isset($item->value->filename) ? $item->value->filename : '';
 
 				$html = '<span class="current-file">';
 
 				if($value) {
-					$html .= '<a ="' . asset('content/' . $value) . '" target="_blank">' . $value . '</a>';
+					$html .= '<a href="' . asset('content/' . $value) . '" target="_blank">' . $value . '</a>';
 				}
 
 				$html .= '</span>

@@ -14,14 +14,11 @@
     <?php echo $messages; ?>
 
     <nav class="sidebar advance_sidebar">
-        <nav class="statuses" style="margin-bottom: 40px">
+        <nav class="sidebar statuses">
             <p>Tình trạng</p>
-            <?php echo Html::link('admin/advance', '<span class="icon"></span> ' . __('global.all'), array(
-                'class' => isset($status) ? ($status == 'all' ? 'active' : '') : ''
-            )); ?>
-            <?php foreach(array('published', 'draft','rebuff') as $type): ?>
-                <?php echo Html::link('admin/advance/status/' . $type, '<span class="icon"></span> ' . __('advance.' . $type), array(
-                    'class' => ($status == $type) ? 'active' : ''
+            <?php foreach($statuses as $data): extract($data); ?>
+                <?php echo Html::link('admin/advance' . $url, '<span class="icon"></span> ' . __($lang), array(
+                    'class' => (isset($status) && $status == $url ? 'active ' : '') .$class
                 )); ?>
             <?php endforeach; ?>
         </nav>
@@ -37,10 +34,10 @@
                     <?php echo Form::number('moneyMax', Input::get('gradeMax'), array('class' => 'form-control', 'id' => 'moneyMax')); ?>
                 </div>
                 <div class="form-group">
-                    <?php echo Form::text('key_course', Input::get('key'), array('class' => 'form-control', 'placeholder' => 'Khóa học')); ?>
-                    <?php echo Form::text('key_name', Input::get('key'), array('class' => 'form-control', 'placeholder' => 'Tên sinh viên')); ?>
+                    <?php echo Form::text('key_course', Input::get('key'), array('class ' => 'form-control', 'placeholder' => 'Khóa học','id' => 'key_course')); ?>
+                    <?php echo Form::text('key_name', Input::get('key'), array('class' => 'form-control', 'placeholder' => 'Tên sinh viên','id' => 'key_name')); ?>
                 </div>
-                <?php echo Form::button( __('Tìm Kiếm'), array('type' => 'submit', 'class' => 'btn btn-primary')); ?>
+                <?php echo Form::button( __('Tìm Kiếm'), array('type' => 'submit', 'class' => 'btn btn-primary', 'id' => 'search_')); ?>
             </form>
             <table class="sort-table table table-hover" id="mytable">
                 <thead>
@@ -91,7 +88,7 @@
         <p class="empty posts">
             <span class="icon"></span>
             <?php echo __('posts.noposts_desc'); ?><br>
-            <?php echo Html::link('admin/posts/add', __('posts.create_post'), array('class' => 'btn')); ?>
+            <?php echo Html::link('admin/advance/add', __('advance.create_advance'), array('class' => 'btn')); ?>
         </p>
 
     <?php endif; ?>
@@ -100,6 +97,8 @@
 <script type="text/javascript">
     $(document).ready(function() {
         $('#mytable').tablesorter();
+
     } );
+
 </script>
 <?php echo $footer; ?>

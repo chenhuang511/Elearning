@@ -35,7 +35,7 @@
                         <td>TRẠNG THÁI: </td>
                         <td>
                             <select name="status">
-                                <option value="0" <?php if($virtual_class_equipments->status == 0) echo "selected"; ?>>Đã được sử dụng</option>
+                                <option value="0" <?php if($virtual_class_equipments->status == 0) echo "selected"; ?>>Đang được sử dụng</option>
                                 <option value="1" <?php if($virtual_class_equipments->status == 1) echo "selected"; ?>>Chưa được sử dụng</option>
                             </select>
                         </td>
@@ -44,7 +44,7 @@
                         <td>ẢNH: </td>
                         <td>
                         	<?php echo Form::file('image_url'); ?>
-                            <img src="<?php echo $virtual_class_equipments->image_url; ?>" id="image"/>
+                            <img src="<?php echo $virtual_class_equipments->image_url; ?>" id="image" height="150px" width="180px"/>
                         </td>
                     </tr>
                     </tbody>
