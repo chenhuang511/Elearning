@@ -34,7 +34,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
     Route::post('admin/advance/add', function() {
         $input = Input::get(array('applicant_id', 'money', 'reason','course_id'));
-        $input['time'] = date("Y-m-d");
+        $input['time_request'] = date("Y-m-d");
 
         $validator = new Validator($input);
         $validator->check('money')
@@ -82,6 +82,12 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         $vars['user'] = User::get_list_author(1);
         $vars['article'] = Advance::find($id);
         $vars['courses'] = Course::get_list_shortname_courses();
+        if( $vars['article']->user_check_id != 0){
+            $vars['user_check'] = User::get_user_check($vars['article']->user_check_id) ;
+        } else {
+            $vars['user_check'] = null;
+        }
+
         $vars['page'] = Registry::get('posts_page');
 
 
@@ -96,14 +102,16 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
     });
 
     Route::post('admin/advance/edit/(:num)', function($id) {
-        $input = Input::get(array('applicant_id', 'money','time', 'reason','status','course_id'));
+        $input = Input::get(array('applicant_id', 'money','time_request','time_response', 'reason','status','course_id'));
         $validator = new Validator($input);
-
 
         $validator->check('money')
             ->is_regex('#^[0-9]{1,9}$#',__('advance.money_not_int'));
 
-        $validator->check('time')
+        $validator->check('time_request')
+            ->is_regex('#^[0-9]{4}\-[0-9]{2}\-[0-9]{2}$#', __('posts.time_invalid'));
+
+        $validator->check('time_response')
             ->is_regex('#^[0-9]{4}\-[0-9]{2}\-[0-9]{2}$#', __('posts.time_invalid'));
 
         if($errors = $validator->errors()) {
@@ -116,6 +124,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         $user = Auth::user();
         if($input['status'] == 'published' || $input['status'] == 'rebuff'){
             $input['user_check_id'] =  $user->id;
+            $input['time_response'] =   date("Y-m-d");
         }
         Advance::update($id, $input);
 
@@ -139,13 +148,16 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         $vars['messages'] = Notify::read();
         $vars['token'] = Csrf::token();
 
-        $input =  Input::get(array('key_name',
+        $input =  Input::get(array(
+            'key_name',
             'key_course',
+            'key_id',
             'moneyMin',
             'moneyMax',))  ;
         $input['key_name'] = trim($input['key_name'])  ;
         $input['key_course'] = trim($input['key_course'])  ;
-        if($input['moneyMin'] && $input['moneyMax'] && $input['key_name'] && $input['moneyMax']) {
+        $input['key_id'] = trim($input['key_id'])  ;
+        if($input['moneyMin'] && $input['moneyMax'] && $input['key_name'] && $input['moneyMax'] && $input['key_id']) {
             return Response::redirect('admin/advance');
         }
         foreach($input as $key => &$value) {
@@ -160,11 +172,11 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
             return Response::redirect('admin/posts/edit/');
         }
-        $whatSearch = '?moneyMin=' . $input['moneyMin'] . '&moneyMax=' . $input['moneyMax'] . '&key_name=' . $input['key_name']. '&key_course=' . $input['key_course'];
+        $whatSearch = '?moneyMin=' . $input['moneyMin'] . '&moneyMax=' . $input['moneyMax'] . '&key_name=' . $input['key_name']. '&key_course=' . $input['key_course'] . '&key_id=' . $input['key_id'];
 
-        $list = Advance::get_list_advance_by_key(4,$page,$input['key_name'], $input['key_course'], $input['moneyMin'],$input['moneyMax']);
+        $list = Advance::get_list_advance_by_key(10,$page,$input['key_name'], $input['key_course'], $input['moneyMin'],$input['moneyMax'],$input['key_id']);
         $url = Uri::to('admin/advance/search');
-        $pagination = new Paginator($list[1], $list[0], $page, 4, $url,$whatSearch);
+        $pagination = new Paginator($list[1], $list[0], $page, 10, $url,$whatSearch);
         $vars['statuses'] = array(
             array('url' => '', 'lang' => 'global.all', 'class' => ''),
             array('url' => '/status/published', 'lang' => 'advance.published', 'class' => 'approved'),

@@ -31,7 +31,7 @@
         <div class="wrap">
             <table class="form_advance">
                 <tr>
-                    <td> <label for="label-slug"><?php echo __('advance.applicant'); ?>:</label></td>
+                    <td> <label for="label-slug"><?php echo __('advance.courses'); ?>:</label></td>
                     <td><?php echo Form::select('course_id', $course, Input::previous('applicant_id'), array('id' => 'label-course_id')); ?></td>
                 </tr>
                 <tr>

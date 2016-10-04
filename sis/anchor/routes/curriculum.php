@@ -170,16 +170,13 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
         $validator = new Validator($input);
         $count = 1;
         foreach ($input as $key => $value) {
-
-            if ((strpos($key, 'content_topic_') !== FALSE && strlen($value) === 0)) {
-                if (!$input['topic_1'] || !$input['teacher_1']) {
+            if (isset($input['content_topic_' . $count]) && ($key === 'content_topic_' . $count && $value === '')) {
                     $validator->check('topic_' . $count)
                         ->is_max(1, __('curriculum.topicname_missing'));
 
                     $validator->check('teacher_' . $count)
                         ->is_boolean(__('curriculum.teacher_missing'));
-                    $count++;
-                }
+                $count++;
             }
 
         }

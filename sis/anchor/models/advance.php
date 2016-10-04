@@ -28,9 +28,12 @@ class Advance extends Base {
         return array($total, $advance);
     }
 
-    public static function get_list_advance_by_key($perpage, $page = 1,$key_name='',$key_course='', $moneyMin='',$moneyMax='') {
+    public static function get_list_advance_by_key($perpage, $page = 1,$key_name='',$key_course='', $moneyMin='',$moneyMax='',$key_id='') {
         $query = static::join(Base::table('courses'), Base::table('courses.id'), '=', Base::table('advance.course_id'))
             ->join(Base::table('users'), Base::table('users.id'), '=', Base::table('advance.applicant_id'));
+        if($key_id) {
+            $query = $query->where(Base::table('advance.id'), 'like', '%' . $key_id . '%');
+        }
         if($key_name) {
             $query = $query->where(Base::table('users.real_name'), 'like', '%' . $key_course . '%');
         }

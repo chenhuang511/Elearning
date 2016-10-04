@@ -44,8 +44,10 @@
                 <?php foreach ($studentcourse as $stucou) { ?>
                     <p>
                         <label id="label-point"><?php echo $stucou->grade ?></label>
-                        <?php if (remote_get_link_certificate($stucou->schoolid, $stucou->id, $stucou->id) != 'false') { ?>
-                            <a target="_blank" class="btn" href="<?php echo remote_get_link_certificate($stucou->schoolid, $stucou->id, $stucou->id); ?>" style="margin-left: 30px">Tổng kết</a>
+                        <?php
+                        $certificate = remote_get_link_certificate($stucou->schoolid, $stucou->id, $stucou->id);
+                        if ( $certificate != 'false' && !empty($certificate)) { ?>
+                            <a target="_blank" class="btn" href="<?php echo $certificate; ?>" style="margin-left: 30px">Tổng kết</a>
                         <?php } else { ?>
                             <a class="btn" href="#" style="margin-left: 30px">Tổng kết</a>
                         <?php } ?>
