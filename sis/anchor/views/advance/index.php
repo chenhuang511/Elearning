@@ -13,7 +13,7 @@
 <section class="wrap">
     <?php echo $messages; ?>
 
-    <nav class="sidebar advance_sidebar">
+    <nav class="sidebar ">
         <nav class="sidebar statuses">
             <p>Tình trạng</p>
             <?php foreach($statuses as $data): extract($data); ?>
@@ -33,7 +33,7 @@
                     <label for="gradeMax">Tới</label>
                     <?php echo Form::number('moneyMax', Input::get('gradeMax'), array('class' => 'form-control', 'id' => 'moneyMax')); ?>
                 </div>
-                <div class="form-group" >
+                <div class="form-group input_key_advance" >
                     <?php echo Form::text('key_course', Input::get('key'), array('class ' => 'form-control key_form', 'placeholder' => 'Khóa học','id' => 'key_course')); ?>
                     <?php echo Form::text('key_name', Input::get('key'), array('class' => 'form-control key_form', 'placeholder' => 'Tên sinh viên','id' => 'key_name')); ?>
                     <?php echo Form::text('key_id', Input::get('key'), array('class' => 'form-control key_form', 'placeholder' => 'Mã tạm ứng','id' => 'key_id')); ?>
@@ -67,7 +67,7 @@
 
                                 <td><?php echo $page->data['money']; ?></td>
 
-                                <td><?php echo __('advance.'.$page->data['status']); ?></td>
+                                <td><em><?php echo __('advance.'.$page->data['status']); ?></em></td>
 
                                 <td><?php echo $page->data['time_request']; ?></td>
                                 <td>
@@ -78,8 +78,8 @@
                                         echo 'Chưa được xét duyệt';
                                     ?></td>
 
-                                <td><a href="<?php echo Uri::to('admin/advance/edit/' .  $page->data['id']); ?>" class="btn btn-primary">Chỉnh sửa</a></td>
-                                <td><a href="<?php echo Uri::to('admin/advance/delete/' .  $page->data['id']); ?>" class="delete btn btn-primary">Xóa</a></td>
+                                <td><a href="<?php echo Uri::to('admin/advance/edit/' .  $page->data['id']); ?>" class="btn">Chỉnh sửa</a></td>
+                                <td><a href="<?php echo Uri::to('admin/advance/delete/' .  $page->data['id']); ?>" class="btn delete red ">Xóa</a></td>
                             </tr>
 
                     <?php endforeach; ?>

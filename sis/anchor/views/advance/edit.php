@@ -32,7 +32,7 @@
     </fieldset>
 
 
-    <fieldset class="meta split">
+    <fieldset class="meta split " style="width: 900px !important;">
         <div class="wrap">
             <table class="form_advance">
                 <tr >
@@ -62,7 +62,10 @@
                     <td><label for="label-status"><?php echo __('advance.time_response'); ?>:</label></td>
                     <td> <?php
                         if ($article->time_response == "0000-00-00"){
-                            echo 'Chưa được xét duyệt';
+                            ?>
+                            <label for="label-slug" style="padding-left: 0px !important;"><?php echo 'Chưa được xét duyệt'; ?></label>
+                            <?php
+
                         } else{
                             ?>
                             <div class='input-group date' id='datetimepicker_enddate'>

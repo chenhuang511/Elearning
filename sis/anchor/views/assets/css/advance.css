@@ -29,12 +29,19 @@
 }
 
 .list_advance{
-    width: 880px !important;
+    width: 955px !important;
 }
 
-#moneyMin,#moneyMax{
-    width: 120px;
+.key_form{
+    width: 120px !important;
+
 }
+
+#mytable>thead>tr>th{
+    vertical-align: top !important;
+}
+
+
 
 
 

@@ -174,9 +174,9 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         }
         $whatSearch = '?moneyMin=' . $input['moneyMin'] . '&moneyMax=' . $input['moneyMax'] . '&key_name=' . $input['key_name']. '&key_course=' . $input['key_course'] . '&key_id=' . $input['key_id'];
 
-        $list = Advance::get_list_advance_by_key(4,$page,$input['key_name'], $input['key_course'], $input['moneyMin'],$input['moneyMax'],$input['key_id']);
+        $list = Advance::get_list_advance_by_key(10,$page,$input['key_name'], $input['key_course'], $input['moneyMin'],$input['moneyMax'],$input['key_id']);
         $url = Uri::to('admin/advance/search');
-        $pagination = new Paginator($list[1], $list[0], $page, 4, $url,$whatSearch);
+        $pagination = new Paginator($list[1], $list[0], $page, 10, $url,$whatSearch);
         $vars['statuses'] = array(
             array('url' => '', 'lang' => 'global.all', 'class' => ''),
             array('url' => '/status/published', 'lang' => 'advance.published', 'class' => 'approved'),
