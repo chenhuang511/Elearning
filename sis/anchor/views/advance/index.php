@@ -25,17 +25,18 @@
 
     </nav>
     <?php if($advance->results): ?>
-        <ul class="main list list_advance" href="">
+        <ul class="main list list_advance" href="" >
             <form action="<?php echo Uri::to('admin/advance/search'); ?>" method="get" class="pull-right form-inline mb10">
-                <div class="form-group">
+                <div class="form-group" >
                     <label for="gradeMin">Tiền</label>
                     <?php echo Form::number('moneyMin', Input::get('gradeMin'), array('class' => 'form-control', 'id' => 'moneyMin')); ?>
                     <label for="gradeMax">Tới</label>
                     <?php echo Form::number('moneyMax', Input::get('gradeMax'), array('class' => 'form-control', 'id' => 'moneyMax')); ?>
                 </div>
-                <div class="form-group">
-                    <?php echo Form::text('key_course', Input::get('key'), array('class ' => 'form-control', 'placeholder' => 'Khóa học','id' => 'key_course')); ?>
-                    <?php echo Form::text('key_name', Input::get('key'), array('class' => 'form-control', 'placeholder' => 'Tên sinh viên','id' => 'key_name')); ?>
+                <div class="form-group" >
+                    <?php echo Form::text('key_course', Input::get('key'), array('class ' => 'form-control key_form', 'placeholder' => 'Khóa học','id' => 'key_course')); ?>
+                    <?php echo Form::text('key_name', Input::get('key'), array('class' => 'form-control key_form', 'placeholder' => 'Tên sinh viên','id' => 'key_name')); ?>
+                    <?php echo Form::text('key_id', Input::get('key'), array('class' => 'form-control key_form', 'placeholder' => 'Mã tạm ứng','id' => 'key_id')); ?>
                 </div>
                 <?php echo Form::button( __('Tìm Kiếm'), array('type' => 'submit', 'class' => 'btn btn-primary', 'id' => 'search_')); ?>
             </form>
@@ -47,7 +48,8 @@
                     <th>Người yêu cầu</th>
                     <th>Số tiền</th>
                     <td>Trạng thái</td>
-                    <th>Thời gian</th>
+                    <th>Thời gian yêu cầu</th>
+                    <th>Thời gian xét duyệt</th>
                     <td></td>
                     <td></td>
                 </tr>
@@ -67,10 +69,17 @@
 
                                 <td><?php echo __('advance.'.$page->data['status']); ?></td>
 
-                                <td><?php echo $page->data['time']; ?></td>
+                                <td><?php echo $page->data['time_request']; ?></td>
+                                <td>
+                                    <?php
+                                    if (isset($page->data['time_response']) && $page->data['time_response'] !== '0000-00-00')
+                                        echo $page->data['time_response'];
+                                    else
+                                        echo 'Chưa được xét duyệt';
+                                    ?></td>
 
-                                <td><a href="<?php echo Uri::to('admin/advance/edit/' .  $page->data['id']); ?>">Chỉnh sửa</a></td>
-                                <td><a href="<?php echo Uri::to('admin/advance/delete/' .  $page->data['id']); ?>" class="delete">Xóa</a></td>
+                                <td><a href="<?php echo Uri::to('admin/advance/edit/' .  $page->data['id']); ?>" class="btn btn-primary">Chỉnh sửa</a></td>
+                                <td><a href="<?php echo Uri::to('admin/advance/delete/' .  $page->data['id']); ?>" class="delete btn btn-primary">Xóa</a></td>
                             </tr>
 
                     <?php endforeach; ?>

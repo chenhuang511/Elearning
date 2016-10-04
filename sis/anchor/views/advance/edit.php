@@ -48,8 +48,36 @@
                     <td><?php echo Form::text('money', Input::previous('money',$article->money), array('id' => 'label-money')); ?></td>
                 </tr>
                 <tr>
-                    <td><label for="label-status"><?php echo __('advance.time'); ?>:</label></td>
-                    <td> <?php echo Form::text('time', Input::previous('time',$article->time), array('id' => 'label-time')); ?></td>
+                    <td><label for="label-status"><?php echo __('advance.time_request'); ?>:</label></td>
+                    <td>
+                        <div class='input-group date' id='datetimepicker_startdate'>
+                        <?php echo Form::text('time_request', Input::previous('time_request',$article->time_request), array('id' => 'label-time datetimepicker_startdate')); ?>
+                            <span class="input-group-addon">
+                            <i class="fa fa-calendar" aria-hidden="true"></i>
+                        </span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="label-status"><?php echo __('advance.time_response'); ?>:</label></td>
+                    <td> <?php
+                        if ($article->time_response == "0000-00-00"){
+                            echo 'Chưa được xét duyệt';
+                        } else{
+                            ?>
+                            <div class='input-group date' id='datetimepicker_startdate'>
+                                <?php echo Form::text('time_response', Input::previous('time_response',$article->time_response), array('id' => 'label-time datetimepicker_startdate')); ?>
+                                <span class="input-group-addon">
+                            <i class="fa fa-calendar" aria-hidden="true"></i>
+                        </span>
+                            </div>
+
+                            <?php
+                        }
+
+                        ?>
+
+                    </td>
                 </tr>
                 <tr>
                     <td><label for="label-description"><?php echo __('advance.reason'); ?>:</label></td>
@@ -59,6 +87,17 @@
                     <td><label for="label-slug"><?php echo __('advance.status'); ?>:</label></td>
                     <td><?php echo Form::select('status',  ['draft' => 'Đang yêu cầu', 'published' => 'Chấp nhận','rebuff' => 'Từ chối yêu cầu'], Input::previous('status', $article->status), array('id' => 'label-applicant_id' )); ?></td>
                 </tr>
+                <?php
+                    if($user_check){
+                        ?>
+                        <tr>
+                            <td><label for="label-slug">Người xét duyệt:</label></td>
+                            <td><label for="label-slug"><?php echo $user_check->real_name; ?></label></td>
+                        </tr>
+
+                        <?php
+                    }
+                ?>
 
             </table>
 
@@ -66,5 +105,32 @@
 
     </fieldset>
 </form>
+<script src="<?php echo asset('anchor/views/assets/js/bootstrap-datetimepicker.js'); ?>"></script>
+<script src="<?php echo asset('anchor/views/assets/js/autosave.js'); ?>"></script>
+<script type="text/javascript">
+    $(function () {
+        $('#datetimepicker_startdate').datetimepicker({
+            language: 'fr',
+            startDate: new Date(),
+            startView: 2,
+            minView: 2,
+            format: 'yyyy-mm-dd',
+            pickTime: false,
+        });
+        $('#datetimepicker_enddate').datetimepicker({
+            language: 'fr',
+            pickTime: false,
+            startView: 2,
+            minView: 2,
+            format: 'yyyy-mm-dd'
+        });
 
+        $("#datetimepicker_startdate").on("changeDate", function (e) {
+            $('#datetimepicker_enddate').datetimepicker('setStartDate', e.date);
+        });
+        $("#datetimepicker_enddate").on("changeDate", function (e) {
+            $('#datetimepicker_startdate').datetimepicker('setEndDate', e.date);
+        });
+    });
+</script>
 <?php echo $footer; ?>

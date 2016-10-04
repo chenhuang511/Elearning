@@ -67,4 +67,10 @@ class User extends Base
 
         return $items;
     }
+
+    public static function get_user_check($id = 1){
+        $query = static::where('id', '=', $id);
+
+        return $query->fetch();
+    }
 }
