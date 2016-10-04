@@ -114,25 +114,16 @@ class Route {
 	 *
 	 * @return object
 	 */
-	public function before() {
-		if( ! isset($this->callbacks['before'])) return;
-        $router = Uri::current();
-        if(\Auth::au_router($router)){
-            foreach(explode(',', \Auth::au_router($router)[0]->action) as $action) {
-                // return the first response object
-                if($response = call_user_func_array(Router::$actions[$action], $this->args)) {
-                    return $response;
-                }
-            }
-        }else{
-            foreach(explode(',', $this->callbacks['before']) as $action) {
-                // return the first response object
-                if($response = call_user_func_array(Router::$actions[$action], $this->args)) {
-                    return $response;
-                }
+    public function before() {
+        if( ! isset($this->callbacks['before'])) return;
+
+        foreach(explode(',', $this->callbacks['before']) as $action) {
+            // return the first response object
+            if($response = call_user_func_array(Router::$actions[$action], $this->args)) {
+                return $response;
             }
         }
-	}
+    }
 
 	/**
 	 * Calls after actions

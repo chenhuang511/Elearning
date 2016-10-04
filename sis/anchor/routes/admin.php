@@ -6,8 +6,23 @@
 Route::action('auth', function() {
 	if(Auth::guest()) {
 	    return Response::redirect('admin/login');
-    }elseif (!Auth::admin()){
-        return Response::redirect('/');
+    }else{
+        $router = Uri::current();
+        if(Auth::au_router($router)){
+            $flag = 0;
+            foreach(explode(',', Auth::au_router($router)[0]->action) as $action) {
+                if(Auth::get_role_user()==$action) {
+                    $flag = 1;
+                    break;
+                }else continue;
+            }
+            if($flag == 0) {
+                return Response::redirect('/');
+            }
+        }
+//        else{
+//            return Response::redirect('/');
+//        }
     }
 });
 

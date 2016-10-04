@@ -15,4 +15,4 @@ CREATE TABLE `anchor_router` (
 -- Records of anchor_router
 -- ----------------------------
 
-INSERT INTO `anchor_router` VALUES ("1", "admin/advance","auth,csrf,install_exists");
+INSERT INTO `anchor_router` VALUES ("1", "admin/advance","administrator,instructor,contract,schools");

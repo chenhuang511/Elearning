@@ -58,6 +58,12 @@ class Auth {
     public static function au_router($router){
             return UserRouter::get_router($router);
     }
+    public static function get_role_user(){
+        if($id = Session::get(static::$session)) {
+            $rid = User::find($id)->role_id;
+            return UserRole::find($rid)->role;
+        }
+    }
 	public static function me($id) {
 		return $id == Session::get(static::$session);
 	}
