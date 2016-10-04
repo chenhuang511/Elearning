@@ -35,7 +35,7 @@
                 </div>
                 <div class="form-group input_key_advance" >
                     <?php echo Form::text('key_course', Input::get('key'), array('class ' => 'form-control key_form', 'placeholder' => 'Khóa học','id' => 'key_course')); ?>
-                    <?php echo Form::text('key_name', Input::get('key'), array('class' => 'form-control key_form', 'placeholder' => 'Tên sinh viên','id' => 'key_name')); ?>
+                    <?php echo Form::text('key_name', Input::get('key'), array('class' => 'form-control key_form', 'placeholder' => 'Người yêu cầu','id' => 'key_name')); ?>
                     <?php echo Form::text('key_id', Input::get('key'), array('class' => 'form-control key_form', 'placeholder' => 'Mã tạm ứng','id' => 'key_id')); ?>
                 </div>
                 <?php echo Form::button( __('Tìm Kiếm'), array('type' => 'submit', 'class' => 'btn btn-primary', 'id' => 'search_')); ?>
@@ -93,12 +93,38 @@
 
 
     <?php else: ?>
+        <ul class="main list list_advance" href="" >
+            <form action="<?php echo Uri::to('admin/advance/search'); ?>" method="get" class="pull-right form-inline mb10">
+                <div class="form-group" >
+                    <label for="gradeMin">Tiền</label>
+                    <?php echo Form::number('moneyMin', Input::get('gradeMin'), array('class' => 'form-control', 'id' => 'moneyMin')); ?>
+                    <label for="gradeMax">Tới</label>
+                    <?php echo Form::number('moneyMax', Input::get('gradeMax'), array('class' => 'form-control', 'id' => 'moneyMax')); ?>
+                </div>
+                <div class="form-group input_key_advance" >
+                    <?php echo Form::text('key_course', Input::get('key'), array('class ' => 'form-control key_form', 'placeholder' => 'Khóa học','id' => 'key_course')); ?>
+                    <?php echo Form::text('key_name', Input::get('key'), array('class' => 'form-control key_form', 'placeholder' => 'Người yêu cầu','id' => 'key_name')); ?>
+                    <?php echo Form::text('key_id', Input::get('key'), array('class' => 'form-control key_form', 'placeholder' => 'Mã tạm ứng','id' => 'key_id')); ?>
+                </div>
+                <?php echo Form::button( __('Tìm Kiếm'), array('type' => 'submit', 'class' => 'btn btn-primary', 'id' => 'search_')); ?>
+            </form>
+            <table class="sort-table table table-hover table-responsive" id="mytable">
+                <thead>
 
-        <p class="empty posts">
-            <span class="icon"></span>
-            <?php echo __('posts.noposts_desc'); ?><br>
-            <?php echo Html::link('admin/advance/add', __('advance.create_advance'), array('class' => 'btn')); ?>
-        </p>
+                </thead>
+                <tbody>
+                <p class="empty posts">
+                    <span class="icon"></span>
+                    <?php echo __('posts.noposts_desc'); ?><br>
+                    <?php echo Html::link('admin/advance/add', __('advance.create_advance'), array('class' => 'btn')); ?>
+                </p>
+                </tbody>
+            </table>
+            <aside class="paging"><?php echo $advance->links(); ?></aside>
+
+        </ul>
+
+
 
     <?php endif; ?>
 </section>

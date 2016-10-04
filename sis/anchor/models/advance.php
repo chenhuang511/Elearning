@@ -35,7 +35,7 @@ class Advance extends Base {
             $query = $query->where(Base::table('advance.id'), 'like', '%' . $key_id . '%');
         }
         if($key_name) {
-            $query = $query->where(Base::table('users.real_name'), 'like', '%' . $key_course . '%');
+            $query = $query->where(Base::table('users.real_name'), 'like', '%' . $key_name . '%');
         }
         if($key_course) {
             $query = $query->where(Base::table('courses.shortname'), 'like', '%' . $key_course . '%');
