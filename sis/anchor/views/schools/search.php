@@ -1,47 +1,51 @@
 <?php echo $header; ?>
-
-<hgroup class="wrap">
-    <h1><?php  echo __('Kết quả tìm kiếm'); ?></h1>
-    <nav style="margin-top: 20px;">
-        <form method="get" action="<?php echo Uri::to('admin/schools/search'); ?>" novalidate>
-
-            <?php echo Form::text('text-search', Input::get('text-search'), array('id' => 'text-search')); ?>
-            <?php echo Form::button('Tìm kiếm', array(
-                'class' => 'btn search blue',
-                'type' => 'submit'
-            )); ?>
-
-        </form>
-    </nav>
-</hgroup>
-
 <section class="wrap">
-    <?php echo $messages;
-    ?>
+    <?php echo $messages; ?>
+    <?php if ($schools->count): ?>
+        <nav>
+            <div style="float: right; margin: 20px 0 0 20px;">
+                <?php // echo Html::link('admin/schools/add', __('schools.create_school'), array('class' => 'btn')); ?>
+            </div>
 
-    <ul class="list">
-        <?php
-            if ($school->results == null)
-            {
-                echo 'Not found any school with keyword "'. $keysearch . '"';
-            }
-            else foreach($school->results as $sch): ?>
-            <li>
-                <a href="<?php echo Uri::to('admin/schools/edit/' . $sch->id); ?>">
-                    <strong><?php echo $sch->id; ?></strong>
-                    <span><?php echo __('schools.name'); ?>: <?php echo $sch->name; ?></span>
-                    <em class="highlight"><?php echo __($sch->id); ?></em>
-                </a>
-            </li>
-        <?php endforeach;  ?>
-    </ul>
+            <form style="float: right; margin-top: 20px;" method="get" action="<?php echo Uri::to('admin/schools/search'); ?>" novalidate>
+                <?php // echo Form::text('text-search', Input::previous('text-search'), array('id' => 'text-search')); ?>
+                <input id="text-search" type="text" name="text-search" placeholder="Tên trường">
+                <?php echo Form::button('Tìm kiếm', array(
+                    'class' => 'btn search blue',
+                    'type' => 'submit'
+                )); ?>
+            </form>
+        </nav>
 
-    <aside class="paging"><?php echo $school->links(); ?></aside>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Mã trường</th>
+                <th>Tên trường</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($schools->results as $school) : ?>
+                <tr>
+                    <td><?php echo $school->id ?></td>
+                    <td>
+                        <a href="<?php echo Uri::to('admin/schools/info/' . $school->id); ?>">
+                            <p style="margin-bottom: 0;"><?php echo $school->name; ?></p>
+                        </a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
 
-    <aside class="buttons">
-        <?php echo Html::link('admin/schools' , __('global.cancel'), array('class' => 'btn cancel blue')); ?>
-    </aside>
+        <aside class="paging"><?php echo $schools->links(); ?></aside>
 
+    <?php else: ?>
+        <aside class="empty pages">
+            <span class="icon"></span>
+            <?php echo __('schools.nopages_desc'); ?><br>
+        </aside>
+    <?php endif; ?>
 </section>
-
 <?php echo $footer; ?>
+

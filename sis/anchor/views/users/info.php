@@ -8,7 +8,7 @@
 	<?php echo $messages; ?>
 
 	<?php if(Auth::admin() || Auth::me($user->id)) : ?>
-	<form method="post" action="<?php echo Uri::to('admin/users/edit/' . $user->id); ?>" novalidate autocomplete="off" enctype="multipart/form-data">
+	<form method="post" action="<?php echo Uri::to('admin/users/info/' . $user->id); ?>" novalidate autocomplete="off" enctype="multipart/form-data">
 
 		<input name="token" type="hidden" value="<?php echo $token; ?>">
 
@@ -60,7 +60,7 @@
 				<em><?php echo __('users.email_explain'); ?></em>
 			</p>
 		</fieldset>
-		<aside class="buttons">
+		<aside class="buttons" style="display: none">
 			<?php echo Form::button(__('global.update'), array(
 				'class' => 'btn',
 				'type' => 'submit'

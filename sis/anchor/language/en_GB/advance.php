@@ -19,5 +19,8 @@ return array(
     'money_not_int' => 'Nhập lại số tiền bằng số',
     'reason_not_null' => 'Lí do xin tạm ứng còn trống',
 
+    'time_request' => 'Thời gian yêu cầu',
+    'time_response' => 'Thời gian xét duyệt'
+
 
 );

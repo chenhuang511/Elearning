@@ -16,7 +16,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 	/*
 		Edit user
 	*/
-	Route::get('admin/users/edit/(:num)', function($id) {
+	Route::get('admin/users/info/(:num)', function($id) {
 		$vars['messages'] = Notify::read();
 		$vars['token'] = Csrf::token();
 		$vars['user'] = User::find($id);
@@ -35,12 +35,12 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 			'user' => __('global.user')
 		);
 
-		return View::create('users/edit', $vars)
+		return View::create('users/info', $vars)
 			->partial('header', 'partials/header')
 			->partial('footer', 'partials/footer');
 	});
 
-	Route::post('admin/users/edit/(:num)', function($id) {
+	Route::post('admin/users/info/(:num)', function($id) {
 		$input = Input::get(array('username', 'email', 'real_name', 'bio', 'status', 'role'));
 		$password_reset = false;
 		
@@ -76,7 +76,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
 			Notify::error($errors);
 
-			return Response::redirect('admin/users/edit/' . $id);
+			return Response::redirect('admin/users/info/' . $id);
 		}
 
 		if($password_reset) {
@@ -89,8 +89,34 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
 		Notify::success(__('users.updated'));
 
-		return Response::redirect('admin/users/edit/' . $id);
+		return Response::redirect('admin/users/info/' . $id);
 	});
+
+    /*
+        Search user
+    */
+    Route::get(array('admin/users/search', 'admin/users/search/(:num)'), function($page = 1) {
+        $vars['messages'] = Notify::read();
+        $vars['token'] = Csrf::token();
+        //$input = Input::get(array('text-search'));
+        //$key = $input['text-search'];
+        $key = $_GET['text-search'];
+
+        $whatSearch = '?text-search=' . $key;
+        //Session::put($whatSearch, $whatSearch);
+        $perpage = Config::get('admin.posts_per_page');
+        list($total, $pages) = User::searchuser($key, $page, $perpage);
+
+        $url = Uri::to('admin/users/search');
+
+        $pagination = new Paginator($pages, $total, $page, $perpage, $url, $whatSearch);
+
+        $vars['users'] = $pagination;
+
+        return View::create('users/search', $vars)
+            ->partial('header', 'partials/header')
+            ->partial('footer', 'partials/footer');
+    });
 
 	/*
 		Add user
@@ -165,7 +191,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 		if($self->id == $id) {
 			Notify::error(__('users.delete_error'));
 
-			return Response::redirect('admin/users/edit/' . $id);
+			return Response::redirect('admin/users/info/' . $id);
 		}
 
 		User::where('id', '=', $id)->delete();

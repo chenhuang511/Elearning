@@ -1,39 +1,47 @@
 <?php echo $header; ?>
-
-<hgroup class="wrap">
-    <h1><?php  echo __('Kết quả tìm kiếm'); ?></h1>
-    <nav style="margin-top: 20px;">
-        <form method="get" action="<?php echo Uri::to('admin/students/search'); ?>" novalidate>
-            <?php echo Form::text('text-search', Input::previous('text-search'), array('id' => 'text-search')); ?>
-            <?php echo Form::button('Tìm kiếm', array(
-                'class' => 'btn search blue',
-                'type' => 'submit'
-            )); ?>
-        </form>
-    </nav>
-</hgroup>
-
 <section class="wrap">
     <?php echo $messages; ?>
+    <?php if ($students->count): ?>
+        <nav>
+            <form style="float: right; margin-top: 20px;" method="get" action="<?php echo Uri::to('admin/students/search'); ?>" novalidate>
+                <input id="text-search" type="text" name="text-search" placeholder="Tên sinh viên">
+                <?php echo Form::button('Tìm kiếm', array(
+                    'class' => 'btn search blue',
+                    'type' => 'submit'
+                )); ?>
+            </form>
+        </nav>
 
-    <ul class="list">
-        <?php foreach($student->results as $stu): ?>
-            <li>
-                <a href="<?php echo Uri::to('admin/students/edit/' . $stu->id); ?>">
-                    <strong><?php echo $stu->id; ?></strong>
-                    <span><?php echo __('Name'); ?>: <?php echo $stu->fullname; ?></span>
-                    <em class="highlight"><?php echo __($stu->email); ?></em>
-                </a>
-            </li>
-        <?php endforeach;  ?>
-    </ul>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Mã sinh viên</th>
+                <th>Tên sinh viên</th>
+                <th>Email</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($students->results as $student) : ?>
+                <tr>
+                    <td><?php echo $student->id ?></td>
+                    <td>
+                        <a href="<?php echo Uri::to('admin/students/info/' . $student->id); ?>">
+                            <p style="margin-bottom: 0;"><?php echo $student->fullname; ?></p>
+                        </a>
+                    </td>
+                    <td><?php echo $student->email ?></td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
 
-    <aside class="paging"><?php  echo $student->links(); ?></aside>
+        <aside class="paging"><?php echo $students->links(); ?></aside>
 
-    <aside class="buttons">
-        <?php echo Html::link('admin/students' , __('global.cancel'), array('class' => 'btn cancel blue')); ?>
-    </aside>
-
+    <?php else: ?>
+        <aside class="empty pages">
+            <span class="icon"></span>
+            <?php echo __('students.nopages_desc'); ?><br>
+        </aside>
+    <?php endif; ?>
 </section>
-
 <?php echo $footer; ?>

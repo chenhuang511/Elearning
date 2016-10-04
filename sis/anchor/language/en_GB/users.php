@@ -9,6 +9,7 @@ return array(
 	'editing_user' => 'Sửa %s&rsquo;s Hồ sơ',
 	'remembered' => 'Ghi nhớ mật khẩu',
 	'forgotten_password' => 'Quên mật khẩu?',
+    'nopages_desc' => 'Không tìm thấy thành viên nào.',
 
 	// roles
 	'administrator' => 'Quản trị',

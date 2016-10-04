@@ -27,7 +27,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         // extended fields
         $vars['fields'] = Extend::fields('school', $id);
 
-        return View::create('schools/edit', $vars)
+        return View::create('schools/info', $vars)
             ->partial('header', 'partials/header')
             ->partial('footer', 'partials/footer');
     });
@@ -52,7 +52,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
         $pagination = new Paginator($pages, $total, $page, $perpage, $url, $whatSearch);
 
-        $vars['school'] = $pagination;
+        $vars['schools'] = $pagination;
 
         return View::create('schools/search', $vars)
             ->partial('header', 'partials/header')
@@ -60,7 +60,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
     });
 
 
-    Route::post('admin/schools/edit/(:num)', function($id) {
+    Route::post('admin/schools/info/(:num)', function($id) {
         $input = Input::get(array('name'));
 
         // A little higher to avoid messing with the password
@@ -82,7 +82,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
             Notify::error($errors);
 
-            return Response::redirect('admin/schools/edit/' . $id);
+            return Response::redirect('admin/schools/info/' . $id);
         }
 
 
@@ -92,7 +92,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
         Notify::success(__('schools.updated'));
 
-        return Response::redirect('admin/schools/edit/' . $id);
+        return Response::redirect('admin/schools/info/' . $id);
     });
 
     /*
