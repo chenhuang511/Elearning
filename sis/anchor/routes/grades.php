@@ -3,7 +3,6 @@ Route::collection(array('before' => 'auth,csrf'), function() {
 
     Route::get(array('admin/grade', 'admin/grade/(:num)'), function($page = 1) {
 
-        // get public listings
         $userid = Auth::get_userid();
         list($total, $pages) = Course::getCoursesBy($userid, $page, $perpage = Config::get('admin.posts_per_page'));
 
@@ -43,22 +42,13 @@ Route::collection(array('before' => 'auth,csrf'), function() {
             'gradeMax',
             'key'
         ));
-        if($input['gradeMin'] && $input['gradeMax'] && $input['key']) {
+        if(!$input['gradeMin'] && !$input['gradeMax'] && !$input['key']) {
             return Response::redirect('admin/grade/course/' . $courseid);
         }
         foreach($input as $key => &$value) {
             $value = eq($value);
         }
 
-        $validator = new Validator($input);
-
-        if($errors = $validator->errors()) {
-            Input::flash();
-
-            Notify::error($errors);
-
-            return Response::redirect('admin/posts/edit/');
-        }
         $whatSearch = '?gradeMin=' . $input['gradeMin'] . '&gradeMax=' . $input['gradeMax'] . '&key=' . $input['key'];
         //Session::put($whatSearch, $whatSearch);
         list($total, $pages) = Course::get_grade_by_course($courseid, $page, $perpage = Config::get('admin.posts_per_page'), $input['key'], $input['gradeMin'], $input['gradeMax']);

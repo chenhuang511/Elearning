@@ -34,14 +34,17 @@
                     <tr>
                         <td>TRẠNG THÁI: </td>
                         <td>
-                            <?php echo Form::select('status', array('1' => 'Chưa được sử dụng', '0' => 'Đã được sử dụng')); ?>
+                            <select name="status">
+                                <option value="0" <?php if($virtual_class_equipments->status == 0) echo "selected"; ?>>Đang được sử dụng</option>
+                                <option value="1" <?php if($virtual_class_equipments->status == 1) echo "selected"; ?>>Chưa được sử dụng</option>
+                            </select>
                         </td>
                     </tr>
                     <tr>
                         <td>ẢNH: </td>
                         <td>
                         	<?php echo Form::file('image_url'); ?>
-                            <img src="<?php echo $virtual_class_equipments->image_url; ?>" id="image"/>
+                            <img src="<?php echo $virtual_class_equipments->image_url; ?>" id="image" height="150px" width="180px"/>
                         </td>
                     </tr>
                     </tbody>

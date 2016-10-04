@@ -2,7 +2,6 @@
 
 class Course extends Base
 {
-
     public static $table = 'courses';
 
     public static function getCoursesBy($userid = null, $page = 1, $perpage = 10)
@@ -57,13 +56,13 @@ class Course extends Base
             ->join(Base::table('schools'), Base::table('schools.id'), '=', Base::table('students.schoolid'))
             ->where(Base::table('courses.id'), '=', $courseid);
 
-        if($key) {
+        if ($key) {
             $query = $query->where(Base::table('students.fullname'), 'like', '%' . $key . '%');
         }
-        if($grademin) {
+        if ($grademin) {
             $query = $query->where(Base::table('student_course.grade'), '>', $grademin);
         }
-        if($grademax) {
+        if ($grademax) {
             $query = $query->where(Base::table('student_course.grade'), '<', $grademax);
         }
         $total = $query->count();
@@ -81,14 +80,19 @@ class Course extends Base
     }
 
 
-    public function get_list_shortname_courses(){
+    public function get_list_shortname_courses()
+    {
         $items = array();
         $query = Query::table(static::table());
-        foreach($query->sort('shortname')->get() as $item) {
+        foreach ($query->sort('shortname')->get() as $item) {
             $items[$item->id] = $item->shortname;
         }
 
         return $items;
     }
 
+    public static function getById($courseid)
+    {
+        return static::where('id', '=', $courseid)->fetch();
+    }
 }

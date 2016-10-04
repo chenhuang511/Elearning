@@ -311,4 +311,60 @@ class local_mod_enrol_external extends external_api
             )
         );
     }
+
+
+    /**
+     * enrol course for host
+     * @return external_function_parameters
+     */
+    public static function remote_enrol_course_parameters() {
+        return new external_function_parameters(
+            array('roleid' => new external_value(PARAM_INT, 'Role id'),
+                'hostid' => new external_value(PARAM_TEXT, 'user id'),
+                'methodname' => new external_value(PARAM_TEXT, 'method name id'),
+                'courseid' => new external_value(PARAM_INT, 'Course id'))
+        );
+    }
+
+    public static function remote_enrol_course($roleid, $hostid, $courseid, $methodname) {
+        global  $DB;
+
+        //validate parameter
+        $params = self::validate_parameters(self::remote_enrol_course_parameters(),
+            array('roleid' => $roleid, 'userid' => $hostid, 'courseid' => $courseid, 'methodname' => $methodname));
+
+        $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+        $plugin = enrol_get_plugin('mnet');
+        if (!$plugin) {
+            throw new moodle_exception('invaliddata', 'error');
+        }
+
+        $fields = (object)$plugin->get_instance_defaults();
+        $fields->customint1       = $hostid;
+        $fields->id       = null;
+        $fields->role       = 5;
+        $fields->name       = $methodname;
+        $fields->type       = 'mnet';
+        $fields->courseid = $course->id;
+        $msg = 'successfully';
+
+        try {
+            $plugin->add_instance($course, $fields);
+        } catch (Exception $e) {
+            $msg = $e->getMessage();
+        }
+
+        return $msg;
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.9 Options available
+     * @since Moodle 2.2
+     */
+    public static function remote_enrol_course_returns() {
+        return new external_value(PARAM_TEXT, 'notice');
+    }
 }

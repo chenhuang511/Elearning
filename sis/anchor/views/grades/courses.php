@@ -1,4 +1,4 @@
-<?php echo $header; ?>
+    <?php echo $header; ?>
 
     <section class="wrap">
         <?php echo $messages; ?>

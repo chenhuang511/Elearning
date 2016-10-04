@@ -4,31 +4,39 @@
     <h1><?php echo __('Quản lí thiết bị'); ?></h1>
 
     <?php if(Auth::admin()) : ?>
-    <nav>
+    <div style="float: right; margin: 20px 0 0 20px;">
         <?php echo Html::link('admin/virtual_class_equipments/add', __('Thêm mới'), array('class' => 'btn')); ?>
-    </nav>
+    </div>
+
     <?php endif; ?>
+    <form style="float: right; margin-top: 20px;" method="get" action="<?php echo Uri::to('admin/virtual_class_equipments/search'); ?>" novalidate>
+        <?php echo Form::text('text-search', Input::previous('text-search'), array('id' => 'text-search')); ?>
+        <?php echo Form::button('Tìm kiếm', array(
+            'class' => 'btn search blue',
+            'type' => 'submit'
+        )); ?>
+    </form>
 </hgroup>
 
 <section class="wrap">
     <?php echo $messages; ?>
 
     <ul class="list">
-        <?php foreach($virtual_class_equipments->results as $virtual_class_equipments): ?>
-            <table class="table table-hover">
+        <table class="table table-hover">
             <thead>
-            <tr>
-                <th class="col-sm-1">ID</th>
-                <th class="col-sm-2">Tên thiết bị</th>
-                <th class="col-sm-2">Ảnh</th><!-- 
-                <th>Ngày thêm</th> -->
-                <th class="col-sm-3">Thông tin</th>
-                <th class="col-sm-1">Số lượng</th>
-                <th class="col-sm-1">Trạng Thái</th>
-                <th class="col-sm-2">Quản lý</th>
-            </tr>
+                <tr>
+                    <th class="col-sm-1">ID</th>
+                    <th class="col-sm-2">Tên thiết bị</th>
+                    <th class="col-sm-2">Ảnh</th><!-- 
+                    <th>Ngày thêm</th> -->
+                    <th class="col-sm-3">Thông tin</th>
+                    <th class="col-sm-1">Số lượng</th>
+                    <th class="col-sm-1">Trạng Thái</th>
+                    <th class="col-sm-2">Quản lý</th>
+                </tr>
             </thead>
             <tbody>
+                <?php foreach($virtual_class_equipments->results as $virtual_class_equipments): ?>
                     <tr>
                         <td class="col-sm-1"><?php echo $virtual_class_equipments->id ?></td>
                         <td class="col-sm-2">

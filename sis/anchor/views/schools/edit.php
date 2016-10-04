@@ -8,7 +8,7 @@
     <?php echo $messages; ?>
 
     <?php if(Auth::admin() || Auth::me($school->id)) : ?>
-        <form method="post" action="<?php echo Uri::to('admin/schools/edit/' . $school->id); ?>" novalidate autocomplete="off" enctype="multipart/form-data">
+        <form method="post" action="<?php echo Uri::to('admin/schools/info/' . $school->id); ?>" novalidate autocomplete="off" enctype="multipart/form-data">
 
             <input name="token" type="hidden" value="<?php echo $token; ?>">
 
@@ -31,12 +31,13 @@
                 <?php foreach($fields as $field): ?>
                     <p>
                         <label for="extend_<?php echo $field->key; ?>"><?php echo $field->label; ?>:</label>
-                        <?php echo Extend::html($field); ?>
+                        <?php // echo Extend::html($field); ?>
                     </p>
                 <?php endforeach; ?>
                 <p>
                     <label for="label-name"><?php echo __('School name'); ?>:</label>
-                    <?php echo Form::text('name', Input::previous('name', $school->name), array('id' => 'label-name')); ?>
+                    <?php // echo Form::text('name', Input::previous('name', $school->name), array('id' => 'label-name')); ?>
+                    <label id="label-name"><?php echo $school->name ?></label>
                 </p>
 
                 <?php foreach($schoolstudent as $schstu): ?>

@@ -35,7 +35,7 @@ return array(
     'role' => 'Role',
     'role_explain' => '',
 
-    'name' => 'Name',
+    'name' => 'Tên',
     'username_explain' => '',
     'schoolname_missing' => 'Please enter a school name, must be at least %s characters',
 

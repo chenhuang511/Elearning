@@ -18,4 +18,7 @@ return array(
     'startdate_missing' => 'Bạn chưa chọn ngày khai giảng',
     'enddate_missing' => 'Bạn chưa chọn ngày kết thúc',
     'summary_missing' => 'Mô tả khóa học không được để trống',
+
+    //messages
+    'created' => 'Tạo mới khóa học thành công',
 );

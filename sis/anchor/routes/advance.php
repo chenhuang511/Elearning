@@ -8,10 +8,12 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         $list =   Advance::get_list(10,$page);
         $url = Uri::to('admin/advance');
         $pagination = new Paginator($list[1], $list[0], $page, 10, $url);
-        $vars['status'] = array(
-            'published' => __('advance.published'),
-            'draft' => __('advance.draft'),
-            'rebuff' => __('advance.rebuff')
+
+        $vars['statuses'] = array(
+            array('url' => '', 'lang' => 'global.all', 'class' => 'active'),
+            array('url' => '/status/published', 'lang' => 'advance.published', 'class' => 'approved'),
+            array('url' => '/status/draft', 'lang' => 'advance.draft', 'class' => 'pending'),
+            array('url' => '/status/rebuff', 'lang' => 'advance.rebuff', 'class' => 'spam')
         );
         $vars['advance'] =  $pagination;
         return View::create('advance/index', $vars)
@@ -23,7 +25,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         $vars['messages'] = Notify::read();
         $vars['token'] = Csrf::token();
         $vars['course'] = Course::get_list_shortname_courses();
-        $vars['user'] = User::get_list_author('user') ;
+        $vars['user'] = User::get_list_author(1) ;
         $vars['courses'] =  Course::read();
         return View::create('advance/add', $vars)
             ->partial('header', 'partials/header')
@@ -52,17 +54,20 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
     });
 
-    Route::get(array('admin/advance/status/(:any)','admin/advance/status/(:any)/(:num)'), function($status, $page = 1) {
+    Route::get(array('admin/advance/status/(:any)','admin/advance/status/(:any)/(:num)'), function($status='', $page = 1) {
         $vars['messages'] = Notify::read();
         $vars['token'] = Csrf::token();
         $list =   Advance::get_list_by_status($status,10,$page);
         $url = Uri::to('admin/advance/status/'.$status );
         $pagination = new Paginator($list[1], $list[0], $page, 10, $url);
-        $vars['status'] = array(
-            'published' => __('advance.published'),
-            'draft' => __('advance.draft'),
-            'rebuff' => __('advance.rebuff')
+        $vars['status'] = '/status/'.$status;
+        $vars['statuses'] = array(
+            array('url' => '', 'lang' => 'global.all', 'class' => ''),
+            array('url' => '/status/published', 'lang' => 'advance.published', 'class' => 'approved'),
+            array('url' => '/status/draft', 'lang' => 'advance.draft', 'class' => 'pending'),
+            array('url' => '/status/rebuff', 'lang' => 'advance.rebuff', 'class' => 'spam')
         );
+
         $vars['advance'] =  $pagination;
         return View::create('advance/index', $vars)
             ->partial('header', 'partials/header')
@@ -74,7 +79,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
     Route::get('admin/advance/edit/(:num)', function($id) {
         $vars['messages'] = Notify::read();
         $vars['token'] = Csrf::token();
-        $vars['user'] = User::get_list_author();
+        $vars['user'] = User::get_list_author(1);
         $vars['article'] = Advance::find($id);
         $vars['courses'] = Course::get_list_shortname_courses();
         $vars['page'] = Registry::get('posts_page');
@@ -138,6 +143,8 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
             'key_course',
             'moneyMin',
             'moneyMax',))  ;
+        $input['key_name'] = trim($input['key_name'])  ;
+        $input['key_course'] = trim($input['key_course'])  ;
         if($input['moneyMin'] && $input['moneyMax'] && $input['key_name'] && $input['moneyMax']) {
             return Response::redirect('admin/advance');
         }
@@ -158,10 +165,11 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         $list = Advance::get_list_advance_by_key(4,$page,$input['key_name'], $input['key_course'], $input['moneyMin'],$input['moneyMax']);
         $url = Uri::to('admin/advance/search');
         $pagination = new Paginator($list[1], $list[0], $page, 4, $url,$whatSearch);
-        $vars['status'] = array(
-            'published' => __('advance.published'),
-            'draft' => __('advance.draft'),
-            'rebuff' => __('advance.rebuff')
+        $vars['statuses'] = array(
+            array('url' => '', 'lang' => 'global.all', 'class' => ''),
+            array('url' => '/status/published', 'lang' => 'advance.published', 'class' => 'approved'),
+            array('url' => '/status/draft', 'lang' => 'advance.draft', 'class' => 'pending'),
+            array('url' => '/status/rebuff', 'lang' => 'advance.rebuff', 'class' => 'spam')
         );
         $vars['advance'] =  $pagination;
         return View::create('advance/index', $vars)

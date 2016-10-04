@@ -8,7 +8,6 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 	Route::get(array('admin/virtual_class_equipments', 'admin/virtual_class_equipments/(:num)'), function($page = 1) {
 		$vars['messages'] = Notify::read();
 		$vars['virtual_class_equipments'] = VirtualClassEquipment::paginate($page, Config::get('admin.posts_per_page'));
-
 		return View::create('virtual_class_equipments/index', $vars)
 			->partial('header', 'partials/header')
 			->partial('footer', 'partials/footer');
@@ -69,7 +68,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 		$vars['token'] = Csrf::token();
 
 		// extended fields
-		$vars['fields'] = Extend::fields('user');
+		$vars['fields'] = Extend::fields('post');
 
 		return View::create('virtual_class_equipments/add', $vars)
 			->partial('header', 'partials/header')
@@ -107,13 +106,30 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 	});
 
 	/*
-		Delete user
+		Delete 
 	*/
 	Route::get('admin/virtual_class_equipments/delete/(:num)', function($id) {
 		VirtualClassEquipment::where('id', '=', $id)->delete();
 		Notify::success(__('Bạn đã xóa thành công'));
 		return Response::redirect('admin/virtual_class_equipments');
-		
 	});
+
+	/*
+	/   Search 
+	*/
+	Route::get('admin/virtual_class_equipments/search', function() {
+        $vars['messages'] = Notify::read();
+        $vars['token'] = Csrf::token();
+        //$key = Input::get(array('text-search'));
+        $key = $_GET['text-search'];
+
+        $vars['virtual_class_equipments'] = VirtualClassEquipment::where('name', 'LIKE', '%' . $key . '%')
+        															->or_where('description', 'LIKE', '%' . $key . '%')
+        															->get();
+
+        return View::create('virtual_class_equipments/search', $vars)
+            ->partial('header', 'partials/header')
+            ->partial('footer', 'partials/footer');
+    });
 
 });
