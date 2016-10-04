@@ -84,18 +84,30 @@ function gethtmlcontentforprintslide($slides) {
 
     $index = 1;
     foreach ($slides as $slide) {
+        $linkpage = $CFG->wwwroot . '/contentcreator/';
         $out .= html_writer::start_tag('div', ['class' => 'col-sm-4']);
         $out .= html_writer::start_tag('div', ['class' => 'list-slide-content']);
-        $out .= html_writer::start_tag('h4', ['class' => 'slide-title']);
+        $out .= html_writer::start_tag('h4', ['class' => 'slide-title', 'data-slide' => $slide->id]);
         $hasfileex = strrpos($slide->filename, '.strut');
+        $title = '';
         if($hasfileex === false) {
-            $out .= $slide->filename;
+            $title = $slide->filename;
         } else {
-            $out .= substr($slide->filename, 0, $hasfileex);
+            $title = substr($slide->filename, 0, $hasfileex);
         }
+        $out .= $title;
         $out .= html_writer::end_tag('h4');
+        $out .= html_writer::start_tag('div', ['class' => 'update-input-value']);
+        $out .= html_writer::tag('input', '', ['type' => 'text', 'class' => 'input-update-title', 'value' => $title]);
+        $out .= html_writer::end_tag('div');
+        $out .= html_writer::start_tag('div', ['class' => 'wrap-btn']);
+        $out .= html_writer::tag('button', '', ['class' => 'btn btn-update-title']);
+        $out .= html_writer::start_tag('div', ['class' => 'update-do-action']);
+        $out .= html_writer::tag('button', 'Save', ['class' => 'btn btn-success btn-save-title']);
+        $out .= html_writer::tag('button', 'Cancel', ['class' => 'btn btn-danger btn-cancel-title']);
+        $out .= html_writer::end_tag('div');
+        $out .= html_writer::end_tag('div');
         $out .= html_writer::start_tag('div', ['class' => 'slide-btn-action']);
-        $linkpage = $CFG->wwwroot . '/contentcreator/';
         $out .= html_writer::link($linkpage . 'edit.php?id=' . $slide->id,
             get_string('edit'), ['class' => 'btn btn-edit-slide']);
         $out .= html_writer::link($linkpage . 'view/index.php?id=' . $slide->id,
