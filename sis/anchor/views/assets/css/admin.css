@@ -719,10 +719,6 @@ input[type='range'] {
     padding: 0 0 15px;
 }
 
-.bhxh-body {
-    margin-top: 15px;
-}
-
 .datepicker, .datepicker-dropdown {
     z-index: 999 !important;
 }

@@ -748,7 +748,7 @@ INSERT INTO `anchor_meta` (`key`, `value`) VALUES
 ('posts_page', '1'),
 ('posts_per_page', '6'),
 ('show_all_posts', '0'),
-('sitename', 'My First Anchor Blog'),
+('sitename', 'Hệ thống quản lý đào tạo'),
 ('theme', 'default'),
 ('update_version', '');
 

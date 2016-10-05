@@ -45,47 +45,128 @@
             </div>
         </div>
         <div class="right-menu pull-right">
-            <ul class="nav nav-pills" role="tablist">
+            <ul class="logon-block">
                 <?php if (Auth::user()): ?>
-                    <li class="username li-square">
-                        <a href="#" class="fa fa-user"> <?= user_authed_name() ?></a>
+                    <li class="username">
+                        Xin chào, <a href="#"> <?= user_authed_name() ?></a>
                     </li>
-                    <li class="logout li-square">
-                        <?php echo Html::link('admin/logout', __('global.logout'), array('class' => 'fa fa-sign-out')); ?>
+                    <li class="divided">|</li>
+                    <li class="logout">
+                        <a href="/admin/logout"><?php echo __('global.logout') ?> <i class="fa fa-sign-out"></i></a>
                     </li>
                 <?php else: ?>
-                    <li class="logout li-square">
-                        <a href="<?php echo Uri::to('admin/login'); ?>"><i class="fa fa-sign-in" aria-hidden="true"></i>Login</a>
+                    <li class="logout">
+                        <a href="<?php echo Uri::to('admin/login'); ?>"><i class="fa fa-sign-in" aria-hidden="true"></i>Đăng
+                            nhập</a>
                     </li>
                 <?php endif; ?>
             </ul>
         </div>
     </div>
 </header>
-<?php if (Auth::user()): ?>
-    <nav id="main-nav" class="no-site-messages navbar-inverse nav collapse navbar-collapse nav-main main-nav">
-        <div class="container">
-            <div class="bhxh-nav-home clearfix">
-                <ul id="dropdown-nav" class="nav navbar-nav">
-                    <?php $menu = array('panel', 'posts', 'comments', 'pages', 'categories', 'users', 'students', 'schools', 'instructor', 'extend',  'grade', 'courses', 'curriculum', 'virtual_class_equipments'); ?>
-                    <?php foreach ($menu as $url): ?>
-                        <li <?php if (strpos(Uri::current(), $url) !== false) echo 'class="home active dropdown-nav-home"'; ?>>
-                            <?php if ($url === 'curriculum') { ?>
-                                <a href="<?php echo Uri::to('admin/' . $url . '/add/course'); ?>">
-                                    <?php echo ucfirst(__($url . '.' . $url)); ?>
-                                </a>
-                            <?php } else { ?>
-                                <a href="<?php echo Uri::to('admin/' . $url); ?>">
-                                    <?php echo ucfirst(__($url . '.' . $url)); ?>
-                                </a>
-                            <?php } ?>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
-        </div>
-    </nav>
-<?php endif; ?>
 <div class="bhxh-body">
-    <div class="container">
+    <div class="collapse-menu" style="display: none;">
+        <a id="collapse_menu" href="#"><i class="fa fa-cogs" aria-hidden="true"></i></a>
+    </div>
+    <div class="clearfix main-body">
+        <div id="main_menu" class="col-sm-3">
+            <div class="clearfix text-right expanded-menu">
+                <a id="expand_menu" href="#"><i class="fa fa-caret-square-o-left" aria-hidden="true"></i></a>
+            </div>
+            <?php if (Auth::user()): ?>
+                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingOne">
+                            <h4 class="panel-title">
+                                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
+                                   aria-expanded="true" aria-controls="collapseOne">
+                                    <i class="fa fa-cog" aria-hidden="true"></i> Quản lý khóa học
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel"
+                             aria-labelledby="headingOne">
+                            <div class="panel-body">
+                                <ul class="mnu-lst">
+                                    <li><a href="<?php echo Uri::to('admin/courses'); ?>"><i class="fa fa-caret-right"
+                                                                                             aria-hidden="true"></i>
+                                            Danh
+                                            sách khóa học</a></li>
+                                    <li><a href="<?php echo Uri::to('admin/curriculum/add/course'); ?>"><i
+                                                class="fa fa-caret-right" aria-hidden="true"></i> Tạo lịch giảng</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingTwo">
+                            <h4 class="panel-title">
+                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                                   href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    <i class="fa fa-book" aria-hidden="true"></i> Quản lý bài viết
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel"
+                             aria-labelledby="headingTwo">
+                            <div class="panel-body">
+                                <ul class="mnu-lst">
+                                    <li><a href="<?php echo Uri::to('admin/posts'); ?>"><i class="fa fa-caret-right"
+                                                                                           aria-hidden="true"></i> Danh
+                                            sách
+                                            bài viết</a></li>
+                                    <li><a href="<?php echo Uri::to('admin/posts/add'); ?>"><i class="fa fa-caret-right"
+                                                                                               aria-hidden="true"></i>
+                                            Tạo
+                                            bài viết mới</a></li>
+                                    <li><a href="<?php echo Uri::to('admin/comments'); ?>"><i class="fa fa-caret-right"
+                                                                                              aria-hidden="true"></i>
+                                            Danh
+                                            sách bình luận</a></li>
+                                    <li><a href="<?php echo Uri::to('admin/categories'); ?>"><i
+                                                class="fa fa-caret-right"
+                                                aria-hidden="true"></i> Quản
+                                            lý danh mục</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingThree">
+                            <h4 class="panel-title">
+                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                                   href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    <i class="fa fa-users" aria-hidden="true"></i> Quản lý tài khoản hệ thống
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseThree" class="panel-collapse collapse" role="tabpanel"
+                             aria-labelledby="headingThree">
+                            <div class="panel-body">
+                                <ul class="mnu-lst">
+                                    <li><a href="<?php echo Uri::to('admin/users'); ?>"><i class="fa fa-caret-right"
+                                                                                           aria-hidden="true"></i> Quản
+                                            lý
+                                            người dùng</a></li>
+                                    <li><a href="<?php echo Uri::to('admin/students'); ?>"><i class="fa fa-caret-right"
+                                                                                              aria-hidden="true"></i>
+                                            Quản
+                                            lý sinh viên</a></li>
+                                    <li><a href="<?php echo Uri::to('admin/instructor'); ?>"><i
+                                                class="fa fa-caret-right"
+                                                aria-hidden="true"></i> Quản
+                                            lý giảng viên</a></li>
+                                    <li><a href="<?php echo Uri::to('admin/schools'); ?>"><i class="fa fa-caret-right"
+                                                                                             aria-hidden="true"></i>
+                                            Quản
+                                            lý Trường học</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+        </div>
+        <div id="main_content" class="col-sm-9">
 

@@ -55,8 +55,8 @@ return array(
 
 	'log_in' => 'Đăng nhập',
 	'login' => 'Đăng nhập',
-	'log_out' => 'Thoát',
-	'logout' => 'Thoát',
+	'log_out' => 'Đăng xuất',
+	'logout' => 'Đăng xuất',
 
 	// pharses
 	'visit_your_site' => 'Xem site',

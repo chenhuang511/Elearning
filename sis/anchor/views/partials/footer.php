@@ -1,5 +1,6 @@
 </div>
 </div>
+</div>
 
 <footer class="footer" id="footer">
     <div class=" container">
@@ -54,6 +55,24 @@
             nav.className = nav.className.replace(/\b f-nav\b/, '');
         }
     }
+</script>
+<script>
+    (function ($) {
+        var expandMenu = $('#expand_menu'),
+            mainMenu = $('#main_menu'),
+            mainContent = $('#main_content'),
+            mainBody = $('.main-body'),
+            collapseMenu = $('.collapse-menu');
+
+        expandMenu.on('click', function (e) {
+            mainMenu.hide();
+            mainMenu.removeClass('col-sm-3');
+            mainContent.removeClass('col-sm-9');
+            mainBody.addClass('container');
+            collapseMenu.show();
+            e.preventDefault();
+        });
+    })(jQuery);
 </script>
 </body>
 </html>
