@@ -49,9 +49,9 @@
                     <?php
                     $certificate = remote_get_link_certificate($stu->schoolid, $stu->studentid, $stu->id);
                     if ( $certificate != 'false' && !empty($certificate)) { ?>
-                        <a target="_blank" class="btn" href="<?php echo $certificate; ?>" >Chứng chỉ</a>
+                        <a target="_blank" class="btn btn-primary" href="<?php echo $certificate; ?>" >Chứng chỉ</a>
                     <?php } else { ?>
-                        <a class="btn" href="#" >Chứng chỉ</a>
+                        <a class="btn btn-primary" href="#" >Chứng chỉ</a>
                     <?php } ?>
                 </td>
             </tr>

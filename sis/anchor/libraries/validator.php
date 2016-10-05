@@ -60,6 +60,11 @@ class Validator
         $this->methods['boolean'] = function ($str) {
             return intval($str) == 0 ? false : true;
         };
+
+        $this->methods['not_null'] = function ($str){
+            return $str == null ? false : true;
+        };
+
     }
 
     public function check($key)

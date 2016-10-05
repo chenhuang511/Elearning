@@ -6,7 +6,7 @@
 			<form style="float: right; margin: 20px 0;" method="get" action="<?php echo Uri::to('admin/users/search'); ?>" novalidate>
 				<input id="text-search" type="text" name="text-search" placeholder="Tên thành viên">
 				<?php echo Form::button('Tìm kiếm', array(
-					'class' => 'btn search blue',
+					'class' => 'btn btn-primary',
 					'type' => 'submit'
 				)); ?>
 			</form>

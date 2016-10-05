@@ -19,8 +19,8 @@ class School extends Base {
 
         $count = $query->count();
 
-        //$results = $query->take($perpage)->skip(($page - 1) * $perpage)->sort('real_name', 'desc')->get();
-        $results = $query->take($perpage)->skip(($page - 1) * $perpage)->get();
+        $results = $query->take($perpage)->skip(($page - 1) * $perpage)->sort('id', 'asc')->get();
+        //$results = $query->take($perpage)->skip(($page - 1) * $perpage)->get();
 
         return new Paginator($results, $count, $page, $perpage, Uri::to('admin/schools'));
     }

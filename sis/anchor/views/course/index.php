@@ -11,6 +11,7 @@
                 <th>Ngày kết thúc</th>
                 <th>Quản lý</th>
                 <th>Quản lý điểm</th>
+                <th>Tạm ứng tiền</th>
             </tr>
             </thead>
             <tbody>
@@ -45,6 +46,10 @@
                         <td>
                             <a href="<?php echo Uri::to('admin/grade/course/' . $page->id); ?>"
                                class="btn btn-primary">quản lý điểm</a>
+                        </td>
+                        <td>
+                            <a href="<?php echo Uri::to('admin/advance/course/' . $page->id); ?>"
+                               class="btn btn-primary">tạm ứng</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

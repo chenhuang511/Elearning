@@ -5,13 +5,17 @@ class VirtualClassEquipment extends Base {
 
     public static $table = 'virtual_class_equipment';
 
-	public static function paginate($page = 1, $perpage = 10) {
+	public static function getList($page = 1, $perpage = 10) {
 		$query = Query::table(static::table());
 
-		$count = $query->count();
+        $total = $query->count();
 
-		$results = $query->take($perpage)->skip(($page - 1) * $perpage)->get();
-		return new Paginator($results, $count, $page, $perpage, Uri::to('admin/virtual_class_equipments'));
+        // get list equiments
+        $equipments = $query->take($perpage)
+            ->skip(--$page * $perpage)
+            ->get();
+
+        return array($total, $equipments);
 	}
 
 	public static function search($params = array()) {
