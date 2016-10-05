@@ -6,7 +6,7 @@
             <form style="float: right; margin-top: 20px;" method="get" action="<?php echo Uri::to('admin/students/search'); ?>" novalidate>
                 <input id="text-search" type="text" name="text-search" placeholder="Tên sinh viên">
                 <?php echo Form::button('Tìm kiếm', array(
-                    'class' => 'btn search blue',
+                    'class' => 'btn btn-primary',
                     'type' => 'submit'
                 )); ?>
             </form>
@@ -18,6 +18,8 @@
                 <th>Mã sinh viên</th>
                 <th>Tên sinh viên</th>
                 <th>Email</th>
+                <th>Thành tích</th>
+                <th>Đăng kí học</th>
             </tr>
             </thead>
             <tbody>
@@ -30,6 +32,8 @@
                         </a>
                     </td>
                     <td><?php echo $student->email ?></td>
+                    <td><a class="btn btn-primary" href="#">Chứng chỉ</a></td>
+                    <td><a class="btn btn-primary" href="#">Các khóa học</a></td>
                 </tr>
             <?php endforeach; ?>
             </tbody>

@@ -3,15 +3,10 @@
     <?php echo $messages; ?>
     <?php if ($schools->count): ?>
         <nav>
-            <div style="float: right; margin: 20px 0 0 20px;">
-                <?php // echo Html::link('admin/schools/add', __('schools.create_school'), array('class' => 'btn')); ?>
-            </div>
-
             <form style="float: right; margin-top: 20px;" method="get" action="<?php echo Uri::to('admin/schools/search'); ?>" novalidate>
-                <?php // echo Form::text('text-search', Input::previous('text-search'), array('id' => 'text-search')); ?>
                 <input id="text-search" type="text" name="text-search" placeholder="Tên trường">
                 <?php echo Form::button('Tìm kiếm', array(
-                    'class' => 'btn search blue',
+                    'class' => 'btn btn-primary',
                     'type' => 'submit'
                 )); ?>
             </form>
