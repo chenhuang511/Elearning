@@ -65,11 +65,18 @@ class local_certificate_external extends external_api
         $params = self::validate_parameters(self::certificate_get_link_parameters(),
             array('userid' => $userid, 'courseid' => $courseid));
 
-        $courselocal = $DB->get_field('course', 'id', array('remoteid' => $courseid));
-        $cm =  reset(get_coursemodules_in_course('certificate', $courselocal));
+        $course = $DB->get_record('course', array('remoteid' => $courseid));
 
+        $courselocal = $course->id;
+        $cm =  reset(get_coursemodules_in_course('certificate', $courselocal));
         $userlocal = get_remote_mapping_localuserid($userid);
         if(!$cm || !$userlocal) {return 'false';};
+        $modinfo = get_fast_modinfo($course);
+        $cmcheck = $modinfo->get_cm($cm->id);
+
+        if(!$cmcheck->get_user_access($userid)){
+          return 'false';
+        };
         $url = $CFG->wwwroot . '/mod/certificate/preview.php?id=' . $cm->id . '&uid=' . $userlocal;
         return $url;
     }

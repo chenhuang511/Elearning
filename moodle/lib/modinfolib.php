@@ -1912,6 +1912,32 @@ class cm_info implements IteratorAggregate {
     }
 
     /**
+     * Get permission access activity by userid
+     */
+
+    public function get_user_access($userid) {
+
+        if ($userid == -1) {
+            return null;
+        }
+        $access = true;
+
+        // If the user cannot access the activity set the uservisible flag to false.
+        // Additional checks are required to determine whether the activity is entirely hidden or just greyed out.
+        if ((!$this->visible or !$this->get_available()) and
+            !has_capability('moodle/course:viewhiddenactivities', $this->get_context(), $userid)) {
+
+            $access = false;
+        }
+
+        // Check group membership.
+        if ($this->is_user_access_restricted_by_capability()) {
+            $access = false;
+        }
+        return $access;
+    }
+
+    /**
      * Checks whether the module's group settings restrict the current user's
      * access. This function is not necessary now that all access restrictions
      * are handled by the availability API. You can use $cm->uservisible to
