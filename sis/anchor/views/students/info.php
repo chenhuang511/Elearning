@@ -45,10 +45,13 @@
             <tr>
                 <td><?php echo $stu->fullname ?></td>
                 <td style="text-align: center"><?php echo $stu->grade ?></td>
-                <td style="text-align: center"><?php if (remote_get_link_certificate($stu->schoolid, $stu->id, $stu->id) != 'false') { ?>
-                        <a target="_blank" class="btn" href="<?php echo remote_get_link_certificate($stu->schoolid, $stu->id, $stu->id); ?>">Chứng chỉ</a>
+                <td style="text-align: center">
+                    <?php
+                    $certificate = remote_get_link_certificate($stu->schoolid, $stu->studentid, $stu->id);
+                    if ( $certificate != 'false' && !empty($certificate)) { ?>
+                        <a target="_blank" class="btn" href="<?php echo $certificate; ?>" >Chứng chỉ</a>
                     <?php } else { ?>
-                        <a class="btn" href="#">Chứng chỉ</a>
+                        <a class="btn" href="#" >Chứng chỉ</a>
                     <?php } ?>
                 </td>
             </tr>
