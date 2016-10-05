@@ -5,7 +5,7 @@
 
 
         <nav>
-            <?php echo Html::link('admin/advance/course/' .$courseId.'/add', __('advance.create_advance'), array('class' => 'btn')); ?>
+            <?php echo Html::link('admin/advance/course/' .$courseId.'/add', __('advance.create_advance'), array('class' => 'btn btn-primary')); ?>
         </nav>
 
 </hgroup>
@@ -75,7 +75,7 @@
                                         echo 'Chưa được xét duyệt';
                                     ?></td>
 
-                                <td><a href="<?php echo Uri::to('admin/advance/course/' .$courseId.'/edit/' .  $page->data['id']); ?>" class="btn">Chỉnh sửa</a></td>
+                                <td><a href="<?php echo Uri::to('admin/advance/course/' .$courseId.'/edit/' .  $page->data['id']); ?>" class="btn btn-primary">Chỉnh sửa</a></td>
                                 <td><a href="<?php echo Uri::to('admin/advance/course/' .$courseId.'/delete/' .  $page->data['id']); ?>" class="btn delete red ">Xóa</a></td>
                             </tr>
 

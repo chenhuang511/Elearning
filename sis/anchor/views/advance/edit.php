@@ -45,54 +45,106 @@
                 </tr>
                 <tr >
                     <td><label for="label-slug"><?php echo __('advance.applicant'); ?>:</label></td>
-                    <td><?php echo Form::select('applicant_id', $user, Input::previous('status', $article->applicant_id), array('id' => 'label-applicant_id' )); ?></td>
+                    <?php if($article->status == "published"){
+                        ?>
+                        <td> <label for="label-slug" style="padding-left: 0px !important;"><?php echo $article->real_name; ?></label></td>
+                        <input type="hidden" name="applicant_id" value="<?php echo $article->applicant_id;?>"/>
+                        <?php
+                    }else{
+                        ?>
+                        <td><?php echo Form::select('applicant_id', $user, Input::previous('applicant', $article->applicant_id), array('id' => 'label-applicant_id', '' )); ?></td>
+                        <?php
+                    }?>
+
                 </tr>
                 <tr>
                     <td><label for="label-status"><?php echo __('advance.money'); ?>:</label></td>
-                    <td><?php echo Form::text('money', Input::previous('money',$article->money), array('id' => 'label-money')); ?></td>
+                    <?php if($article->status == "published"){
+                        ?>
+                        <td><?php echo Form::text('money', Input::previous('money',$article->money), array('id' => 'label-applicant_id', 'readonly'=>'true' )); ?></td>
+                        <?php
+                    }else{
+                        ?>
+                        <td><?php echo Form::text('money', Input::previous('money',$article->money), array('id' => 'label-money')); ?></td>
+                        <?php
+                    }?>
+
                 </tr>
                 <tr>
                     <td><label for="label-status"><?php echo __('advance.time_request'); ?>:</label></td>
-                    <td>
-                        <div class='input-group date' id='datetimepicker_startdate'>
-                            <?php echo Form::text('time_request', Input::previous('time_request',$article->time_request), array('id' => 'label-time datetimepicker_startdate')); ?>
-                            <span class="input-group-addon">
-                            <i class="fa fa-calendar" aria-hidden="true"></i>
-                        </span>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td><label for="label-status"><?php echo __('advance.time_response'); ?>:</label></td>
-                    <td> <?php
-                        if ($article->time_response == "0000-00-00"){
-                            ?>
-                            <label for="label-slug" style="padding-left: 0px !important;"><?php echo 'Chưa được xét duyệt'; ?></label>
-                            <?php
-
-                        } else{
-                            ?>
-                            <div class='input-group date' id='datetimepicker_enddate'>
-                                <?php echo Form::text('time_response', Input::previous('time_response',$article->time_response), array('id' => 'label-time datetimepicker_enddate')); ?>
+                    <?php if($article->status == "published"){
+                        ?>
+                        <td><?php echo Form::text('time_request', Input::previous('time_request',$article->time_request), array('id' => 'label-time datetimepicker_startdate','readonly'=>'true')); ?></td>
+                        <?php
+                    }else{
+                        ?>
+                        <td>
+                            <div class='input-group date' id='datetimepicker_startdate'>
+                                <?php echo Form::text('time_request', Input::previous('time_request',$article->time_request), array('id' => 'label-time datetimepicker_startdate')); ?>
                                 <span class="input-group-addon">
                             <i class="fa fa-calendar" aria-hidden="true"></i>
                         </span>
                             </div>
+                        </td>
+                        <?php
+                    }?>
 
+                </tr>
+                <tr>
+                    <td><label for="label-status"><?php echo __('advance.time_response'); ?>:</label></td>
+                     <?php
+                        if ($article->status == "draft"){
+                            ?>
+                            <td><label for="label-slug" style="padding-left: 0px !important;"><?php echo 'Chưa được xét duyệt'; ?></label></td>
                             <?php
+
+                        } else{
+                                if($article->status == "published"){
+                                ?>
+                                    <td><?php echo Form::text('time_response', Input::previous('time_response',$article->time_response), array('id' => 'label-time datetimepicker_enddate','readonly'=>'true')); ?></td>
+                                <?php
+                                }else{
+                                ?>
+                                    <td>
+                                        <div class='input-group date' id='datetimepicker_enddate'>
+                                            <?php echo Form::text('time_response', Input::previous('time_response',$article->time_response), array('id' => 'label-time datetimepicker_enddate')); ?>
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-calendar" aria-hidden="true"></i>
+                                            </span>
+                                        </div>
+                                    </td>
+                                <?php
+                                }
                         }
 
                         ?>
 
-                    </td>
                 </tr>
                 <tr>
                     <td><label for="label-description"><?php echo __('advance.reason'); ?>:</label></td>
-                    <td><?php echo Form::textarea('reason', Input::previous('reason',$article->reason), array('id' => 'label-reason')); ?></td>
+                    <?php if($article->status == "published"){
+                        ?>
+                        <td><?php echo Form::textarea('reason', Input::previous('reason',$article->reason), array('id' => 'label-applicant_id', 'readonly'=>'true' )); ?></td>
+                        <?php
+                    }else{
+                        ?>
+                        <td><?php echo Form::textarea('reason', Input::previous('reason',$article->reason), array('id' => 'label-reason')); ?></td>
+                        <?php
+                    }?>
+
                 </tr>
                 <tr>
                     <td><label for="label-slug"><?php echo __('advance.status'); ?>:</label></td>
-                    <td><?php echo Form::select('status',  ['draft' => 'Đang yêu cầu', 'published' => 'Chấp nhận','rebuff' => 'Từ chối yêu cầu'], Input::previous('status', $article->status), array('id' => 'label-applicant_id' )); ?></td>
+                    <?php if($article->status == "published"){
+                        ?>
+                        <td><?php echo Form::select('status',  [ 'published' => 'Chấp nhận'], Input::previous('status', $article->status), array('id' => 'label-applicant_id', 'readonly'=>'true' )); ?></td>
+                        <?php
+                    }else{
+                        ?>
+                        <td><?php echo Form::select('status',  ['draft' => 'Đang yêu cầu', 'published' => 'Chấp nhận','rebuff' => 'Từ chối yêu cầu'], Input::previous('status', $article->status), array('id' => 'label-applicant_id' )); ?></td>
+                        <?php
+                    }?>
+
                 </tr>
 
                     <tr>

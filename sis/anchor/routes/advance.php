@@ -93,8 +93,6 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
 
 
         $vars['page'] = Registry::get('posts_page');
-
-
         $vars['statuses'] = array(
             'published' => __('global.published'),
             'draft' => __('global.draft'),
@@ -106,6 +104,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
     });
     Route::post('admin/advance/course/(:num)/edit/(:num)', function($courseId,$id) {
         $input = Input::get(array('applicant_id', 'money','time_request','time_response', 'reason','status'));
+        var_dump($input);
         $validator = new Validator($input);
 
         $validator->check('money')
@@ -125,7 +124,8 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
             return Response::redirect('admin/advance/course/'.$courseId.'/edit/' . $id);
         }
         $user = Auth::user();
-        if($input['status'] == 'published' || $input['status'] == 'rebuff'){
+        $status = Advance::getById($id)->status;
+        if($input['status'] != $status){
             $input['user_check_id'] =  $user->id;
             $input['time_response'] =   date("Y-m-d");
         }
