@@ -74,7 +74,7 @@ class local_certificate_external extends external_api
         $modinfo = get_fast_modinfo($course);
         $cmcheck = $modinfo->get_cm($cm->id);
 
-        if(!$cmcheck->get_user_access($userid)){
+        if(!$cmcheck->get_user_access($userlocal)){
           return 'false';
         };
         $url = $CFG->wwwroot . '/mod/certificate/preview.php?id=' . $cm->id . '&uid=' . $userlocal;
