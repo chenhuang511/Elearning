@@ -8,6 +8,9 @@ function remote_add_course($data)
             'function_name'=>'core_course_create_courses',
             'params'=>array('courses' => $data )
         ));
+    if (isset($resp->exception)) {
+        return 0;
+    }
     return $resp[0];
 }
 
@@ -20,6 +23,9 @@ function remote_edit_course_section($data)
             'function_name'=>'core_update_inplace_editable',
             'params'=> $data
         ));
+    if (isset($resp->exception)) {
+        return 0;
+    }
     return $resp;
 }
 
@@ -49,6 +55,9 @@ function remote_enrol_host($roleid, $hostid, $courseid, $methodname)
                 'methodname' => $methodname
             )
         ));
+    if (isset($resp->exception)) {
+        return 0;
+    }
     return $resp;
 }
 
@@ -87,5 +96,8 @@ function remote_enrol_user($schoolid, $roleid, $userid, $courseid)
                 'userid' => $userremoteid,
                 'courseid' => $remotecoursid)
         ));
+    if (isset($resp->exception)) {
+        return 0;
+    }
     return $resp;
 }
