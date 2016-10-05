@@ -91,4 +91,5 @@ class local_certificate_external extends external_api
     public static function certificate_get_link_returns() {
         return new external_value(PARAM_TEXT, 'link');
     }
+
 }
