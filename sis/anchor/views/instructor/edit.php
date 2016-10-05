@@ -41,8 +41,12 @@
 		<?php foreach($contract as $contract): ?>
 		<div style="border:1px solid;border-color:blue">
 			<p>
+				<label for="label-name_contract"><?php echo __('contract.name_contract'); ?>:</label>
+				<?php echo Form::text('name_contract', Input::previous('name_contract', $contract->name_contract), array('id' => 'label-name_contract')); ?>
+			</p>
+			<p>
 				<label for="label-type"><?php echo __('contract.type'); ?>:</label>
-				<?php echo Form::text('type', Input::previous('type', $contract->type), array('id' => 'label-type')); ?>
+				<?php echo Form::select('type', $type, Input::previous('type', $contract->type), array('id' => 'label-type')); ?>
 			</p>
 			<p>
 				<label for="label-name_partner"><?php echo __('contract.name_partner'); ?>:</label>
@@ -62,7 +66,7 @@
 			</p>
 			<p>
 				<label for="label-state"><?php echo __('contract.state'); ?>:</label>
-				<?php echo Form::text('state', Input::previous('state', $contract->state), array('id' => 'label-state')); ?>
+				<?php echo Form::select('state', $state, Input::previous('state', $contract->state), array('id' => 'label-state')); ?>
 			</p>
 			<p>
 				<label for="label-rules"><?php echo __('contract.rules'); ?>:</label>

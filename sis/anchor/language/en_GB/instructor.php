@@ -69,6 +69,7 @@ return array(
 	'email_explain' => '',
 	'email_missing' => 'Vui lòng nhập địa chỉ email',
 	'email_not_found' => 'Không tìm thấy hồ sơ.',
+	'email_was_found' => 'Email đã được sử dụng',
 
 	// messages
 	'updated' => 'Hồ sơ thành viên đã được cập nhật.',

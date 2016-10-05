@@ -1,7 +1,7 @@
 <?php echo $header; ?>
 
 <hgroup class="wrap">
-	<h1><?php echo __('contract.editing_user'); ?></h1>
+	<h1><?php echo __('contract.editing_contract'); ?></h1>
 </hgroup>
 
 <section class="wrap">
@@ -13,9 +13,12 @@
 		<input name="token" type="hidden" value="<?php echo $token; ?>">
 		
 		<fieldset class="half split">
-		
 			<p>
-				<label for="label-instructor_id"><?php echo __('contract.instructor_selected'); ?>:</label>
+				<label for="label-name_contract"><?php echo __('contract.name_contract'); ?>:</label>
+				<?php echo Form::text('name_contract', Input::previous('name_contract', $contract->name_partner), array('id' => 'label-name_contract')); ?>
+			</p>
+			<p>
+				<label for="label-instructor_id"><?php echo __('contract.instructor'); ?>:</label>
 				<?php echo Form::select('instructor_id', $instructor_id, Input::previous('instructor_id', $contract->instructor_id), array('id' => 'label-instructor_id')); ?>
 			</p>
 			<p>
@@ -59,7 +62,6 @@
 
 			<?php echo Html::link('admin/contract' , __('global.cancel'), array('class' => 'btn cancel blue')); ?>
 
-			<?php echo Html::link('admin/contract/delete/' . $contract->id, __('global.delete'), array('class' => 'btn delete red')); ?>
 		</aside>
 	</form>
 	<?php else : ?>

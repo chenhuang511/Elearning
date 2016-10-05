@@ -29,4 +29,18 @@ class Instructor extends Base {
 		return $query->get();
 	}
 
+	public static function search($key, $page = 1, $per_page = 10) {
+
+        $query = static::where('lastname', 'LIKE', '%' . $key . '%')->or_where('firstname', 'LIKE', '%' . $key . '%');
+
+        $total = $query->count();
+
+        // get posts
+        $posts = $query->take($per_page)
+            ->skip(--$page * $per_page)
+            ->get();
+
+        return array($total, $posts);
+    }
+
 }
