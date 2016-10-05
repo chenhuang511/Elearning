@@ -16,6 +16,7 @@ alter table mdl_bigbluebuttonbn add remoteid bigint(10) not null default 0;
 alter table mdl_resource add remoteid bigint(10) not null default 0;
 alter table mdl_label add remoteid bigint(10) not null default 0;
 alter table mdl_url add remoteid bigint(10) not null default 0;
+alter table mdl_slide add remoteid bigint(10) not null default 0;
 
 CREATE TABLE mdl_course_modules_createdby (
   id BIGINT(10) NOT NULL AUTO_INCREMENT,
@@ -27,7 +28,7 @@ CREATE TABLE mdl_course_modules_createdby (
 
 drop table mdl_mnetservice_enrol_courses;
 
-CREATE TABLE mdl_slide_storage (
+CREATE TABLE l_slide_storage (
   id BIGINT(10) AUTO_INCREMENT NOT NULL PRIMARY KEY,
   userid BIGINT(10) NOT NULL,
   filename VARCHAR(512) NOT NULL,

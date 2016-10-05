@@ -121,4 +121,8 @@ class local_user_external extends external_api
             )
         );
     }
+
+    public static function get_remote_grade_history_user_by_host_ip($sql, $params, $take = 0, $skip = 0) {
+
+    }
 }
