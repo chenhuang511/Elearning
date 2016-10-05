@@ -44,7 +44,7 @@
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <div class="form-group">
-                                            <label for="time"
+                                            <label for="time_<?php echo $key; ?>"
                                                    class="control-label"><?php echo __('curriculum.time') ?></label>
                                             <?php echo Form::text('time_' . $key, Input::previous('time'), array(
                                                 'placeholder' => __('curriculum.time'),
@@ -59,7 +59,7 @@
                                         } else {
                                             echo '';
                                         } ?>">
-                                            <label for="topic"
+                                            <label for="topic_<?php echo $key; ?>"
                                                    class="control-label"><?php echo __('curriculum.topic') ?> <span
                                                     class="text-danger">*</span></label>
                                             <?php echo Form::textarea('topic_' . $key, Input::previous('topic'), array('id' => 'topic_' . $key, 'class' => 'form-control', 'rows' => 3)); ?>
@@ -74,7 +74,7 @@
                                         } else {
                                             echo '';
                                         } ?>">
-                                            <label for="teacher"
+                                            <label for="teacher_<?php echo $key; ?>"
                                                    class="control-label"><?php echo __('curriculum.teacher') ?> <span
                                                     class="text-danger">*</span></label>
                                             <?php echo Form::select('teacher_' . $key, $teachers, Input::previous('teacher'), array('id' => 'teacher_' . $key, 'class' => 'form-control')); ?>
@@ -84,7 +84,7 @@
                                             <?php } ?>
                                         </div>
                                         <div class="form-group">
-                                            <label for="topic"
+                                            <label for="note_topic_<?php echo $key; ?>"
                                                    class="control-label"><?php echo __('curriculum.note') ?></label>
                                             <?php echo Form::textarea('note_topic_' . $key, Input::previous('note'), array('id' => 'note_topic_' . $key, 'class' => 'form-control', 'rows' => 3)); ?>
                                         </div>
@@ -113,7 +113,7 @@
                     'class' => 'btn btn-primary btn-save',
                     'data-loading' => __('global.saving')
                 )); ?>
-                <?php echo Html::link('admin/posts', __('global.cancel'), array(
+                <?php echo Html::link('admin/curriculum/' . $courseid, __('global.cancel'), array(
                     'class' => 'btn btn-danger btn-cancel'
                 )); ?>
             </aside>

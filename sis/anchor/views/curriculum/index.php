@@ -19,10 +19,15 @@
             <?php foreach ($pages->results as $item): $display_pages = array($item); ?>
                 <?php foreach ($display_pages as $page) : ?>
                     <tr>
-                        <td><?php echo $page->time ?></td>
+                        <td><?php echo $page->topicday ?></td>
                         <td>
                                 <span class="bhxh-course">
-                                    <?php echo $page->topic; ?>
+                                    <?php if ($page->topictime !== NULL):
+                                        echo '<strong>' . $page->topictime . '</strong>' . ' ' . $page->topicname;
+                                    else:
+                                        echo $page->topicname;
+                                    endif;
+                                    ?>
                                 </span>
                         </td>
                         <td><?php
@@ -34,10 +39,11 @@
                             ?>
                         </td>
                         <td>
-                            <a href="<?php echo Uri::to('admin/curriculum/' . $page->id); ?>"
-                               >Sửa <i class="fa fa-pencil" aria-hidden="true"></i></a> |
-                            <a href="<?php echo Uri::to('admin/grade/course/' . $page->id); ?>"
-                               >Xóa <i class="fa fa-times" aria-hidden="true"></i></a>
+                            <a href="<?php echo Uri::to('admin/curriculum/edit/topic/' . $page->id); ?>"
+                            >Sửa <i class="fa fa-pencil" aria-hidden="true"></i></a> |
+                            <a href="<?php echo Uri::to('admin/curriculum/topic/delete/' . $page->id); ?>"
+                               onclick="return confirm('Bạn chắc chắn muốn xóa thông tin này');">Xóa <i class="fa fa-times"
+                                                                                                 aria-hidden="true"></i></a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

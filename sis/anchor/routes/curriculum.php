@@ -7,7 +7,6 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
         display list of curriculum by courseid
     */
     Route::get(array('admin/curriculum/(:any)', 'admin/curriculum/(:any)/(:num)'), function ($courseid, $page = 1) {
-
         $course = Course::getById($courseid);
 
         if (!$course) {
@@ -217,12 +216,13 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
                 foreach ($topics as $topic) {
                     $arr = array();
                     $arr['course'] = $course->id;
-                    $arr['time'] = $dates[$icount];
+                    $arr['topicday'] = $dates[$icount];
                     if ($topic->timetopic !== '') {
-                        $arr['topic'] = '<strong>' . $topic->timetopic . '</strong> ' . $topic->name;
+                        $arr['topictime'] = $topic->timetopic;
                     } else {
-                        $arr['topic'] = $topic->name;
+                        $arr['topictime'] = NULL;
                     }
+                    $arr['topicname'] = $topic->name;
                     $arr['lecturer'] = $topic->teacherid;
                     $arr['userid'] = $user->id;
                     $arr['timecreated'] = time();
@@ -303,5 +303,79 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
         Notify::success(__('courses.updated'));
 
         return Response::redirect('admin/curriculum/add/topic/' . $courseid);
+    });
+
+    /*
+        Edit a curriculum
+     */
+    Route::get('admin/curriculum/edit/topic/(:any)', function ($id) {
+        $vars['errors'] = Session::get('messages.error');
+        $vars['messages'] = Notify::read();
+        $vars['token'] = Csrf::token();
+
+        $curriculum = Curriculum::getById($id);
+
+        if (!$curriculum) {
+            Notify::error(__('curriculum.notfound'));
+            return Response::redirect('admin/courses');
+        }
+
+        $vars['curriculum'] = $curriculum;
+
+        $teachers = array();
+        $teachers = $teachers + array('0' => '--- Chọn giảng viên ---');
+        $teachers = $teachers + User::dropdown();
+
+        $vars['teachers'] = $teachers;
+
+        // extended fields
+        $vars['fields'] = Extend::fields('curriculum');
+
+        return View::create('curriculum/edit', $vars)
+            ->partial('header', 'partials/header')
+            ->partial('footer', 'partials/footer');
+    });
+
+    Route::post('admin/curriculum/edit/topic/(:any)', function ($id) {
+
+        $curriculum = Curriculum::getById($id);
+        $input = Input::get(array('topictime', 'topicname', 'lecturer', 'note'));
+
+        $validator = new Validator($input);
+
+        $validator->check('topicname')
+            ->is_max(1, __('curriculum.topicname_missing'));
+
+        $validator->check('lecturer')
+            ->is_boolean(__('curriculum.teacher_missing'));
+
+        if ($errors = $validator->errors()) {
+            Input::flash();
+            Notify::error($errors);
+            return Response::redirect('admin/curriculum/edit/topic/' . $id);
+        }
+
+        $user = Auth::user();
+
+        Curriculum::update($id, $input);
+
+        Notify::success(__('curriculum.updated'));
+
+        return Response::redirect('admin/curriculum/' . $curriculum->course);
+    });
+
+
+    /*
+        Delete post
+    */
+    Route::get('admin/curriculum/topic/delete/(:any)', function ($id) {
+        $curriculum = Curriculum::getById($id);
+        $courseid = $curriculum->course;
+
+        $curriculum->delete();
+
+        Notify::success(__('curriculum.deleted'));
+
+        return Response::redirect('admin/curriculum/' . $courseid);
     });
 });
