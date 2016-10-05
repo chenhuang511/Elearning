@@ -364,11 +364,12 @@ function slide_get_local_settings_info($courseid, $instance)
     require_once($CFG->dirroot . '/mod/slide/remote/locallib.php');
     if (!$url = $DB->get_record('slide', array('remoteid' => $instance))) {
         // Get remote url
-        if (!$url = get_remote_slide_by_id($instance)) {
-            print_error('Not Found url id on host');
-        }
+//        if (!$url = get_remote_slide_by_id($instance)) {
+//            print_error('Not Found url id on host');
+//        }
 
         // Check if not exist then insert local DB
+        $url = get_remote_slide_by_id($instance);
         unset($url->id);
         $url->course = $courseid;
         $url->remoteid = $instance;
@@ -377,6 +378,7 @@ function slide_get_local_settings_info($courseid, $instance)
         $url->id = $DB->insert_record('slide', $url);
         return $url->id;
     }
+    return $url->id;
 
     return 0;
 }
