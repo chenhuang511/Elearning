@@ -16,24 +16,24 @@
             <?php foreach ($pages->results as $item): $display_pages = array($item); ?>
                 <?php foreach ($display_pages as $page) : ?>
                     <tr>
-                        <td><?php echo $page->data['time'] ?></td>
+                        <td><?php echo $page->time ?></td>
                         <td>
                                 <span class="bhxh-course">
-                                    <?php echo $page->data['topic']; ?>
+                                    <?php echo $page->topic; ?>
                                 </span>
                         </td>
                         <td><?php
-                            echo $page->data['teacher_name'];
+                            echo $page->teacher_name;
                             ?></td>
                         <td>
                             <?php
-                            echo $page->data['note'];
+                            echo $page->note;
                             ?>
                         </td>
                         <td>
-                            <a href="<?php echo Uri::to('admin/curriculum/' . $page->data['id']); ?>"
+                            <a href="<?php echo Uri::to('admin/curriculum/' . $page->id); ?>"
                                >Sửa <i class="fa fa-pencil" aria-hidden="true"></i></a> |
-                            <a href="<?php echo Uri::to('admin/grade/course/' . $page->data['id']); ?>"
+                            <a href="<?php echo Uri::to('admin/grade/course/' . $page->id); ?>"
                                >Xóa <i class="fa fa-times" aria-hidden="true"></i></a>
                         </td>
                     </tr>

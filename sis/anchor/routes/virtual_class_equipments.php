@@ -7,7 +7,14 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 	*/
 	Route::get(array('admin/virtual_class_equipments', 'admin/virtual_class_equipments/(:num)'), function($page = 1) {
 		$vars['messages'] = Notify::read();
-		$vars['virtual_class_equipments'] = VirtualClassEquipment::paginate($page, Config::get('admin.posts_per_page'));
+        list($total, $equipments) = VirtualClassEquipment::getList($page, $perpage = Config::get('admin.posts_per_page'));
+
+        $url = Uri::to('admin/virtual_class_equipments');
+
+        $pagination = new Paginator($equipments, $total, $page, $perpage, $url);
+
+        $vars['pages'] = $pagination;
+
 		return View::create('virtual_class_equipments/index', $vars)
 			->partial('header', 'partials/header')
 			->partial('footer', 'partials/footer');
