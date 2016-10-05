@@ -2,6 +2,9 @@
 <section class="wrap">
     <?php echo $messages; ?>
     <?php if ($pages->count): ?>
+        <p class="text-right">
+            <a href="#" class="btn btn-success">Tạo khóa học</a>
+        </p>
         <table class="table table-hover">
             <thead>
             <tr>
