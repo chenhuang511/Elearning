@@ -82,8 +82,6 @@
 			)); ?>
 
 			<?php echo Html::link('admin/instructor' , __('global.cancel'), array('class' => 'btn cancel blue')); ?>
-
-			<?php echo Html::link('admin/instructor/delete/' . $instructor->id, __('global.delete'), array('class' => 'btn delete red')); ?>
 		</aside>
 	</form>
 	<?php else : ?>

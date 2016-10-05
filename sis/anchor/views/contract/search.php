@@ -11,6 +11,8 @@
 					'class' => 'btn search blue',
 					'type' => 'submit'
 				)); ?>
+				<a href="<?php echo Uri::to('admin/contract/'); ?>"
+                               class="btn btn-primary">Quay lại</a>
 		</form>
 	</nav>
 	<?php endif; ?>
