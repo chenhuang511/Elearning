@@ -28,9 +28,13 @@
 				<tr>
 					<td><?php echo $user->id ?></td>
 					<td>
-<!--						<a href="--><?php //echo Uri::to('http://192.168.1.253/user/profile.php?id=' . $user->id); ?><!--">-->
-							<p><?php echo $user->real_name; ?></p>
-<!--						</a>-->
+						<?php
+						$url = remote_get_user_link_profile($user->schoolid, $user->remoteid);
+						if ( $url != 'false' && !empty($url)) { ?>
+							<a target="_blank" class="btn btn-primary" href="<?php echo $url; ?>" >Chứng chỉ</a>
+						<?php } else { ?>
+							<a class="btn btn-primary" href="#" >Chứng chỉ</a>
+						<?php } ?>
 					</td>
 					<td>
 						<p><?php echo $user->email; ?></p>

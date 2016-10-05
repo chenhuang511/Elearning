@@ -30,4 +30,20 @@ class Contract extends Base {
 		return new Paginator($results, $count, $page, $perpage, Uri::to('admin/contract'));
 	}
 
+	public static function search($key, $page = 1, $per_page = 10) {
+
+        $query = static::where('name_contract', 'LIKE', '%' . $key . '%')->join(Base::table('instructors'), Base::table('instructor_contract.instructor_id'),'=',Base::table('instructors.id'));
+
+        $total = $query->count();
+
+        // get posts
+        $posts = $query->take($per_page)
+            ->skip(--$page * $per_page)
+            ->get(array(Base::table('instructor_contract.*'),
+					 			Base::table('instructors.firstname as firstname'),
+								Base::table('instructors.lastname as lastname')));
+
+        return array($total, $posts);
+    }
+
 }

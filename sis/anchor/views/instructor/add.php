@@ -1,7 +1,7 @@
 <?php echo $header; ?>
 
 <hgroup class="wrap">
-	<h1><?php echo __('instructor.add_user'); ?></h1>
+	<h1><?php echo __('instructor.create_instructor'); ?></h1>
 </hgroup>
 
 <section class="wrap">

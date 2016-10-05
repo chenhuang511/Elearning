@@ -97,9 +97,15 @@ class Course extends Base
     }
 
 
-    public static function create_course_hub($courseid) {
+    public static function create_course_hub($courseid, $loop = false) {
         $course = static::find($courseid);
         $curiculum = Curriculum::where('course', '=', $courseid);
+
+        if($course->remoteid) {
+            $curiculums = $curiculum->get();
+            return self::edit_section_hub($curiculums, $course->remoteid);
+        }
+
         $numbersection = $curiculum->count();
         if(!isset($course) || $numbersection < 1){return false;};
         /**
@@ -117,26 +123,33 @@ class Course extends Base
         $data['courses[0][completionnotify]']= 1;
         $courseupdate = new stdClass();
         $courseremote = remote_add_course($data);
+        if(!$courseremote) {return false;};
         $courseupdate->remoteid = $courseremote->id;
         Course::update($course->id, $courseupdate);
         //end api
-
+        // start edit title section
         $curiculums = $curiculum->get();
-        self::edit_section_hub($curiculums, $courseremote->id);
+        return self::edit_section_hub($curiculums, $courseremote->id);
     }
     public static function edit_section_hub($sections, $courseid) {
         $remotesections = remote_get_course_section($courseid); // must be remote course id
+        if(count($remotesections) < 2){
+            return false;
+        }
         $data = array();
         $data['component'] = 'format_weeks';
         $data['itemtype'] = 'sectionname';
+
         foreach ($sections as $key => $section) {
             $date = date_create($section->time);
             $time = date_format($date,"Y/m/d");
-            $name = $time . '-' . $section->topic;
+            $name = $time . '-' . $section->topictime . '-' . $section->topicname;
             if(!isset($remotesections[$key+1])){break;};
             $data['itemid'] = $remotesections[$key+1]->id;
             $data['value'] = $name;
             remote_edit_course_section($data);
         }
+
+        return true;
     }
 }

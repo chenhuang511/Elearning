@@ -5,17 +5,14 @@
 	
 	<?php if(Auth::admin()) : ?>
 	<nav>
-		<div style="float: right; margin: 20px 0 0 20px;">
-			<?php echo Html::link('admin/contract/add', __('contract.create_contract'), array('class' => 'btn')); ?>
-			<a href="<?php echo Uri::to('admin/instructor/'); ?>"
-                               class="btn btn-primary">Quay lại</a>
-		</div>	
 		<form style="float: right; margin-top: 20px;" method="get" action="<?php echo Uri::to('admin/contract/search'); ?>" novalidate>
 				<input id="text-search" type="text" name="text-search" placeholder="Tên Hợp Đồng">
 				<?php echo Form::button('Tìm kiếm', array(
 					'class' => 'btn search blue',
 					'type' => 'submit'
 				)); ?>
+				<a href="<?php echo Uri::to('admin/contract/'); ?>"
+                               class="btn btn-primary">Quay lại</a>
 		</form>
 	</nav>
 	<?php endif; ?>
@@ -35,7 +32,7 @@
 				<th>Mức lương</th>
 				<th>Trạng thái thanh toán</th>
 				<th>Điều khoản</th>
-				<th>Quản lý</th>
+                <th>Quản lý</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -68,7 +65,7 @@
 					<td>
 						<p><?php echo $contract->rules; ?></p>
 					</td>
-					<td>
+                    <td>
 						<a href="<?php echo Uri::to('admin/contract/edit/' . $contract->id); ?>"
                                class="btn btn-primary">Sửa</a>
 						<a href="<?php echo Uri::to('admin/contract/delete/' . $contract->id); ?>"

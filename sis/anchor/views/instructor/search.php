@@ -2,19 +2,17 @@
 
 <hgroup class="wrap">
 	<h1><?php echo __('instructor.instructor'); ?></h1>
-
+	
 	<?php if(Auth::admin()) : ?>
 	<nav>
-		<div style="float: right; margin: 20px 0 0 20px;">
-			<?php echo Html::link('admin/instructor/add', __('instructor.create_instructor'), array('class' => 'btn')); ?>
-			<?php echo Html::link('admin/contract/', __('contract.view_contract'), array('class' => 'btn')); ?>
-		</div>
 		<form style="float: right; margin-top: 20px;" method="get" action="<?php echo Uri::to('admin/instructor/search'); ?>" novalidate>
-			<input id="text-search" type="text" name="text-search" placeholder="Tên Giảng Viên">
+				<input id="text-search" type="text" name="text-search" placeholder="Tên Hợp Đồng">
 				<?php echo Form::button('Tìm kiếm', array(
 					'class' => 'btn search blue',
 					'type' => 'submit'
 				)); ?>
+				<a href="<?php echo Uri::to('admin/instructor/'); ?>"
+                               class="btn btn-primary">Quay lại</a>
 		</form>
 	</nav>
 	<?php endif; ?>
@@ -58,7 +56,7 @@
 				</tr>
 			<?php endforeach; ?>
 		</tbody>
-	</table>
+	</table>	
 </section>
-
 <?php echo $footer; ?>
+
