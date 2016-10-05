@@ -6,8 +6,7 @@
 	<?php if(Auth::admin()) : ?>
 	<nav>
 		<div style="float: right; margin: 20px 0 0 20px;">
-			<?php echo Html::link('admin/instructor/add', __('instructor.create_instructor'), array('class' => 'btn')); ?>
-			<?php echo Html::link('admin/contract/', __('contract.view_contract'), array('class' => 'btn')); ?>
+			<?php echo Html::link('admin/instructor/add', __('instructor.create_instructor'), array('class' => 'btn btn-primary')); ?>
 		</div>
 		<form style="float: right; margin-top: 20px;" method="get" action="<?php echo Uri::to('admin/instructor/search'); ?>" novalidate>
 			<input id="text-search" type="text" name="text-search" placeholder="Tên Giảng Viên">
@@ -50,6 +49,8 @@
 					<td>
 						<p><?php echo $instructor->subject; ?></p>
                     <td>
+						<a href="<?php echo Uri::to('admin/instructor/view/' . $instructor->id); ?>"
+                               class="btn blue">Xem</a>
 						<a href="<?php echo Uri::to('admin/instructor/edit/' . $instructor->id); ?>"
                                class="btn btn-primary">Sửa</a>
 						<a href="<?php echo Uri::to('admin/instructor/delete/' . $instructor->id); ?>"
