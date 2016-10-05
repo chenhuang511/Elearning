@@ -13,7 +13,8 @@ require_login();
 
 $PAGE->set_heading($site->fullname);
 $PAGE->set_title("Content Creator");
-
+$PAGE->requires->js('/contentcreator/scripts/app.js');
+$PAGE->requires->css('/contentcreator/styles/cc-style.css');
 
 echo $OUTPUT->header();
 echo $OUTPUT->skip_link_target();
