@@ -26,15 +26,13 @@ function getcontenthtmlbyslideid($id) {
     return '';
 }
 
-function printscriptpresentationdata($str, $id) {
+function printscriptpresentationdata($str, $id, $filename = '') {
     $return = "<script type=\"text/javascript\">
 //<![CDATA[";
     $return .= "
     var contentJSON = {$str};
-    try {
-        localStorage.setItem('contentJSON', contentJSON);
-        localStorage.setItem('presentationId', {$id});
-    } catch(e) {}
+    var slideFileName = '{$filename}';
+    var presentationId = {$id};
     ";
 
     $return .= "//]]>
@@ -46,10 +44,8 @@ function printscriptnewpresentation() {
     $return = "<script type=\"text/javascript\">
 //<![CDATA[";
     $return .= "
-    try {
-        localStorage.setItem('contentJSON', '');
-        localStorage.setItem('presentationId', -1);
-    } catch(e) {}
+    var contentJSON = '';
+    var presentationId = -1;
     ";
 
     $return .= "//]]>

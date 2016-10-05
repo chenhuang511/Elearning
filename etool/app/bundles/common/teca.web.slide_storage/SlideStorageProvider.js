@@ -124,14 +124,7 @@ define(function() {
                 success: function (response) {
                     var resp = JSON.parse(response);
                     console.log(resp);
-                    try {
-                        localStorage.setItem('presentationId', resp.slideid);
-                    } catch (e) {
-
-                    }
-                    if(cb) {
-                        cb(true);
-                    }
+                    window.presentationId = parseInt(resp.slideid) || undefined;
                 },
                 error: function (e) {
                     console.log(e.message);

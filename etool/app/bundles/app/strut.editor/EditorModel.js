@@ -25,7 +25,6 @@ define(['libs/backbone',
 				this._deck.on('change:customBackgrounds', function(deck, bgs) {
 					this.trigger('change:customBackgrounds', this, bgs)
 				}, this);
-				this.addSlide();
 
 				this.set('header', new Header(this.registry, this));
 
@@ -62,22 +61,21 @@ define(['libs/backbone',
                     slides: []
                 };
                 var oldContent = presentationContent;
-                var rawContent = '';
-                try {
-                    rawContent = localStorage.getItem('contentJSON');
-                } catch (err) {
-                    rawContent = '';
-                }
+                var rawContent = window.contentJSON ||'';
 
                 if (rawContent) {
                     try {
                         presentationContent = JSON.parse(rawContent);
+                        // make sure correct file name from server
+                        presentationContent.fileName = window.slideFileName;
                     } catch(err) {
                         presentationContent = oldContent;
                     }
                 }
                 this.importPresentation(presentationContent);
-                this._deck.create();
+                if (!rawContent) {
+                    this._deck.create();
+                }
 			},
 
 			changeActiveMode: function(modeId) {
@@ -103,11 +101,6 @@ define(['libs/backbone',
 			},
 
 			newPresentation: function() {
-                try {
-                    localStorage.setItem('presentationId', -1);
-                } catch (e) {
-
-                }
 
 				this.importPresentation({
 	        		fileName: "presentation-" + Date.now(),
@@ -170,14 +163,8 @@ define(['libs/backbone',
                 }
                 var contentJSON = this.exportPresentation(filename);
                 var presentationId = this.getPresentationPageParam('id') || -1;
-                var pId = -1;
-                var localStoragePID = -1;
-                try {
-                    localStoragePID = localStorage.getItem('presentationId');
-                    pId = parseInt(localStoragePID);
-                } catch(err) {
-                    pId = -1
-                }
+                var pId = window.presentationId ||-1;
+
                 if (pId != presentationId) {
                     presentationId = pId
                 }

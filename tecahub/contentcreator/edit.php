@@ -21,5 +21,5 @@ $PAGE->set_title("Update Slide");
 
 echo $OUTPUT->header();
 echo $OUTPUT->skip_link_target();
-echo printscriptpresentationdata(json_encode($slideobj->content_json), $slideid);
+echo printscriptpresentationdata(json_encode($slideobj->content_json), $slideid, $slideobj->filename);
 echo $OUTPUT->footer();
