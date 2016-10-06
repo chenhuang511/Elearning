@@ -18,7 +18,6 @@
             )); ?>
         </form>
     </hgroup>
-
     <section class="wrap">
         <?php echo $messages; ?>
         <?php if ($pages->count): ?>
@@ -66,7 +65,7 @@
                 <?php endforeach; ?>
                 </tbody>
         </table>
-        <aside class="paging"><?php echo $schools->links(); ?></aside>
+        <aside class="paging"><?php echo $pages->links(); ?></aside>
         <?php else: ?>
             <aside class="empty pages">
                 <span class="icon"></span>

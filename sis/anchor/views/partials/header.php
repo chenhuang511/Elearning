@@ -159,6 +159,10 @@
                                                                                              aria-hidden="true"></i>
                                             Quản
                                             lý Trường học</a></li>
+                                    <li><a href="<?php echo Uri::to('admin/equipment'); ?>"><i class="fa fa-caret-right"
+                                                                                             aria-hidden="true"></i>
+                                            Quản
+                                            lý Phòng học-Thiết bị</a></li>
                                 </ul>
                             </div>
                         </div>
