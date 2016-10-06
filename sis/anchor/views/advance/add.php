@@ -40,12 +40,14 @@
         <label for="money" class="col-sm-2 control-label"><?php echo __('advance.money') ?> <span
                 class="text-danger">*</span></label>
         <div class="col-sm-4">
-            <?php echo Form::text('money', Input::previous('money'), array(
+            <?php echo Form::text('money_', Input::previous('money'), array(
                 'placeholder' => 'Số tiền muốn xin tạm ứng',
                 'autocomplete' => 'off',
                 'autofocus' => 'true',
-                'class' => 'form-control'
+                'class' => 'form-control' ,
+                'id' =>  'money_'
             )); ?>
+            <input type="hidden" id="hidden_money" value="" name="money">
             <?php if (isset($errors['money'])) { ?>
                 <p class="help-block"><?php echo $errors['money'][0] ?></p>
             <?php } ?>
@@ -79,5 +81,19 @@
         </aside>
     </div>
 </form>
+<script src="<?php echo asset_url('js/accounting.min.js'); ?>"></script>
+<script src="<?php echo asset_url('js/currency-module.js'); ?>"></script>
+<script type="text/javascript">
+    (function($){
+        $(document).ready(function () {
 
+            var inputs = ['#money_'];
+            var hiddens = ['#hidden_money'];
+
+            currencyModule.init(accounting, inputs, hiddens);
+
+        });
+    })(jQuery);
+
+</script>
 <?php echo $footer; ?>

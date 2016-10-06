@@ -41,7 +41,8 @@
                     <label for="money"
                            class="control-label"><?php echo __('advance.money') ?> <span
                             class="text-danger">*</span></label>
-                    <?php echo Form::text('money', Input::previous('money',$article->money), array('id' => 'money', 'class' => 'form-control', 'rows' => 3)); ?>
+                    <?php echo Form::text('money_', Input::previous('money',number_format($article->money)), array('id' => 'money', 'class' => 'form-control', 'rows' => 3)); ?>
+                    <input type="hidden" id="hidden_money" value="<?php echo $article->money?>" name="money">
                     <?php if (isset($errors['money'])) { ?>
                         <p class="help-block"><?php echo $errors['money'][0] ?></p>
                     <?php } ?>
@@ -60,7 +61,7 @@
                     <?php if($article->status !== 'draft'){
                         echo Form::text('real_name', Input::previous('real_name', $article->real_name), array('id' => 'note', 'class' => 'form-control','readonly' =>'true' ));
                     }else {
-                        echo Form::text('real_name', __('advance.not_response'), array('id' => 'note', 'class' => 'form-control' ));
+                        echo Form::text('real_name', __('advance.not_response'), array('id' => 'note', 'class' => 'form-control','readonly' =>'true' ));
                     } ?>
 
                 </div>
@@ -101,9 +102,22 @@
         </aside>
     </div>
 </form>
+<script src="<?php echo asset_url('js/jquery.tablesorter.min.js'); ?>"></script>
+<script src="<?php echo asset_url('js/accounting.min.js'); ?>"></script>
+<script src="<?php echo asset_url('js/currency-module.js'); ?>"></script>
+<script type="text/javascript">
+    (function($){
+        $(document).ready(function () {
+            $('#mytable').tablesorter();
 
-<script src="<?php echo asset('anchor/views/assets/js/bootstrap-datetimepicker.js'); ?>"></script>
-<script src="<?php echo asset('anchor/views/assets/js/autosave.js'); ?>"></script>
+            var inputs = ['#money'];
+            var hiddens = ['#hidden_money'];
 
+            currencyModule.init(accounting, inputs, hiddens);
+
+        });
+    })(jQuery);
+
+</script>
 
 <?php echo $footer; ?>
