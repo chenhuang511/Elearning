@@ -1,8 +1,12 @@
 <?php echo $header; ?>
+<ol class="breadcrumb">
+    <li><a href="/admin">Trang chủ</a></li>
+    <li class="active">Quản lý khóa học</li>
+</ol>
 <section class="wrap">
     <?php echo $messages; ?>
     <?php if ($pages->count): ?>
-        <table class="table table-hover">
+        <table class="table table-hover adm-table">
             <thead>
             <tr>
                 <th>Mã</th>
