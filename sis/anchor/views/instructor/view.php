@@ -35,7 +35,7 @@
 			</p>
 			<p>
 				<label for="label-thematic_taught"><?php echo __('instructor.thematic_taught'); ?>:</label>
-				<?php echo Form::textarea('thematic_taught', Input::previous('thematic_taught', $instructor->thematic_taught), array('cols' => 20 ,'id' => 'label-thematic_taught','disabled'=>'true','style'=>'opacity:1')); ?>
+				<?php echo Form::text('thematic_taught', Input::previous('thematic_taught', $instructor->thematic_taught), array('id' => 'label-thematic_taught','disabled'=>'true','style'=>'opacity:1')); ?>
 			</p>
 			<p>
 				<label for="label-comment"><?php echo __('instructor.comment'); ?>:</label>

@@ -32,7 +32,7 @@ return array(
 	'type_instructor' => 'Hình thức',
 	'contract' => 'Giảng viên hợp đồng',
 	'official' => 'Giảng viên chính thức',
-	'thematic_taught' => 'Chuyên đề đã dạy',
+	'thematic_taught' => 'Số chuyên đề đã dạy',
 	'comment' => 'Ý kiến đánh giá,đóng góp',
 	'type' => 'Loại hợp đồng',
 	'name_personal/organization' => 'Tên Cá nhân/Tổ chức',

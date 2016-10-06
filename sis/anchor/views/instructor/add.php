@@ -40,7 +40,7 @@
 			</p>
 			<p>
 				<label for="label-thematic_taught"><?php echo __('instructor.thematic_taught'); ?>:</label>
-				<?php echo Form::textarea('thematic_taught', Input::previous('thematic_taught'), array('id' => 'label-thematic_taught', 'cols'=> 20)); ?>
+				<?php echo Form::text('thematic_taught', Input::previous('thematic_taught'), array('id' => 'label-thematic_taught')); ?>
 			</p>
 			<p>
 				<label for="label-comment"><?php echo __('instructor.comment'); ?>:</label>
