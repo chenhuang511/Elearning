@@ -2,7 +2,7 @@
 </div>
 </div>
 
-<footer class="footer clearfix navbar-fixed-bottom" id="footer">
+<footer class="footer clearfix" id="footer">
     <div class="container-fluid">
         <div class="footer-inner">
             <div id="powered-by" class="left-footer">
