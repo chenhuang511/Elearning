@@ -65,6 +65,7 @@ if(is_admin()) {
 	// Set posts per page for admin
 	Config::set('admin.posts_per_page', 6);
     Config::set('admin.curriculum_per_page', 15);
+    Config::set('admin.advance_per_page', 10);
 	require APP . 'routes/admin' . EXT;
 	require APP . 'routes/categories' . EXT;
 	require APP . 'routes/comments' . EXT;

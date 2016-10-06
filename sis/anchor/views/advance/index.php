@@ -35,7 +35,7 @@
                 </div>
                 <div class="form-group input_key_advance" >
                     <?php echo Form::text('key_name', Input::get('key'), array('class' => 'form-control key_form', 'placeholder' => 'Người yêu cầu','id' => 'key_name')); ?>
-                    <?php echo Form::text('key_id', Input::get('key'), array('class' => 'form-control key_form', 'placeholder' => 'Mã tạm ứng','id' => 'key_id')); ?>
+                    <?php echo Form::number('key_id', Input::get('key'), array('class' => 'form-control key_form', 'placeholder' => 'Mã tạm ứng','id' => 'key_id')); ?>
                 </div>
                 <?php echo Form::button( __('Tìm kiếm'), array('type' => 'submit', 'class' => 'btn btn-primary', 'id' => 'search_')); ?>
             </form>
