@@ -11,8 +11,8 @@ return array(
     'create_advance' => 'Thêm mới',
     'courses' => 'Khóa học cần tạm ứng',
     'published' => 'Đã được ứng',
-    'draft' => 'Đang yêu cầu',
-    'rebuff' => 'Không chấp nhận',
+    'draft' => 'Đang chờ',
+    'rebuff' => 'Không duyệt',
 
 
     'create_advance'  => 'Thêm tạm ứng mới',

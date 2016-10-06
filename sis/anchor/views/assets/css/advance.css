@@ -28,15 +28,6 @@
     border-radius: 5px;
 }
 
-.list_advance{
-    width: 955px !important;
-}
-
-.key_form{
-    width: 120px !important;
-
-}
-
 #mytable>thead>tr>th{
     vertical-align: top !important;
 }
