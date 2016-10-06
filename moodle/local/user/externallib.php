@@ -7,7 +7,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/externallib.php');
 
 
-class local_certificate_external extends external_api
+class local_user_external extends external_api
 {
 
     public static function get_user_link_profile_parameters() {
