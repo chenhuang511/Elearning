@@ -239,7 +239,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 			if($errors = $validator->errors()) {
 				Input::flash();
 				Notify::error($errors);
-				return Response::redirect('admin/contract/add');
+				return Response::redirect('admin/instructor/add');
 			}
 			$instructor = Instructor::create($input_instructor);
 			Extend::process('Instructor', $instructor->id);
@@ -263,7 +263,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 			if($errors = $validator->errors()) {
 				Input::flash();
 				Notify::error($errors);
-				return Response::redirect('admin/contract/add');
+				return Response::redirect('admin/instructor/add');
 			}
 			$input_contract = Input::get(array('name_contract', 'instructor_id', 'type', 'name_partner', 'start_date', 'end_date', 'salary', 'state', 'rules'));
 			$contract = Contract::create($input_contract);
