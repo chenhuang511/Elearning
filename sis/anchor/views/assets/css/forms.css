@@ -170,7 +170,7 @@ select {
 		resize: vertical;
 	}
 	textarea[name=css], textarea[name=js] {
-		font-family: Monaco, "Courier New", courier, monospace;
+		font-family: 'Open Sans';
 	}
 
 	.split summary {
