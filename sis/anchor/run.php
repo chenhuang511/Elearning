@@ -85,8 +85,10 @@ if(is_admin()) {
     require APP . 'routes/schools' . EXT;
     require APP . 'routes/grades' . EXT;
     require APP . 'routes/curriculum' . EXT;
+    require APP . 'routes/testroom' . EXT;
     require APP . 'routes/course' . EXT;
     require APP . 'routes/virtual_class_equipments' . EXT;
+    require APP . 'routes/rooms' . EXT;
 }
 else {
 	require APP . 'routes/site' . EXT;
