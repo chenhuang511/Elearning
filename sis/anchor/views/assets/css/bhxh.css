@@ -528,6 +528,20 @@ ul.mnu-lst li:last-child {
     text-align: center;
 }
 
+.adm-table > thead > tr > th {
+    text-align: center;
+    border-width: 1px;
+    border-color: #187bb2;
+}
+
+.adm-table tr:focus, .adm-table tr:hover {
+    cursor: pointer;
+}
+
+#main_content .breadcrumb {
+    padding-left: 0;
+}
+
 @media only screen and (min-width: 992px) {
     .main-body #main_menu, .main-body #main_content {
         float: none !important;

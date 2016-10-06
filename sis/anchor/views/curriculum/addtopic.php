@@ -1,5 +1,9 @@
 <?php echo $header; ?>
-
+    <ol class="breadcrumb">
+        <li><a href="<?php echo Uri::to('admin'); ?>">Trang chủ</a></li>
+        <li><a href="<?php echo Uri::to('admin/courses'); ?>">Quản lý khóa học</a></li>
+        <li class="active">Tạo lịch giảng</li>
+    </ol>
     <form method="post" class="addtopic"
           action="<?php echo Uri::to('admin/curriculum/add/topic/' . $courseid); ?>"
           enctype="multipart/form-data" novalidate>
