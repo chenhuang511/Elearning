@@ -7,8 +7,7 @@
 	    'create_user' => 'Tạo thành viên',
 	    'add_user' => 'Tạo mới một thành viên',
 
-	    'first_name' => 'Tên',
-	    'last_name' => 'Họ',
+	    'fullname' => 'Tên đầy đủ',
 
         'name_contract' => 'Tên hợp đồng',
 	    'type' => 'Loại hợp đồng',
@@ -27,8 +26,7 @@
 	    'bio' => 'Giới thiệu bản thân',
 	    'bio_explain' => '',
 	
-	    'firstname_missing' => 'Vui lòng nhập lại tên',
-	    'lastname_missing' => 'Vui lòng nhập lại họ',
+	    'fullname_missing' => 'Vui lòng nhập lại tên',
 	    'birthday_missing' => 'Vui lòng nhập lại ngày sinh',
 	    'subject_missing' => 'Vui lòng nhập lại môn học',
 		'salary_missing' => 'Vui lòng nhập lại mức lương',

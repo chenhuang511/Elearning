@@ -19,25 +19,24 @@
 </hgroup>
 
 <section class="wrap">
+	<?php echo $messages; ?>
+	<?php if ($instructors->count): ?>
 	<table class="table table-hover">
 		<thead>
 			<tr>
-				<th>Họ</th>
-				<th>Tên</th>
+				<th>Tên đầy đủ</th>
 				<th>Email</th>
 				<th>Ngày sinh</th>
+				<th>Hình thức</th>
 				<th>Môn học</th>
                 <th>Quản lý</th>
 			</tr>
 		</thead>
 		<tbody>
-			<?php foreach ($instructor->results as $instructor): ?>
+			<?php foreach ($instructors->results as $instructor): ?>
 				<tr>
 					<td>
-						<p><?php echo $instructor->lastname; ?></p>
-					</td>
-					<td>
-						<p><?php echo $instructor->firstname; ?></p>
+						<p><?php echo $instructor->fullname; ?></p>
 					</td>
 					<td>
 						<p><?php echo $instructor->email; ?></p>
@@ -46,8 +45,13 @@
 						<p><?php echo date('d-m-Y', strtotime($instructor->birthday)); ?></p>
 					</td>
 					<td>
+						<p><?php echo __('instructor.'.$instructor->type_instructor); ?></p>
+					</td>
+					<td>
 						<p><?php echo $instructor->subject; ?></p>
                     <td>
+						<a href="<?php echo Uri::to('admin/instructor/view/' . $instructor->id); ?>"
+                               class="btn blue">Xem</a>
 						<a href="<?php echo Uri::to('admin/instructor/edit/' . $instructor->id); ?>"
                                class="btn btn-primary">Sửa</a>
 						<a href="<?php echo Uri::to('admin/instructor/delete/' . $instructor->id); ?>"
@@ -56,7 +60,14 @@
 				</tr>
 			<?php endforeach; ?>
 		</tbody>
-	</table>	
+	</table>
+	<aside class="paging"><?php echo $instructors->links(); ?></aside>
+	<?php else: ?>
+		<aside class="empty pages">
+			<span class="icon"></span>
+			<?php echo __('instructor.nopages_desc'); ?><br>
+		</aside>
+	<?php endif; ?>	
 </section>
 <?php echo $footer; ?>
 

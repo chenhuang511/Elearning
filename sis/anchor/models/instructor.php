@@ -19,8 +19,7 @@ class Instructor extends Base {
 
 		$count = $query->count();
 
-		//$results = $query->take($perpage)->skip(($page - 1) * $perpage)->sort('real_name', 'desc')->get();
-		$results = $query->take($perpage)->skip(($page - 1) * $perpage)->get();
+		$results = $query->take($perpage)->skip(($page - 1) * $perpage)->sort('fullname', 'asc')->get();
 		return new Paginator($results, $count, $page, $perpage, Uri::to('admin/instructor'));
 	}
 	
@@ -31,7 +30,7 @@ class Instructor extends Base {
 
 	public static function search($key, $page = 1, $per_page = 10) {
 
-        $query = static::where('lastname', 'LIKE', '%' . $key . '%')->or_where('firstname', 'LIKE', '%' . $key . '%');
+        $query = static::where('fullname', 'LIKE', '%' . $key . '%');
 
         $total = $query->count();
 

@@ -19,24 +19,32 @@
 				<?php echo Form::select('instructor_id', $instructor_id, Input::previous('instructor_id'), array('id' => 'label-instructor_id')); ?>
 			</p>
 			<p>
-				<label for="label-lastname"><?php echo __('contract.last_name'); ?>:</label>
-				<?php echo Form::text('lastname', Input::previous('lastname'), array('id' => 'label-lastname')); ?>
+				<label for="label-fullname"><?php echo __('instructor.fullname'); ?>:</label>
+				<?php echo Form::text('fullname', Input::previous('fullname'), array('id' => 'label-fullname')); ?>
 			</p>
 			<p>
-				<label for="label-firstname"><?php echo __('contract.first_name'); ?>:</label>
-				<?php echo Form::text('firstname', Input::previous('firstname'), array('id' => 'label-firstname')); ?>
-			</p>
-			<p>
-				<label for="label-birthday"><?php echo __('contract.birthday'); ?>:</label>
+				<label for="label-birthday"><?php echo __('instructor.birthday'); ?>:</label>
 				<?php echo Form::date('birthday', Input::previous('birthday'), array('id' => 'label-birthday')); ?>
 			</p>
 			<p>
-				<label for="label-email"><?php echo __('contract.email'); ?>:</label>
+				<label for="label-email"><?php echo __('instructor.email'); ?>:</label>
 				<?php echo Form::text('email', Input::previous('email'), array('id' => 'label-email')); ?>
 			</p>
 			<p>
-				<label for="label-subject"><?php echo __('contract.subject'); ?>:</label>
+				<label for="label-type_instructor"><?php echo __('instructor.type_instructor'); ?>:</label>
+				<?php echo Form::select('type_instructor', $type_instructor, Input::previous('type_instructor'), array('id' => 'label-type_instructor')); ?>
+			</p>
+			<p>
+				<label for="label-subject"><?php echo __('instructor.subject'); ?>:</label>
 				<?php echo Form::text('subject', Input::previous('subject'), array('id' => 'label-subject')); ?>
+			</p>
+			<p>
+				<label for="label-thematic_taught"><?php echo __('instructor.thematic_taught'); ?>:</label>
+				<?php echo Form::textarea('thematic_taught', Input::previous('thematic_taught'), array('id' => 'label-thematic_taught', 'cols'=> 20)); ?>
+			</p>
+			<p>
+				<label for="label-comment"><?php echo __('instructor.comment'); ?>:</label>
+				<?php echo Form::textarea('comment', Input::previous('comment'), array('id' => 'label-comment', 'cols'=> 20)); ?>
 			</p>
 		</fieldset>
 
@@ -93,25 +101,21 @@
 			var $value = $this.val();
 			console.log($value);
 			if($value != 0){
-				document.getElementById("label-lastname").value = "";
-				document.getElementById("label-firstname").value = "";
+				document.getElementById("label-fullname").value = "";
 				document.getElementById("label-birthday").value = "";
 				document.getElementById("label-email").value = "";
 				document.getElementById("label-subject").value = "";
-				document.getElementById("label-lastname").disabled = true;
-				document.getElementById("label-firstname").disabled = true;
+				document.getElementById("label-fullname").disabled = true;
 				document.getElementById("label-birthday").disabled = true;
 				document.getElementById("label-email").disabled = true;
 				document.getElementById("label-subject").disabled = true;
 			}
 			else{
-				document.getElementById("label-lastname").value = "";
-				document.getElementById("label-firstname").value = "";
+				document.getElementById("label-fullname").value = "";
 				document.getElementById("label-birthday").value = "";
 				document.getElementById("label-email").value = "";
 				document.getElementById("label-subject").value = "";
-				document.getElementById("label-lastname").disabled = false;
-				document.getElementById("label-firstname").disabled = false;
+				document.getElementById("label-fullname").disabled = false;
 				document.getElementById("label-birthday").disabled = false;
 				document.getElementById("label-email").disabled = false;
 				document.getElementById("label-subject").disabled = false;
