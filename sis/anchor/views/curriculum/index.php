@@ -3,7 +3,9 @@
     <?php echo $messages; ?>
     <?php if ($pages->count): ?>
         <p class="text-right">
-            <a href="#" class="btn btn-success">Tạo khóa học</a>
+            <a href="#" class="btn btn-success" id="add-remote-course">
+                Tạo khóa học
+            </a>
         </p>
         <table class="table table-hover">
             <thead>
@@ -60,4 +62,41 @@
         </aside>
     <?php endif; ?>
 </section>
+
+<script type="text/javascript">
+
+    var addRemoteCourse = (function () {
+        var i = 0;
+        var callAjax = function(url, token, courseid, loop) {
+            $.ajax({
+                method: "POST",
+                url: url,
+                data : { token: token, courseid: courseid, loop: loop },
+                dataType: "text",
+                success: function(result){
+                    if(result == false && i < 100) {
+                        callAjax(url, token, courseid, 1);
+                        i++;
+                    }
+
+                    $('#load').removeClass();
+                    if(result == false) {
+                        $('#load').addClass('fa fa-exclamation-triangle');
+                    }
+                    $('#load').addClass('fa fa-check');
+                }});
+        }
+        var init = function (url, token, courseid) {
+            $('#add-remote-course').click(function () {
+                // call ajax
+                $(this).append('<i id="load" class="fa fa-spinner fa-pulse fa fa-fw"></i>');
+                callAjax(url, token, courseid, 0);
+            });
+        }
+        return {
+            init: init
+        }
+    }());
+    addRemoteCourse.init('<?php echo base_url('admin/curriculum/add/remote/course') ?>', '<?php echo Csrf::token(); ?>', '<?php echo $courseid ; ?>')
+</script>
 <?php echo $footer; ?>

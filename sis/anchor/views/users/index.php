@@ -28,9 +28,15 @@
 				<tr>
 					<td><?php echo $user->id ?></td>
 					<td>
-<!--						<a href="--><?php //echo Uri::to('http://192.168.1.253/user/profile.php?id=' . $user->id); ?><!--">-->
-							<p><?php echo $user->real_name; ?></p>
-<!--						</a>-->
+						<?php
+						//var_dump($user->schoolid);
+						//var_dump($user->remoteid);die;
+						$url = remote_get_user_link_profile($user->schoolid, $user->remoteid);
+						if ( $url != 'false' && !empty($url)) { ?>
+							<a target="_blank" href="<?php echo $url; ?>" ><?php echo $user->real_name ?></a>
+						<?php } else { ?>
+							<a href="#" ><?php echo $user->real_name ?></a>
+						<?php } ?>
 					</td>
 					<td>
 						<p><?php echo $user->email; ?></p>

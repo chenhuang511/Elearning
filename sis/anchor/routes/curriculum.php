@@ -32,6 +32,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
         $pagination = new Paginator($curriculums, $total, $page, $perpage, $url);
 
         $vars['pages'] = $pagination;
+        $vars['courseid'] = $courseid;
 
         return View::create('curriculum/index', $vars)
             ->partial('header', 'partials/header')
@@ -377,5 +378,12 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
         Notify::success(__('curriculum.deleted'));
 
         return Response::redirect('admin/curriculum/' . $courseid);
+    });
+    Route::post('admin/curriculum/add/remote/course', function () {
+        $input = Input::get(array('courseid', 'loop'));
+        $courseid = $input['courseid'];
+        $loop = $input['loop'];
+
+        echo Course::create_course_hub($courseid, $loop);
     });
 });

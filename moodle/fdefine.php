@@ -45,4 +45,4 @@ define('HOST_TOKEN', 'b8229b71fd2e6fedbcb8e61b8a3b95a4');
  *  HUB TOKEN - Mobile services
 */
 //define('HOST_TOKEN_M', '55112a458cf73292710da6ed382cf668');
-define('HOST_TOKEN_M', 'b8229b71fd2e6fedbcb8e61b8a3b95a4');
+define('HOST_TOKEN_M', 'e420697f35476b809eb25d1b524175bf');

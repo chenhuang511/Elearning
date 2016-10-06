@@ -24,8 +24,8 @@
 		<thead>
 			<tr>
 				<th>Tên hợp đồng</th>
-				<th>Tên giảng viên</th>
 				<th>Loại hợp đồng </th>
+				<th>Tên giảng viên</th>
 				<th>Tên cá nhân/tổ chức</th>
 				<th>Ngày bắt đầu</th>
 				<th>Ngày kết thúc</th>
@@ -41,11 +41,11 @@
 					<td>
 						<p><?php echo $contract->name_contract; ?></p>
 					</td>
-					<td>
-						<p><?php echo __($contract->lastname ." ". $contract->firstname); ?></p>
+						<td>
+						<p><?php echo __('contract.'. $contract->type); ?></p>
 					</td>
 					<td>
-						<p><?php echo $contract->type; ?></p>
+						<p><?php echo __($contract->lastname ." ". $contract->firstname); ?></p>
 					</td>
 					<td>
 						<p><?php echo $contract->name_partner; ?></p>
@@ -60,7 +60,7 @@
 						<p><?php echo $contract->salary; ?></p>
 					</td>
 					<td>
-						<p><?php echo $contract->state; ?></p>
+						<p><?php echo __('contract.'.$contract->state); ?></p>
 					</td>
 					<td>
 						<p><?php echo $contract->rules; ?></p>
