@@ -222,7 +222,7 @@ class api {
      */
     protected function call_pluginfo_service(array $params) {
 
-        $serviceurl = $this->get_serviceurl_pluginfo();
+        /*$serviceurl = $this->get_serviceurl_pluginfo();
         $response = $this->call_service($serviceurl, $params);
 
         if ($response) {
@@ -241,7 +241,8 @@ class api {
             }
         }
 
-        return false;
+        return false;*/
+        return true;
     }
 
     /**
