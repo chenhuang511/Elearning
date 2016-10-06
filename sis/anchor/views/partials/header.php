@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="<?php echo asset('anchor/views/assets/css/reset.css'); ?>">
     <link rel="stylesheet" href="<?php echo asset('anchor/views/assets/css/admin.css'); ?>">
     <link rel="stylesheet" href="<?php echo asset('anchor/views/assets/css/login.css'); ?>">
+    <link rel="stylesheet" href="<?php echo asset('anchor/views/assets/css/open-sans.min.css'); ?>">
     <link rel="stylesheet" href="<?php echo asset('anchor/views/assets/css/notifications.css'); ?>">
     <link rel="stylesheet" href="<?php echo asset('anchor/views/assets/css/forms.css'); ?>">
     <link rel="stylesheet" href="<?php echo asset('anchor/views/assets/css/font-awesome.min.css'); ?>">
@@ -158,6 +159,10 @@
                                                                                              aria-hidden="true"></i>
                                             Quản
                                             lý Trường học</a></li>
+                                    <li><a href="<?php echo Uri::to('admin/equipment'); ?>"><i class="fa fa-caret-right"
+                                                                                             aria-hidden="true"></i>
+                                            Quản
+                                            lý Phòng học-Thiết bị</a></li>
                                 </ul>
                             </div>
                         </div>

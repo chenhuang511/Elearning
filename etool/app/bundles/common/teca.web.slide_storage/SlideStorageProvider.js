@@ -1,5 +1,4 @@
 define(function() {
-    var prefix = "strut-";
     function SlideStorageProvider() {
         this.impl = localStorage;
         this.name = "Slide Storage";
@@ -118,7 +117,7 @@ define(function() {
                 type: 'POST',
                 data: {
                     action: 'setContents',
-                    filename: prefix + path,
+                    filename: path,
                     data: JSON.stringify(senddata),
                 },
                 success: function (response) {

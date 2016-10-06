@@ -38,17 +38,36 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
 	Route::post('admin/virtual_class_equipments/edit/(:num)', function($id) {
 		$input = Input::get(array('name', 'description', 'image_url', 'quantity', 'status'));
-				
+
 		$validator = new Validator($input);
 
+		// if ($input['image_url'] == null) {
+		// 	Input::flash();
+
+		// 	Notify::error('Bạn chưa nhập ảnh');
+
+		// 	return Response::redirect('admin/virtual_class_equipments/edit/' . $id);
+		// }
+
+		// else
+
+		// 	$allowedTypes = array(IMAGETYPE_PNG, IMAGETYPE_JPEG, IMAGETYPE_GIF);
+		// 	$detectedType = exif_imagetype($_FILES['image_url']['tmp_name']);
+		// 	$check = !in_array($detectedType, $allowedTypes);
+
+		// if ($check == 1) {
+		// 	Notify::error("Ảnh phải có định dạng jpeg, png hoặc gif");
+		// 	return Response::redirect('admin/virtual_class_equipments/edit/' . $id);
+		// } else {
+
 		$validator->check('name')
-		 	->is_max(2, __('Bạn chưa nhập tên thiết bị', 2));
+		 	->is_max(2, __('Bạn chưa nhập tên thiết bị'));
 
 		$validator->check('description')
-		 	->is_max(2, __('Bạn chưa nhập mô tả', 2));
+		 	->is_max(2,('Bạn chưa nhập mô tả'));
 
 		$validator->check('quantity')
-			->is_max(1, __('Bạn chưa nhập số lượng', 1));
+			->is_max(1, __('Bạn chưa nhập số lượng'));
 
 		if($errors = $validator->errors()) {
 			Input::flash();
@@ -57,6 +76,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
 			return Response::redirect('admin/virtual_class_equipments/edit/' . $id);
 		}
+		// }
 
 		VirtualClassEquipment::update($id, $input);
 

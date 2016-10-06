@@ -8,7 +8,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 	*/
 	Route::get(array('admin/contract', 'admin/contract/(:num)'), function($page = 1) {
 		$vars['messages'] = Notify::read();
-		$vars['contract'] = Contract::paginate($page, Config::get('admin.posts_per_page'));
+		$vars['contracts'] = Contract::paginate($page, Config::get('admin.posts_per_page'));
 
 		return View::create('contract/index', $vars)
 			->partial('header', 'partials/header')
@@ -28,7 +28,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
         $pagination = new Paginator($pages, $total, $page, $perpage, $url, $whatSearch);
 
-        $vars['contract'] = $pagination;
+        $vars['contracts'] = $pagination;
 
         return View::create('contract/search', $vars)
             ->partial('header', 'partials/header')
@@ -60,7 +60,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
 		foreach($instructor as $in)
 		{
-			$inst[$in->id] = $in->lastname." ".$in->firstname;
+			$inst[$in->id] = $in->fullname;
 		}	
 
 		$vars['instructor_id'] = $inst;
@@ -128,12 +128,17 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 			'unpaid' => __('contract.unpaid'),
 		);
 
+		$vars['type_instructor'] = array(
+			'contract' => __('instructor.contract'),
+			'official' => __('instructor.official'),
+		);
+
 		$instructor = Instructor::get_name_instructor();
 		$inst = array('0' => 'Tạo Mới');
 
 		foreach($instructor as $in)
 		{
-			$inst[$in->id] = $in->lastname." ".$in->firstname;
+			$inst[$in->id] = $in->fullname;
 		}	
 
 		$vars['instructor_id'] = $inst;
@@ -143,7 +148,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 	});
 
 	Route::post('admin/contract/add', function() {
-		$input = Input::get(array('lastname', 'firstname', 'birthday', 'email', 'subject','name_contract', 'instructor_id', 'type', 'name_partner', 'start_date', 'end_date', 'salary', 'state', 'rules'));
+		$input = Input::get(array('fullname', 'birthday', 'email', 'type_instructor', 'subject', 'thematic_taught', 'comment', 'name_contract', 'instructor_id', 'type', 'name_partner', 'start_date', 'end_date', 'salary', 'state', 'rules'));
 		$ins_id = $input['instructor_id'];
 		
 		$validator = new Validator($input);
@@ -167,17 +172,14 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 		 	->is_max(2, __('contract.rules_missing', 2));
 	
 		if($ins_id == 0){
-			$input_instructor = Input::get(array('lastname', 'firstname', 'birthday', 'email', 'subject'));
+			$input_instructor = Input::get(array('fullname', 'birthday', 'type_instructor', 'email', 'subject', 'thematic_taught', 'comment'));
 
 			$validator->add('valid', function($email) {
 				return Query::table(Base::table('instructors'))->where('email', '=', $email)->count() == 0;
 			});
 
-			$validator->check('firstname')
-		 		->is_max(2, __('contract.firstname_missing'));
-
-			$validator->check('lastname')
-		 		->is_max(2, __('contract.lastname_missing'));
+			$validator->check('fullname')
+		 		->is_max(2, __('contract.fullname_missing'));
 
 			$validator->check('birthday')	
 		 		->is_regex('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', __('contract.birthday_missing'));
