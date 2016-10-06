@@ -320,9 +320,10 @@ class local_mod_enrol_external extends external_api
     public static function remote_enrol_course_parameters() {
         return new external_function_parameters(
             array('roleid' => new external_value(PARAM_INT, 'Role id'),
-                'hostid' => new external_value(PARAM_TEXT, 'user id'),
-                'methodname' => new external_value(PARAM_TEXT, 'method name id'),
-                'courseid' => new external_value(PARAM_INT, 'Course id'))
+                'hostid' => new external_value(PARAM_INT, 'user id'),
+                'courseid' => new external_value(PARAM_INT, 'Course id'),
+                'methodname' => new external_value(PARAM_TEXT, 'method name id')
+            )
         );
     }
 
@@ -331,7 +332,7 @@ class local_mod_enrol_external extends external_api
 
         //validate parameter
         $params = self::validate_parameters(self::remote_enrol_course_parameters(),
-            array('roleid' => $roleid, 'userid' => $hostid, 'courseid' => $courseid, 'methodname' => $methodname));
+            array('roleid' => $roleid, 'hostid' => $hostid, 'courseid' => $courseid, 'methodname' => $methodname));
 
         $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
         $plugin = enrol_get_plugin('mnet');
@@ -342,18 +343,17 @@ class local_mod_enrol_external extends external_api
         $fields = (object)$plugin->get_instance_defaults();
         $fields->customint1       = $hostid;
         $fields->id       = null;
-        $fields->role       = 5;
+        $fields->roleid       = 5; // hardcode roleid
         $fields->name       = $methodname;
         $fields->type       = 'mnet';
         $fields->courseid = $course->id;
-        $msg = 'successfully';
 
-        try {
-            $plugin->add_instance($course, $fields);
-        } catch (Exception $e) {
-            $msg = $e->getMessage();
+        if($DB->get_record('enrol', array('courseid' => $courseid, 'enrol' => 'mnet', 'roleid' => 5, 'customint1' => $hostid), '*', MUST_EXIST)){
+            return 'enroled';
         }
+        $plugin->add_instance($course, (array)$fields);
 
+        $msg = 'successfully';
         return $msg;
     }
 

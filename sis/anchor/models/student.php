@@ -59,11 +59,11 @@ class Student extends Base {
     public static function getStudentsByCourse($courseid) {
         $query = static::join(Base::table('student_course'), Base::table('student_course.studentid'), '=', Base::table('students.id'))
             ->where(Base::table('student_course.courseid'), '=', $courseid)
-            ->get(
+            ->get(array(
                 Base::table('students.fullname'),
                 Base::table('students.email'),
                 Base::table('student_course.studentid')
-            );
+            ));
 
         return $query;
 

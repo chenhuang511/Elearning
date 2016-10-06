@@ -42,4 +42,12 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_host_enrol_user_to_course' => array(
+		'classname'	  => 'local_role_external',
+		'methodname'  => 'host_enrol_user_to_course',
+		'classpath'	  => 'local/role/externallib.php',
+		'description' => "Assign user to course",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 );
