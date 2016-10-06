@@ -25,4 +25,21 @@ Route::collection(array('before' => 'auth,csrf'), function () {
             ->partial('header', 'partials/header')
             ->partial('footer', 'partials/footer');
     });
+
+    Route::get(array('admin/courses/(:num)/enrol', 'admin/courses/(:num)/enrol/(:num)'), function ($courseid, $page = 1) {
+
+        // get public listings
+        $course = Course::find($courseid);
+        $studentsenrol = Student::getStudentsByCourse($courseid);
+        $usersenrol = User::getUsersByCourse($courseid);
+        $vars['messages'] = Notify::read();
+
+        $vars['course'] = $course;
+        $vars['usersenrol'] = $usersenrol;
+        $vars['studentsenrol'] = $studentsenrol;
+        //need process here
+        return View::create('course/enrol', $vars)
+            ->partial('header', 'partials/header')
+            ->partial('footer', 'partials/footer');
+    });
 });

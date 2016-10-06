@@ -1,0 +1,1 @@
+ALTER TABLE anchor_courses ADD COLUMN status INT(1) DEFAULT 1;

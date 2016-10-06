@@ -16,6 +16,7 @@
                 <th>Quản lý</th>
                 <th>Quản lý điểm</th>
                 <th>Tạm ứng tiền</th>
+                <th>Ghi danh</th>
             </tr>
             </thead>
             <tbody>
@@ -55,6 +56,17 @@
                             <a href="<?php echo Uri::to('admin/advance/course/' . $page->id); ?>"
                                class="btn btn-primary">tạm ứng</a>
                         </td>
+                        <?php if($page->status == PUBLISHED) : ?>
+                            <td>
+                                <a href="<?php echo Uri::to('admin/courses/' . $page->id . '/enrol'); ?>"
+                                   class="btn btn-primary">Ghi danh</a>
+                            </td>
+                        <?php else : ?>
+                            <td>
+                                <a href="#"
+                                   class="btn btn-primary hidden">Ghi danh</a>
+                            </td>
+                        <?php endif; ?>
                     </tr>
                 <?php endforeach; ?>
             <?php endforeach; ?>
