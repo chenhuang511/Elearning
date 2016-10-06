@@ -1,4 +1,8 @@
 <?php echo $header; ?>
+<ol class="breadcrumb">
+	<li><a href="<?php echo Uri::to('admin'); ?>">Trang chủ</a></li>
+	<li class="active">Quản lý thành viên</li>
+</ol>
 <section class="wrap">
 	<?php echo $messages; ?>
 	<?php if ($users->count): ?>
@@ -29,13 +33,11 @@
 					<td><?php echo $user->id ?></td>
 					<td>
 						<?php
-						//var_dump($user->schoolid);
-						//var_dump($user->remoteid);die;
 						$url = remote_get_user_link_profile($user->schoolid, $user->remoteid);
-						if ( $url != 'false' && !empty($url)) { ?>
-							<a target="_blank" href="<?php echo $url; ?>" ><?php echo $user->real_name ?></a>
+						if ($url != 'false' && !empty($url)) { ?>
+							<a target="_blank" href="<?php echo $url; ?>"><?php echo $user->real_name ?></a>
 						<?php } else { ?>
-							<a href="#" ><?php echo $user->real_name ?></a>
+							<a href="#"><?php echo $user->real_name ?></a>
 						<?php } ?>
 					</td>
 					<td>

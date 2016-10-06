@@ -35,7 +35,13 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         $vars['token'] = Csrf::token();
         $vars['student'] = Student::find($id);
         $vars['studentschool'] = Student::getSchoolByStudent($id);
-        $vars['studentcourse'] = Student::getCoursesByStudent($id);
+        $vars['studentcourselearning'] = Student::getCoursesLearningByStudent($id);
+        $vars['studentcoursesuccessed'] = Student::getCoursesSuccessedByStudent($id);
+        list($vars['studenttopicsuccessed'], $vars['counttopicsuccessed']) = Student::getTopicSuccessedByStudent($id);
+        list($vars['studenttopiclearning'], $vars['counttopiclearning']) = Student::getTopicLearningByStudent($id);
+
+        //echo '<pre>';var_dump($vars['studenttopiclearning']);die;
+        //echo '<pre>';var_dump($vars['studentcoursesuccessed']);die;
 
         // extended fields
         $vars['fields'] = Extend::fields('student', $id);
