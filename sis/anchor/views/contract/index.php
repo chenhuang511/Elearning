@@ -22,7 +22,8 @@
 </hgroup>
 
 <section class="wrap">
-	
+	<?php echo $messages; ?>
+	<?php if ($contracts->count): ?>
 	<table class="table table-hover">
 		<thead>
 			<tr>
@@ -39,7 +40,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			<?php foreach ($contract->results as $contract): ?>
+			<?php foreach ($contracts->results as $contract): ?>
 				<tr>
 					<td>
 						<p><?php echo $contract->name_contract; ?></p>
@@ -48,7 +49,7 @@
 						<p><?php echo __('contract.'. $contract->type); ?></p>
 					</td>
 					<td>
-						<p><?php echo __($contract->lastname ." ". $contract->firstname); ?></p>
+						<p><?php echo __($contract->fullname); ?></p>
 					</td>
 					<td>
 						<p><?php echo $contract->name_partner; ?></p>
@@ -77,7 +78,14 @@
 				</tr>
 			<?php endforeach; ?>
 		</tbody>
-	</table>	
+	</table>
+	<aside class="paging"><?php echo $contracts->links(); ?></aside>
+	<?php else: ?>
+		<aside class="empty pages">
+			<span class="icon"></span>
+			<?php echo __('instructor.nopages_desc'); ?><br>
+		</aside>
+	<?php endif; ?>	
 </section>
 <?php echo $footer; ?>
 
