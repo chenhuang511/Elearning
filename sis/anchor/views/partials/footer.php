@@ -2,32 +2,22 @@
 </div>
 </div>
 
-<footer class="footer" id="footer">
-    <div class=" container">
+<footer class="footer clearfix navbar-fixed-bottom" id="footer">
+    <div class="container-fluid">
         <div class="footer-inner">
-            <ul class="nav nav-pills footer-nav">
-                <li class="">
-                    <a href="#">Xác nhận quyền riêng tư</a>
-                </li>
-                <li class="">
-                    <a href="#">Giới thiệu</a>
-                </li>
-                <li class="">
-                    <a href="#">Liên hệ chúng tôi</a>
-                </li>
-                <li><a href="<?php echo base_url('admin'); ?>" title="Administer your site!">Admin area</a></li>
-            </ul>
-            <div id="powered-by" class="mahara-logo logo-area bhxh-table">
-                <div class="logo-section bhxh-td">
+            <div id="powered-by" class="left-footer">
+                <div class="main-footer">
                     <a href="<?php echo base_url(); ?>" class="logo">
                         <img src="<?php echo theme_url('/img/site-logo.png'); ?>" alt="qldt">
                     </a>
-                </div>
-                <div class="logo-section bhxh-td">
-                    <h2 class="logo-title no-padding">
-                        Trường Đào Tạo Nghiệp Vụ <br> Bảo Hiểm Xã Hội Việt Nam
+                    <h2 class="school-name">
+                        Trường Đào Tạo Nghiệp Vụ<br>Bảo Hiểm Xã Hội Việt Nam
                     </h2>
                 </div>
+            </div>
+            <div class="right-footer">
+                <p>&copy; 2016. NCCSOFT VIETNAM TECHNOLOGY</p>
+                <p>Email: <a href="mailto:contact@nccsoft.vn">contact@nccsoft.vn</a></p>
             </div>
         </div>
     </div>
@@ -62,7 +52,7 @@
             mainMenu = $('#main_menu'),
             mainContent = $('#main_content'),
             mainBody = $('.main-body'),
-            collapseMenu = $('.collapse-menu');
+            collapseMenu = $('#collapse_menu');
 
         expandMenu.on('click', function (e) {
             mainMenu.hide();
@@ -70,6 +60,15 @@
             mainContent.removeClass('col-sm-9');
             mainBody.addClass('container');
             collapseMenu.show();
+            e.preventDefault();
+        });
+
+        collapseMenu.on('click', function(e) {
+            mainMenu.show();
+            mainMenu.addClass('col-sm-3');
+            mainContent.addClass('col-sm-9');
+            mainBody.removeClass('container');
+            collapseMenu.hide();
             e.preventDefault();
         });
     })(jQuery);

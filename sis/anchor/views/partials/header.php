@@ -31,47 +31,43 @@
 <body
     class="<?php echo Auth::guest() ? 'login' : 'admin'; ?> <?php echo str_replace('_', '-', Config::app('language')); ?>">
 <header class="header navbar navbar-default navbar-fixed-top no-site-messages" id="header">
-    <div class="container">
-        <div id="logo-area" class="logo-area bhxh-table pull-left">
-            <div class="logo-section bhxh-td">
-                <a href="<?php echo base_url(); ?>" class="logo">
-                    <img src="<?php echo asset_url('img/site-logo.png'); ?>" alt="qldt">
-                </a>
-            </div>
-            <div class="logo-section bhxh-td">
-                <p class="logo-title">
+    <div class="container-fluid">
+        <div class="main-header">
+            <div id="logo-area" class="logo-area">
+                <div class="logo-block">
+                    <a id="collapse_menu" href="#" style="display: none;"><i class="fa fa-bars" aria-hidden="true"></i></a>
+                    <span class="logo-title">
                     <?php echo site_name(); ?>
-                </p>
+                </span>
+                </div>
             </div>
-        </div>
-        <div class="right-menu pull-right">
-            <ul class="logon-block">
-                <?php if (Auth::user()): ?>
-                    <li class="username">
-                        Xin chào, <a href="#"> <?= user_authed_name() ?></a>
-                    </li>
-                    <li class="divided">|</li>
-                    <li class="logout">
-                        <a href="/admin/logout"><?php echo __('global.logout') ?> <i class="fa fa-sign-out"></i></a>
-                    </li>
-                <?php else: ?>
-                    <li class="logout">
-                        <a href="<?php echo Uri::to('admin/login'); ?>"><i class="fa fa-sign-in" aria-hidden="true"></i>Đăng
-                            nhập</a>
-                    </li>
-                <?php endif; ?>
-            </ul>
+            <div class="auth-area">
+                <ul class="logon-block pull-right">
+                    <?php if (Auth::user()): ?>
+                        <li class="username">
+                            <i class="fa fa-user" aria-hidden="true"></i> Xin chào, <a href="#"> <?= user_authed_name() ?></a>
+                        </li>
+                        <li class="divided">|</li>
+                        <li class="logout">
+                            <a href="/admin/logout"><?php echo __('global.logout') ?> <i class="fa fa-sign-out"></i></a>
+                        </li>
+                    <?php else: ?>
+                        <li class="logout">
+                            <a href="<?php echo Uri::to('admin/login'); ?>"><i class="fa fa-sign-in"
+                                                                               aria-hidden="true"></i>Đăng
+                                nhập</a>
+                        </li>
+                    <?php endif; ?>
+                </ul>
+            </div>
         </div>
     </div>
 </header>
 <div class="bhxh-body">
-    <div class="collapse-menu" style="display: none;">
-        <a id="collapse_menu" href="#"><i class="fa fa-cogs" aria-hidden="true"></i></a>
-    </div>
     <div class="clearfix main-body">
         <div id="main_menu" class="col-sm-3">
             <div class="clearfix text-right expanded-menu">
-                <a id="expand_menu" href="#"><i class="fa fa-caret-square-o-left" aria-hidden="true"></i></a>
+                <a id="expand_menu" href="#"><i class="fa fa-long-arrow-left" aria-hidden="true"></i></a>
             </div>
             <?php if (Auth::user()): ?>
                 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
