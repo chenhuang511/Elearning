@@ -29,11 +29,13 @@
 					<td><?php echo $user->id ?></td>
 					<td>
 						<?php
+						//var_dump($user->schoolid);
+						//var_dump($user->remoteid);die;
 						$url = remote_get_user_link_profile($user->schoolid, $user->remoteid);
 						if ( $url != 'false' && !empty($url)) { ?>
-							<a target="_blank" class="btn btn-primary" href="<?php echo $url; ?>" >Chứng chỉ</a>
+							<a target="_blank" href="<?php echo $url; ?>" ><?php echo $user->real_name ?></a>
 						<?php } else { ?>
-							<a class="btn btn-primary" href="#" >Chứng chỉ</a>
+							<a href="#" ><?php echo $user->real_name ?></a>
 						<?php } ?>
 					</td>
 					<td>

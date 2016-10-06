@@ -33,7 +33,7 @@
 					</td>
 					<td><?php echo $student->email ?></td>
 					<td><a class="btn btn-primary" href="#">Chứng chỉ</a></td>
-					<td><a class="btn btn-primary" href="#">Các khóa học</a></td>
+					<td><a class="btn btn-primary" href= <?php echo 'students/'.$student->id.'/courses' ?>>Các khóa học</a></td>
 				</tr>
 			<?php endforeach; ?>
 			</tbody>

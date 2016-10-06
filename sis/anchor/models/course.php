@@ -4,6 +4,17 @@ class Course extends Base
 {
     public static $table = 'courses';
 
+    public static function paginate($page = 1, $perpage = 10, $stuid) {
+        $query = Query::table(static::table())->where('remoteid', '!=', 'null');
+
+        $count = $query->count();
+
+        $results = $query->take($perpage)->skip(($page - 1) * $perpage)->sort('id', 'asc')->get();
+        //$results = $query->take($perpage)->skip(($page - 1) * $perpage)->get();
+
+        return new Paginator($results, $count, $page, $perpage, Uri::to('admin/students/'.$stuid.'/courses'));
+    }
+
     public static function getCoursesBy($userid = null, $page = 1, $perpage = 10)
     {
         if ($userid != null) {
