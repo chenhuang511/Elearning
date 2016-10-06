@@ -28,7 +28,7 @@ CREATE TABLE mdl_course_modules_createdby (
 
 drop table mdl_mnetservice_enrol_courses;
 
-CREATE TABLE l_slide_storage (
+CREATE TABLE mdl_slide_storage (
   id BIGINT(10) AUTO_INCREMENT NOT NULL PRIMARY KEY,
   userid BIGINT(10) NOT NULL,
   filename VARCHAR(512) NOT NULL,
@@ -37,4 +37,4 @@ CREATE TABLE l_slide_storage (
   visibility tinyint(1) DEFAULT 0,
   timecreated INT DEFAULT 0,
   timemodified INT DEFAULT 0
-);
+) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
