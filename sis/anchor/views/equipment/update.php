@@ -34,17 +34,17 @@
     </div>
     
     
-    <div class="form-group <?php if (isset($errors['summary'])) {
+    <div class="form-group <?php if (isset($errors['description'])) {
         echo 'has-error';
     } else {
         echo '';
     } ?>">
-        <label for="summary" class="col-sm-2 control-label"><?php echo __('rooms.summary') ?></label>
+        <label for="description" class="col-sm-2 control-label"><?php echo __('rooms.description') ?></label>
         <div class="col-sm-10">
-            <?php echo Form::textarea('summary', Input::previous('summary', $room->summary), array('id' => 'summary', 'class' => 'form-control')); ?>
-            <em><?php echo __('courses.summary_explain'); ?></em>
-            <?php if (isset($errors['summary'])) { ?>
-                <p class="help-block"><?php echo $errors['summary'][0] ?></p>
+            <?php echo Form::textarea('description', Input::previous('description', $room->description), array('id' => 'description', 'class' => 'form-control')); ?>
+            <em><?php echo __('courses.description_explain'); ?></em>
+            <?php if (isset($errors['description'])) { ?>
+                <p class="help-block"><?php echo $errors['description'][0] ?></p>
             <?php } ?>
         </div>
     </div>
