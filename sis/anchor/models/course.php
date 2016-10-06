@@ -20,8 +20,42 @@ class Course extends Base
         if ($userid != null) {
             return self::getCoursesByUserId($userid, $page, $perpage);
         }
+        /**
+         * for now, we only support one school
+         */
+        return self::getAllCourses($page, $perpage);
+//        return self::getCoursesBySchoolId($page, $perpage);
+    }
 
-        return self::getCoursesBySchoolId($page, $perpage);
+    private static function getCoursesByStatus($page = 1, $perpage = 10, $status = 1)
+    {
+        $query = static::where('status', '=', $status);
+
+        $total = static::count();
+
+        // get courses
+        $courses = $query->take($perpage)
+            ->skip(--$page * $perpage)
+            ->get(array(
+                Base::table('courses.*')
+            ));
+
+        return array($total, $courses);
+    }
+
+    private static function getAllCourses($page = 1, $perpage = 10)
+    {
+        $total = static::count();
+
+        // get courses
+        $courses = static::sort('id', 'DESC')
+            ->take($perpage)
+            ->skip(--$page * $perpage)
+            ->get(array(
+                Base::table('courses.*')
+            ));
+
+        return array($total, $courses);
     }
 
     private static function getCoursesBySchoolId($page = 1, $perpage = 10)

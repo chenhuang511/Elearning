@@ -96,4 +96,17 @@ class User extends Base
     {
         return static::find($id);
     }
+
+    public static function getUsersByCourse($courseid) {
+        $query = static::join(Base::table('user_course'), Base::table('user_course.userid'), '=', Base::table('users.id'))
+            ->where(Base::table('user_course.courseid'), '=', $courseid)
+            ->get(
+                Base::table('users.real_name AS fullname'),
+                Base::table('users.email'),
+                Base::table('users.userid')
+            );
+
+        return $query;
+
+    }
 }

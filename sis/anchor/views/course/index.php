@@ -1,62 +1,68 @@
 <?php echo $header; ?>
+<ol class="breadcrumb">
+    <li><a href="<?php echo Uri::to('admin'); ?>">Trang chủ</a></li>
+    <li class="active">Quản lý khóa học</li>
+</ol>
 <section class="wrap">
+    <p class="text-right">
+        <a href="<?php echo Uri::to('admin/curriculum/add/course'); ?>" class="btn btn-primary">Tạo khóa học mới</a>
+    </p>
     <?php echo $messages; ?>
     <?php if ($pages->count): ?>
-        <table class="table table-hover">
-            <thead>
-            <tr>
-                <th>Mã</th>
-                <th>Tên khoá học</th>
-                <th>Ngày bắt đầu</th>
-                <th>Ngày kết thúc</th>
-                <th>Quản lý</th>
-                <th>Quản lý điểm</th>
-                <th>Tạm ứng tiền</th>
-            </tr>
-            </thead>
-            <tbody>
-            <?php foreach ($pages->results as $item): $display_pages = array($item); ?>
-                <?php foreach ($display_pages as $page) : ?>
-                    <tr>
-                        <td><?php echo $page->data['id'] ?></td>
-                        <td>
-                            <a href="<?php echo Uri::to('admin/courses/edit/' . $page->data['id']); ?>">
+        <div class="table-responsive">
+            <table class="table table-hover adm-table">
+                <thead>
+                <tr>
+                    <th>Mã</th>
+                    <th>Tên khoá học</th>
+                    <th>Ngày bắt đầu</th>
+                    <th>Ngày kết thúc</th>
+                    <th>Quản lý</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($pages->results as $item): $display_pages = array($item); ?>
+                    <?php foreach ($display_pages as $page) : ?>
+                        <tr>
+                            <td><?php echo $page->id ?></td>
+                            <td>
+                                <a href="<?php echo Uri::to('admin/curriculum/update/course/' . $page->id); ?>">
                                 <span class="bhxh-course">
                                     <?php echo $page->fullname; ?>
                                 </span>
-                            </a>
-                        </td>
-                        <td><?php
-                            if ($page->startdate !== NULL)
-                                echo $page->startdate;
-                            else
-                                echo 'chưa khởi tạo';
-                            ?></td>
-                        <td><?php
-                            if ($page->enddate !== NULL)
-                                echo $page->enddate;
-                            else
-                                echo 'chưa khởi tạo';
-                            ?>
-                        </td>
-                        <td>
-                            <a href="<?php echo Uri::to('admin/curriculum/' . $page->id); ?>"
-                               class="btn btn-primary">lịch giảng</a>
-                        </td>
-                        <td>
-                            <a href="<?php echo Uri::to('admin/grade/course/' . $page->id); ?>"
-                               class="btn btn-primary">quản lý điểm</a>
-                        </td>
-                        <td>
-                            <a href="<?php echo Uri::to('admin/advance/course/' . $page->id); ?>"
-                               class="btn btn-primary">tạm ứng</a>
-                        </td>
-                    </tr>
+                                </a>
+                            </td>
+                            <td><?php
+                                if ($page->startdate !== NULL)
+                                    echo $page->startdate;
+                                else
+                                    echo 'chưa khởi tạo';
+                                ?></td>
+                            <td><?php
+                                if ($page->enddate !== NULL)
+                                    echo $page->enddate;
+                                else
+                                    echo 'chưa khởi tạo';
+                                ?>
+                            </td>
+                            <td>
+                                <a href="<?php echo Uri::to('admin/curriculum/' . $page->id); ?>"><i
+                                        class="fa fa-calendar" aria-hidden="true"></i>Lịch giảng</a>
+                                | <a href="<?php echo Uri::to('admin/grade/course/' . $page->id); ?>"><i
+                                        class="fa fa-pencil-square-o" aria-hidden="true"></i>Điểm</a>
+                                | <a href="<?php echo Uri::to('admin/advance/course/' . $page->id); ?>"><i
+                                        class="fa fa-usd" aria-hidden="true"></i>Tạm ứng tiền</a>
+                                <?php if ($page->status == PUBLISHED) : ?>
+                                    | <a href="<?php echo Uri::to('admin/courses/' . $page->id . '/enrol'); ?>"
+                                         class="btn btn-primary">Ghi danh</a>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
                 <?php endforeach; ?>
-            <?php endforeach; ?>
-            </tbody>
-        </table>
-
+                </tbody>
+            </table>
+        </div>
         <aside class="paging"><?php echo $pages->links(); ?></aside>
 
     <?php else: ?>
