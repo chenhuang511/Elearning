@@ -51,7 +51,8 @@
                 <ul class="logon-block pull-right">
                     <?php if (Auth::user()): ?>
                         <li class="username">
-                            <i class="fa fa-user" aria-hidden="true"></i> Xin chào, <a href="#"> <?= user_authed_name() ?></a>
+                            <i class="fa fa-user" aria-hidden="true"></i> Xin chào, <a
+                                href="#"> <?= user_authed_name() ?></a>
                         </li>
                         <li class="divided">|</li>
                         <li class="logout">
@@ -163,10 +164,32 @@
                                                                                              aria-hidden="true"></i>
                                             Quản
                                             lý Trường học</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingFour">
+                            <h4 class="panel-title">
+                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                                   href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                    <i class="fa fa-users" aria-hidden="true"></i> Quản lý Phòng, thiết bị
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseFour" class="panel-collapse collapse" role="tabpanel"
+                             aria-labelledby="headingFour">
+                            <div class="panel-body">
+                                <ul class="mnu-lst">
+                                    <li><a href="#"><i class="fa fa-caret-right"
+                                                       aria-hidden="true"></i>
+                                            Danh sách phòng học</a></li>
+                                    <li><a href="#"><i class="fa fa-caret-right"
+                                                       aria-hidden="true"></i>
+                                            Tạo phòng học mới</a></li>
                                     <li><a href="<?php echo Uri::to('admin/equipment'); ?>"><i class="fa fa-caret-right"
-                                                                                             aria-hidden="true"></i>
-                                            Quản
-                                            lý Phòng học-Thiết bị</a></li>
+                                                                                               aria-hidden="true"></i>
+                                            Danh sách thiết bị</a></li>
                                 </ul>
                             </div>
                         </div>

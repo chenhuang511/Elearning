@@ -44,7 +44,7 @@
             mainMenu.hide();
             mainMenu.removeClass('col-sm-3');
             mainContent.removeClass('col-sm-9');
-            mainBody.addClass('container');
+            mainContent.addClass('container');
             collapseMenu.show();
             e.preventDefault();
         });
@@ -53,7 +53,7 @@
             mainMenu.show();
             mainMenu.addClass('col-sm-3');
             mainContent.addClass('col-sm-9');
-            mainBody.removeClass('container');
+            mainContent.removeClass('container');
             collapseMenu.hide();
             e.preventDefault();
         });
