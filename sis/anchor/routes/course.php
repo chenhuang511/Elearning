@@ -26,7 +26,7 @@ Route::collection(array('before' => 'auth,csrf'), function () {
             ->partial('footer', 'partials/footer');
     });
 
-    Route::get(array('admin/courses/(:num)/enrol', 'admin/courses/(:num)/enrol/(:num)'), function ($courseid, $page = 1) {
+    Route::get(array('admin/courses/enrol/(:num)', 'admin/courses/enrol/(:num)/(:num)'), function ($courseid, $page = 1) {
 
         // get public listings
         $course = Course::find($courseid);
