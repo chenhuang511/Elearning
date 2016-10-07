@@ -17,9 +17,9 @@ class Curriculum extends Base
             ->skip(--$page * $perpage)
             ->get(array(
                 Base::table('curriculum.*'),
-                Base::table('courses.fullname as coursename')
+                Base::table('courses.fullname as coursename'),
+                Base::table('courses.status as status')
             ));
-
         foreach ($curriculums as $curriculum) {
             $curriculum->topicday = self::GetDayOfWeek($curriculum->topicday) . ' ' . date('d-m-Y', strtotime($curriculum->topicday));
             $curriculum->teacher_name = User::getRealName($curriculum->lecturer);
