@@ -10,8 +10,8 @@ return array(
     'status' => 'Trạng thái',
     'create_advance' => 'Thêm mới',
     'courses' => 'Khóa học cần tạm ứng',
-    'published' => 'Đã được ứng',
-    'draft' => 'Đang chờ',
+    'published' => 'Đã duyệt',
+    'draft' => 'Chờ duyệt',
     'rebuff' => 'Không duyệt',
 
 

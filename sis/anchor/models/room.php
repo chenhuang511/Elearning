@@ -3,7 +3,7 @@
 
 class Room extends Base {
 
-    public static $table = 'room';
+    public static $table = 'rooms';
 
 	public static function paginate($page = 1, $perpage = 10) {
 		$query = Query::table(static::table());

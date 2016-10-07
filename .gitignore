@@ -17,3 +17,4 @@ Elearning.phpproj
 /etool/app/scripts/compiled-templates.js
 etool/app/scripts/compiled-templates.js
 etool/dist/*
+/sis/composer.lock

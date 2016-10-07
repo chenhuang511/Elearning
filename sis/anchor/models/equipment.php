@@ -13,7 +13,7 @@ class Equipment extends Base
         $total = $query->count();
 
         // get list curriculumn
-        $curriculums = $query->take($perpage)
+        $equipments = $query->take($perpage)
             ->skip(--$page * $perpage)
             ->get(array(
                 Base::table('equipment.*'),
@@ -25,7 +25,7 @@ class Equipment extends Base
         //     $curriculum->teacher_name = User::getRealName($curriculum->lecturer);
         // }
 
-        return array($total, $curriculums);
+        return array($total, $equipments);
     }
 
     public static function getById($id)

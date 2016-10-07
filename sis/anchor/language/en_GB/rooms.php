@@ -5,19 +5,19 @@ return array(
     'rooms' => 'Phòng học',
 
     // fields
-    'fullname' => 'Tên phòng học',
+    'name' => 'Tên phòng học',
     'shortname' => 'Tên gợi ý',
     'startdate' => 'Ngày khai giảng',
     'enddate' => 'Ngày kết thúc',
-    'summary' => 'Mô tả',
+    'description' => 'Mô tả',
     'description_explain' => '',
 
     //validator
-    'fullname_missing' => 'Tên phòng học không được để trống',
+    'name_missing' => 'Tên phòng học không được để trống',
     'shortname_missing' => 'Tên gợi ý không được để trống',
     'startdate_missing' => 'Bạn chưa chọn ngày khai giảng',
     'enddate_missing' => 'Bạn chưa chọn ngày kết thúc',
-    'summary_missing' => 'Mô tả phòng học không được để trống',
+    'description_missing' => 'Mô tả phòng học không được để trống',
 
     //messages
     'created' => 'Tạo mới phòng học thành công',

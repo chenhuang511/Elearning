@@ -187,7 +187,7 @@
                                     <li><a href="#"><i class="fa fa-caret-right"
                                                        aria-hidden="true"></i>
                                             Tạo phòng học mới</a></li>
-                                    <li><a href="<?php echo Uri::to('admin/equipment'); ?>"><i class="fa fa-caret-right"
+                                    <li><a href="<?php echo Uri::to('admin/equipment/add/room'); ?>"><i class="fa fa-caret-right"
                                                                                                aria-hidden="true"></i>
                                             Danh sách thiết bị</a></li>
                                 </ul>

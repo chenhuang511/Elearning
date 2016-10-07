@@ -17,19 +17,19 @@
                       class="adm-search-box">
                     <div class="form-group">
                         <label for="key_id" class="control-label">Mã tạm ứng</label>
-                        <?php echo Form::text('key_id', Input::get('key'), array('class' => 'form-control', 'placeholder' => 'Mã tạm ứng', 'id' => 'key_id')); ?>
+                        <?php echo Form::text('key_id', Input::get('key_id'), array('class' => 'form-control', 'placeholder' => 'Mã tạm ứng', 'id' => 'key_id')); ?>
                     </div>
                     <div class="form-group">
                         <label for="key_name" class="control-label">Người yêu cầu</label>
-                        <?php echo Form::text('key_name', Input::get('key'), array('class' => 'form-control', 'placeholder' => 'Người yêu cầu', 'id' => 'key_name')); ?>
+                        <?php echo Form::text('key_name', Input::get('key_name'), array('class' => 'form-control', 'placeholder' => 'Người yêu cầu', 'id' => 'key_name')); ?>
                     </div>
                     <div class="form-group">
                         <label for="gradeMin">Số tiền (thấp nhất)</label>
-                        <?php echo Form::text('moneyMin', Input::get('gradeMin'), array('class' => 'form-control', 'id' => 'moneyMin')); ?>
-                        <input type="hidden" id="hidden_moneyMin" value="">
+                        <?php echo Form::text('moneyMin_', Input::get('moneyMin'), array('class' => 'form-control', 'id' => 'moneyMin')); ?>
+                        <input type="hidden" id="hidden_moneyMin" value="<?php Input::get('moneyMin') ?>" name="moneyMin">
                         <label for="gradeMax">Số tiền (cao nhất)</label>
-                        <?php echo Form::text('moneyMax', Input::get('gradeMax'), array('class' => 'form-control', 'id' => 'moneyMax')); ?>
-                        <input type="hidden" id="hidden_moneyMax" value="">
+                        <?php echo Form::text('moneyMax_', Input::get('moneyMax'), array('class' => 'form-control', 'id' => 'moneyMax')); ?>
+                        <input type="hidden" id="hidden_moneyMax" value="<?php echo Input::get('moneyMax') ?>" name="moneyMax">
                     </div>
                     <div class="form-group text-right">
                         <?php echo Form::button(__('Tìm kiếm'), array('type' => 'submit', 'class' => 'btn btn-primary', 'id' => 'search_')); ?>
@@ -81,15 +81,22 @@
                                 <td><?php echo $page->time_request; ?></td>
                                 <td>
                                     <?php
-                                    if (isset($page->time_response) && $page->time_response !== '0000-00-00')
+                                    if ($page->time_response !== '0000-00-00')
                                         echo $page->time_response;
                                     ?>
                                 </td>
                                 <td>
-                                    <a href="<?php echo Uri::to('admin/advance/course/' . $courseId . '/edit/' . $page->data['id']); ?>"
-                                    >Sửa<i class="fa fa-pencil" aria-hidden="true"></i></a> |
-                                    <a href="<?php echo Uri::to('admin/advance/course/' . $courseId . '/delete/' . $page->data['id']); ?>"
-                                    >Xóa<i class="fa fa-times" aria-hidden="true"></i></a></a>
+                                   <?php if($page->status !== 'published'){
+                                      ?>
+                                       <a href="<?php echo Uri::to('admin/advance/course/' . $courseId . '/edit/' . $page->data['id']); ?>"
+                                       >Sửa<i class="fa fa-pencil" aria-hidden="true"></i></a> |
+                                       <a href="<?php echo Uri::to('admin/advance/course/' . $courseId . '/delete/' . $page->data['id']); ?>"
+                                          onclick="return confirm('Bạn chắc chắn muốn xóa thông tin này');">Xóa <i
+                                               class="fa fa-times"
+                                               aria-hidden="true"></i></a>
+                                       <?php
+                                   }?>
+
                                 </td>
                             </tr>
 

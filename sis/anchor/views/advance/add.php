@@ -1,8 +1,10 @@
 <?php echo $header; ?>
+<ol class="breadcrumb">
+    <li><a href="<?php echo Uri::to('admin'); ?>">Trang chủ</a></li>
+    <li class="active"><a href="<?php echo Uri::to('admin/advance/course/'.$course_id); ?>">Tạm ứng tiền</a></li>
+    <li class="active">Thêm mới</li>
+</ol>
 
-<hgroup class="wrap">
-    <h1><?php echo __('advance.advance'); ?></h1>
-</hgroup>
 <form method="post" class="form-horizontal" action="<?php echo Uri::to('admin/advance/course/'.$course_id.'/add'); ?>"
       enctype="multipart/form-data" novalidate>
     <input name="token" type="hidden" value="<?php echo $token; ?>">
@@ -21,7 +23,7 @@
     } ?>">
         <label for="fullname" class="col-sm-2 control-label"><?php echo __('advance.applicant') ?> <span
                 class="text-danger">*</span></label>
-        <div class="col-sm-10">
+        <div class="col-sm-4">
             <?php echo Form::select('applicant_id', $user, Input::previous('applicant_id'), array(
                 'autocomplete' => 'off',
                 'autofocus' => 'true',
@@ -40,12 +42,14 @@
         <label for="money" class="col-sm-2 control-label"><?php echo __('advance.money') ?> <span
                 class="text-danger">*</span></label>
         <div class="col-sm-4">
-            <?php echo Form::text('money', Input::previous('money'), array(
+            <?php echo Form::text('money_', Input::previous('money'), array(
                 'placeholder' => 'Số tiền muốn xin tạm ứng',
                 'autocomplete' => 'off',
                 'autofocus' => 'true',
-                'class' => 'form-control'
+                'class' => 'form-control' ,
+                'id' =>  'money_'
             )); ?>
+            <input type="hidden" id="hidden_money" value="" name="money">
             <?php if (isset($errors['money'])) { ?>
                 <p class="help-block"><?php echo $errors['money'][0] ?></p>
             <?php } ?>
@@ -68,7 +72,7 @@
     </div>
     <div class="form-group text-right" style="padding-right: 15px;">
         <aside class="buttons">
-            <?php echo Form::button(__('global.continue'), array(
+            <?php echo Form::button(__('global.save'), array(
                 'type' => 'submit',
                 'class' => 'btn btn-primary btn-continue',
                 'data-loading' => __('global.saving')
@@ -79,5 +83,19 @@
         </aside>
     </div>
 </form>
+<script src="<?php echo asset_url('js/accounting.min.js'); ?>"></script>
+<script src="<?php echo asset_url('js/currency-module.js'); ?>"></script>
+<script type="text/javascript">
+    (function($){
+        $(document).ready(function () {
 
+            var inputs = ['#money_'];
+            var hiddens = ['#hidden_money'];
+
+            currencyModule.init(accounting, inputs, hiddens);
+
+        });
+    })(jQuery);
+
+</script>
 <?php echo $footer; ?>
