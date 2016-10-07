@@ -37,7 +37,7 @@
 			<?php foreach ($instructors->results as $instructor): ?>
 				<tr>
 					<td>
-						<p><?php echo $instructor->fullname; ?></p>
+						<p><?php echo $instructor->lastname.' '.$instructor->firstname; ?></p>
 					</td>
 					<td>
 						<p><?php echo $instructor->email; ?></p>
@@ -46,7 +46,7 @@
 						<p><?php echo date('d-m-Y', strtotime($instructor->birthday)); ?></p>
 					</td>
 					<td>
-						<p><?php echo __('instructor.'.$instructor->type_instructor); ?></p>
+						<p><?php echo __('instructor.'.$instructor->subject); ?></p>
 					</td>
 					<td>
 						<p><?php echo $instructor->subject; ?></p>

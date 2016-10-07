@@ -1,6 +1,7 @@
 <?php echo $header; ?>
 <ol class="breadcrumb">
     <li><a href="<?php echo Uri::to('admin'); ?>">Trang chủ</a></li>
+    <li><a href="<?php echo Uri::to('admin/schools'); ?>">Quản lý trường học</a></li>
     <li class="active">Thông tin trường học</li>
 </ol>
 
@@ -24,6 +25,8 @@
             <label id="label-name"><?php echo $school->name ?></label>
         </p>
     </fieldset>
+
+    <h3 style="margin-top: 80px">Danh sách sinh viên</h3>
 
     <?php if ($schoolstudent != null) { ?>
         <table class="table table-hover">
