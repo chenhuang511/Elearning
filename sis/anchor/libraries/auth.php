@@ -16,7 +16,8 @@ class Auth {
 
 	public static function admin() {
 		if($id = Session::get(static::$session)) {
-			return User::find($id)->role == "administrator";
+            $rid = User::find($id)->role_id;
+            return UserRole::find($rid)->role == "administrator";
 		}
 		return false;
 	}
