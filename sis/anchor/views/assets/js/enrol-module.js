@@ -1,53 +1,45 @@
-var enrolModule = (function () {
-    var getAddEnrol = function () {
-        return $('button[id^=add_enrol_]');
+var enrolModule = (function ($) {
+    var getToken = function () {
+        return $('#token').val();
+    };
+    var getUrl = function (courseid) {
+        return '/admin/courses/enrol/user/' + courseid;
     };
 
-    var getShowEnrol = function () {
-        return $('span[id^=show_enrol_]');
+    var getRoleName = function (role) {
+        return role == 3 ? 'Giảng viên' : 'Học viên';
     };
 
-    var getAssignRoles = function () {
-        return $('button[id^=assign_role_]');
-    };
-
-    var getRoleIds = function () {
-        return $('input[id^=role_id_]');
-    };
-
-    var init = function () {
-        var addEnrols = getAddEnrol(),
-            showEnrols = getShowEnrol(),
-            assignRoles = getAssignRoles(),
-            roleIds = getRoleIds(),
-            positionHidden = $('#enrol_position');
-
-        $.each(addEnrols, function (index, element) {
-            $(element).on('click', function (e) {
-                console.log('vao day');
-                var positionid = $(this).attr('data-positon');
-                positionHidden.val(positionid);
-            });
-        });
-
-        $.each(assignRoles, function (index, element) {
-            $(element).on('click', function (e) {
-                console.log('chon vai tro');
-                var positionid = positionHidden.val();
-                console.log('vi tri: ', positionid);
-                if(positionid.length > 0) {
-                    var roleid = $(this).attr('data-role'),
-                        rolename = $(this).attr('data-text');
-                    console.log('role id: ', roleid);
-                    console.log('role name: ', rolename);
-                    $('#role_id_' + positionid).val(roleid);
-                    $('#show_enrol_' + positionid).html(rolename);
-                    $('#enrolModal').modal('hide');
+    var callAjax = function(url, token, userid, target, role) {
+        $.ajax({
+            method: "POST",
+            url: url,
+            data : { token: token, userid: userid, role: role },
+            dataType: "text",
+            success: function(result){
+                $('#load').remove();
+                if(result) {
+                    $(target).text(getRoleName(role));
                 }
-            });
+            }
         });
-    };
+    }
+    var init = function (courseid) {
+        
+        $('.enrol-user').click(function () {
+            // call ajax
+            
+            token = getToken();
+            userid = $(this).data('id');
+            role = $(this).data('role');
+            url = getUrl(courseid);
+            target = $(this).data('target');
+            
+            $(this).append('<i id="load" class="fa fa-spinner fa-pulse fa fa-fw"></i>');
+            callAjax(url, token, userid, target, role);
+        });
+    }
     return {
         init: init
-    };
-}).call(this);
+    }
+}(jQuery));

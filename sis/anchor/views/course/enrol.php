@@ -42,45 +42,31 @@
                     <tr>
                         <th>Họ tên/ Email</th>
                         <th>Ghi danh</th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>
-                            <div class="enrol-user">
-                                <span class="enrol-user-icon"><i class="fa fa-user" aria-hidden="true"></i></span>
-                                <p class="enrol-user-info">
-                                    <span>teacher name</span><br>
-                                    <span>teacher@email.com</span>
-                                </p>
-                            </div>
-                        </td>
-                        <td>
-                            <span id="show_enrol_1" class="show-enrol"></span>
-                            <input type="hidden" id="role_id_1" value="">
-                            <button id="add_enrol_1" data-positon="1" type="button" class="add-enrol"
-                                    data-toggle="modal" data-target="#enrolModal"><i
-                                    class="fa fa-user-plus" aria-hidden="true"></i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="enrol-user">
-                                <span class="enrol-user-icon"><i class="fa fa-user" aria-hidden="true"></i></span>
-                                <p class="enrol-user-info">
-                                    <span>teacher name</span><br>
-                                    <span>teacher@email.com</span>
-                                </p>
-                            </div>
-                        </td>
-                        <td>
-                            <span id="show_enrol_2" class="show-enrol"></span>
-                            <input type="hidden" id="role_id_2" value="">
-                            <button id="add_enrol_2" data-positon="2" type="button" class="add-enrol"
-                                    data-toggle="modal" data-target="#enrolModal"><i
-                                    class="fa fa-user-plus" aria-hidden="true"></i></button>
-                        </td>
-                    </tr>
+                        <?php foreach ($users as $user) : ?>
+                            <tr>
+                                <td>
+                                    <div class="enrol-user">
+                                        <span class="enrol-user-icon"><i class="fa fa-user" aria-hidden="true"></i></span>
+                                        <p class="enrol-user-info">
+                                            <span><?= $user->fullname ?></span><br>
+                                            <span><?= $user->email ?></span>
+                                        </p>
+                                    </div>
+                                </td>
+                                <td id="rolename-tc-<?= $user->id ?>"</td>
+                                <td>
+                                    <span id="show_enrol_2" class="show-enrol"></span>
+                                    <input type="hidden" id="role_id_2" value="">
+                                    <button id="enrol-user" data-role="3" type="button" class="add-enrol enrol-user"
+                                            data-id="<?= $user->id ?>" data-target="#rolename-tc-<?= $user->id ?>"><i
+                                            class="fa fa-user-plus" aria-hidden="true"></i></button>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>
@@ -91,76 +77,43 @@
                     <tr>
                         <th>Họ tên/ Email</th>
                         <th>Ghi danh</th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
+                    <?php foreach ($students as $student) : ?>
                     <tr>
                         <td>
                             <div class="enrol-user">
                                 <span class="enrol-user-icon"><i class="fa fa-user" aria-hidden="true"></i></span>
                                 <p class="enrol-user-info">
-                                    <span>student name</span><br>
-                                    <span>student@email.com</span>
+                                    <span><?= $student->real_name ?> </span><br>
+                                    <span><?= $student->email ?></span>
                                 </p>
                             </div>
                         </td>
+                        <td id="rolename-st-<?= $student->id ?>"></td>
                         <td>
                             <span id="show_enrol_3" class="show-enrol"></span>
                             <input type="hidden" id="role_id_3" value="">
-                            <button id="add_enrol_3" data-positon="3" type="button" class="add-enrol"
-                                    data-toggle="modal" data-target="#enrolModal"><i
+                            <button id="enrol-user" data-role="5" type="button" class="add-enrol enrol-user"
+                                    data-id="<?= $student->id ?>" data-target="#rolename-st-<?= $student->id ?>" ><i
                                     class="fa fa-user-plus" aria-hidden="true"></i></button>
                         </td>
                     </tr>
-                    <tr>
-                        <td>
-                            <div class="enrol-user">
-                                <span class="enrol-user-icon"><i class="fa fa-user" aria-hidden="true"></i></span>
-                                <p class="enrol-user-info">
-                                    <span>student name</span><br>
-                                    <span>student@email.com</span>
-                                </p>
-                            </div>
-                        </td>
-                        <td>
-                            <span id="show_enrol_4" class="show-enrol"></span>
-                            <input type="hidden" id="role_id_4" value="">
-                            <button id="add_enrol_4" data-positon="4" type="button" class="add-enrol"
-                                    data-toggle="modal" data-target="#enrolModal"><i
-                                    class="fa fa-user-plus" aria-hidden="true"></i></button>
-                        </td>
-                    </tr>
+                    <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 </section>
-<!-- Modal -->
-<div class="modal fade" id="enrolModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-sm" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">Vai trò người dùng</h4>
-            </div>
-            <div class="modal-body">
-                <div class="form-group enrol-options">
-                    <button id="assign_role_2" class="btn btn-primary" data-role="3" data-text="Giảng viên">Giảng viên
-                    </button>
-                    <button id="assign_role_4" class="btn btn-primary" data-role="5" data-text="Học viên">Học viên
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<input type="hidden" name="token" id="token" value="<?php echo Csrf::token(); ?>">
 <script src="<?php echo asset('anchor/views/assets/js/enrol-module.js'); ?>"></script>
 <script>
     (function ($) {
         $(document).ready(function () {
-            enrolModule.init();
+            enrolModule.init(<?= $course->id ?>);
         });
     })(jQuery);
 </script>

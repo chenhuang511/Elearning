@@ -33,20 +33,20 @@ Route::collection(array('before' => 'auth,csrf'), function () {
         if(!isset($course) && $course->status == 1) {
             return  Response::redirect('/');
         };
-        $studentsenrol = Student::getStudentsByCourse($courseid);
-        $usersenrol = User::getUsersByCourse($courseid);
+        $studentsenrol = Student::get();
+        $usersenrol = User::get();
         $vars['messages'] = Notify::read();
 
         $vars['course'] = $course;
-        $vars['usersenrol'] = $usersenrol;
-        $vars['studentsenrol'] = $studentsenrol;
+        $vars['users'] = $usersenrol;
+        $vars['students'] = $studentsenrol;
         //need process here
         return View::create('course/enrol', $vars)
             ->partial('header', 'partials/header')
             ->partial('footer', 'partials/footer');
     });
 
-    Route::get(array('admin/courses/(:num)/enrol/teacher', 'admin/courses/(:num)/enrol/teacher/(:num)'), function ($courseid, $page = 1) {
+    Route::get(array('admin/courses/enrol/user/(:num)', 'admin/courses/(:num)/enrol/teacher/(:num)'), function ($courseid, $page = 1) {
 
         // get public listings
         $course = Course::find($courseid);
@@ -67,12 +67,18 @@ Route::collection(array('before' => 'auth,csrf'), function () {
             ->partial('footer', 'partials/footer');
     });
 
-    Route::post('admin/courses/(:num)/enrol/teacher', function($courseid) {
-        $input = Input::get(array('userid'));
+    Route::post('admin/courses/enrol/user/(:num)', function($courseid) {
+        $input = Input::get(array('userid', 'role'));
         $userid = $input['userid'];
-        $user = User::find($userid);
+        $role = $input['role'];
+        if($role == 3) {
+            $user = User::find($userid);
+        } else {
+            $user = Student::find($userid);
+        }
         $course = Course::find($courseid);
         $ispass = true;
+
         if(!$user || !$course) {
             $ispass = false;
         } else {
