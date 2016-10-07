@@ -8,9 +8,13 @@
     <?php echo $messages; ?>
     <?php if ($pages->count): ?>
         <p class="text-right">
-            <a href="#" class="btn btn-primary" id="add-remote-course">
-                Đồng bộ khóa học
-            </a>
+            <?php if ($pages->results[0]->status != PUBLISHED) : ?>
+                <a href="#" class="btn btn-primary" id="add-remote-course">
+                    Đồng bộ khóa học
+                </a>
+            <?php else : ?>
+                <span class="btn btn-primary"> Khóa học đã được đồng bộ </span>
+            <?php endif; ?>
         </p>
         <table class="table table-hover">
             <thead>
