@@ -6,6 +6,7 @@ body {
 a {
     color: #187bb2;
 }
+
 /*start header*/
 .f-nav {
     position: fixed !important;
@@ -60,9 +61,9 @@ a {
     background-color: #187bb2;
     padding: 10px 0;
     margin-bottom: 0 !important;
-    -webkit-box-shadow: 0px 4px 5px 0px rgba(153,150,153,0.75);
-    -moz-box-shadow: 0px 4px 5px 0px rgba(153,150,153,0.75);
-    box-shadow: 0px 4px 5px 0px rgba(153,150,153,0.75);
+    -webkit-box-shadow: 0px 4px 5px 0px rgba(153, 150, 153, 0.75);
+    -moz-box-shadow: 0px 4px 5px 0px rgba(153, 150, 153, 0.75);
+    box-shadow: 0px 4px 5px 0px rgba(153, 150, 153, 0.75);
 }
 
 #header .main-header {
@@ -211,6 +212,7 @@ a {
     display: table-cell;
     width: 50%;
 }
+
 #footer .footer-inner .right-footer {
     text-align: right;
     color: #c3c3c3;
@@ -219,7 +221,6 @@ a {
 #footer .footer-inner .right-footer a {
     color: #ddd;
 }
-
 
 #footer #powered-by .main-footer {
     display: table;
@@ -231,7 +232,7 @@ a {
 }
 
 #footer .school-name {
-    text-transform: uppercase!important;
+    text-transform: uppercase !important;
     font-weight: bold;
     font-size: 17px;
     padding-left: 15px;
@@ -561,5 +562,21 @@ ul.mnu-lst li:last-child {
 
     #main_content {
         padding: 20px;
+    }
+
+    .adm-table > thead > tr > th.adm-code {
+        width: 5%;
+    }
+
+    .adm-table > thead > tr > th.adm-name {
+        width: 35%;
+    }
+
+    .adm-table > thead > tr > th.adm-date {
+        width: 12.5%;
+    }
+
+    .adm-table > thead > tr > th.adm-task {
+        width: 35%;
     }
 }

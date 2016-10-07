@@ -15,7 +15,6 @@ a {
     color: #187bb2;
 }
 
-
 a, button, input[type="button"], input[type="reset"], input[type="submit"] {
     color: #486899;
     text-decoration: none;
@@ -855,12 +854,91 @@ input[type='range'] {
     margin-left: 10px;
 }
 
-.statusbar  h5 {
+.statusbar h5 {
     font-weight: bold;
     border-bottom: 1px solid #187bb2;
     padding-bottom: 15px;
 }
 
 .adm-search-box label {
-  font-weight: 500 !important;
+    font-weight: 500 !important;
+}
+
+.nav-tabs.enrol-tab {
+    border-bottom: solid 1px #187bb2;
+}
+
+.nav-tabs.enrol-tab > li > a {
+    border-width: 0;
+    border-radius: 0;
+}
+
+.nav-tabs.enrol-tab > li.active > a, .nav-tabs.enrol-tab > li.active > a:hover, .nav-tabs.enrol-tab > li.active > a:focus,
+.nav-tabs.enrol-tab > li > a:hover, .nav-tabs.enrol-tab > li > a:focus{
+    border: none;
+    background-color: #187bb2;
+    color: #fff;
+}
+
+.enrol-table > thead > tr >th {
+    border-bottom-width: 1px !important;
+    width: 50%;
+}
+
+.enrol-user {
+    display: table;
+    vertical-align: middle;
+}
+
+.enrol-user .enrol-user-icon, .enrol-user .enrol-user-info {
+    display: table-cell;
+    vertical-align: middle;
+}
+.enrol-user .enrol-user-icon {
+    padding-right: 15px;
+    font-size: 2em;
+    color: #187bb2;
+}
+
+.enrol-table .add-enrol {
+    float: right;
+    vertical-align: middle;
+}
+
+.enrollment-block .tab-content {
+    padding:20px 40px;
+}
+
+.enrol-options {
+    display: table;
+    width: 100%;
+}
+
+.enrol-options button {
+    display: table-cell;
+    vertical-align: middle;
+    margin-right: 15px;
+}
+
+
+@media only screen and (min-width: 992px) {
+
+    .course-box .course-info {
+        float: left;
+        width: 50%;
+    }
+
+    .course-box .course-info .first-col {
+        width: 30%;
+    }
+
+    .course-box .course-info .last-col {
+        width: 70%;
+    }
+
+    .table.enrol-table {
+        width: 60%;
+        float: left;
+        margin-left: 20%;
+    }
 }

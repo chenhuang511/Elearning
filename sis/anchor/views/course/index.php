@@ -13,11 +13,11 @@
             <table class="table table-hover adm-table">
                 <thead>
                 <tr>
-                    <th>Mã</th>
-                    <th>Tên khoá học</th>
-                    <th>Ngày bắt đầu</th>
-                    <th>Ngày kết thúc</th>
-                    <th>Quản lý</th>
+                    <th class="adm-code">Mã</th>
+                    <th class="adm-name">Tên khoá học</th>
+                    <th class="adm-date">Ngày bắt đầu</th>
+                    <th class="adm-date">Ngày kết thúc</th>
+                    <th class="adm-task">Quản lý</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -53,8 +53,7 @@
                                 | <a href="<?php echo Uri::to('admin/advance/course/' . $page->id); ?>"><i
                                         class="fa fa-usd" aria-hidden="true"></i>Tạm ứng tiền</a>
                                 <?php if ($page->status == PUBLISHED) : ?>
-                                    | <a href="<?php echo Uri::to('admin/courses/enrol/' . $page->id ); ?>"
-                                         class="btn btn-primary">Ghi danh</a>
+                                    | <a href="<?php echo Uri::to('admin/courses/enrol/' . $page->id ); ?>"><i class="fa fa-users" aria-hidden="true"></i>Ghi danh</a>
                                 <?php endif; ?>
                             </td>
                         </tr>
