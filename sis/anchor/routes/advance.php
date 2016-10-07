@@ -44,7 +44,6 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
         $input = Input::get(array('applicant_id', 'money', 'reason',));
         $vars['course'] = Course::getById($courseId)->fullname;
         $input['time_request'] = date("Y-m-d");
-        $input['time_request'] = '0000-00-00';
         $input['course_id'] =  $courseId;
 
         $validator = new Validator($input);

@@ -33,7 +33,7 @@
 			<?php } ?>
 		</div>
 	</div>
-	<div class="form-group <?php if (isset($errors['title'])) {
+	<div class="form-group <?php if (isset($errors['slug'])) {
 		echo 'has-error';
 	} else {
 		echo '';
@@ -41,14 +41,13 @@
 		<label for="label-slug" class="col-sm-2 control-label label-slug"><?php echo __('posts.slug'); ?> <span
 				class="text-danger">*</span></label>
 		<div class="col-sm-10">
-<!--			<em>--><?php //echo __('posts.slug_explain'); ?><!--</em>-->
 			<?php echo Form::text('slug', Input::previous('slug'), array(
 				'placeholder' => __('posts.slug'),
 				'autocomplete' => 'off',
 				'autofocus' => 'true',
 				'class' => 'form-control'
 			)); ?>
-			<?php if (isset($errors['title'])) { ?>
+			<?php if (isset($errors['slug'])) { ?>
 				<p class="help-block"><?php echo $errors['slug'][0] ?></p>
 			<?php } ?>
 		</div>
