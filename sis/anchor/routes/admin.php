@@ -4,25 +4,42 @@
  * Admin actions
  */
 Route::action('auth', function() {
-	if(Auth::guest()) {
-	    return Response::redirect('admin/login');
-    }else{
-        $router = Uri::current();
-        if(Auth::au_router($router)){
+    if (Auth::guest()) {
+        return Response::redirect('admin/login');
+    } elseif (!Auth::admin()) {
+        $routes = Router::$routes;
+        $uri = Uri::current();
+        $method = Request::method();
+        $patterns = Router::$patterns;
+        $searches = array_keys($patterns);
+        $replaces = array_values($patterns);
+        $pattern = Router::$pattern;
+        $search = array_keys($pattern);
+        $replace = array_values($pattern);
+        $router = "";
+        if (array_key_exists($uri, $routes)) {
+            $router = $uri;
+        }
+        foreach ($routes[$method] as $pattern => $action) {
+            if (strpos($pattern, ':') !== false) {
+                $pattern = str_replace($searches, $replaces, $pattern);
+            }
+            if (preg_match('#^' . $pattern . '$#', $uri, $matched)) {
+                $router = str_replace($search, $replace, $pattern);
+            }
+        }
+        if (Auth::au_router($router)) {
             $flag = 0;
-            foreach(explode(',', Auth::au_router($router)[0]->action) as $action) {
-                if(Auth::get_role_user()==$action) {
+            foreach (explode(',', Auth::au_router($router)[0]->action) as $action) {
+                if (Auth::get_role_user() == $action) {
                     $flag = 1;
                     break;
-                }else continue;
+                } else continue;
             }
-            if($flag == 0) {
+            if ($flag == 0) {
                 return Response::redirect('/');
             }
         }
-//        else{
-//            return Response::redirect('/');
-//        }
     }
 });
 

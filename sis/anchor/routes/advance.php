@@ -22,7 +22,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
             ->partial('footer', 'partials/footer');
     });
 
-    Route::get('admin/advance/course/(:num)/add',function($courseId=1) {
+    Route::get('admin/advance/course/(:numy)/add',function($courseId=1) {
         $vars['errors'] = Session::get('messages.error');
         $vars['messages'] = Notify::read();
         $vars['token'] = Csrf::token();

@@ -11,9 +11,9 @@ CREATE TABLE `anchor_user_role` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 INSERT INTO `anchor_user_role` VALUES ('1', 'administrator');
-INSERT INTO `anchor_user_role` VALUES ('2', 'users');
-INSERT INTO `anchor_user_role` VALUES ('3', 'students');
-INSERT INTO `anchor_user_role` VALUES ('4', 'schools');
+INSERT INTO `anchor_user_role` VALUES ('2', 'user');
+INSERT INTO `anchor_user_role` VALUES ('3', 'student');
+INSERT INTO `anchor_user_role` VALUES ('4', 'school');
 INSERT INTO `anchor_user_role` VALUES ('5', 'instructor');
 INSERT INTO `anchor_user_role` VALUES ('6', 'contract');
 

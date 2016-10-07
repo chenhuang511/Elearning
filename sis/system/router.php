@@ -41,8 +41,14 @@ class Router {
 		':num' => '[0-9]+',
 		':all' => '.*'
 	);
+    public static $pattern = array(
+        '[^/]+' => ':any',
+        '[0-9]+' => ':num',
+        '.*' => ':all'
+    );
 
-	/**
+
+    /**
 	 * The defined routes set by the app
 	 *
 	 * @var array
