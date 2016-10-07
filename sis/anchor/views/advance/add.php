@@ -1,11 +1,12 @@
 <?php echo $header; ?>
 <ol class="breadcrumb">
     <li><a href="<?php echo Uri::to('admin'); ?>">Trang chủ</a></li>
+    <li><a href="<?php echo Uri::to('admin/courses'); ?>">Quản lý khóa học</a></li>
     <li class="active"><a href="<?php echo Uri::to('admin/advance/course/'.$course_id); ?>">Tạm ứng tiền</a></li>
     <li class="active">Thêm mới</li>
 </ol>
 
-<form method="post" class="form-horizontal" action="<?php echo Uri::to('admin/advance/course/'.$course_id.'/add'); ?>"
+<form method="post" class="form-horizontal" action="<?php echo Uri::to('admin/advance/course/add/'.$course_id); ?>"
       enctype="multipart/form-data" novalidate>
     <input name="token" type="hidden" value="<?php echo $token; ?>">
     <div class="form-group notification">

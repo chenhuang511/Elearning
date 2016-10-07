@@ -183,6 +183,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 	Route::get('admin/posts/add', function() {
 		$vars['messages'] = Notify::read();
 		$vars['token'] = Csrf::token();
+        $vars['errors'] = Session::get('messages.error');
 		$vars['page'] = Registry::get('posts_page');
 
 		// extended fields

@@ -1,12 +1,13 @@
 <?php echo $header; ?>
 <ol class="breadcrumb">
     <li><a href="<?php echo Uri::to('admin'); ?>">Trang chủ</a></li>
+    <li><a href="<?php echo Uri::to('admin/courses'); ?>">Quản lý khóa học</a></li>
     <li class="active"><a href="<?php echo Uri::to('admin/advance/course/' . $courseId); ?>">Tạm ứng tiền</a></li>
     <li class="active">Thay đổi</li>
 </ol>
 
 <form method="post" class="edtitopic"
-      action="<?php echo Uri::to('admin/advance/course/' . $courseId . '/edit/' . $article->id); ?>"
+      action="<?php echo Uri::to('admin/advance/course/edit/'.$courseId . '/' .$article->id); ?>"
       enctype="multipart/form-data" novalidate>
     <input name="token" type="hidden" value="<?php echo $token; ?>">
     <div class="form-group notification ">
@@ -60,8 +61,8 @@
                         <label for="money"
                                class="control-label"><?php echo __('advance.money') ?> <span
                                 class="text-danger">*</span></label>
-                        <?php echo Form::text('money_', Input::previous('money', number_format($article->money)), array('id' => 'money', 'class' => 'form-control', 'rows' => 3)); ?>
-                        <input type="hidden" id="hidden_money" value="<?php echo $article->money ?>" name="money">
+                        <?php echo Form::text('money', Input::previous('money',number_format($article->money)), array('id' => 'money', 'class' => 'form-control', 'rows' => 3)); ?>
+                        <input type="hidden" id="hidden_money" value="<?php echo $article->money?>" name="money">
                         <?php if (isset($errors['money'])) { ?>
                             <p class="help-block"><?php echo $errors['money'][0] ?></p>
                         <?php } ?>

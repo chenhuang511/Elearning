@@ -1,11 +1,12 @@
 <?php echo $header; ?>
 <ol class="breadcrumb">
     <li><a href="<?php echo Uri::to('admin'); ?>">Trang chủ</a></li>
+    <li><a href="<?php echo Uri::to('admin/courses'); ?>">Quản lý khóa học</a></li>
     <li class="active">Tạm ứng tiền</li>
 </ol>
 <section class="wrap">
     <p class="text-right">
-        <?php echo Html::link('admin/advance/course/' . $courseId . '/add', __('advance.create_advance'), array('class' => 'btn btn-primary')); ?>
+        <?php echo Html::link('admin/advance/course/add/' . $courseId, __('advance.create_advance'), array('class' => 'btn btn-primary')); ?>
     </p>
     <?php echo $messages; ?>
 
@@ -42,7 +43,7 @@
                     <?php foreach ($statuses as $data):
                     extract($data); ?>
                     <li>
-                        <?php echo Html::link('admin/advance/course/' . $courseId . '' . $url, '<span class="icon"></span> ' . __($lang), array(
+                        <?php echo Html::link('admin/advance/course'. $url.'/' . $courseId, '<span class="icon"></span> ' . __($lang), array(
                             'class' => (isset($status) && $status == $url ? 'active ' : '') . $class
                         )); ?>
                         <?php endforeach; ?>
@@ -88,9 +89,9 @@
                                 <td>
                                    <?php if($page->status !== 'published'){
                                       ?>
-                                       <a href="<?php echo Uri::to('admin/advance/course/' . $courseId . '/edit/' . $page->data['id']); ?>"
+                                       <a href="<?php echo Uri::to('admin/advance/course/edit/'. $courseId . '/' . $page->data['id']); ?>"
                                        >Sửa<i class="fa fa-pencil" aria-hidden="true"></i></a> |
-                                       <a href="<?php echo Uri::to('admin/advance/course/' . $courseId . '/delete/' . $page->data['id']); ?>"
+                                       <a href="<?php echo Uri::to('admin/advance/course/delete/' . $courseId . '/' . $page->data['id']); ?>"
                                           onclick="return confirm('Bạn chắc chắn muốn xóa thông tin này');">Xóa <i
                                                class="fa fa-times"
                                                aria-hidden="true"></i></a>

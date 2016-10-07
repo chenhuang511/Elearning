@@ -22,7 +22,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
             ->partial('footer', 'partials/footer');
     });
 
-    Route::get('admin/advance/course/(:numy)/add',function($courseId=1) {
+    Route::get('admin/advance/course/add/(:num)',function($courseId=1) {
         $vars['errors'] = Session::get('messages.error');
         $vars['messages'] = Notify::read();
         $vars['token'] = Csrf::token();
@@ -39,11 +39,12 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
             ->partial('footer', 'partials/footer');
     });
 
-    Route::post('admin/advance/course/(:num)/add', function($courseId) {
+    Route::post('admin/advance/course/add/(:num)', function($courseId) {
 
         $input = Input::get(array('applicant_id', 'money', 'reason',));
         $vars['course'] = Course::getById($courseId)->fullname;
         $input['time_request'] = date("Y-m-d");
+        $input['time_request'] = '0000-00-00';
         $input['course_id'] =  $courseId;
 
         $validator = new Validator($input);
@@ -60,7 +61,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
         if($errors = $validator->errors()) {
             Input::flash();
             Notify::error($errors);
-            return Response::redirect('admin/advance/course/'.$courseId.'/add');
+            return Response::redirect('admin/advance/course/add/'.$courseId);
         }
         $advance = Advance::create($input);
         Extend::process('advance', $advance->id);
@@ -72,7 +73,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
     });
 
 
-    Route::get(array('admin/advance/course/(:num)/status/(:any)','admin/advance/course/(:num)/status/(:any)/(:num)'), function($courseId=1, $status='', $page = 1) {
+    Route::get(array('admin/advance/course/status/(:any)/(:num)','admin/advance/course/status/(:any)/(:num)/(:num)'), function($status='',$courseId=1,  $page = 1) {
 
         $vars['messages'] = Notify::read();
         $vars['token'] = Csrf::token();
@@ -96,7 +97,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
             ->partial('footer', 'partials/footer');
     });
 
-    Route::get('admin/advance/course/(:num)/edit/(:num)', function($courseId,$id) {
+    Route::get('admin/advance/course/edit/(:num)/(:num)', function($courseId,$id) {
         $vars['errors'] = Session::get('messages.error');
         $vars['messages'] = Notify::read();
         $vars['token'] = Csrf::token();
@@ -120,7 +121,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
             ->partial('header', 'partials/header')
             ->partial('footer', 'partials/footer');
     });
-    Route::post('admin/advance/course/(:num)/edit/(:num)', function($courseId,$id) {
+    Route::post('admin/advance/course/edit/(:num)/(:num)', function($courseId,$id) {
         $input = Input::get(array('applicant_id', 'money', 'reason','status'));
         $validator = new Validator($input);
 
@@ -138,7 +139,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
 
             Notify::error($errors);
 
-            return Response::redirect('admin/advance/course/'.$courseId.'/edit/' . $id);
+            return Response::redirect('admin/advance/course/edit/' . $courseId .'/'.$id);
         }
         $user = Auth::user();
         $status = Advance::getById($id)->status;
@@ -152,10 +153,10 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
 
         Notify::success(__('posts.updated'));
 
-        return Response::redirect('admin/advance/course/'.$courseId.'/edit/' . $id);
+        return Response::redirect('admin/advance/course/edit/' . $courseId .'/'.$id);
     });
 
-    Route::get('admin/advance/course/(:num)/delete/(:num)', function ($courseId,$id) {
+    Route::get('admin/advance/course/delete/(:num)/(:num)', function ($courseId,$id) {
         Advance::find($id)->delete();
 
         Notify::success(__('posts.deleted'));
