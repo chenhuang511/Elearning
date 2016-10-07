@@ -53,7 +53,7 @@
                                 | <a href="<?php echo Uri::to('admin/advance/course/' . $page->id); ?>"><i
                                         class="fa fa-usd" aria-hidden="true"></i>Tạm ứng tiền</a>
                                 <?php if ($page->status == PUBLISHED) : ?>
-                                    | <a href="<?php echo Uri::to('admin/courses/' . $page->id . '/enrol'); ?>"
+                                    | <a href="<?php echo Uri::to('admin/courses/enrol/' . $page->id ); ?>"
                                          class="btn btn-primary">Ghi danh</a>
                                 <?php endif; ?>
                             </td>

@@ -46,7 +46,7 @@ Route::collection(array('before' => 'auth,csrf'), function () {
             ->partial('footer', 'partials/footer');
     });
 
-    Route::get(array('admin/courses/(:num)/enrol/teacher', 'admin/courses/(:num)/enrol/teacher/(:num)'), function ($courseid, $page = 1) {
+    Route::get(array('admin/courses/enrol/teacher/(:num)', 'admin/courses/enrol/teacher/(:num)/(:num)'), function ($courseid, $page = 1) {
 
         // get public listings
         $course = Course::find($courseid);
@@ -55,7 +55,7 @@ Route::collection(array('before' => 'auth,csrf'), function () {
         };
 
         $url = 'admin/courses/' . $courseid . '/enrol/teacher';
-
+        // need merge user with student - pedding
         $users = User::paginate($page, Config::get('admin.posts_per_page'), $url);
         $vars['messages'] = Notify::read();
 
