@@ -1647,11 +1647,7 @@ class grade_structure
             }
             return new moodle_url('/mod/' . $itemmodule . '/grade.php', $args);
         } else {
-            if (ISREMOTE) {
-                return new moodle_url('/mod/' . $itemmodule . '/remote/view.php', array('id' => $cm->id));
-            } else {
-                return new moodle_url('/mod/' . $itemmodule . '/view.php', array('id' => $cm->id));
-            }
+            return new moodle_url('/mod/' . $itemmodule . '/view.php', array('id' => $cm->id));
         }
     }
 
