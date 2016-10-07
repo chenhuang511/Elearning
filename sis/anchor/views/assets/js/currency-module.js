@@ -2,10 +2,14 @@ var currencyModule = (function () {
     var changeValue = function (input, hidden) {
         var value = input.val();
 
-        if (checkNumber(value) == true) {
-            hidden.val(value);
+        if (value.length === 0) {
+            hidden.val('');
         } else {
-            input.val('');
+            if (checkNumber(value) == true) {
+                hidden.val(value);
+            } else {
+                input.val('');
+            }
         }
     };
 
