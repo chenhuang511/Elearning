@@ -1,4 +1,9 @@
 <?php echo $header; ?>
+<ol class="breadcrumb">
+    <li><a href="<?php echo Uri::to('admin'); ?>">Trang chủ</a></li>
+    <li class="active"><a href="<?php echo Uri::to('admin/advance/course/'.$courseId); ?>">Tạm ứng tiền</a></li>
+    <li class="active">Thay đổi</li>
+</ol>
 
 <form method="post" class="edtitopic"
       action="<?php echo Uri::to('admin/advance/course/' .$courseId.'/edit/'. $article->id); ?>"

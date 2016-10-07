@@ -1,8 +1,10 @@
 <?php echo $header; ?>
+<ol class="breadcrumb">
+    <li><a href="<?php echo Uri::to('admin'); ?>">Trang chủ</a></li>
+    <li class="active"><a href="<?php echo Uri::to('admin/advance/course/'.$course_id); ?>">Tạm ứng tiền</a></li>
+    <li class="active">Thêm mới</li>
+</ol>
 
-<hgroup class="wrap">
-    <h1><?php echo __('advance.advance'); ?></h1>
-</hgroup>
 <form method="post" class="form-horizontal" action="<?php echo Uri::to('admin/advance/course/'.$course_id.'/add'); ?>"
       enctype="multipart/form-data" novalidate>
     <input name="token" type="hidden" value="<?php echo $token; ?>">
@@ -21,7 +23,7 @@
     } ?>">
         <label for="fullname" class="col-sm-2 control-label"><?php echo __('advance.applicant') ?> <span
                 class="text-danger">*</span></label>
-        <div class="col-sm-10">
+        <div class="col-sm-4">
             <?php echo Form::select('applicant_id', $user, Input::previous('applicant_id'), array(
                 'autocomplete' => 'off',
                 'autofocus' => 'true',
@@ -70,7 +72,7 @@
     </div>
     <div class="form-group text-right" style="padding-right: 15px;">
         <aside class="buttons">
-            <?php echo Form::button(__('global.continue'), array(
+            <?php echo Form::button(__('global.save'), array(
                 'type' => 'submit',
                 'class' => 'btn btn-primary btn-continue',
                 'data-loading' => __('global.saving')
