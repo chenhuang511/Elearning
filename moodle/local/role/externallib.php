@@ -65,4 +65,45 @@ class local_role_external extends external_api {
     public static function host_assign_role_to_user_returns() {
         return new external_value(PARAM_INT, 'role assignments id');
     }
+
+    public static function host_enrol_user_to_course_parameters() {
+        return new external_function_parameters(
+            array(
+                'userid' => new external_value(PARAM_INT, 'user id'),
+                'courseid' => new external_value(PARAM_INT, 'Course id'))
+        );
+    }
+
+    public static function host_enrol_user_to_course($userid, $courseid)
+    {
+        global $DB;
+        //validate parameter
+        $params = self::validate_parameters(self::host_assign_role_to_user_parameters(),
+            array('userid' => $userid, 'courseid' => $courseid));
+        $service = mnetservice_enrol::get_instance();
+        $host = $DB->get_record('mnet_host', array('wwwroot' => HUB_URL), '*', MUST_EXIST);
+        $course = $DB->get_record('course', array('remoteid' => $courseid, 'hostid' => $host->id), '*', MUST_EXIST);
+        // user selectors
+        $currentuserselector = new mnetservice_enrol_existing_users_selector('removeselect', array('hostid' => $host->id, 'remotecourseid' => $course->remoteid));
+        $potentialuserselector = new mnetservice_enrol_potential_users_selector('addselect', array('hostid' => $host->id, 'remotecourseid' => $course->remoteid));
+
+        // process incoming enrol request
+        $error = '';
+        $localusserid = get_remote_mapping_localuserid($userid);
+        if (!empty($userid)) {
+            $user = $DB->get_record('user', array('id' => $localusserid));
+            $result = $service->req_enrol_user($user, $course);
+            if ($result !== true) {
+                $error .= $service->format_error_message($result);
+            }
+
+            $potentialuserselector->invalidate_selected_users();
+            $currentuserselector->invalidate_selected_users();
+        }
+        return $error;
+    }
+
+    public static function host_enrol_user_to_course_returns() {
+        return new external_value(PARAM_INT, 'role assignments id');
+    }
 }

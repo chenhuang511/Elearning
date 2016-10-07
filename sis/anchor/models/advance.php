@@ -37,7 +37,7 @@ class Advance extends Base
             ->join(Base::table('users'), Base::table('users.id'), '=', Base::table('advance.applicant_id'))
             ->where(Base::table('advance.course_id'), '=', $courseId);
         if($key_id) {
-            $query = $query->where(Base::table('advance.id'), 'like', '%' . $key_id . '%');
+            $query = $query->where(Base::table('advance.id'), '=',  $key_id );
         }
         if($key_name) {
             $query = $query->where(Base::table('users.real_name'), 'like', '%' . $key_name . '%');

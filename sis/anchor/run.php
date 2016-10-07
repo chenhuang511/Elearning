@@ -65,6 +65,7 @@ if(is_admin()) {
 	// Set posts per page for admin
 	Config::set('admin.posts_per_page', 6);
     Config::set('admin.curriculum_per_page', 15);
+    Config::set('admin.advance_per_page', 10);
 	require APP . 'routes/admin' . EXT;
 	require APP . 'routes/categories' . EXT;
 	require APP . 'routes/comments' . EXT;
@@ -85,8 +86,10 @@ if(is_admin()) {
     require APP . 'routes/schools' . EXT;
     require APP . 'routes/grades' . EXT;
     require APP . 'routes/curriculum' . EXT;
+    require APP . 'routes/equipment' . EXT;
     require APP . 'routes/course' . EXT;
     require APP . 'routes/virtual_class_equipments' . EXT;
+    require APP . 'routes/rooms' . EXT;
 }
 else {
 	require APP . 'routes/site' . EXT;

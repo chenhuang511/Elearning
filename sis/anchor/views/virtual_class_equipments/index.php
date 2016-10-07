@@ -18,21 +18,19 @@
             )); ?>
         </form>
     </hgroup>
-
     <section class="wrap">
         <?php echo $messages; ?>
         <?php if ($pages->count): ?>
             <table class="table table-hover">
                 <thead>
-                <tr>
-                    <th class="col-sm-1">ID</th>
-                    <th class="col-sm-2">Tên thiết bị</th>
-                    <th class="col-sm-2">Ảnh</th>
-                    <th class="col-sm-3">Thông tin</th>
-                    <th class="col-sm-1">Số lượng</th>
-                    <th class="col-sm-1">Trạng Thái</th>
-                    <th class="col-sm-2">Quản lý</th>
-                </tr>
+                    <tr>
+                        <th class="col-sm-1">ID</th>
+                        <th class="col-sm-2">Tên thiết bị</th>
+                        <th class="col-sm-3">Thông tin</th>
+                        <th class="col-sm-1">Số lượng</th>
+                        <th class="col-sm-1">Trạng Thái</th>
+                        <th class="col-sm-2">Quản lý</th>
+                    </tr>
                 </thead>
                 <tbody>
                 <?php foreach ($pages->results as $item): $display_pages = array($item); ?>
@@ -42,25 +40,6 @@
                             <td class="col-sm-2">
                                 <?php echo $page->name ?>
                             </td>
-                            <td class="col-sm-2">
-                                <?php
-                                if ($page->image_url == null) {
-                                    ?>
-                                    <img src="<?php echo asset_url('img/noimage.jpg'); ?>"
-                                         style="width: 180px; height: 150px;">
-                                <?php } else { ?>
-                                    <img src="<?php echo $page->image_url; ?>"
-                                         style="width: 180px; height: 150px;">
-                                <?php } ?>
-                            </td>
-                            <!-- <td>
-                            <?php
-                            if (isset($page->created) && $page->created !== NULL)
-                                echo date('d-m-Y', strtotime($page->created));
-                            else
-                                echo 'chưa khởi tạo';
-                            ?>
-                        </td> -->
                             <td class="col-sm-3">
                                 <?php echo $page->description; ?>
                             </td>
@@ -70,9 +49,9 @@
                             <td class="col-sm-1">
                                 <?php
                                 if ($page->status == 1) {
-                                    echo 'Chưa được sử dụng';
+                                    echo 'Tốt';
                                 } else
-                                    echo 'Đang được sử dụng';
+                                    echo 'Hỏng';
                                 ?>
                             </td>
                             <td class="col-sm-2">
@@ -85,9 +64,8 @@
                     <?php endforeach; ?>
                 <?php endforeach; ?>
                 </tbody>
-            </table>
-            <aside class="paging"><?php echo $pages->links(); ?></aside>
-
+        </table>
+        <aside class="paging"><?php echo $pages->links(); ?></aside>
         <?php else: ?>
             <aside class="empty pages">
                 <span class="icon"></span>

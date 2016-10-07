@@ -1,4 +1,8 @@
 <?php echo $header; ?>
+<ol class="breadcrumb">
+    <li><a href="<?php echo Uri::to('admin'); ?>">Trang chủ</a></li>
+    <li class="active">Danh sách khóa học</li>
+</ol>
 <section class="wrap">
     <?php echo $messages; ?>
     <?php if ($courses->count): ?>

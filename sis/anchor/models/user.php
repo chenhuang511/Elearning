@@ -31,7 +31,7 @@ class User extends Base
         return array($total, $posts);
     }
 
-    public static function paginate($page = 1, $perpage = 10)
+    public static function paginate($page = 1, $perpage = 10, $url = 'admin/users')
     {
         $query = Query::table(static::table());
 
@@ -39,7 +39,7 @@ class User extends Base
 
         $results = $query->take($perpage)->skip(($page - 1) * $perpage)->sort('id', 'asc')->get();
 
-        return new Paginator($results, $count, $page, $perpage, Uri::to('admin/users'));
+        return new Paginator($results, $count, $page, $perpage, Uri::to($url));
     }
 
     public static function get_id($id = 1)
@@ -100,11 +100,10 @@ class User extends Base
     public static function getUsersByCourse($courseid) {
         $query = static::join(Base::table('user_course'), Base::table('user_course.userid'), '=', Base::table('users.id'))
             ->where(Base::table('user_course.courseid'), '=', $courseid)
-            ->get(
-                Base::table('users.real_name AS fullname'),
+            ->get(array( Base::table('users.real_name as fullname'),
                 Base::table('users.email'),
-                Base::table('users.userid')
-            );
+                Base::table('user_course.userid')
+            ));
 
         return $query;
 

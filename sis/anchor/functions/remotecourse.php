@@ -42,31 +42,26 @@ function remote_get_course_section($courseid)
     return $resp->sections;
 }
 // userid and remote id of remote
-function remote_enrol_host($roleid, $hostid, $courseid, $methodname)
+function remote_enrol_host($roleid, $hostid, $courseid, $methodname = 'host')
 {
     $resp = RestClient::dorest(
         array(
             'domain' => HUB_URL,
             'token' => TOKEN,
             'function_name'=>'local_mod_remote_enrol_course',
-            'params'=>array('roleid' => $roleid,
+            'params'=>array(
+                'roleid' => $roleid,
                 'hostid' => $hostid,
                 'courseid' => $courseid,
                 'methodname' => $methodname
             )
         ));
-    if (isset($resp->exception)) {
-        return 0;
-    }
     return $resp;
 }
 
 
-function remote_fetch_course($schoolid, $hubid = '')
+function remote_fetch_course($domain, $token, $hubid = HUB_URL)
 {
-    $shool = School::find($schoolid);
-    $domain = $shool->wwwroot;
-    $token = $shool->token;
 
     $resp = RestClient::dorest(
         array(
@@ -79,13 +74,8 @@ function remote_fetch_course($schoolid, $hubid = '')
 }
 
 // userid and course id is of remote
-function remote_enrol_user($schoolid, $roleid, $userid, $courseid)
+function remote_enrol_user($domain, $token, $roleid, $userremoteid, $courseremoteid)
 {
-    $shool = School::find($schoolid);
-    $domain = $shool->wwwroot;
-    $token = $shool->token;
-    $userremoteid = User::find($userid)->remoteid;
-    $remotecoursid = Course::find($courseid)->remoteid;
 
     $resp = RestClient::dorest(
         array(
@@ -94,10 +84,7 @@ function remote_enrol_user($schoolid, $roleid, $userid, $courseid)
             'function_name'=>'local_host_assign_role_to_user',
             'params'=>array('roleid' => $roleid,
                 'userid' => $userremoteid,
-                'courseid' => $remotecoursid)
+                'courseid' => $courseremoteid)
         ));
-    if (isset($resp->exception)) {
-        return 0;
-    }
     return $resp;
 }

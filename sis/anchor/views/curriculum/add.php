@@ -1,11 +1,13 @@
 <?php echo $header; ?>
-
+<ol class="breadcrumb">
+    <li><a href="<?php echo Uri::to('admin'); ?>">Trang chủ</a></li>
+    <li><a href="<?php echo Uri::to('admin/courses'); ?>">Quản lý khóa học</a></li>
+    <li class="active">Tạo khóa học mới</li>
+</ol>
+<h4 class="step-heading">Bước 1: Tạo khóa học mới</h4>
 <form method="post" class="form-horizontal" action="<?php echo Uri::to('admin/curriculum/add/course'); ?>"
       enctype="multipart/form-data" novalidate>
     <input name="token" type="hidden" value="<?php echo $token; ?>">
-    <div class="form-group">
-        <h4 class="step-heading">Bước 1: Tạo khóa học mới</h4>
-    </div>
     <div class="form-group notification">
         <?php
         if (count($errors) == 0) {
@@ -111,7 +113,7 @@
             <?php } ?>
         </div>
     </div>
-    <div class="form-group text-right">
+    <div class="form-group text-right" style="padding-right: 15px;">
         <aside class="buttons">
             <?php echo Form::button(__('global.continue'), array(
                 'type' => 'submit',

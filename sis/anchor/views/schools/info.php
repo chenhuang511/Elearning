@@ -1,4 +1,8 @@
 <?php echo $header; ?>
+<ol class="breadcrumb">
+    <li><a href="<?php echo Uri::to('admin'); ?>">Trang chủ</a></li>
+    <li class="active">Thông tin trường học</li>
+</ol>
 
 <hgroup class="wrap">
     <h1 style="margin: 0"><?php echo __('Thông tin trường học'); ?></h1>

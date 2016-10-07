@@ -19,7 +19,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>SÔ LƯƠNG: </td>
+                        <td>SỐ LƯỢNG: </td>
                         <td>
                             <?php echo Form::text('quantity', Input::previous('quantity'), array('id' => 'label-quantity', 'placeholder' => __('nhập số lượng'))); ?>
                         </td>
@@ -36,13 +36,13 @@
                             <?php echo Form::select('status', array('1' => 'Chưa được sử dụng', '0' => 'Đang được sử dụng')); ?>
                         </td>
                     </tr>
-                    <tr>
+                    <!-- <tr>
                         <td>ẢNH : </td>
                         <td>
                             <input type="file" name = "image_url" />
                             <img src="" id="image"/>
                         </td>
-                    </tr>
+                    </tr> -->
                     </tbody>
                 </table>
                 <aside class="buttons">

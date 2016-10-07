@@ -6,15 +6,15 @@
 /*
 	Admin panel-wide styles
 */
-body {
-    background: #eceef1;
-    color: #7d8693;
-    font: 15px/25px "Helvetica Neue", "Open Sans", "DejaVu Sans", "Arial", sans-serif;
-}
 
 b, strong {
     font-weight: 500;
 }
+
+a {
+    color: #187bb2;
+}
+
 
 a, button, input[type="button"], input[type="reset"], input[type="submit"] {
     color: #486899;
@@ -390,13 +390,6 @@ hgroup nav {
     float: right;
     width: 760px;
     padding-top: 0;
-}
-
-.sidebar {
-    float: left;
-    width: 150px;
-
-    border-top: 1px solid #dadfe5;
 }
 
 .sidebar a {
@@ -860,4 +853,14 @@ input[type='range'] {
 
 .pl-PL .top .btn {
     margin-left: 10px;
+}
+
+.statusbar  h5 {
+    font-weight: bold;
+    border-bottom: 1px solid #187bb2;
+    padding-bottom: 15px;
+}
+
+.adm-search-box label {
+  font-weight: 500 !important;
 }

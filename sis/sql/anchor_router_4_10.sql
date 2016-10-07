@@ -16,3 +16,5 @@ CREATE TABLE `anchor_router` (
 -- ----------------------------
 
 INSERT INTO `anchor_router` VALUES ("1", "admin/advance","administrator,instructor,contract,schools");
+
+ALTER TABLE

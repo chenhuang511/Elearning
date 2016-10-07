@@ -25,8 +25,7 @@ class Contract extends Base {
 		//$results = $query->take($perpage)->skip(($page - 1) * $perpage)->sort('id', 'desc')->get();
 		$results = $query->take($perpage)->skip(($page - 1) * $perpage)
 					->get(array(Base::table('instructor_contract.*'),
-					 			Base::table('instructors.firstname as firstname'),
-								Base::table('instructors.lastname as lastname')));
+					 			Base::table('instructors.fullname as fullname')));
 		return new Paginator($results, $count, $page, $perpage, Uri::to('admin/contract'));
 	}
 
@@ -40,8 +39,7 @@ class Contract extends Base {
         $posts = $query->take($per_page)
             ->skip(--$page * $per_page)
             ->get(array(Base::table('instructor_contract.*'),
-					 			Base::table('instructors.firstname as firstname'),
-								Base::table('instructors.lastname as lastname')));
+								Base::table('instructors.fullname as fullname')));
 
         return array($total, $posts);
     }

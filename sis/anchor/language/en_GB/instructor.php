@@ -8,8 +8,10 @@ return array(
 	'create_user' => 'Tạo thành viên',
 	'add_user' => 'Tạo mới một thành viên',
 	'editing_user' => 'Sửa chữa Hồ sơ',
+	'view_instructor' => 'Xem hồ sơ',
 	'remembered' => 'Ghi nhớ mật khẩu',
 	'forgotten_password' => 'Quên mật khẩu?',
+	'nopages_desc' => 'Bạn không có trang nào',
 
 	// roles
 	'administrator' => 'Quản trị',
@@ -25,9 +27,13 @@ return array(
 	'real_name' => 'Tên thực',
 	'real_name_explain' => '',
 
-	'first_name' => 'Tên',
+	'fullname' => 'Tên đầy đủ',
 	'last_name' => 'Họ',
-
+	'type_instructor' => 'Hình thức',
+	'contract' => 'Giảng viên hợp đồng',
+	'official' => 'Giảng viên chính thức',
+	'thematic_taught' => 'Số chuyên đề đã dạy',
+	'comment' => 'Ý kiến đánh giá,đóng góp',
 	'type' => 'Loại hợp đồng',
 	'name_personal/organization' => 'Tên Cá nhân/Tổ chức',
 	'personal' => 'Cá nhân',
@@ -60,8 +66,7 @@ return array(
 
 	'new_password' => 'Mật khẩu mới',
 	
-	'firstname_missing' => 'Vui lòng nhập lại tên',
-	'lastname_missing' => 'Vui lòng nhập lại họ',
+	'fullname_missing' => 'Vui lòng nhập lại tên',
 	'birthday_missing' => 'Vui lòng nhập lại ngày sinh',
 	'subject_missing' => 'Vui lòng nhập lại môn học',
 
@@ -72,9 +77,9 @@ return array(
 	'email_was_found' => 'Email đã được sử dụng',
 
 	// messages
-	'updated' => 'Hồ sơ thành viên đã được cập nhật.',
-	'created' => 'Hồ sơ thành viên đã được tạo.',
-	'deleted' => 'Hò sơ thành viên đã bị xóa.',
+	'updated' => 'Hồ sơ đã được cập nhật.',
+	'created' => 'Hồ sơ đã được tạo.',
+	'deleted' => 'Hò sơ đã bị xóa.',
 	'delete_error' => 'Bạn không thể tự xóa hồ sơ thành viên của mình',
 	'login_error' => 'Sai tài khoản hoặc mật khẩu.',
 	'logout_notice' => 'Bạn đã đăng xuất.',

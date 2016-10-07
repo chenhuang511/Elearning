@@ -123,7 +123,7 @@ select {
 .one-third {
 	width: 32%;
 	float: left;
-	margin-right: 1%;
+	/*margin-right: 1%;*/
 }
 
 .half {
@@ -170,7 +170,7 @@ select {
 		resize: vertical;
 	}
 	textarea[name=css], textarea[name=js] {
-		font-family: Monaco, "Courier New", courier, monospace;
+		font-family: 'Open Sans';
 	}
 
 	.split summary {

@@ -1,10 +1,15 @@
 <?php echo $header; ?>
+<ol class="breadcrumb">
+    <li><a href="<?php echo Uri::to('admin'); ?>">Trang chủ</a></li>
+    <li><a href="<?php echo Uri::to('admin/courses'); ?>">Quản lý khóa học</a></li>
+    <li class="active">Lịch giảng</li>
+</ol>
 <section class="wrap">
     <?php echo $messages; ?>
     <?php if ($pages->count): ?>
         <p class="text-right">
-            <a href="#" class="btn btn-success" id="add-remote-course">
-                Tạo khóa học
+            <a href="#" class="btn btn-primary" id="add-remote-course">
+                Đồng bộ khóa học
             </a>
         </p>
         <table class="table table-hover">
@@ -44,8 +49,9 @@
                             <a href="<?php echo Uri::to('admin/curriculum/edit/topic/' . $page->id); ?>"
                             >Sửa <i class="fa fa-pencil" aria-hidden="true"></i></a> |
                             <a href="<?php echo Uri::to('admin/curriculum/topic/delete/' . $page->id); ?>"
-                               onclick="return confirm('Bạn chắc chắn muốn xóa thông tin này');">Xóa <i class="fa fa-times"
-                                                                                                 aria-hidden="true"></i></a>
+                               onclick="return confirm('Bạn chắc chắn muốn xóa thông tin này');">Xóa <i
+                                    class="fa fa-times"
+                                    aria-hidden="true"></i></a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
@@ -67,24 +73,25 @@
 
     var addRemoteCourse = (function () {
         var i = 0;
-        var callAjax = function(url, token, courseid, loop) {
+        var callAjax = function (url, token, courseid, loop) {
             $.ajax({
                 method: "POST",
                 url: url,
-                data : { token: token, courseid: courseid, loop: loop },
+                data: {token: token, courseid: courseid, loop: loop},
                 dataType: "text",
-                success: function(result){
-                    if(result == false && i < 100) {
+                success: function (result) {
+                    if (result == false && i < 100) {
                         callAjax(url, token, courseid, 1);
                         i++;
                     }
 
                     $('#load').removeClass();
-                    if(result == false) {
+                    if (result == false) {
                         $('#load').addClass('fa fa-exclamation-triangle');
                     }
                     $('#load').addClass('fa fa-check');
-                }});
+                }
+            });
         }
         var init = function (url, token, courseid) {
             $('#add-remote-course').click(function () {
@@ -97,6 +104,6 @@
             init: init
         }
     }());
-    addRemoteCourse.init('<?php echo base_url('admin/curriculum/add/remote/course') ?>', '<?php echo Csrf::token(); ?>', '<?php echo $courseid ; ?>')
+    addRemoteCourse.init('<?php echo base_url('admin/curriculum/add/remote/course') ?>', '<?php echo Csrf::token(); ?>', '<?php echo $courseid; ?>')
 </script>
 <?php echo $footer; ?>

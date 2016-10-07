@@ -13,14 +13,9 @@
 		<input name="token" type="hidden" value="<?php echo $token; ?>">
 		
 		<fieldset class="half split">
-		
 			<p>
-				<label for="label-firstname"><?php echo __('instructor.first_name'); ?>:</label>
-				<?php echo Form::text('firstname', Input::previous('firstname', $instructor->firstname), array('id' => 'label-firstname')); ?>
-			</p>
-			<p>
-				<label for="label-lastname"><?php echo __('instructor.last_name'); ?>:</label>
-				<?php echo Form::text('lastname', Input::previous('lastname', $instructor->lastname), array('id' => 'label-lastname')); ?>
+				<label for="label-fullname"><?php echo __('instructor.fullname'); ?>:</label>
+				<?php echo Form::text('fullname', Input::previous('fullname', $instructor->fullname), array('id' => 'label-fullname')); ?>
 			</p>
 			<p>
 				<label for="label-email"><?php echo __('instructor.email'); ?>:</label>
@@ -31,8 +26,20 @@
 				<?php echo Form::date('birthday', Input::previous('birthday', $instructor->birthday), array('id' => 'label-birthday')); ?>
 			</p>
 			<p>
+				<label for="label-type_instructor"><?php echo __('instructor.type_instructor'); ?>:</label>
+				<?php echo Form::select('type_instructor', $type_instructor, Input::previous('type_instructor', $instructor->type_instructor), array('id' => 'label-type_instructor')); ?>
+			</p>
+			<p>
 				<label for="label-subject"><?php echo __('instructor.subject'); ?>:</label>
 				<?php echo Form::text('subject', Input::previous('subject', $instructor->subject), array('id' => 'label-subject')); ?>
+			</p>
+			<p>
+				<label for="label-thematic_taught"><?php echo __('instructor.thematic_taught'); ?>:</label>
+				<?php echo Form::text('thematic_taught', Input::previous('thematic_taught', $instructor->thematic_taught), array('id' => 'label-thematic_taught')); ?>
+			</p>
+			<p>
+				<label for="label-comment"><?php echo __('instructor.comment'); ?>:</label>
+				<?php echo Form::textarea('comment', Input::previous('comment', $instructor->comment), array('cols' => 20 ,'id' => 'label-comment')); ?>
 			</p>
 		
 		</fieldset>
