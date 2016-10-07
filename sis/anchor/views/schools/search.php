@@ -1,14 +1,15 @@
 <?php echo $header; ?>
 <ol class="breadcrumb">
     <li><a href="<?php echo Uri::to('admin'); ?>">Trang chủ</a></li>
-    <li class="active">Quản lý trường học</li>
+    <li><a href="<?php echo Uri::to('admin/schools'); ?>">Quản lý trường học</a></li>
+    <li class="active">Tìm kiếm</li>
 </ol>
 <section class="wrap">
     <?php echo $messages; ?>
     <?php if ($schools->count): ?>
         <nav>
-            <form style="float: right; margin-top: 20px;" method="get" action="<?php echo Uri::to('admin/schools/search'); ?>" novalidate>
-                <input id="text-search" type="text" name="text-search" placeholder="Tên trường">
+            <form class="form-inline" method="get" action="<?php echo Uri::to('admin/schools/search'); ?>" novalidate>
+                <input class="form-control" type="text" name="text-search" placeholder="Tên trường">
                 <?php echo Form::button('Tìm kiếm', array(
                     'class' => 'btn btn-primary',
                     'type' => 'submit'

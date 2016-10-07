@@ -1,6 +1,7 @@
 <?php echo $header; ?>
 <ol class="breadcrumb">
     <li><a href="<?php echo Uri::to('admin'); ?>">Trang chủ</a></li>
+    <li><a href="<?php echo Uri::to('admin/students'); ?>">Quản lý sinh viên</a></li>
     <li class="active">Danh sách khóa học</li>
 </ol>
 <section class="wrap">
@@ -13,9 +14,7 @@
                 <th>Tên khoá học</th>
                 <th>Ngày bắt đầu</th>
                 <th>Ngày kết thúc</th>
-                <th>Quản lý</th>
-                <th>Quản lý điểm</th>
-                <th>Tạm ứng tiền</th>
+                <th>Đăng kí học</th>
             </tr>
             </thead>
             <tbody>
@@ -43,16 +42,7 @@
                             ?>
                         </td>
                         <td>
-                            <a href="<?php echo Uri::to('admin/curriculum/' . $cour->id); ?>"
-                               class="btn btn-primary">lịch giảng</a>
-                        </td>
-                        <td>
-                            <a href="<?php echo Uri::to('admin/grade/course/' . $cour->id); ?>"
-                               class="btn btn-primary">quản lý điểm</a>
-                        </td>
-                        <td>
-                            <a href="<?php echo Uri::to('admin/advance/course/' . $cour->id); ?>"
-                               class="btn btn-primary">tạm ứng</a>
+                            <a href="#" class="btn btn-primary">Ghi danh</a>
                         </td>
                     </tr>
             <?php endforeach; ?>

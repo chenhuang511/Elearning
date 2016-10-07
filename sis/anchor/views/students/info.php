@@ -1,6 +1,7 @@
 <?php echo $header; ?>
 <ol class="breadcrumb">
     <li><a href="<?php echo Uri::to('admin'); ?>">Trang chủ</a></li>
+    <li><a href="<?php echo Uri::to('admin/students'); ?>">Quản lý sinh viên</a></li>
     <li class="active">Thông tin sinh viên</li>
 </ol>
 
@@ -11,7 +12,7 @@
 
 <section class="wrap">
     <?php echo $messages; ?>
-
+    <div style="display: flex">
     <fieldset class="half split">
         <p>
             <label for="label-fullname"><?php echo __('students.fullname') ?></label>
@@ -32,6 +33,7 @@
         <?php } ?>
         <p style="height: 39px;"></p>
     </fieldset>
+    </div>
 
     <h3>Số chuyên đề đã hoàn thành : <?php echo $counttopicsuccessed; ?></h3>
     <?php if ($counttopicsuccessed > 0) { ?>
@@ -59,7 +61,7 @@
     <?php } ?>
 
 
-    <h3 style="margin-top: 0">Các khóa học đã hoàn thành</h3>
+    <h3>Các khóa học đã hoàn thành</h3>
     <?php if ($studentcoursesuccessed != null) { ?>
         <table class="table table-hover">
             <thead>

@@ -7,8 +7,8 @@
     <?php echo $messages; ?>
     <?php if ($schools->count): ?>
         <nav>
-            <form style="float: right; margin: 20px 0;" method="get" action="<?php echo Uri::to('admin/schools/search'); ?>" novalidate>
-                <input id="text-search" type="text" name="text-search" placeholder="Tên trường">
+            <form class="form-inline" method="get" action="<?php echo Uri::to('admin/schools/search'); ?>" novalidate>
+                <input class="form-control" type="text" name="text-search" placeholder="Tên trường">
                 <?php echo Form::button('Tìm kiếm', array(
                     'class' => 'btn btn-primary',
                     'type' => 'submit'

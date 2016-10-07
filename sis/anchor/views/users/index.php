@@ -7,8 +7,8 @@
 	<?php echo $messages; ?>
 	<?php if ($users->count): ?>
 		<nav>
-			<form style="float: right; margin: 20px 0;" method="get" action="<?php echo Uri::to('admin/users/search'); ?>" novalidate>
-				<input id="text-search" type="text" name="text-search" placeholder="Tên thành viên">
+			<form class="form-inline" method="get" action="<?php echo Uri::to('admin/users/search'); ?>" novalidate>
+				<input class="form-control" type="text" name="text-search" placeholder="Tên thành viên">
 				<?php echo Form::button('Tìm kiếm', array(
 					'class' => 'btn btn-primary',
 					'type' => 'submit'

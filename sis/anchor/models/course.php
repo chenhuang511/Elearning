@@ -5,7 +5,15 @@ class Course extends Base
     public static $table = 'courses';
 
     public static function paginate($page = 1, $perpage = 10, $stuid) {
+
         $query = Query::table(static::table())->where('remoteid', '!=', 'null');
+
+        $coursesuccessed = StudentCourse::where('studentid', '=', $stuid)->get();
+
+        foreach ($coursesuccessed as $course)
+        {
+            $query = $query->where('id', '!=', $course->courseid);
+        }
 
         $count = $query->count();
 
