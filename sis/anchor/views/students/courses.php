@@ -5,6 +5,9 @@
     <li class="active">Danh sách khóa học</li>
 </ol>
 <section class="wrap">
+    <hgroup class="wrap">
+        <h1 style="margin: 0"><?php echo __('Danh sách khóa học'); ?></h1>
+    </hgroup>
     <?php echo $messages; ?>
     <?php if ($courses->count): ?>
         <table class="table table-hover">
@@ -21,13 +24,7 @@
             <?php foreach ($courses->results as $cour): ?>
                     <tr>
                         <td><?php echo $cour->id ?></td>
-                        <td>
-<!--                            <a href="--><?php //echo Uri::to('admin/courses/edit/' . $page->data['id']); ?><!--">-->
-                                <span class="bhxh-course">
-                                    <?php echo $cour->fullname; ?>
-                                </span>
-<!--                            </a>-->
-                        </td>
+                        <td><?php echo $cour->fullname; ?></td>
                         <td><?php
                             if ($cour->startdate !== NULL)
                                 echo $cour->startdate;

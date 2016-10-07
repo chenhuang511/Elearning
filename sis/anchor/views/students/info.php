@@ -101,15 +101,13 @@
             <thead>
             <tr>
                 <th>Tên khóa học</th>
-                <th style="text-align: center">Điểm tổng kết</th>
                 <th style="text-align: center">Chứng chỉ khóa học</th>
             </tr>
             </thead>
             <tbody>
             <?php foreach ($studentcourselearning as $stu) : ?>
                 <tr>
-                    <td style="width: 650px"><?php echo $stu->fullname ?></td>
-                    <td style="text-align: center"><?php echo $stu->grade ?></td>
+                    <td style="width: 862px"><?php echo $stu->fullname ?></td>
                     <td style="text-align: center">
                         <?php
                         $certificate = remote_get_link_certificate($stu->schoolid, $stu->studentid, $stu->id);
