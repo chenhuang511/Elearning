@@ -83,6 +83,21 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
         $validator->check('summary')
             ->is_max(1, __('courses.summary_missing'));
 
+        //check fullname and short name exists
+        $validator->add('fullname_exists', function($str) use($input) {
+            return Course::where('fullname', '=', $input['fullname'])->count() == 0;
+        });
+
+        $validator->check('fullname')
+            ->is_fullname_exists('Tên khóa học đã tồn tại');
+
+        $validator->add('shortname_exists', function($str) use($input) {
+            return Course::where('shortname', '=', $input['shortname'])->count() == 0;
+        });
+
+        $validator->check('shortname')
+            ->is_shortname_exists('Tên gợi ý khóa học đã tồn tại');
+
         if ($errors = $validator->errors()) {
             Input::flash();
             Notify::error($errors);
@@ -287,6 +302,13 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
 
         $validator->check('summary')
             ->is_max(1, __('courses.summary_missing'));
+
+        $validator->add('course_pendding', function($str) use($courseid) {
+            return Course::find($courseid)->status == PENDING;
+        });
+
+        $validator->check('fullname')
+            ->is_course_pendding('Khóa học đã được đồng bộ');
 
         if ($errors = $validator->errors()) {
             Input::flash();
