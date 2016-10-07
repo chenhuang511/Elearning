@@ -148,7 +148,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 	});
 
 	Route::post('admin/contract/add', function() {
-		$input = Input::get(array('fullname', 'birthday', 'email', 'type_instructor', 'subject', 'thematic_taught', 'comment', 'name_contract', 'instructor_id', 'type', 'name_partner', 'start_date', 'end_date', 'salary', 'state', 'rules'));
+		$input = Input::get(array('fullname', 'birthday', 'email', 'type_instructor', 'subject', 'name_contract', 'instructor_id', 'type', 'name_partner', 'start_date', 'end_date', 'salary', 'state', 'rules'));
 		$ins_id = $input['instructor_id'];
 		
 		$validator = new Validator($input);
@@ -172,7 +172,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 		 	->is_max(2, __('contract.rules_missing', 2));
 	
 		if($ins_id == 0){
-			$input_instructor = Input::get(array('fullname', 'birthday', 'type_instructor', 'email', 'subject', 'thematic_taught', 'comment'));
+			$input_instructor = Input::get(array('fullname', 'birthday', 'type_instructor', 'email', 'subject'));
 
 			$validator->add('valid', function($email) {
 				return Query::table(Base::table('instructors'))->where('email', '=', $email)->count() == 0;

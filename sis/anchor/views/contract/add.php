@@ -39,8 +39,8 @@
 				<?php echo Form::text('subject', Input::previous('subject'), array('id' => 'label-subject')); ?>
 			</p>
 			<p>
-				<label for="label-thematic_taught"><?php echo __('instructor.thematic_taught'); ?>:</label>
-				<?php echo Form::textarea('thematic_taught', Input::previous('thematic_taught'), array('id' => 'label-thematic_taught', 'cols'=> 20)); ?>
+				<label for="label-curriculum_taught"><?php echo __('instructor.curriculum_taught'); ?>:</label>
+				<?php echo Form::textarea('curriculum_taught', Input::previous('curriculum_taught'), array('id' => 'label-curriculum_taught', 'cols'=> 20)); ?>
 			</p>
 			<p>
 				<label for="label-comment"><?php echo __('instructor.comment'); ?>:</label>

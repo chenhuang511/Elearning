@@ -32,7 +32,7 @@ return array(
 	'type_instructor' => 'Hình thức',
 	'contract' => 'Giảng viên hợp đồng',
 	'official' => 'Giảng viên chính thức',
-	'thematic_taught' => 'Số chuyên đề đã dạy',
+	'curriculum_taught' => 'Số chuyên giảng dạy',
 	'comment' => 'Ý kiến đánh giá,đóng góp',
 	'type' => 'Loại hợp đồng',
 	'name_personal/organization' => 'Tên Cá nhân/Tổ chức',
@@ -46,6 +46,7 @@ return array(
 	'salary' => 'Mức lương',
 	'rules' => 'Điều khoản',
 	'state' => 'Trạng thái thanh toán',
+	'curriculum' => 'Chuyên đề giảng dạy của giảng viên',
 
 	'bio' => 'Giới thiệu bản thân',
 	'bio_explain' => '',

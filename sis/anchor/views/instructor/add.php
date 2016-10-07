@@ -9,7 +9,7 @@
 	<?php if(Auth::admin()) : ?>
 
 
-	<form method="post" action="<?php echo Uri::to('admin/instructor/add'); ?>" novalidate autocomplete="off" enctype="multipart/form-data">
+	<form method="post" action="<?php echo Uri::to('admin/instructor/add'); ?>" novalidate autocomplete="on" enctype="multipart/form-data">
 
 		<input name="token" type="hidden" value="<?php echo $token; ?>">
 
@@ -39,13 +39,6 @@
 				<?php echo Form::text('subject', Input::previous('subject'), array('id' => 'label-subject')); ?>
 			</p>
 			<p>
-				<label for="label-thematic_taught"><?php echo __('instructor.thematic_taught'); ?>:</label>
-				<?php echo Form::text('thematic_taught', Input::previous('thematic_taught'), array('id' => 'label-thematic_taught')); ?>
-			</p>
-			<p>
-				<label for="label-comment"><?php echo __('instructor.comment'); ?>:</label>
-				<?php echo Form::textarea('comment', Input::previous('comment'), array('id' => 'label-comment', 'cols'=> 20)); ?>
-			</p>
 		</fieldset>
 
 		<fieldset class="half split">
@@ -106,15 +99,12 @@
 				document.getElementById("label-email").value = "";
 				document.getElementById("label-type_instructor").value = "";
 				document.getElementById("label-subject").value = "";
-				document.getElementById("label-thematic_taught").value = "";
-				document.getElementById("label-comment").value = "";
 				document.getElementById("label-fullname").disabled = true;
 				document.getElementById("label-birthday").disabled = true;
 				document.getElementById("label-email").disabled = true;
 				document.getElementById("label-type_instructor").disabled = true;
 				document.getElementById("label-subject").disabled = true;
-				document.getElementById("label-thematic_taught").disabled = true;
-				document.getElementById("label-comment").disabled = true;
+				
 			}
 			else{
 				document.getElementById("label-fullname").value = "";
@@ -122,15 +112,11 @@
 				document.getElementById("label-email").value = "";
 				document.getElementById("label-type_instructor").value = "";
 				document.getElementById("label-subject").value = "";
-				document.getElementById("label-thematic_taught").value = "";
-				document.getElementById("label-comment").value = "";
 				document.getElementById("label-fullname").disabled = false;
 				document.getElementById("label-birthday").disabled = false;
 				document.getElementById("label-email").disabled = false;
 				document.getElementById("label-type_instructor").disabled = false;
 				document.getElementById("label-subject").disabled = false;
-				document.getElementById("label-thematic_taught").disabled = false;
-				document.getElementById("label-comment").disabled = false;
 			}
 		});
 	});

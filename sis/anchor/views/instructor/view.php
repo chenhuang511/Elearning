@@ -34,8 +34,10 @@
 				<?php echo Form::text('subject', Input::previous('subject', $instructor->subject), array('id' => 'label-subject','disabled'=>'true','style'=>'opacity:1')); ?>
 			</p>
 			<p>
-				<label for="label-thematic_taught"><?php echo __('instructor.thematic_taught'); ?>:</label>
-				<?php echo Form::text('thematic_taught', Input::previous('thematic_taught', $instructor->thematic_taught), array('id' => 'label-thematic_taught','disabled'=>'true','style'=>'opacity:1')); ?>
+				<label for="label-curriculum_taught"><?php echo __('instructor.curriculum_taught'); ?>:</label>
+				<a href="<?php echo Uri::to('admin/instructor/curriculum/' . $instructor->id); ?>">
+                    <p style="margin-left: 10px;"><?php echo $curriculum_taught; ?></p>
+                </a>
 			</p>
 			<p>
 				<label for="label-comment"><?php echo __('instructor.comment'); ?>:</label>
@@ -47,35 +49,35 @@
 		<?php foreach($contract as $contract): ?>
 		<div style="border:1px solid;border-color:blue">
 			<p>
-				<label for="label-name_contract"><?php echo __('contract.name_contract'); ?>:</label></br>
+				<label for="label-name_contract"><?php echo __('contract.name_contract'); ?>:</label>
 				<?php echo Form::text('name_contract', Input::previous('name_contract', $contract->name_contract), array('id' => 'label-name_contract','disabled'=>'true','style'=>'opacity:1')); ?>
 			</p>
 			<p>
-				<label for="label-type"><?php echo __('contract.type'); ?>:</label></br>
+				<label for="label-type"><?php echo __('contract.type'); ?>:</label>
 				<?php echo Form::select('type', $type, Input::previous('type', $contract->type), array('id' => 'label-type','disabled'=>'true','style'=>'opacity:1')); ?>
 			</p>
 			<p>
-				<label for="label-name_partner"><?php echo __('contract.name_partner'); ?>:</label></br>
+				<label for="label-name_partner"><?php echo __('contract.name_partner'); ?>:</label>
 				<?php echo Form::text('name_partner', Input::previous('name_partner', $contract->name_partner), array('id' => 'label-name_partner','disabled'=>'true','style'=>'opacity:1')); ?>
 			</p>
 			<p>
-				<label for="label-start_date"><?php echo __('contract.start_date'); ?>:</label></br>
+				<label for="label-start_date"><?php echo __('contract.start_date'); ?>:</label>
 				<?php echo Form::date('start_date', Input::previous('start_date', $contract->start_date), array('id' => 'label-start_date','disabled'=>'true','style'=>'opacity:1')); ?>
 			</p>
 			<p>
-				<label for="label-end_date"><?php echo __('contract.end_date'); ?>:</label></br>
+				<label for="label-end_date"><?php echo __('contract.end_date'); ?>:</label>
 				<?php echo Form::date('end_date', Input::previous('end_date', $contract->end_date), array('id' => 'label-end_date','disabled'=>'true','style'=>'opacity:1')); ?>
 			</p>
 			<p>
-				<label for="label-salary"><?php echo __('contract.salary'); ?>:</label></br>
+				<label for="label-salary"><?php echo __('contract.salary'); ?>:</label>
 				<?php echo Form::text('salary', Input::previous('salary', $contract->salary), array('id' => 'label-salary','disabled'=>'true','style'=>'opacity:1')); ?>
 			</p>
 			<p>
-				<label for="label-state"><?php echo __('contract.state'); ?>:</label></br>
+				<label for="label-state"><?php echo __('contract.state'); ?>:</label>
 				<?php echo Form::select('state', $state, Input::previous('state', $contract->state), array('id' => 'label-state','disabled'=>'true','style'=>'opacity:1')); ?>
 			</p>
 			<p>
-				<label for="label-rules"><?php echo __('contract.rules'); ?>:</label></br>
+				<label for="label-rules"><?php echo __('contract.rules'); ?>:</label>
 				<?php echo Form::textarea('rules', Input::previous('rules', $contract->rules), array('cols' => 20 ,'id' => 'label-rules','disabled'=>'true','style'=>'opacity:1')); ?>
 			</p>			
 		</div></br>

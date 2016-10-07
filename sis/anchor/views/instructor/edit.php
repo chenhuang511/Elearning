@@ -33,14 +33,6 @@
 				<label for="label-subject"><?php echo __('instructor.subject'); ?>:</label>
 				<?php echo Form::text('subject', Input::previous('subject', $instructor->subject), array('id' => 'label-subject')); ?>
 			</p>
-			<p>
-				<label for="label-thematic_taught"><?php echo __('instructor.thematic_taught'); ?>:</label>
-				<?php echo Form::text('thematic_taught', Input::previous('thematic_taught', $instructor->thematic_taught), array('id' => 'label-thematic_taught')); ?>
-			</p>
-			<p>
-				<label for="label-comment"><?php echo __('instructor.comment'); ?>:</label>
-				<?php echo Form::textarea('comment', Input::previous('comment', $instructor->comment), array('cols' => 20 ,'id' => 'label-comment')); ?>
-			</p>
 		
 		</fieldset>
 

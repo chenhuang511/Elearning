@@ -28,6 +28,29 @@ class Curriculum extends Base
         return array($total, $curriculums);
     }
 
+    public static function getByLecturerId($lectureid, $page = 1, $perpage = 10)
+    {
+        $query = static::join(Base::table('instructors'), Base::table('instructors.id'), '=', Base::table('curriculum.lecturer'))
+            ->join(Base::table('courses'), Base::table('courses.id'), '=', Base::table('curriculum.course'))
+            ->where(Base::table('curriculum.lecturer'), '=', $lectureid);
+
+        $total = $query->count();
+
+        // get list curriculumn
+        $curriculums = $query->take($perpage)
+            ->skip(--$page * $perpage)
+            ->get(array(
+                Base::table('curriculum.*'),
+                 Base::table('courses.fullname as coursename')
+            ));
+
+        foreach ($curriculums as $curriculum) {
+            $curriculum->topicday = self::GetDayOfWeek($curriculum->topicday) . ' ' . date('d-m-Y', strtotime($curriculum->topicday));
+        }
+
+        return array($total, $curriculums);
+    }
+
     public static function getById($id)
     {
         return static::find($id);
