@@ -46,7 +46,7 @@ Route::collection(array('before' => 'auth,csrf'), function () {
             ->partial('footer', 'partials/footer');
     });
 
-    Route::get(array('admin/courses/enrol/teacher/(:num)', 'admin/courses/enrol/teacher/(:num)/(:num)'), function ($courseid, $page = 1) {
+    Route::get(array('admin/courses/(:num)/enrol/teacher', 'admin/courses/(:num)/enrol/teacher/(:num)'), function ($courseid, $page = 1) {
 
         // get public listings
         $course = Course::find($courseid);
@@ -75,28 +75,33 @@ Route::collection(array('before' => 'auth,csrf'), function () {
         $ispass = true;
         if(!$user || !$course) {
             $ispass = false;
+        } else {
+            $school = School::find($user->schoolid);
+            //enrol for school
+            $rolehost = 5;
+
+            $domain = $school->wwwroot;
+            $token = $school->token;
+            $roleid = 3;
+            $userremoteid = $user->remoteid;
+            $courseremoteid = $course->remoteid;
+
+            $hostid = $school->remoteid;
+            remote_enrol_host($rolehost, $hostid, $courseremoteid);
+            remote_fetch_course($domain, $token);
+            remote_enrol_course($domain, $token, $userremoteid, $courseremoteid);
+            remote_assign_enrol_user($domain, $token, $roleid, $userremoteid, $courseremoteid);
+            //add localdatabase
+            if(!UserCourse::where('userid','=', $user->id)->where('courseid','=', $course->id)->where('remoterole','=', $roleid)->get()) {
+                $user_course = array();
+                $user_course['userid'] = $user->id;
+                $user_course['courseid'] = $course->id;
+                $user_course['remoterole'] = $roleid;
+                UserCourse::create($user_course);
+
+            }
         }
-        $school = School::find($user->schoolid);
-        //enrol for school
-        $rolehost = 5;
-
-        $domain = $school->wwwroot;
-        $token = $school->token;
-        $roleid = 3;
-        $userremoteid = $user->remoteid;
-        $courseremoteid = $course->remoteid;
-
-        $hostid = $school->remoteid;
-        $enrolhost = remote_enrol_host($rolehost, $hostid, $courseremoteid);
-        var_dump($enrolhost);
-        $fetch = remote_fetch_course($domain, $token);
-        var_dump($fetch);
-        $abc = remote_enrol_user($domain, $token, $roleid, $userremoteid, $courseremoteid);
-        var_dump($abc);
-//        if(!$ispass){
-//            return Response::create(0, 500, array('content-type' => 'application/json'));
-//        }
-//        return Response::create(1, 200, array('content-type' => 'application/json'));
+        echo $ispass;
     });
 
     Route::get(array('admin/courses/(:num)/enrol/teacher/search', 'admin/courses/(:num)/enrol/teacher/search/(:num)'), function($courseid, $page = 1) {

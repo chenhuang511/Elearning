@@ -47,7 +47,7 @@
                                 abc
                             </td>
                             <td>
-                                 <button data-userid="<?php echo $page->id ?>" id="enrol-user" class="btn btn-primary">
+                                 <button data-userid="<?php echo $page->id ?>" class="enrol-user btn btn-primary">
                                      Ghi danh
                                  </button>
                             </td>
@@ -75,14 +75,15 @@
                 data : { token: token, userid: userid },
                 dataType: "text",
                 success: function(result){
-
                     $('#load').removeClass();
-                    $('#load').addClass('fa fa-check');
+                    if(result) {
+                        $('#load').addClass('fa fa-check');
+                    }
                 }
             });
         }
         var init = function (url) {
-            $('#enrol-user').click(function () {
+            $('.enrol-user').click(function () {
                 // call ajax
                 token = $('#token').val();
                 userid = $(this).data('userid');

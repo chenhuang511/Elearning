@@ -348,7 +348,7 @@ class local_mod_enrol_external extends external_api
         $fields->type       = 'mnet';
         $fields->courseid = $course->id;
 
-        if($DB->get_record('enrol', array('courseid' => $courseid, 'enrol' => 'mnet', 'roleid' => 5, 'customint1' => $hostid), '*', MUST_EXIST)){
+        if($DB->get_record('enrol', array('courseid' => $courseid, 'enrol' => 'mnet', 'roleid' => 5, 'customint1' => $hostid))){
             return 'enroled';
         }
         $plugin->add_instance($course, (array)$fields);

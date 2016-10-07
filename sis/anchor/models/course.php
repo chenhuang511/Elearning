@@ -170,6 +170,7 @@ class Course extends Base
         $courseremote = remote_add_course($data);
         if(!$courseremote) {return false;};
         $courseupdate->remoteid = $courseremote->id;
+        $courseupdate->status = 2;
         Course::update($course->id, $courseupdate);
         //end api
         // start edit title section

@@ -60,7 +60,7 @@ function remote_enrol_host($roleid, $hostid, $courseid, $methodname = 'host')
 }
 
 
-function remote_fetch_course($domain, $token, $hubid = HUB_URL)
+function remote_fetch_course($domain, $token, $hubid = 0)
 {
 
     $resp = RestClient::dorest(
@@ -74,7 +74,22 @@ function remote_fetch_course($domain, $token, $hubid = HUB_URL)
 }
 
 // userid and course id is of remote
-function remote_enrol_user($domain, $token, $roleid, $userremoteid, $courseremoteid)
+function remote_enrol_course($domain, $token, $userremoteid, $courseremoteid)
+{
+
+    $resp = RestClient::dorest(
+        array(
+            'domain' => $domain,
+            'token' => $token,
+            'function_name'=>'local_host_enrol_user_to_course',
+            'params'=>array(
+                'userid' => $userremoteid,
+                'courseid' => $courseremoteid)
+        ));
+    return $resp;
+}
+
+function remote_assign_enrol_user($domain, $token, $roleid, $userremoteid, $courseremoteid)
 {
 
     $resp = RestClient::dorest(
