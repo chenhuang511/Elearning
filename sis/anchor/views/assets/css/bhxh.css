@@ -75,6 +75,7 @@ a {
 #header .main-header .logo-area, #header .main-header .auth-area {
     display: table-cell;
     width: 50%;
+    vertical-align: middle;
 }
 
 .logo-block {
@@ -161,6 +162,10 @@ a {
 
 .top-menu ul a.active img {
     opacity: 1;
+}
+
+.main-wrap {
+    min-height: 530px;
 }
 
 /*menu home*/
@@ -355,15 +360,31 @@ i.fa.fa-sign-in {
 }
 
 article.wrap.coursebox {
-    border-bottom: dotted 1px #ddd;
+    border-bottom: solid 1px #ddd;
     padding: 11px 1px;
 }
 
+.searchbox {
+    display: block;
+    position: relative;
+}
+
+.searchbox input[id=search_term] {
+    width: 64%;
+}
+.searchbox input[type=submit] {
+    width: 30%;
+}
+
+
+.searchbox input[id=search_term], .searchbox input[type=submit] {
+    display: inline-block;
+    vertical-align: middle;
+}
+
 .right-block.col-md-3.block-search {
-    /* background: #ececec; */
-    /* padding-right: 0px; */
-    padding-left: 12px;
-    margin-bottom: 9px;
+    padding: 15px;
+    margin-bottom: 10px;
 }
 
 button.search-btn {
@@ -553,6 +574,12 @@ ul.mnu-lst li:last-child {
 
 .currency-format {
     text-align: right;
+}
+
+article.wrap.coursebox > header > a {
+    color: #187bb2;
+    font-weight: bold;
+    font-size: 18px;
 }
 
 @media only screen and (min-width: 992px) {

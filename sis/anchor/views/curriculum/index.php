@@ -8,7 +8,11 @@
     <?php echo $messages; ?>
     <?php if ($pages->count): ?>
         <p class="text-right">
-            <?php if ($pages->results[0]->status != PUBLISHED) : ?>
+            <?php if ($pages->results[0]->status === PENDING) : ?>
+                <a href="#" class="btn btn-primary" id="add-remote-course">
+                    Xét duyệt khóa học
+                </a>
+                <?php elseif($pages->results[0]->status != APPROVED) : ?>
                 <a href="#" class="btn btn-primary" id="add-remote-course">
                     Đồng bộ khóa học
                 </a>
@@ -50,12 +54,14 @@
                             ?>
                         </td>
                         <td>
-                            <a href="<?php echo Uri::to('admin/curriculum/edit/topic/' . $page->id); ?>"
-                            >Sửa <i class="fa fa-pencil" aria-hidden="true"></i></a> |
-                            <a href="<?php echo Uri::to('admin/curriculum/topic/delete/' . $page->id); ?>"
-                               onclick="return confirm('Bạn chắc chắn muốn xóa thông tin này');">Xóa <i
-                                    class="fa fa-times"
-                                    aria-hidden="true"></i></a>
+                            <?php if ($page->status === 1): ?>
+                                <a href="<?php echo Uri::to('admin/curriculum/edit/topic/' . $page->id); ?>"
+                                >Sửa <i class="fa fa-pencil" aria-hidden="true"></i></a> |
+                                <a href="<?php echo Uri::to('admin/curriculum/topic/delete/' . $page->id); ?>"
+                                   onclick="return confirm('Bạn chắc chắn muốn xóa thông tin này');">Xóa <i
+                                        class="fa fa-times"
+                                        aria-hidden="true"></i></a>
+                            <?php endif; ?>
                         </td>
                     </tr>
                 <?php endforeach; ?>

@@ -21,7 +21,8 @@
                 \ /
 */
 define('PENDING', 1);
-define('PUBLISHED', 2);
+define('APPROVED', 2);
+define('PUBLISHED', 3);
 
 define('DS', DIRECTORY_SEPARATOR);
 define('ENV', getenv('APP_ENV'));

@@ -18,16 +18,16 @@
  */
 body {
 	/* Use a serif font for nice readability, but not Times */
-	font: 17px/26px Skolar, Tisa, "Chaparral Pro", Merriweather, Georgia, serif;
+	font: 17px/26px 'Open Sans';
 }
 
 h1, h2, h3, h4, h5, #logo, #top, .slidey b, .slidey label, .counter, input, textarea, button, .pagination {
-	font-family: "Helvetica Neue", sans-serif;
+	font-family: 'Open Sans';
 	font-weight: 300;
 }
 
 pre, code, .mono {
-	font: 12px/19px "Anonymous Pro", Consolas, monospace;
+	font: 12px/19px 'Open Sans';
 	padding: 0 2px;
 }
 
