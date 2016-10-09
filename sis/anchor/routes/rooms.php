@@ -29,6 +29,19 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 			->partial('footer', 'partials/footer');
 	});
 
+    Route::get('admin/rooms/view/(:num)', function($id) {
+        $vars['messages'] = Notify::read();
+        $vars['token'] = Csrf::token();
+        $vars['rooms'] = Room::find($id);
+
+        // extended fields
+        $vars['fields'] = Extend::fields('rooms', $id);
+
+        return View::create('rooms/view', $vars)
+            ->partial('header', 'partials/header')
+            ->partial('footer', 'partials/footer');
+    });
+
 	Route::post('admin/rooms/edit/(:num)', function($id) {
 		$input = Input::get(array('name', 'description', 'status'));
 

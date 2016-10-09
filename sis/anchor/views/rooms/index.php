@@ -4,9 +4,6 @@
     <h1><?php echo __('Quản lí phòng học'); ?></h1>
 
     <?php if(Auth::admin()) : ?>
-    <div style="float: right; margin: 20px 0 0 20px;">
-        <?php echo Html::link('admin/rooms/add', __('Thêm mới'), array('class' => 'btn')); ?>
-    </div>
 
     <?php endif; ?>
     <form style="float: right; margin-top: 20px;" method="get" action="<?php echo Uri::to('admin/rooms/search'); ?>" novalidate>
@@ -27,10 +24,7 @@
                 <tr>
                     <th class="col-sm-1">ID</th>
                     <th class="col-sm-3">Tên phòng</th>
-                    <!-- <th class="col-sm-2">Ảnh</th> -->
-                    <!-- <th>Ngày thêm</th> -->
                     <th class="col-sm-3">Thông tin</th>
-                    <!-- <th class="col-sm-1">Số lượng</th> -->
                     <th class="col-sm-2">Trạng Thái</th>
                     <th class="col-sm-3">Quản lý</th>
                 </tr>
@@ -42,14 +36,6 @@
                         <td class="col-sm-3">
                             <?php echo $rooms->name ?>
                         </td>
-                        <!-- <td>
-                            <?php
-                            if (isset($rooms->created) && $rooms->created !== NULL)
-                                echo date('d-m-Y', strtotime($rooms->created));
-                            else
-                                echo 'chưa khởi tạo';
-                            ?>
-                        </td> -->
                         <td class="col-sm-3">
                             <?php echo $rooms->description ?>
                         </td>
@@ -63,7 +49,7 @@
                             ?>
                         </td>
                         <td class="col-sm-3">
-                            <a href="<?php echo Uri::to('admin/rooms/' . $rooms->id); ?>" class="btn btn-info">Xem</a>
+                            <a href="<?php echo Uri::to('admin/rooms/view/' . $rooms->id); ?>" class="btn btn-info">Xem</a>
                             <a href="<?php echo Uri::to('admin/rooms/edit/' . $rooms->id); ?>" class="btn btn-primary">Sửa</a>
                             <a href="<?php echo Uri::to('admin/rooms/delete/' . $rooms->id); ?>" class="btn btn-danger">Xóa</a>
                         </td>

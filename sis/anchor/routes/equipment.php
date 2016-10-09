@@ -14,22 +14,17 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
             return Response::redirect('admin/equipment/add/room');
         }
 
-        if ($room->startdate === NULL && $room->enddate === NULL) {
-            Notify::notice(__('rooms.room_notfound'));
-            return Response::redirect('admin/equipment/update/room/' . $roomid);
-        }
-
         $vars['messages'] = Notify::read();
 
-        list($total, $equipments) = Equipment::getByRoomId($roomid, $page, $perpage = Config::get('admin.curriculum_per_page'));
+        list($total, $equipments) = Equipment::getByRoomId($roomid, $page, $perpage = Config::get('admin.posts_per_page'));
 
         if (count($equipments) === 0) {
-            Notify::notice(__('equipment.notopic'));
-            return Response::redirect('admin/equipment/add/topic/' . $courseid);
+            Notify::notice(__('equipment.novirtual_class_equipment'));
+            return Response::redirect('admin/equipment/add/virtual_class_equipment/' . $roomid);
         }
 
         $url = Uri::to('admin/equipment/' . $roomid);
-        $pagination = new Paginator($curriculums, $total, $page, $perpage, $url);
+        $pagination = new Paginator($equipments, $total, $page, $perpage, $url);
 
         $vars['pages'] = $pagination;
         $vars['roomid'] = $roomid;
@@ -55,10 +50,10 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
     });
 
     Route::post('admin/equipment/add/room', function () {
-        $input = Input::get(array('name', 'shortname', 'startdate', 'enddate', 'summary'));
+        $input = Input::get(array('name', 'description'));
 
         // an array of items that we shouldn't encode - they're no XSS threat
-        $dont_encode = array('summary', 'css', 'js');
+        $dont_encode = array('description', 'css', 'js');
 
         foreach ($input as $key => &$value) {
             if (in_array($key, $dont_encode)) continue;
@@ -70,17 +65,8 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
         $validator->check('name')
             ->is_max(1, __('rooms.name_missing'));
 
-        $validator->check('shortname')
-            ->is_max(1, __('rooms.shortname_missing'));
-
-        $validator->check('startdate')
-            ->is_max(1, __('rooms.startdate_missing'));
-
-        $validator->check('enddate')
-            ->is_max(1, __('rooms.enddate_missing'));
-
-        $validator->check('summary')
-            ->is_max(1, __('rooms.summary_missing'));
+        $validator->check('description')
+            ->is_max(1, __('rooms.description_missing'));
 
         if ($errors = $validator->errors()) {
             Input::flash();
@@ -90,18 +76,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
 
         $user = Auth::user();
 
-        // set remoteid = null
-        $input['remoteid'] = null;
-
         $room = Room::create($input);
-
-        $uroom = array(
-            'userid' => $user->id,
-            'roomid' => $room->id,
-            'remoterole' => null
-        );
-
-        $userroom = UserRoom::create($uroom);
 
         Notify::success(__('rooms.created'));
 
@@ -123,7 +98,12 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
             return Response::redirect('admin/rooms');
         }
 
+        $status = array();
+        $status = $status + array('1' => 'Tốt','0' => 'Hỏng');
+
+        $vars['status'] = $status;
         $vars['roomid'] = $room->id;
+        $vars['roomname']= $room->name;
 
         $dates = array();
 
@@ -140,12 +120,6 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
         $dates[($days + 1)] = Equipment::GetDayOfWeek($room->enddate) . ' ' . date('d-m-Y', strtotime($room->enddate));
         $vars['dates'] = $dates;
 
-        $teachers = array();
-        $teachers = $teachers + array('0' => '--- Chọn giảng viên ---');
-        $teachers = $teachers + User::dropdown();
-
-        $vars['teachers'] = $teachers;
-
         // extended fields
         $vars['fields'] = Extend::fields('equipment');
 
@@ -156,7 +130,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
 
     Route::post('admin/equipment/add/virtual_class_equipment/(:any)', function ($roomid) {
 
-        $room = room::getById($roomid);
+        $room = Room::getById($roomid);
 
         if (!$room) {
             Notify::warning(__('rooms.notfound'));
@@ -181,9 +155,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
         for ($j = 1; $j <= $days + 1; $j++) {
             array_push($arr, "content_virtual_class_equipment_" . $j);
             array_push($arr, "virtual_class_equipment_" . $j);
-            array_push($arr, "teacher_" . $j);
         }
-
 
         $input = Input::get($arr);
 
@@ -193,9 +165,6 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
             if (isset($input['content_virtual_class_equipment_' . $count]) && ($key === 'content_virtual_class_equipment_' . $count && $value === '')) {
                 $validator->check('virtual_class_equipment_' . $count)
                     ->is_max(1, __('equipment.virtual_class_equipmentname_missing'));
-
-                $validator->check('teacher_' . $count)
-                    ->is_boolean(__('equipment.teacher_missing'));
                 $count++;
             }
         }
@@ -216,19 +185,15 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
                 foreach ($virtual_class_equipments as $virtual_class_equipment) {
                     $arr = array();
                     $arr['room'] = $room->id;
-                    $arr['virtual_class_equipmentday'] = $dates[$icount];
-                    if ($virtual_class_equipment->timevirtual_class_equipment !== '') {
-                        $arr['virtual_class_equipmenttime'] = $virtual_class_equipment->timevirtual_class_equipment;
-                    } else {
-                        $arr['virtual_class_equipmenttime'] = NULL;
-                    }
+                    $arr['virtual_class_equipmenttime'] = NULL;
                     $arr['virtual_class_equipmentname'] = $virtual_class_equipment->name;
-                    $arr['lecturer'] = $virtual_class_equipment->teacherid;
+                    $arr['status'] = $virtual_class_equipment->status;
+                    $arr['description'] = $virtual_class_equipment->description;
+                    $arr['quantity'] = $virtual_class_equipment->quantity;
                     $arr['userid'] = $user->id;
                     $arr['timecreated'] = time();
                     $arr['timemodified'] = time();
                     $arr['usermodified'] = $user->id;
-                    $arr['note'] = $virtual_class_equipment->note;
 
                     $equipment = Equipment::create($arr);
                 }
@@ -236,9 +201,9 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
             }
         }
 
-        Notify::success(__('equipment.created'));
+        Notify::success(__('equipment.virtual_class_equipmentcreated'));
 
-        return Response::redirect('admin/equipment/add/room');
+        return Response::redirect('admin/equipment/' . $room->id);
     });
 
     /*
@@ -322,11 +287,10 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
 
         $vars['equipment'] = $equipment;
 
-        $teachers = array();
-        $teachers = $teachers + array('0' => '--- Chọn giảng viên ---');
-        $teachers = $teachers + User::dropdown();
+        $status = array();
+        $status = $status + array('0' => 'Hỏng', '1' => 'Tốt');
 
-        $vars['teachers'] = $teachers;
+        $vars['status'] = $status;
 
         // extended fields
         $vars['fields'] = Extend::fields('equipment');
@@ -339,16 +303,12 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
     Route::post('admin/equipment/edit/virtual_class_equipment/(:any)', function ($id) {
 
         $equipment = equipment::getById($id);
-        $input = Input::get(array('virtual_class_equipmenttime', 'virtual_class_equipmentname', 'lecturer', 'note'));
+        $input = Input::get(array('virtual_class_equipmenttime', 'virtual_class_equipmentname', 'status', 'description', 'quantity'));
 
         $validator = new Validator($input);
 
         $validator->check('virtual_class_equipmentname')
             ->is_max(1, __('equipment.virtual_class_equipmentname_missing'));
-
-        $validator->check('lecturer')
-            ->is_boolean(__('equipment.teacher_missing'));
-
         if ($errors = $validator->errors()) {
             Input::flash();
             Notify::error($errors);

@@ -23,49 +23,25 @@
             <thead>
                 <tr>
                     <th class="col-sm-1">ID</th>
-                    <th class="col-sm-2">Tên thiết bị</th>
-                    <th class="col-sm-2">Ảnh</th><!-- 
-                    <th>Ngày thêm</th> -->
+                    <th class="col-sm-2">Tên phòng học</th>
                     <th class="col-sm-3">Thông tin</th>
-                    <th class="col-sm-1">Số lượng</th>
-                    <th class="col-sm-1">Trạng Thái</th>
+                    <th class="col-sm-2">Trạng Thái</th>
                     <th class="col-sm-2">Quản lý</th>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach($rooms as $virtual_class_equipment): ?>
+                <?php foreach($rooms as $room): ?>
                     <tr>
-                        <td class="col-sm-1"><?php echo $virtual_class_equipment->id ?></td>
+                        <td class="col-sm-1"><?php echo $room->id ?></td>
                         <td class="col-sm-2">
-                            <?php echo $virtual_class_equipment->name ?>
+                            <?php echo $room->name ?>
                         </td>
-                        <td class="col-sm-2">
-                            <?php 
-                                if ($virtual_class_equipment->image_url == null) {
-                            ?>
-                                <img src= "<?php echo asset_url('img/noimage.jpg'); ?>" style="width: 180px; height: 150px;">
-                            <?php } 
-                            else{ ?>
-                                <img src= "<?php echo $virtual_class_equipment->image_url; ?>" style="width: 180px; height: 150px;">    
-                            <?php } ?>
-                        </td>
-                        <!-- <td>
-                            <?php
-                            if (isset($rooms->created) && $rooms->created !== NULL)
-                                echo date('d-m-Y', strtotime($rooms->created));
-                            else
-                                echo 'chưa khởi tạo';
-                            ?>
-                        </td> -->
                         <td class="col-sm-3">
-                            <?php echo $virtual_class_equipment->description ?>
+                            <?php echo $room->description ?>
                         </td>
-                        <td class="col-sm-1">
-                            <?php echo $virtual_class_equipment->quantity ?>
-                        </td>
-                        <td class="col-sm-1">
+                        <td class="col-sm-2">
                             <?php
-                                if ($virtual_class_equipment->status == 1) {
+                                if ($room->status == 1) {
                                     echo 'Chưa được sử dụng';
                                 }
                                 else
@@ -73,8 +49,9 @@
                             ?>
                         </td>
                         <td class="col-sm-2">
-                            <a href="<?php echo Uri::to('admin/rooms/edit/' . $virtual_class_equipment->id); ?>" class="btn btn-primary">Sửa</a>
-                            <a href="<?php echo Uri::to('admin/rooms/delete/' . $virtual_class_equipment->id); ?>" class="btn btn-danger">Xóa</a>
+                            <a href="<?php echo Uri::to('admin/rooms/view/' . $room->id); ?>" class="btn btn-primary">Xem</a>
+                            <a href="<?php echo Uri::to('admin/rooms/edit/' . $room->id); ?>" class="btn btn-primary">Sửa</a>
+                            <a href="<?php echo Uri::to('admin/rooms/delete/' . $room->id); ?>" class="btn btn-danger">Xóa</a>
                         </td>
                     </tr>
             <?php endforeach; ?>

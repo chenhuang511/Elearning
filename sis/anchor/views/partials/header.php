@@ -181,15 +181,12 @@
                              aria-labelledby="headingFour">
                             <div class="panel-body">
                                 <ul class="mnu-lst">
-                                    <li><a href="#"><i class="fa fa-caret-right"
+                                    <li><a href="<?php echo Uri::to('admin/rooms'); ?>"><i class="fa fa-caret-right"
                                                        aria-hidden="true"></i>
                                             Danh sách phòng học</a></li>
-                                    <li><a href="#"><i class="fa fa-caret-right"
+                                    <li><a href="<?php echo Uri::to('admin/equipment/add/room'); ?>"><i class="fa fa-caret-right"
                                                        aria-hidden="true"></i>
                                             Tạo phòng học mới</a></li>
-                                    <li><a href="<?php echo Uri::to('admin/equipment/add/room'); ?>"><i class="fa fa-caret-right"
-                                                                                               aria-hidden="true"></i>
-                                            Danh sách thiết bị</a></li>
                                 </ul>
                             </div>
                         </div>

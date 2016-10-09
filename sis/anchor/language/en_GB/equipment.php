@@ -6,19 +6,24 @@ return array(
 
     // fields
     'time' => 'Thời gian',
-    'topic' => 'Tên chuyên đề',
+    'virtual_class_equipment' => 'Tên thiết bị',
     'teacher' => 'Giảng viên thực hiện',
     'note' => 'Ghi chú',
+    'description' => 'Mô tả',
+    'quantity' => 'Số lượng',
+    'status' => 'Trạng thái',
+
 
     // labels
-    'addtopic' => 'Tạo chuyên đề',
+
+    'addvirtual_class_equipment' => 'Tạo thiết bị',
 
     // message
-    'topicname_missing' => 'Tên chuyên đề không được để trống',
+    'addvirtual_class_equipmentname_missing' => 'Tên thiết bị không được để trống',
     'teacher_missing' => 'Giảng viên thực hiện phải chọn',
     'created' => 'Tạo phòng học thành công',
+    'virtual_class_equipmentcreated' => 'Tạo thiết bị thành công',
     'updated' => 'Cập nhật thông tin phòng học thành công',
     'deleted' => 'Xóa thông tin phòng học thành công',
-    'notopic' => 'Chưa có phòng học, Hãy tạo phòng học cho phòng học',
-    'notfound' => 'Không tìm thấy thông tin về phòng học này',
-);
+    'novirtual_class_equipment' => 'Chưa có thiết bị, Hãy tạo thiết bị cho phòng học',
+    'notfound' => 'Không tìm thấy thông tin về phòng học này',);

@@ -1,7 +1,7 @@
 <?php echo $header; ?>
 
 <hgroup class="wrap">
-	<h1><?php echo __('Thêm mới thiết bị'); ?></h1>
+	<h1><?php echo __('Sửa thông tin phòng học'); ?></h1>
 </hgroup>
 
 <section class="wrap">
