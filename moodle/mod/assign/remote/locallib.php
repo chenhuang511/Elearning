@@ -695,7 +695,9 @@ function core_grades_update_grades($source, $courseid, $component, $activityid, 
             ),
         ), false
     );
-    update_course_module_completion_from_hub($rgrades['studentid'], $activityid);
+    if (!$resp) {
+        update_course_module_completion_from_hub($rgrades['studentid'], $activityid);
+    }
 
     return $resp;
 }
