@@ -4,7 +4,7 @@ return array(
 
 	'posts' => 'Bài viết',
 
-	'create_post' => 'Đăng bài',
+	'create_post' => 'Đăng bài viết mới',
 	'noposts_desc' => 'Bạn chưa có bài đăng nào!',
 
 	// form fields
