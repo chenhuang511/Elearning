@@ -57,7 +57,7 @@
 					</em>
 				</span>
 
-                            <p><?php echo strip_tags($article->description); ?></p>
+                            <p class="post-desc"><?php echo strip_tags($article->description); ?></p>
                         </li>
                     <?php endforeach; ?>
                 </ul>

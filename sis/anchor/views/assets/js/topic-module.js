@@ -9,15 +9,19 @@ var topicModule = (function () {
     };
 
     var getTimeTopics = function () {
-        return $('input[id^=time_]');
+        return $('select[id^=time_]');
     };
 
     var getTopics = function () {
-        return $('textarea[id^=topic_]');
+        return $('input[id^=topic_]');
     };
 
     var getTeachers = function () {
         return $('select[id^=teacher_]');
+    };
+
+    var getRooms = function () {
+        return $('select[id^=room_]');
     };
 
     var getNoteTopics = function () {
@@ -41,10 +45,11 @@ var topicModule = (function () {
         return lastObj.id;
     }
 
-    var validation = function (topic, teacher) {
+    var validation = function (topic, teacher, room) {
         var isValidate = true;
         var topic_val = $(topic).val();
         var teacher_selected = $(teacher).find(':selected').val();
+        var room_selected = $(room).find(':selected').val();
         if (!topic_val.length) {
             addErrorClass($(topic).parent(), 'Tên chuyên đề không được để trống');
         } else {
@@ -55,8 +60,13 @@ var topicModule = (function () {
         } else {
             removeErrorClass($(teacher).parent());
         }
+        if (!room_selected.length || parseInt(room_selected) === 0) {
+            addErrorClass($(room).parent(), 'Bạn phải chọn phòng học cho chuyên đề');
+        } else {
+            removeErrorClass($(room).parent());
+        }
 
-        if (topic_val.length && (teacher_selected.length && parseInt(teacher_selected) !== 0)) {
+        if (topic_val.length && (teacher_selected.length && parseInt(teacher_selected) !== 0) && (room_selected.length && parseInt(room_selected) !== 0)) {
             isValidate = false;
         }
 
@@ -94,18 +104,19 @@ var topicModule = (function () {
             var html = '';
 
             html += '<table class="table table-hover">';
-            html += '<thead><tr><th>Tên chuyên đề</th><th>Giảng viên thực hiện</th><th>Ghi chú</th><th></th></tr></thead>';
+            html += '<thead><tr><th>Tên chuyên đề</th><th>Thời gian</th><th>Giảng viên thực hiện</th><th>Phòng học</th><th>Ghi chú</th><th></th></tr></thead>';
             html += '<tbody>';
             for (var i = 0; i < contents.length; i++) {
                 var content = contents[i];
                 html += '<tr>';
-                if (content.timetopic.length) {
-                    html += '<td>' + '<strong>' + content.timetopic + '</strong>' + ' ' + content.name + '</td>';
+                html += '<td>' + content.name + '</td>';
+                if (content.timeid != 0) {
+                    html += '<td>' + '<strong>' + content.timename + '</strong>' + '</td>';
                 } else {
-                    html += '<td>' + content.name + '</td>';
+                    html += '<td> </td>';
                 }
-
                 html += '<td>' + content.teachername + '</td>';
+                html += '<td>' + content.roomname + '</td>';
                 html += '<td>' + content.note + '</td>';
                 html += '<td>' + '<a href="#" id="' + 'remove_' + node.attr('id') + '_' + content.id + '">' + '<i class="fa fa-times" aria-hidden="true"></i> Xóa</a>' + '</td>';
                 html += '</tr>';
@@ -117,11 +128,12 @@ var topicModule = (function () {
         }
     };
 
-    var resetInput = function (timeInput, topicInput, teacherInput, noteInput) {
+    var resetInput = function (timeInput, topicInput, teacherInput, noteInput, roomInput) {
         timeInput.val('');
         topicInput.val('');
         noteInput.val('');
         teacherInput.prop('selectedIndex', 0);
+        roomInput.prop('selectedIndex', 0);
     };
 
     var removeTopicTolList = function (id, topics) {
@@ -135,11 +147,31 @@ var topicModule = (function () {
         return topics;
     };
 
+    var checkRoom = function (day, roomid, time) {
+        var url = '/admin/curriculum/topic/checkroom/' + day + '/' + roomid;
+        if (parseInt(time) != 0) {
+            url = '/admin/curriculum/topic/checkroom/' + day + '/' + roomid + '/' + time;
+        }
+
+        $.ajax({
+            method: "GET",
+            url: url,
+            dataType: "text",
+            success: function (data) {
+                return data;
+            },
+            fail: function (data) {
+                console.log('co loi');
+            }
+        });
+    };
+
     var init = function () {
         var addTopicButtons = getAddTopicButtons(),
             timeTopics = getTimeTopics(),
             nameTopics = getTopics(),
             teachers = getTeachers(),
+            rooms = getRooms(),
             notes = getNoteTopics(),
             contentTopics = getContentTopics(),
             htmlTopics = getHTMLTopics(),
@@ -148,7 +180,7 @@ var topicModule = (function () {
         $.each(addTopicButtons, function (index, element) {
             $(element).on('click', function (e) {
                 // validation
-                var is_validate = validation(nameTopics[index], teachers[index]);
+                var is_validate = validation(nameTopics[index], teachers[index], rooms[index]);
                 // if have no validate
                 if (!is_validate) {
                     var lastid = 0;
@@ -156,22 +188,33 @@ var topicModule = (function () {
                     if (content.length) {
                         content = $.parseJSON(content);
                         lastid = getIdOfLastObject(content);
+
+                        if (lastid === 2) {
+                            alert('Bạn chỉ tạo được 2 chuyên đề trong ngày');
+                            return;
+                        }
                     } else {
                         content = [];
                     }
 
-                    var time = $(timeTopics[index]).val(),
+                    var timeid = $(timeTopics[index]).find(':selected').val(),
+                        timename = $(timeTopics[index]).find(':selected').text(),
                         name = $(nameTopics[index]).val(),
                         teacherid = $(teachers[index]).find(':selected').val(),
                         teachername = $(teachers[index]).find(':selected').text(),
+                        roomid = $(rooms[index]).find(':selected').val(),
+                        roomname = $(rooms[index]).find(':selected').text(),
                         note = $(notes[index]).val();
 
                     content.push({
                         id: (lastid + 1),
-                        timetopic: time,
+                        timeid: timeid,
+                        timename: timename,
                         name: name,
                         teacherid: teacherid,
                         teachername: teachername,
+                        roomid: roomid,
+                        roomname: roomname,
                         note: note
                     });
 
@@ -179,7 +222,7 @@ var topicModule = (function () {
                     // update content topic
                     $(contentTopics[index]).val(JSON.stringify(content));
                     //reset values that choose
-                    resetInput($(timeTopics[index]), $(nameTopics[index]), $(teachers[index]), $(notes[index]));
+                    resetInput($(timeTopics[index]), $(nameTopics[index]), $(teachers[index]), $(notes[index]), $(rooms[index]));
                     $(htmlTopics[index]).click(function (e) {
                         var id = e.target.id;
                         id = parseInt(id.substr(-1));
@@ -195,8 +238,6 @@ var topicModule = (function () {
                         }
                     });
                 }
-
-                e.preventDefault();
             });
         });
 
@@ -212,6 +253,16 @@ var topicModule = (function () {
                 } else {
                     $(hiddenTeacherIds[index]).val('');
                 }
+            });
+        });
+
+        $.each(rooms, function (index, element) {
+            var day = $('#topic_day_' + (index + 1)).val();
+            $(element).on('change', function () {
+                var time = $(timeTopics[index]).find(':selected').val();
+                var roomid = $(this).find(':selected').val();
+                var result = checkRoom(day, roomid, time);
+                console.log('rs:', result);
             });
         });
     };

@@ -136,4 +136,16 @@ class Room extends Base
 
         return true;
     }
+
+    public static function dropdown()
+    {
+        $items = array();
+        $query = Query::table(static::table());
+
+        foreach ($query->sort('id')->get() as $item) {
+            $items[$item->id] = $item->name;
+        }
+
+        return $items;
+    }
 }

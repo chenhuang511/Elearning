@@ -84,14 +84,14 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
             ->is_max(1, __('courses.summary_missing'));
 
         //check fullname and short name exists
-        $validator->add('fullname_exists', function($str) use($input) {
+        $validator->add('fullname_exists', function ($str) use ($input) {
             return Course::where('fullname', '=', $input['fullname'])->count() == 0;
         });
 
         $validator->check('fullname')
             ->is_fullname_exists('Tên khóa học đã tồn tại');
 
-        $validator->add('shortname_exists', function($str) use($input) {
+        $validator->add('shortname_exists', function ($str) use ($input) {
             return Course::where('shortname', '=', $input['shortname'])->count() == 0;
         });
 
@@ -142,25 +142,41 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
         $vars['courseid'] = $course->id;
 
         $dates = array();
+        $hidden_dates = array();
 
         $days = ceil(abs(strtotime($course->enddate) - strtotime($course->startdate)) / 86400);
         $curdate = $course->startdate;
         for ($i = 1; $i <= $days; $i++) {
             if ($i == 1) { // start date
                 $dates[$i] = Curriculum::GetDayOfWeek($course->startdate) . ' ' . date('d-m-Y', strtotime($course->startdate));
+                $hidden_dates[$i] = $course->startdate;
             } else {
                 $curdate = date('Y-m-d', strtotime('+1 day', strtotime($curdate)));
                 $dates[$i] = Curriculum::GetDayOfWeek($curdate) . ' ' . date('d-m-Y', strtotime($curdate));
+                $hidden_dates[$i] = $curdate;
             }
         }
         $dates[($days + 1)] = Curriculum::GetDayOfWeek($course->enddate) . ' ' . date('d-m-Y', strtotime($course->enddate));
+        $hidden_dates[($days + 1)] = $course->enddate;
         $vars['dates'] = $dates;
+        $vars['hiddendates'] = $hidden_dates;
 
         $teachers = array();
         $teachers = $teachers + array('0' => '--- Chọn giảng viên ---');
         $teachers = $teachers + User::dropdown();
 
         $vars['teachers'] = $teachers;
+
+        $vars['topictime'] = array(
+            '0' => '--- Thời gian ---',
+            '1' => 'Sáng',
+            '2' => 'Chiều'
+        );
+
+        $rooms = array();
+        $rooms = $rooms + array('0' => '--- Chọn phòng học ---');
+        $rooms = $rooms + Room::dropdown();
+        $vars['rooms'] = $rooms;
 
         // extended fields
         $vars['fields'] = Extend::fields('curriculum');
@@ -198,6 +214,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
             array_push($arr, "content_topic_" . $j);
             array_push($arr, "topic_" . $j);
             array_push($arr, "teacher_" . $j);
+            array_push($arr, "room_" . $j);
         }
 
 
@@ -212,6 +229,10 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
 
                 $validator->check('teacher_' . $count)
                     ->is_boolean(__('curriculum.teacher_missing'));
+
+                $validator->check('room_' . $count)
+                    ->is_boolean(__('curriculum.room_missing'));
+
                 $count++;
             }
         }
@@ -233,8 +254,8 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
                     $arr = array();
                     $arr['course'] = $course->id;
                     $arr['topicday'] = $dates[$icount];
-                    if ($topic->timetopic !== '') {
-                        $arr['topictime'] = $topic->timetopic;
+                    if ($topic->timeid != 0) {
+                        $arr['topictime'] = $topic->timeid;
                     } else {
                         $arr['topictime'] = NULL;
                     }
@@ -245,6 +266,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
                     $arr['timemodified'] = time();
                     $arr['usermodified'] = $user->id;
                     $arr['note'] = $topic->note;
+                    $arr['room'] = $topic->roomid;
 
                     $curriculum = Curriculum::create($arr);
                 }
@@ -303,7 +325,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
         $validator->check('summary')
             ->is_max(1, __('courses.summary_missing'));
 
-        $validator->add('course_pendding', function($str) use($courseid) {
+        $validator->add('course_pendding', function ($str) use ($courseid) {
             return Course::find($courseid)->status == PENDING;
         });
 
@@ -407,5 +429,9 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
         $loop = $input['loop'];
 
         echo Course::create_course_hub($courseid, $loop);
+    });
+
+    Route::get('admin/curriculum/topic/checkroom/(:any)/(:any)/(:any)', function ($day, $roomid, $time = null) {
+        return Curriculum::checkRoom($day, $roomid, $time);
     });
 });

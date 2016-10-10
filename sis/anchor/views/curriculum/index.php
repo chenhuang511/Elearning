@@ -12,7 +12,7 @@
                 <a href="#" class="btn btn-primary" id="add-remote-course">
                     Xét duyệt khóa học
                 </a>
-                <?php elseif($pages->results[0]->status != APPROVED) : ?>
+            <?php elseif ($pages->results[0]->status != APPROVED) : ?>
                 <a href="#" class="btn btn-primary" id="add-remote-course">
                     Đồng bộ khóa học
                 </a>
@@ -26,6 +26,7 @@
                 <th>Thời gian</th>
                 <th>Tên chuyên đề</th>
                 <th>Giảng viên thực hiện</th>
+                <th>Phòng học</th>
                 <th>Ghi chú</th>
                 <th>Thao tác</th>
             </tr>
@@ -38,7 +39,11 @@
                         <td>
                                 <span class="bhxh-course">
                                     <?php if ($page->topictime !== NULL):
-                                        echo '<strong>' . $page->topictime . '</strong>' . ' ' . $page->topicname;
+                                        if ($page->topictime == 1):
+                                            echo '<strong> Sáng </strong>' . ' ' . $page->topicname;
+                                        elseif ($page->topictime == 2):
+                                            echo '<strong> Chiều </strong>' . ' ' . $page->topicname;
+                                        endif;
                                     else:
                                         echo $page->topicname;
                                     endif;
@@ -48,13 +53,16 @@
                         <td><?php
                             echo $page->teacher_name;
                             ?></td>
+                        <td><?php
+                            echo $page->roomname;
+                            ?></td>
                         <td>
                             <?php
                             echo $page->note;
                             ?>
                         </td>
                         <td>
-                            <?php if ($page->status === 1): ?>
+                            <?php if ($page->status == 1): ?>
                                 <a href="<?php echo Uri::to('admin/curriculum/edit/topic/' . $page->id); ?>"
                                 >Sửa <i class="fa fa-pencil" aria-hidden="true"></i></a> |
                                 <a href="<?php echo Uri::to('admin/curriculum/topic/delete/' . $page->id); ?>"
