@@ -1,7 +1,13 @@
 <?php echo $header; ?>
 
+<ol class="breadcrumb">
+	<li><a href="<?php echo Uri::to('admin'); ?>">Trang chủ</a></li>
+	<li><a href="<?php echo Uri::to('admin/instructor'); ?>">Quản lý giảng viên</a></li>
+	<li class="active">Sửa thông tin</li>
+</ol>
+
 <hgroup class="wrap">
-	<h1><?php echo __('instructor.editing_user'); ?></h1>
+	<h1 style="margin: 0;"><?php echo 'Sửa thông tin' ?></h1>
 </hgroup>
 
 <section class="wrap">
@@ -33,12 +39,20 @@
 				<label for="label-subject"><?php echo __('instructor.subject'); ?>:</label>
 				<?php echo Form::text('subject', Input::previous('subject', $instructor->subject), array('id' => 'label-subject')); ?>
 			</p>
-		
+			<p style="height: 39px"></p>
+			<p style="height: 39px"></p>
+			<aside class="buttons" style="padding-left: 5px">
+				<?php echo Form::button(__('global.update'), array(
+					'class' => 'btn btn-primary',
+					'type' => 'submit'
+				)); ?>
+
+				<?php echo Html::link('admin/instructor' , __('global.cancel'), array('class' => 'btn btn-primary')); ?>
+			</aside>
 		</fieldset>
 
 		<fieldset class="half split">
 		<?php foreach($contract as $contract): ?>
-		<div style="border:1px solid;border-color:blue">
 			<p>
 				<label for="label-name_contract"><?php echo __('contract.name_contract'); ?>:</label>
 				<?php echo Form::text('name_contract', Input::previous('name_contract', $contract->name_contract), array('id' => 'label-name_contract')); ?>
@@ -48,7 +62,7 @@
 				<?php echo Form::select('type', $type, Input::previous('type', $contract->type), array('id' => 'label-type')); ?>
 			</p>
 			<p>
-				<label for="label-name_partner"><?php echo __('contract.name_partner'); ?>:</label>
+				<label for="label-name_partner"><?php echo 'Cá nhân/Tổ chức	' ?>:</label>
 				<?php echo Form::text('name_partner', Input::previous('name_partner', $contract->name_partner), array('id' => 'label-name_partner')); ?>
 			</p>
 			<p>
@@ -64,24 +78,15 @@
 				<?php echo Form::text('salary', Input::previous('salary', $contract->salary), array('id' => 'label-salary')); ?>
 			</p>
 			<p>
-				<label for="label-state"><?php echo __('contract.state'); ?>:</label>
+				<label for="label-state"><?php echo 'Trạng thái' ?>:</label>
 				<?php echo Form::select('state', $state, Input::previous('state', $contract->state), array('id' => 'label-state')); ?>
 			</p>
 			<p>
 				<label for="label-rules"><?php echo __('contract.rules'); ?>:</label>
 				<?php echo Form::textarea('rules', Input::previous('rules', $contract->rules), array('cols' => 20 ,'id' => 'label-rules')); ?>
-			</p>			
-		</div></br>
+			</p>
 		<?php endforeach; ?>
 		</fieldset>
-		<aside class="buttons">
-			<?php echo Form::button(__('global.update'), array(
-				'class' => 'btn',
-				'type' => 'submit'
-			)); ?>
-
-			<?php echo Html::link('admin/instructor' , __('global.cancel'), array('class' => 'btn cancel blue')); ?>
-		</aside>
 	</form>
 	<?php else : ?>
 		<p>You do not have the required privileges to modify this instructor information, you must be an Administrator. Please contact the Administrator of the site if you are supposed to have these privileges.</p>

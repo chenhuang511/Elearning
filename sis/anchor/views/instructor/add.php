@@ -1,7 +1,13 @@
 <?php echo $header; ?>
 
+<ol class="breadcrumb">
+	<li><a href="<?php echo Uri::to('admin'); ?>">Trang chủ</a></li>
+	<li><a href="<?php echo Uri::to('admin/instructor'); ?>">Quản lý giảng viên</a></li>
+	<li class="active">Thêm mới hợp đồng</li>
+</ol>
+
 <hgroup class="wrap">
-	<h1><?php echo __('contract.add_contract'); ?></h1>
+	<h1 style="margin: 0"><?php echo 'Thêm mới hợp đồng' ?></h1>
 </hgroup>
 
 <section class="wrap">
@@ -36,9 +42,14 @@
 			</p>
 			<p>
 				<label for="label-subject"><?php echo __('instructor.subject'); ?>:</label>
-				<?php echo Form::text('subject', Input::previous('subject'), array('id' => 'label-subject')); ?>
+				<?php echo Form::select('subject', $type_subject, Input::previous('subject'), array('id' => 'label-subject')); ?>
 			</p>
-			<p>
+			<p style="height: 39px"></p>
+			<aside class="buttons" style="padding-left: 5px">
+				<?php echo Form::button(__('Tạo mới'), array('class' => 'btn btn-primary', 'type' => 'submit')); ?>
+
+				<?php echo Html::link('admin/instructor' , __('global.cancel'), array('class' => 'btn btn-primary')); ?>
+			</aside>
 		</fieldset>
 
 		<fieldset class="half split">
@@ -51,7 +62,7 @@
 				<?php echo Form::select('type', $type, Input::previous('type'), array('id' => 'label-type')); ?>
 			</p>
 			<p>
-				<label for="label-name_partner"><?php echo __('contract.name_partner'); ?>:</label>
+				<label for="label-name_partner"><?php echo 'Cá nhân/Tổ chức' ?>:</label>
 				<?php echo Form::text('name_partner', Input::previous('name_partner'), array('id' => 'label-name_partner')); ?>
 			</p>
 			<p>
@@ -66,21 +77,16 @@
 				<label for="label-salary"><?php echo __('contract.salary'); ?>:</label>
 				<?php echo Form::text('salary', Input::previous('salary'), array('id' => 'label-salary')); ?>
 			</p>
-			<p>
-				<label for="label-state"><?php echo __('contract.state'); ?>:</label>
-				<?php echo Form::select('state', $state, Input::previous('state'), array('id' => 'label-state')); ?>
-			</p>
+<!--			<p>-->
+<!--				<label for="label-state">--><?php //echo __('contract.state'); ?><!--:</label>-->
+<!--				--><?php //echo Form::select('state', $state, Input::previous('state'), array('id' => 'label-state')); ?>
+<!--			</p>-->
 			<p>
 				<label for="label-rules"><?php echo __('contract.rules'); ?>:</label>
 				<?php echo Form::textarea('rules', Input::previous('rules'), array('cols' => 20 ,'id' => 'label-rules')); ?>
 			</p>
 		</fieldset>
 
-		<aside class="buttons">
-			<?php echo Form::button(__('global.create'), array('class' => 'btn', 'type' => 'submit')); ?>
-
-			<?php echo Html::link('admin/instructor' , __('global.cancel'), array('class' => 'btn cancel blue')); ?>
-		</aside>
 	</form>
 	<?php else : ?>
 		<p>You do not have the required privileges to add instructor, you must be an Administrator. Please contact the Administrator of the site if you are supposed to have these privileges.</p>
