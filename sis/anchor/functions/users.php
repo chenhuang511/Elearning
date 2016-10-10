@@ -35,3 +35,15 @@ function user_object() {
 function user_is_admin() {
 	return user_authed_role() == 'administrator';
 }
+
+function check_user_enrolled($userid, $courseid, $role ) {
+	if($role == 5) {
+		return StudentCourse::where('studentid', '=', $userid)
+					->where('courseid', '=', $courseid)
+					->count() > 0;
+	} else {
+		return UserCourse::where('userid', '=', $userid)
+			->where('courseid', '=', $courseid)
+			->count() > 0;
+	}
+}
