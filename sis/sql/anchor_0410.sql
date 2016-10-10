@@ -1,1 +1,0 @@
-ALTER TABLE `anchor_instructor_contract` ADD COLUMN `name_contract` varchar(140) DEFAULT NULL;
