@@ -32,7 +32,7 @@
                                aria-controls="collapse_topic_<?php echo $key ?>">
                                 <?php echo $key . '. ' . $date ?> </a>
 
-                            <?php if ((isset($errors['topic_' . $key][0]) && $errors['topic_' . $key][0]) || (isset($errors['teacher_' . $key][0]) && $errors['teacher_' . $key][0])) { ?>
+                            <?php if ((isset($errors['topic_' . $key][0]) && $errors['topic_' . $key][0]) || (isset($errors['teacher_' . $key][0]) && $errors['teacher_' . $key][0]) || (isset($errors['room_' . $key][0]) && $errors['room_' . $key][0])) { ?>
                                 <span class="text-danger"> Có lỗi<i class="fa fa-exclamation"
                                                                     aria-hidden="true"></i></span>
                             <?php } ?>
@@ -47,18 +47,7 @@
                             <div class="topic-box clearfix">
                                 <div class="row">
                                     <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label for="time_<?php echo $key; ?>"
-                                                   class="control-label"><?php echo __('curriculum.time') ?></label>
-                                            <?php echo Form::text('time_' . $key, Input::previous('time'), array(
-                                                'placeholder' => __('curriculum.time'),
-                                                'autocomplete' => 'off',
-                                                'autofocus' => 'true',
-                                                'class' => 'form-control',
-                                                'id' => 'time_' . $key
-                                            )); ?>
-                                        </div>
-                                        <div class="form-group <?php if (isset($errors['topic_' . $key])) {
+                                        <div class="form-group clearfix <?php if (isset($errors['topic_' . $key])) {
                                             echo 'has-error';
                                         } else {
                                             echo '';
@@ -66,25 +55,9 @@
                                             <label for="topic_<?php echo $key; ?>"
                                                    class="control-label"><?php echo __('curriculum.topic') ?> <span
                                                     class="text-danger">*</span></label>
-                                            <?php echo Form::textarea('topic_' . $key, Input::previous('topic'), array('id' => 'topic_' . $key, 'class' => 'form-control', 'rows' => 3)); ?>
+                                            <?php echo Form::text('topic_' . $key, Input::previous('topic'), array('id' => 'topic_' . $key, 'class' => 'form-control', 'rows' => 3)); ?>
                                             <?php if (isset($errors['topic_' . $key])) { ?>
                                                 <p class="help-block"><?php echo $errors['topic_' . $key][0] ?></p>
-                                            <?php } ?>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <div class="form-group clearfix <?php if (isset($errors['teacher_' . $key])) {
-                                            echo 'has-error';
-                                        } else {
-                                            echo '';
-                                        } ?>">
-                                            <label for="teacher_<?php echo $key; ?>"
-                                                   class="control-label"><?php echo __('curriculum.teacher') ?> <span
-                                                    class="text-danger">*</span></label>
-                                            <?php echo Form::select('teacher_' . $key, $teachers, Input::previous('teacher'), array('id' => 'teacher_' . $key, 'class' => 'form-control')); ?>
-                                            <input type="hidden" id="hidden_teacher_id_<?php echo $key; ?>" value="">
-                                            <?php if (isset($errors['teacher_' . $key])) { ?>
-                                                <p class="help-block"><?php echo $errors['teacher_' . $key][0] ?></p>
                                             <?php } ?>
                                         </div>
                                         <div class="form-group">
@@ -93,14 +66,62 @@
                                             <?php echo Form::textarea('note_topic_' . $key, Input::previous('note'), array('id' => 'note_topic_' . $key, 'class' => 'form-control', 'rows' => 3)); ?>
                                         </div>
                                     </div>
+                                    <div class="col-sm-6">
+                                        <div class="row">
+                                            <div class="col-sm-4">
+                                                <div class="form-group">
+                                                    <label for="time_<?php echo $key; ?>"
+                                                           class="control-label"><?php echo __('curriculum.time') ?></label>
+                                                    <?php echo Form::select('time_' . $key, $topictime, Input::previous('time'), array('id' => 'time_' . $key, 'class' => 'form-control')); ?>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-8">
+                                                <div
+                                                    class="form-group clearfix <?php if (isset($errors['teacher_' . $key])) {
+                                                        echo 'has-error';
+                                                    } else {
+                                                        echo '';
+                                                    } ?>">
+                                                    <label for="teacher_<?php echo $key; ?>"
+                                                           class="control-label"><?php echo __('curriculum.teacher') ?>
+                                                        <span
+                                                            class="text-danger">*</span></label>
+                                                    <?php echo Form::select('teacher_' . $key, $teachers, Input::previous('teacher'), array('id' => 'teacher_' . $key, 'class' => 'form-control')); ?>
+                                                    <input type="hidden" id="hidden_teacher_id_<?php echo $key; ?>"
+                                                           value="">
+                                                    <?php if (isset($errors['teacher_' . $key])) { ?>
+                                                        <p class="help-block"><?php echo $errors['teacher_' . $key][0] ?></p>
+                                                    <?php } ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group <?php if (isset($errors['room_' . $key])) {
+                                            echo 'has-error';
+                                        } else {
+                                            echo '';
+                                        } ?>">
+                                            <label for="topic_room_<?php echo $key; ?>"
+                                                   class="control-label"><?php echo __('curriculum.room'); ?> <span
+                                                    class="text-danger">*</span></label>
+                                            <?php echo Form::select('room_' . $key, $rooms, Input::previous('room'), array('id' => 'room_' . $key, 'class' => 'form-control')); ?>
+                                            <?php if (isset($errors['room_' . $key])) { ?>
+                                                <p class="help-block"><?php echo $errors['room_' . $key][0] ?></p>
+                                            <?php } ?>
+                                        </div>
+                                        <div class="form-group">
+                                            <p style="font-style: italic;">(Những thông tin có <span
+                                                    class="text-danger">*</span> là bắt buộc điền thông tin)</p>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="form-group text-right">
+                                    <input type="hidden" id="topic_day_<?php echo $key; ?>"
+                                           name="topic_day_<?php echo $key; ?>"
+                                           value="<?php echo substr($hiddendates[$key], 0, 10); ?>">
                                     <input type="hidden" id="id_topic_<?php echo $key; ?>"
                                            name="id_topic_<?php echo $key; ?>" value="<?php echo $key; ?>">
                                     <input type="hidden" id="content_topic_<?php echo $key; ?>"
                                            name="content_topic_<?php echo $key; ?>" value="">
-                                    <p style="font-style: italic;">(Những thông tin có <span
-                                            class="text-danger">*</span> là bắt buộc điền thông tin)</p>
                                     <a href="#" id="add_new_topic_<?php echo $key; ?>"
                                        class="btn btn-success"><?php echo __('curriculum.addtopic') ?></a>
                                 </div>

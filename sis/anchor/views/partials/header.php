@@ -77,18 +77,18 @@
                 <a id="expand_menu" href="#"><i class="fa fa-long-arrow-left" aria-hidden="true"></i></a>
             </div>
             <?php if (Auth::user()): ?>
-                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                <div class="panel-group" id="accordionMenu" role="tablist" aria-multiselectable="true">
                     <div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="headingOne">
+                        <div class="panel-heading" role="tab" id="headingCourse">
                             <h4 class="panel-title">
-                                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
-                                   aria-expanded="true" aria-controls="collapseOne">
+                                <a role="button" data-toggle="collapse" data-parent="#accordionMenu" href="#collapseCourse"
+                                   aria-expanded="true" aria-controls="collapseCourse">
                                     <i class="fa fa-cog" aria-hidden="true"></i> Quản lý khóa học
                                 </a>
                             </h4>
                         </div>
-                        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel"
-                             aria-labelledby="headingOne">
+                        <div id="collapseCourse" class="panel-collapse collapse in" role="tabpanel"
+                             aria-labelledby="headingCourse">
                             <div class="panel-body">
                                 <ul class="mnu-lst">
                                     <li><a href="<?php echo Uri::to('admin/courses'); ?>"><i class="fa fa-caret-right"
@@ -103,16 +103,16 @@
                         </div>
                     </div>
                     <div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="headingTwo">
+                        <div class="panel-heading" role="tab" id="headingPost">
                             <h4 class="panel-title">
-                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
-                                   href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordionMenu"
+                                   href="#collapsePost" aria-expanded="false" aria-controls="collapsePost">
                                     <i class="fa fa-book" aria-hidden="true"></i> Quản lý bài viết
                                 </a>
                             </h4>
                         </div>
-                        <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel"
-                             aria-labelledby="headingTwo">
+                        <div id="collapsePost" class="panel-collapse collapse" role="tabpanel"
+                             aria-labelledby="headingPost">
                             <div class="panel-body">
                                 <ul class="mnu-lst">
                                     <li><a href="<?php echo Uri::to('admin/posts'); ?>"><i class="fa fa-caret-right"
@@ -136,16 +136,16 @@
                         </div>
                     </div>
                     <div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="headingThree">
+                        <div class="panel-heading" role="tab" id="headingSystem">
                             <h4 class="panel-title">
-                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
-                                   href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordionMenu"
+                                   href="#collapseSystem" aria-expanded="false" aria-controls="collapseSystem">
                                     <i class="fa fa-users" aria-hidden="true"></i> Quản lý tài khoản hệ thống
                                 </a>
                             </h4>
                         </div>
-                        <div id="collapseThree" class="panel-collapse collapse" role="tabpanel"
-                             aria-labelledby="headingThree">
+                        <div id="collapseSystem" class="panel-collapse collapse" role="tabpanel"
+                             aria-labelledby="headingSystem">
                             <div class="panel-body">
                                 <ul class="mnu-lst">
                                     <li><a href="<?php echo Uri::to('admin/users'); ?>"><i class="fa fa-caret-right"
@@ -169,16 +169,16 @@
                         </div>
                     </div>
                     <div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="headingFour">
+                        <div class="panel-heading" role="tab" id="headingRoom">
                             <h4 class="panel-title">
-                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
-                                   href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordionMenu"
+                                   href="#collapseRoom" aria-expanded="false" aria-controls="collapseRoom">
                                     <i class="fa fa-users" aria-hidden="true"></i> Quản lý Phòng, thiết bị
                                 </a>
                             </h4>
                         </div>
-                        <div id="collapseFour" class="panel-collapse collapse" role="tabpanel"
-                             aria-labelledby="headingFour">
+                        <div id="collapseRoom" class="panel-collapse collapse" role="tabpanel"
+                             aria-labelledby="headingRoom">
                             <div class="panel-body">
                                 <ul class="mnu-lst">
                                     <li><a href="<?php echo Uri::to('admin/rooms'); ?>"><i class="fa fa-caret-right"
