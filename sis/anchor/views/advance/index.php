@@ -27,10 +27,12 @@
                     <div class="form-group">
                         <label for="gradeMin">Số tiền (thấp nhất)</label>
                         <?php echo Form::text('moneyMin_', Input::get('moneyMin'), array('class' => 'form-control', 'id' => 'moneyMin')); ?>
-                        <input type="hidden" id="hidden_moneyMin" value="<?php Input::get('moneyMin') ?>" name="moneyMin">
+                        <input type="hidden" id="hidden_moneyMin" value="<?php Input::get('moneyMin') ?>"
+                               name="moneyMin">
                         <label for="gradeMax">Số tiền (cao nhất)</label>
                         <?php echo Form::text('moneyMax_', Input::get('moneyMax'), array('class' => 'form-control', 'id' => 'moneyMax')); ?>
-                        <input type="hidden" id="hidden_moneyMax" value="<?php echo Input::get('moneyMax') ?>" name="moneyMax">
+                        <input type="hidden" id="hidden_moneyMax" value="<?php echo Input::get('moneyMax') ?>"
+                               name="moneyMax">
                     </div>
                     <div class="form-group text-right">
                         <?php echo Form::button(__('Tìm kiếm'), array('type' => 'submit', 'class' => 'btn btn-primary', 'id' => 'search_')); ?>
@@ -41,13 +43,13 @@
                 <h5>Trạng thái</h5>
                 <ul class="sidebar statuses">
                     <?php foreach ($statuses as $data):
-                    extract($data); ?>
-                    <li>
-                        <?php echo Html::link('admin/advance/course'. $url.'/' . $courseId, '<span class="icon"></span> ' . __($lang), array(
-                            'class' => (isset($status) && $status == $url ? 'active ' : '') . $class
-                        )); ?>
-                        <?php endforeach; ?>
-                    </li>
+                        extract($data); ?>
+                        <li>
+                            <?php echo Html::link('admin/advance/course' . $url . '/' . $courseId, '<span class="icon"></span> ' . __($lang), array(
+                                'class' => (isset($status) && $status == $url ? 'active ' : '') . $class
+                            )); ?>
+                        </li>
+                    <?php endforeach; ?>
                 </ul>
             </div>
         </div>
@@ -87,16 +89,16 @@
                                     ?>
                                 </td>
                                 <td>
-                                   <?php if($page->status !== 'published'){
-                                      ?>
-                                       <a href="<?php echo Uri::to('admin/advance/course/edit/'. $courseId . '/' . $page->data['id']); ?>"
-                                       >Sửa<i class="fa fa-pencil" aria-hidden="true"></i></a> |
-                                       <a href="<?php echo Uri::to('admin/advance/course/delete/' . $courseId . '/' . $page->data['id']); ?>"
-                                          onclick="return confirm('Bạn chắc chắn muốn xóa thông tin này');">Xóa <i
-                                               class="fa fa-times"
-                                               aria-hidden="true"></i></a>
-                                       <?php
-                                   }?>
+                                    <?php if ($page->status !== 'published') {
+                                        ?>
+                                        <a href="<?php echo Uri::to('admin/advance/course/edit/' . $courseId . '/' . $page->data['id']); ?>"
+                                        >Sửa<i class="fa fa-pencil" aria-hidden="true"></i></a> |
+                                        <a href="<?php echo Uri::to('admin/advance/course/delete/' . $courseId . '/' . $page->data['id']); ?>"
+                                           onclick="return confirm('Bạn chắc chắn muốn xóa thông tin này');">Xóa <i
+                                                class="fa fa-times"
+                                                aria-hidden="true"></i></a>
+                                        <?php
+                                    } ?>
 
                                 </td>
                             </tr>
@@ -122,7 +124,7 @@
 <script src="<?php echo asset_url('js/accounting.min.js'); ?>"></script>
 <script src="<?php echo asset_url('js/currency-module.js'); ?>"></script>
 <script type="text/javascript">
-    (function($){
+    (function ($) {
         $(document).ready(function () {
             $('#mytable').tablesorter();
 
