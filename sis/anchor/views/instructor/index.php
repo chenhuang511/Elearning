@@ -46,7 +46,7 @@
 						<p><?php echo date('d-m-Y', strtotime($instructor->birthday)); ?></p>
 					</td>
 					<td>
-						<p><?php echo __('instructor.'.$instructor->subject); ?></p>
+						<p><?php echo __('instructor.'.$instructor->type_instructor); ?></p>
 					</td>
 					<td>
 						<p><?php echo $instructor->subject; ?></p>
