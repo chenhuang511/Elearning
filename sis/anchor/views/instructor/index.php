@@ -37,7 +37,7 @@
 			<?php foreach ($instructors->results as $instructor): ?>
 				<tr>
 					<td>
-						<p><?php echo $instructor->lastname.' '.$instructor->firstname; ?></p>
+						<p><?php echo $instructor->fullname; ?></p>
 					</td>
 					<td>
 						<p><?php echo $instructor->email; ?></p>
