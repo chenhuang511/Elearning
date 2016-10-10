@@ -53,7 +53,7 @@
                 'class' => 'btn btn-primary btn-continue',
                 'data-loading' => __('global.saving')
             )); ?>
-            <?php echo Html::link('admin/posts', __('global.cancel'), array(
+            <?php echo Html::link('admin/rooms', __('global.cancel'), array(
                 'class' => 'btn btn-danger btn-cancel'
             )); ?>
         </aside>

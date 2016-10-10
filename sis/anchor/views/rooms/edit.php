@@ -19,12 +19,6 @@
                             <?php echo Form::text('name', Input::previous('name', $rooms->name), array('id' => 'label-name')); ?>
                         </td>
                     </tr>
-                    <!-- <tr>
-                        <td>SỐ LƯỢNG: </td>
-                        <td>
-                            <?php echo Form::text('quantity', Input::previous('quantity', $rooms->quantity), array('id' => 'label-quantity')); ?>
-                        </td>
-                    </tr> -->
                     <tr>
                         <td>MÔ TẢ: </td>
                         <td>

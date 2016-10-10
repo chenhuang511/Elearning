@@ -42,16 +42,34 @@ var virtualclassequipmentModule = (function () {
         return lastObj.id;
     }
 
-    var validation = function (virtual_class_equipment) {
+    var validation = function (virtual_class_equipment, description_virtual_class_equipment, quantity_virtual_class_equipment) {
         var isValidate = true;
         var virtual_class_equipment_val = $(virtual_class_equipment).val();
+        var description_virtual_class_equipment_val = $(description_virtual_class_equipment).val();
+        var quantity_virtual_class_equipment_val = $(quantity_virtual_class_equipment).val();
+
         if (!virtual_class_equipment_val.length) {
             addErrorClass($(virtual_class_equipment).parent(), 'Tên thiết bị không được để trống');
         } else {
             removeErrorClass($(virtual_class_equipment).parent());
         }
 
-        if (virtual_class_equipment_val.length !== 0) {
+        if (!description_virtual_class_equipment_val.length) {
+            addErrorClass($(description_virtual_class_equipment).parent(), 'Mô tả thiết bị không được để trống');
+        } else {
+            removeErrorClass($(description_virtual_class_equipment).parent());
+        }
+
+        if (!quantity_virtual_class_equipment_val.length) {
+            addErrorClass($(quantity_virtual_class_equipment).parent(), 'Số lượng thiết bị không được để trống hoặc sai định dạng');
+        } else {
+            removeErrorClass($(quantity_virtual_class_equipment).parent());
+        }
+
+        if (virtual_class_equipment_val.length !== 0 &&
+            description_virtual_class_equipment_val.length !== 0 &&
+            quantity_virtual_class_equipment_val.length !== 0)
+        {
             isValidate = false;
         }
 
@@ -93,7 +111,6 @@ var virtualclassequipmentModule = (function () {
             html += '<tbody>';
             for (var i = 0; i < contents.length; i++) {
                 var content = contents[i];
-                console.log(content);
                 html += '<tr>';
                 html += '<td>' + content.name + '</td>';
                 html += '<td>' + content.description + '</td>';
@@ -113,7 +130,7 @@ var virtualclassequipmentModule = (function () {
         timeInput.val('');
         virtual_class_equipmentInput.val('');
         descriptionInput.val('');
-        statusInput.prop('selectedIndex', 0);
+        statusInput.prop('selectedIndex', 1);
         quantityInput.val('');
     };
 
@@ -141,7 +158,7 @@ var virtualclassequipmentModule = (function () {
         $.each(addVirtual_class_equipmentButtons, function (index, element) {
             $(element).on('click', function (e) {
                 // validation
-                var is_validate = validation(nameVirtual_class_equipments[index]);
+                var is_validate = validation(nameVirtual_class_equipments[index], descriptionVirtual_class_equipments[index], quantityVirtual_class_equipments[index]);
                 // if have no validate
                 if (!is_validate) {
                     var lastid = 0;

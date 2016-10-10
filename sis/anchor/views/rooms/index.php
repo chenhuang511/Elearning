@@ -1,23 +1,22 @@
 <?php echo $header; ?>
+<ol class="breadcrumb">
+    <li><a href="<?php echo Uri::to('admin'); ?>">Trang chủ</a></li>
+    <li class="active">Quản lý phòng học</li>
+</ol>
 
-<hgroup class="wrap">
-    <h1><?php echo __('Quản lí phòng học'); ?></h1>
-
-    <?php if(Auth::admin()) : ?>
-
-    <?php endif; ?>
-    <form style="float: right; margin-top: 20px;" method="get" action="<?php echo Uri::to('admin/rooms/search'); ?>" novalidate>
-        <?php echo Form::text('text-search', Input::previous('text-search'), array('id' => 'text-search')); ?>
+<section class="wrap">
+    <p class="text-right">
+        <a href="<?php echo Uri::to('admin/equipment/add/room'); ?>" class="btn btn-primary">Tạo phòng học mới</a>
+    </p>
+    <?php echo $messages; ?>
+    <?php if ($rooms->count): ?>
+    <form class="form-inline" method="get" action="<?php echo Uri::to('admin/rooms/search'); ?>" novalidate>
+        <input class="form-control" type="text" name="text-search" id = "text-search" placeholder="Tên phòng học">
         <?php echo Form::button('Tìm kiếm', array(
             'class' => 'btn search blue',
             'type' => 'submit'
         )); ?>
     </form>
-</hgroup>
-
-<section class="wrap">
-    <?php echo $messages; ?>
-
     <ul class="list">
         <table class="table table-hover">
             <thead>
@@ -30,18 +29,18 @@
                 </tr>
             </thead>
             <tbody>
-                <?php foreach($rooms->results as $rooms): ?>
+                <?php foreach($rooms->results as $room): ?>
                     <tr>
-                        <td class="col-sm-1"><?php echo $rooms->id ?></td>
+                        <td class="col-sm-1"><?php echo $room->id ?></td>
                         <td class="col-sm-3">
-                            <?php echo $rooms->name ?>
+                            <?php echo $room->name ?>
                         </td>
                         <td class="col-sm-3">
-                            <?php echo $rooms->description ?>
+                            <?php echo $room->description ?>
                         </td>
                         <td class="col-sm-2">
                             <?php
-                                if ($rooms->status == 1) {
+                                if ($room->status == 1) {
                                     echo 'Chưa được sử dụng';
                                 }
                                 else
@@ -49,15 +48,23 @@
                             ?>
                         </td>
                         <td class="col-sm-3">
-                            <a href="<?php echo Uri::to('admin/rooms/view/' . $rooms->id); ?>" class="btn btn-info">Xem</a>
-                            <a href="<?php echo Uri::to('admin/rooms/edit/' . $rooms->id); ?>" class="btn btn-primary">Sửa</a>
-                            <a href="<?php echo Uri::to('admin/rooms/delete/' . $rooms->id); ?>" class="btn btn-danger">Xóa</a>
+                            <a href="<?php echo Uri::to('admin/rooms/view/' . $room->id); ?>" class="btn btn-info">Xem</a>
+                            <a href="<?php echo Uri::to('admin/rooms/edit/' . $room->id); ?>" class="btn btn-primary">Sửa</a>
+                            <a href="<?php echo Uri::to('admin/rooms/delete/' . $room->id); ?>"
+                               onclick="return confirm('Bạn chắc chắn muốn xóa thông tin này');" class="btn btn-danger">Xóa</a>
                         </td>
                     </tr>
-            <?php endforeach; ?>
+                <?php endforeach; ?>
             </tbody>
         </table>
+        <aside class="paging"><?php echo $rooms->links(); ?></aside>
     </ul>
+    <?php else: ?>
+        <aside class="empty pages">
+            <span class="icon"></span>
+            <?php echo __('rooms.room_notfound'); ?><br>
+        </aside>
+    <?php endif; ?>
 </section>
 
 <?php echo $footer; ?>

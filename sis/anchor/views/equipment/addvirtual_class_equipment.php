@@ -84,24 +84,23 @@
                                         <label for="virtual_class_equipment_<?php echo $key; ?>"
                                                class="control-label"><?php echo __('equipment.quantity') ?> <span
                                                 class="text-danger">*</span></label>
-                                        <?php echo Form::text('quantity_virtual_class_equipment_' . $key, Input::previous('quantity_virtual_class_equipment'), array('id' => 'quantity_virtual_class_equipment_' . $key, 'class' => 'form-control')); ?>
+                                        <?php echo Form::number('quantity_virtual_class_equipment_' . $key, Input::previous('quantity_virtual_class_equipment'), array('id' => 'quantity_virtual_class_equipment_' . $key, 'type' => 'number', 'class' => 'form-control')); ?>
                                         <?php if (isset($errors['virtual_class_equipment_' . $key])) { ?>
                                             <p class="help-block"><?php echo $errors['quantity_virtual_class_equipment_' . $key][0] ?></p>
                                         <?php } ?>
                                     </div>
 
-                                    <div class="form-group clearfix <?php if (isset($errors['status_' . $key])) {
+                                    <div class="form-group clearfix <?php if (isset($errors['status'])) {
                                         echo 'has-error';
                                     } else {
                                         echo '';
                                     } ?>">
-                                        <label for="status_<?php echo $key; ?>"
+                                        <label for="lecturer"
                                                class="control-label"><?php echo __('equipment.status') ?> <span
                                                 class="text-danger">*</span></label>
-                                        <?php echo Form::select('status_virtual_class_equipment_' . $key, $status, Input::previous('status'), array('id' => 'status_virtual_class_equipment_' . $key, 'class' => 'form-control')); ?>
-                                        <input type="hidden" id="hidden_status_id_<?php echo $key; ?>" value="">
-                                        <?php if (isset($errors['status_virtual_class_equipment_' . $key])) { ?>
-                                            <p class="help-block"><?php echo $errors['status_' . $key][0] ?></p>
+                                        <?php echo Form::select('status', array('1' => 'Tốt', '0' => 'Hỏng', '1'), Input::previous('status'), array('id' => 'status_virtual_class_equipment_', 'class' => 'form-control')); ?>
+                                        <?php if (isset($errors['status'])) { ?>
+                                            <p class="help-block"><?php echo $errors['status'][0] ?></p>
                                         <?php } ?>
                                     </div>
                                 </div>

@@ -25,5 +25,6 @@ return array(
     'virtual_class_equipmentcreated' => 'Tạo thiết bị thành công',
     'updated' => 'Cập nhật thông tin phòng học thành công',
     'deleted' => 'Xóa thông tin phòng học thành công',
+    'virtual_class_equipmentdeleted' => 'Xóa thông tin thiết bị thành công',
     'novirtual_class_equipment' => 'Chưa có thiết bị, Hãy tạo thiết bị cho phòng học',
     'notfound' => 'Không tìm thấy thông tin về phòng học này',);

@@ -99,7 +99,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
         }
 
         $status = array();
-        $status = $status + array('1' => 'Tốt','0' => 'Hỏng');
+        $status = $status + array('1' => "1",'0' => "0");
 
         $vars['status'] = $status;
         $vars['roomid'] = $room->id;
@@ -164,6 +164,8 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
         foreach ($input as $key => $value) {
             if (isset($input['content_virtual_class_equipment_' . $count]) && ($key === 'content_virtual_class_equipment_' . $count && $value === '')) {
                 $validator->check('virtual_class_equipment_' . $count)
+                    ->is_max(1, __('equipment.virtual_class_equipmentname_missing'));
+                $validator->check('description_virtual_class_equipment_' . $count)
                     ->is_max(1, __('equipment.virtual_class_equipmentname_missing'));
                 $count++;
             }
@@ -288,7 +290,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
         $vars['equipment'] = $equipment;
 
         $status = array();
-        $status = $status + array('0' => 'Hỏng', '1' => 'Tốt');
+        $status = $status + array('1' => 'Tốt', '0' => 'Hỏng');
 
         $vars['status'] = $status;
 
@@ -334,7 +336,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
 
         $equipment->delete();
 
-        Notify::success(__('equipment.deleted'));
+        Notify::success(__('equipment.virtual_class_equipmentdeleted'));
 
         return Response::redirect('admin/equipment/' . $roomid);
     });
