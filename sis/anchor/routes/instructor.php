@@ -194,8 +194,13 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
 		$vars['type_instructor'] = array(
 			'contract' => __('instructor.contract'),
-			'official' => __('instructor.official'),
+			//'official' => __('instructor.official'),
 		);
+
+        $vars['type_subject'] = array(
+            'math' => 'Math',
+            'history' => 'History',
+        );
 
 		$instructor = Instructor::get_name_instructor();
 		$inst = array('0' => 'Tạo Mới');

@@ -8,8 +8,8 @@
     <?php echo $messages; ?>
     <?php if ($pages->count): ?>
         <p class="text-right">
-            <?php if ($pages->results[0]->status === PENDING) : ?>
-                <a href="#" class="btn btn-primary" id="add-remote-course">
+            <?php if ($pages->results[0]->status == PENDING) : ?>
+                <a href="#" class="btn btn-primary" id="approve-course">
                     Xét duyệt khóa học
                 </a>
             <?php elseif ($pages->results[0]->status != APPROVED) : ?>
@@ -88,7 +88,6 @@
 </section>
 
 <script type="text/javascript">
-
     var addRemoteCourse = (function () {
         var i = 0;
         var callAjax = function (url, token, courseid, loop) {
@@ -101,13 +100,13 @@
                     if (result == false && i < 100) {
                         callAjax(url, token, courseid, 1);
                         i++;
+                    } else {
+                        $('#load').removeClass();
+                        if (result == false) {
+                            $('#load').addClass('fa fa-exclamation-triangle');
+                        }
+                        $('#load').addClass('fa fa-check');
                     }
-
-                    $('#load').removeClass();
-                    if (result == false) {
-                        $('#load').addClass('fa fa-exclamation-triangle');
-                    }
-                    $('#load').addClass('fa fa-check');
                 }
             });
         }
@@ -122,6 +121,29 @@
             init: init
         }
     }());
-    addRemoteCourse.init('<?php echo base_url('admin/curriculum/add/remote/course') ?>', '<?php echo Csrf::token(); ?>', '<?php echo $courseid; ?>')
+
+    $(document).ready(function () {
+        $('#approve-course').click(function () {
+            // call ajax
+            $(this).append('<i id="load" class="fa fa-spinner fa-pulse fa fa-fw"></i>');
+            $.ajax({
+                method: "POST",
+                url: '/admin/approve/course',
+                data: {token: '<?php echo Csrf::token(); ?>', courseid: '<?php echo $courseid; ?>'},
+                dataType: "text",
+                success: function (result) {
+                    $('#load').removeClass();
+                    if (result == true) {
+                        $('#load').addClass('fa fa-check');
+                    } else {
+                        $('#load').addClass('fa fa-exclamation-triangle');
+                    }
+                }
+            });
+        });
+
+        addRemoteCourse.init('<?php echo base_url('admin/curriculum/add/remote/course') ?>', '<?php echo Csrf::token(); ?>', '<?php echo $courseid; ?>');
+    });
+
 </script>
 <?php echo $footer; ?>
