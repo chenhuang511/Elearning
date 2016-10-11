@@ -97,7 +97,7 @@
                             </div>
                         </td>
                         <td id="rolename-st-<?= $student->id ?>">
-                            <?php if(check_user_enrolled($student->id, $course->id, 3)) : ?>
+                            <?php if(check_user_enrolled($student->id, $course->id, 5)) : ?>
                             Học viên
                             <?php endif; ?>
                         </td>

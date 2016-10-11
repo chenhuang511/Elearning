@@ -78,14 +78,27 @@ Route::collection(array('before' => 'auth,csrf'), function () {
             remote_fetch_course($domain, $token);
             remote_enrol_course($domain, $token, $userremoteid, $courseremoteid);
             remote_assign_enrol_user($domain, $token, $roleid, $userremoteid, $courseremoteid);
-            //add localdatabase
-            if(!UserCourse::where('userid','=', $user->id)->where('courseid','=', $course->id)->where('remoterole','=', $roleid)->get()) {
-                $user_course = array();
-                $user_course['userid'] = $user->id;
-                $user_course['courseid'] = $course->id;
-                $user_course['remoterole'] = $roleid;
-                UserCourse::create($user_course);
 
+            if($role == 3) {
+                //add localdatabase
+                if(!UserCourse::where('userid','=', $user->id)->where('courseid','=', $course->id)->where('remoterole','=', $roleid)->get()) {
+                    $user_course = array();
+                    $user_course['userid'] = $user->id;
+                    $user_course['courseid'] = $course->id;
+                    $user_course['remoterole'] = $roleid;
+                    UserCourse::create($user_course);
+
+                }
+            } else {
+                //add localdatabase
+                if(!UserCourse::where('studentid','=', $user->id)->where('courseid','=', $course->id)->where('remoterole','=', $roleid)->get()) {
+                    $user_course = array();
+                    $user_course['studentid'] = $user->id;
+                    $user_course['courseid'] = $course->id;
+                    $user_course['remoterole'] = $roleid;
+                    StudentCourse::create($user_course);
+
+                }
             }
         }
         echo $ispass;
