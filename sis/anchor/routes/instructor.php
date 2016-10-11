@@ -14,6 +14,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 			->partial('footer', 'partials/footer');
 	});
 
+
 	Route::get(array('admin/instructor/search', 'admin/instructor/search/(:num)'), function($page = 1) {
         $vars['messages'] = Notify::read();
         $vars['token'] = Csrf::token();
@@ -33,6 +34,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
             ->partial('header', 'partials/header')
             ->partial('footer', 'partials/footer');
     });
+
 
 	Route::get('admin/instructor/edit/(:num)', function($id) {
 		$vars['messages'] = Notify::read();
@@ -62,6 +64,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 			->partial('header', 'partials/header')
 			->partial('footer', 'partials/footer');
 	});
+
 
 	Route::post('admin/instructor/edit/(:num)', function($id) {
 		$input = Input::get(array('fullname', 'birthday', 'email', 'subject', 'curriculum_taught', 'instructor_id', 'type', 'name_partner', 'start_date', 'end_date', 'salary', 'state', 'rules'));
@@ -125,6 +128,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 		return Response::redirect('admin/instructor/edit/' . $id);
 	});
 
+
 	Route::get('admin/instructor/view/(:num)', function($id) {
 		$vars['messages'] = Notify::read();
 		$vars['token'] = Csrf::token();
@@ -153,6 +157,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 			->partial('header', 'partials/header')
 			->partial('footer', 'partials/footer');
 	});
+
 
 	Route::get('admin/instructor/curriculum/(:num)', function($id) {
 		$vars['messages'] = Notify::read();
@@ -197,6 +202,9 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 			//'official' => __('instructor.official'),
 		);
 
+        $test = Course::showallcourses();
+        var_dump($test);die;
+
         $vars['type_subject'] = array(
             'math' => 'Math',
             'history' => 'History',
@@ -215,6 +223,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 			->partial('header', 'partials/header')
 			->partial('footer', 'partials/footer');
 	});
+
 
 	Route::post('admin/instructor/add', function() {
 		$input = Input::get(array('fullname', 'birthday', 'email', 'type_instructor', 'subject', 'name_contract', 'instructor_id', 'type', 'name_partner', 'start_date', 'end_date', 'salary', 'state', 'rules'));
@@ -299,6 +308,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
 		return Response::redirect('admin/instructor');
 	});
+
 
 	/*
 		Delete user

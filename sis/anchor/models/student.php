@@ -28,7 +28,9 @@ class Student extends Base {
             ->join(Base::table('courses'), Base::table('courses.id'), '=', Base::table('student_course.courseid'))
             ->where(Base::table('students.id'), '=', $id)->where(Base::table('student_course.grade'), '=', 0)->get();
 
-        return $query;
+        $query2 = static::where('id', '=', $id)->fetch();
+
+        return array($query, $query2);
     }
 
     public static function getCoursesSuccessedByStudent($id)

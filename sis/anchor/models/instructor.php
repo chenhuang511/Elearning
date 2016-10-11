@@ -18,7 +18,7 @@ class Instructor extends Base {
 		$query = Query::table(static::table());
 
 		$count = $query->count();
-        
+
 		$results = $query->take($perpage)->skip(($page - 1) * $perpage)->sort('id', 'asc')->get();
 
 		return new Paginator($results, $count, $page, $perpage, Uri::to('admin/instructor'));

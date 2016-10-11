@@ -2,11 +2,11 @@
 
 return array(
 
-    'students' => 'Sinh viên',
+    'students' => 'Học viên',
 
-    'nopages_desc' => 'Không tìm thấy sinh viên nào.',
+    'nopages_desc' => 'Không tìm thấy học viên nào.',
 
-    'create_student' => 'Tạo sinh viên',
+    'create_student' => 'Tạo học viên',
     'add_student' => 'Add a new student',
     'editing_student' => 'Editing Student Profile',
     'remembered' => 'I know my password',

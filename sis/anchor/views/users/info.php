@@ -4,11 +4,6 @@
 	<h1><?php echo __('users.editing_user', $user->username); ?></h1>
 </hgroup>
 
- <?php
-//var_dump('user info.php');
- $test = remote_get_user_link_profile($user->schoolid, $user->remoteid);
- ?>
-
 <section class="wrap">
 	<?php echo $messages; ?>
 

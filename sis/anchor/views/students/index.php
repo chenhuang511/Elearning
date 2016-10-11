@@ -1,14 +1,14 @@
 <?php echo $header; ?>
 <ol class="breadcrumb">
 	<li><a href="<?php echo Uri::to('admin'); ?>">Trang chủ</a></li>
-	<li class="active">Quản lý sinh viên</li>
+	<li class="active">Quản lý học viên</li>
 </ol>
 <section class="wrap">
 	<?php echo $messages; ?>
 	<?php if ($students->count): ?>
 		<nav>
 			<form class="form-inline" method="get" action="<?php echo Uri::to('admin/students/search'); ?>" novalidate>
-				<input class="form-control" type="text" name="text-search" placeholder="Tên sinh viên">
+				<input class="form-control" type="text" name="text-search" placeholder="Tên học viên">
 				<?php echo Form::button('Tìm kiếm', array(
 					'class' => 'btn btn-primary',
 					'type' => 'submit'
@@ -19,8 +19,8 @@
 		<table class="table table-hover">
 			<thead>
 			<tr>
-				<th>Mã sinh viên</th>
-				<th>Tên sinh viên</th>
+				<th>Mã học viên</th>
+				<th>Tên học viên</th>
 				<th>Email</th>
 				<th>Kết quả học tập</th>
 				<th>Đăng kí học</th>

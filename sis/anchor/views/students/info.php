@@ -1,12 +1,12 @@
 <?php echo $header; ?>
 <ol class="breadcrumb">
     <li><a href="<?php echo Uri::to('admin'); ?>">Trang chủ</a></li>
-    <li><a href="<?php echo Uri::to('admin/students'); ?>">Quản lý sinh viên</a></li>
-    <li class="active">Thông tin sinh viên</li>
+    <li><a href="<?php echo Uri::to('admin/students'); ?>">Quản lý học viên</a></li>
+    <li class="active">Thông tin học viên</li>
 </ol>
 
 <hgroup class="wrap">
-    <h1 style="margin: 0"><?php echo __('Thông tin sinh viên'); ?></h1>
+    <h1 style="margin: 0"><?php echo __('Thông tin học viên'); ?></h1>
 </hgroup>
 
 
@@ -94,14 +94,16 @@
         <p>Chưa có khóa học nào đã hoàn thành</p>
     <?php } ?>
 
-    <h3>Các khóa học chưa hoàn thành <?php // echo $counttopiclearning; ?></h3>
+    <h3>Các khóa học chưa hoàn thành</h3>
+
+    <?php // echo'<pre>';var_dump($thisstudent->remoteid);die; ?>
 
     <?php if ($studentcourselearning != null) { ?>
         <table class="table table-hover">
             <thead>
             <tr>
                 <th>Tên khóa học</th>
-                <th style="text-align: center">Chứng chỉ khóa học</th>
+                <th style="text-align: center">Tiến độ hoàn thành</th>
             </tr>
             </thead>
             <tbody>
@@ -109,13 +111,8 @@
                 <tr>
                     <td style="width: 862px"><?php echo $stu->fullname ?></td>
                     <td style="text-align: center">
-                        <?php
-                        $certificate = remote_get_link_certificate($stu->schoolid, $stu->studentid, $stu->id);
-                        if ($certificate != 'false' && !empty($certificate)) { ?>
-                            <a target="_blank" class="btn btn-primary" href="<?php echo $certificate; ?>">Chứng chỉ</a>
-                        <?php } else { ?>
-                            <a class="btn btn-primary" href="#">Chứng chỉ</a>
-                        <?php } ?>
+                        <?php $percent = remote_get_percent_course($stu->schoolid, $stu->remoteid, $thisstudent->remoteid);
+                         echo $percent.'%' ?>
                     </td>
                 </tr>
             <?php endforeach; ?>
