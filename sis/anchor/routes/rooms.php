@@ -67,7 +67,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
 		Notify::success(__('Bạn đã cập nhật thành công'));
 
-		return Response::redirect('admin/rooms/edit/' . $id);
+		return Response::redirect('admin/rooms/view/' . $id);
 	});
 
 	/*
