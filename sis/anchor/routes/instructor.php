@@ -202,9 +202,6 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 			//'official' => __('instructor.official'),
 		);
 
-        $test = Course::showallcourses();
-        var_dump($test);die;
-
         $vars['type_subject'] = array(
             'math' => 'Math',
             'history' => 'History',
