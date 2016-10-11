@@ -69,7 +69,7 @@ Route::collection(array('before' => 'auth,csrf'), function () {
 
             $domain = $school->wwwroot;
             $token = $school->token;
-            $roleid = 3;
+
             $userremoteid = $user->remoteid;
             $courseremoteid = $course->remoteid;
 
@@ -77,25 +77,25 @@ Route::collection(array('before' => 'auth,csrf'), function () {
             remote_enrol_host($rolehost, $hostid, $courseremoteid);
             remote_fetch_course($domain, $token);
             remote_enrol_course($domain, $token, $userremoteid, $courseremoteid);
-            remote_assign_enrol_user($domain, $token, $roleid, $userremoteid, $courseremoteid);
+            remote_assign_enrol_user($domain, $token, $role, $userremoteid, $courseremoteid);
 
             if($role == 3) {
                 //add localdatabase
-                if(!UserCourse::where('userid','=', $user->id)->where('courseid','=', $course->id)->where('remoterole','=', $roleid)->get()) {
+                if(!UserCourse::where('userid','=', $user->id)->where('courseid','=', $course->id)->where('remoterole','=', $role)->get()) {
                     $user_course = array();
                     $user_course['userid'] = $user->id;
                     $user_course['courseid'] = $course->id;
-                    $user_course['remoterole'] = $roleid;
+                    $user_course['remoterole'] = $role;
                     UserCourse::create($user_course);
 
                 }
             } else {
                 //add localdatabase
-                if(!StudentCourse::where('studentid','=', $user->id)->where('courseid','=', $course->id)->where('remoterole','=', $roleid)->get()) {
+                if(!StudentCourse::where('studentid','=', $user->id)->where('courseid','=', $course->id)->where('remoterole','=', $role)->get()) {
                     $user_course = array();
                     $user_course['studentid'] = $user->id;
                     $user_course['courseid'] = $course->id;
-                    $user_course['remoterole'] = $roleid;
+                    $user_course['remoterole'] = $role;
                     StudentCourse::create($user_course);
 
                 }
