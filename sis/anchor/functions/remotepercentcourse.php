@@ -1,8 +1,7 @@
 <?php
-// userid is of remote
+
 function remote_get_percent_course($schoolid, $courseid, $userid)
 {
-    //var_dump('remoteuser.php');
     $school = School::find($schoolid);
     $domain = $school->wwwroot;
     $token = $school->token;
