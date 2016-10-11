@@ -115,7 +115,7 @@ var virtualclassequipmentModule = (function () {
                 html += '<td>' + content.name + '</td>';
                 html += '<td>' + content.description + '</td>';
                 html += '<td>' + content.quantity + '</td>';
-                html += '<td>' + content.status + '</td>';
+                html += '<td>' + content.statusname + '</td>';
                 html += '<td>' + '<a href="#" id="' + 'remove_' + node.attr('id') + '_' + content.id + '">' + '<i class="fa fa-times" aria-hidden="true"></i> Xóa</a>' + '</td>';
                 html += '</tr>';
             }
@@ -183,9 +183,9 @@ var virtualclassequipmentModule = (function () {
                         name: name,
                         description: description,
                         quantity: quantity,
-                        status: statusname
+                        status: status,
+                        statusname: statusname,
                     });
-
                     generateHTML($(htmlVirtual_class_equipments[index]), content);
                     // update content virtual_class_equipment
                     $(contentVirtual_class_equipments[index]).val(JSON.stringify(content));
@@ -205,8 +205,8 @@ var virtualclassequipmentModule = (function () {
                         }
                     });
                 }
-
                 e.preventDefault();
+                return 0;
             });
         });
     };

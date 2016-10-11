@@ -1,4 +1,4 @@
-/*
+﻿/*
 Navicat MySQL Data Transfer
 
 Source Server         : 249
@@ -366,7 +366,6 @@ CREATE TABLE `anchor_rooms` (
   `timecreated` int(11) DEFAULT '0',
   `timemodified` int(11) DEFAULT '0',
   `usermodified` bigint(10) DEFAULT NULL,
-  `room` int(6) DEFAULT NULL,
   `status` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id`),
   KEY `status` (`status`)

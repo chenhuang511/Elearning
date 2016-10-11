@@ -99,7 +99,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
         }
 
         $status = array();
-        $status = $status + array('1' => "1",'0' => "0");
+        $status = $status + array('1' => "Tốt",'0' => "Hỏng");
 
         $vars['status'] = $status;
         $vars['roomid'] = $room->id;

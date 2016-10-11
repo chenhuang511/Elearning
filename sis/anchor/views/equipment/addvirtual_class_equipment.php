@@ -98,7 +98,7 @@
                                         <label for="lecturer"
                                                class="control-label"><?php echo __('equipment.status') ?> <span
                                                 class="text-danger">*</span></label>
-                                        <?php echo Form::select('status', array('1' => 'Tốt', '0' => 'Hỏng', '1'), Input::previous('status'), array('id' => 'status_virtual_class_equipment_', 'class' => 'form-control')); ?>
+                                        <?php echo Form::select('status', array('1' => 'Tốt', '0' => 'Hỏng'), Input::previous('status'), array('id' => 'status_virtual_class_equipment_', 'class' => 'form-control')); ?>
                                         <?php if (isset($errors['status'])) { ?>
                                             <p class="help-block"><?php echo $errors['status'][0] ?></p>
                                         <?php } ?>
