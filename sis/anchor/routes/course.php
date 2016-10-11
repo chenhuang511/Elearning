@@ -46,27 +46,6 @@ Route::collection(array('before' => 'auth,csrf'), function () {
             ->partial('footer', 'partials/footer');
     });
 
-    Route::get(array('admin/courses/enrol/user/(:num)', 'admin/courses/(:num)/enrol/teacher/(:num)'), function ($courseid, $page = 1) {
-
-        // get public listings
-        $course = Course::find($courseid);
-        if(!isset($course) && $course->status == PENDING) {
-            return  Response::redirect('/');
-        };
-
-        $url = 'admin/courses/' . $courseid . '/enrol/teacher';
-        // need merge user with student - pedding
-        $users = User::paginate($page, Config::get('admin.posts_per_page'), $url);
-        $vars['messages'] = Notify::read();
-
-        $vars['course'] = $course;
-        $vars['pages'] = $users;
-        //need process here
-        return View::create('users/enrol', $vars)
-            ->partial('header', 'partials/header')
-            ->partial('footer', 'partials/footer');
-    });
-
     Route::post('admin/courses/enrol/user/(:num)', function($courseid) {
         $input = Input::get(array('userid', 'role'));
         $userid = $input['userid'];
@@ -110,33 +89,33 @@ Route::collection(array('before' => 'auth,csrf'), function () {
         echo $ispass;
     });
 
-    Route::get(array('admin/courses/(:num)/enrol/teacher/search', 'admin/courses/(:num)/enrol/teacher/search/(:num)'), function($courseid, $page = 1) {
+    Route::get(array('admin/courses/enrol/(:num)', 'admin/courses/enrol/(:num)/(:num)'), function ($courseid, $page = 1) {
+
+        // get public listings
         $course = Course::find($courseid);
-        if(!isset($course) && $course->status == PENDING) {
+        if(!isset($course) && $course->status == 1) {
             return  Response::redirect('/');
         };
-        $input = Input::get(array(
-            'key'
-        ));
-        foreach($input as $key => &$value) {
-            $value = eq($value);
-        }
-
-        $key = $input['key'];
-        $whatSearch = '?key=' . $key;
-        $perpage = Config::get('admin.posts_per_page');
-        list($total, $pages) = User::searchuser($key, $page, $perpage);
-
-        $url = Uri::to('admin/courses/' . $courseid . '/enrol/teacher/search');
-
-        $pagination = new Paginator($pages, $total, $page, $perpage, $url, $whatSearch);
-
+        $studentsenrol = Student::get();
+        $usersenrol = User::get();
         $vars['messages'] = Notify::read();
+
         $vars['course'] = $course;
-        $vars['pages'] = $pagination;
+        $vars['users'] = $usersenrol;
+        $vars['students'] = $studentsenrol;
         //need process here
-        return View::create('users/enrol', $vars)
+        return View::create('course/enrol', $vars)
             ->partial('header', 'partials/header')
             ->partial('footer', 'partials/footer');
+    });
+    Route::post('admin/approve/course', function () {
+        $input = Input::get(array('courseid'));
+        $courseid = $input['courseid'];
+
+        $courseupdate = new stdClass();
+        $courseupdate->status = APPROVED;
+        Course::update($courseid, $courseupdate);
+
+        echo 1;
     });
 });

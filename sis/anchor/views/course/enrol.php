@@ -41,7 +41,7 @@
                     <thead>
                     <tr>
                         <th>Họ tên/ Email</th>
-                        <th>Ghi danh</th>
+                        <th class="th-sort">Ghi danh</th>
                         <th></th>
                     </tr>
                     </thead>
@@ -52,12 +52,16 @@
                                     <div class="enrol-user">
                                         <span class="enrol-user-icon"><i class="fa fa-user" aria-hidden="true"></i></span>
                                         <p class="enrol-user-info">
-                                            <span><?= $user->fullname ?></span><br>
+                                            <span><?= $user->real_name ?></span><br>
                                             <span><?= $user->email ?></span>
                                         </p>
                                     </div>
                                 </td>
-                                <td id="rolename-tc-<?= $user->id ?>"</td>
+                                <td id="rolename-tc-<?= $user->id ?>">
+                                    <?php if(check_user_enrolled($user->id, $course->id, 3)) : ?>
+                                        Giảng viên
+                                    <?php endif; ?>
+                                </td>
                                 <td>
                                     <span id="show_enrol_2" class="show-enrol"></span>
                                     <input type="hidden" id="role_id_2" value="">
@@ -76,7 +80,7 @@
                     <thead>
                     <tr>
                         <th>Họ tên/ Email</th>
-                        <th>Ghi danh</th>
+                        <th class="th-sort">Ghi danh</th>
                         <th></th>
                     </tr>
                     </thead>
@@ -87,12 +91,16 @@
                             <div class="enrol-user">
                                 <span class="enrol-user-icon"><i class="fa fa-user" aria-hidden="true"></i></span>
                                 <p class="enrol-user-info">
-                                    <span><?= $student->real_name ?> </span><br>
+                                    <span><?= $student->fullname ?> </span><br>
                                     <span><?= $student->email ?></span>
                                 </p>
                             </div>
                         </td>
-                        <td id="rolename-st-<?= $student->id ?>"></td>
+                        <td id="rolename-st-<?= $student->id ?>">
+                            <?php if(check_user_enrolled($student->id, $course->id, 3)) : ?>
+                            Học viên
+                            <?php endif; ?>
+                        </td>
                         <td>
                             <span id="show_enrol_3" class="show-enrol"></span>
                             <input type="hidden" id="role_id_3" value="">
@@ -110,10 +118,35 @@
 </section>
 <input type="hidden" name="token" id="token" value="<?php echo Csrf::token(); ?>">
 <script src="<?php echo asset('anchor/views/assets/js/enrol-module.js'); ?>"></script>
+<script src="<?php echo asset('anchor/views/assets/js/sort-elements.js'); ?>"></script>
 <script>
     (function ($) {
         $(document).ready(function () {
             enrolModule.init(<?= $course->id ?>);
+
+            $('.enrol-table').each(function(){
+
+                var th = $(this).find('.th-sort'),
+                    thIndex = th.index(),
+                    inverse = true;
+
+                $(this).find('td').filter(function(){
+
+                    return $(this).index() === thIndex;
+
+                }).sortElements(function(a, b){
+
+                    return $.text([a]) > $.text([b]) ?
+                        inverse ? -1 : 1
+                        : inverse ? 1 : -1;
+                }, function(){
+
+                    // parentNode is the element we want to move
+                    return this.parentNode;
+
+                });
+
+            });
         });
     })(jQuery);
 </script>

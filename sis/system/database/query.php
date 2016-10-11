@@ -144,7 +144,6 @@ class Query extends Builder {
 	 */
 	public function count() {
 		list($result, $statement) = $this->connection->ask($this->build_select_count(), $this->bind);
-
 		return $statement->fetchColumn();
 	}
 

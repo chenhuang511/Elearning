@@ -362,18 +362,18 @@ i.fa.fa-sign-in {
 article.wrap.coursebox {
     border-bottom: solid 1px #ddd;
     padding: 11px 1px;
+    min-height: 200px;
+    max-height: 200px;
+}
+
+.search-cnt {
+    padding: 20px;
+    text-align: right;
 }
 
 .searchbox {
     display: block;
     position: relative;
-}
-
-.searchbox input[id=search_term] {
-    width: 64%;
-}
-.searchbox input[type=submit] {
-    width: 30%;
 }
 
 

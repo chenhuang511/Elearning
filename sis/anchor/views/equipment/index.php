@@ -20,6 +20,7 @@
             <tbody>
             <?php foreach ($pages->results as $item): $display_pages = array($item); ?>
                 <?php foreach ($display_pages as $page) : ?>
+<!--                    --><?php //var_dump( $page); ?>
                     <tr>
                         <td>
                             <span class="bhxh-course">
@@ -38,7 +39,7 @@
                             <?php echo $page->quantity; ?>
                         </td>
                         <td>
-                            <?php if ($page->status = 1):
+                            <?php if ($page->status == 1):
                                 echo 'Tốt';
                             else:
                                 echo 'Hỏng';

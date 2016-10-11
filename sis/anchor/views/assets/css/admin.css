@@ -267,11 +267,9 @@ hgroup nav {
 .list {
     list-style: none;
     width: 100%;
-
-    border-top: 1px solid #dadfe5;
 }
 
-.list li a {
+.list li{
     display: block;
     padding: 25px 30px 15px;
     color: #7d8693;
@@ -282,8 +280,9 @@ hgroup nav {
     border-bottom: 1px solid #dadfe5;
 }
 
-.list li a:hover {
+.list li:hover {
     background: #e7eaee;
+    cursor: pointer;
 }
 
 .list li strong {
@@ -324,6 +323,22 @@ hgroup nav {
 
 .list li .status {
     margin-left: 10px;
+}
+
+.post-box .post-title {
+    color: #187bb2;
+    font-weight: 700;
+    display: block;
+    font-size: 18px;
+}
+
+.post-box .post-time {
+    font-style: italic;
+}
+
+.post-box .post-desc {
+    margin-top: 15px;
+    text-align: justify;
 }
 
 [draggable] {
@@ -858,6 +873,7 @@ input[type='range'] {
     font-weight: bold;
     border-bottom: 1px solid #187bb2;
     padding-bottom: 15px;
+    text-transform: uppercase !important;
 }
 
 .adm-search-box label {

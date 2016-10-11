@@ -24,7 +24,7 @@ CREATE TABLE mdl_course_modules_createdby (
   coursemodule BIGINT(10) NOT NULL,
   userid BIGINT(10) NOT NULL,
   PRIMARY KEY(id)
-);
+) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 drop table mdl_mnetservice_enrol_courses;
 

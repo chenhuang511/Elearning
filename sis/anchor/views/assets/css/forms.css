@@ -19,6 +19,10 @@
 	vertical-align: middle !important;
 }
 
+.table-hover p{
+	margin: 5px 0;
+}
+
 
 /*-----------------------------------------------------*/
 
@@ -100,21 +104,17 @@ legend {
 select {
 	-webkit-appearance: none;
 	display: block;
-	float: left;
 	height: 39px;
 	padding: 9px 0 8px 20px;
 
-	font: 15px/22px "Helvetica Neue", sans-serif;
+	font: 15px/22px "Open Sans";
 
 	border: none;
 	border-radius: 0 5px 5px 0;
 
 	background: #fff;
 	color: #7f8b9e;
-
 	cursor: pointer;
-
-	min-width: 216px;
 }
 
 	select + .arrow {

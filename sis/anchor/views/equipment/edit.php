@@ -37,7 +37,7 @@
                     <div class="form-group">
                         <label for="description"
                                class="control-label"><?php echo __('equipment.quantity') ?></label>
-                        <?php echo Form::text('quantity', Input::previous('quantity', $equipment->description), array('id' => 'quantity', 'class' => 'form-control', 'rows' => 3)); ?>
+                        <?php echo Form::number('quantity', Input::previous('quantity', $equipment->description), array('id' => 'quantity', 'class' => 'form-control', 'rows' => 3)); ?>
                     </div>
 
                     <div class="form-group clearfix <?php if (isset($errors['status'])) {

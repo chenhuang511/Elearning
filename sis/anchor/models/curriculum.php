@@ -7,7 +7,8 @@ class Curriculum extends Base
     public static function getByCourseId($courseid, $page = 1, $perpage = 10)
     {
         $query = static::join(Base::table('courses'), Base::table('courses.id'), '=', Base::table('curriculum.course'))
-            ->left_join(Base::table('users'), Base::table('users.id'), '=', Base::table('curriculum.lecturer'))
+            ->join(Base::table('users'), Base::table('users.id'), '=', Base::table('curriculum.lecturer'))
+            ->join(Base::table('rooms'), Base::table('rooms.id'), '=', Base::table('curriculum.room'))
             ->where(Base::table('curriculum.course'), '=', $courseid);
 
         $total = $query->count();
@@ -18,7 +19,8 @@ class Curriculum extends Base
             ->get(array(
                 Base::table('curriculum.*'),
                 Base::table('courses.fullname as coursename'),
-                Base::table('courses.status as status')
+                Base::table('courses.status as status'),
+                Base::table('rooms.name as roomname')
             ));
         foreach ($curriculums as $curriculum) {
             $curriculum->topicday = self::GetDayOfWeek($curriculum->topicday) . ' ' . date('d-m-Y', strtotime($curriculum->topicday));
@@ -41,7 +43,7 @@ class Curriculum extends Base
             ->skip(--$page * $perpage)
             ->get(array(
                 Base::table('curriculum.*'),
-                 Base::table('courses.fullname as coursename')
+                Base::table('courses.fullname as coursename')
             ));
 
         foreach ($curriculums as $curriculum) {
@@ -49,6 +51,19 @@ class Curriculum extends Base
         }
 
         return array($total, $curriculums);
+    }
+
+    public static function checkRoom($day, $roomid, $time = NULL)
+    {
+        $query = static::join(Base::table('rooms'), Base::table('rooms.id'), '=', Base::table('curriculum.room'))
+            ->where(Base::table('curriculum.topicday'), '=', $day)
+            ->where(Base::table('curriculum.room'), '=', $roomid);
+        if ($time == NULL)
+            $query->where(Base::table('curriculum.topictime'), 'IS', NULL);
+        else
+            $query->where(Base::table('curriculum.topictime'), '=', $time);
+
+        return $query->count() == 0 ? 'n' : 'y';
     }
 
     public static function getById($id)

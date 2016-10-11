@@ -8,7 +8,7 @@
 	<?php echo $messages; ?>
 	<?php if(Auth::admin()) : ?>
         <p class="text-right">
-            <a href="<?php echo Uri::to('admin/equipment/' . $rooms->id) ;?>" class="btn btn-success" id="add-remote-room">
+            <a href="<?php echo Uri::to('admin/equipment/' . $rooms->id) ;?>" class="btn btn-success" id="">
                 Xem thiết bị
             </a>
         </p>
@@ -43,7 +43,8 @@
 
                 <aside class="buttons">
                     <a href="<?php echo Uri::to('admin/rooms/edit/' . $rooms->id); ?>" class="btn btn-primary">Sửa</a>
-                    <a href="<?php echo Uri::to('admin/rooms/delete/' . $rooms->id); ?>" class="btn btn-danger">Xóa</a>
+                    <a href="<?php echo Uri::to('admin/rooms/delete/' . $rooms->id); ?>"
+                       onclick="return confirm('Bạn chắc chắn muốn xóa thông tin này');" class="btn btn-danger">Xóa</a>
 				</aside>
         </div>
 
