@@ -1,7 +1,7 @@
 <?php echo $header; ?>
 <ol class="breadcrumb">
     <li><a href="<?php echo Uri::to('admin'); ?>">Trang chủ</a></li>
-    <li><a href="<?php echo Uri::to('admin/students'); ?>">Quản lý sinh viên</a></li>
+    <li><a href="<?php echo Uri::to('admin/students'); ?>">Quản lý học viên</a></li>
     <li class="active">Tìm kiếm</li>
 </ol>
 <section class="wrap">
@@ -9,7 +9,7 @@
     <?php if ($students->count): ?>
         <nav>
             <form class="form-inline" method="get" action="<?php echo Uri::to('admin/students/search'); ?>" novalidate>
-                <input class="form-control" type="text" name="text-search" placeholder="Tên sinh viên">
+                <input class="form-control" type="text" name="text-search" placeholder="Tên học viên">
                 <?php echo Form::button('Tìm kiếm', array(
                     'class' => 'btn btn-primary',
                     'type' => 'submit'
@@ -20,8 +20,8 @@
         <table class="table table-hover">
             <thead>
             <tr>
-                <th>Mã sinh viên</th>
-                <th>Tên sinh viên</th>
+                <th>Mã học viên</th>
+                <th>Tên học viên</th>
                 <th>Email</th>
                 <th>Thành tích</th>
                 <th>Đăng kí học</th>

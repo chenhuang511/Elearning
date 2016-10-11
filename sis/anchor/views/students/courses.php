@@ -1,7 +1,7 @@
 <?php echo $header; ?>
 <ol class="breadcrumb">
     <li><a href="<?php echo Uri::to('admin'); ?>">Trang chủ</a></li>
-    <li><a href="<?php echo Uri::to('admin/students'); ?>">Quản lý sinh viên</a></li>
+    <li><a href="<?php echo Uri::to('admin/students'); ?>">Quản lý học viên</a></li>
     <li class="active">Danh sách khóa học</li>
 </ol>
 <section class="wrap">

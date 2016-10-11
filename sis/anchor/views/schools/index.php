@@ -19,7 +19,7 @@
         <table class="table table-hover">
             <thead>
             <tr>
-                <th>Mã trường</th>
+                <th style="width: 28%;">Mã trường</th>
                 <th>Tên trường</th>
             </tr>
             </thead>

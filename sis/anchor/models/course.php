@@ -4,6 +4,13 @@ class Course extends Base
 {
     public static $table = 'courses';
 
+    public static function showallcourses()
+    {
+        $query = Query::table(static::table())->get();
+
+        return $query;
+    }
+
     public static function paginate($page = 1, $perpage = 10, $stuid) {
 
         $query = Query::table(static::table())->where('remoteid', '!=', 'null');

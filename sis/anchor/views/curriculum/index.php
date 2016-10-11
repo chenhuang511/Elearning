@@ -12,7 +12,7 @@
                 <a href="#" class="btn btn-primary" id="approve-course">
                     Xét duyệt khóa học
                 </a>
-            <?php elseif ($pages->results[0]->status != APPROVED) : ?>
+            <?php elseif ($pages->results[0]->status == APPROVED) : ?>
                 <a href="#" class="btn btn-primary" id="add-remote-course">
                     Đồng bộ khóa học
                 </a>
