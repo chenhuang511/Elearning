@@ -32,19 +32,15 @@
 		<tbody>
 			<?php foreach ($instructors->results as $instructor): ?>
 				<tr>
-                    <?php if ($instructor->type_instructor != 'official') { ?>
-                        <td><a href="<?php echo Uri::to('admin/instructor/edit/' . $instructor->id); ?>">
-                                <?php echo $instructor->fullname; ?></a></td>
-                    <?php } else { ?>
-                        <td><a href="<?php echo Uri::to('admin/instructor/view/' . $instructor->id); ?>">
-                                <?php echo $instructor->fullname; ?></a></td>
-                    <?php } ?>
+                    <td><a href="<?php echo Uri::to('admin/instructor/view/' . $instructor->id); ?>">
+                            <?php echo $instructor->fullname; ?></a></td>
 					<td><p><?php echo $instructor->email; ?></p></td>
 					<td><p><?php echo date('d-m-Y', strtotime($instructor->birthday)); ?></p></td>
-					<td><p><?php echo $instructor->type_instructor; ?></p></td>
+					<td><p><?php echo __('instructor.'.$instructor->type_instructor); ?></p></td>
 					<td><p><?php echo $instructor->subject; ?></p></td>
                     <td>
                         <?php if ($instructor->type_instructor != 'official') : ?>
+							<a href="<?php echo Uri::to('admin/instructor/edit/' . $instructor->id); ?>"class="btn btn-primary">Sửa</a>
                             <a href="<?php echo Uri::to('admin/instructor/delete/' . $instructor->id); ?>" class="btn btn-primary delete">Xóa</a>
                         <?php endif; ?>
 					</td>

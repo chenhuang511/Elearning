@@ -32,10 +32,6 @@
 				<?php echo Form::date('birthday', Input::previous('birthday', $instructor->birthday), array('id' => 'label-birthday')); ?>
 			</p>
 			<p>
-				<label for="label-type_instructor"><?php echo __('instructor.type_instructor'); ?>:</label>
-				<?php echo Form::select('type_instructor', $type_instructor, Input::previous('type_instructor', $instructor->type_instructor), array('id' => 'label-type_instructor')); ?>
-			</p>
-			<p>
 				<label for="label-subject"><?php echo __('instructor.subject'); ?>:</label>
 				<?php echo Form::text('subject', Input::previous('subject', $instructor->subject), array('id' => 'label-subject')); ?>
 			</p>
@@ -52,39 +48,52 @@
 		</fieldset>
 
 		<fieldset class="half split">
-		<?php foreach($contract as $contract): ?>
+		<?php foreach($contracts as $contract): 
+		$id = $contract->id; ?>
+		<div style="border:1px solid;border-color:blue">
 			<p>
 				<label for="label-name_contract"><?php echo __('contract.name_contract'); ?>:</label>
-				<?php echo Form::text('name_contract', Input::previous('name_contract', $contract->name_contract), array('id' => 'label-name_contract')); ?>
+				<?php echo Form::text('name_contract'. $id, Input::previous('name_contract', $contract->name_contract), array('id' => 'label-name_contract')); ?>
 			</p>
 			<p>
-				<label for="label-type"><?php echo __('contract.type'); ?>:</label>
-				<?php echo Form::select('type', $type, Input::previous('type', $contract->type), array('id' => 'label-type')); ?>
+				<label><?php echo __('contract.type'); ?>:</label>
+				<?php echo Form::select('type'. $id, $type, Input::previous('type', $contract->type), array('class' => 'type')); ?>
 			</p>
-			<p>
-				<label for="label-name_partner"><?php echo 'Cá nhân/Tổ chức	' ?>:</label>
-				<?php echo Form::text('name_partner', Input::previous('name_partner', $contract->name_partner), array('id' => 'label-name_partner')); ?>
-			</p>
+			<div class="organization_form" id="organization_form">
+				<p>
+					<label for="label-name_partner"><?php echo __('contract.name_partner'); ?>:</label>
+					<?php echo Form::text('name_partner'. $id, Input::previous('name_partner', $contract->name_partner), array('id' => 'label-name_partner')); ?>
+				</p>
+				<p>
+					<label for="label-name_head"><?php echo __('contract.name_head'); ?>:</label>
+					<?php echo Form::text('name_head'. $id, Input::previous('name_head', $contract->name_head), array('id' => 'label-name_head')); ?>
+				</p>
+				<p>
+					<label for="label-tax_code"><?php echo __('contract.tax_code'); ?>:</label>
+					<?php echo Form::text('tax_code'. $id, Input::previous('tax_code', $contract->tax_code), array('id' => 'label-tax_code')); ?>
+				</p>
+			</div>
 			<p>
 				<label for="label-start_date"><?php echo __('contract.start_date'); ?>:</label>
-				<?php echo Form::date('start_date', Input::previous('start_date', $contract->start_date), array('id' => 'label-start_date')); ?>
+				<?php echo Form::date('start_date'. $id, Input::previous('start_date', $contract->start_date), array('id' => 'label-start_date')); ?>
 			</p>
 			<p>
 				<label for="label-end_date"><?php echo __('contract.end_date'); ?>:</label>
-				<?php echo Form::date('end_date', Input::previous('end_date', $contract->end_date), array('id' => 'label-end_date')); ?>
+				<?php echo Form::date('end_date'. $id, Input::previous('end_date', $contract->end_date), array('id' => 'label-end_date')); ?>
 			</p>
 			<p>
 				<label for="label-salary"><?php echo __('contract.salary'); ?>:</label>
-				<?php echo Form::text('salary', Input::previous('salary', $contract->salary), array('id' => 'label-salary')); ?>
+				<?php echo Form::text('salary'. $id, Input::previous('salary', $contract->salary), array('id' => 'label-salary')); ?>
 			</p>
 			<p>
 				<label for="label-state"><?php echo 'Trạng thái' ?>:</label>
-				<?php echo Form::select('state', $state, Input::previous('state', $contract->state), array('id' => 'label-state')); ?>
+				<?php echo Form::select('state'. $id, $state, Input::previous('state', $contract->state), array('id' => 'label-state')); ?>
 			</p>
 			<p>
 				<label for="label-rules"><?php echo __('contract.rules'); ?>:</label>
-				<?php echo Form::textarea('rules', Input::previous('rules', $contract->rules), array('cols' => 20 ,'id' => 'label-rules')); ?>
+				<?php echo Form::textarea('rules'. $id, Input::previous('rules', $contract->rules), array('cols' => 20 ,'id' => 'label-rules')); ?>
 			</p>
+			</div></br></br>
 		<?php endforeach; ?>
 		</fieldset>
 	</form>
@@ -94,7 +103,37 @@
 	<?php endif; ?>
 	<input id="menuSelected" type="hidden" value="<?php if (isset($tab)): echo $tab; endif; ?>">
 </section>
-
+<script>
+  var list = document.getElementsByClassName("organization_form");
+  var list_type = document.getElementsByClassName("type");
+  for (var i = 0; i < list.length; i++) {
+	list_type[i].setAttribute("id", "t" + i);
+	list[i].setAttribute("id", "form_t" + i);
+  }
+  $(document).ready(function() {
+	for (var i = 0; i < list.length; i++) {
+		if($('#t'+ i).val() == "personal"){
+			document.getElementById("form_t"+i).setAttribute("style","display:none;");
+		}
+		else{
+			document.getElementById("form_t"+i).setAttribute("style","display:inline;");
+		}
+	}
+   });
+   for (var i = 0; i < list.length; ++i) {
+	console.log($('#t'+ i));
+  	$('#t'+ i).on('change', function(){
+		var $this = $(this);
+		var $value = $this.val();
+		if($value == "personal"){
+			document.getElementById("form_" + $this[0].id).setAttribute("style","display:none;");
+		}
+		else{
+			document.getElementById("form_"+ $this[0].id).setAttribute("style","display:inline;");
+		}
+	});
+   }
+ </script>
 <script src="<?php echo asset('anchor/views/assets/js/upload-fields.js'); ?>"></script>
 
 <?php echo $footer; ?>

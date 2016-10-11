@@ -42,15 +42,10 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 		$vars['messages'] = Notify::read();
 		$vars['token'] = Csrf::token();
 		$vars['instructor'] = Instructor::find($id);
-		$vars['contract'] = Contract::search_by_instructor_id($id);
+		$vars['contracts'] = Contract::search_by_instructor_id($id);
 		
 		// extended fields
 		$vars['fields'] = Extend::fields('instructor', $id);
-
-		$vars['type_instructor'] = array(
-			'contract' => __('instructor.contract'),
-			'official' => __('instructor.official')
-		);
 
 		$vars['type'] = array(
 			'personal' => __('contract.personal'),
@@ -71,14 +66,31 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
 
 	Route::post('admin/instructor/edit/(:num)', function($id) {
-		$input = Input::get(array('fullname', 'birthday', 'email', 'subject', 'curriculum_taught', 'instructor_id', 'type', 'name_partner', 'start_date', 'end_date', 'salary', 'state', 'rules'));
+		$arr_input = array('fullname', 'birthday', 'email', 'subject');
+		$contracts = Contract::search_by_instructor_id($id);
+		$count_contract = Query::table(Base::table('instructor_contract'))->where('instructor_id', '=', $id)->count();
+		if($count_contract > 0){
+			foreach($contracts as $c){
+				array_push($arr_input, 'name_contract' . $c->id);
+				array_push($arr_input, 'type' . $c->id);
+				array_push($arr_input, 'name_partner' . $c->id);
+				array_push($arr_input, 'name_head' . $c->id);
+				array_push($arr_input, 'tax_code' . $c->id);
+				array_push($arr_input, 'start_date' . $c->id);
+				array_push($arr_input, 'end_date' . $c->id);
+				array_push($arr_input, 'salary' . $c->id);
+				array_push($arr_input, 'state' . $c->id);
+				array_push($arr_input, 'rules' . $c->id);
+			}
+		}
+		
+		$input = Input::get($arr_input);
 		$validator = new Validator($input);
 
 		$validator->add('valid', function($email) use($id) {
 			return Query::table(Base::table('instructors'))->where('id', '!=', $id)->where('email', '=', $email)->count() == 0;
 		});
-		$count_contract = Query::table(Base::table('instructor_contract'))->where('instructor_id', '=', $id)->count();
-
+		
 		$validator->check('fullname')
 		 	->is_max(2, __('instructor.fullname_missing', 2));
 
@@ -93,25 +105,34 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 		 	->is_max(2, __('instructor.subject_missing', 2));
 
 		if($count_contract > 0){
-
-			$validator->check('name_contract')
+			foreach($contracts as $c){
+			$validator->check('name_contract' . $c->id)
 		 		->is_max(2, __('contract.name_contract_missing', 2));
+				
+			if($input['type' . $c->id] == 'organization'){
+				$validator->check('name_partner'. $c->id)
+		 			->is_max(2, __('contract.name_partner_missing', 2));
 
-			$validator->check('name_partner')
-		 		->is_max(2, __('contract.name_partner_missing', 2));
-	
-			$validator->check('start_date')
+				$validator->check('name_head'. $c->id)
+		 			->is_max(2, __('contract.name_head_missing', 2));
+			 
+				$validator->check('tax_code'. $c->id)
+		 			->is_max(2, __('contract.tax_code_missing', 2));
+			}
+			$validator->check('start_date'. $c->id)
 		 		->is_regex('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', __('contract.start_date_missing'));
 
-			$validator->check('end_date')	
+			$validator->check('end_date'. $c->id)	
 		 		->is_regex('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', __('contract.end_date_missing'));
 
-			$validator->check('salary')
+			$validator->check('salary'. $c->id)
 		 		->is_max(2, __('contract.salary_missing', 2));
 
-			$validator->check('rules')
+			$validator->check('rules'. $c->id)
 		 		->is_max(2, __('contract.rules_missing', 2));
+			}
 		}
+
 		if($errors = $validator->errors()) {
 			Input::flash();
 
@@ -119,11 +140,43 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
 			return Response::redirect('admin/instructor/edit/' . $id);
 		}
-		$input_instructor = Input::get(array('fullname', 'birthday', 'email', 'type_instructor', 'subject'));
+		$input_instructor = Input::get(array('fullname', 'birthday', 'email', 'subject'));
 		Instructor::update($id, $input_instructor);
+
 		if($count_contract > 0){
-			$input_contract = Input::get(array('name_contract', 'type', 'name_partner', 'start_date', 'end_date', 'salary', 'state', 'rules'));
-			Query::table(Base::table('instructor_contract'))->where('instructor_id', '=', $id)->update($input_contract);
+			foreach($contracts as $c){
+			if($input['type' . $c->id] == "organization"){
+				$input_contract = array(
+				'name_contract'=> $input['name_contract' . $c->id],
+				'type'=> $input['type' . $c->id],
+				'name_partner'=> $input['name_partner' . $c->id],
+				'name_head'=> $input['name_head' . $c->id],
+				'tax_code'=> $input['tax_code' . $c->id],
+				'start_date'=> $input['start_date' . $c->id],
+				'end_date'=> $input['end_date' . $c->id],
+				'salary'=> $input['salary' . $c->id],
+				'state'=> $input['state' . $c->id],
+				'rules'=> $input['rules' . $c->id]
+				);
+				Contract::update($c->id, $input_contract);
+			}
+
+			else{
+				$input_contract = array(
+				'name_contract'=> $input['name_contract' . $c->id],
+				'type'=> $input['type' . $c->id],
+				'name_partner'=> null,
+				'name_head'=> null,
+				'tax_code'=> null,
+				'start_date'=> $input['start_date' . $c->id],
+				'end_date'=> $input['end_date' . $c->id],
+				'salary'=> $input['salary' . $c->id],
+				'state'=> $input['state' . $c->id],
+				'rules'=> $input['rules' . $c->id]
+				);
+				Contract::update($c->id, $input_contract);
+			}
+			}
 		}
 		Extend::process('instructor', $id);
 
@@ -199,16 +252,6 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 			'organization' => __('contract.organization')
 		);
 
-		$vars['state'] = array(
-			'paid' => __('contract.paid'),
-			'unpaid' => __('contract.unpaid'),
-		);
-
-		$vars['type_instructor'] = array(
-			'contract' => __('instructor.contract'),
-			//'official' => __('instructor.official'),
-		);
-
         $vars['type_subject'] = array(
             'math' => 'Math',
             'history' => 'History',
@@ -232,7 +275,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
 
 	Route::post('admin/instructor/add', function() {
-		$input = Input::get(array('fullname', 'birthday', 'email', 'type_instructor', 'subject', 'name_contract', 'instructor_id', 'type', 'name_partner', 'start_date', 'end_date', 'salary', 'state', 'rules'));
+		$input = Input::get(array('fullname', 'birthday', 'email', 'type_instructor' => 'contract', 'subject', 'name_contract', 'instructor_id', 'type', 'name_partner', 'start_date', 'name_head', 'tax_code', 'end_date', 'salary', 'state', 'rules'));
 		$ins_id = $input['instructor_id'];
 		
 		$validator = new Validator($input);
@@ -240,9 +283,6 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 		$validator->check('name_contract')
 		 	->is_max(2, __('contract.name_contract_missing', 2));
 
-		$validator->check('name_partner')
-		 	->is_max(2, __('contract.name_partner_missing', 2));
-	
 		$validator->check('start_date')
 		 	->is_regex('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', __('contract.start_date_missing'));
 
@@ -254,9 +294,27 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
 		$validator->check('rules')
 		 	->is_max(2, __('contract.rules_missing', 2));
+
+		if($input['type'] == "organization"){
+
+			$validator->check('name_partner')
+		 		->is_max(2, __('contract.name_partner_missing', 2));
+			
+			$validator->check('name_head')
+		 		->is_max(2, __('contract.name_head_missing', 2));
+			 
+			$validator->check('tax_code')
+		 		->is_max(2, __('contract.tax_code_missing', 2));
+		}
 	
 		if($ins_id == 0){
-			$input_instructor = Input::get(array('fullname', 'birthday', 'type_instructor', 'email', 'subject'));
+			$input_instructor =  array(
+				'fullname'=>$input['fullname'],
+				'birthday'=>$input['birthday'],
+				'email'=>$input['email'],
+				'subject'=>$input['subject'],
+				'type_instructor'=> 'contract',
+			);
 
 			$validator->add('valid', function($email) {
 				return Query::table(Base::table('instructors'))->where('email', '=', $email)->count() == 0;
@@ -283,15 +341,17 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 			$instructor = Instructor::create($input_instructor);
 			Extend::process('Instructor', $instructor->id);
 			$input_contract = array(
-				'name_contract'=>$input['name_contract'],
-				'instructor_id'=>$instructor->id,
-				'type'=>$input['type'],
-				'name_partner'=>$input['name_partner'],
-				'start_date'=>$input['start_date'],
-				'end_date'=>$input['end_date'],
-				'salary'=>$input['salary'],
-				'state'=>$input['state'],
-				'rules'=>$input['rules']
+				'name_contract'=> $input['name_contract'],
+				'instructor_id'=> $instructor->id,
+				'type'=> $input['type'],
+				'name_partner'=> $input['name_partner'],
+				'name_head'=> $input['name_head'],
+				'tax_code'=> $input['tax_code'],
+				'start_date'=> $input['start_date'],
+				'end_date'=> $input['end_date'],
+				'salary'=> $input['salary'],
+				'state'=> 'unpaid',
+				'rules'=> $input['rules']
 			);
 			$contract = Contract::create($input_contract);
 			Extend::process('Contract', $contract->id);
@@ -304,7 +364,19 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 				Notify::error($errors);
 				return Response::redirect('admin/instructor/add');
 			}
-			$input_contract = Input::get(array('name_contract', 'instructor_id', 'type', 'name_partner', 'start_date', 'end_date', 'salary', 'state', 'rules'));
+			$input_contract = array(
+				'name_contract'=> $input['name_contract'],
+				'instructor_id'=> $input['instructor_id'],
+				'type'=> $input['type'],
+				'name_partner'=> $input['name_partner'],
+				'name_head'=> $input['name_head'],
+				'tax_code'=> $input['tax_code'],
+				'start_date'=> $input['start_date'],
+				'end_date'=> $input['end_date'],
+				'salary'=> $input['salary'],
+				'state'=> 'unpaid',
+				'rules'=> $input['rules']
+			);
 			$contract = Contract::create($input_contract);
 			Extend::process('Contract', $contract->id);
 			

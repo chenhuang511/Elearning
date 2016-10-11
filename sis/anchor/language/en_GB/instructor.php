@@ -35,7 +35,6 @@ return array(
 	'curriculum_taught' => 'Số chuyên giảng dạy',
 	'comment' => 'Ý kiến đánh giá,đóng góp',
 	'type' => 'Loại hợp đồng',
-	'name_personal/organization' => 'Cá nhân/Tổ chức',
 	'personal' => 'Cá nhân',
 	'organization' => 'Tổ chức',
 	'birthday' => 'Ngày sinh',

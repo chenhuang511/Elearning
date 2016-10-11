@@ -37,10 +37,6 @@
 				<?php echo Form::text('email', Input::previous('email'), array('id' => 'label-email')); ?>
 			</p>
 			<p>
-				<label for="label-type_instructor"><?php echo __('instructor.type_instructor'); ?>:</label>
-				<?php echo Form::select('type_instructor', $type_instructor, Input::previous('type_instructor'), array('id' => 'label-type_instructor')); ?>
-			</p>
-			<p>
 				<label for="label-subject"><?php echo __('instructor.subject'); ?>:</label>
 				<?php echo Form::select('subject', $type_subject, Input::previous('subject'), array('id' => 'label-subject')); ?>
 			</p>
@@ -61,10 +57,21 @@
 				<label for="label-type"><?php echo __('contract.type'); ?>:</label>
 				<?php echo Form::select('type', $type, Input::previous('type'), array('id' => 'label-type')); ?>
 			</p>
-			<p>
-				<label for="label-name_partner"><?php echo 'Cá nhân/Tổ chức' ?>:</label>
-				<?php echo Form::text('name_partner', Input::previous('name_partner'), array('id' => 'label-name_partner')); ?>
-			</p>
+			<div id="organization_register" style="display:none">
+				<p>
+					<label for="label-name_partner"><?php echo __('contract.name_partner'); ?>:</label>
+					<?php echo Form::text('name_partner', Input::previous('name_partner'), array('id' => 'label-name_partner')); ?>
+				</p>
+				<p>
+					<label for="label-name_head"><?php echo __('contract.name_head'); ?>:</label>
+					<?php echo Form::text('name_head', Input::previous('name_head'), array('id' => 'label-name_head')); ?>
+				</p>
+				<p>
+					<label for="label-tax_code"><?php echo __('contract.tax_code'); ?>:</label>
+					<?php echo Form::text('tax_code', Input::previous('tax_code'), array('id' => 'label-tax_code')); ?>
+				</p>
+
+			</div>
 			<p>
 				<label for="label-start_date"><?php echo __('contract.start_date'); ?>:</label>
 				<?php echo Form::date('start_date', Input::previous('start_date'), array('id' => 'label-start_date')); ?>
@@ -77,10 +84,6 @@
 				<label for="label-salary"><?php echo __('contract.salary'); ?>:</label>
 				<?php echo Form::text('salary', Input::previous('salary'), array('id' => 'label-salary')); ?>
 			</p>
-<!--			<p>-->
-<!--				<label for="label-state">--><?php //echo __('contract.state'); ?><!--:</label>-->
-<!--				--><?php //echo Form::select('state', $state, Input::previous('state'), array('id' => 'label-state')); ?>
-<!--			</p>-->
 			<p>
 				<label for="label-rules"><?php echo __('contract.rules'); ?>:</label>
 				<?php echo Form::textarea('rules', Input::previous('rules'), array('cols' => 20 ,'id' => 'label-rules')); ?>
@@ -96,20 +99,17 @@
 </section>
 <script>
 	$(document).ready( function () {
-		$('#label-instructor_id').on('change',function(){
+		$('#label-instructor_id').on('change', function(){
 			var $this = $(this);
 			var $value = $this.val();
-			console.log($value);
 			if($value != 0){
 				document.getElementById("label-fullname").value = "";
 				document.getElementById("label-birthday").value = "";
 				document.getElementById("label-email").value = "";
-				document.getElementById("label-type_instructor").value = "";
 				document.getElementById("label-subject").value = "";
 				document.getElementById("label-fullname").disabled = true;
 				document.getElementById("label-birthday").disabled = true;
 				document.getElementById("label-email").disabled = true;
-				document.getElementById("label-type_instructor").disabled = true;
 				document.getElementById("label-subject").disabled = true;
 				
 			}
@@ -117,14 +117,20 @@
 				document.getElementById("label-fullname").value = "";
 				document.getElementById("label-birthday").value = "";
 				document.getElementById("label-email").value = "";
-				document.getElementById("label-type_instructor").value = "";
 				document.getElementById("label-subject").value = "";
 				document.getElementById("label-fullname").disabled = false;
 				document.getElementById("label-birthday").disabled = false;
 				document.getElementById("label-email").disabled = false;
-				document.getElementById("label-type_instructor").disabled = false;
 				document.getElementById("label-subject").disabled = false;
 			}
+		});
+		$('#label-type').on('change', function(){
+			var $this = $(this);
+			var $value = $this.val();
+			if($value == "organization")
+				document.getElementById("organization_register").style.display = "inline";
+			else 
+				document.getElementById("organization_register").style.display = "none";
 		});
 	});
 </script>

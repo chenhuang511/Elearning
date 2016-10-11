@@ -32,7 +32,9 @@
 				<td><p><?php echo date('d-m-Y', strtotime($instructor->birthday)); ?></p></td>
 				<td><p><?php echo $instructor->type_instructor ?></p></td>
 				<td><p><?php echo $instructor->subject; ?></p></td>
-				<td><p><?php echo $instructor->id; ?></p></td>
+				<td><a href="<?php echo Uri::to('admin/instructor/curriculum/' . $instructor->id); ?>">
+               		<?php echo $curriculum_taught; ?>
+              	</a></td>
 				<td><p><?php echo $instructor->comment ?></p></td>
 			</tr>
 		</tbody>
@@ -45,7 +47,9 @@
 		<tr>
 			<th>Tên</th>
 			<th>Loại</th>
-			<th>Tổ chức/Cá nhân</th>
+			<th>Tên tổ chức</th>
+			<th>Người đứng đầu</th>
+			<th>Mã số thuế</th>
 			<th>Ngày bắt đầu</th>
 			<th>Ngày kết thúc</th>
 			<th>Mức lương</th>
@@ -57,12 +61,14 @@
 		<?php foreach($contract as $ctr): ?>
 			<tr>
 				<td><p><?php echo $ctr->name_contract ?></p></td>
-				<td><p><?php echo $ctr->type ?></p></td>
+				<td><p><?php echo __('contract.'.$ctr->type) ?></p></td>
 				<td><p><?php echo $ctr->name_partner ?></p></td>
+				<td><p><?php echo $ctr->name_head ?></p></td>
+				<td><p><?php echo $ctr->tax_code ?></p></td>
 				<td><p><?php echo $ctr->start_date ?></p></td>
 				<td><p><?php echo $ctr->end_date ?></p></td>
 				<td><p><?php echo $ctr->salary ?></p></td>
-				<td><p><?php echo $ctr->state ?></p></td>
+				<td><p><?php echo __('contract.'.$ctr->state) ?></p></td>
 				<td><p><?php echo $ctr->rules ?></p></td>
 			</tr>
 		<?php endforeach; ?>
