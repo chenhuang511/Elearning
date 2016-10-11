@@ -92,6 +92,7 @@
 		<p>You do not have the required privileges to modify this instructor information, you must be an Administrator. Please contact the Administrator of the site if you are supposed to have these privileges.</p>
 		<br><a class="btn" href="<?php echo Uri::to('admin/instructor'); ?>">Go back</a>
 	<?php endif; ?>
+	<input id="menuSelected" type="hidden" value="<?php if (isset($tab)): echo $tab; endif; ?>">
 </section>
 
 <script src="<?php echo asset('anchor/views/assets/js/upload-fields.js'); ?>"></script>

@@ -38,7 +38,8 @@
                     </td>
                     <td><?php echo $student->email ?></td>
                     <td><a class="btn btn-primary" href="#">Chứng chỉ</a></td>
-                    <td><a class="btn btn-primary" href= <?php echo '../students/'.$student->id.'/courses' ?>>Đăng kí học</a></td>
+                    <td><a class="btn btn-primary" href= <?php echo '../students/' . $student->id . '/courses' ?>>Đăng
+                            kí học</a></td>
                 </tr>
             <?php endforeach; ?>
             </tbody>
@@ -53,4 +54,5 @@
         </aside>
     <?php endif; ?>
 </section>
+<input id="menuSelected" type="hidden" value="<?php if (isset($tab)): echo $tab; endif; ?>">
 <?php echo $footer; ?>

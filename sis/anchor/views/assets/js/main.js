@@ -1,12 +1,27 @@
 (function ($) {
-    var menu_course = ['course', 'curriculum', 'grade'],
-        menu_post = ['post', 'cateogory'],
-        menu_user = ['user', 'student', 'instructor', 'school'],
-        menu_room = ['room', ];
-
     $(document).ready(function () {
-        $("ul.mnu-lst a").click(function(event) {
-            //alert($(event.target).attr('data-parent'));
-        });
+        var menuSelected = $('#menuSelected').val();
+
+        if (menuSelected == 'course') {
+            $('#collapseCourse').addClass('in');
+            $('#collapsePost').removeClass('in');
+            $('#collapseSystem').removeClass('in');
+            $('#collapseRoom').removeClass('in');
+        } else if (menuSelected == 'post') {
+            $('#collapseCourse').removeClass('in');
+            $('#collapsePost').addClass('in');
+            $('#collapseSystem').removeClass('in');
+            $('#collapseRoom').removeClass('in');
+        } else if (menuSelected == 'sys') {
+            $('#collapseCourse').removeClass('in');
+            $('#collapsePost').removeClass('in');
+            $('#collapseSystem').addClass('in');
+            $('#collapseRoom').removeClass('in');
+        } else if (menuSelected == 'room') {
+            $('#collapseCourse').removeClass('in');
+            $('#collapsePost').removeClass('in');
+            $('#collapseSystem').removeClass('in');
+            $('#collapseRoom').addClass('in');
+        }
     });
 })(jQuery);

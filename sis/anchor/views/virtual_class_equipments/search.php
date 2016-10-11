@@ -1,7 +1,7 @@
 <?php echo $header; ?>
 
 <hgroup class="wrap">
-    <h1><?php  echo __('Kết quả tìm kiếm'); ?></h1>
+    <h1><?php echo __('Kết quả tìm kiếm'); ?></h1>
     <nav style="margin-top: 20px;">
         <form method="get" action="<?php echo Uri::to('admin/virtual_class_equipments/search'); ?>" novalidate>
 
@@ -21,69 +21,70 @@
     <ul class="list">
         <table class="table table-hover">
             <thead>
-                <tr>
-                    <th class="col-sm-1">ID</th>
-                    <th class="col-sm-2">Tên thiết bị</th>
-                    <th class="col-sm-2">Ảnh</th><!-- 
+            <tr>
+                <th class="col-sm-1">ID</th>
+                <th class="col-sm-2">Tên thiết bị</th>
+                <th class="col-sm-2">Ảnh</th><!--
                     <th>Ngày thêm</th> -->
-                    <th class="col-sm-3">Thông tin</th>
-                    <th class="col-sm-1">Số lượng</th>
-                    <th class="col-sm-1">Trạng Thái</th>
-                    <th class="col-sm-2">Quản lý</th>
-                </tr>
+                <th class="col-sm-3">Thông tin</th>
+                <th class="col-sm-1">Số lượng</th>
+                <th class="col-sm-1">Trạng Thái</th>
+                <th class="col-sm-2">Quản lý</th>
+            </tr>
             </thead>
             <tbody>
-                <?php foreach($virtual_class_equipments as $virtual_class_equipment): ?>
-                    <tr>
-                        <td class="col-sm-1"><?php echo $virtual_class_equipment->id ?></td>
-                        <td class="col-sm-2">
-                            <?php echo $virtual_class_equipment->name ?>
-                        </td>
-                        <td class="col-sm-2">
-                            <?php 
-                                if ($virtual_class_equipment->image_url == null) {
+            <?php foreach ($virtual_class_equipments as $virtual_class_equipment): ?>
+                <tr>
+                    <td class="col-sm-1"><?php echo $virtual_class_equipment->id ?></td>
+                    <td class="col-sm-2">
+                        <?php echo $virtual_class_equipment->name ?>
+                    </td>
+                    <td class="col-sm-2">
+                        <?php
+                        if ($virtual_class_equipment->image_url == null) {
                             ?>
-                                <img src= "<?php echo asset_url('img/noimage.jpg'); ?>" style="width: 180px; height: 150px;">
-                            <?php } 
-                            else{ ?>
-                                <img src= "<?php echo $virtual_class_equipment->image_url; ?>" style="width: 180px; height: 150px;">    
-                            <?php } ?>
-                        </td>
-                        <!-- <td>
+                            <img src="<?php echo asset_url('img/noimage.jpg'); ?>" style="width: 180px; height: 150px;">
+                        <?php } else { ?>
+                            <img src="<?php echo $virtual_class_equipment->image_url; ?>"
+                                 style="width: 180px; height: 150px;">
+                        <?php } ?>
+                    </td>
+                    <!-- <td>
                             <?php
-                            if (isset($virtual_class_equipments->created) && $virtual_class_equipments->created !== NULL)
-                                echo date('d-m-Y', strtotime($virtual_class_equipments->created));
-                            else
-                                echo 'chưa khởi tạo';
-                            ?>
+                    if (isset($virtual_class_equipments->created) && $virtual_class_equipments->created !== NULL)
+                        echo date('d-m-Y', strtotime($virtual_class_equipments->created));
+                    else
+                        echo 'chưa khởi tạo';
+                    ?>
                         </td> -->
-                        <td class="col-sm-3">
-                            <?php echo $virtual_class_equipment->description ?>
-                        </td>
-                        <td class="col-sm-1">
-                            <?php echo $virtual_class_equipment->quantity ?>
-                        </td>
-                        <td class="col-sm-1">
-                            <?php
-                                if ($virtual_class_equipment->status == 1) {
-                                    echo 'Chưa được sử dụng';
-                                }
-                                else
-                                    echo 'Đang được sử dụng';
-                            ?>
-                        </td>
-                        <td class="col-sm-2">
-                            <a href="<?php echo Uri::to('admin/virtual_class_equipments/edit/' . $virtual_class_equipment->id); ?>" class="btn btn-primary">Sửa</a>
-                            <a href="<?php echo Uri::to('admin/virtual_class_equipments/delete/' . $virtual_class_equipment->id); ?>" class="btn btn-danger">Xóa</a>
-                        </td>
-                    </tr>
+                    <td class="col-sm-3">
+                        <?php echo $virtual_class_equipment->description ?>
+                    </td>
+                    <td class="col-sm-1">
+                        <?php echo $virtual_class_equipment->quantity ?>
+                    </td>
+                    <td class="col-sm-1">
+                        <?php
+                        if ($virtual_class_equipment->status == 1) {
+                            echo 'Chưa được sử dụng';
+                        } else
+                            echo 'Đang được sử dụng';
+                        ?>
+                    </td>
+                    <td class="col-sm-2">
+                        <a href="<?php echo Uri::to('admin/virtual_class_equipments/edit/' . $virtual_class_equipment->id); ?>"
+                           class="btn btn-primary">Sửa</a>
+                        <a href="<?php echo Uri::to('admin/virtual_class_equipments/delete/' . $virtual_class_equipment->id); ?>"
+                           class="btn btn-danger">Xóa</a>
+                    </td>
+                </tr>
             <?php endforeach; ?>
             </tbody>
         </table>
     </ul>
 
     <aside class="paging"><?php // echo $school->links(); ?></aside>
-
+    <input id="menuSelected" type="hidden" value="<?php if (isset($tab)): echo $tab; endif; ?>">
 </section>
 
 <?php echo $footer; ?>

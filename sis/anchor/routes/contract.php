@@ -29,6 +29,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         $pagination = new Paginator($pages, $total, $page, $perpage, $url, $whatSearch);
 
         $vars['contracts'] = $pagination;
+        $vars['tab'] = 'sys';
 
         return View::create('contract/search', $vars)
             ->partial('header', 'partials/header')
@@ -64,6 +65,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 		}	
 
 		$vars['instructor_id'] = $inst;
+        $vars['tab'] = 'sys';
 
 		return View::create('contract/edit', $vars)
 			->partial('header', 'partials/header')
@@ -132,6 +134,8 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 			'contract' => __('instructor.contract'),
 			'official' => __('instructor.official'),
 		);
+
+        $vars['tab'] = 'sys';
 
 		$instructor = Instructor::get_name_instructor();
 		$inst = array('0' => 'Tạo Mới');

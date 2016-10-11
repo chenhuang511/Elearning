@@ -68,7 +68,7 @@
 		<?php endforeach; ?>
 		</tbody>
 	</table>
-
+	<input id="menuSelected" type="hidden" value="<?php if (isset($tab)): echo $tab; endif; ?>">
 </section>
 
 <script src="<?php echo asset('anchor/views/assets/js/upload-fields.js'); ?>"></script>

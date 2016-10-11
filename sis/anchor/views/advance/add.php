@@ -2,11 +2,11 @@
 <ol class="breadcrumb">
     <li><a href="<?php echo Uri::to('admin'); ?>">Trang chủ</a></li>
     <li><a href="<?php echo Uri::to('admin/courses'); ?>">Quản lý khóa học</a></li>
-    <li class="active"><a href="<?php echo Uri::to('admin/advance/course/'.$course_id); ?>">Tạm ứng tiền</a></li>
+    <li class="active"><a href="<?php echo Uri::to('admin/advance/course/' . $course_id); ?>">Tạm ứng tiền</a></li>
     <li class="active">Thêm mới</li>
 </ol>
 
-<form method="post" class="form-horizontal" action="<?php echo Uri::to('admin/advance/course/add/'.$course_id); ?>"
+<form method="post" class="form-horizontal" action="<?php echo Uri::to('admin/advance/course/add/' . $course_id); ?>"
       enctype="multipart/form-data" novalidate>
     <input name="token" type="hidden" value="<?php echo $token; ?>">
     <div class="form-group notification">
@@ -47,8 +47,8 @@
                 'placeholder' => 'Số tiền muốn xin tạm ứng',
                 'autocomplete' => 'off',
                 'autofocus' => 'true',
-                'class' => 'form-control' ,
-                'id' =>  'money_'
+                'class' => 'form-control',
+                'id' => 'money_'
             )); ?>
             <input type="hidden" id="hidden_money" value="" name="money">
             <?php if (isset($errors['money'])) { ?>
@@ -78,16 +78,17 @@
                 'class' => 'btn btn-primary btn-continue',
                 'data-loading' => __('global.saving')
             )); ?>
-            <?php echo Html::link('admin/advance/course/'.$course_id, __('global.cancel'), array(
+            <?php echo Html::link('admin/advance/course/' . $course_id, __('global.cancel'), array(
                 'class' => 'btn btn-danger btn-cancel'
             )); ?>
         </aside>
     </div>
 </form>
+<input id="menuSelected" type="hidden" value="<?php if (isset($tab)): echo $tab; endif; ?>">
 <script src="<?php echo asset_url('js/accounting.min.js'); ?>"></script>
 <script src="<?php echo asset_url('js/currency-module.js'); ?>"></script>
 <script type="text/javascript">
-    (function($){
+    (function ($) {
         $(document).ready(function () {
 
             var inputs = ['#money_'];

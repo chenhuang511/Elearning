@@ -59,6 +59,7 @@
 			<?php echo __('instructor.nopages_desc'); ?><br>
 		</aside>
 	<?php endif; ?>
+	<input id="menuSelected" type="hidden" value="<?php if (isset($tab)): echo $tab; endif; ?>">
 </section>
 
 <?php echo $footer; ?>

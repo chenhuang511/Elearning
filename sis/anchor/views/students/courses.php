@@ -22,26 +22,26 @@
             </thead>
             <tbody>
             <?php foreach ($courses->results as $cour): ?>
-                    <tr>
-                        <td><?php echo $cour->id ?></td>
-                        <td><?php echo $cour->fullname; ?></td>
-                        <td><?php
-                            if ($cour->startdate !== NULL)
-                                echo $cour->startdate;
-                            else
-                                echo 'chưa khởi tạo';
-                            ?></td>
-                        <td><?php
-                            if ($cour->enddate !== NULL)
-                                echo $cour->enddate;
-                            else
-                                echo 'chưa khởi tạo';
-                            ?>
-                        </td>
-                        <td>
-                            <a href="#" class="btn btn-primary">Ghi danh</a>
-                        </td>
-                    </tr>
+                <tr>
+                    <td><?php echo $cour->id ?></td>
+                    <td><?php echo $cour->fullname; ?></td>
+                    <td><?php
+                        if ($cour->startdate !== NULL)
+                            echo $cour->startdate;
+                        else
+                            echo 'chưa khởi tạo';
+                        ?></td>
+                    <td><?php
+                        if ($cour->enddate !== NULL)
+                            echo $cour->enddate;
+                        else
+                            echo 'chưa khởi tạo';
+                        ?>
+                    </td>
+                    <td>
+                        <a href="#" class="btn btn-primary">Ghi danh</a>
+                    </td>
+                </tr>
             <?php endforeach; ?>
             </tbody>
         </table>
@@ -55,4 +55,5 @@
         </aside>
     <?php endif; ?>
 </section>
+<input id="menuSelected" type="hidden" value="<?php if (isset($tab)): echo $tab; endif; ?>">
 <?php echo $footer; ?>

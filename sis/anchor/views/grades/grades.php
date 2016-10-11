@@ -49,7 +49,7 @@
         </aside>
     <?php endif; ?>
 </section>
-
+<input id="menuSelected" type="hidden" value="<?php if (isset($tab)): echo $tab; endif; ?>">
 <script src="<?php echo asset_url('js/jquery.tablesorter.min.js'); ?>"></script>
 <script type="text/javascript">
     $(document).ready(function() {

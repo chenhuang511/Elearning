@@ -115,6 +115,7 @@
             </div>
         </div>
     </div>
+    <input id="menuSelected" type="hidden" value="<?php if (isset($tab)): echo $tab; endif; ?>">
 </section>
 <input type="hidden" name="token" id="token" value="<?php echo Csrf::token(); ?>">
 <script src="<?php echo asset('anchor/views/assets/js/enrol-module.js'); ?>"></script>

@@ -23,14 +23,14 @@
         <?php if ($pages->count): ?>
             <table class="table table-hover">
                 <thead>
-                    <tr>
-                        <th class="col-sm-1">ID</th>
-                        <th class="col-sm-2">Tên thiết bị</th>
-                        <th class="col-sm-3">Thông tin</th>
-                        <th class="col-sm-1">Số lượng</th>
-                        <th class="col-sm-1">Trạng Thái</th>
-                        <th class="col-sm-2">Quản lý</th>
-                    </tr>
+                <tr>
+                    <th class="col-sm-1">ID</th>
+                    <th class="col-sm-2">Tên thiết bị</th>
+                    <th class="col-sm-3">Thông tin</th>
+                    <th class="col-sm-1">Số lượng</th>
+                    <th class="col-sm-1">Trạng Thái</th>
+                    <th class="col-sm-2">Quản lý</th>
+                </tr>
                 </thead>
                 <tbody>
                 <?php foreach ($pages->results as $item): $display_pages = array($item); ?>
@@ -64,8 +64,8 @@
                     <?php endforeach; ?>
                 <?php endforeach; ?>
                 </tbody>
-        </table>
-        <aside class="paging"><?php echo $pages->links(); ?></aside>
+            </table>
+            <aside class="paging"><?php echo $pages->links(); ?></aside>
         <?php else: ?>
             <aside class="empty pages">
                 <span class="icon"></span>
@@ -73,5 +73,5 @@
             </aside>
         <?php endif; ?>
     </section>
-
+    <input id="menuSelected" type="hidden" value="<?php if (isset($tab)): echo $tab; endif; ?>">
 <?php echo $footer; ?>

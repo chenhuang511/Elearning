@@ -17,6 +17,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
             array('url' => '/status/rebuff', 'lang' => 'advance.rebuff', 'class' => 'spam')
         );
         $vars['advance'] =  $pagination;
+        $vars['tab'] = 'course';
         return View::create('advance/index', $vars)
             ->partial('header', 'partials/header')
             ->partial('footer', 'partials/footer');
@@ -45,6 +46,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
         $vars['course'] = Course::getById($courseId)->fullname;
         $input['time_request'] = date("Y-m-d");
         $input['course_id'] =  $courseId;
+        $vars['tab'] = 'course';
 
         $validator = new Validator($input);
         $validator->check('money')
@@ -108,7 +110,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
         $vars['course'] = Course::getById($courseId)->fullname;
         $vars['courses'] = Course::get_list_shortname_courses();
         $vars['courseId'] =  $courseId;
-
+        $vars['tab'] = 'course';
 
         $vars['page'] = Registry::get('posts_page');
         $vars['statuses'] = array(
@@ -168,6 +170,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
         $vars['courseId'] =  $courseId;
         $vars['messages'] = Notify::read();
         $vars['token'] = Csrf::token();
+        $vars['tab'] = 'course';
 
         $input = Input::get(array(
             'key_name',

@@ -81,21 +81,23 @@
                     <div class="panel panel-default">
                         <div class="panel-heading" role="tab" id="headingCourse">
                             <h4 class="panel-title">
-                                <a role="button" data-toggle="collapse" data-parent="#accordionMenu" href="#collapseCourse"
+                                <a role="button" data-toggle="collapse" data-parent="#accordionMenu"
+                                   href="#collapseCourse"
                                    aria-expanded="true" aria-controls="collapseCourse">
                                     <i class="fa fa-cog" aria-hidden="true"></i> Quản lý khóa học
                                 </a>
                             </h4>
                         </div>
-                        <div id="collapseCourse" class="panel-collapse collapse in" role="tabpanel"
+                        <div id="collapseCourse"
+                             class="panel-collapse collapse in" role="tabpanel"
                              aria-labelledby="headingCourse">
                             <div class="panel-body">
                                 <ul class="mnu-lst">
-                                    <li><a data-parent="course" href="<?php echo Uri::to('admin/courses'); ?>"><i class="fa fa-caret-right"
+                                    <li><a href="<?php echo Uri::to('admin/courses'); ?>"><i class="fa fa-caret-right"
                                                                                              aria-hidden="true"></i>
                                             Danh
                                             sách khóa học</a></li>
-                                    <li><a data-parent="curriculum" href="<?php echo Uri::to('admin/curriculum/add/course'); ?>"><i
+                                    <li><a href="<?php echo Uri::to('admin/curriculum/add/course'); ?>"><i
                                                 class="fa fa-caret-right" aria-hidden="true"></i> Tạo lịch giảng</a>
                                     </li>
                                 </ul>
@@ -115,15 +117,19 @@
                              aria-labelledby="headingPost">
                             <div class="panel-body">
                                 <ul class="mnu-lst">
-                                    <li><a data-parent="post" href="<?php echo Uri::to('admin/posts'); ?>"><i class="fa fa-caret-right"
+                                    <li><a href="<?php echo Uri::to('admin/posts'); ?>"><i class="fa fa-caret-right"
                                                                                            aria-hidden="true"></i> Danh
                                             sách
                                             bài viết</a></li>
-                                    <li><a data-parent="parent" href="<?php echo Uri::to('admin/posts/add'); ?>"><i class="fa fa-caret-right"
+                                    <li><a href="<?php echo Uri::to('admin/posts/add'); ?>"><i class="fa fa-caret-right"
                                                                                                aria-hidden="true"></i>
                                             Tạo
                                             bài viết mới</a></li>
-                                    <li><a data-parent="cateogory" href="<?php echo Uri::to('admin/categories'); ?>"><i
+                                    <li><a href="<?php echo Uri::to('admin/comments'); ?>"><i class="fa fa-caret-right"
+                                                                                              aria-hidden="true"></i>
+                                            Danh
+                                            sách bình luận</a></li>
+                                    <li><a href="<?php echo Uri::to('admin/categories'); ?>"><i
                                                 class="fa fa-caret-right"
                                                 aria-hidden="true"></i> Quản
                                             lý danh mục</a></li>
@@ -144,19 +150,19 @@
                              aria-labelledby="headingSystem">
                             <div class="panel-body">
                                 <ul class="mnu-lst">
-                                    <li><a data-parent="user" href="<?php echo Uri::to('admin/users'); ?>"><i class="fa fa-caret-right"
+                                    <li><a href="<?php echo Uri::to('admin/users'); ?>"><i class="fa fa-caret-right"
                                                                                            aria-hidden="true"></i> Quản
                                             lý
                                             người dùng</a></li>
-                                    <li><a data-parent="student" href="<?php echo Uri::to('admin/students'); ?>"><i class="fa fa-caret-right"
+                                    <li><a href="<?php echo Uri::to('admin/students'); ?>"><i class="fa fa-caret-right"
                                                                                               aria-hidden="true"></i>
                                             Quản
                                             lý sinh viên</a></li>
-                                    <li><a data-parent="instructor" href="<?php echo Uri::to('admin/instructor'); ?>"><i
+                                    <li><a href="<?php echo Uri::to('admin/instructor'); ?>"><i
                                                 class="fa fa-caret-right"
                                                 aria-hidden="true"></i> Quản
                                             lý giảng viên</a></li>
-                                    <li><a data-parent="school" href="<?php echo Uri::to('admin/schools'); ?>"><i class="fa fa-caret-right"
+                                    <li><a href="<?php echo Uri::to('admin/schools'); ?>"><i class="fa fa-caret-right"
                                                                                              aria-hidden="true"></i>
                                             Quản
                                             lý Trường học</a></li>
@@ -178,10 +184,11 @@
                             <div class="panel-body">
                                 <ul class="mnu-lst">
                                     <li><a href="<?php echo Uri::to('admin/rooms'); ?>"><i class="fa fa-caret-right"
-                                                       aria-hidden="true"></i>
+                                                                                           aria-hidden="true"></i>
                                             Danh sách phòng học</a></li>
-                                    <li><a href="<?php echo Uri::to('admin/equipment/add/room'); ?>"><i class="fa fa-caret-right"
-                                                       aria-hidden="true"></i>
+                                    <li><a href="<?php echo Uri::to('admin/equipment/add/room'); ?>"><i
+                                                class="fa fa-caret-right"
+                                                aria-hidden="true"></i>
                                             Tạo phòng học mới</a></li>
                                 </ul>
                             </div>

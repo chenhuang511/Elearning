@@ -47,5 +47,6 @@
         </aside>
     <?php endif; ?>
 </section>
+<input id="menuSelected" type="hidden" value="<?php if (isset($tab)): echo $tab; endif; ?>">
 <?php echo $footer; ?>
 

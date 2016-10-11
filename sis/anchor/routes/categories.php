@@ -8,6 +8,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 	Route::get(array('admin/categories', 'admin/categories/(:num)'), function($page = 1) {
 		$vars['messages'] = Notify::read();
 		$vars['categories'] = Category::paginate($page, Config::get('admin.posts_per_page'));
+        $vars['tab'] = 'post';
 
 		return View::create('categories/index', $vars)
 			->partial('header', 'partials/header')
@@ -22,6 +23,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 		$vars['messages'] = Notify::read();
 		$vars['token'] = Csrf::token();
 		$vars['category'] = Category::find($id);
+        $vars['tab'] = 'post';
 
 		// extended fields
 		$vars['fields'] = Extend::fields('category', $id);
@@ -72,6 +74,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         $vars['errors'] = Session::get('messages.error');
 		$vars['messages'] = Notify::read();
 		$vars['token'] = Csrf::token();
+        $vars['tab'] = 'post';
 
 		// extended fields
 		$vars['fields'] = Extend::fields('category');

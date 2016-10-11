@@ -164,6 +164,7 @@
             </div>
         </div>
     </div>
+    <input id="menuSelected" type="hidden" value="<?php if (isset($tab)): echo $tab; endif; ?>">
     <script src="<?php echo asset('anchor/views/assets/js/topic-module.js'); ?>"></script>
     <script src="<?php echo asset('anchor/views/assets/js/autosave.js'); ?>"></script>
     <script type="text/javascript">

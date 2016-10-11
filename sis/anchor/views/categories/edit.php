@@ -87,6 +87,7 @@
 		</div>
 
 	</form>
+	<input id="menuSelected" type="hidden" value="<?php if (isset($tab)): echo $tab; endif; ?>">
 </section>
 
 <script src="<?php echo asset('anchor/views/assets/js/slug.js'); ?>"></script>

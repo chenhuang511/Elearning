@@ -29,7 +29,7 @@
                     <td><?php echo $school->id ?></td>
                     <td>
                         <a href="<?php echo Uri::to('admin/schools/info/' . $school->id); ?>">
-                                <p style="margin-bottom: 0;"><?php echo $school->name; ?></p>
+                            <p style="margin-bottom: 0;"><?php echo $school->name; ?></p>
                         </a>
                     </td>
                 </tr>
@@ -46,4 +46,5 @@
         </aside>
     <?php endif; ?>
 </section>
+<input id="menuSelected" type="hidden" value="<?php if (isset($tab)): echo $tab; endif; ?>">
 <?php echo $footer; ?>
