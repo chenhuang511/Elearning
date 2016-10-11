@@ -294,16 +294,12 @@ $(function() {
 	});
 
 	output.bind('blur', function() {
-		if (output.val() == '') {
-			output.val(slugify(input.val()));
-		} else {
-			output.val(slugify(output.val()));
-		}
+
+		output.val(slugify(input.val()));
+		// output.val(slugify(output.val()));
 	});
 
 	input.bind('keyup', function() {
-		if (slugHasValue == '') {
-			output.val(slugify(input.val()));
-		}
+		output.val(slugify(input.val()));
 	});
 });

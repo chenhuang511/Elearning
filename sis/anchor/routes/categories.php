@@ -18,6 +18,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 		Edit Category
 	*/
 	Route::get('admin/categories/edit/(:num)', function($id) {
+        $vars['errors'] = Session::get('messages.error');
 		$vars['messages'] = Notify::read();
 		$vars['token'] = Csrf::token();
 		$vars['category'] = Category::find($id);
@@ -68,6 +69,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 		Add Category
 	*/
 	Route::get('admin/categories/add', function() {
+        $vars['errors'] = Session::get('messages.error');
 		$vars['messages'] = Notify::read();
 		$vars['token'] = Csrf::token();
 

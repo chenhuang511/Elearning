@@ -104,7 +104,7 @@
 		</div>
 	</div>
 
-	<div class=" form-group <?php if (isset($errors['description'])) {
+	<div class=" form-group <?php if (isset($errors['status'])) {
 		echo 'has-error';
 	} else {
 		echo '';
@@ -120,11 +120,6 @@
 	</div>
 
 	<?php foreach($fields as $field): ?>
-		<div class=" form-group <?php if (isset($errors['category'])) {
-			echo 'has-error';
-		} else {
-			echo '';
-		} ?>">
 
 			<label for="extend_<?php echo $field->key; ?>" class="col-sm-2 control-label"><?php echo $field->label; ?></label>
 			<div class="col-sm-4">
@@ -153,17 +148,22 @@
 <script src="<?php echo asset('anchor/views/assets/js/slug.js'); ?>"></script>
 <script src="<?php echo asset('anchor/views/assets/js/dragdrop.js'); ?>"></script>
 <script src="<?php echo asset('anchor/views/assets/js/upload-fields.js'); ?>"></script>
-<script src="<?php echo asset('anchor/views/assets/js/text-resize.js'); ?>"></script>
-<script src="<?php echo asset('anchor/views/assets/js/editor.js'); ?>"></script>
 <script src="<?php echo asset('anchor/views/assets/js/autosave.js'); ?>"></script>
 <script src="<?php echo asset('anchor/views/assets/ckeditor/ckeditor.js'); ?>"></script>
 <script>
-	editor = CKEDITOR.replace( 'markdown');
+	var editor = CKEDITOR.replace( 'markdown');
 	$('#submit').click(function() {
 		var value = editor.getData() ;
 	    console.log(value) ;
 		$('#markdown').val(value) ;
 		// send your ajax request with value// profit!
+	});
+	$('#datetimepicker_enddate').datetimepicker({
+		language: 'fr',
+		pickTime: false,
+		startView: 2,
+		minView: 2,
+		format: 'yyyy-mm-dd'
 	});
 
 </script>

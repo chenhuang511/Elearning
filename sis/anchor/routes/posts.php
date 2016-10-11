@@ -61,7 +61,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 		'admin/posts/status/(:any)/(:num)'), function($status, $post = 1) {
 
 		$query = Post::where('status', '=', $status);
-
+        $vars['errors'] = Session::get('messages.error');
 		$perpage = Config::get('admin.posts_per_page');
 		$total = $query->count();
 		$posts = $query->sort('title')->take($perpage)->skip(($post - 1) * $perpage)->get();
@@ -84,6 +84,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 		Edit post
 	*/
 	Route::get('admin/posts/edit/(:num)', function($id) {
+        $vars['errors'] = Session::get('messages.error');
 		$vars['messages'] = Notify::read();
 		$vars['token'] = Csrf::token();
 		$vars['article'] = Post::find($id);
@@ -108,8 +109,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
 	Route::post('admin/posts/edit/(:num)', function($id) {
 		$input = Input::get(array('title', 'slug', 'description', 'created',
-			'markdown', 'css', 'js', 'category', 'status', 'comments'));
-
+			'markdown', 'category', 'status'));
 		// if there is no slug try and create one from the title
 		if(empty($input['slug'])) {
 			$input['slug'] = $input['title'];
@@ -119,7 +119,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 		$input['slug'] = slug($input['slug']);
 		
 		// an array of items that we shouldn't encode - they're no XSS threat
-		$dont_encode = array('description', 'markdown', 'css', 'js');
+		$dont_encode = array('description', 'markdown');
 		
 		foreach($input as $key => &$value) {
 			if(in_array($key, $dont_encode)) continue;
@@ -181,10 +181,10 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 		Add new post
 	*/
 	Route::get('admin/posts/add', function() {
+        $vars['errors'] = Session::get('messages.error');
 		$vars['messages'] = Notify::read();
 		$vars['token'] = Csrf::token();
-        $vars['errors'] = Session::get('messages.error');
-		$vars['page'] = Registry::get('posts_page');
+        $vars['page'] = Registry::get('posts_page');
 
 		// extended fields
 		$vars['fields'] = Extend::fields('post');
@@ -206,64 +206,57 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 	Route::post('admin/posts/add', function() {
 		$input = Input::get(array('title', 'slug', 'description',
 			'markdown', 'category', 'status'));
-//        var_dump($input);
-//
-//
-//		// if there is no slug try and create one from the title
-//		if(empty($input['slug'])) {
-//			$input['slug'] = $input['title'];
-//		} ;
-//
-//		// convert to ascii
-//		$input['slug'] = slug($input['slug']);
-//        var_dump($input['slug']) ;die;
-//		// an array of items that we shouldn't encode - they're no XSS threat
-//		$dont_encode = array('description', 'markdown');
-//
-//		foreach($input as $key => &$value) {
-//			if(in_array($key, $dont_encode)) continue;
-//			$value = eq($value);
-//		}
-//
-//		$validator = new Validator($input);
-//
-//		$validator->add('duplicate', function($str) {
-//			return Post::where('slug', '=', $str)->count() == 0;
-//		});
-//
-//		$validator->check('title')
-//			->is_max(3, __('posts.title_missing'));
-//
-//		$validator->check('slug')
-//			->is_max(3, __('posts.slug_missing'))
-//			->is_duplicate(__('posts.slug_duplicate'))
-//			->not_regex('#^[0-9_-]+$#', __('posts.slug_invalid'));
-//
-//		if($errors = $validator->errors()) {
-//			Input::flash();
-//
-//			Notify::error($errors);
-//
-//			return Response::redirect('admin/posts/add');
-//		}
-//
-//		if(empty($input['created'])) {
-//			$input['created'] = Date::mysql('now');
-//		}
-//
-//		$user = Auth::user();
-//
-//		$input['author'] = $user->id;
-//
-//		if(empty($input['comments'])) {
-//			$input['comments'] = 0;
-//		}
-//
-//		if(empty($input['markdown'])) {
-//			$input['status'] = 'draft';
-//		}
-//
-//		$input['html'] = parse($input['markdown']);
+
+
+		// if there is no slug try and create one from the title
+		if(empty($input['slug'])) {
+			$input['slug'] = $input['title'];
+		} ;
+
+		// convert to ascii
+		$input['slug'] = slug($input['slug']);
+		// an array of items that we shouldn't encode - they're no XSS threat
+		$dont_encode = array('description', 'markdown');
+
+		foreach($input as $key => &$value) {
+			if(in_array($key, $dont_encode)) continue;
+			$value = eq($value);
+		}
+
+		$validator = new Validator($input);
+
+		$validator->add('duplicate', function($str) {
+			return Post::where('slug', '=', $str)->count() == 0;
+		});
+
+		$validator->check('title')
+			->is_max(3, __('posts.title_missing'));
+
+		$validator->check('slug')
+			->is_max(3, __('posts.slug_missing'))
+			->is_duplicate(__('posts.slug_duplicate'))
+			->not_regex('#^[0-9_-]+$#', __('posts.slug_invalid'));
+
+        if($errors = $validator->errors()) {
+            Input::flash();
+
+            Notify::error($errors);
+
+            return Response::redirect('admin/posts/add');
+        }
+		if(empty($input['created'])) {
+			$input['created'] = Date::mysql('now');
+		}
+
+		$user = Auth::user();
+
+		$input['author'] = $user->id;
+
+		if(empty($input['markdown'])) {
+			$input['status'] = 'draft';
+		}
+
+		$input['html'] = parse($input['markdown']);
 
 		$post = Post::create($input);
 
@@ -271,8 +264,8 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
 		Notify::success(__('posts.created'));
 
-		if(Input::get('autosave') === 'true') return Response::redirect('admin/posts/edit/' . $page->id);
-		else return Response::redirect('admin/posts');
+        return Response::redirect('admin/posts');
+
 	});
 
 	/*
