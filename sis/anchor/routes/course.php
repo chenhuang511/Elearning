@@ -91,7 +91,7 @@ Route::collection(array('before' => 'auth,csrf'), function () {
                 }
             } else {
                 //add localdatabase
-                if(!UserCourse::where('studentid','=', $user->id)->where('courseid','=', $course->id)->where('remoterole','=', $roleid)->get()) {
+                if(!StudentCourse::where('studentid','=', $user->id)->where('courseid','=', $course->id)->where('remoterole','=', $roleid)->get()) {
                     $user_course = array();
                     $user_course['studentid'] = $user->id;
                     $user_course['courseid'] = $course->id;
