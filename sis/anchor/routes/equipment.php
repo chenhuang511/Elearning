@@ -28,6 +28,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
 
         $vars['pages'] = $pagination;
         $vars['roomid'] = $roomid;
+        $vars['tab'] = 'room';
 
         return View::create('equipment/index', $vars)
             ->partial('header', 'partials/header')
@@ -43,6 +44,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
 
         // extended fields
         $vars['fields'] = Extend::fields('rooms');
+        $vars['tab'] = 'room';
 
         return View::create('equipment/add', $vars)
             ->partial('header', 'partials/header')
@@ -104,6 +106,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
         $vars['status'] = $status;
         $vars['roomid'] = $room->id;
         $vars['roomname']= $room->name;
+        $vars['tab'] = 'room';
 
         $dates = array();
 
@@ -220,6 +223,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
 
         // extended fields
         $vars['fields'] = Extend::fields('rooms');
+        $vars['tab'] = 'room';
 
         return View::create('equipment/update', $vars)
             ->partial('header', 'partials/header')
@@ -293,6 +297,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
         $status = $status + array('1' => 'Tốt', '0' => 'Hỏng');
 
         $vars['status'] = $status;
+        $vars['tab'] = 'room';
 
         // extended fields
         $vars['fields'] = Extend::fields('equipment');

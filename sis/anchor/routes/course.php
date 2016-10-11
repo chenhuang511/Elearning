@@ -41,6 +41,7 @@ Route::collection(array('before' => 'auth,csrf'), function () {
         $vars['course'] = $course;
         $vars['users'] = $usersenrol;
         $vars['students'] = $studentsenrol;
+        $vars['tab'] = 'course';
         //need process here
         return View::create('course/enrol', $vars)
             ->partial('header', 'partials/header')
@@ -104,6 +105,7 @@ Route::collection(array('before' => 'auth,csrf'), function () {
         $vars['course'] = $course;
         $vars['users'] = $usersenrol;
         $vars['students'] = $studentsenrol;
+        $vars['tab'] = 'course';
         //need process here
         return View::create('course/enrol', $vars)
             ->partial('header', 'partials/header')

@@ -8,6 +8,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
     Route::get(array('admin/students', 'admin/students/(:num)'), function($page = 1) {
         $vars['messages'] = Notify::read();
         $vars['students'] = Student::paginate($page, Config::get('admin.posts_per_page'));
+        $vars['tab'] = 'sys';
 
         return View::create('students/index', $vars)
             ->partial('header', 'partials/header')
@@ -21,6 +22,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
         $vars['messages'] = Notify::read();
         $vars['courses'] = Course::paginate($page, Config::get('admin.posts_per_page'), $stuid);
+        $vars['tab'] = 'sys';
 
         return View::create('students/courses', $vars)
             ->partial('header', 'partials/header')
@@ -42,6 +44,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
         // extended fields
         $vars['fields'] = Extend::fields('student', $id);
+        $vars['tab'] = 'sys';
 
         return View::create('students/info', $vars)
             ->partial('header', 'partials/header')
@@ -68,6 +71,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         $pagination = new Paginator($pages, $total, $page, $perpage, $url, $whatSearch);
 
         $vars['students'] = $pagination;
+        $vars['tab'] = 'sys';
 
         return View::create('students/search', $vars)
             ->partial('header', 'partials/header')
@@ -136,6 +140,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
         // extended fields
         $vars['fields'] = Extend::fields('student');
+        $vars['tab'] = 'sys';
 
 //        $vars['statuses'] = array(
 //            'inactive' => __('global.inactive'),

@@ -33,6 +33,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
 
         $vars['pages'] = $pagination;
         $vars['courseid'] = $courseid;
+        $vars['tab'] = 'course';
 
         return View::create('curriculum/index', $vars)
             ->partial('header', 'partials/header')
@@ -49,6 +50,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
 
         // extended fields
         $vars['fields'] = Extend::fields('courses');
+        $vars['tab'] = 'course';
 
         return View::create('curriculum/add', $vars)
             ->partial('header', 'partials/header')
@@ -140,6 +142,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
         }
 
         $vars['courseid'] = $course->id;
+        $vars['tab'] = 'course';
 
         $dates = array();
         $hidden_dates = array();
@@ -180,6 +183,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
 
         // extended fields
         $vars['fields'] = Extend::fields('curriculum');
+        $vars['tab'] = 'course';
 
         return View::create('curriculum/addtopic', $vars)
             ->partial('header', 'partials/header')
@@ -291,6 +295,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
 
         // extended fields
         $vars['fields'] = Extend::fields('courses');
+        $vars['tab'] = 'course';
 
         return View::create('curriculum/update', $vars)
             ->partial('header', 'partials/header')
@@ -375,6 +380,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
 
         // extended fields
         $vars['fields'] = Extend::fields('curriculum');
+        $vars['tab'] = 'course';
 
         return View::create('curriculum/edit', $vars)
             ->partial('header', 'partials/header')

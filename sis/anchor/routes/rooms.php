@@ -8,6 +8,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 	Route::get(array('admin/rooms', 'admin/rooms/(:num)'), function($page = 1) {
 		$vars['messages'] = Notify::read();
 		$vars['rooms'] = Room::paginate($page, Config::get('admin.posts_per_page'));
+        $vars['tab'] = 'room';
 		return View::create('rooms/index', $vars)
 			->partial('header', 'partials/header')
 			->partial('footer', 'partials/footer');
@@ -23,6 +24,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
 		// extended fields
 		$vars['fields'] = Extend::fields('rooms', $id);
+        $vars['tab'] = 'room';
 
 		return View::create('rooms/edit', $vars)
 			->partial('header', 'partials/header')
@@ -36,6 +38,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
         // extended fields
         $vars['fields'] = Extend::fields('rooms', $id);
+        $vars['tab'] = 'room';
 
         return View::create('rooms/view', $vars)
             ->partial('header', 'partials/header')
@@ -80,6 +83,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
 		// extended fields
 		$vars['fields'] = Extend::fields('post');
+        $vars['tab'] = 'room';
 
 		return View::create('rooms/add', $vars)
 			->partial('header', 'partials/header')
@@ -134,6 +138,8 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         $vars['rooms'] = Room::where('name', 'LIKE', '%' . $key . '%')
 							->or_where('description', 'LIKE', '%' . $key . '%')
 							->get();
+
+        $vars['tab'] = 'room';
 
         return View::create('rooms/search', $vars)
             ->partial('header', 'partials/header')

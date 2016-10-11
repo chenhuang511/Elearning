@@ -8,6 +8,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 	Route::get(array('admin/instructor', 'admin/instructor/(:num)'), function($page = 1) {
 		$vars['messages'] = Notify::read();
 		$vars['instructors'] = Instructor::paginate($page, Config::get('admin.posts_per_page'));
+        $vars['tab'] = 'sys';
 
 		return View::create('instructor/index', $vars)
 			->partial('header', 'partials/header')
@@ -29,6 +30,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         $pagination = new Paginator($pages, $total, $page, $perpage, $url, $whatSearch);
 
         $vars['instructors'] = $pagination;
+        $vars['tab'] = 'sys';
 
         return View::create('instructor/search', $vars)
             ->partial('header', 'partials/header')
@@ -59,6 +61,8 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 			'paid' => __('contract.paid'),
 			'unpaid' => __('contract.unpaid'),
 		);
+
+        $vars['tab'] = 'sys';
 		
 		return View::create('instructor/edit', $vars)
 			->partial('header', 'partials/header')
@@ -152,6 +156,8 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 			'paid' => __('contract.paid'),
 			'unpaid' => __('contract.unpaid'),
 		);
+
+        $vars['tab'] = 'sys';
 		
 		return View::create('instructor/view', $vars)
 			->partial('header', 'partials/header')
@@ -172,6 +178,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         $pagination = new Paginator($pages, $total, $page, $perpage, $url);
 
         $vars['curriculums'] = $pagination;
+        $vars['tab'] = 'sys';
 
 		return View::create('instructor/curriculum', $vars)
 			->partial('header', 'partials/header')
@@ -209,6 +216,8 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
             'math' => 'Math',
             'history' => 'History',
         );
+
+        $vars['tab'] = 'sys';
 
 		$instructor = Instructor::get_name_instructor();
 		$inst = array('0' => 'Tạo Mới');

@@ -8,6 +8,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
     Route::get(array('admin/schools', 'admin/schools/(:num)'), function($page = 1) {
         $vars['messages'] = Notify::read();
         $vars['schools'] = School::paginate($page, Config::get('admin.posts_per_page'));
+        $vars['tab'] = 'sys';
 
         return View::create('schools/index', $vars)
             ->partial('header', 'partials/header')
@@ -53,6 +54,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         $pagination = new Paginator($pages, $total, $page, $perpage, $url, $whatSearch);
 
         $vars['schools'] = $pagination;
+        $vars['tab'] = 'sys';
 
         return View::create('schools/search', $vars)
             ->partial('header', 'partials/header')
@@ -104,6 +106,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
         // extended fields
         $vars['fields'] = Extend::fields('school');
+        $vars['tab'] = 'sys';
 
         return View::create('schools/add', $vars)
             ->partial('header', 'partials/header')

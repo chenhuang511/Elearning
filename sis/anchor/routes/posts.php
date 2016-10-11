@@ -18,6 +18,8 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 		$vars['categories'] = Category::sort('title')->get();
 		$vars['status'] = 'all';
 
+        $vars['tab'] = 'post';
+
 		return View::create('posts/index', $vars)
 			->partial('header', 'partials/header')
 			->partial('footer', 'partials/footer');
@@ -47,6 +49,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 		$vars['category'] = $category;
 		$vars['categories'] = Category::sort('title')->get();
 		$vars['status']	= 'all';
+        $vars['tab'] = 'post';
 
 		return View::create('posts/index', $vars)
 			->partial('header', 'partials/header')
@@ -73,6 +76,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 		$vars['posts'] = $pagination;
 		$vars['status'] = $status;
 		$vars['categories'] = Category::sort('title')->get();
+        $vars['tab'] = 'post';
 
 		return View::create('posts/index', $vars)
 			->partial('header', 'partials/header')
@@ -100,6 +104,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 		);
 
 		$vars['categories'] = Category::dropdown();
+        $vars['tab'] = 'post';
 
 		return View::create('posts/edit', $vars)
 			->partial('header', 'partials/header')
@@ -196,6 +201,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 		);
 
 		$vars['categories'] = Category::dropdown();
+        $vars['tab'] = 'post';
 
 		return View::create('posts/add', $vars)
 			->partial('header', 'partials/header')

@@ -30,6 +30,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
 		// extended fields
 		$vars['fields'] = Extend::fields('virtual_class_equipments', $id);
+        $vars['tab'] = 'room';
 
 		return View::create('virtual_class_equipments/edit', $vars)
 			->partial('header', 'partials/header')
@@ -96,6 +97,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
 		// extended fields
 		$vars['fields'] = Extend::fields('post');
+        $vars['tab'] = 'room';
 
 		return View::create('virtual_class_equipments/add', $vars)
 			->partial('header', 'partials/header')
@@ -149,6 +151,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         $vars['token'] = Csrf::token();
         //$key = Input::get(array('text-search'));
         $key = $_GET['text-search'];
+        $vars['tab'] = 'room';
 
         $vars['virtual_class_equipments'] = VirtualClassEquipment::where('name', 'LIKE', '%' . $key . '%')
         															->or_where('description', 'LIKE', '%' . $key . '%')
