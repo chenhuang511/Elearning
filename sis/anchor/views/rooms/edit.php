@@ -34,13 +34,6 @@
                             </select>
                         </td>
                     </tr>
-                    <!-- <tr>
-                        <td>ẢNH: </td>
-                        <td>
-                        	<?php echo Form::file('image_url'); ?>
-                            <img src="<?php echo Input::previous('image', $rooms->image_url, array('id' => 'image')); ?>" id="image" height="150px" width="180px"/>
-                        </td>
-                    </tr> -->
                     </tbody>
                 </table>
 

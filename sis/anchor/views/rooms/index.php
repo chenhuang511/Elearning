@@ -32,8 +32,8 @@
                 <?php foreach($rooms->results as $room): ?>
                     <tr>
                         <td class="col-sm-1"><?php echo $room->id ?></td>
-                        <td class="col-sm-3">
-                            <?php echo $room->name ?>
+                        <td class="col-sm-3"><a href="<?php echo Uri::to('admin/rooms/view/' . $room->id); ?>">
+                            <?php echo $room->name ?></a>
                         </td>
                         <td class="col-sm-3">
                             <?php echo $room->description ?>
@@ -48,8 +48,6 @@
                             ?>
                         </td>
                         <td class="col-sm-3">
-                            <a href="<?php echo Uri::to('admin/rooms/view/' . $room->id); ?>" class="btn btn-info">Xem</a>
-                            <a href="<?php echo Uri::to('admin/rooms/edit/' . $room->id); ?>" class="btn btn-primary">Sửa</a>
                             <a href="<?php echo Uri::to('admin/rooms/delete/' . $room->id); ?>"
                                onclick="return confirm('Bạn chắc chắn muốn xóa thông tin này');" class="btn btn-danger">Xóa</a>
                         </td>
