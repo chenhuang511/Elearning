@@ -144,6 +144,26 @@
             </aside>
         </div>
     </form>
+    <!-- Modal -->
+    <div class="modal fade" id="confirmRoom" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title text-danger" id="myModalLabel"><i class="fa fa-exclamation-triangle"
+                                                                             aria-hidden="true"></i> Cảnh báo</h4>
+                </div>
+                <div class="modal-body">
+                    Phòng học này đã được đăng ký sử dụng. Bạn có chắc chắn muốn đăng ký?
+                </div>
+                <div class="modal-footer">
+                    <button id="confirmRoomButton" type="button" class="btn btn-primary" data-dismiss="modal">Đăng ký</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Hủy bỏ</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="<?php echo asset('anchor/views/assets/js/topic-module.js'); ?>"></script>
     <script src="<?php echo asset('anchor/views/assets/js/autosave.js'); ?>"></script>
     <script type="text/javascript">

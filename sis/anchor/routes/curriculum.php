@@ -432,6 +432,10 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
     });
 
     Route::get('admin/curriculum/topic/checkroom/(:any)/(:any)/(:any)', function ($day, $roomid, $time = null) {
-        return Curriculum::checkRoom($day, $roomid, $time);
+        if ($time == 0) {
+            return Curriculum::checkRoom($day, $roomid);
+        } else {
+            return Curriculum::checkRoom($day, $roomid, $time);
+        }
     });
 });

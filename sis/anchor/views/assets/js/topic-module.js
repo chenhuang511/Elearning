@@ -1,5 +1,7 @@
 var topicModule = (function () {
 
+    var confirmRoom = '#confirmRoom';
+
     Array.prototype.last = function () {
         return this[this.length - 1];
     };
@@ -97,6 +99,30 @@ var topicModule = (function () {
         }
     };
 
+    var addWarningClass = function (node, message) {
+        if (!$(node).hasClass('has-warning')) {
+            $(node).addClass('has-warning');
+        }
+
+        var helpBlock = $(node).find('p.help-block');
+        if (helpBlock.length) {
+            helpBlock.html(message);
+        } else {
+            $(node).append('<p class="help-block">' + message + '</p>');
+        }
+    }
+
+    var removeWarningClass = function (node) {
+        if ($(node).hasClass('has-warning')) {
+            $(node).removeClass('has-warning');
+        }
+
+        var helpBlock = $(node).find('p.help-block');
+        if (helpBlock.length) {
+            helpBlock.remove();
+        }
+    };
+
     var generateHTML = function (node, contents) {
         if (contents.length === 0) {
             node.html('');
@@ -147,18 +173,24 @@ var topicModule = (function () {
         return topics;
     };
 
-    var checkRoom = function (day, roomid, time) {
-        var url = '/admin/curriculum/topic/checkroom/' + day + '/' + roomid;
-        if (parseInt(time) != 0) {
-            url = '/admin/curriculum/topic/checkroom/' + day + '/' + roomid + '/' + time;
-        }
+    var checkRoom = function (day, roomid, time, node, addButton) {
+        var url = '/admin/curriculum/topic/checkroom/' + day + '/' + roomid + '/' + time;
 
         $.ajax({
             method: "GET",
             url: url,
             dataType: "text",
-            success: function (data) {
-                return data;
+            success: function (rs) {
+                if (rs == 'y') {
+                    $(confirmRoom).modal('show');
+                    addWarningClass($(node).parent(), '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Phòng học này đã được sử dụng');
+                    // disable add new topic
+                    $(addButton).attr('disabled', 'disabled');
+                }
+                if (rs == 'n') {
+                    removeWarningClass($(node).parent());
+                    $(addButton).removeAttr('disabled');
+                }
             },
             fail: function (data) {
                 console.log('co loi');
@@ -261,10 +293,30 @@ var topicModule = (function () {
             $(element).on('change', function () {
                 var time = $(timeTopics[index]).find(':selected').val();
                 var roomid = $(this).find(':selected').val();
-                var result = checkRoom(day, roomid, time);
-                console.log('rs:', result);
+                checkRoom(day, roomid, time, element, addTopicButtons[index]);
             });
         });
+
+        $.each(timeTopics, function (index, element) {
+            var day = $('#topic_day_' + (index + 1)).val();
+            $(element).on('change', function () {
+                var time = $(this).find(':selected').val();
+                var roomid = $(rooms[index]).find(':selected').val();
+                if (roomid != 0) {
+                    checkRoom(day, roomid, time, rooms[index], addTopicButtons[index]);
+                }
+            });
+        });
+
+        $('#confirmRoomButton').on('click', function () {
+            $.each(addTopicButtons, function (index, element) {
+                var disabled = $(element).attr('disabled');
+                if (disabled.length) {
+                    $(element).removeAttr('disabled');
+                }
+            });
+        });
+
     };
     return {
         init: init
