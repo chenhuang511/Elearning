@@ -55,7 +55,7 @@
                                             <label for="topic_<?php echo $key; ?>"
                                                    class="control-label"><?php echo __('curriculum.topic') ?> <span
                                                     class="text-danger">*</span></label>
-                                            <?php echo Form::text('topic_' . $key, Input::previous('topic'), array('id' => 'topic_' . $key, 'class' => 'form-control', 'rows' => 3)); ?>
+                                            <?php echo Form::text('topic_' . $key, Input::previous('topic'), array('id' => 'topic_name_' . $key, 'class' => 'form-control', 'rows' => 3)); ?>
                                             <?php if (isset($errors['topic_' . $key])) { ?>
                                                 <p class="help-block"><?php echo $errors['topic_' . $key][0] ?></p>
                                             <?php } ?>

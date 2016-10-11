@@ -15,7 +15,7 @@ var topicModule = (function () {
     };
 
     var getTopics = function () {
-        return $('input[id^=topic_]');
+        return $('input[id^=topic_name_]');
     };
 
     var getTeachers = function () {
@@ -211,6 +211,10 @@ var topicModule = (function () {
 
         $.each(addTopicButtons, function (index, element) {
             $(element).on('click', function (e) {
+                var disabled = $(element).attr('disabled');
+                if(disabled) {
+                    return;
+                }
                 // validation
                 var is_validate = validation(nameTopics[index], teachers[index], rooms[index]);
                 // if have no validate
@@ -311,7 +315,8 @@ var topicModule = (function () {
         $('#confirmRoomButton').on('click', function () {
             $.each(addTopicButtons, function (index, element) {
                 var disabled = $(element).attr('disabled');
-                if (disabled.length) {
+                console.log(disabled);
+                if (disabled) {
                     $(element).removeAttr('disabled');
                 }
             });
