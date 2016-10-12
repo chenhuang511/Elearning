@@ -52,7 +52,7 @@ class local_role_external extends external_api {
         $hostuser = get_remote_mapping_localuserid($userid);
 
         //userid and courseid is remoteid
-        remote_assign_role_to_user($roleid, $hostuser, $courseid);
+        remote_assign_role_to_user($roleid, $hostuser, $hostcourse);
 
         return role_assign($roleid, $hostuser, $hostcourse, '', NULL);
     }
@@ -88,7 +88,7 @@ class local_role_external extends external_api {
         $hostuser = get_remote_mapping_localuserid($userid);
 
         //userid and courseid is remoteid
-        remote_unassign_role_to_user($roleid, $hostuser, $courseid);
+        remote_unassign_role_to_user($roleid, $hostuser, $hostcourse);
 
         return role_unassign($roleid, $hostuser, $hostcourse, '', NULL);
     }
