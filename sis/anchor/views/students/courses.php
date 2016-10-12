@@ -39,7 +39,12 @@
                         ?>
                     </td>
                     <td>
-                        <a href="#" class="btn btn-primary">Ghi danh</a>
+                    <?php $isenrol = check_user_enrolled($userid, $cour->id, $role) ?>
+                    <?php if($isenrol) : ?>
+                        <button data-courseid="<?= $cour->id ?>" class="btn btn-primary role-action enrol-user" data-type="unenroll">Bỏ ghi danh</button>
+                    <?php else : ?>
+                        <button data-courseid="<?= $cour->id ?>" class="btn btn-primary role-action enrol-user" data-type="enrol">Ghi danh</button>
+                    <?php endif; ?>
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -55,5 +60,15 @@
         </aside>
     <?php endif; ?>
 </section>
+<input type="hidden" name="token" id="token" value="<?php echo Csrf::token(); ?>">
 <input id="menuSelected" type="hidden" value="<?php if (isset($tab)): echo $tab; endif; ?>">
+<script src="<?php echo asset('anchor/views/assets/js/enrol-module.js'); ?>"></script>
+<script>
+    (function ($) {
+        $(document).ready(function () {
+            enrolModule.init_course(<?= $userid ?>, <?= $role ?>);
+        });
+    })(jQuery);
+</script>
+
 <?php echo $footer; ?>

@@ -13,21 +13,14 @@ class Course extends Base
 
     public static function paginate($page = 1, $perpage = 10, $stuid) {
 
-        $query = Query::table(static::table())->where('remoteid', '!=', 'null');
-
-        $coursesuccessed = StudentCourse::where('studentid', '=', $stuid)->get();
-
-        foreach ($coursesuccessed as $course)
-        {
-            $query = $query->where('id', '!=', $course->courseid);
-        }
+        $query = Query::table(static::table())->where('status', '=', PUBLISHED);
 
         $count = $query->count();
 
         $results = $query->take($perpage)->skip(($page - 1) * $perpage)->sort('id', 'asc')->get();
         //$results = $query->take($perpage)->skip(($page - 1) * $perpage)->get();
 
-        return new Paginator($results, $count, $page, $perpage, Uri::to('admin/students/'.$stuid.'/courses'));
+        return new Paginator($results, $count, $page, $perpage, Uri::to('admin/students/courses/'.$stuid));
     }
 
     public static function getCoursesBy($userid = null, $page = 1, $perpage = 10)

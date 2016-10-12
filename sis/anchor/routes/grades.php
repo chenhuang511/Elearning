@@ -36,7 +36,7 @@ Route::collection(array('before' => 'auth,csrf'), function() {
             ->partial('footer', 'partials/footer');
     });
 
-    Route::get(array('admin/grade/course/(:num)/search', 'admin/grade/course/(:num)/search/(:num)'), function($courseid, $page = 1) {
+    Route::get(array('admin/grade/course/search/(:num)', 'admin/grade/course/search/(:num)/(:num)'), function($courseid, $page = 1) {
         $input = Input::get(array(
             'gradeMin',
             'gradeMax',
@@ -54,7 +54,7 @@ Route::collection(array('before' => 'auth,csrf'), function() {
         list($total, $pages) = Course::get_grade_by_course($courseid, $page, $perpage = Config::get('admin.posts_per_page'), $input['key'], $input['gradeMin'], $input['gradeMax']);
         // get public listings
 
-        $url = Uri::to('admin/grade/course/' . $courseid . '/search');
+        $url = Uri::to('admin/grade/course/search/' . $courseid);
 
         $pagination = new Paginator($pages, $total, $page, $perpage, $url, $whatSearch);
 

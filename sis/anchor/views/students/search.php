@@ -38,7 +38,7 @@
                     </td>
                     <td><?php echo $student->email ?></td>
                     <td><a class="btn btn-primary" href="#">Chứng chỉ</a></td>
-                    <td><a class="btn btn-primary" href= <?php echo '../students/' . $student->id . '/courses' ?>>Đăng
+                    <td><a class="btn btn-primary" href= <?php echo Uri::to('admin/students/courses/' . $student->id); ?>>Đăng
                             kí học</a></td>
                 </tr>
             <?php endforeach; ?>

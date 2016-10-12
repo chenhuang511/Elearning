@@ -103,3 +103,17 @@ function remote_assign_enrol_user($domain, $token, $roleid, $userremoteid, $cour
         ));
     return $resp;
 }
+function remote_unassign_enrol_user($domain, $token, $roleid, $userremoteid, $courseremoteid)
+{
+
+    $resp = RestClient::dorest(
+        array(
+            'domain' => $domain,
+            'token' => $token,
+            'function_name'=>'local_host_unassign_role_to_user',
+            'params'=>array('roleid' => $roleid,
+                'userid' => $userremoteid,
+                'courseid' => $courseremoteid)
+        ));
+    return $resp;
+}

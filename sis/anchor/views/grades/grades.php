@@ -2,7 +2,7 @@
 <section class="wrap">
     <?php echo $messages; ?>
     <?php if ($pages->count): ?>
-        <form action="<?php echo Uri::to('admin/grade/course/' . $courseid . '/search') ?>" method="get" class="pull-right form-inline mb10">
+        <form action="<?php echo Uri::to('admin/grade/course/search/' . $courseid) ?>" method="get" class="pull-right form-inline mb10">
             <div class="form-group">
                 <label for="gradeMin">Điểm</label>
                 <?php echo Form::number('gradeMin', Input::get('gradeMin'), array('class' => 'form-control', 'id' => 'gradeMin')); ?>

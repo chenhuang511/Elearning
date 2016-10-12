@@ -104,6 +104,42 @@ Route::collection(array('before' => 'auth,csrf'), function () {
         echo $ispass;
     });
 
+    Route::post('admin/courses/unenroll/user/(:num)', function($courseid) {
+        $input = Input::get(array('userid', 'role'));
+        $userid = $input['userid'];
+        $role = $input['role'];
+        if($role == 3) {
+            $user = User::find($userid);
+        } else {
+            $user = Student::find($userid);
+        }
+        $course = Course::find($courseid);
+        $ispass = true;
+        if(!$user || !$course) {
+            $ispass = false;
+        } else {
+            $school = School::find($user->schoolid);
+            //enrol for school
+            $domain = $school->wwwroot;
+            $token = $school->token;
+
+            $userremoteid = $user->remoteid;
+            $courseremoteid = $course->remoteid;
+
+            remote_unassign_enrol_user($domain, $token, $role, $userremoteid, $courseremoteid);
+
+            if($role == 3) {
+                //delete
+                UserCourse::where('userid','=', $user->id)->where('courseid','=', $course->id)->where('remoterole','=', $role)->delete();
+            } else {
+                //delete
+                StudentCourse::where('studentid','=', $user->id)->where('courseid','=', $course->id)->where('remoterole','=', $role)->delete();
+            }
+        }
+        echo $ispass;
+
+    });
+
     Route::get(array('admin/courses/enrol/(:num)', 'admin/courses/enrol/(:num)/(:num)'), function ($courseid, $page = 1) {
 
         // get public listings

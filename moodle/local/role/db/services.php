@@ -42,6 +42,14 @@ $functions = array(
 		'type'		  => 'read',
 		'ajax'		  => true
 	),
+	'local_host_unassign_role_to_user' => array(
+		'classname'	  => 'local_role_external',
+		'methodname'  => 'host_unassign_role_to_user',
+		'classpath'	  => 'local/role/externallib.php',
+		'description' => "Unassign role to user",
+		'type'		  => 'read',
+		'ajax'		  => true
+	),
 	'local_host_enrol_user_to_course' => array(
 		'classname'	  => 'local_role_external',
 		'methodname'  => 'host_enrol_user_to_course',

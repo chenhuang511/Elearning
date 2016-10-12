@@ -18,11 +18,13 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
     /*
        List courses
    */
-    Route::get(array('admin/students/(:num)/courses', 'admin/students/(:num)/courses/(:num)'), function ($stuid, $page = 1) {
+    Route::get(array('admin/students/courses/(:num)', 'admin/students/courses/(:num)/(:num)'), function ($stuid, $page = 1) {
 
         $vars['messages'] = Notify::read();
         $vars['courses'] = Course::paginate($page, Config::get('admin.posts_per_page'), $stuid);
         $vars['tab'] = 'sys';
+        $vars['userid'] = $stuid;
+        $vars['role'] = 5;
 
         return View::create('students/courses', $vars)
             ->partial('header', 'partials/header')

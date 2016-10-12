@@ -140,7 +140,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
 
             Notify::error($errors);
 
-            return Response::redirect('admin/advance/course/edit/' . $courseId .'/'.$id);
+            return Response::redirect('admin/advance/course/edit/' . $courseId . '/' . $id);
         }
         $user = Auth::user();
         $status = Advance::getById($id)->status;
@@ -154,7 +154,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
 
         Notify::success(__('posts.updated'));
 
-        return Response::redirect('admin/advance/course/edit/' . $courseId .'/'.$id);
+        return Response::redirect('admin/advance/course/edit/' . $courseId . '/' . $id);
     });
 
     Route::get('admin/advance/course/delete/(:num)/(:num)', function ($courseId,$id) {
@@ -165,7 +165,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
         return Response::redirect('admin/advance/course/'.$courseId);
     });
 
-    Route::get(array('admin/advance/course/(:num)/search', 'admin/advance/course/(:num)/search/(:num)'), function ($courseId,$page = 1) {
+    Route::get(array('admin/advance/course/search/(:num)', 'admin/advance/course/search/(:num)/(:num)'), function ($courseId, $page = 1) {
 
         $vars['courseId'] =  $courseId;
         $vars['messages'] = Notify::read();
@@ -179,7 +179,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
             'moneyMax',));
         $input['key_name'] = trim($input['key_name']);
         $input['key_id'] = trim($input['key_id']);
-        if ($input['moneyMin'] && $input['moneyMax'] && $input['key_name'] && $input['moneyMax'] && $input['key_id']) {
+        if (!$input['moneyMin'] && !$input['moneyMax'] && !$input['key_name'] && !$input['moneyMax'] && !$input['key_id']) {
             return Response::redirect('admin/advance/course/'.$courseId);
         }
         foreach ($input as $key => &$value) {
@@ -189,7 +189,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
         $whatSearch = '?moneyMin=' . $input['moneyMin'] . '&moneyMax=' . $input['moneyMax'] . '&key_name=' . $input['key_name'] . '&key_id=' . $input['key_id'];
 
         $list = Advance::get_list_advance_by_key($courseId,$perpage, $page, $input['key_name'], $input['moneyMin'], $input['moneyMax'], $input['key_id']);
-        $url = Uri::to('admin/advance/search');
+        $url = Uri::to('admin/advance/search/' . $courseId);
         $pagination = new Paginator($list[1], $list[0], $page, $perpage, $url, $whatSearch);
         $vars['statuses'] = array(
             array('url' => '', 'lang' => 'global.all', 'class' => ''),

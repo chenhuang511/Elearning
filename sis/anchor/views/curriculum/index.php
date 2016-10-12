@@ -114,6 +114,7 @@
         var init = function (url, token, courseid) {
             $('#add-remote-course').click(function () {
                 // call ajax
+                $('#load').remove();
                 $(this).append('<i id="load" class="fa fa-spinner fa-pulse fa fa-fw"></i>');
                 callAjax(url, token, courseid, 0);
             });

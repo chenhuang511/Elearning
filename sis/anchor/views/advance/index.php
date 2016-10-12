@@ -14,7 +14,7 @@
         <div class="statusbar col-sm-3">
             <div class="sidebarbox">
                 <h5>Tìm kiếm</h5>
-                <form action="<?php echo Uri::to('admin/advance/course/' . $courseId . '/search'); ?>" method="GET"
+                <form action="<?php echo Uri::to('admin/advance/course/search/' . $courseId ); ?>" method="GET"
                       class="adm-search-box">
                     <div class="form-group">
                         <label for="key_id" class="control-label">Mã tạm ứng</label>

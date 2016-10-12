@@ -66,6 +66,34 @@ class local_role_external extends external_api {
         return new external_value(PARAM_INT, 'role assignments id');
     }
 
+    public static function host_unassign_role_to_user($roleid, $userid, $courseid) {
+        global $CFG, $DB, $PAGE;
+
+        //validate parameter
+        $params = self::validate_parameters(self::host_unassign_role_to_user_parameters(),
+            array('roleid' => $roleid, 'userid' => $userid, 'courseid' => $courseid));
+
+        //userid and courseid is remoteid
+        remote_unassign_role_to_user($roleid, $userid, $courseid);
+
+        //need mapping id
+        $hostcourse = $DB->get_field('course', 'id', array('remoteid' => $courseid));
+        $hostuser = get_remote_mapping_localuserid($userid);
+
+        return role_unassign($roleid, $hostuser, $hostcourse, '', NULL);
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.9 Options available
+     * @since Moodle 2.2
+     */
+    public static function host_unassign_role_to_user_returns() {
+        return new external_value(PARAM_INT, 'role assignments id');
+    }
+
     public static function host_enrol_user_to_course_parameters() {
         return new external_function_parameters(
             array(

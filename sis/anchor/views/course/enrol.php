@@ -58,16 +58,23 @@
                                     </div>
                                 </td>
                                 <td id="rolename-tc-<?= $user->id ?>">
-                                    <?php if(check_user_enrolled($user->id, $course->id, 3)) : ?>
+                                    <?php $isenrol = check_user_enrolled($user->id, $course->id, 3); ?>
+                                    <?php if($isenrol) : ?>
                                         Giảng viên
                                     <?php endif; ?>
                                 </td>
                                 <td>
                                     <span id="show_enrol_2" class="show-enrol"></span>
                                     <input type="hidden" id="role_id_2" value="">
-                                    <button id="enrol-user" data-role="3" type="button" class="add-enrol enrol-user"
-                                            data-id="<?= $user->id ?>" data-target="#rolename-tc-<?= $user->id ?>"><i
-                                            class="fa fa-user-plus" aria-hidden="true"></i></button>
+                                    <?php if($isenrol) : ?>
+                                        <button data-role="3" type="button" class="add-enrol role-action unenroll-user"
+                                                data-userid="<?= $user->id ?>" data-type="unenroll" data-target="#rolename-tc-<?= $user->id ?>" ><i
+                                                class="fa fa-user-times" aria-hidden="true"></i></button>
+                                    <?php else: ?>
+                                        <button data-role="3" type="button" class="add-enrol role-action enrol-user"
+                                                data-userid="<?= $user->id ?>" data-type="enrol" data-target="#rolename-tc-<?= $user->id ?>"><i
+                                                class="fa fa-user-plus" aria-hidden="true"></i></button>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -97,16 +104,23 @@
                             </div>
                         </td>
                         <td id="rolename-st-<?= $student->id ?>">
-                            <?php if(check_user_enrolled($student->id, $course->id, 5)) : ?>
+                            <?php $isenrol = check_user_enrolled($student->id, $course->id, 5) ?>
+                            <?php if($isenrol) : ?>
                             Học viên
                             <?php endif; ?>
                         </td>
                         <td>
                             <span id="show_enrol_3" class="show-enrol"></span>
                             <input type="hidden" id="role_id_3" value="">
-                            <button id="enrol-user" data-role="5" type="button" class="add-enrol enrol-user"
-                                    data-id="<?= $student->id ?>" data-target="#rolename-st-<?= $student->id ?>" ><i
-                                    class="fa fa-user-plus" aria-hidden="true"></i></button>
+                            <?php if($isenrol) : ?>
+                                <button data-role="5" type="button" class="add-enrol role-action unenroll-user"
+                                        data-userid="<?= $student->id ?>" data-type="unenroll" data-target="#rolename-st-<?= $student->id ?>" ><i
+                                        class="fa fa-user-times" aria-hidden="true"></i></button>
+                            <?php else: ?>
+                                <button data-role="5" type="button" class="add-enrol role-action enrol-user"
+                                        data-userid="<?= $student->id ?>" data-type="enrol" data-target="#rolename-st-<?= $student->id ?>" ><i
+                                        class="fa fa-user-plus" aria-hidden="true"></i></button>
+                            <?php endif; ?>
                         </td>
                     </tr>
                     <?php endforeach; ?>
