@@ -216,44 +216,18 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
         $arr = array();
         for ($j = 1; $j <= $days + 1; $j++) {
             array_push($arr, "content_topic_" . $j);
-            array_push($arr, "topic_" . $j);
-            array_push($arr, "teacher_" . $j);
-            array_push($arr, "room_" . $j);
         }
 
 
         $input = Input::get($arr);
 
-        $validator = new Validator($input);
-        $count = 1;
-        foreach ($input as $key => $value) {
-            if (isset($input['content_topic_' . $count]) && ($key === 'content_topic_' . $count && $value === '')) {
-                $validator->check('topic_' . $count)
-                    ->is_max(1, __('curriculum.topicname_missing'));
-
-                $validator->check('teacher_' . $count)
-                    ->is_boolean(__('curriculum.teacher_missing'));
-
-                $validator->check('room_' . $count)
-                    ->is_boolean(__('curriculum.room_missing'));
-
-                $count++;
-            }
-        }
-
-        if ($errors = $validator->errors()) {
-            Input::flash();
-            Notify::error($errors);
-            return Response::redirect('admin/curriculum/add/topic/' . $course->id);
-        }
-
         $user = Auth::user();
 
         $icount = 1;
 
-        foreach ($input as $key => $val) {
-            if ($key === 'content_topic_' . $icount && strlen($val) !== 0) {
-                $topics = json_decode($val);
+        foreach ($input as $item) {
+            if (strlen($item) !== 0) {
+                $topics = json_decode($item);
                 foreach ($topics as $topic) {
                     $arr = array();
                     $arr['course'] = $course->id;
@@ -264,19 +238,36 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
                         $arr['topictime'] = NULL;
                     }
                     $arr['topicname'] = $topic->name;
-                    $arr['lecturer'] = $topic->teacherid;
+                    $arr['teacher'] = $topic->teacherid;
+                    $arr['room'] = $topic->roomid;
                     $arr['userid'] = $user->id;
                     $arr['timecreated'] = time();
-                    $arr['timemodified'] = time();
-                    $arr['usermodified'] = $user->id;
+                    $arr['timemodified'] = NULL;
+                    $arr['usermodified'] = NULL;
                     $arr['note'] = $topic->note;
-                    $arr['room'] = $topic->roomid;
 
                     $curriculum = Curriculum::create($arr);
                 }
-                $icount++;
+            } else {
+                $arr = array();
+                $arr['course'] = $course->id;
+                $arr['topicday'] = $dates[$icount];
+                $arr['topictime'] = NULL;
+                $arr['topicname'] = "Ngày nghỉ";
+                $arr['teacher'] = NULL;
+                $arr['room'] = NULL;
+                $arr['userid'] = $user->id;
+                $arr['timecreated'] = time();
+                $arr['timemodified'] = NULL;
+                $arr['usermodified'] = NULL;
+                $arr['note'] = NULL;
+
+
+                $curriculum = Curriculum::create($arr);
             }
+            $icount++;
         }
+
 
         Notify::success(__('curriculum.created'));
 
@@ -377,6 +368,16 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
         $teachers = $teachers + User::dropdown();
 
         $vars['teachers'] = $teachers;
+        $vars['topictime'] = array(
+            '0' => '--- Thời gian ---',
+            '1' => 'Sáng',
+            '2' => 'Chiều'
+        );
+
+        $rooms = array();
+        $rooms = $rooms + array('0' => '--- Chọn phòng học ---');
+        $rooms = $rooms + Room::dropdown();
+        $vars['rooms'] = $rooms;
 
         // extended fields
         $vars['fields'] = Extend::fields('curriculum');
@@ -390,25 +391,46 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
     Route::post('admin/curriculum/edit/topic/(:any)', function ($id) {
 
         $curriculum = Curriculum::getById($id);
-        $input = Input::get(array('topictime', 'topicname', 'lecturer', 'note'));
+        $input = Input::get(array('topictime', 'topicname', 'teacher', 'room', 'note', 'dayoff'));
 
-        $validator = new Validator($input);
+        if ($input['dayoff'] === NULL) {
 
-        $validator->check('topicname')
-            ->is_max(1, __('curriculum.topicname_missing'));
+            $validator = new Validator($input);
 
-        $validator->check('lecturer')
-            ->is_boolean(__('curriculum.teacher_missing'));
+            $validator->check('topicname')
+                ->is_max(1, __('curriculum.topicname_missing'));
 
-        if ($errors = $validator->errors()) {
-            Input::flash();
-            Notify::error($errors);
-            return Response::redirect('admin/curriculum/edit/topic/' . $id);
+            $validator->check('teacher')
+                ->is_boolean(__('curriculum.teacher_missing'));
+
+            $validator->check('room')
+                ->is_boolean(__('curriculum.teacher_missing'));
+
+            if ($errors = $validator->errors()) {
+                Input::flash();
+                Notify::error($errors);
+                return Response::redirect('admin/curriculum/edit/topic/' . $id);
+            }
         }
 
         $user = Auth::user();
 
-        Curriculum::update($id, $input);
+        if (intval($input['dayoff']) === 1) {
+            $data = array();
+            $data['topictime'] = NULL;
+            $data['topicname'] = 'Ngày nghỉ';
+            $data['teacher'] = NULL;
+            $data['room'] = NULL;
+            $data['note'] = NULL;
+            $data['usermodified'] = $user->id;
+            $data['timemodified'] = time();
+            Curriculum::update($id, $data);
+        } else {
+            unset($input['dayoff']);
+            $input['usermodified'] = $user->id;
+            $input['timemodified'] = time();
+            Curriculum::update($id, $input);
+        }
 
         Notify::success(__('curriculum.updated'));
 

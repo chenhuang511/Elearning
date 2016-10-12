@@ -315,7 +315,6 @@ var topicModule = (function () {
         $('#confirmRoomButton').on('click', function () {
             $.each(addTopicButtons, function (index, element) {
                 var disabled = $(element).attr('disabled');
-                console.log(disabled);
                 if (disabled) {
                     $(element).removeAttr('disabled');
                 }

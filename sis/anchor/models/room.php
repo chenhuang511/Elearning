@@ -148,4 +148,12 @@ class Room extends Base
 
         return $items;
     }
+
+    public static function getRoomName($id)
+    {
+        $room = self::getById($id);
+        if ($room)
+            return $room->name;
+        return '';
+    }
 }

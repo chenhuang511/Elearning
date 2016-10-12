@@ -54,7 +54,7 @@
                             echo $page->teacher_name;
                             ?></td>
                         <td><?php
-                            echo $page->roomname;
+                            echo $page->room_name;
                             ?></td>
                         <td>
                             <?php

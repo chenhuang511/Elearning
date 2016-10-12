@@ -7,8 +7,6 @@ class Curriculum extends Base
     public static function getByCourseId($courseid, $page = 1, $perpage = 10)
     {
         $query = static::join(Base::table('courses'), Base::table('courses.id'), '=', Base::table('curriculum.course'))
-            ->join(Base::table('users'), Base::table('users.id'), '=', Base::table('curriculum.lecturer'))
-            ->join(Base::table('rooms'), Base::table('rooms.id'), '=', Base::table('curriculum.room'))
             ->where(Base::table('curriculum.course'), '=', $courseid);
 
         $total = $query->count();
@@ -19,22 +17,26 @@ class Curriculum extends Base
             ->get(array(
                 Base::table('curriculum.*'),
                 Base::table('courses.fullname as coursename'),
-                Base::table('courses.status as status'),
-                Base::table('rooms.name as roomname')
+                Base::table('courses.status as status')
             ));
         foreach ($curriculums as $curriculum) {
             $curriculum->topicday = self::GetDayOfWeek($curriculum->topicday) . ' ' . date('d-m-Y', strtotime($curriculum->topicday));
-            $curriculum->teacher_name = User::getRealName($curriculum->lecturer);
+            if ($curriculum->teacher != NULL) {
+                $curriculum->teacher_name = User::getRealName($curriculum->teacher);
+            }
+            if($curriculum->room != NULL) {
+                $curriculum->room_name = Room::getRoomName($curriculum->room);
+            }
         }
 
         return array($total, $curriculums);
     }
 
-    public static function getByLecturerId($lectureid, $page = 1, $perpage = 10)
+    public static function getByTeacherId($teacherid, $page = 1, $perpage = 10)
     {
-        $query = static::join(Base::table('instructors'), Base::table('instructors.id'), '=', Base::table('curriculum.lecturer'))
+        $query = static::join(Base::table('instructors'), Base::table('instructors.id'), '=', Base::table('curriculum.teacher'))
             ->join(Base::table('courses'), Base::table('courses.id'), '=', Base::table('curriculum.course'))
-            ->where(Base::table('curriculum.lecturer'), '=', $lectureid);
+            ->where(Base::table('curriculum.teacher'), '=', $teacherid);
 
         $total = $query->count();
 
