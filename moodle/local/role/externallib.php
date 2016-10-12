@@ -47,7 +47,7 @@ class local_role_external extends external_api {
             array('roleid' => $roleid, 'userid' => $userid, 'courseid' => $courseid));
 
         //need mapping id
-        $course = $DB->get_record('course', 'id', array('remoteid' => $courseid));
+        $course = $DB->get_record('course', array('remoteid' => $courseid));
         $hostuser = get_remote_mapping_localuserid($userid);
 
         //userid and courseid is remoteid
@@ -85,7 +85,7 @@ class local_role_external extends external_api {
             array('roleid' => $roleid, 'userid' => $userid, 'courseid' => $courseid));
 
         //need mapping id
-        $course = $DB->get_record('course', 'id', array('remoteid' => $courseid));
+        $course = $DB->get_record('course', array('remoteid' => $courseid));
         $hostuser = get_remote_mapping_localuserid($userid);
 
         //userid and courseid is remoteid
