@@ -212,8 +212,10 @@ class condition extends \core_availability\condition {
         if (!$userid) {
             $userid = $USER->id;
         }
-        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB){
-            $gradeitemid = get_local_grade_items_record($gradeitemid, true)->remoteid;
+        if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+            try {
+                $gradeitemid = get_local_grade_items_record($gradeitemid, true)->remoteid;
+            } catch (\Exception $e) {}
         }
         $cache = \cache::make('availability_grade', 'scores');
         if (($cachedgrades = $cache->get($userid)) === false) {
