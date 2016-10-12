@@ -34,7 +34,8 @@ class local_role_external extends external_api {
         return new external_function_parameters(
             array('roleid' => new external_value(PARAM_INT, 'Role id'),
                 'userid' => new external_value(PARAM_INT, 'user id'),
-        'courseid' => new external_value(PARAM_INT, 'Course id'))
+                'courseid' => new external_value(PARAM_INT, 'Course id')
+            )
         );
     }
 
@@ -66,6 +67,14 @@ class local_role_external extends external_api {
         return new external_value(PARAM_INT, 'role assignments id');
     }
 
+    public static function host_unassign_role_to_user_parameters() {
+        return new external_function_parameters(
+            array('roleid' => new external_value(PARAM_INT, 'Role id'),
+                'userid' => new external_value(PARAM_INT, 'user id'),
+                'courseid' => new external_value(PARAM_INT, 'Course id')
+            )
+        );
+    }
     public static function host_unassign_role_to_user($roleid, $userid, $courseid) {
         global $CFG, $DB, $PAGE;
 
