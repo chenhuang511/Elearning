@@ -39,10 +39,46 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         $vars['token'] = Csrf::token();
         $vars['student'] = Student::find($id);
         $vars['studentschool'] = Student::getSchoolByStudent($id);
-        list($vars['studentcourselearning'], $vars['thisstudent']) = Student::getCoursesLearningByStudent($id);
-        $vars['studentcoursesuccessed'] = Student::getCoursesSuccessedByStudent($id);
-        list($vars['studenttopicsuccessed'], $vars['counttopicsuccessed']) = Student::getTopicSuccessedByStudent($id);
-        list($vars['studenttopiclearning'], $vars['counttopiclearning']) = Student::getTopicLearningByStudent($id);
+
+        list($vars['studentcourse'], $vars['thisstudent']) = Student::getCoursesByStudent($id);
+
+        $vars['countcourselearning'] = 0;
+        $vars['countcoursesuccessed'] = 0;
+        $vars['courselearning'] = array();
+        $vars['coursesuccessed'] = array();
+        $vars['topicsuccessed'] = array();
+        $vars['counttopicsuccessed'] = 0;
+
+        foreach ($vars['studentcourse'] as $vars['stu'])
+        {
+            $vars['percentobj'] = remote_get_percent_course($vars['stu']->data['schoolid'], $vars['stu']->data['remoteid'], $vars['thisstudent']->data['remoteid']);
+            if (is_object($vars['percentobj'])) {
+                $vars['percent'] = 0;
+            } else {
+                $vars['percent'] = $vars['percentobj'];
+            }
+            if ($vars['percent'] == 100)
+            {
+                array_push($vars['coursesuccessed'], $vars['stu']);
+                $vars['countcoursesuccessed']++;
+            }
+            else
+            {
+                array_push($vars['courselearning'], $vars['stu']);
+                $vars['countcourselearning']++;
+            }
+        }
+
+        foreach ($vars['coursesuccessed'] as $vars['cosu'])
+        {
+            list($vars['listtopic'], $vars['counttopic']) = Student::getTopicByCourse($vars['cosu']->data['id']);
+            foreach ($vars['listtopic'] as $vars['lito'])
+            {
+                array_push($vars['topicsuccessed'], $vars['lito']);
+                $vars['counttopicsuccessed']++;
+            }
+        }
+
 
         // extended fields
         $vars['fields'] = Extend::fields('student', $id);
