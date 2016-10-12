@@ -36,6 +36,8 @@
 		'end_date_missing' => 'Vui lòng nhập lại ngày kết thúc',
 	    'name_head_missing' => 'Vui lòng nhập lại tên người đứng đầu',
 		'tax_code_missing' => 'Vui lòng nhập lại mã số thuế',
+		'number_phone_missing' => 'Vui lòng nhập lại số điện thoại',
+		'address_missing' => 'Vui lòng nhập lại địa chỉ',
 		'email' => 'Email',
 	    'email_explain' => '',
 	    'email_missing' => 'Vui lòng nhập địa chỉ email',
@@ -61,6 +63,8 @@
         'instructor_selected' => 'Chọn giảng viên',
 		'name_head' => 'Người đứng đầu',
 		'tax_code' => 'Mã số thuế',
+		'number_phone' => 'Số điện thoại',
+		'address' => 'Địa chỉ',
 
 		'view_contract' => 'Xem hợp đồng',
         'create_contract' => 'Tạo hợp đồng',

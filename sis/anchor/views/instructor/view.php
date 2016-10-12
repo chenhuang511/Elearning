@@ -50,6 +50,8 @@
 			<th>Tên tổ chức</th>
 			<th>Người đứng đầu</th>
 			<th>Mã số thuế</th>
+			<th>Số điện thoại</th>
+			<th>Địa chỉ</th>
 			<th>Ngày bắt đầu</th>
 			<th>Ngày kết thúc</th>
 			<th>Mức lương</th>
@@ -65,6 +67,8 @@
 				<td><p><?php echo $ctr->name_partner ?></p></td>
 				<td><p><?php echo $ctr->name_head ?></p></td>
 				<td><p><?php echo $ctr->tax_code ?></p></td>
+				<td><p><?php echo $ctr->number_phone ?></p></td>
+				<td><p><?php echo $ctr->address ?></p></td>
 				<td><p><?php echo $ctr->start_date ?></p></td>
 				<td><p><?php echo $ctr->end_date ?></p></td>
 				<td><p><?php echo $ctr->salary ?></p></td>

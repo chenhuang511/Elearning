@@ -275,7 +275,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
 
 	Route::post('admin/instructor/add', function() {
-		$input = Input::get(array('fullname', 'birthday', 'email', 'type_instructor' => 'contract', 'subject', 'name_contract', 'instructor_id', 'type', 'name_partner', 'start_date', 'name_head', 'tax_code', 'end_date', 'salary', 'state', 'rules'));
+		$input = Input::get(array('fullname', 'birthday', 'email', 'type_instructor' => 'contract', 'subject', 'name_contract', 'instructor_id', 'type', 'name_partner', 'start_date', 'name_head', 'tax_code', 'number_phone', 'address', 'end_date', 'salary', 'state', 'rules'));
 		$ins_id = $input['instructor_id'];
 		
 		$validator = new Validator($input);
@@ -305,6 +305,12 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 			 
 			$validator->check('tax_code')
 		 		->is_max(2, __('contract.tax_code_missing', 2));
+
+			$validator->check('number_phone')
+		 		->is_max(2, __('contract.number_phone_missing', 2));
+			 
+			$validator->check('address')
+		 		->is_max(2, __('contract.address_missing', 2));
 		}
 	
 		if($ins_id == 0){
@@ -347,6 +353,8 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 				'name_partner'=> $input['name_partner'],
 				'name_head'=> $input['name_head'],
 				'tax_code'=> $input['tax_code'],
+				'number_phone'=> $input['number_phone'],
+				'address'=> $input['address'],
 				'start_date'=> $input['start_date'],
 				'end_date'=> $input['end_date'],
 				'salary'=> $input['salary'],
@@ -371,6 +379,8 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 				'name_partner'=> $input['name_partner'],
 				'name_head'=> $input['name_head'],
 				'tax_code'=> $input['tax_code'],
+				'number_phone'=> $input['number_phone'],
+				'address'=> $input['address'],
 				'start_date'=> $input['start_date'],
 				'end_date'=> $input['end_date'],
 				'salary'=> $input['salary'],

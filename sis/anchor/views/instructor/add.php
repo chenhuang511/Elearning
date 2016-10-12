@@ -70,7 +70,14 @@
 					<label for="label-tax_code"><?php echo __('contract.tax_code'); ?>:</label>
 					<?php echo Form::text('tax_code', Input::previous('tax_code'), array('id' => 'label-tax_code')); ?>
 				</p>
-
+				<p>
+					<label for="label-number_phone"><?php echo __('contract.number_phone'); ?>:</label>
+					<?php echo Form::text('number_phone', Input::previous('number_phone'), array('id' => 'label-number_phone')); ?>
+				</p>
+				<p>
+					<label for="label-address"><?php echo __('contract.address'); ?>:</label>
+					<?php echo Form::text('address', Input::previous('address'), array('id' => 'label-address')); ?>
+				</p>
 			</div>
 			<p>
 				<label for="label-start_date"><?php echo __('contract.start_date'); ?>:</label>
