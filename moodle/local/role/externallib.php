@@ -115,7 +115,7 @@ class local_role_external extends external_api {
     {
         global $DB;
         //validate parameter
-        $params = self::validate_parameters(self::host_assign_role_to_user_parameters(),
+        $params = self::validate_parameters(self::host_enrol_user_to_course_parameters(),
             array('userid' => $userid, 'courseid' => $courseid));
         $service = mnetservice_enrol::get_instance();
         $host = $DB->get_record('mnet_host', array('wwwroot' => HUB_URL), '*', MUST_EXIST);
@@ -141,6 +141,6 @@ class local_role_external extends external_api {
     }
 
     public static function host_enrol_user_to_course_returns() {
-        return new external_value(PARAM_INT, 'role assignments id');
+        return new external_value(PARAM_TEXT, 'role assignments id');
     }
 }
