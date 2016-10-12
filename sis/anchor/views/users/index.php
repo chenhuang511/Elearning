@@ -40,17 +40,10 @@
                             <a href="#"><?php echo $user->real_name ?></a>
                         <?php } ?>
                     </td>
-                    <td>
-                        <p><?php echo $user->email; ?></p>
-                    <td>
-                        <p><?php echo $user->username; ?></p>
-                    </td>
-                    <td>
-                        <p><?php echo $user->role; ?></p>
-                    </td>
-                    <td>
-                        <p><?php echo $user->status; ?></p>
-                    </td>
+                    <td><p><?php echo $user->email; ?></p></td>
+                    <td><p><?php echo $user->username; ?></p></td>
+                    <td><p><?php echo $user->role; ?></p></td>
+                    <td><p><?php echo $user->status; ?></p></td>
                 </tr>
             <?php endforeach; ?>
             </tbody>

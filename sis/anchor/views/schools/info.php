@@ -12,21 +12,22 @@
 <section class="wrap">
     <?php echo $messages; ?>
 
-    <fieldset class="half split">
-        <p>
-            <label for="label-id"><?php echo __('ID Trường'); ?></label>
-            <label id="label-id"><?php echo $school->id ?></label>
-        </p>
-    </fieldset>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th style="width: 28%;">Mã trường</th>
+            <th>Tên trường</th>
+        </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><?php echo $school->id ?></td>
+                <td><?php echo $school->name ?></td>
+            </tr>
+        </tbody>
+    </table>
 
-    <fieldset class="half split">
-        <p>
-            <label for="label-name"><?php echo __('Tên trường'); ?></label>
-            <label id="label-name"><?php echo $school->name ?></label>
-        </p>
-    </fieldset>
-
-    <h3 style="margin-top: 80px">Danh sách sinh viên</h3>
+    <h3 style="margin: 50px 0 20px; color: #99a3b1">Danh sách sinh viên</h3>
 
     <?php if ($schoolstudent != null) { ?>
         <table class="table table-hover">

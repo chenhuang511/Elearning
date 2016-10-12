@@ -12,45 +12,43 @@
 
 <section class="wrap">
     <?php echo $messages; ?>
-    <div style="display: flex">
-        <fieldset class="half split">
-            <p>
-                <label for="label-fullname"><?php echo __('students.fullname') ?></label>
-                <label id="label-fullname"><?php echo $student->fullname ?></label>
-            </p>
-            <p>
-                <label for="label-email"><?php echo __('students.email'); ?></label>
-                <label id="label-email"><?php echo $student->email ?></label>
-            </p>
-        </fieldset>
 
-        <fieldset class="half split">
-            <?php foreach ($studentschool as $stusch) { ?>
-                <p>
-                    <label for="label-schoolname"><?php echo __('Tên trường'); ?></label>
-                    <label id="label-schoolname"><?php echo $stusch->name ?></label>
-                </p>
-            <?php } ?>
-            <p style="height: 39px;"></p>
-        </fieldset>
-    </div>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>Tên học viên</th>
+            <th>Email</th>
+            <th>Tên trường</th>
+        </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><?php echo $student->fullname ?></td>
+                <td><?php echo $student->email ?></td>
+                <?php foreach ($studentschool as $stusch) { ?>
+                        <td><?php echo $stusch->name ?></td>
+                <?php } ?>
+            </tr>
+        </tbody>
+    </table>
 
-    <h3>Số chuyên đề đã hoàn thành : <?php echo $counttopicsuccessed; ?></h3>
+
+    <h3 style="color: #99a3b1; margin: 50px 0 20px;">Số chuyên đề đã hoàn thành : <?php echo $counttopicsuccessed; ?></h3>
     <?php if ($counttopicsuccessed > 0) { ?>
         <table class="table table-hover">
             <thead>
             <tr>
-                <th style="text-align: center">Mã khóa học</th>
-                <th style="text-align: center">Mã chuyên đề</th>
-                <th style="text-align: center">Tên chuyên đề</th>
+                <th>Mã khóa học</th>
+                <th>Mã chuyên đề</th>
+                <th>Tên chuyên đề</th>
             </tr>
             </thead>
             <tbody>
-            <?php foreach ($studenttopicsuccessed as $stu) : ?>
+            <?php foreach ($topicsuccessed as $stu) : ?>
                 <tr>
-                    <td style="text-align: center"><?php echo $stu->courseid ?></td>
-                    <td style="text-align: center"><?php echo $stu->id ?></td>
-                    <td style="text-align: center"><?php echo $stu->topicname ?></td>
+                    <td><?php echo $stu->course ?></td>
+                    <td><?php echo $stu->id ?></td>
+                    <td><?php echo $stu->topicname ?></td>
                 </tr>
             <?php endforeach; ?>
             </tbody>
@@ -60,8 +58,9 @@
     <?php } ?>
 
 
-    <h3>Các khóa học đã hoàn thành</h3>
-    <?php if ($studentcoursesuccessed != null) { ?>
+    <h3 style="color: #99a3b1; margin: 50px 0 20px;">Các khóa học đã hoàn thành</h3>
+
+    <?php if ($countcoursesuccessed > 0) { ?>
         <table class="table table-hover">
             <thead>
             <tr>
@@ -71,32 +70,34 @@
             </tr>
             </thead>
             <tbody>
-            <?php foreach ($studentcoursesuccessed as $stu) : ?>
-                <tr>
-                    <td style="width: 650px"><?php echo $stu->fullname ?></td>
-                    <td style="text-align: center"><?php echo $stu->grade ?></td>
-                    <td style="text-align: center">
-                        <?php
-                        $certificate = remote_get_link_certificate($stu->schoolid, $stu->studentid, $stu->id);
-                        if ($certificate != 'false' && !empty($certificate)) { ?>
-                            <a target="_blank" class="btn btn-primary" href="<?php echo $certificate; ?>">Chứng chỉ</a>
-                        <?php } else { ?>
-                            <a class="btn btn-primary" href="#">Chứng chỉ</a>
-                        <?php } ?>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
+            <?php foreach ($coursesuccessed as $stu) : ?>
+
+                    <tr>
+                        <td style="width: 650px"><?php echo $stu->fullname ?></td>
+                        <?php  $gradecomplete = remote_get_grade_complete_course($thisstudent->remoteid, $stu->id) ?>
+                        <td style="text-align: center"><?php $gradecomplete ?></td>
+                        <td style="text-align: center">
+                            <?php
+                            $certificate = remote_get_link_certificate($stu->schoolid, $stu->studentid, $stu->id);
+                            if ($certificate != 'false' && !empty($certificate)) { ?>
+                                <a target="_blank" class="btn btn-primary" href="<?php echo $certificate; ?>">Chứng chỉ</a>
+                            <?php } else { ?>
+                                <a class="btn btn-primary" href="#">Chứng chỉ</a>
+                            <?php } ?>
+                        </td>
+                    </tr>
+                <?php  endforeach; ?>
             </tbody>
         </table>
+
     <?php } else { ?>
         <p>Chưa có khóa học nào đã hoàn thành</p>
     <?php } ?>
 
-    <h3>Các khóa học chưa hoàn thành</h3>
 
-    <?php // echo'<pre>';var_dump($thisstudent->remoteid);die; ?>
+    <h3 style="color: #99a3b1; margin: 50px 0 20px;">Các khóa học chưa hoàn thành</h3>
 
-    <?php if ($studentcourselearning != null) { ?>
+    <?php if ($countcourselearning > 0) { ?>
         <table class="table table-hover">
             <thead>
             <tr>
@@ -105,17 +106,18 @@
             </tr>
             </thead>
             <tbody>
-            <?php foreach ($studentcourselearning as $stu) : ?>
+            <?php foreach ($courselearning as $stu) : ?>
                 <tr>
                     <td style="width: 862px"><?php echo $stu->fullname ?></td>
                     <td style="text-align: center">
                         <?php $percent = remote_get_percent_course($stu->schoolid, $stu->remoteid, $thisstudent->remoteid);
-                         echo $percent.'%' ?>
+                         echo $percent . '%' ?>
                     </td>
                 </tr>
             <?php endforeach; ?>
             </tbody>
         </table>
+
     <?php } else { ?>
         <p>Không có khóa học nào chưa hoàn thành</p>
     <?php } ?>

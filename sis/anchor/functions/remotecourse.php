@@ -14,6 +14,25 @@ function remote_add_course($data)
     return $resp[0];
 }
 
+
+function remote_get_grade_complete_course($userid, $courseid)
+{
+    $resp = RestClient::dorest(
+        array(
+            'domain' => HUB_URL,
+            'token' => TOKEN,
+            'function_name'=>'local_host_get_grade_complete_course',
+            'params'=>array(
+                'userid' => $userid,
+                'courseid' => $courseid )
+        ));
+    if (isset($resp->exception)) {
+        return 0;
+    }
+    return $resp;
+}
+
+
 function remote_edit_course_section($data)
 {
     $resp = RestClient::dorest(
