@@ -45,6 +45,24 @@
 					</td>
 				</tr>
 			<?php endforeach; ?>
+			<?php foreach ($official_instructors->results as $instructor): ?>
+				<tr>
+				 	<td>
+                        <?php
+                        $url = remote_get_user_link_profile($instructor->schoolid, $instructor->remoteid);
+                        if ($url != 'false' && !empty($url)) { ?>
+                            <a target="_blank" href="<?php echo $url; ?>"><?php echo $instructor->real_name ?></a>
+                        <?php } else { ?>
+                            <a href="#"><?php echo $instructor->real_name ?></a>
+                        <?php } ?>
+                    </td>
+					<td><p><?php echo $instructor->email; ?></p></td>
+					<td></td>
+					<td><p>Giảng viên chính thức</p></td>
+					<td></td>
+                    <td></td>
+				</tr>
+			<?php endforeach; ?>
 		</tbody>
 	</table>
 	<aside class="paging"><?php echo $instructors->links(); ?></aside>

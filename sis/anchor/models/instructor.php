@@ -23,6 +23,16 @@ class Instructor extends Base {
 
 		return new Paginator($results, $count, $page, $perpage, Uri::to('admin/instructor'));
 	}
+
+	public static function get_official_instructor($page = 1, $perpage = 10) {
+		$query = Query::table(Base::table('users'))->where('role_id', '=', 5);
+
+		$count = $query->count();
+
+		$results = $query->take($perpage)->skip(($page - 1) * $perpage)->sort('id', 'asc')->get();
+
+		return new Paginator($results, $count, $page, $perpage, Uri::to('admin/instructor'));
+	}
 	
 	public static function get_name_instructor() {
 		$query = Query::table(static::table());
@@ -32,6 +42,20 @@ class Instructor extends Base {
 	public static function search($key, $page = 1, $per_page = 10) {
 
         $query = static::where('fullname', 'LIKE', '%' . $key . '%');
+
+        $total = $query->count();
+
+        // get posts
+        $posts = $query->take($per_page)
+            ->skip(--$page * $per_page)
+            ->get();
+
+        return array($total, $posts);
+    }
+
+	public static function search_official_instructor($key, $page = 1, $per_page = 10) {
+
+        $query = Query::table(Base::table('users'))->where('role_id', '=', 5)->where('real_name', 'LIKE', '%' . $key . '%');
 
         $total = $query->count();
 

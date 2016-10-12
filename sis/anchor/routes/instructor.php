@@ -8,6 +8,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 	Route::get(array('admin/instructor', 'admin/instructor/(:num)'), function($page = 1) {
 		$vars['messages'] = Notify::read();
 		$vars['instructors'] = Instructor::paginate($page, Config::get('admin.posts_per_page'));
+		$vars['official_instructors'] = Instructor::get_official_instructor($page, Config::get('admin.posts_per_page'));
         $vars['tab'] = 'sys';
 
 		return View::create('instructor/index', $vars)
@@ -24,12 +25,14 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         $whatSearch = '?text-search=' . $key;
         $perpage = Config::get('admin.posts_per_page');
         list($total, $pages) = Instructor::search($key, $page, $perpage);
-
+		list($total_official_inst, $pages_official_inst) = Instructor::search_official_instructor($key, $page, $perpage);
         $url = Uri::to('admin/contract/search');
 
         $pagination = new Paginator($pages, $total, $page, $perpage, $url, $whatSearch);
+		$pagination_official_inst = new Paginator($pages_official_inst, $total_official_inst, $page, $perpage, $url, $whatSearch);
 
         $vars['instructors'] = $pagination;
+		$vars['official_instructors'] = $pagination_official_inst;
         $vars['tab'] = 'sys';
 
         return View::create('instructor/search', $vars)
