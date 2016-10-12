@@ -46,12 +46,13 @@ class local_role_external extends external_api {
         $params = self::validate_parameters(self::host_assign_role_to_user_parameters(),
             array('roleid' => $roleid, 'userid' => $userid, 'courseid' => $courseid));
 
-        //userid and courseid is remoteid
-        remote_assign_role_to_user($roleid, $userid, $courseid);
-
         //need mapping id
         $hostcourse = $DB->get_field('course', 'id', array('remoteid' => $courseid));
+
         $hostuser = get_remote_mapping_localuserid($userid);
+
+        //userid and courseid is remoteid
+        remote_assign_role_to_user($roleid, $hostuser, $courseid);
 
         return role_assign($roleid, $hostuser, $hostcourse, '', NULL);
     }
@@ -82,12 +83,12 @@ class local_role_external extends external_api {
         $params = self::validate_parameters(self::host_unassign_role_to_user_parameters(),
             array('roleid' => $roleid, 'userid' => $userid, 'courseid' => $courseid));
 
-        //userid and courseid is remoteid
-        remote_unassign_role_to_user($roleid, $userid, $courseid);
-
         //need mapping id
         $hostcourse = $DB->get_field('course', 'id', array('remoteid' => $courseid));
         $hostuser = get_remote_mapping_localuserid($userid);
+
+        //userid and courseid is remoteid
+        remote_unassign_role_to_user($roleid, $hostuser, $courseid);
 
         return role_unassign($roleid, $hostuser, $hostcourse, '', NULL);
     }
