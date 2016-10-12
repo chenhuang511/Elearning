@@ -709,7 +709,8 @@ class course_enrolment_manager {
                 }
             }
             if(MOODLE_MODE_HUB === MOODLE_RUN_MODE) {
-                remote_unassign_role_to_user($ra->roleid, $ra->userid, $ra->contextid);
+                $courseid = $DB->get_field('context', 'instanceid', array('id' => $ra->contextid));
+                remote_unassign_role_to_user($ra->roleid, $ra->userid, $courseid);
             }
             role_unassign($ra->roleid, $ra->userid, $ra->contextid, $ra->component, $ra->itemid);
         }

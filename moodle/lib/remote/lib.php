@@ -234,11 +234,9 @@ function remote_assign_role_to_user($roleid, $userid, $courseid)
     );
     return $resp;
 }
-function remote_unassign_role_to_user($roleid, $userid, $contextid)
+function remote_unassign_role_to_user($roleid, $userid, $courseid)
 {
     global $DB;
-
-    $courseid = $DB->get_field('context', 'instanceid', array('id' => $contextid));
     $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
     $remotecourse = $DB->get_field('course', 'remoteid', array('id' => $courseid));
     $remoteuser = get_remote_mapping_user($user);

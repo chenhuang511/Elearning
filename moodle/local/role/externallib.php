@@ -47,14 +47,15 @@ class local_role_external extends external_api {
             array('roleid' => $roleid, 'userid' => $userid, 'courseid' => $courseid));
 
         //need mapping id
-        $hostcourse = $DB->get_field('course', 'id', array('remoteid' => $courseid));
-
+        $course = $DB->get_record('course', 'id', array('remoteid' => $courseid));
         $hostuser = get_remote_mapping_localuserid($userid);
 
         //userid and courseid is remoteid
-        remote_assign_role_to_user($roleid, $hostuser, $hostcourse);
+        $context = context_course::instance($course->id);
+        //userid and courseid is remoteid
+        remote_assign_role_to_user($roleid, $hostuser, $course->id);
 
-        return role_assign($roleid, $hostuser, $hostcourse, '', NULL);
+        return role_assign($roleid, $hostuser, $context->id, '', NULL);
     }
 
     /**
@@ -84,13 +85,13 @@ class local_role_external extends external_api {
             array('roleid' => $roleid, 'userid' => $userid, 'courseid' => $courseid));
 
         //need mapping id
-        $hostcourse = $DB->get_field('course', 'id', array('remoteid' => $courseid));
+        $course = $DB->get_record('course', 'id', array('remoteid' => $courseid));
         $hostuser = get_remote_mapping_localuserid($userid);
 
         //userid and courseid is remoteid
-        remote_unassign_role_to_user($roleid, $hostuser, $hostcourse);
-
-        return role_unassign($roleid, $hostuser, $hostcourse, '', NULL);
+        $context = context_course::instance($course->id);
+        remote_unassign_role_to_user($roleid, $hostuser, $course->id);
+        return role_unassign($roleid, $hostuser, $context->id, '', NULL);
     }
 
     /**
