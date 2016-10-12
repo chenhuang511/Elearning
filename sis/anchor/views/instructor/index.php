@@ -41,7 +41,6 @@
                     <td>
                         <?php if ($instructor->type_instructor != 'official') : ?>
 							<a href="<?php echo Uri::to('admin/instructor/edit/' . $instructor->id); ?>"class="btn btn-primary">Sửa</a>
-                            <a href="<?php echo Uri::to('admin/instructor/delete/' . $instructor->id); ?>" class="btn btn-primary delete">Xóa</a>
                         <?php endif; ?>
 					</td>
 				</tr>

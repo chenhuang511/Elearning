@@ -23,7 +23,7 @@
                     <tr>
                         <td>MÔ TẢ:</td>
                         <td>
-                            <?php echo Form::text('description', Input::previous('description', $rooms->description), array('id' => 'label-description')); ?>
+                            <?php echo Form::textarea('description', Input::previous('description', $rooms->description), array('id' => 'label-description')); ?>
                         </td>
                     </tr>
                     <tr>
@@ -67,6 +67,7 @@
             reader.onload = function (e) {
                 $('#image').attr('src', e.target.result);
             }
+
             reader.readAsDataURL(input.files[0]);
         }
     }
