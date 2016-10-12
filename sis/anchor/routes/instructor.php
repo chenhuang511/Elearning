@@ -194,7 +194,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 		$vars['token'] = Csrf::token();
 		$vars['instructor'] = Instructor::find($id);
 		$vars['contract'] = Contract::search_by_instructor_id($id);
-		$vars['curriculum_taught'] = Query::table(base::table('curriculum'))->where(('lecturer'), '=', $id)->count();
+		$vars['curriculum_taught'] = Query::table(base::table('curriculum'))->where(('teacher'), '=', $id)->count();
 		// extended fields
 		$vars['fields'] = Extend::fields('instructor', $id);
 
@@ -227,7 +227,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 		$vars['instructor'] = Instructor::find($id);
 		// extended fields
 		$vars['fields'] = Extend::fields('curriculum', $id);
-		list($total, $pages) = Curriculum::getByLecturerId($id, $page=1, $perpage= Config::get('admin.posts_per_page'));
+		list($total, $pages) = Curriculum::getByTeacherId($id, $page=1, $perpage= Config::get('admin.posts_per_page'));
 
         $url = Uri::to('admin/instructor/curriculum');
 
