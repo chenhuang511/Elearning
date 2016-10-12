@@ -225,6 +225,11 @@ abstract class grade_object
                         }
                     }
                 }
+                if (strpos($var, 'id') !== false && $table == 'grade_categories' && $value == 1) {
+                    $useremote = false;
+                    break;
+                }
+
             }
         }
         $index = 0;
