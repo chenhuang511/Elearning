@@ -401,12 +401,4 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 	/*
 		Delete user
 	*/
-	Route::get('admin/instructor/delete/(:num)', function($id) {
-		Instructor::where('id', '=', $id)->delete();
-		Query::table(Base::table('instructor_contract'))->where('instructor_id', '=', $id)->delete();
-		Notify::success(__('instructor.deleted'));
-		return Response::redirect('admin/instructor');
-		
-	});
-
 });
