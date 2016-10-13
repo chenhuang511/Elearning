@@ -64,6 +64,14 @@ class local_mod_question_external extends external_api
             $categories = array();
         }
 
+        foreach ($categories as $category) {
+            $context = $DB->get_record('context', array('id' => $category->contextid), 'contextlevel, instanceid');
+            if ($context) {
+                $category->contextlevel = $context->contextlevel;
+                $category->instanceid = $context->instanceid;
+            }
+        }
+
         $result = array();
         $result['categories'] = $categories;
         $result['warnings'] = $warnings;
@@ -85,6 +93,8 @@ class local_mod_question_external extends external_api
                             'stamp' => new external_value(PARAM_TEXT, 'the stamp of question categories', VALUE_OPTIONAL),
                             'parent' => new external_value(PARAM_INT, 'the parent of question categories', VALUE_OPTIONAL),
                             'sortorder' => new external_value(PARAM_INT, 'the sort order of question categories', VALUE_OPTIONAL),
+                            'contextlevel' => new external_value(PARAM_INT, 'the context level of context', VALUE_OPTIONAL),
+                            'instanceid' => new external_value(PARAM_INT, 'the instanceid of context', VALUE_OPTIONAL),
                         )
                     )
                 ),
