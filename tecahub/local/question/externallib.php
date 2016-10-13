@@ -60,6 +60,10 @@ class local_mod_question_external extends external_api
 
         $qc = $DB->get_record('question_categories', array('id' => $params['id']));
 
+        if($qc) {
+            $qc->instaceid = $DB->get_field('context', 'instanceid', array('id' => $qc->contextid));
+        }
+
         if(!$qc) {
             $qc = new stdClass();
         }
@@ -84,6 +88,7 @@ class local_mod_question_external extends external_api
                         'stamp' => new external_value(PARAM_TEXT, 'the stamp', VALUE_OPTIONAL),
                         'parent' => new external_value(PARAM_INT, 'the parent id', VALUE_OPTIONAL),
                         'sortorder' => new external_value(PARAM_INT, 'the sort order', VALUE_OPTIONAL),
+                        'instaceid' => new external_value(PARAM_INT, 'the instaceid of context', VALUE_OPTIONAL),
                     )
                 ),
                 'warnings' => new external_warnings()
