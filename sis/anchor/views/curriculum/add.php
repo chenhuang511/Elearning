@@ -156,12 +156,7 @@
             $('#datetimepicker_startdate').datetimepicker('setEndDate', e.date);
         });
         var editor = CKEDITOR.replace( 'summary');
-        $('#submit').click(function() {
-            var value = editor.getData() ;
-            console.log(value) ;
-            $('#markdown').val(value) ;
-            // send your ajax request with value// profit!
-        });
+
     });
 </script>
 <?php echo $footer; ?>

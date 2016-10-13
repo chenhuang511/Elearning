@@ -119,9 +119,10 @@
             <?php echo Form::button(__('global.continue'), array(
                 'type' => 'submit',
                 'class' => 'btn btn-primary btn-continue',
-                'data-loading' => __('global.saving')
+                'data-loading' => __('global.saving') ,
+                'id' => 'submit'
             )); ?>
-            <?php echo Html::link('admin/posts', __('global.cancel'), array(
+            <?php echo Html::link('admin/courses', __('global.cancel'), array(
                 'class' => 'btn btn-danger btn-cancel'
             )); ?>
         </aside>
@@ -131,8 +132,11 @@
 <script src="<?php echo asset('anchor/views/assets/js/bootstrap-datetimepicker.js'); ?>"></script>
 <script src="<?php echo asset('anchor/views/assets/js/autosave.js'); ?>"></script>
 <script src="<?php echo asset('anchor/views/assets/ckeditor/ckeditor.js'); ?>"></script>
+<script src="<?php echo asset('anchor/views/assets/ckeditor/ckeditor.js'); ?>"></script>
 <script type="text/javascript">
-    $(function () {
+    $(document).ready(function() {
+        var editor = CKEDITOR.replace( 'summary');
+
         $('#datetimepicker_startdate').datetimepicker({
             language: 'fr',
             startDate: new Date(),
@@ -148,20 +152,13 @@
             minView: 2,
             format: 'yyyy-mm-dd'
         });
-
         $("#datetimepicker_startdate").on("changeDate", function (e) {
+            console.log(e.date);
             $('#datetimepicker_enddate').datetimepicker('setStartDate', e.date);
         });
         $("#datetimepicker_enddate").on("changeDate", function (e) {
             $('#datetimepicker_startdate').datetimepicker('setEndDate', e.date);
         });
-        var editor = CKEDITOR.replace( 'summary');
-        $('#submit').click(function() {
-            var value = editor.getData() ;
-            console.log(value) ;
-            $('#markdown').val(value) ;
-            // send your ajax request with value// profit!
-        })
     });
 </script>
 <?php echo $footer; ?>
