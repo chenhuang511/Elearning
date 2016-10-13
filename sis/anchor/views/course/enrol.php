@@ -141,7 +141,7 @@
 
             $('.enrol-table').each(function(){
 
-                var th = $(this).find('. '),
+                var th = $(this).find('.th-sort'),
                     thIndex = th.index(),
                     inverse = true;
 
