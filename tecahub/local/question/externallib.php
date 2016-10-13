@@ -58,18 +58,12 @@ class local_mod_question_external extends external_api
             'sort' => $sort
         ));
 
-        $categories = $DB->get_records('question_categories', null, $params['sort']);
+        $sql = "SELECT qc.*, c.contextlevel, c.instanceid FROM m_question_categories qc LEFT JOIN m_context c ON qc.contextid = c.id";
+
+        $categories = $DB->get_record_sql($sql);
 
         if (!$categories) {
             $categories = array();
-        }
-
-        foreach ($categories as $category) {
-            $context = $DB->get_record('context', array('id' => $category->contextid), 'contextlevel, instanceid');
-            if ($context) {
-                $category->contextlevel = $context->contextlevel;
-                $category->instanceid = $context->instanceid;
-            }
         }
 
         $result = array();
