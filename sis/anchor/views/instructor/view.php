@@ -45,7 +45,7 @@
 			</tr>
 			<tr>
 				<th>Loại</th>
-				<td><p><?php echo Form::text('type','contract.'. $ctr->type, array('id' => 'label-type')); ?></p></td>
+				<td><p><?php echo __('contract.'. $ctr->type)?></p></td>
 			</tr>
 			<tr>
 				<th>Tên tổ chức</th>
