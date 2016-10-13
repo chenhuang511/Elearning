@@ -33,7 +33,8 @@ require_once($CFG->libdir . '/questionlib.php');
 define('DEFAULT_QUESTIONS_PER_PAGE', 20);
 define('MAXIMUM_QUESTIONS_PER_PAGE', 1000);
 
-function get_module_from_cmid($cmid) {
+function get_module_from_cmid($cmid)
+{
     global $CFG, $DB;
     if (!$cmrec = $DB->get_record_sql("SELECT cm.*, md.name as modname
                                FROM {course_modules} cm,
@@ -41,8 +42,7 @@ function get_module_from_cmid($cmid) {
                                WHERE cm.id = ? AND
                                      md.id = cm.module", array($cmid))){
         print_error('invalidcoursemodule');
-    } elseif (!$modrec = (MOODLE_RUN_MODE === MOODLE_MODE_HUB)?get_remote_quiz_by_id($cmrec->instance, false)
-        :$DB->get_record($cmrec->modname, array('id' => $cmrec->instance))) {
+    } elseif (!$modrec =$DB->get_record($cmrec->modname, array('id' => $cmrec->instance))) {
         print_error('invalidcoursemodule');
     }
     $modrec->instance = $modrec->id;
@@ -51,21 +51,23 @@ function get_module_from_cmid($cmid) {
 
     return array($modrec, $cmrec);
 }
+
 /**
-* Function to read all questions for category into big array
-*
-* @param int $category category number
-* @param bool $noparent if true only questions with NO parent will be selected
-* @param bool $recurse include subdirectories
-* @param bool $export set true if this is called by questionbank export
-*/
-function get_questions_category( $category, $noparent=false, $recurse=true, $export=true ) {
+ * Function to read all questions for category into big array
+ *
+ * @param int $category category number
+ * @param bool $noparent if true only questions with NO parent will be selected
+ * @param bool $recurse include subdirectories
+ * @param bool $export set true if this is called by questionbank export
+ */
+function get_questions_category($category, $noparent = false, $recurse = true, $export = true)
+{
     global $DB;
 
     // Build sql bit for $noparent
     $npsql = '';
     if ($noparent) {
-      $npsql = " and parent='0' ";
+        $npsql = " and parent='0' ";
     }
 
     // Get list of categories
@@ -81,7 +83,7 @@ function get_questions_category( $category, $noparent=false, $recurse=true, $exp
 
     // Iterate through questions, getting stuff we need
     $qresults = array();
-    foreach($questions as $key => $question) {
+    foreach ($questions as $key => $question) {
         $question->export_process = $export;
         $qtype = question_bank::get_qtype($question->qtype, false);
         if ($export && $qtype->name() == 'missingtype') {
@@ -99,7 +101,8 @@ function get_questions_category( $category, $noparent=false, $recurse=true, $exp
  * @param int $categoryid a category id.
  * @return bool whether this is the only top-level category in a context.
  */
-function question_is_only_toplevel_category_in_context($categoryid) {
+function question_is_only_toplevel_category_in_context($categoryid)
+{
     global $DB;
     return 1 == $DB->count_records_sql("
             SELECT count(*)
@@ -115,7 +118,8 @@ function question_is_only_toplevel_category_in_context($categoryid) {
  *
  * @param int $todelete a category id.
  */
-function question_can_delete_cat($todelete) {
+function question_can_delete_cat($todelete)
+{
     global $DB;
     if (question_is_only_toplevel_category_in_context($todelete)) {
         print_error('cannotdeletecate', 'question');
@@ -264,7 +268,8 @@ class_alias('core_question\bank\view', 'question_bank_view', true);
  * @param bool $unused no longer used, do no pass
  * @return array $thispageurl, $contexts, $cmid, $cm, $module, $pagevars
  */
-function question_edit_setup($edittab, $baseurl, $requirecmid = false, $unused = null) {
+function question_edit_setup($edittab, $baseurl, $requirecmid = false, $unused = null)
+{
     global $DB, $PAGE, $CFG;
 
     if ($unused !== null) {
@@ -274,12 +279,12 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $unused =
     $thispageurl = new moodle_url($baseurl);
     $thispageurl->remove_all_params(); // We are going to explicity add back everything important - this avoids unwanted params from being retained.
 
-    if ($requirecmid){
-        $cmid =required_param('cmid', PARAM_INT);
+    if ($requirecmid) {
+        $cmid = required_param('cmid', PARAM_INT);
     } else {
         $cmid = optional_param('cmid', 0, PARAM_INT);
     }
-    if ($cmid){
+    if ($cmid) {
         list($module, $cm) = get_module_from_cmid($cmid);
         $courseid = $cm->course;
         $thispageurl->params(compact('cmid'));
@@ -288,13 +293,13 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $unused =
     } else {
         $module = null;
         $cm = null;
-        $courseid  = required_param('courseid', PARAM_INT);
+        $courseid = required_param('courseid', PARAM_INT);
         $thispageurl->params(compact('courseid'));
         require_login($courseid, false);
         $thiscontext = context_course::instance($courseid);
     }
 
-    if ($thiscontext){
+    if ($thiscontext) {
         $contexts = new question_edit_contexts($thiscontext);
         $contexts->require_one_edit_tab_cap($edittab);
 
@@ -316,7 +321,7 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $unused =
             $pagevars['qpage'] = 0;
         }
     }
-    if ($pagevars['cat']){
+    if ($pagevars['cat']) {
         $thispageurl->param('cat', $pagevars['cat']);
     }
     if (strpos($baseurl, '/question/') === 0) {
@@ -330,7 +335,7 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $unused =
     }
 
     $pagevars['qperpage'] = question_get_display_preference(
-            'qperpage', DEFAULT_QUESTIONS_PER_PAGE, PARAM_INT, $thispageurl);
+        'qperpage', DEFAULT_QUESTIONS_PER_PAGE, PARAM_INT, $thispageurl);
 
     for ($i = 1; $i <= question_bank_view::MAX_SORTS; $i++) {
         $param = 'qbs' . $i;
@@ -343,14 +348,15 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $unused =
     $defaultcategory = question_make_default_categories($contexts->all());
 
     $contextlistarr = array();
-    foreach ($contexts->having_one_edit_tab_cap($edittab) as $context){
+    foreach ($contexts->having_one_edit_tab_cap($edittab) as $context) {
         $contextlistarr[] = "'{$context->id}'";
     }
     $contextlist = join($contextlistarr, ' ,');
-    if (!empty($pagevars['cat'])){
+    if (!empty($pagevars['cat'])) {
         $catparts = explode(',', $pagevars['cat']);
         if (!$catparts[0] || (false !== array_search($catparts[1], $contextlistarr)) ||
-                !$DB->count_records_select("question_categories", "id = ? AND contextid = ?", array($catparts[0], $catparts[1]))) {
+            !$DB->count_records_select("question_categories", "id = ? AND contextid = ?", array($catparts[0], $catparts[1]))
+        ) {
             print_error('invalidcategory', 'question');
         }
     } else {
@@ -359,13 +365,13 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $unused =
     }
 
     // Display options.
-    $pagevars['recurse']    = question_get_display_preference('recurse',    1, PARAM_BOOL, $thispageurl);
+    $pagevars['recurse'] = question_get_display_preference('recurse', 1, PARAM_BOOL, $thispageurl);
     $pagevars['showhidden'] = question_get_display_preference('showhidden', 0, PARAM_BOOL, $thispageurl);
     $pagevars['qbshowtext'] = question_get_display_preference('qbshowtext', 0, PARAM_BOOL, $thispageurl);
 
     // Category list page.
     $pagevars['cpage'] = optional_param('cpage', 1, PARAM_INT);
-    if ($pagevars['cpage'] != 1){
+    if ($pagevars['cpage'] != 1) {
         $thispageurl->param('cpage', $pagevars['cpage']);
     }
 
@@ -377,7 +383,8 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $unused =
  * @param array $pagevars from {@link question_edit_setup()}.
  * @return int the category id.
  */
-function question_get_category_id_from_pagevars(array $pagevars) {
+function question_get_category_id_from_pagevars(array $pagevars)
+{
     list($questioncategoryid) = explode(',', $pagevars['cat']);
     return $questioncategoryid;
 }
@@ -397,7 +404,8 @@ function question_get_category_id_from_pagevars(array $pagevars) {
  *      it to this URL.
  * @return mixed the parameter value to use.
  */
-function question_get_display_preference($param, $default, $type, $thispageurl) {
+function question_get_display_preference($param, $default, $type, $thispageurl)
+{
     $submittedvalue = optional_param($param, null, $type);
     if (is_null($submittedvalue)) {
         return get_user_preferences('question_bank_' . $param, $default);
@@ -411,9 +419,10 @@ function question_get_display_preference($param, $default, $type, $thispageurl) 
 /**
  * Make sure user is logged in as required in this context.
  */
-function require_login_in_context($contextorid = null){
+function require_login_in_context($contextorid = null)
+{
     global $DB, $CFG;
-    if (!is_object($contextorid)){
+    if (!is_object($contextorid)) {
         $context = context::instance_by_id($contextorid, IGNORE_MISSING);
     } else {
         $context = $contextorid;
@@ -421,7 +430,7 @@ function require_login_in_context($contextorid = null){
     if ($context && ($context->contextlevel == CONTEXT_COURSE)) {
         require_login($context->instanceid);
     } else if ($context && ($context->contextlevel == CONTEXT_MODULE)) {
-        if ($cm = $DB->get_record('course_modules',array('id' =>$context->instanceid))) {
+        if ($cm = $DB->get_record('course_modules', array('id' => $context->instanceid))) {
             if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
                 print_error('invalidcourseid');
             }
@@ -448,7 +457,8 @@ function require_login_in_context($contextorid = null){
  * @param $allowedqtypes optional list of qtypes that are allowed. If given, only
  *      those qtypes will be shown. Example value array('description', 'multichoice').
  */
-function print_choose_qtype_to_add_form($hiddenparams, array $allowedqtypes = null, $enablejs = true) {
+function print_choose_qtype_to_add_form($hiddenparams, array $allowedqtypes = null, $enablejs = true)
+{
     global $CFG, $PAGE, $OUTPUT;
 
     if ($enablejs) {
@@ -485,12 +495,13 @@ function print_choose_qtype_to_add_form($hiddenparams, array $allowedqtypes = nu
  * @param string $tooltip a tooltip to add to the button (optional).
  * @param bool $disabled if true, the button will be disabled.
  */
-function create_new_question_button($categoryid, $params, $caption, $tooltip = '', $disabled = false) {
+function create_new_question_button($categoryid, $params, $caption, $tooltip = '', $disabled = false)
+{
     global $CFG, $PAGE, $OUTPUT;
     static $choiceformprinted = false;
     $params['category'] = $categoryid;
     $url = new moodle_url('/question/addquestion.php', $params);
-    echo $OUTPUT->single_button($url, $caption, 'get', array('disabled'=>$disabled, 'title'=>$tooltip));
+    echo $OUTPUT->single_button($url, $caption, 'get', array('disabled' => $disabled, 'title' => $tooltip));
 
     if (!$choiceformprinted) {
         echo '<div id="qtypechoicecontainer">';

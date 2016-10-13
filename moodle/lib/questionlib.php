@@ -36,8 +36,8 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/question/engine/lib.php');
 require_once($CFG->dirroot . '/question/type/questiontypebase.php');
-require_once($CFG->dirroot.'/mod/quiz/remote/locallib.php');
-
+require_once($CFG->dirroot . '/mod/quiz/remote/locallib.php');
+require_once($CFG->dirroot . '/question/remote/locallib.php');
 
 
 /// CONSTANTS ///////////////////////////////////
@@ -73,7 +73,8 @@ define("QUESTION_NUMANS_ADD", 3);
  *      the $qtypes in the same order as $sortedqtypes, except that $tomove will
  *      have been moved one place.
  */
-function question_reorder_qtypes($sortedqtypes, $tomove, $direction) {
+function question_reorder_qtypes($sortedqtypes, $tomove, $direction)
+{
     $neworder = array_keys($sortedqtypes);
     // Find the element to move.
     $key = array_search($tomove, $neworder);
@@ -98,7 +99,8 @@ function question_reorder_qtypes($sortedqtypes, $tomove, $direction) {
  * @param $neworder An arra $index => $qtype. Indices should start at 0 and be in order.
  * @param $config get_config('question'), if you happen to have it around, to save one DB query.
  */
-function question_save_qtype_order($neworder, $config = null) {
+function question_save_qtype_order($neworder, $config = null)
+{
     global $DB;
 
     if (is_null($config)) {
@@ -119,7 +121,8 @@ function question_save_qtype_order($neworder, $config = null) {
  * @param array $questionids of question ids.
  * @return boolean whether any of these questions are being used by any part of Moodle.
  */
-function questions_in_use($questionids) {
+function questions_in_use($questionids)
+{
     global $CFG;
 
     if (question_engine::questions_in_use($questionids)) {
@@ -164,7 +167,8 @@ function questions_in_use($questionids) {
  * @return boolean whether any of the question categories beloning to this context have
  *         any questions in them.
  */
-function question_context_has_any_questions($context) {
+function question_context_has_any_questions($context)
+{
     global $DB;
     if (is_object($context)) {
         $contextid = $context->id;
@@ -188,7 +192,8 @@ function question_context_has_any_questions($context) {
  * @param string $matchgrades 'error' or 'nearest'
  * @return mixed either 'fixed' value or false if error.
  */
-function match_grade_options($gradeoptionsfull, $grade, $matchgrades = 'error') {
+function match_grade_options($gradeoptionsfull, $grade, $matchgrades = 'error')
+{
 
     if ($matchgrades == 'error') {
         // (Almost) exact match, or an error.
@@ -217,7 +222,7 @@ function match_grade_options($gradeoptionsfull, $grade, $matchgrades = 'error') 
     } else {
         // Unknow option passed.
         throw new coding_exception('Unknown $matchgrades ' . $matchgrades .
-                ' passed to match_grade_options');
+            ' passed to match_grade_options');
     }
 }
 
@@ -229,7 +234,8 @@ function match_grade_options($gradeoptionsfull, $grade, $matchgrades = 'error') 
  *
  * @param object|coursecat $category course category object
  */
-function question_category_delete_safe($category) {
+function question_category_delete_safe($category)
+{
     global $DB;
     $criteria = array('category' => $category->id);
     $context = context::instance_by_id($category->contextid, IGNORE_MISSING);
@@ -274,12 +280,14 @@ function question_category_delete_safe($category) {
  * @param boolean $recursive whether to check child categories too.
  * @return boolean whether any question in this category is in use.
  */
-function question_category_in_use($categoryid, $recursive = false) {
+function question_category_in_use($categoryid, $recursive = false)
+{
     global $DB;
 
     //Look at each question in the category
     if ($questions = $DB->get_records_menu('question',
-            array('category' => $categoryid), '', 'id, 1')) {
+        array('category' => $categoryid), '', 'id, 1')
+    ) {
         if (questions_in_use(array_keys($questions))) {
             return true;
         }
@@ -290,7 +298,8 @@ function question_category_in_use($categoryid, $recursive = false) {
 
     //Look under child categories recursively
     if ($children = $DB->get_records('question_categories',
-            array('parent' => $categoryid), '', 'id, 1')) {
+        array('parent' => $categoryid), '', 'id, 1')
+    ) {
         foreach ($children as $child) {
             if (question_category_in_use($child->id, $recursive)) {
                 return true;
@@ -305,9 +314,10 @@ function question_category_in_use($categoryid, $recursive = false) {
  * Deletes question and all associated data from the database
  *
  * It will not delete a question if it is used by an activity module
- * @param object $question  The question being deleted
+ * @param object $question The question being deleted
  */
-function question_delete_question($questionid) {
+function question_delete_question($questionid)
+{
     global $DB;
 
     $question = $DB->get_record_sql('
@@ -332,14 +342,15 @@ function question_delete_question($questionid) {
 
     // delete questiontype-specific data
     question_bank::get_qtype($question->qtype, false)->delete_question(
-            $questionid, $question->contextid);
+        $questionid, $question->contextid);
 
     // Delete all tag instances.
     core_tag_tag::remove_all_item_tags('core_question', 'question', $question->id);
 
     // Now recursively delete all child questions
     if ($children = $DB->get_records('question',
-            array('parent' => $questionid), '', 'id, qtype')) {
+        array('parent' => $questionid), '', 'id, qtype')
+    ) {
         foreach ($children as $child) {
             if ($child->id != $questionid) {
                 question_delete_question($child->id);
@@ -358,11 +369,12 @@ function question_delete_question($questionid) {
  * @param object $contextid The contextid to delete question categories from
  * @return array Feedback from deletes (if any)
  */
-function question_delete_context($contextid) {
+function question_delete_context($contextid)
+{
     global $DB;
 
     //To store feedback to be showed at the end of the process
-    $feedbackdata   = array();
+    $feedbackdata = array();
 
     //Cache some strings
     $strcatdeleted = get_string('unusedcategorydeleted', 'question');
@@ -389,7 +401,8 @@ function question_delete_context($contextid) {
  * @param boolean $feedback to specify if the process must output a summary of its work
  * @return boolean
  */
-function question_delete_course($course, $feedback=true) {
+function question_delete_course($course, $feedback = true)
+{
     $coursecontext = context_course::instance($course->id);
     $feedbackdata = question_delete_context($coursecontext->id, $feedback);
 
@@ -414,7 +427,8 @@ function question_delete_course($course, $feedback=true) {
  * @param boolean $feedback to specify if the process must output a summary of its work
  * @return boolean
  */
-function question_delete_course_category($category, $newcategory, $feedback=true) {
+function question_delete_course_category($category, $newcategory, $feedback = true)
+{
     global $DB, $OUTPUT;
 
     $context = context_coursecat::instance($category->id);
@@ -445,7 +459,7 @@ function question_delete_course_category($category, $newcategory, $feedback=true
             $a->oldplace = $context->get_context_name();
             $a->newplace = $newcontext->get_context_name();
             echo $OUTPUT->notification(
-                    get_string('movedquestionsandcategories', 'question', $a), 'notifysuccess');
+                get_string('movedquestionsandcategories', 'question', $a), 'notifysuccess');
         }
     }
 
@@ -463,7 +477,8 @@ function question_delete_course_category($category, $newcategory, $feedback=true
  * @return mixed false on
  */
 function question_save_from_deletion($questionids, $newcontextid, $oldplace,
-        $newcategory = null) {
+                                     $newcategory = null)
+{
     global $DB;
 
     // Make a category in the parent context to move the questions to.
@@ -492,7 +507,8 @@ function question_save_from_deletion($questionids, $newcontextid, $oldplace,
  * @param boolean $feedback to specify if the process must output a summary of its work
  * @return boolean
  */
-function question_delete_activity($cm, $feedback=true) {
+function question_delete_activity($cm, $feedback = true)
+{
     global $DB;
 
     $modcontext = context_module::instance($cm->id);
@@ -517,11 +533,12 @@ function question_delete_activity($cm, $feedback=true) {
  * @param array $questionids of question ids.
  * @param integer $newcategoryid the id of the category to move to.
  */
-function question_move_questions_to_category($questionids, $newcategoryid) {
+function question_move_questions_to_category($questionids, $newcategoryid)
+{
     global $DB;
 
     $newcontextid = $DB->get_field('question_categories', 'contextid',
-            array('id' => $newcategoryid));
+        array('id' => $newcategoryid));
     list($questionidcondition, $params) = $DB->get_in_or_equal($questionids);
     $questions = $DB->get_records_sql("
             SELECT q.id, q.qtype, qc.contextid
@@ -531,17 +548,17 @@ function question_move_questions_to_category($questionids, $newcategoryid) {
     foreach ($questions as $question) {
         if ($newcontextid != $question->contextid) {
             question_bank::get_qtype($question->qtype)->move_files(
-                    $question->id, $question->contextid, $newcontextid);
+                $question->id, $question->contextid, $newcontextid);
         }
     }
 
     // Move the questions themselves.
     $DB->set_field_select('question', 'category', $newcategoryid,
-            "id $questionidcondition", $params);
+        "id $questionidcondition", $params);
 
     // Move any subquestions belonging to them.
     $DB->set_field_select('question', 'category', $newcategoryid,
-            "parent $questionidcondition", $params);
+        "parent $questionidcondition", $params);
 
     // Update the contextid for any tag instances that may exist for these questions.
     core_tag_tag::change_items_context('core_question', 'question', $questionids, $newcontextid);
@@ -564,26 +581,27 @@ function question_move_questions_to_category($questionids, $newcategoryid) {
  * @param integer $oldcontextid the old context id.
  * @param integer $newcontextid the new context id.
  */
-function question_move_category_to_context($categoryid, $oldcontextid, $newcontextid) {
+function question_move_category_to_context($categoryid, $oldcontextid, $newcontextid)
+{
     global $DB;
 
     $questionids = $DB->get_records_menu('question',
-            array('category' => $categoryid), '', 'id,qtype');
+        array('category' => $categoryid), '', 'id,qtype');
     foreach ($questionids as $questionid => $qtype) {
         question_bank::get_qtype($qtype)->move_files(
-                $questionid, $oldcontextid, $newcontextid);
+            $questionid, $oldcontextid, $newcontextid);
         // Purge this question from the cache.
         question_bank::notify_question_edited($questionid);
     }
 
     core_tag_tag::change_items_context('core_question', 'question',
-            array_keys($questionids), $newcontextid);
+        array_keys($questionids), $newcontextid);
 
     $subcatids = $DB->get_records_menu('question_categories',
-            array('parent' => $categoryid), '', 'id,1');
+        array('parent' => $categoryid), '', 'id,1');
     foreach ($subcatids as $subcatid => $notused) {
         $DB->set_field('question_categories', 'contextid', $newcontextid,
-                array('id' => $subcatid));
+            array('id' => $subcatid));
         question_move_category_to_context($subcatid, $oldcontextid, $newcontextid);
     }
 }
@@ -601,7 +619,8 @@ function question_move_category_to_context($categoryid, $oldcontextid, $newconte
  * @return moodle_url the URL.
  */
 function question_preview_url($questionid, $preferredbehaviour = null,
-        $maxmark = null, $displayoptions = null, $variant = null, $context = null) {
+                              $maxmark = null, $displayoptions = null, $variant = null, $context = null)
+{
 
     $params = array('id' => $questionid);
 
@@ -624,13 +643,13 @@ function question_preview_url($questionid, $preferredbehaviour = null,
     }
 
     if (!is_null($displayoptions)) {
-        $params['correctness']     = $displayoptions->correctness;
-        $params['marks']           = $displayoptions->marks;
-        $params['markdp']          = $displayoptions->markdp;
-        $params['feedback']        = (bool) $displayoptions->feedback;
-        $params['generalfeedback'] = (bool) $displayoptions->generalfeedback;
-        $params['rightanswer']     = (bool) $displayoptions->rightanswer;
-        $params['history']         = (bool) $displayoptions->history;
+        $params['correctness'] = $displayoptions->correctness;
+        $params['marks'] = $displayoptions->marks;
+        $params['markdp'] = $displayoptions->markdp;
+        $params['feedback'] = (bool)$displayoptions->feedback;
+        $params['generalfeedback'] = (bool)$displayoptions->generalfeedback;
+        $params['rightanswer'] = (bool)$displayoptions->rightanswer;
+        $params['history'] = (bool)$displayoptions->history;
     }
 
     if ($variant) {
@@ -643,7 +662,8 @@ function question_preview_url($questionid, $preferredbehaviour = null,
 /**
  * @return array that can be passed as $params to the {@link popup_action} constructor.
  */
-function question_preview_popup_params() {
+function question_preview_popup_params()
+{
     return array(
         'height' => 600,
         'width' => 800,
@@ -668,7 +688,8 @@ function question_preview_popup_params() {
  * on them before they can be properly used.
  */
 function question_preload_questions($questionids = null, $extrafields = '', $join = '',
-        $extraparams = array(), $orderby = '', $quizid = null) {
+                                    $extraparams = array(), $orderby = '', $quizid = null)
+{
     global $DB;
 
     if ($questionids === null) {
@@ -680,7 +701,7 @@ function question_preload_questions($questionids = null, $extrafields = '', $joi
         }
 
         list($questionidcondition, $params) = $DB->get_in_or_equal(
-                $questionids, SQL_PARAMS_NAMED, 'qid0000');
+            $questionids, SQL_PARAMS_NAMED, 'qid0000');
         $where = 'WHERE q.id ' . $questionidcondition;
     }
 
@@ -704,9 +725,9 @@ function question_preload_questions($questionids = null, $extrafields = '', $joi
           {$orderby}";
 
     // Load the questions.
-    if(MOODLE_RUN_MODE === MOODLE_MODE_HOST){
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HOST) {
         $questions = $DB->get_records_sql($sql, $extraparams + $params);
-    }else{
+    } else {
         //hanv: 04/06/2016: get_remote_questions
         $questions = get_remote_question($quizid);
         return $questions;
@@ -732,16 +753,17 @@ function question_preload_questions($questionids = null, $extrafields = '', $joi
  *
  * @return array question objects.
  */
-function question_load_questions($questionids, $extrafields = '', $join = '') {
-    if(MOODLE_RUN_MODE === MOODLE_MODE_HUB && $questionids){
+function question_load_questions($questionids, $extrafields = '', $join = '')
+{
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB && $questionids) {
         $quesdata = array();
         $index = 0;
-        foreach ($questionids as $questionid){
+        foreach ($questionids as $questionid) {
             $quesdata["questionids[$index]"] = $questionid;
             $index++;
         }
         $questions = get_remote_question_preload_questions($quesdata);
-    }else{
+    } else {
         $questions = question_preload_questions($questionids, $extrafields, $join, '', '');
     }
     // Load the question type specific information
@@ -758,7 +780,8 @@ function question_load_questions($questionids, $extrafields = '', $join = '') {
  * @param object $question the question to tidy.
  * @param boolean $loadtags load the question tags from the tags table. Optional, default false.
  */
-function _tidy_question($question, $loadtags = false) {
+function _tidy_question($question, $loadtags = false)
+{
     global $CFG;
 
     // Load question-type specific fields.
@@ -793,7 +816,8 @@ function _tidy_question($question, $loadtags = false) {
  * @param boolean $loadtags load the question tags from the tags table. Optional, default false.
  * @return bool Indicates success or failure.
  */
-function get_question_options(&$questions, $loadtags = false) {
+function get_question_options(&$questions, $loadtags = false)
+{
     if (is_array($questions)) { // deal with an array of questions
         foreach ($questions as $i => $notused) {
             _tidy_question($questions[$i], $loadtags);
@@ -811,7 +835,8 @@ function get_question_options(&$questions, $loadtags = false) {
  *       Only $question->qtype is used.
  * @return string the HTML for the img tag.
  */
-function print_question_icon($question) {
+function print_question_icon($question)
+{
     global $PAGE;
     return $PAGE->get_renderer('question', 'bank')->qtype_icon($question->qtype);
 }
@@ -825,7 +850,8 @@ function print_question_icon($question) {
  * @param object $question
  * @return string A unique version stamp
  */
-function question_hash($question) {
+function question_hash($question)
+{
     return make_unique_id_code();
 }
 
@@ -836,7 +862,8 @@ function question_hash($question) {
  * finally it tries to return pending categories (those being orphaned, whose parent is
  * incorrect) to avoid missing any category from original array.
  */
-function sort_categories_by_tree(&$categories, $id = 0, $level = 1) {
+function sort_categories_by_tree(&$categories, $id = 0, $level = 1)
+{
     global $DB;
 
     $children = array();
@@ -847,7 +874,7 @@ function sort_categories_by_tree(&$categories, $id = 0, $level = 1) {
             $children[$key] = $categories[$key];
             $categories[$key]->processed = true;
             $children = $children + sort_categories_by_tree(
-                    $categories, $children[$key]->id, $level+1);
+                    $categories, $children[$key]->id, $level + 1);
         }
     }
     //If level = 1, we have finished, try to look for non processed categories
@@ -858,7 +885,8 @@ function sort_categories_by_tree(&$categories, $id = 0, $level = 1) {
             // parent doesn't exist in the course)
             if (!isset($categories[$key]->processed) && !$DB->record_exists('question_categories',
                     array('contextid' => $categories[$key]->contextid,
-                            'id' => $categories[$key]->parent))) {
+                        'id' => $categories[$key]->parent))
+            ) {
                 $children[$key] = $categories[$key];
                 $categories[$key]->processed = true;
                 $children = $children + sort_categories_by_tree(
@@ -883,13 +911,14 @@ function sort_categories_by_tree(&$categories, $id = 0, $level = 1) {
  * @param int $depth the indent depth. Used in recursive calls.
  * @return array a new array of categories, in the right order for the tree.
  */
-function flatten_category_tree(&$categories, $id, $depth = 0, $nochildrenof = -1) {
+function flatten_category_tree(&$categories, $id, $depth = 0, $nochildrenof = -1)
+{
 
     // Indent the name of this category.
     $newcategories = array();
     $newcategories[$id] = $categories[$id];
     $newcategories[$id]->indentedname = str_repeat('&nbsp;&nbsp;&nbsp;', $depth) .
-            $categories[$id]->name;
+        $categories[$id]->name;
 
     // Recursively indent the children.
     foreach ($categories[$id]->childids as $childid) {
@@ -911,7 +940,8 @@ function flatten_category_tree(&$categories, $id, $depth = 0, $nochildrenof = -1
  * @param array $categories An array of category objects, for example from the.
  * @return array The formatted list of categories.
  */
-function add_indented_names($categories, $nochildrenof = -1) {
+function add_indented_names($categories, $nochildrenof = -1)
+{
 
     // Add an array to each category to hold the child category ids. This array
     // will be removed again by flatten_category_tree(). It should not be used
@@ -926,7 +956,8 @@ function add_indented_names($categories, $nochildrenof = -1) {
     $toplevelcategoryids = array();
     foreach (array_keys($categories) as $id) {
         if (!empty($categories[$id]->parent) &&
-                array_key_exists($categories[$id]->parent, $categories)) {
+            array_key_exists($categories[$id]->parent, $categories)
+        ) {
             $categories[$categories[$id]->parent]->childids[] = $id;
         } else {
             $toplevelcategoryids[] = $id;
@@ -956,10 +987,11 @@ function add_indented_names($categories, $nochildrenof = -1) {
  *      default in the dropdown.
  */
 function question_category_select_menu($contexts, $top = false, $currentcat = 0,
-        $selected = "", $nochildrenof = -1) {
+                                       $selected = "", $nochildrenof = -1)
+{
     global $OUTPUT;
     $categoriesarray = question_category_options($contexts, $top, $currentcat,
-            false, $nochildrenof);
+        false, $nochildrenof);
     if ($selected) {
         $choose = '';
     } else {
@@ -977,10 +1009,11 @@ function question_category_select_menu($contexts, $top = false, $currentcat = 0,
  * @param integer $contextid a context id.
  * @return object the default question category for that context, or false if none.
  */
-function question_get_default_category($contextid) {
+function question_get_default_category($contextid)
+{
     global $DB;
     $category = $DB->get_records('question_categories',
-            array('contextid' => $contextid), 'id', '*', 0, 1);
+        array('contextid' => $contextid), 'id', '*', 0, 1);
     if (!empty($category)) {
         return reset($category);
     } else {
@@ -992,11 +1025,13 @@ function question_get_default_category($contextid) {
  * Gets the default category in the most specific context.
  * If no categories exist yet then default ones are created in all contexts.
  *
- * @param array $contexts  The context objects for this context and all parent contexts.
+ * @param array $contexts The context objects for this context and all parent contexts.
  * @return object The default category - the category in the course context
  */
-function question_make_default_categories($contexts) {
+function question_make_default_categories($contexts)
+{
     global $DB;
+
     static $preferredlevels = array(
         CONTEXT_COURSE => 4,
         CONTEXT_MODULE => 3,
@@ -1006,10 +1041,21 @@ function question_make_default_categories($contexts) {
 
     $toreturn = null;
     $preferredness = 0;
+
+    if (MOODLE_RUN_MODE === MOODLE_MODE_HUB) {
+        $categories = $DB->get_records("question_categories");
+        $len = count($categories);
+
+        if ($len == 0 || $len == 1) {
+            sync_question_categories($len);
+        }
+    }
+
     // If it already exists, just return it.
     foreach ($contexts as $key => $context) {
         if (!$exists = $DB->record_exists("question_categories",
-                array('contextid' => $context->id))) {
+            array('contextid' => $context->id))
+        ) {
             // Otherwise, we need to make one
             $category = new stdClass();
             $contextname = $context->get_context_name(false, true);
@@ -1048,7 +1094,8 @@ function question_make_default_categories($contexts) {
  * @param string $sortorder used as the ORDER BY clause in the select statement.
  * @return array of category objects.
  */
-function get_categories_for_contexts($contexts, $sortorder = 'parent, sortorder, name ASC') {
+function get_categories_for_contexts($contexts, $sortorder = 'parent, sortorder, name ASC')
+{
     global $DB;
     return $DB->get_records_sql("
             SELECT c.*, (SELECT count(1) FROM {question} q
@@ -1062,7 +1109,8 @@ function get_categories_for_contexts($contexts, $sortorder = 'parent, sortorder,
  * Output an array of question categories.
  */
 function question_category_options($contexts, $top = false, $currentcat = 0,
-        $popupform = false, $nochildrenof = -1) {
+                                   $popupform = false, $nochildrenof = -1)
+{
     global $CFG;
     $pcontexts = array();
     foreach ($contexts as $context) {
@@ -1089,10 +1137,10 @@ function question_category_options($contexts, $top = false, $currentcat = 0,
                 $cid = $category->id;
                 if ($currentcat != $cid || $currentcat == 0) {
                     $countstring = !empty($category->questioncount) ?
-                            " ($category->questioncount)" : '';
+                        " ($category->questioncount)" : '';
                     $categoriesarray[$contextstring][$cid] =
-                            format_string($category->indentedname, true,
-                                array('context' => $context)) . $countstring;
+                        format_string($category->indentedname, true,
+                            array('context' => $context)) . $countstring;
                 }
             }
         }
@@ -1113,7 +1161,8 @@ function question_category_options($contexts, $top = false, $currentcat = 0,
     }
 }
 
-function question_add_context_in_key($categories) {
+function question_add_context_in_key($categories)
+{
     $newcatarray = array();
     foreach ($categories as $id => $category) {
         $category->parent = "$category->parent,$category->contextid";
@@ -1123,7 +1172,8 @@ function question_add_context_in_key($categories) {
     return $newcatarray;
 }
 
-function question_add_tops($categories, $pcontexts) {
+function question_add_tops($categories, $pcontexts)
+{
     $topcats = array();
     foreach ($pcontexts as $context) {
         $newcat = new stdClass();
@@ -1140,7 +1190,8 @@ function question_add_tops($categories, $pcontexts) {
 /**
  * @return array of question category ids of the category and all subcategories.
  */
-function question_categorylist($categoryid) {
+function question_categorylist($categoryid)
+{
     global $DB;
 
     // final list of category IDs
@@ -1161,7 +1212,7 @@ function question_categorylist($categoryid) {
         list ($in, $params) = $DB->get_in_or_equal($subcategories);
 
         $subcategories = $DB->get_records_select_menu('question_categories',
-                "parent $in", $params, NULL, 'id,id AS id2');
+            "parent $in", $params, NULL, 'id,id AS id2');
     }
 
     return $categorylist;
@@ -1176,7 +1227,8 @@ function question_categorylist($categoryid) {
  * @param string $type 'import' if import list, otherwise export list assumed
  * @return array sorted list of import/export formats available
  */
-function get_import_export_formats($type) {
+function get_import_export_formats($type)
+{
     global $CFG;
     require_once($CFG->dirroot . '/question/format.php');
 
@@ -1210,7 +1262,8 @@ function get_import_export_formats($type) {
  * @param object $category the question category.
  * @return string the filename.
  */
-function question_default_export_filename($course, $category) {
+function question_default_export_filename($course, $category)
+{
     // We build a string that is an appropriate name (questions) from the lang pack,
     // then the corse shortname, then the question category name, then a timestamp.
 
@@ -1220,7 +1273,7 @@ function question_default_export_filename($course, $category) {
     $timestamp = clean_filename(userdate(time(), $dateformat, 99, false));
 
     $shortname = clean_filename($course->shortname);
-    if ($shortname == '' || $shortname == '_' ) {
+    if ($shortname == '' || $shortname == '_') {
         $shortname = $course->id;
     }
 
@@ -1238,26 +1291,31 @@ function question_default_export_filename($course, $category) {
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class context_to_string_translator{
+class context_to_string_translator
+{
     /**
      * @var array used to translate between contextids and strings for this context.
      */
     protected $contexttostringarray = array();
 
-    public function __construct($contexts) {
+    public function __construct($contexts)
+    {
         $this->generate_context_to_string_array($contexts);
     }
 
-    public function context_to_string($contextid) {
+    public function context_to_string($contextid)
+    {
         return $this->contexttostringarray[$contextid];
     }
 
-    public function string_to_context($contextname) {
+    public function string_to_context($contextname)
+    {
         $contextid = array_search($contextname, $this->contexttostringarray);
         return $contextid;
     }
 
-    protected function generate_context_to_string_array($contexts) {
+    protected function generate_context_to_string_array($contexts)
+    {
         if (!$this->contexttostringarray) {
             $catno = 1;
             foreach ($contexts as $context) {
@@ -1291,9 +1349,10 @@ class context_to_string_translator{
  * @param integer $cachecat useful to cache all question records in a category
  * @return boolean this user has the capability $cap for this question $question?
  */
-function question_has_capability_on($question, $cap, $cachecat = -1) {
+function question_has_capability_on($question, $cap, $cachecat = -1)
+{
     global $USER, $DB;
-    $isremote = (MOODLE_RUN_MODE === MOODLE_MODE_HUB)?true:false;
+    $isremote = (MOODLE_RUN_MODE === MOODLE_MODE_HUB) ? true : false;
 
     // these are capabilities on existing questions capabilties are
     //set per category. Each of these has a mine and all version. Append 'mine' and 'all'
@@ -1302,10 +1361,10 @@ function question_has_capability_on($question, $cap, $cachecat = -1) {
     static $categories = array();
     static $cachedcat = array();
     if ($cachecat != -1 && array_search($cachecat, $cachedcat) === false) {
-        if($isremote){
+        if ($isremote) {
             $res = get_remote_ques_by_category($cachecat);
             $questions += $res;
-        }else{
+        } else {
             $questions += $DB->get_records('question', array('category' => $cachecat), '', 'id,category,createdby');
         }
         $cachedcat[] = $cachecat;
@@ -1313,7 +1372,8 @@ function question_has_capability_on($question, $cap, $cachecat = -1) {
     if (!is_object($question)) {
         if (!isset($questions[$question])) {
             if (!$questions[$question] = $DB->get_record('question',
-                    array('id' => $question), 'id,category,createdby')) {
+                array('id' => $question), 'id,category,createdby')
+            ) {
                 print_error('questiondoesnotexist', 'question');
             }
         }
@@ -1326,48 +1386,35 @@ function question_has_capability_on($question, $cap, $cachecat = -1) {
     }
 
     if (!isset($categories[$question->category])) {
-        if($isremote){
-            $cond = array();
-            $cond['conditions[0][name]'] = 'id';
-            $cond['conditions[0][value]'] = $question->category;
-            $category = remote_db_get_record('question_categories', $cond);
-        }else{
-            $category = $DB->get_record('question_categories', array('id'=>$question->category));
-        }
+        $category = $DB->get_record('question_categories', array('id' => $question->category));
         if (!$categories[$question->category] = $category) {
             print_error('invalidcategory', 'question');
         }
     }
 
     $category = $categories[$question->category];
+    $context = context::instance_by_id($category->contextid);
 
-    //@TODO: handle context here. hardcode return true for show statistic Quiz structure analysis.
-    if($isremote){
-        return true;
-    }else{
-        $context = context::instance_by_id($category->contextid);
-
-        if (array_search($cap, $question_questioncaps)!== false) {
-            if (!has_capability('moodle/question:' . $cap . 'all', $context)) {
-                if ($question->createdby == $USER->id) {
-                    return has_capability('moodle/question:' . $cap . 'mine', $context);
-                } else {
-                    return false;
-                }
+    if (array_search($cap, $question_questioncaps) !== false) {
+        if (!has_capability('moodle/question:' . $cap . 'all', $context)) {
+            if ($question->createdby == $USER->id) {
+                return has_capability('moodle/question:' . $cap . 'mine', $context);
             } else {
-                return true;
+                return false;
             }
         } else {
-            return has_capability('moodle/question:' . $cap, $context);
+            return true;
         }
+    } else {
+        return has_capability('moodle/question:' . $cap, $context);
     }
-
 }
 
 /**
  * Require capability on question.
  */
-function question_require_capability_on($question, $cap) {
+function question_require_capability_on($question, $cap)
+{
     if (!question_has_capability_on($question, $cap)) {
         print_error('nopermissions', '', '', $cap);
     }
@@ -1378,7 +1425,8 @@ function question_require_capability_on($question, $cap) {
  * @param object $context a context
  * @return string A URL for editing questions in this context.
  */
-function question_edit_url($context) {
+function question_edit_url($context)
+{
     global $CFG, $SITE;
     if (!has_any_capability(question_get_question_capabilities(), $context)) {
         return false;
@@ -1410,13 +1458,14 @@ function question_edit_url($context) {
  * @param object $context
  * @return navigation_node Returns the question branch that was added
  */
-function question_extend_settings_navigation(navigation_node $navigationnode, $context) {
+function question_extend_settings_navigation(navigation_node $navigationnode, $context)
+{
     global $PAGE;
 
     if ($context->contextlevel == CONTEXT_COURSE) {
-        $params = array('courseid'=>$context->instanceid);
+        $params = array('courseid' => $context->instanceid);
     } else if ($context->contextlevel == CONTEXT_MODULE) {
-        $params = array('cmid'=>$context->instanceid);
+        $params = array('cmid' => $context->instanceid);
     } else {
         return;
     }
@@ -1426,24 +1475,24 @@ function question_extend_settings_navigation(navigation_node $navigationnode, $c
     }
 
     $questionnode = $navigationnode->add(get_string('questionbank', 'question'),
-            new moodle_url('/question/edit.php', $params), navigation_node::TYPE_CONTAINER, null, 'questionbank');
+        new moodle_url('/question/edit.php', $params), navigation_node::TYPE_CONTAINER, null, 'questionbank');
 
     $contexts = new question_edit_contexts($context);
     if ($contexts->have_one_edit_tab_cap('questions')) {
         $questionnode->add(get_string('questions', 'question'), new moodle_url(
-                '/question/edit.php', $params), navigation_node::TYPE_SETTING, null, 'questions');
+            '/question/edit.php', $params), navigation_node::TYPE_SETTING, null, 'questions');
     }
     if ($contexts->have_one_edit_tab_cap('categories')) {
         $questionnode->add(get_string('categories', 'question'), new moodle_url(
-                '/question/category.php', $params), navigation_node::TYPE_SETTING, null, 'categories');
+            '/question/category.php', $params), navigation_node::TYPE_SETTING, null, 'categories');
     }
     if ($contexts->have_one_edit_tab_cap('import')) {
         $questionnode->add(get_string('import', 'question'), new moodle_url(
-                '/question/import.php', $params), navigation_node::TYPE_SETTING, null, 'import');
+            '/question/import.php', $params), navigation_node::TYPE_SETTING, null, 'import');
     }
     if ($contexts->have_one_edit_tab_cap('export')) {
         $questionnode->add(get_string('export', 'question'), new moodle_url(
-                '/question/export.php', $params), navigation_node::TYPE_SETTING, null, 'export');
+            '/question/export.php', $params), navigation_node::TYPE_SETTING, null, 'export');
     }
 
     return $questionnode;
@@ -1452,7 +1501,8 @@ function question_extend_settings_navigation(navigation_node $navigationnode, $c
 /**
  * @return array all the capabilities that relate to accessing particular questions.
  */
-function question_get_question_capabilities() {
+function question_get_question_capabilities()
+{
     return array(
         'moodle/question:add',
         'moodle/question:editmine',
@@ -1469,7 +1519,8 @@ function question_get_question_capabilities() {
 /**
  * @return array all the question bank capabilities.
  */
-function question_get_all_capabilities() {
+function question_get_all_capabilities()
+{
     $caps = question_get_question_capabilities();
     $caps[] = 'moodle/question:managecategory';
     $caps[] = 'moodle/question:flag';
@@ -1484,7 +1535,8 @@ function question_get_all_capabilities() {
  * @copyright 2007 Jamie Pratt me@jamiep.org
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_edit_contexts {
+class question_edit_contexts
+{
 
     public static $caps = array(
         'editq' => array('moodle/question:add',
@@ -1496,16 +1548,16 @@ class question_edit_contexts {
             'moodle/question:useall',
             'moodle/question:movemine',
             'moodle/question:moveall'),
-        'questions'=>array('moodle/question:add',
+        'questions' => array('moodle/question:add',
             'moodle/question:editmine',
             'moodle/question:editall',
             'moodle/question:viewmine',
             'moodle/question:viewall',
             'moodle/question:movemine',
             'moodle/question:moveall'),
-        'categories'=>array('moodle/question:managecategory'),
-        'import'=>array('moodle/question:add'),
-        'export'=>array('moodle/question:viewall', 'moodle/question:viewmine'));
+        'categories' => array('moodle/question:managecategory'),
+        'import' => array('moodle/question:add'),
+        'export' => array('moodle/question:viewall', 'moodle/question:viewmine'));
 
     protected $allcontexts;
 
@@ -1513,21 +1565,24 @@ class question_edit_contexts {
      * Constructor
      * @param context the current context.
      */
-    public function __construct(context $thiscontext) {
+    public function __construct(context $thiscontext)
+    {
         $this->allcontexts = array_values($thiscontext->get_parent_contexts(true));
     }
 
     /**
      * @return array all parent contexts
      */
-    public function all() {
+    public function all()
+    {
         return $this->allcontexts;
     }
 
     /**
      * @return object lowest context which must be either the module or course context
      */
-    public function lowest() {
+    public function lowest()
+    {
         return $this->allcontexts[0];
     }
 
@@ -1535,7 +1590,8 @@ class question_edit_contexts {
      * @param string $cap capability
      * @return array parent contexts having capability, zero based index
      */
-    public function having_cap($cap) {
+    public function having_cap($cap)
+    {
         $contextswithcap = array();
         foreach ($this->allcontexts as $context) {
             if (has_capability($cap, $context)) {
@@ -1549,7 +1605,8 @@ class question_edit_contexts {
      * @param array $caps capabilities
      * @return array parent contexts having at least one of $caps, zero based index
      */
-    public function having_one_cap($caps) {
+    public function having_one_cap($caps)
+    {
         $contextswithacap = array();
         foreach ($this->allcontexts as $context) {
             foreach ($caps as $cap) {
@@ -1566,21 +1623,23 @@ class question_edit_contexts {
      * @param string $tabname edit tab name
      * @return array parent contexts having at least one of $caps, zero based index
      */
-    public function having_one_edit_tab_cap($tabname) {
+    public function having_one_edit_tab_cap($tabname)
+    {
         return $this->having_one_cap(self::$caps[$tabname]);
     }
 
     /**
      * @return those contexts where a user can add a question and then use it.
      */
-    public function having_add_and_use() {
+    public function having_add_and_use()
+    {
         $contextswithcap = array();
         foreach ($this->allcontexts as $context) {
             if (!has_capability('moodle/question:add', $context)) {
                 continue;
             }
             if (!has_any_capability(array('moodle/question:useall', 'moodle/question:usemine'), $context)) {
-                            continue;
+                continue;
             }
             $contextswithcap[] = $context;
         }
@@ -1593,7 +1652,8 @@ class question_edit_contexts {
      * @param string $cap capability
      * @return boolean
      */
-    public function have_cap($cap) {
+    public function have_cap($cap)
+    {
         return (count($this->having_cap($cap)));
     }
 
@@ -1603,7 +1663,8 @@ class question_edit_contexts {
      * @param array $caps capability
      * @return boolean
      */
-    public function have_one_cap($caps) {
+    public function have_one_cap($caps)
+    {
         foreach ($caps as $cap) {
             if ($this->have_cap($cap)) {
                 return true;
@@ -1618,7 +1679,8 @@ class question_edit_contexts {
      * @param string $tabname edit tab name
      * @return boolean
      */
-    public function have_one_edit_tab_cap($tabname) {
+    public function have_one_edit_tab_cap($tabname)
+    {
         return $this->have_one_cap(self::$caps[$tabname]);
     }
 
@@ -1627,7 +1689,8 @@ class question_edit_contexts {
      *
      * @param string $cap capability
      */
-    public function require_cap($cap) {
+    public function require_cap($cap)
+    {
         if (!$this->have_cap($cap)) {
             print_error('nopermissions', '', '', $cap);
         }
@@ -1638,7 +1701,8 @@ class question_edit_contexts {
      *
      * @param array $cap capabilities
      */
-    public function require_one_cap($caps) {
+    public function require_one_cap($caps)
+    {
         if (!$this->have_one_cap($caps)) {
             $capsstring = join($caps, ', ');
             print_error('nopermissions', '', '', $capsstring);
@@ -1650,9 +1714,10 @@ class question_edit_contexts {
      *
      * @param string $tabname edit tab name
      */
-    public function require_one_edit_tab_cap($tabname) {
+    public function require_one_edit_tab_cap($tabname)
+    {
         if (!$this->have_one_edit_tab_cap($tabname)) {
-            print_error('nopermissions', '', '', 'access question edit tab '.$tabname);
+            print_error('nopermissions', '', '', 'access question edit tab ' . $tabname);
         }
     }
 }
@@ -1674,7 +1739,8 @@ class question_edit_contexts {
  * @return string
  */
 function question_rewrite_question_urls($text, $file, $contextid, $component,
-        $filearea, array $ids, $itemid, array $options=null) {
+                                        $filearea, array $ids, $itemid, array $options = null)
+{
 
     $idsstr = '';
     if (!empty($ids)) {
@@ -1684,7 +1750,7 @@ function question_rewrite_question_urls($text, $file, $contextid, $component,
         $idsstr .= '/' . $itemid;
     }
     return file_rewrite_pluginfile_urls($text, $file, $contextid, $component,
-            $filearea, $idsstr, $options);
+        $filearea, $idsstr, $options);
 }
 
 /**
@@ -1704,8 +1770,9 @@ function question_rewrite_question_urls($text, $file, $contextid, $component,
  * @return string $questiontext with URLs rewritten.
  */
 function question_rewrite_question_preview_urls($text, $questionid,
-        $filecontextid, $filecomponent, $filearea, $itemid,
-        $previewcontextid, $previewcomponent, $options = null) {
+                                                $filecontextid, $filecomponent, $filearea, $itemid,
+                                                $previewcontextid, $previewcomponent, $options = null)
+{
 
     $path = "preview/$previewcontextid/$previewcomponent/$questionid";
     if ($itemid) {
@@ -1713,7 +1780,7 @@ function question_rewrite_question_preview_urls($text, $questionid,
     }
 
     return file_rewrite_pluginfile_urls($text, 'pluginfile.php', $filecontextid,
-            $filecomponent, $filearea, $path, $options);
+        $filecomponent, $filearea, $path, $options);
 }
 
 /**
@@ -1739,7 +1806,8 @@ function question_rewrite_question_preview_urls($text, $questionid,
  * @param bool $forcedownload whether the user must be forced to download the file.
  * @param array $options additional options affecting the file serving
  */
-function question_pluginfile($course, $context, $component, $filearea, $args, $forcedownload, array $options=array()) {
+function question_pluginfile($course, $context, $component, $filearea, $args, $forcedownload, array $options = array())
+{
     global $DB, $CFG;
 
     // Special case, sending a question bank export.
@@ -1752,10 +1820,10 @@ function question_pluginfile($course, $context, $component, $filearea, $args, $f
         // check export capability
         $contexts->require_one_edit_tab_cap('export');
         $category_id = (int)array_shift($args);
-        $format      = array_shift($args);
-        $cattofile   = array_shift($args);
+        $format = array_shift($args);
+        $cattofile = array_shift($args);
         $contexttofile = array_shift($args);
-        $filename    = array_shift($args);
+        $filename = array_shift($args);
 
         // load parent class for import/export
         require_once($CFG->dirroot . '/question/format.php');
@@ -1809,18 +1877,18 @@ function question_pluginfile($course, $context, $component, $filearea, $args, $f
     if ($qubaidorpreview === 'preview') {
         $previewcontextid = (int)array_shift($args);
         $previewcomponent = array_shift($args);
-        $questionid = (int) array_shift($args);
+        $questionid = (int)array_shift($args);
         $previewcontext = context_helper::instance_by_id($previewcontextid);
 
         $result = component_callback($previewcomponent, 'question_preview_pluginfile', array(
-                $previewcontext, $questionid,
-                $context, $component, $filearea, $args,
-                $forcedownload, $options), 'callbackmissing');
+            $previewcontext, $questionid,
+            $context, $component, $filearea, $args,
+            $forcedownload, $options), 'callbackmissing');
 
         if ($result === 'callbackmissing') {
             throw new coding_exception("Component {$previewcomponent} does not define the callback " .
-                    "{$previewcomponent}_question_preview_pluginfile callback. " .
-                    "Which is required if you are using question_rewrite_question_preview_urls.", DEBUG_DEVELOPER);
+                "{$previewcomponent}_question_preview_pluginfile callback. " .
+                "Which is required if you are using question_rewrite_question_preview_urls.", DEBUG_DEVELOPER);
         }
 
         send_file_not_found();
@@ -1831,7 +1899,7 @@ function question_pluginfile($course, $context, $component, $filearea, $args, $f
     $slot = (int)array_shift($args);
 
     $module = $DB->get_field('question_usages', 'component',
-            array('id' => $qubaid));
+        array('id' => $qubaid));
     if (!$module) {
         send_file_not_found();
     }
@@ -1839,7 +1907,7 @@ function question_pluginfile($course, $context, $component, $filearea, $args, $f
     if ($module === 'core_question_preview') {
         require_once($CFG->dirroot . '/question/previewlib.php');
         return question_preview_question_pluginfile($course, $context,
-                $component, $filearea, $qubaid, $slot, $args, $forcedownload, $options);
+            $component, $filearea, $qubaid, $slot, $args, $forcedownload, $options);
 
     } else {
         $dir = core_component::get_component_directory($module);
@@ -1856,7 +1924,7 @@ function question_pluginfile($course, $context, $component, $filearea, $args, $f
 
         // Okay, we're here so lets check for function without 'mod_'.
         if (strpos($module, 'mod_') === 0) {
-            $filefunctionold  = substr($module, 4) . '_question_pluginfile';
+            $filefunctionold = substr($module, 4) . '_question_pluginfile';
             if (function_exists($filefunctionold)) {
                 $filefunctionold($course, $context, $component, $filearea, $qubaid, $slot,
                     $args, $forcedownload, $options);
@@ -1878,11 +1946,12 @@ function question_pluginfile($course, $context, $component, $filearea, $args, $f
  * @param string $filecomponent the component the file belongs to.
  * @param string $filearea the file area.
  * @param array $args remaining file args.
- * @param bool $forcedownload.
+ * @param bool $forcedownload .
  * @param array $options additional options affecting the file serving.
  */
 function core_question_question_preview_pluginfile($previewcontext, $questionid,
-        $filecontext, $filecomponent, $filearea, $args, $forcedownload, $options = array()) {
+                                                   $filecontext, $filecomponent, $filearea, $args, $forcedownload, $options = array())
+{
     global $DB;
 
     // Verify that contextid matches the question.
@@ -1891,7 +1960,7 @@ function core_question_question_preview_pluginfile($previewcontext, $questionid,
               FROM {question} q
               JOIN {question_categories} qc ON qc.id = q.category
              WHERE q.id = :id AND qc.contextid = :contextid',
-            array('id' => $questionid, 'contextid' => $filecontext->id), MUST_EXIST);
+        array('id' => $questionid, 'contextid' => $filecontext->id), MUST_EXIST);
 
     // Check the capability.
     list($context, $course, $cm) = get_context_info_array($previewcontext->id);
@@ -1912,20 +1981,21 @@ function core_question_question_preview_pluginfile($previewcontext, $questionid,
 /**
  * Create url for question export
  *
- * @param int $contextid, current context
- * @param int $categoryid, categoryid
+ * @param int $contextid , current context
+ * @param int $categoryid , categoryid
  * @param string $format
  * @param string $withcategories
  * @param string $ithcontexts
  * @param moodle_url export file url
  */
 function question_make_export_url($contextid, $categoryid, $format, $withcategories,
-        $withcontexts, $filename) {
+                                  $withcontexts, $filename)
+{
     global $CFG;
     $urlbase = "$CFG->httpswwwroot/pluginfile.php";
     return moodle_url::make_file_url($urlbase,
-            "/$contextid/question/export/{$categoryid}/{$format}/{$withcategories}" .
-            "/{$withcontexts}/{$filename}", true);
+        "/$contextid/question/export/{$categoryid}/{$format}/{$withcategories}" .
+        "/{$withcontexts}/{$filename}", true);
 }
 
 /**
@@ -1934,14 +2004,15 @@ function question_make_export_url($contextid, $categoryid, $format, $withcategor
  * @param stdClass $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block
  */
-function question_page_type_list($pagetype, $parentcontext, $currentcontext) {
+function question_page_type_list($pagetype, $parentcontext, $currentcontext)
+{
     global $CFG;
     $types = array(
-        'question-*'=>get_string('page-question-x', 'question'),
-        'question-edit'=>get_string('page-question-edit', 'question'),
-        'question-category'=>get_string('page-question-category', 'question'),
-        'question-export'=>get_string('page-question-export', 'question'),
-        'question-import'=>get_string('page-question-import', 'question')
+        'question-*' => get_string('page-question-x', 'question'),
+        'question-edit' => get_string('page-question-edit', 'question'),
+        'question-category' => get_string('page-question-category', 'question'),
+        'question-export' => get_string('page-question-export', 'question'),
+        'question-import' => get_string('page-question-import', 'question')
     );
     if ($currentcontext->contextlevel == CONTEXT_COURSE) {
         require_once($CFG->dirroot . '/course/lib.php');
@@ -1957,12 +2028,13 @@ function question_page_type_list($pagetype, $parentcontext, $currentcontext) {
  * @param string $modname The name of the module (without mod_ prefix).
  * @return bool true if the module uses questions.
  */
-function question_module_uses_questions($modname) {
+function question_module_uses_questions($modname)
+{
     if (plugin_supports('mod', $modname, FEATURE_USES_QUESTIONS)) {
         return true;
     }
 
-    $component = 'mod_'.$modname;
+    $component = 'mod_' . $modname;
     if (component_callback_exists($component, 'question_pluginfile')) {
         debugging("{$component} uses questions but doesn't declare FEATURE_USES_QUESTIONS", DEBUG_DEVELOPER);
         return true;

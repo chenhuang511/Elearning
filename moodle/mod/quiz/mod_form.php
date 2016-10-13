@@ -63,7 +63,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         $quizconfig = get_config('quiz');
         $mform = $this->_form;
         // chech disable form if update quiz
-        $isdisable = (MOODLE_RUN_MODE === MOODLE_MODE_HUB) && $this->current->update;
+        $isdisable = ((MOODLE_RUN_MODE === MOODLE_MODE_HUB) && isset($this->current->update));
 
         // -------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));

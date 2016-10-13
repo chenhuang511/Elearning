@@ -38,3 +38,6 @@ CREATE TABLE mdl_slide_storage (
   timecreated INT DEFAULT 0,
   timemodified INT DEFAULT 0
 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+
+--------------------------- ----------------------------------------
+alter table mdl_question_categories add remoteid bigint(10) not null default 0;

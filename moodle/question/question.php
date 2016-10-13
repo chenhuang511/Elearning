@@ -28,6 +28,7 @@ require_once(dirname(__FILE__) . '/../config.php');
 require_once(dirname(__FILE__) . '/editlib.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->libdir . '/formslib.php');
+require_once($CFG->dirroot . '/question/remote/locallib.php');
 
 // Read URL parameters telling us which question to edit.
 $id = optional_param('id', 0, PARAM_INT); // question id
