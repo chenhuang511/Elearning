@@ -90,6 +90,8 @@ return array(
 	// password recovery email
 	'recovery_subject' => 'Đổi mật khẩu',
 	'recovery_message' => 'Bạn vừa gửi yêu cầu khôi phục mật khẩu.' .
-		'Để tiếp tục vui lòng nhấn link bên dưới.' . PHP_EOL . '%s',
+	'Để tiếp tục vui lòng nhấn link bên dưới.' . PHP_EOL . '%s',
+	'0' => 'Sáng',
+	'1' => 'Chiều',
 
 );

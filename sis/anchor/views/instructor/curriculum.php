@@ -15,6 +15,7 @@
 				<th>Tên khóa học</th>
 				<th>Ngày</th>
 				<th>Giờ</th>
+				<th>Phòng học</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -30,7 +31,10 @@
 						<p><?php echo $curriculum->topicday; ?></p>
 					</td>
                     <td>
-						<p><?php echo $curriculum->topictime; ?></p>
+						<p><?php echo __('instructor.' . $curriculum->topictime); ?></p>
+					</td>
+					<td>
+						<p><?php echo $curriculum->room_name; ?></p>
 					</td>
 				</tr>
 			<?php endforeach; ?>

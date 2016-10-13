@@ -216,15 +216,14 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 	});
 
 
-	Route::get('admin/instructor/curriculum/(:num)', function($id) {
+	Route::get(array('admin/instructor/curriculum/(:num)', 'admin/instructor/curriculum/(:num)/(:num)'), function($id, $page = 1) {
 		$vars['messages'] = Notify::read();
 		$vars['token'] = Csrf::token();
 		// extended fields
-		$vars['instructor'] = Instructor::find($id);
 		$vars['fields'] = Extend::fields('curriculum', $id);
-		list($total, $pages) = Curriculum::getByTeacherId($id, $page=1, $perpage= Config::get('admin.posts_per_page'));
+		list($total, $pages) = Curriculum::getByTeacherId($id, $page, $perpage= Config::get('admin.posts_per_page'));
 
-        $url = Uri::to('admin/instructor/curriculum');
+        $url = Uri::to('admin/instructor/curriculum/' .$id);
 
         $pagination = new Paginator($pages, $total, $page, $perpage, $url);
 

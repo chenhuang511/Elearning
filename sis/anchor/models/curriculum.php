@@ -57,8 +57,11 @@ class Curriculum extends Base
                 Base::table('courses.fullname as coursename')
             ));
 
-        foreach ($curriculums as $curriculum) {
+      foreach ($curriculums as $curriculum) {
             $curriculum->topicday = self::GetDayOfWeek($curriculum->topicday) . ' ' . date('d-m-Y', strtotime($curriculum->topicday));
+            if($curriculum->room != NULL) {
+                $curriculum->room_name = Room::getRoomName($curriculum->room);
+            } 
         }
 
         return array($total, $curriculums);
