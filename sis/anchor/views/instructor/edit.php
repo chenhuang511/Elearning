@@ -31,10 +31,6 @@
 				<label for="label-birthday"><?php echo __('instructor.birthday'); ?>:</label>
 				<?php echo Form::date('birthday', Input::previous('birthday', $instructor->birthday), array('id' => 'label-birthday')); ?>
 			</p>
-			<p>
-				<label for="label-subject"><?php echo __('instructor.subject'); ?>:</label>
-				<?php echo Form::text('subject', Input::previous('subject', $instructor->subject), array('id' => 'label-subject')); ?>
-			</p>
 			<p style="height: 39px"></p>
 			<p style="height: 39px"></p>
 			<aside class="buttons" style="padding-left: 5px">
@@ -43,7 +39,7 @@
 					'type' => 'submit'
 				)); ?>
 
-				<?php echo Html::link('admin/instructor' , __('global.cancel'), array('class' => 'btn btn-primary')); ?>
+				<a href="<?php echo Uri::to('admin/instructor/view/' . $instructor->id); ?>"class="btn btn-primary">Hủy bỏ</a>
 			</aside>
 		</fieldset>
 

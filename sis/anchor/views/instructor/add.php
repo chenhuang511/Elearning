@@ -36,10 +36,6 @@
 				<label for="label-email"><?php echo __('instructor.email'); ?>:</label>
 				<?php echo Form::text('email', Input::previous('email'), array('id' => 'label-email')); ?>
 			</p>
-			<p>
-				<label for="label-subject"><?php echo __('instructor.subject'); ?>:</label>
-				<?php echo Form::select('subject', $type_subject, Input::previous('subject'), array('id' => 'label-subject')); ?>
-			</p>
 			<p style="height: 39px"></p>
 			<aside class="buttons" style="padding-left: 5px">
 				<?php echo Form::button(__('Tạo mới'), array('class' => 'btn btn-primary', 'type' => 'submit')); ?>
@@ -113,22 +109,18 @@
 				document.getElementById("label-fullname").value = "";
 				document.getElementById("label-birthday").value = "";
 				document.getElementById("label-email").value = "";
-				document.getElementById("label-subject").value = "";
 				document.getElementById("label-fullname").disabled = true;
 				document.getElementById("label-birthday").disabled = true;
 				document.getElementById("label-email").disabled = true;
-				document.getElementById("label-subject").disabled = true;
 				
 			}
 			else{
 				document.getElementById("label-fullname").value = "";
 				document.getElementById("label-birthday").value = "";
 				document.getElementById("label-email").value = "";
-				document.getElementById("label-subject").value = "";
 				document.getElementById("label-fullname").disabled = false;
 				document.getElementById("label-birthday").disabled = false;
 				document.getElementById("label-email").disabled = false;
-				document.getElementById("label-subject").disabled = false;
 			}
 		});
 		$('#label-type').on('change', function(){

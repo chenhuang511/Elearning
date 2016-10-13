@@ -29,7 +29,19 @@ class Instructor extends Base {
 
 		$count = $query->count();
 
-		$results = $query->take($perpage)->skip(($page - 1) * $perpage)->sort('id', 'asc')->get();
+		$results = $query
+			->take($perpage)
+			->skip(($page - 1) * $perpage)
+			->sort('id', 'asc')
+			->get(array(Base::table('users.id as id'),
+						Base::table('users.real_name as real_name'),
+						Base::table('users.email as email'),
+						Base::table('users.schoolid as schoolid'),
+						Base::table('users.remoteid as remoteid')));
+		
+		foreach($results as $instructor){
+			$instructor->curriculum_taught = Query::table(base::table('curriculum'))->where(('teacher'), '=', $instructor->id)->count();
+		}
 
 		return new Paginator($results, $count, $page, $perpage, Uri::to('admin/instructor'));
 	}
@@ -63,6 +75,9 @@ class Instructor extends Base {
         $posts = $query->take($per_page)
             ->skip(--$page * $per_page)
             ->get();
+		foreach($posts as $instructor){
+			$instructor->curriculum_taught = Query::table(base::table('curriculum'))->where(('teacher'), '=', $instructor->id)->count();
+		}
 
         return array($total, $posts);
     }

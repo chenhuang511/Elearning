@@ -9,7 +9,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 		$vars['messages'] = Notify::read();
 		$vars['instructors'] = Instructor::paginate($page, Config::get('admin.posts_per_page'));
 		$vars['official_instructors'] = Instructor::get_official_instructor($page, Config::get('admin.posts_per_page'));
-        $vars['tab'] = 'sys';
+		$vars['tab'] = 'sys';
 
 		return View::create('instructor/index', $vars)
 			->partial('header', 'partials/header')
@@ -21,7 +21,6 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         $vars['messages'] = Notify::read();
         $vars['token'] = Csrf::token();
         $key = $_GET['text-search'];
-
         $whatSearch = '?text-search=' . $key;
         $perpage = Config::get('admin.posts_per_page');
         list($total, $pages) = Instructor::search($key, $page, $perpage);
@@ -69,7 +68,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
 
 	Route::post('admin/instructor/edit/(:num)', function($id) {
-		$arr_input = array('fullname', 'birthday', 'email', 'subject');
+		$arr_input = array('fullname', 'birthday', 'email');
 		$contracts = Contract::search_by_instructor_id($id);
 		$count_contract = Query::table(Base::table('instructor_contract'))->where('instructor_id', '=', $id)->count();
 		if($count_contract > 0){
@@ -103,9 +102,6 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
 		$validator->check('birthday')
 		 	->is_regex('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', __('instructor.birthday_missing'));
-
-		$validator->check('subject')
-		 	->is_max(2, __('instructor.subject_missing', 2));
 
 		if($count_contract > 0){
 			foreach($contracts as $c){
@@ -143,7 +139,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
 			return Response::redirect('admin/instructor/edit/' . $id);
 		}
-		$input_instructor = Input::get(array('fullname', 'birthday', 'email', 'subject'));
+		$input_instructor = Input::get(array('fullname', 'birthday', 'email'));
 		Instructor::update($id, $input_instructor);
 
 		if($count_contract > 0){
@@ -188,13 +184,12 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 		return Response::redirect('admin/instructor/edit/' . $id);
 	});
 
-
 	Route::get('admin/instructor/view/(:num)', function($id) {
 		$vars['messages'] = Notify::read();
 		$vars['token'] = Csrf::token();
 		$vars['instructor'] = Instructor::find($id);
 		$vars['contract'] = Contract::search_by_instructor_id($id);
-		$vars['curriculum_taught'] = Query::table(base::table('curriculum'))->where(('teacher'), '=', $id)->count();
+		
 		// extended fields
 		$vars['fields'] = Extend::fields('instructor', $id);
 
@@ -224,8 +219,8 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 	Route::get('admin/instructor/curriculum/(:num)', function($id) {
 		$vars['messages'] = Notify::read();
 		$vars['token'] = Csrf::token();
-		$vars['instructor'] = Instructor::find($id);
 		// extended fields
+		$vars['instructor'] = Instructor::find($id);
 		$vars['fields'] = Extend::fields('curriculum', $id);
 		list($total, $pages) = Curriculum::getByTeacherId($id, $page=1, $perpage= Config::get('admin.posts_per_page'));
 
@@ -255,11 +250,6 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 			'organization' => __('contract.organization')
 		);
 
-        $vars['type_subject'] = array(
-            'math' => 'Math',
-            'history' => 'History',
-        );
-
         $vars['tab'] = 'sys';
 
 		$instructor = Instructor::get_name_instructor();
@@ -278,7 +268,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 
 
 	Route::post('admin/instructor/add', function() {
-		$input = Input::get(array('fullname', 'birthday', 'email', 'type_instructor' => 'contract', 'subject', 'name_contract', 'instructor_id', 'type', 'name_partner', 'start_date', 'name_head', 'tax_code', 'number_phone', 'address', 'end_date', 'salary', 'state', 'rules'));
+		$input = Input::get(array('fullname', 'birthday', 'email', 'type_instructor', 'name_contract', 'instructor_id', 'type', 'name_partner', 'start_date', 'name_head', 'tax_code', 'number_phone', 'address', 'end_date', 'salary', 'state', 'rules'));
 		$ins_id = $input['instructor_id'];
 		
 		$validator = new Validator($input);
@@ -321,7 +311,6 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 				'fullname'=>$input['fullname'],
 				'birthday'=>$input['birthday'],
 				'email'=>$input['email'],
-				'subject'=>$input['subject'],
 				'type_instructor'=> 'contract',
 			);
 
@@ -338,9 +327,6 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 			$validator->check('email')
 				->is_email(__('contract.email_missing'))
 				->is_valid(__('contract.email_was_found'));
-
-			$validator->check('subject')
-		 		->is_max(2, __('contract.subject_missing'));
 
 			if($errors = $validator->errors()) {
 				Input::flash();

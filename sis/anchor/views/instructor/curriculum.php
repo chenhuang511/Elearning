@@ -1,9 +1,9 @@
 <?php echo $header; ?>
 
-<hgroup class="wrap">
-	<h1><?php echo __('instructor.curriculum'); ?></h1>
-	
-</hgroup>
+<ol class="breadcrumb">
+    <li><a href="<?php echo Uri::to('admin'); ?>">Trang chủ</a></li>
+    <li class="active">Quản lý giảng viên</li>
+</ol>
 
 <section class="wrap">
 	<?php echo $messages; ?>
@@ -37,9 +37,6 @@
 		</tbody>
 	</table>
 	<aside class="paging"><?php echo $curriculums->links(); ?></aside>
-     <aside>
-		<a href="<?php echo Uri::to('admin/instructor/view/' . $instructor->id); ?>" class="btn blue">Quay lại</a>
-	</aside>
 	<?php else: ?>
 		<aside class="empty pages">
 			<span class="icon"></span>

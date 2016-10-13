@@ -32,7 +32,6 @@ class Curriculum extends Base
         return array($total, $curriculums);
     }
 
-
     public static function getTopicByCourse($id)
     {
         $query = static::join(Base::table('student_course'), Base::table('student_course.studentid'), '=', Base::table('students.id'))
@@ -43,10 +42,8 @@ class Curriculum extends Base
         return array($rs, $count);
     }
 
-    
-    public static function getByTeacherId($teacherid, $page = 1, $perpage = 10)
-    {
-        $query = static::join(Base::table('instructors'), Base::table('instructors.id'), '=', Base::table('curriculum.teacher'))
+    public static function getByTeacherId($teacherid, $page = 1, $perpage = 10) {
+        $query = static::join(Base::table('users'), Base::table('users.id'), '=', Base::table('curriculum.teacher'))
             ->join(Base::table('courses'), Base::table('courses.id'), '=', Base::table('curriculum.course'))
             ->where(Base::table('curriculum.teacher'), '=', $teacherid);
 

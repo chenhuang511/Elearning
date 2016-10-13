@@ -25,8 +25,7 @@
 				<th>Email</th>
 				<th>Ngày sinh</th>
 				<th>Chức vụ</th>
-				<th>Môn dạy</th>
-                <th></th>
+				<th>Số chuyên đề giảng dạy</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -37,30 +36,26 @@
 					<td><p><?php echo $instructor->email; ?></p></td>
 					<td><p><?php echo date('d-m-Y', strtotime($instructor->birthday)); ?></p></td>
 					<td><p><?php echo __('instructor.'.$instructor->type_instructor); ?></p></td>
-					<td><p><?php echo $instructor->subject; ?></p></td>
-                    <td>
-                        <?php if ($instructor->type_instructor != 'official') : ?>
-							<a href="<?php echo Uri::to('admin/instructor/edit/' . $instructor->id); ?>"class="btn btn-primary">Sửa</a>
-                        <?php endif; ?>
-					</td>
+                    <td></td>
 				</tr>
 			<?php endforeach; ?>
-			<?php foreach ($official_instructors->results as $instructor): ?>
+			<?php foreach ($official_instructors->results as $official_instructor): ?>
 				<tr>
 				 	<td>
                         <?php
-                        $url = remote_get_user_link_profile($instructor->schoolid, $instructor->remoteid);
+                        $url = remote_get_user_link_profile($official_instructor->schoolid, $official_instructor->remoteid);
                         if ($url != 'false' && !empty($url)) { ?>
-                            <a target="_blank" href="<?php echo $url; ?>"><?php echo $instructor->real_name ?></a>
+                            <a target="_blank" href="<?php echo $url; ?>"><?php echo $official_instructor->real_name ?></a>
                         <?php } else { ?>
-                            <a href="#"><?php echo $instructor->real_name ?></a>
+                            <a href="#"><?php echo $official_instructor->real_name ?></a>
                         <?php } ?>
                     </td>
-					<td><p><?php echo $instructor->email; ?></p></td>
+					<td><p><?php echo $official_instructor->email; ?></p></td>
 					<td></td>
 					<td><p>Giảng viên chính thức</p></td>
-					<td></td>
-                    <td></td>
+                    <td><a href="<?php echo Uri::to('admin/instructor/curriculum/' . $official_instructor->id); ?>">
+               			<?php echo $official_instructor->curriculum_taught; ?>
+              		</a></td>
 				</tr>
 			<?php endforeach; ?>
 		</tbody>
