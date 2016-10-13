@@ -60,7 +60,7 @@ class local_mod_question_external extends external_api
 
         $sql = "SELECT qc.*, c.contextlevel, c.instanceid FROM m_question_categories qc LEFT JOIN m_context c ON qc.contextid = c.id";
 
-        $categories = $DB->get_record_sql($sql);
+        $categories = $DB->get_records_sql($sql);
 
         if (!$categories) {
             $categories = array();
