@@ -17,8 +17,8 @@ class Course extends Base
 
         $count = $query->count();
 
-        $results = $query->take($perpage)->skip(($page - 1) * $perpage)->sort('id', 'asc')->get();
-        //$results = $query->take($perpage)->skip(($page - 1) * $perpage)->get();
+        //$results = $query->take($perpage)->skip(($page - 1) * $perpage)->sort('id', 'asc')->get();
+        $results = $query->take($perpage)->skip(($page - 1) * $perpage)->get();
 
         return new Paginator($results, $count, $page, $perpage, Uri::to('admin/students/courses/'.$stuid));
     }
@@ -56,7 +56,7 @@ class Course extends Base
         $total = static::count();
 
         // get courses
-        $courses = static::sort('id', 'DESC')
+        $courses = static::sort('id', 'ASC')
             ->take($perpage)
             ->skip(--$page * $perpage)
             ->get(array(

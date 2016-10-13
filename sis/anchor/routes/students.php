@@ -74,8 +74,11 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
             list($vars['listtopic'], $vars['counttopic']) = Student::getTopicByCourse($vars['cosu']->data['id']);
             foreach ($vars['listtopic'] as $vars['lito'])
             {
-                array_push($vars['topicsuccessed'], $vars['lito']);
-                $vars['counttopicsuccessed']++;
+                if ($vars['lito']->data['topicname'] != 'Ngày nghỉ')
+                {
+                    array_push($vars['topicsuccessed'], $vars['lito']);
+                    $vars['counttopicsuccessed']++;
+                }
             }
         }
 

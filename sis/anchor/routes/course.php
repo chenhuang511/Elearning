@@ -21,6 +21,7 @@ Route::collection(array('before' => 'auth,csrf'), function () {
         $vars['messages'] = Notify::read();
         $vars['pages'] = $pagination;
         $vars['tab'] = 'course';
+
         //need process here
         return View::create('course/index', $vars)
             ->partial('header', 'partials/header')
