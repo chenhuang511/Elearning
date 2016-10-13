@@ -40,55 +40,52 @@ require_once("$CFG->libdir/externallib.php");
  */
 class local_mod_question_external extends external_api
 {
-    public static function get_question_categories_by_id_parameters()
+    public static function get_list_question_categories_parameters()
     {
         return new external_function_parameters(
             array(
-                'id' => new external_value(PARAM_INT, 'the id of question categories')
+                'sort' => new external_value(PARAM_TEXT, 'the sort')
             )
         );
     }
 
-    public static function get_question_categories_by_id($id)
+    public static function get_list_question_categories($sort)
     {
         global $DB;
         $warnings = array();
 
-        $params = self::validate_parameters(self::get_question_categories_by_id_parameters(), array(
-            'id' => $id
+        $params = self::validate_parameters(self::get_list_question_categories_parameters(), array(
+            'sort' => $sort
         ));
 
-        $qc = $DB->get_record('question_categories', array('id' => $params['id']));
+        $categories = $DB->get_records('question_categories', null, $params['sort']);
 
-        if($qc) {
-            $qc->instaceid = $DB->get_field('context', 'instanceid', array('id' => $qc->contextid));
-        }
-
-        if(!$qc) {
-            $qc = new stdClass();
+        if (!$categories) {
+            $categories = array();
         }
 
         $result = array();
-        $result['qc'] = $qc;
+        $result['categories'] = $categories;
         $result['warnings'] = $warnings;
         return $result;
     }
 
-    public static function get_question_categories_by_id_returns()
+    public static function get_list_question_categories_returns()
     {
         return new external_single_structure(
             array(
-                'qc' => new external_single_structure(
-                    array(
-                        'id' => new external_value(PARAM_INT, 'the id of question categories', VALUE_OPTIONAL),
-                        'name' => new external_value(PARAM_TEXT, 'the name of question categories', VALUE_OPTIONAL),
-                        'contextid' => new external_value(PARAM_INT, 'the id of context', VALUE_OPTIONAL),
-                        'info' => new external_value(PARAM_RAW, 'the information of question categories', VALUE_OPTIONAL),
-                        'infoformat' => new external_value(PARAM_INT, 'the information format', VALUE_OPTIONAL),
-                        'stamp' => new external_value(PARAM_TEXT, 'the stamp', VALUE_OPTIONAL),
-                        'parent' => new external_value(PARAM_INT, 'the parent id', VALUE_OPTIONAL),
-                        'sortorder' => new external_value(PARAM_INT, 'the sort order', VALUE_OPTIONAL),
-                        'instaceid' => new external_value(PARAM_INT, 'the instaceid of context', VALUE_OPTIONAL),
+                'categories' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'the id of question categories', VALUE_OPTIONAL),
+                            'name' => new external_value(PARAM_TEXT, 'the name of question categories', VALUE_OPTIONAL),
+                            'contextid' => new external_value(PARAM_INT, 'the id of context', VALUE_OPTIONAL),
+                            'info' => new external_value(PARAM_RAW, 'the info of question categories', VALUE_OPTIONAL),
+                            'infoformat' => new external_value(PARAM_INT, 'the information format of question categories', VALUE_OPTIONAL),
+                            'stamp' => new external_value(PARAM_TEXT, 'the stamp of question categories', VALUE_OPTIONAL),
+                            'parent' => new external_value(PARAM_INT, 'the parent of question categories', VALUE_OPTIONAL),
+                            'sortorder' => new external_value(PARAM_INT, 'the sort order of question categories', VALUE_OPTIONAL),
+                        )
                     )
                 ),
                 'warnings' => new external_warnings()

@@ -34,11 +34,11 @@
  */
 
 $functions = array(
-    'local_mod_get_question_categories_by_id' => array(
+    'local_mod_get_list_question_categories' => array(
         'classname' => 'local_mod_question_external',
-        'methodname' => 'get_question_categories_by_id',
+        'methodname' => 'get_list_question_categories',
         'classpath' => 'local/question/externallib.php',
-        'description' => 'Get question categories by id',
+        'description' => 'get list question categories',
         'type' => 'read',
         'ajax' => true
     ),
