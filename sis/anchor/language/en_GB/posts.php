@@ -25,7 +25,7 @@ return array(
 	'time_explain' => 'Mẫu: YYYY-MM-DD HH:MM:SS',
 	'time_invalid' => 'mẫu thời gian không hợp lệ',
 
-	'description' => 'Miêu tả',
+	'description' => 'Mô tả',
 	'description_explain' => '',
 
 	'status' => 'Trạng thái',

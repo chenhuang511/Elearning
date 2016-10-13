@@ -66,7 +66,7 @@
                         class="text-danger">*</span></label>
                 <div class="col-sm-8">
                     <div class='input-group date' id='datetimepicker_startdate'>
-                        <input id="startdate" name="startdate" type='text' class="form-control" readonly/>
+                        <input id="startdate" name="startdate" type='text' class="form-control"  value="<?php echo  $course->startdate;?>" readonly/>
                         <span class="input-group-addon">
                             <i class="fa fa-calendar" aria-hidden="true"></i>
                         </span>
@@ -88,7 +88,7 @@
                         class="text-danger">*</span></label>
                 <div class="col-sm-8">
                     <div class='input-group date' id='datetimepicker_enddate'>
-                        <input id="enddate" name="enddate" type='text' class="form-control" readonly/>
+                        <input id="enddate" name="enddate" type='text' class="form-control"  value="<?php echo  $course->enddate;?>" readonly/>
                         <span class="input-group-addon">
                             <i class="fa fa-calendar" aria-hidden="true"></i>
                         </span>
@@ -130,6 +130,7 @@
 </form>
 <script src="<?php echo asset('anchor/views/assets/js/bootstrap-datetimepicker.js'); ?>"></script>
 <script src="<?php echo asset('anchor/views/assets/js/autosave.js'); ?>"></script>
+<script src="<?php echo asset('anchor/views/assets/ckeditor/ckeditor.js'); ?>"></script>
 <script type="text/javascript">
     $(function () {
         $('#datetimepicker_startdate').datetimepicker({
@@ -154,6 +155,13 @@
         $("#datetimepicker_enddate").on("changeDate", function (e) {
             $('#datetimepicker_startdate').datetimepicker('setEndDate', e.date);
         });
+        var editor = CKEDITOR.replace( 'summary');
+        $('#submit').click(function() {
+            var value = editor.getData() ;
+            console.log(value) ;
+            $('#markdown').val(value) ;
+            // send your ajax request with value// profit!
+        })
     });
 </script>
 <?php echo $footer; ?>

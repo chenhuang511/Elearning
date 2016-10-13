@@ -192,7 +192,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
         $vars['page'] = Registry::get('posts_page');
 
 		// extended fields
-		$vars['fields'] = Extend::fields('post');
+//		$vars['fields'] = Extend::fields('post');
 
 		$vars['statuses'] = array(
 			'published' => __('global.published'),

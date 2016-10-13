@@ -118,7 +118,8 @@
             <?php echo Form::button(__('global.continue'), array(
                 'type' => 'submit',
                 'class' => 'btn btn-primary btn-continue',
-                'data-loading' => __('global.saving')
+                'data-loading' => __('global.saving') ,
+                'id' => 'submit',
             )); ?>
             <?php echo Html::link('admin/posts', __('global.cancel'), array(
                 'class' => 'btn btn-danger btn-cancel'
@@ -129,6 +130,7 @@
 <input id="menuSelected" type="hidden" value="<?php if (isset($tab)): echo $tab; endif; ?>">
 <script src="<?php echo asset('anchor/views/assets/js/bootstrap-datetimepicker.js'); ?>"></script>
 <script src="<?php echo asset('anchor/views/assets/js/autosave.js'); ?>"></script>
+<script src="<?php echo asset('anchor/views/assets/ckeditor/ckeditor.js'); ?>"></script>
 <script type="text/javascript">
     $(function () {
         $('#datetimepicker_startdate').datetimepicker({
@@ -152,6 +154,13 @@
         });
         $("#datetimepicker_enddate").on("changeDate", function (e) {
             $('#datetimepicker_startdate').datetimepicker('setEndDate', e.date);
+        });
+        var editor = CKEDITOR.replace( 'summary');
+        $('#submit').click(function() {
+            var value = editor.getData() ;
+            console.log(value) ;
+            $('#markdown').val(value) ;
+            // send your ajax request with value// profit!
         });
     });
 </script>

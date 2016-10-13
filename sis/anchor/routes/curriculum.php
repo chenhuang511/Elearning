@@ -284,6 +284,11 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
         $vars['token'] = Csrf::token();
         $vars['course'] = Course::getById($courseid);
 
+        $startdate = strtotime($vars['course']->startdate);
+        $vars['course']->startdate = date("Y-m-d", $startdate);
+
+        $enddate =  strtotime($vars['course']->enddate);
+        $vars['course']->enddate = date("Y-m-d", $enddate);
         // extended fields
         $vars['fields'] = Extend::fields('courses');
         $vars['tab'] = 'course';

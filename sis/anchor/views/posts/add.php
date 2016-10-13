@@ -118,17 +118,17 @@
 			<?php } ?>
 		</div>
 	</div>
-
-	<?php foreach($fields as $field): ?>
-
-			<label for="extend_<?php echo $field->key; ?>" class="col-sm-2 control-label"><?php echo $field->label; ?></label>
-			<div class="col-sm-4">
-
-				<?php echo Extend::html($field); ?>
-
-			</div>
-		</div>
-	<?php endforeach; ?>
+<!---->
+<!--	--><?php //foreach($fields as $field): ?>
+<!--		<div>-->
+<!--			<label for="extend_--><?php //echo $field->key; ?><!--" class="col-sm-2 control-label">--><?php //echo $field->label; ?><!--</label>-->
+<!--			<div class="col-sm-4">-->
+<!---->
+<!--				--><?php //echo Extend::html($field); ?>
+<!---->
+<!--			</div>-->
+<!--		</div>-->
+<!--	--><?php //endforeach; ?>
 
 	<div class="form-group text-right" style="padding-right: 15px;">
 		<aside class="buttons">

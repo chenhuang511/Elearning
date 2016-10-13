@@ -49,5 +49,5 @@ CKEDITOR.editorConfig = function( config ) {
 
 	config.filebrowserFlashUploadUrl = '/anchor/views/assets/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Flash';
 
-
+	config.height = 350;
 };
