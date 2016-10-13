@@ -1,7 +1,11 @@
 <?php echo $header; ?>
+    <ol class="breadcrumb">
+        <li><a href="<?php echo Uri::to('admin'); ?>">Trang chủ</a></li>
+        <li class="active">Danh mục</li>
+    </ol>
 
     <hgroup class="wrap">
-        <h1><?php echo __('categories.categories'); ?></h1>
+
 
         <nav>
             <?php echo Html::link('admin/categories/add', __('categories.create_category'), array('class' => 'btn')); ?>

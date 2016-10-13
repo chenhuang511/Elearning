@@ -125,10 +125,7 @@
                                                                                                aria-hidden="true"></i>
                                             Tạo
                                             bài viết mới</a></li>
-                                    <li><a href="<?php echo Uri::to('admin/comments'); ?>"><i class="fa fa-caret-right"
-                                                                                              aria-hidden="true"></i>
-                                            Danh
-                                            sách bình luận</a></li>
+
                                     <li><a href="<?php echo Uri::to('admin/categories'); ?>"><i
                                                 class="fa fa-caret-right"
                                                 aria-hidden="true"></i> Quản

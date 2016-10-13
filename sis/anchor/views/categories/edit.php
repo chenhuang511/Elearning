@@ -1,8 +1,10 @@
 <?php echo $header; ?>
 
-<hgroup class="wrap">
-	<h1><?php echo __('categories.edit_category', $category->title); ?></h1>
-</hgroup>
+<ol class="breadcrumb">
+	<li><a href="<?php echo Uri::to('admin'); ?>">Trang chủ</a></li>
+	<li><a href="<?php echo Uri::to('admin/categories'); ?>">Danh mục</a></li>
+	<li class="active">Chỉnh sửa</li>
+</ol>
 
 <section class="wrap">
 	<?php echo $messages; ?>
