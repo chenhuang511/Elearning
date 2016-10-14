@@ -96,4 +96,59 @@ class local_mod_question_external extends external_api
             )
         );
     }
+
+    public static function save_question_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'param name'),
+                            'value' => new external_value(PARAM_RAW, 'param value'),
+                        )
+                    ), 'the data saved'
+                )
+            )
+        );
+    }
+
+    public static function save_question($data)
+    {
+        global $DB;
+        $warnings = array();
+
+        $params = self::validate_parameters(self::save_question_parameters(), array(
+            'data' => $data
+        ));
+
+        $question = new stdClass();
+
+        foreach ($params['data'] as $element) {
+            $question->$element['name'] = $element['value'];
+        }
+
+        $result = array();
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $newid = $DB->insert_record('question', $question);
+
+        $transaction->allow_commit();
+
+        $result['newid'] = $newid;
+        $result['warnings'] = $warnings;
+
+        return $result;
+    }
+
+    public static function save_question_returns()
+    {
+        return new external_single_structure(
+            array(
+                'newid' => new external_value(PARAM_INT, 'the new id'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

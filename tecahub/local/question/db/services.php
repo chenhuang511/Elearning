@@ -42,4 +42,12 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'local_mod_save_question' => array(
+        'classname' => 'local_mod_question_external',
+        'methodname' => 'save_question',
+        'classpath' => 'local/question/externallib.php',
+        'description' => 'save new question object',
+        'type' => 'read',
+        'ajax' => true
+    ),
 );
