@@ -1,5 +1,4 @@
 var enrolModule = (function ($) {
-    var btn;
     var getToken = function () {
         return $('#token').val();
     };
@@ -15,15 +14,16 @@ var enrolModule = (function ($) {
         return role == 3 ? 'Giảng viên' : 'Học viên';
     };
 
-    var callAjax = function(url, token, userid, target, role, type) {
+    var callAjax = function(url, token, userid, target, role, type, btn) {
         $.ajax({
             method: "POST",
             url: url,
             data : { token: token, userid: userid, role: role },
-            dataType: "text",
+            dataType: "json",
             success: function(result) {
+                
                 $('#load').remove();
-                if(result) {
+                if(result && result.status == true) {
                     if(target != false) {
                         if(type == 'enrol') {
                             $(target).text(getRoleName(role));
@@ -45,6 +45,8 @@ var enrolModule = (function ($) {
                             btn.data('type', 'enrol');
                         }
                     }
+                } else {
+                    btn.append('<i id="load" class="fa fa-exclamation-triangle"></i>');
                 }
             }
         });
@@ -52,7 +54,6 @@ var enrolModule = (function ($) {
     var role_user = function (courseid, userid, role) {
         $('.role-action').click(function () {
             // call ajax
-            btn = $(this);
             token = getToken();
             courseid = $(this).data('courseid') ? $(this).data('courseid') : courseid ;
             userid = $(this).data('userid') ? $(this).data('userid') : userid ;
@@ -64,7 +65,7 @@ var enrolModule = (function ($) {
             $('#load').remove();
             $(this).append('<i id="load" class="fa fa-spinner fa-pulse fa fa-fw"></i>');
             
-            callAjax(url, token, userid, target, role, type);
+            callAjax(url, token, userid, target, role, type, $(this));
         });
     };
 

@@ -248,22 +248,6 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
 
                     $curriculum = Curriculum::create($arr);
                 }
-            } else {
-                $arr = array();
-                $arr['course'] = $course->id;
-                $arr['topicday'] = $dates[$icount];
-                $arr['topictime'] = NULL;
-                $arr['topicname'] = "Ngày nghỉ";
-                $arr['teacher'] = NULL;
-                $arr['room'] = NULL;
-                $arr['userid'] = $user->id;
-                $arr['timecreated'] = time();
-                $arr['timemodified'] = NULL;
-                $arr['usermodified'] = NULL;
-                $arr['note'] = NULL;
-
-
-                $curriculum = Curriculum::create($arr);
             }
             $icount++;
         }

@@ -77,32 +77,43 @@ Route::collection(array('before' => 'auth,csrf'), function () {
             $hostid = $school->remoteid;
             remote_enrol_host($rolehost, $hostid, $courseremoteid);
             remote_fetch_course($domain, $token);
-            remote_enrol_course($domain, $token, $userremoteid, $courseremoteid);
-            remote_assign_enrol_user($domain, $token, $role, $userremoteid, $courseremoteid);
+            if(!remote_enrol_course($domain, $token, $userremoteid, $courseremoteid)) {
+                $ispass = false;
+            };
+            if(!remote_assign_enrol_user($domain, $token, $role, $userremoteid, $courseremoteid)) {
+                $ispass = false;
+            };
 
-            if($role == 3) {
-                //add localdatabase
-                if(!UserCourse::where('userid','=', $user->id)->where('courseid','=', $course->id)->where('remoterole','=', $role)->get()) {
-                    $user_course = array();
-                    $user_course['userid'] = $user->id;
-                    $user_course['courseid'] = $course->id;
-                    $user_course['remoterole'] = $role;
-                    UserCourse::create($user_course);
+            if($ispass) {
+                if($role == 3) {
+                    //add localdatabase
+                    if(!UserCourse::where('userid','=', $user->id)->where('courseid','=', $course->id)->where('remoterole','=', $role)->get()) {
+                        $user_course = array();
+                        $user_course['userid'] = $user->id;
+                        $user_course['courseid'] = $course->id;
+                        $user_course['remoterole'] = $role;
+                        UserCourse::create($user_course);
 
-                }
-            } else {
-                //add localdatabase
-                if(!StudentCourse::where('studentid','=', $user->id)->where('courseid','=', $course->id)->where('remoterole','=', $role)->get()) {
-                    $user_course = array();
-                    $user_course['studentid'] = $user->id;
-                    $user_course['courseid'] = $course->id;
-                    $user_course['remoterole'] = $role;
-                    StudentCourse::create($user_course);
+                    }
+                } else {
+                    //add localdatabase
+                    if(!StudentCourse::where('studentid','=', $user->id)->where('courseid','=', $course->id)->where('remoterole','=', $role)->get()) {
+                        $user_course = array();
+                        $user_course['studentid'] = $user->id;
+                        $user_course['courseid'] = $course->id;
+                        $user_course['remoterole'] = $role;
+                        StudentCourse::create($user_course);
 
+                    }
                 }
             }
         }
-        echo $ispass;
+
+        $output = Json::encode(array('status' => $ispass));
+        if($ispass) {
+            return Response::create($output, 200, array('content-type' => 'application/json'));
+        }
+        return Response::create($output, 200, array('content-type' => 'application/json'));
     });
 
     Route::post('admin/courses/unenroll/user/(:num)', function($courseid) {
@@ -127,17 +138,24 @@ Route::collection(array('before' => 'auth,csrf'), function () {
             $userremoteid = $user->remoteid;
             $courseremoteid = $course->remoteid;
 
-            remote_unassign_enrol_user($domain, $token, $role, $userremoteid, $courseremoteid);
-
-            if($role == 3) {
-                //delete
-                UserCourse::where('userid','=', $user->id)->where('courseid','=', $course->id)->where('remoterole','=', $role)->delete();
+            if(remote_unassign_enrol_user($domain, $token, $role, $userremoteid, $courseremoteid)) {
+                if($role == 3) {
+                    //delete
+                    UserCourse::where('userid','=', $user->id)->where('courseid','=', $course->id)->where('remoterole','=', $role)->delete();
+                } else {
+                    //delete
+                    StudentCourse::where('studentid','=', $user->id)->where('courseid','=', $course->id)->where('remoterole','=', $role)->delete();
+                }
             } else {
-                //delete
-                StudentCourse::where('studentid','=', $user->id)->where('courseid','=', $course->id)->where('remoterole','=', $role)->delete();
-            }
+                $ispass = false;
+            };
         }
-        echo $ispass;
+
+        $output = Json::encode(array('status' => $ispass));
+        if($ispass) {
+            return Response::create($output, 200, array('content-type' => 'application/json'));
+        }
+        return Response::create($output, 200, array('content-type' => 'application/json'));
 
     });
 

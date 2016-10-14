@@ -57,7 +57,8 @@ function remote_get_course_section($courseid)
             'function_name'=>'local_get_course_sections',
             'params'=> array('courseid' => $courseid)
         ));
-    if(!isset($resp->sections)) {return 'error';};
+    if(!isset($resp->sections)) {return 0;};
+
     return $resp->sections;
 }
 
@@ -96,7 +97,6 @@ function remote_fetch_course($domain, $token, $hubid = 0)
 // userid and course id is of remote
 function remote_enrol_course($domain, $token, $userremoteid, $courseremoteid)
 {
-
     $resp = RestClient::dorest(
         array(
             'domain' => $domain,
@@ -106,6 +106,9 @@ function remote_enrol_course($domain, $token, $userremoteid, $courseremoteid)
                 'userid' => $userremoteid,
                 'courseid' => $courseremoteid)
         ));
+    if (isset($resp->exception)) {
+        return 0;
+    }
     return $resp;
 }
 
@@ -121,6 +124,10 @@ function remote_assign_enrol_user($domain, $token, $roleid, $userremoteid, $cour
                 'userid' => $userremoteid,
                 'courseid' => $courseremoteid)
         ));
+
+    if (isset($resp->exception)) {
+        return 0;
+    }
     return $resp;
 }
 function remote_unassign_enrol_user($domain, $token, $roleid, $userremoteid, $courseremoteid)
@@ -135,5 +142,8 @@ function remote_unassign_enrol_user($domain, $token, $roleid, $userremoteid, $co
                 'userid' => $userremoteid,
                 'courseid' => $courseremoteid)
         ));
+    if (isset($resp->exception)) {
+        return 0;
+    }
     return $resp;
 }
