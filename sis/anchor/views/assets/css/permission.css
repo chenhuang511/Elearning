@@ -10,20 +10,21 @@
 .control-group {
     display: inline-block;
     vertical-align: top;
-    background: #fff;
+    background: rgba(126, 192, 253, 0.14);
     text-align: left;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    padding: 30px;
+    padding: 29px;
     margin: 10px;
 }
 
 .control {
     display: block;
     position: relative;
-    padding-left: 30px;
-    margin-bottom: 15px;
+    padding-left: 39px;
+    margin-bottom: 13px;
     cursor: pointer;
-    font-size: 18px;
+    font-weight: 400;
+    font-size: 16px;
 }
 
 .control input {
@@ -332,5 +333,9 @@ textarea {
 
 [type="search"]::-webkit-search-cancel-button, [type="search"]::-webkit-search-decoration {
     -webkit-appearance: none
+}
+.permission-title {
+    font-size: 16px;
+    border-bottom: solid 1px #7f3433;
 }
 

@@ -27,6 +27,7 @@
             <div class="list_advance col-sm-9">
                 <div class="container">
                     <div class="control-group">
+                        <a class="permission-title" href="#"><b>Bảng phân quyền cho <?php echo __('global.' . $role)?></b></br></br></a>
                         <?php foreach ($permission->results as $key => $value): ?>
                             <?php if (in_array($value, $dbrouter)): ?>
                                 <label class="control control--checkbox"> <?php echo $value; ?>

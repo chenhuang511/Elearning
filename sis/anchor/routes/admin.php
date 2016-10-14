@@ -16,6 +16,7 @@ Route::action('auth', function() {
         $pattern = Router::$pattern;
         $search = array_keys($pattern);
         $replace = array_values($pattern);
+        $role = Auth::get_role_user();
         $router = "";
         if (array_key_exists($uri, $routes)) {
             $router = $uri;
@@ -28,10 +29,10 @@ Route::action('auth', function() {
                 $router = str_replace($search, $replace, $pattern);
             }
         }
-        if (Auth::au_router($router)) {
+        if (Auth::au_router($role)[0]->router) {
             $flag = 0;
-            foreach (explode(',', Auth::au_router($router)[0]->action) as $action) {
-                if (Auth::get_role_user() == $action) {
+            foreach (explode(',', Auth::au_router($role)[0]->router) as $action) {
+                if ($router == $action) {
                     $flag = 1;
                     break;
                 } else continue;
