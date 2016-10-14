@@ -444,8 +444,13 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function () {
         $input = Input::get(array('courseid', 'loop'));
         $courseid = $input['courseid'];
         $loop = $input['loop'];
+        $ispass = Course::create_course_hub($courseid, $loop);
 
-        echo Course::create_course_hub($courseid, $loop);
+        $output = Json::encode(array('status' => $ispass));
+        if($ispass) {
+            return Response::create($output, 200, array('content-type' => 'application/json'));
+        }
+        return Response::create($output, 200, array('content-type' => 'application/json'));
     });
 
     Route::get('admin/curriculum/topic/checkroom/(:any)/(:any)/(:any)', function ($day, $roomid, $time = null) {

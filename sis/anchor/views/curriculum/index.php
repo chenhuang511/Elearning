@@ -98,12 +98,12 @@
                 data: {token: token, courseid: courseid, loop: loop},
                 dataType: "text",
                 success: function (result) {
-                    if (result == false && i < 100) {
+                    if (result && result.status == false && i < 500) {
                         callAjax(url, token, courseid, 1);
                         i++;
                     } else {
                         $('#load').removeClass();
-                        if (result == false) {
+                        if (result && result.status == false) {
                             $('#load').addClass('fa fa-exclamation-triangle');
                         }
                         $('#load').addClass('fa fa-check');
@@ -135,7 +135,7 @@
                 dataType: "text",
                 success: function (result) {
                     $('#load').removeClass();
-                    if (result == true) {
+                    if (result && result.status == true) {
                         $('#load').addClass('fa fa-check');
                     } else {
                         $('#load').addClass('fa fa-exclamation-triangle');

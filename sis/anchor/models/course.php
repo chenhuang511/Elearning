@@ -155,8 +155,17 @@ class Course extends Base
         $curiculum = Curriculum::where('course', '=', $courseid);
 
         if($course->remoteid) {
+            $courseupdate = new stdClass();
+            $courseupdate->status = PUBLISHED;
             $curiculums = $curiculum->get();
-            return self::edit_section_hub($curiculums, $course->remoteid);
+            if($ispass = self::edit_section_hub($curiculums, $course->remoteid)) {
+                try {
+                    Course::update($course->id, $courseupdate);
+                } catch (Exception $e) {
+                    $ispass = false;
+                }
+            };
+            return $ispass;
         }
 
         $numbersection = $curiculum->count();
@@ -178,12 +187,10 @@ class Course extends Base
         $courseremote = remote_add_course($data);
         if(!$courseremote) {return false;};
         $courseupdate->remoteid = $courseremote->id;
-        $courseupdate->status = PUBLISHED;
         Course::update($course->id, $courseupdate);
         //end api
         // start edit title section
-        $curiculums = $curiculum->get();
-        return self::edit_section_hub($curiculums, $courseremote->id);
+        return false;
     }
 
     public static function edit_section_hub($sections, $courseid) {

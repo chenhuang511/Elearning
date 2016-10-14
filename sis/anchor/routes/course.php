@@ -185,8 +185,17 @@ Route::collection(array('before' => 'auth,csrf'), function () {
 
         $courseupdate = new stdClass();
         $courseupdate->status = APPROVED;
-        Course::update($courseid, $courseupdate);
+        $ispass = true;
+        try{
+            Course::update($courseid, $courseupdate);
+        } catch (Exception $e) {
+            $ispass = false;
+        }
 
-        echo 1;
+        $output = Json::encode(array('status' => $ispass));
+        if($ispass) {
+            return Response::create($output, 200, array('content-type' => 'application/json'));
+        }
+        return Response::create($output, 200, array('content-type' => 'application/json'));
     });
 });

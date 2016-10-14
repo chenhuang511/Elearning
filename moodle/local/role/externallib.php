@@ -127,7 +127,7 @@ class local_role_external extends external_api {
         $potentialuserselector = new mnetservice_enrol_potential_users_selector('addselect', array('hostid' => $host->id, 'remotecourseid' => $course->remoteid));
 
         // process incoming enrol request
-        $error = '';
+        $error = 'successful';
         $localusserid = get_remote_mapping_localuserid($userid);
         if (!empty($userid)) {
             $user = $DB->get_record('user', array('id' => $localusserid));
