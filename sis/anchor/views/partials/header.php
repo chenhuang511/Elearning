@@ -21,6 +21,7 @@
 
     <link rel="stylesheet" href="<?php echo asset_url('css/bootstrap.min.css'); ?>">
     <link rel="stylesheet" href="<?php echo asset_url('css/bhxh.css'); ?>">
+    <link rel="stylesheet" href="<?php echo asset('anchor/views/assets/css/permission.css'); ?>">
 
     <link rel="stylesheet" media="(max-width: 980px), (max-device-width: 480px)"
           href="<?php echo asset('anchor/views/assets/css/small.css'); ?>">
@@ -189,6 +190,15 @@
                                             Tạo phòng học mới</a></li>
                                 </ul>
                             </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingRoom">
+                            <h4 class="panel-title">
+                                <a href="<?php echo Uri::to('admin/permission'); ?>"><i class="fa fa-users"
+                                                                                        aria-hidden="true"></i> Phân
+                                    quyền người dùng</a>
+                            </h4>
                         </div>
                     </div>
                 </div>

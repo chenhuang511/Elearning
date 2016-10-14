@@ -90,6 +90,7 @@ if(is_admin()) {
     require APP . 'routes/course' . EXT;
     require APP . 'routes/virtual_class_equipments' . EXT;
     require APP . 'routes/rooms' . EXT;
+    require APP . 'routes/permission' . EXT;
 }
 else {
 	require APP . 'routes/site' . EXT;

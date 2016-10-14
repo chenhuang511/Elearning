@@ -14,7 +14,10 @@ return array(
 	'delete' => 'Xóa',
 	'deleting' => 'Đang xóa...',
 	'update' => 'Cập nhật',
-	'updating' => 'Đang cập nhật...',
+    'update_success' => 'Cập nhật router thành công!',
+    'box_null' => 'Bạn chưa chọn router nào!',
+
+    'updating' => 'Đang cập nhật...',
 	'edit' => 'Sửa',
     'search' =>'Tìm kiếm',
     'searching' => 'Đang tìm ...',
@@ -52,6 +55,10 @@ return array(
 	'administrator' => 'Quản trị',
 	'editor' => 'Biên tập',
 	'user' => 'Thành viên',
+	'student' => 'Sinh viên',
+	'school' => 'Trường học ',
+	'instructor' => 'Giảng viên',
+	'contract' => 'Phòng đào tạo',
 
 	'log_in' => 'Đăng nhập',
 	'login' => 'Đăng nhập',

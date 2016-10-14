@@ -130,7 +130,7 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
 			if(in_array($key, $dont_encode)) continue;
 			$value = eq($value);
 		}
-		
+
 		$validator = new Validator($input);
 
 		$validator->add('duplicate', function($str) use($id) {

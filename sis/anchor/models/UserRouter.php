@@ -9,8 +9,8 @@
 class UserRouter extends Base
 {
     public static $table = "router";
-    public static function get_router($router) {
-        $query = Query::table(static::table())->where(Base::table('router.router'), '=', $router);
+    public static function get_router($action) {
+        $query = Query::table(static::table())->where(Base::table('router.action'), '=', $action);
         return $query->get();
     }
 }
