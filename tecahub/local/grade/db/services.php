@@ -34,6 +34,14 @@
  */
 
 $functions = array(
+    'local_get_grade_complete_course' => array(
+        'classname' => 'local_grade_external',
+        'methodname' => 'get_grade_complete_course',
+        'classpath' => 'local/grade/externallib.php',
+        'description' => 'Get grade complete course',
+        'type' => 'read',
+        'ajax' => true
+    ),
     'local_get_grade_settings_by' => array(
         'classname' => 'local_grade_external',
         'methodname' => 'get_grade_settings_by',

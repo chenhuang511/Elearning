@@ -21,7 +21,7 @@ function remote_get_grade_complete_course($userid, $courseid)
         array(
             'domain' => HUB_URL,
             'token' => TOKEN,
-            'function_name'=>'local_host_get_grade_complete_course',
+            'function_name'=>'local_get_grade_complete_course',
             'params'=>array(
                 'userid' => $userid,
                 'courseid' => $courseid )
@@ -60,6 +60,7 @@ function remote_get_course_section($courseid)
     if(!isset($resp->sections)) {return 'error';};
     return $resp->sections;
 }
+
 // userid and remote id of remote
 function remote_enrol_host($roleid, $hostid, $courseid, $methodname = 'host')
 {

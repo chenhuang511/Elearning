@@ -185,6 +185,7 @@ class Course extends Base
         $curiculums = $curiculum->get();
         return self::edit_section_hub($curiculums, $courseremote->id);
     }
+
     public static function edit_section_hub($sections, $courseid) {
         $remotesections = remote_get_course_section($courseid); // must be remote course id
         if(count($remotesections) < 2){
