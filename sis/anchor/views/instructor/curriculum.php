@@ -31,7 +31,10 @@
 						<p><?php echo $curriculum->topicday; ?></p>
 					</td>
                     <td>
-						<p><?php echo __('instructor.' . $curriculum->topictime); ?></p>
+						<p><?php if($curriculum->topictime != NULL){
+									echo __('instructor.' . $curriculum->topictime);} 
+								else{
+									echo __("Chưa có giờ"); }?></p>
 					</td>
 					<td>
 						<p><?php echo $curriculum->room_name; ?></p>
