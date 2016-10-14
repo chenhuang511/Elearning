@@ -75,7 +75,7 @@
                     <tr>
                         <td style="width: 650px"><?php echo $stu->fullname ?></td>
                         <?php  $gradecomplete = remote_get_grade_complete_course($thisstudent->remoteid, $stu->id) ?>
-                        <td style="text-align: center"><?php $gradecomplete ?></td>
+                        <td style="text-align: center"><?php echo $gradecomplete ?></td>
                         <td style="text-align: center">
                             <?php
                             $certificate = remote_get_link_certificate($stu->schoolid, $stu->studentid, $stu->id);
