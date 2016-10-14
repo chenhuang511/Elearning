@@ -127,12 +127,13 @@
     $(document).ready(function () {
         $('#approve-course').click(function () {
             // call ajax
+            $('#load').remove();
             $(this).append('<i id="load" class="fa fa-spinner fa-pulse fa fa-fw"></i>');
             $.ajax({
                 method: "POST",
                 url: '/admin/approve/course',
                 data: {token: '<?php echo Csrf::token(); ?>', courseid: '<?php echo $courseid; ?>'},
-                dataType: "text",
+                dataType: "json",
                 success: function (result) {
                     $('#load').removeClass();
                     if (result && result.status == true) {
