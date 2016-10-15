@@ -34,8 +34,19 @@ Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
     Route::get('admin/rooms/view/(:num)', function($id) {
         $vars['messages'] = Notify::read();
         $vars['token'] = Csrf::token();
-        $vars['rooms'] = Room::find($id);
+        $vars['rooms'] = Room::getById($id);
 
+        foreach ($vars['rooms'] as &$value) {
+            $topicday = date('Y-m-d', strtotime($value ->topicday));
+            $today = new Datetime();
+            $now = $today->format('Y-m-d');
+            if (isset($topicday) == ($now)){
+                $value -> status = 1;
+            }
+            else{
+                $value ->status = 0;
+            }
+        }
         // extended fields
         $vars['fields'] = Extend::fields('rooms', $id);
         $vars['tab'] = 'room';

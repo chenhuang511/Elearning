@@ -8,12 +8,12 @@
     <?php echo $messages; ?>
     <?php if (Auth::admin()) : ?>
         <p class="text-right">
-            <a href="<?php echo Uri::to('admin/equipment/' . $rooms->id); ?>" class="btn btn-success" id="">
+            <a href="<?php echo Uri::to('admin/equipment/' . $rooms[0]->id); ?>" class="btn btn-success" id="">
                 Xem thiết bị
             </a>
         </p>
         <div class="col-md-12">
-            <form action="<?php echo Uri::to('admin/rooms/edit/' . $rooms->id); ?>" method="POST"
+            <form action="<?php echo Uri::to('admin/rooms/edit/' . $rooms[0]->id); ?>" method="POST"
                   enctype="multipart/form-data" autocomplete="off">
                 <input name="token" type="hidden" value="<?php echo $token; ?>">
                 <table class="table">
@@ -21,32 +21,34 @@
                     <tr>
                         <td>TÊN:</td>
                         <td>
-                            <?php echo Form::text('name', Input::previous('name', $rooms->name), array('id' => 'label-name', 'readonly' => 'readonly')); ?>
+                            <?php echo Form::text('name', Input::previous('name', $rooms[0]->name), array('id' => 'label-name', 'readonly' => 'readonly')); ?>
                         </td>
                     </tr>
                     <tr>
                         <td>MÔ TẢ:</td>
                         <td>
-                            <?php echo Form::text('description', Input::previous('description', $rooms->description), array('id' => 'label-description', 'readonly' => 'readonly')); ?>
+                            <?php echo Form::text('description', Input::previous('description', $rooms[0]->description), array('id' => 'label-description', 'readonly' => 'readonly')); ?>
                         </td>
                     </tr>
                     <tr>
                         <td>TRẠNG THÁI:</td>
                         <td>
-                            <select name="status" disabled="disabled">
-                                <option value="0" <?php if ($rooms->status == 0) echo "selected"; ?>>Đang được sử dụng
-                                </option>
-                                <option value="1" <?php if ($rooms->status == 1) echo "selected"; ?>>Chưa được sử dụng
-                                </option>
-                            </select>
+                            <div id = "status">
+                                <?php
+                                if ($rooms[0]->status = 1){
+                                    echo "Phòng học đang được sử dụng";
+                                }
+                                    else "Phòng học còn trống";
+                                ?>
+                            </div>
                         </td>
                     </tr>
                     </tbody>
                 </table>
 
                 <aside class="buttons">
-                    <a href="<?php echo Uri::to('admin/rooms/edit/' . $rooms->id); ?>" class="btn btn-primary">Sửa</a>
-                    <a href="<?php echo Uri::to('admin/rooms/delete/' . $rooms->id); ?>"
+                    <a href="<?php echo Uri::to('admin/rooms/edit/' . $rooms[0]->id); ?>" class="btn btn-primary">Sửa</a>
+                    <a href="<?php echo Uri::to('admin/rooms/delete/' . $rooms[0]->id); ?>"
                        onclick="return confirm('Bạn chắc chắn muốn xóa thông tin này');" class="btn btn-danger">Xóa</a>
                 </aside>
         </div>
@@ -77,3 +79,4 @@
 </script>
 
 <?php echo $footer; ?>
+

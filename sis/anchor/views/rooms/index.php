@@ -24,7 +24,6 @@
                         <th class="col-sm-1">ID</th>
                         <th class="col-sm-3">Tên phòng</th>
                         <th class="col-sm-3">Thông tin</th>
-                        <th class="col-sm-2">Trạng Thái</th>
                         <th class="col-sm-3">Quản lý</th>
                     </tr>
                     </thead>
@@ -38,15 +37,8 @@
                             <td class="col-sm-3">
                                 <?php echo $room->description ?>
                             </td>
-                            <td class="col-sm-2">
-                                <?php
-                                if ($room->status == 1) {
-                                    echo 'Chưa được sử dụng';
-                                } else
-                                    echo 'Đang được sử dụng';
-                                ?>
-                            </td>
                             <td class="col-sm-3">
+                                <a href="<?php echo Uri::to('admin/rooms/edit/' . $room->id); ?>" class="btn btn-primary">Sửa</a>
                                 <a href="<?php echo Uri::to('admin/rooms/delete/' . $room->id); ?>"
                                    onclick="return confirm('Bạn chắc chắn muốn xóa thông tin này');"
                                    class="btn btn-danger">Xóa</a>
